@@ -13,6 +13,8 @@ target 'ExponeaSDK' do
   target 'ExponeaSDKTests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'Quick'
+    pod 'Nimble'
   end
 
 end
