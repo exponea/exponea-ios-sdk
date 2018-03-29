@@ -103,7 +103,6 @@
 		F021E85B206CF10200788ABC /* ExponeaSDK */ = {
 			isa = PBXGroup;
 			children = (
-				F021E874206CFAE800788ABC /* Classes */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
 			);
 			path = ExponeaSDK;
@@ -127,13 +126,6 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		F021E874206CFAE800788ABC /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Classes;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -152,6 +144,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F021E86D206CF10200788ABC /* Build configuration list for PBXNativeTarget "ExponeaSDK" */;
 			buildPhases = (
+				01A62DCD206D193600E4EACE /* SwiftLint */,
 				C274BBDE503AE53257B1623E /* [CP] Check Pods Manifest.lock */,
 				F021E854206CF10200788ABC /* Sources */,
 				F021E855206CF10200788ABC /* Frameworks */,
@@ -245,6 +238,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		01A62DCD206D193600E4EACE /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\" autocorrect";
+		};
 		13B7A6B555A91517D17166BA /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
