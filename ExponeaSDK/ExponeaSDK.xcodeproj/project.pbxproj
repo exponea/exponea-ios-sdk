@@ -11,6 +11,7 @@
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		F021E868206CF10200788ABC /* ExponeaSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F021E867206CF10200788ABC /* ExponeaSDKTests.swift */; };
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F021E8AC206D2B2E00788ABC /* ExponeaDbModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F021E8AA206D2B2E00788ABC /* ExponeaDbModel.xcdatamodeld */; };
 		FFE74F5792FF87D90A822C1A /* Pods_ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		F021E862206CF10200788ABC /* ExponeaSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExponeaSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F021E867206CF10200788ABC /* ExponeaSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSDKTests.swift; sourceTree = "<group>"; };
 		F021E869206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExponeaDbModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 		F021E85B206CF10200788ABC /* ExponeaSDK */ = {
 			isa = PBXGroup;
 			children = (
+				F021E8A9206D2B0400788ABC /* Database */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
 			);
 			path = ExponeaSDK;
@@ -126,6 +129,14 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F021E8A9206D2B0400788ABC /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				F021E8AA206D2B2E00788ABC /* ExponeaDbModel.xcdatamodeld */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -144,8 +155,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F021E86D206CF10200788ABC /* Build configuration list for PBXNativeTarget "ExponeaSDK" */;
 			buildPhases = (
-				01A62DCD206D193600E4EACE /* SwiftLint */,
 				C274BBDE503AE53257B1623E /* [CP] Check Pods Manifest.lock */,
+				01A62DCD206D193600E4EACE /* SwiftLint */,
 				F021E854206CF10200788ABC /* Sources */,
 				F021E855206CF10200788ABC /* Frameworks */,
 				F021E856206CF10200788ABC /* Headers */,
@@ -340,6 +351,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F021E8AC206D2B2E00788ABC /* ExponeaDbModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -580,6 +592,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		F021E8AA206D2B2E00788ABC /* ExponeaDbModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */,
+			);
+			currentVersion = F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */;
+			path = ExponeaDbModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = F021E850206CF10200788ABC /* Project object */;
 }
