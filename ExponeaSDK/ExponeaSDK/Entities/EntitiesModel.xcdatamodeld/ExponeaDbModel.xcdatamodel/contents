@@ -1,24 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17E199" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="CustomerAnonymize" representedClassName="CustomerAnonymize" syncable="YES" codeGenerationType="class">
-        <attribute name="customerIdKey" attributeType="String" syncable="YES"/>
-        <attribute name="customerIdValue" attributeType="String" syncable="YES"/>
-        <attribute name="projectId" attributeType="String" syncable="YES"/>
-    </entity>
-    <entity name="TokenRevoke" representedClassName="TokenRevoke" syncable="YES" codeGenerationType="class">
-        <attribute name="projectId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="timestamp" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-    </entity>
-    <entity name="TokenRotate" representedClassName="TokenRotate" syncable="YES" codeGenerationType="class">
-        <attribute name="projectId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="timestamp" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-    </entity>
     <entity name="TrackCustomers" representedClassName="TrackCustomers" syncable="YES" codeGenerationType="class">
         <attribute name="customerIdKey" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="customerIdValue" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="projectId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="timestamp" optional="YES" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="trackCustomerProperties" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrackCustomersProperties" inverseName="trackCustomer" inverseEntity="TrackCustomersProperties" syncable="YES"/>
+        <relationship name="trackCustomerProperties" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrackCustomersProperties" inverseName="trackCustomer" inverseEntity="TrackCustomersProperties" syncable="YES"/>
     </entity>
     <entity name="TrackCustomersProperties" representedClassName="TrackCustomersProperties" syncable="YES" codeGenerationType="class">
         <attribute name="key" optional="YES" attributeType="String" syncable="YES"/>
@@ -31,7 +18,7 @@
         <attribute name="eventType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="projectId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="timestamp" optional="YES" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="trackEventsProperties" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrackEventsProperties" inverseName="trackEvents" inverseEntity="TrackEventsProperties" syncable="YES"/>
+        <relationship name="trackEventsProperties" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrackEventsProperties" inverseName="trackEvents" inverseEntity="TrackEventsProperties" syncable="YES"/>
     </entity>
     <entity name="TrackEventsProperties" representedClassName="TrackEventsProperties" syncable="YES" codeGenerationType="class">
         <attribute name="key" optional="YES" attributeType="String" syncable="YES"/>
@@ -43,8 +30,5 @@
         <element name="TrackCustomersProperties" positionX="-36" positionY="9" width="128" height="90"/>
         <element name="TrackEvents" positionX="-27" positionY="54" width="128" height="135"/>
         <element name="TrackEventsProperties" positionX="0" positionY="72" width="128" height="90"/>
-        <element name="TokenRotate" positionX="-18" positionY="81" width="128" height="75"/>
-        <element name="TokenRevoke" positionX="-9" positionY="90" width="128" height="75"/>
-        <element name="CustomerAnonymize" positionX="18" positionY="162" width="128" height="90"/>
     </elements>
 </model>
