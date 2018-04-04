@@ -53,7 +53,6 @@ public class EntitiesManager {
             }
         }
     }
-
 }
 
 extension EntitiesManager: EntitieTrack {
@@ -116,7 +115,6 @@ extension EntitiesManager: EntitieTrack {
         // Save the customer properties into CoreData
         saveContext()
     }
-
 }
 
 extension EntitiesManager: EntitieTokens {
@@ -172,5 +170,4 @@ extension EntitiesManager: EntitieCustomerData {
         customerAnonymize.customerIdKey = customerId.key
         customerAnonymize.customerIdValue = customerId.value
     }
-
 }
