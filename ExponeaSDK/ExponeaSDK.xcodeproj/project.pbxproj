@@ -12,6 +12,12 @@
 		F021E868206CF10200788ABC /* ExponeaSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F021E867206CF10200788ABC /* ExponeaSDKTests.swift */; };
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F021E8AA206D2B2E00788ABC /* EntitiesModel.xcdatamodeld */; };
+		F0A400E02075189E007E823E /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400DF2075189E007E823E /* ConnectionManager.swift */; };
+		F0A400E2207518CC007E823E /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E1207518CC007E823E /* Repository.swift */; };
+		F0A400E42075223E007E823E /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E32075223E007E823E /* APIConfiguration.swift */; };
+		F0A400E620760A86007E823E /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E520760A86007E823E /* Router.swift */; };
+		F0EDF40220761FF800317DB4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDF40120761FF800317DB4 /* Constants.swift */; };
+		F0EDF40420762E8400317DB4 /* APISource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDF40320762E8400317DB4 /* APISource.swift */; };
 		FFE74F5792FF87D90A822C1A /* Pods_ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +45,12 @@
 		F021E867206CF10200788ABC /* ExponeaSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSDKTests.swift; sourceTree = "<group>"; };
 		F021E869206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExponeaDbModel.xcdatamodel; sourceTree = "<group>"; };
+		F0A400DF2075189E007E823E /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
+		F0A400E1207518CC007E823E /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
+		F0A400E32075223E007E823E /* APIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfiguration.swift; sourceTree = "<group>"; };
+		F0A400E520760A86007E823E /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		F0EDF40120761FF800317DB4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		F0EDF40320762E8400317DB4 /* APISource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,7 +117,9 @@
 		F021E85B206CF10200788ABC /* ExponeaSDK */ = {
 			isa = PBXGroup;
 			children = (
+				F0A400DE2075187C007E823E /* Repository */,
 				F021E8A9206D2B0400788ABC /* Entities */,
+				F0EDF3FF20761FD700317DB4 /* Others */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
 			);
 			path = ExponeaSDK;
@@ -135,6 +149,26 @@
 				F021E8AA206D2B2E00788ABC /* EntitiesModel.xcdatamodeld */,
 			);
 			path = Entities;
+			sourceTree = "<group>";
+		};
+		F0A400DE2075187C007E823E /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				F0A400DF2075189E007E823E /* ConnectionManager.swift */,
+				F0A400E1207518CC007E823E /* Repository.swift */,
+				F0A400E32075223E007E823E /* APIConfiguration.swift */,
+				F0A400E520760A86007E823E /* Router.swift */,
+				F0EDF40320762E8400317DB4 /* APISource.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		F0EDF3FF20761FD700317DB4 /* Others */ = {
+			isa = PBXGroup;
+			children = (
+				F0EDF40120761FF800317DB4 /* Constants.swift */,
+			);
+			path = Others;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -205,6 +239,7 @@
 				TargetAttributes = {
 					F021E858206CF10200788ABC = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 0930;
 						ProvisioningStyle = Automatic;
 					};
 					F021E861206CF10200788ABC = {
@@ -356,7 +391,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0A400E42075223E007E823E /* APIConfiguration.swift in Sources */,
 				F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */,
+				F0A400E620760A86007E823E /* Router.swift in Sources */,
+				F0A400E02075189E007E823E /* ConnectionManager.swift in Sources */,
+				F0A400E2207518CC007E823E /* Repository.swift in Sources */,
+				F0EDF40420762E8400317DB4 /* APISource.swift in Sources */,
+				F0EDF40220761FF800317DB4 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -497,6 +538,7 @@
 			baseConfigurationReference = B57907D0B9C15901B882D6C2 /* Pods-ExponeaSDK.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -510,6 +552,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDK;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -520,6 +563,7 @@
 			baseConfigurationReference = 6A9541A0D49B621C7B60EAC2 /* Pods-ExponeaSDK.release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -542,6 +586,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ExponeaSDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -556,6 +601,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ExponeaSDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
