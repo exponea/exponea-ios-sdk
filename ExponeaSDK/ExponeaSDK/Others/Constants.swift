@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// enum that contains network configurations constants.
 enum Constants {
     enum Repository {
         static let baseURL = "https://api.exponea.com/"

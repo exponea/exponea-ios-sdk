@@ -8,7 +8,7 @@
 
 import Foundation
 
-// Remove vv after merge with Database Manager
+// FIXME: Remove vv when merging with feature/DatabaseManager
 
 public struct KeyValueModel {
     /// Name of the key in the dictionary
@@ -52,7 +52,7 @@ public struct CustomerAttributesListModel {
     public var identificationValue: String
 }
 
-// Remove ^^ after merge with Database Manager
+// FIXME: Remove ^^ when merging with feature/DatabaseManager
 
 protocol TrackingRepository {
     func trackCustumer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel])

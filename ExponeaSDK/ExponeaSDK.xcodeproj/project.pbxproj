@@ -15,7 +15,6 @@
 		F0A400E02075189E007E823E /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400DF2075189E007E823E /* ConnectionManager.swift */; };
 		F0A400E2207518CC007E823E /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E1207518CC007E823E /* Repository.swift */; };
 		F0A400E42075223E007E823E /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E32075223E007E823E /* APIConfiguration.swift */; };
-		F0A400E620760A86007E823E /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E520760A86007E823E /* Router.swift */; };
 		F0EDF40220761FF800317DB4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDF40120761FF800317DB4 /* Constants.swift */; };
 		F0EDF40420762E8400317DB4 /* APISource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDF40320762E8400317DB4 /* APISource.swift */; };
 		FFE74F5792FF87D90A822C1A /* Pods_ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */; };
@@ -48,7 +47,6 @@
 		F0A400DF2075189E007E823E /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
 		F0A400E1207518CC007E823E /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		F0A400E32075223E007E823E /* APIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfiguration.swift; sourceTree = "<group>"; };
-		F0A400E520760A86007E823E /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		F0EDF40120761FF800317DB4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F0EDF40320762E8400317DB4 /* APISource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -157,7 +155,6 @@
 				F0A400DF2075189E007E823E /* ConnectionManager.swift */,
 				F0A400E1207518CC007E823E /* Repository.swift */,
 				F0A400E32075223E007E823E /* APIConfiguration.swift */,
-				F0A400E520760A86007E823E /* Router.swift */,
 				F0EDF40320762E8400317DB4 /* APISource.swift */,
 			);
 			path = Repository;
@@ -393,7 +390,6 @@
 			files = (
 				F0A400E42075223E007E823E /* APIConfiguration.swift in Sources */,
 				F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */,
-				F0A400E620760A86007E823E /* Router.swift in Sources */,
 				F0A400E02075189E007E823E /* ConnectionManager.swift in Sources */,
 				F0A400E2207518CC007E823E /* Repository.swift in Sources */,
 				F0EDF40420762E8400317DB4 /* APISource.swift in Sources */,

@@ -8,9 +8,11 @@
 
 import Foundation
 
+/// APISource class is responsible to prepare the data used in the http request.
+/// It receives all inputs for the call and return a NSMutableURLRequest.
 public class APISource {
 
-    class func prepareRequest(withURL url: String) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
 
@@ -22,7 +24,7 @@ public class APISource {
         return request
     }
 
-    class func prepareRequest(withURL url: String, customerId: KeyValueModel) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String, customerId: KeyValueModel) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
 
@@ -47,7 +49,7 @@ public class APISource {
         return request
     }
 
-    class func prepareRequest(withURL url: String, customerId: KeyValueModel, properties: [KeyValueModel]) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String, customerId: KeyValueModel, properties: [KeyValueModel]) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
 
@@ -75,7 +77,7 @@ public class APISource {
         return request
     }
 
-    class func prepareRequest(withURL url: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Int, eventType: String) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Int, eventType: String) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
 
@@ -105,7 +107,7 @@ public class APISource {
         return request
     }
 
-    class func prepareRequest(withURL url: String, customerId: KeyValueModel, forProperty property: String) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String, customerId: KeyValueModel, forProperty property: String) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
 
@@ -131,7 +133,7 @@ public class APISource {
         return request
     }
 
-    class func prepareRequest(withURL url: String, customerId: KeyValueModel, forId id: String) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String, customerId: KeyValueModel, forId id: String) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
 
@@ -157,7 +159,7 @@ public class APISource {
         return request
     }
 
-    class func prepareRequest(withURL url: String, customerId: KeyValueModel, forId id: String, withRecommendation recommendation: CustomerRecommendModel?) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String, customerId: KeyValueModel, forId id: String, withRecommendation recommendation: CustomerRecommendModel?) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
         var list: [String: Any] = [:]
@@ -203,7 +205,7 @@ public class APISource {
         return request
     }
 
-    class func prepareRequest(withURL url: String, customerId: KeyValueModel, withAttributes attributes: [CustomerAttributesListModel]) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String, customerId: KeyValueModel, withAttributes attributes: [CustomerAttributesListModel]) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
         var list: [String: Any] = [:]
@@ -239,7 +241,7 @@ public class APISource {
         return request
     }
 
-    class func prepareRequest(withURL url: String, customerId: KeyValueModel, forEvents events: CustomerEventsModel) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String, customerId: KeyValueModel, forEvents events: CustomerEventsModel) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
         var list = [String]()
@@ -269,7 +271,7 @@ public class APISource {
         return request
     }
 
-    class func prepareRequest(withURL url: String, withData data: CustomerExportModel) -> NSMutableURLRequest {
+    func prepareRequest(withURL url: String, withData data: CustomerExportModel) -> NSMutableURLRequest {
 
         let request = NSMutableURLRequest()
         var filterList: [String: Any] = [:]
