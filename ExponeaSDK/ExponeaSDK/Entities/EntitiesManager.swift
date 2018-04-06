@@ -11,7 +11,7 @@ import CoreData
 
 /// Protocol to manage Tracking events
 public protocol EntitieTrack: class {
-    func trackCustumer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel])
+    func trackCustomer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel])
     func trackEvents(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Int, eventType: String)
     func fetchTrackCustomer() -> [TrackCustomers]?
     func fetchTrackEvents() -> [TrackEvents]?
@@ -64,7 +64,7 @@ extension EntitiesManager: EntitieTrack {
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
-    public func trackCustumer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
+    public func trackCustomer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
 
         let trackCustomer = TrackCustomers(context: persistentContainer.viewContext)
         let trackCustomerProperties = TrackCustomersProperties(context: persistentContainer.viewContext)
