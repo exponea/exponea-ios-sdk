@@ -21,6 +21,25 @@ struct APIConfiguration {
     }
 }
 
+/// Identification of endpoints for Exponea API
+enum Routes {
+    case trackCustomers
+    case trackEvents
+    case tokenRotate
+    case tokenRevoke
+    case customersProperty
+    case customersId
+    case customersSegmentation
+    case customersExpression
+    case customersPrediction
+    case customersRecommendation
+    case customersAttributes
+    case customersEvents
+    case customersAnonymize
+    case customersExportAllProperties
+    case customersExportAll
+}
+
 /// Define the type of HTTP method used to perform the request
 public enum HTTPMethod: String {
     case post = "POST"

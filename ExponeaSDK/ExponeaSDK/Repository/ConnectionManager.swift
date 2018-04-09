@@ -31,8 +31,9 @@ extension ConnectionManager: TrackingRepository {
     ///     - properties: Properties that should be updated
     func trackCustumer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
 
-        let url = configuration.baseURL + "track/v2/\(projectId)/customers"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerId, properties: properties)
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .trackCustomers)
+        let params = TrackingParams(customer: customerId, properties: properties, timestamp: nil, eventType: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: params, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -54,8 +55,9 @@ extension ConnectionManager: TrackingRepository {
     ///     - eventType: Type of event to be tracked
     func trackEvents(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Int, eventType: String) {
 
-        let url = configuration.baseURL + "track/v2/\(projectId)/events"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerId, properties: properties, timestamp: timestamp, eventType: eventType)
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .trackEvents)
+        let params = TrackingParams(customer: customerId, properties: properties, timestamp: timestamp, eventType: eventType)
+        let request = apiSource.prepareRequest(router: router, trackingParam: params, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -79,8 +81,9 @@ extension ConnectionManager: TokenRepository {
     /// - Parameters:
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     func rotateToken(projectId: String) {
-        let url = configuration.baseURL + "data/v2/\(projectId)/tokens/rotate"
-        let request = apiSource.prepareRequest(withURL: url)
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .tokenRotate)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -98,8 +101,9 @@ extension ConnectionManager: TokenRepository {
     /// - Parameters:
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     func revokeToken(projectId: String) {
-        let url = configuration.baseURL + "data/v2/\(projectId)/tokens/revoke"
-        let request = apiSource.prepareRequest(withURL: url)
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .tokenRotate)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -121,9 +125,11 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - property: Property that should be updated
-    func fetchProperty(projectId: String, customerIds: KeyValueModel, property: String) {
-        let url = configuration.baseURL + "data/v2/\(projectId)/customers/property"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerIds, forProperty: property)
+    func fetchProperty(projectId: String, customerId: KeyValueModel, property: String) {
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersProperty)
+        let customersParams = CustomersParams(customer: customerId, property: property, id: nil, recommendation: nil, attributes: nil, events: nil, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -141,9 +147,11 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchId(projectId: String, customerIds: KeyValueModel, id: String) {
-        let url = configuration.baseURL + "data/v2/\(projectId)/customers/id"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerIds, forId: id)
+    func fetchId(projectId: String, customerId: KeyValueModel, id: String) {
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersId)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil, attributes: nil, events: nil, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -161,9 +169,11 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchSegmentation(projectId: String, customerIds: KeyValueModel, id: String) {
-        let url = configuration.baseURL + "data/v2/\(projectId)/customers/segmentation"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerIds, forId: id)
+    func fetchSegmentation(projectId: String, customerId: KeyValueModel, id: String) {
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersSegmentation)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil, attributes: nil, events: nil, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -181,9 +191,11 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchExpression(projectId: String, customerIds: KeyValueModel, id: String) {
-        let url = configuration.baseURL + "data/v2/\(projectId)/customers/expression"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerIds, forId: id)
+    func fetchExpression(projectId: String, customerId: KeyValueModel, id: String) {
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersExpression)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil, attributes: nil, events: nil, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -201,9 +213,11 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchPrediction(projectId: String, customerIds: KeyValueModel, id: String) {
-        let url = configuration.baseURL + "data/v2/\(projectId)/customers/prediction"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerIds, forId: id)
+    func fetchPrediction(projectId: String, customerId: KeyValueModel, id: String) {
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersPrediction)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil, attributes: nil, events: nil, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -222,9 +236,11 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
     ///     - recommendation: Recommendations for the customer
-    func fetchRecommendation(projectId: String, customerIds: KeyValueModel, id: String, recommendation: CustomerRecommendModel?) {
-        let url = configuration.baseURL + "data/v2/\(projectId)/customers/recommendation"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerIds, forId: id)
+    func fetchRecommendation(projectId: String, customerId: KeyValueModel, id: String, recommendation: CustomerRecommendModel?) {
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersRecommendation)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: recommendation, attributes: nil, events: nil, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -243,8 +259,10 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - attributes: List of attributes you want to retrieve
     func fetchAttributes(projectId: String, customerId: KeyValueModel, attributes: [CustomerAttributesListModel]) {
-        let url = configuration.baseURL + "/data/v2/\(projectId)/customers/attributes"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerId, withAttributes: attributes)
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersAttributes)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil, attributes: attributes, events: nil, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -263,8 +281,10 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - events: List of event types you want to retrieve
     func fetchEvents(projectId: String, customerId: KeyValueModel, events: CustomerEventsModel) {
-        let url = configuration.baseURL + "/data/v2/\(projectId)/customers/events"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerId, forEvents: events)
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersEvents)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil, attributes: nil, events: events, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -282,8 +302,10 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     func fetchAllProperties(projectId: String, customerId: KeyValueModel) {
-        let url = configuration.baseURL + "/data/v2/\(projectId)/customers/export-one"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerId)
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersExportAllProperties)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil, attributes: nil, events: nil, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -301,8 +323,10 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     ///     - data: List of properties to retrieve
     func fetchAllCustomers(projectId: String, data: CustomerExportModel) {
-        let url = configuration.baseURL + "/data/v2/\(projectId)/customers/export"
-        let request = apiSource.prepareRequest(withURL: url, withData: data)
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersExportAll)
+        let customersParams = CustomersParams(customer: nil, property: nil, id: nil, recommendation: nil, attributes: nil, events: nil, data: data)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -321,8 +345,10 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectId: Project token (you can find it in the Overview section of your project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     func anonymize(projectId: String, customerId: KeyValueModel) {
-        let url = configuration.baseURL + "/data/v2/\(projectId)/customers/anonymize"
-        let request = apiSource.prepareRequest(withURL: url, customerId: customerId)
+
+        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersAnonymize)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil, attributes: nil, events: nil, data: nil)
+        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {

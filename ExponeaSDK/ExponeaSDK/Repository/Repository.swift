@@ -65,12 +65,12 @@ protocol TokenRepository {
 }
 
 protocol FetchCustomerRepository {
-    func fetchProperty(projectId: String, customerIds: KeyValueModel, property: String)
-    func fetchId(projectId: String, customerIds: KeyValueModel, id: String)
-    func fetchSegmentation(projectId: String, customerIds: KeyValueModel, id: String)
-    func fetchExpression(projectId: String, customerIds: KeyValueModel, id: String)
-    func fetchPrediction(projectId: String, customerIds: KeyValueModel, id: String)
-    func fetchRecommendation(projectId: String, customerIds: KeyValueModel, id: String, recommendation: CustomerRecommendModel?)
+    func fetchProperty(projectId: String, customerId: KeyValueModel, property: String)
+    func fetchId(projectId: String, customerId: KeyValueModel, id: String)
+    func fetchSegmentation(projectId: String, customerId: KeyValueModel, id: String)
+    func fetchExpression(projectId: String, customerId: KeyValueModel, id: String)
+    func fetchPrediction(projectId: String, customerId: KeyValueModel, id: String)
+    func fetchRecommendation(projectId: String, customerId: KeyValueModel, id: String, recommendation: CustomerRecommendModel?)
     func fetchAttributes(projectId: String, customerId: KeyValueModel, attributes: [CustomerAttributesListModel])
     func fetchEvents(projectId: String, customerId: KeyValueModel, events: CustomerEventsModel)
     func fetchAllProperties(projectId: String, customerId: KeyValueModel)

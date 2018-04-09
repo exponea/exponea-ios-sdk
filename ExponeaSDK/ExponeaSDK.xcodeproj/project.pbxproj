@@ -12,6 +12,7 @@
 		F021E868206CF10200788ABC /* ExponeaSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F021E867206CF10200788ABC /* ExponeaSDKTests.swift */; };
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F021E8AA206D2B2E00788ABC /* EntitiesModel.xcdatamodeld */; };
+		F09E84D2207B6FE3006BF928 /* APIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09E84D1207B6FE3006BF928 /* APIRouter.swift */; };
 		F0A400E02075189E007E823E /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400DF2075189E007E823E /* ConnectionManager.swift */; };
 		F0A400E2207518CC007E823E /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E1207518CC007E823E /* Repository.swift */; };
 		F0A400E42075223E007E823E /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E32075223E007E823E /* APIConfiguration.swift */; };
@@ -44,6 +45,7 @@
 		F021E867206CF10200788ABC /* ExponeaSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSDKTests.swift; sourceTree = "<group>"; };
 		F021E869206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExponeaDbModel.xcdatamodel; sourceTree = "<group>"; };
+		F09E84D1207B6FE3006BF928 /* APIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRouter.swift; sourceTree = "<group>"; };
 		F0A400DF2075189E007E823E /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
 		F0A400E1207518CC007E823E /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		F0A400E32075223E007E823E /* APIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfiguration.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				F0A400E1207518CC007E823E /* Repository.swift */,
 				F0A400E32075223E007E823E /* APIConfiguration.swift */,
 				F0EDF40320762E8400317DB4 /* APISource.swift */,
+				F09E84D1207B6FE3006BF928 /* APIRouter.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -388,6 +391,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F09E84D2207B6FE3006BF928 /* APIRouter.swift in Sources */,
 				F0A400E42075223E007E823E /* APIConfiguration.swift in Sources */,
 				F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */,
 				F0A400E02075189E007E823E /* ConnectionManager.swift in Sources */,
