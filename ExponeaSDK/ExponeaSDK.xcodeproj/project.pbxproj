@@ -11,7 +11,14 @@
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		F021E868206CF10200788ABC /* ExponeaSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F021E867206CF10200788ABC /* ExponeaSDKTests.swift */; };
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F021E8AA206D2B2E00788ABC /* EntitiesModel.xcdatamodeld */; };
+		F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F021E8AA206D2B2E00788ABC /* 
+EntitiesModel.xcdatamodeld */; }; <<<<<<< HEAD
+		F09E84D2207B6FE3006BF928 /* APIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09E84D1207B6FE3006BF928 /* APIRouter.swift */; };
+		F0A400E02075189E007E823E /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400DF2075189E007E823E /* ConnectionManager.swift */; };
+		F0A400E2207518CC007E823E /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E1207518CC007E823E /* Repository.swift */; };
+		F0A400E42075223E007E823E /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A400E32075223E007E823E /* APIConfiguration.swift */; };
+		F0EDF40220761FF800317DB4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDF40120761FF800317DB4 /* Constants.swift */; };
+		F0EDF40420762E8400317DB4 /* APISource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EDF40320762E8400317DB4 /* APISource.swift */; };
 		F0C1C1CD20737D80005EB697 /* EntitiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */; };
 		F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */; };
 		FFE74F5792FF87D90A822C1A /* Pods_ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */; };
@@ -41,6 +48,12 @@
 		F021E867206CF10200788ABC /* ExponeaSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSDKTests.swift; sourceTree = "<group>"; };
 		F021E869206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExponeaDbModel.xcdatamodel; sourceTree = "<group>"; };
+		F09E84D1207B6FE3006BF928 /* APIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRouter.swift; sourceTree = "<group>"; };
+		F0A400DF2075189E007E823E /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
+		F0A400E1207518CC007E823E /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
+		F0A400E32075223E007E823E /* APIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfiguration.swift; sourceTree = "<group>"; };
+		F0EDF40120761FF800317DB4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		F0EDF40320762E8400317DB4 /* APISource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISource.swift; sourceTree = "<group>"; };
 		F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesManager.swift; sourceTree = "<group>"; };
 		F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,8 +122,10 @@
 		F021E85B206CF10200788ABC /* ExponeaSDK */ = {
 			isa = PBXGroup;
 			children = (
+				F0A400DE2075187C007E823E /* Repository */,
 				F0C1C1CE207384ED005EB697 /* Models */,
 				F021E8A9206D2B0400788ABC /* Entities */,
+				F0EDF3FF20761FD700317DB4 /* Others */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
 			);
 			path = ExponeaSDK;
@@ -143,6 +158,25 @@
 			path = Entities;
 			sourceTree = "<group>";
 		};
+<<<<<<< HEAD
+		F0A400DE2075187C007E823E /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				F0A400DF2075189E007E823E /* ConnectionManager.swift */,
+				F0A400E1207518CC007E823E /* Repository.swift */,
+				F0A400E32075223E007E823E /* APIConfiguration.swift */,
+				F0EDF40320762E8400317DB4 /* APISource.swift */,
+				F09E84D1207B6FE3006BF928 /* APIRouter.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		F0EDF3FF20761FD700317DB4 /* Others */ = {
+			isa = PBXGroup;
+			children = (
+				F0EDF40120761FF800317DB4 /* Constants.swift */,
+			);
+			path = Others;
 		F0C1C1CE207384ED005EB697 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -219,7 +253,7 @@
 				TargetAttributes = {
 					F021E858206CF10200788ABC = {
 						CreatedOnToolsVersion = 9.2;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = 0930;
 						ProvisioningStyle = Automatic;
 					};
 					F021E861206CF10200788ABC = {
@@ -371,9 +405,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */,
+				F09E84D2207B6FE3006BF928 /* APIRouter.swift in Sources */,
+				F0A400E42075223E007E823E /* APIConfiguration.swift in Sources */,
 				F0C1C1CD20737D80005EB697 /* EntitiesManager.swift in Sources */,
 				F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */,
+				F0A400E02075189E007E823E /* ConnectionManager.swift in Sources */,
+				F0A400E2207518CC007E823E /* Repository.swift in Sources */,
+				F0EDF40420762E8400317DB4 /* APISource.swift in Sources */,
+				F0EDF40220761FF800317DB4 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
