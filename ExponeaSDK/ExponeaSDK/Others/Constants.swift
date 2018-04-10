@@ -8,13 +8,18 @@
 
 import Foundation
 
-/// enum that contains network configurations constants.
+/// enum with constants used through the SDK
 enum Constants {
+    /// Network
     enum Repository {
         static let baseURL = "https://api.exponea.com/"
         static let contentType = "application/json"
         static let headerContentType = "Content-Type"
         static let headerAccept = "Accept"
         static let headerContentLenght = "Content-length"
+    }
+    /// Plist keys
+    enum Keys {
+        static let token = "exponeaProjectIdKey"
     }
 }
