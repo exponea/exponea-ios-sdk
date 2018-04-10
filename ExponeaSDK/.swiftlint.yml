@@ -4,7 +4,6 @@ opt_in_rules: # some rules are only opt-in
   - trailing_newline
   - colon
   - comma
-  - todo
 
 excluded: # paths to ignore during linting. Takes precedence over `included`.
   - Pods
@@ -26,12 +25,3 @@ type_name:
   max_length: # warning and error
     warning: 30
     error: 35
-
-identifier_name:
-  min_length: # only min_length
-    error: 4 # only error
-  excluded: # excluded via string array
-    - id
-    - key
-    - URL
-    - ids
