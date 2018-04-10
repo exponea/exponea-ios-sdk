@@ -1,34 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17E199" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="TrackCustomers" representedClassName="TrackCustomers" syncable="YES" codeGenerationType="class">
-        <attribute name="customerIdKey" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="customerIdValue" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="projectId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="timestamp" optional="YES" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="trackCustomerProperties" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrackCustomersProperties" inverseName="trackCustomer" inverseEntity="TrackCustomersProperties" syncable="YES"/>
-    </entity>
-    <entity name="TrackCustomersProperties" representedClassName="TrackCustomersProperties" syncable="YES" codeGenerationType="class">
-        <attribute name="key" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="value" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="trackCustomer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackCustomers" inverseName="trackCustomerProperties" inverseEntity="TrackCustomers" syncable="YES"/>
-    </entity>
-    <entity name="TrackEvents" representedClassName="TrackEvents" syncable="YES" codeGenerationType="class">
-        <attribute name="customerIdKey" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="customerIdValue" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="eventType" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="projectId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="timestamp" optional="YES" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="trackEventsProperties" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrackEventsProperties" inverseName="trackEvents" inverseEntity="TrackEventsProperties" syncable="YES"/>
-    </entity>
-    <entity name="TrackEventsProperties" representedClassName="TrackEventsProperties" syncable="YES" codeGenerationType="class">
-        <attribute name="key" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="value" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="trackEvents" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackEvents" inverseName="trackEventsProperties" inverseEntity="TrackEvents" syncable="YES"/>
-    </entity>
-    <elements>
-        <element name="TrackCustomers" positionX="-63" positionY="-18" width="128" height="120"/>
-        <element name="TrackCustomersProperties" positionX="-36" positionY="9" width="128" height="90"/>
-        <element name="TrackEvents" positionX="-27" positionY="54" width="128" height="135"/>
-        <element name="TrackEventsProperties" positionX="0" positionY="72" width="128" height="90"/>
-    </elements>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13772" systemVersion="17D102" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <elements/>
 </model>
