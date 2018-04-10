@@ -14,6 +14,12 @@
 		F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F021E8AA206D2B2E00788ABC /* EntitiesModel.xcdatamodeld */; };
 		F0C1C1CD20737D80005EB697 /* EntitiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */; };
 		F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */; };
+		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
+		F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */; };
+		F0E757E5207CFA5300FE8C21 /* APIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* APIRouter.swift */; };
+		F0E757E7207CFA6400FE8C21 /* APISource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E6207CFA6400FE8C21 /* APISource.swift */; };
+		F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E8207CFA7A00FE8C21 /* ConnectionManager.swift */; };
+		F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757EA207CFA9700FE8C21 /* Repository.swift */; };
 		FFE74F5792FF87D90A822C1A /* Pods_ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */; };
 /* End PBXBuildFile section */
 
@@ -43,6 +49,12 @@
 		F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExponeaDbModel.xcdatamodel; sourceTree = "<group>"; };
 		F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesManager.swift; sourceTree = "<group>"; };
 		F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesModel.swift; sourceTree = "<group>"; };
+		F0E757DF207CF99E00FE8C21 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfiguration.swift; sourceTree = "<group>"; };
+		F0E757E4207CFA5300FE8C21 /* APIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRouter.swift; sourceTree = "<group>"; };
+		F0E757E6207CFA6400FE8C21 /* APISource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISource.swift; sourceTree = "<group>"; };
+		F0E757E8207CFA7A00FE8C21 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
+		F0E757EA207CFA9700FE8C21 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +121,8 @@
 		F021E85B206CF10200788ABC /* ExponeaSDK */ = {
 			isa = PBXGroup;
 			children = (
+				F0E757E1207CF9BE00FE8C21 /* Repository */,
+				F0E757DE207CF98600FE8C21 /* Others */,
 				F0C1C1CE207384ED005EB697 /* Models */,
 				F021E8A9206D2B0400788ABC /* Entities */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
@@ -149,6 +163,26 @@
 				F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		F0E757DE207CF98600FE8C21 /* Others */ = {
+			isa = PBXGroup;
+			children = (
+				F0E757DF207CF99E00FE8C21 /* Constants.swift */,
+			);
+			path = Others;
+			sourceTree = "<group>";
+		};
+		F0E757E1207CF9BE00FE8C21 /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */,
+				F0E757E4207CFA5300FE8C21 /* APIRouter.swift */,
+				F0E757E6207CFA6400FE8C21 /* APISource.swift */,
+				F0E757E8207CFA7A00FE8C21 /* ConnectionManager.swift */,
+				F0E757EA207CFA9700FE8C21 /* Repository.swift */,
+			);
+			path = Repository;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -372,8 +406,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */,
+				F0E757E5207CFA5300FE8C21 /* APIRouter.swift in Sources */,
 				F0C1C1CD20737D80005EB697 /* EntitiesManager.swift in Sources */,
+				F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */,
 				F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */,
+				F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */,
+				F0E757E7207CFA6400FE8C21 /* APISource.swift in Sources */,
+				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
+				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
