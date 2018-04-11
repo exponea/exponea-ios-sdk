@@ -12,7 +12,8 @@ import CoreData
 /// Protocol to manage Tracking events
 public protocol EntitieTrack: class {
     func trackCustomer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel])
-    func trackEvents(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Int, eventType: String)
+    func trackEvents(projectId: String, customerId: KeyValueModel,
+                     properties: [KeyValueModel], timestamp: Int, eventType: String)
     func fetchTrackCustomer() -> [TrackCustomers]?
     func fetchTrackEvents() -> [TrackEvents]?
     func deleteTrackCustomer(object: AnyObject) -> Bool
@@ -91,7 +92,8 @@ extension EntitiesManager: EntitieTrack {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    public func trackEvents(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Int, eventType: String) {
+    public func trackEvents(projectId: String, customerId: KeyValueModel,
+                            properties: [KeyValueModel], timestamp: Int, eventType: String) {
 
         let trackEvents = TrackEvents(context: persistentContainer.viewContext)
         let trackEventsProperties = TrackEventsProperties(context: persistentContainer.viewContext)

@@ -16,7 +16,7 @@ public class Exponea {
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
-        if let _ = configuration.projectId {
+        if configuration.projectId != nil {
             return true
         }
         return false
