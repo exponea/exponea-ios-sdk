@@ -11,6 +11,11 @@
 		0191639F207E14D9005FD174 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639E207E14D9005FD174 /* LogLevel.swift */; };
 		019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019163A2207E15FB005FD174 /* LoggerSpec.swift */; };
 		019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019163A4207E1904005FD174 /* LogLevelSpec.swift */; };
+		01EC2DA5207E4F8F0031BFEB /* CustomerRecommendModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA4207E4F8F0031BFEB /* CustomerRecommendModel.swift */; };
+		01EC2DA7207E4FBA0031BFEB /* CustomerEventsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA6207E4FBA0031BFEB /* CustomerEventsModel.swift */; };
+		01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */; };
+		01EC2DAB207E53D90031BFEB /* CustomerExportAttributesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DAA207E53D90031BFEB /* CustomerExportAttributesModel.swift */; };
+		01EC2DAD207E53E40031BFEB /* CustomerAttributesListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DAC207E53E40031BFEB /* CustomerAttributesListModel.swift */; };
 		D20134EC7D150032774DF78D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */; };
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -48,6 +53,11 @@
 		0191639E207E14D9005FD174 /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
 		019163A2207E15FB005FD174 /* LoggerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerSpec.swift; sourceTree = "<group>"; };
 		019163A4207E1904005FD174 /* LogLevelSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevelSpec.swift; sourceTree = "<group>"; };
+		01EC2DA4207E4F8F0031BFEB /* CustomerRecommendModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerRecommendModel.swift; sourceTree = "<group>"; };
+		01EC2DA6207E4FBA0031BFEB /* CustomerEventsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerEventsModel.swift; sourceTree = "<group>"; };
+		01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerExportModel.swift; sourceTree = "<group>"; };
+		01EC2DAA207E53D90031BFEB /* CustomerExportAttributesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerExportAttributesModel.swift; sourceTree = "<group>"; };
+		01EC2DAC207E53E40031BFEB /* CustomerAttributesListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerAttributesListModel.swift; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A9541A0D49B621C7B60EAC2 /* Pods-ExponeaSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.release.xcconfig"; sourceTree = "<group>"; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -231,6 +241,11 @@
 				F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */,
 				F0E757EF207D027300FE8C21 /* Configuration.swift */,
 				F063BEA7207E104100030811 /* EventModel.swift */,
+				01EC2DA4207E4F8F0031BFEB /* CustomerRecommendModel.swift */,
+				01EC2DA6207E4FBA0031BFEB /* CustomerEventsModel.swift */,
+				01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */,
+				01EC2DAA207E53D90031BFEB /* CustomerExportAttributesModel.swift */,
+				01EC2DAC207E53E40031BFEB /* CustomerAttributesListModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -490,11 +505,16 @@
 				F0E757E5207CFA5300FE8C21 /* APIRouter.swift in Sources */,
 				F0C1C1CD20737D80005EB697 /* EntitiesManager.swift in Sources */,
 				F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */,
+				01EC2DA5207E4F8F0031BFEB /* CustomerRecommendModel.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
+				01EC2DAD207E53E40031BFEB /* CustomerAttributesListModel.swift in Sources */,
+				01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
 				F0E757E7207CFA6400FE8C21 /* APISource.swift in Sources */,
+				01EC2DA7207E4FBA0031BFEB /* CustomerEventsModel.swift in Sources */,
+				01EC2DAB207E53D90031BFEB /* CustomerExportAttributesModel.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				F063BEA8207E104100030811 /* EventModel.swift in Sources */,
