@@ -11,32 +11,32 @@ import Foundation
 /// Path route with projectId
 struct APIRouter {
     var baseURL: String
-    var projectId: String
+    var projectToken: String
     var route: Routes
 
-    init(baseURL: String, projectId: String, route: Routes) {
+    init(baseURL: String, projectToken: String, route: Routes) {
         self.baseURL = baseURL
-        self.projectId = projectId
+        self.projectToken = projectToken
         self.route = route
     }
 
     var path: String {
         switch self.route {
-        case .trackCustomers: return baseURL + "track/v2/\(projectId)/customers"
-        case .trackEvents: return baseURL + "track/v2/\(projectId)/events"
-        case .tokenRotate: return baseURL + "data/v2/\(projectId)/tokens/rotate"
-        case .tokenRevoke: return baseURL + "data/v2/\(projectId)/tokens/revoke"
-        case .customersProperty: return baseURL + "data/v2/\(projectId)/customers/property"
-        case .customersId: return baseURL + "data/v2/\(projectId)/customers/id"
-        case .customersSegmentation: return baseURL + "data/v2/\(projectId)/customers/segmentation"
-        case .customersExpression: return baseURL + "data/v2/\(projectId)/customers/expression"
-        case .customersPrediction: return baseURL + "data/v2/\(projectId)/customers/prediction"
-        case .customersRecommendation: return baseURL + "data/v2/\(projectId)/customers/recommendation"
-        case .customersAttributes: return baseURL + "/data/v2/\(projectId)/customers/attributes"
-        case .customersEvents: return baseURL + "/data/v2/\(projectId)/customers/events"
-        case .customersAnonymize: return baseURL + "/data/v2/\(projectId)/customers/anonymize"
-        case .customersExportAllProperties: return baseURL + "/data/v2/\(projectId)/customers/export-one"
-        case .customersExportAll: return baseURL + "/data/v2/\(projectId)/customers/export"
+        case .trackCustomers: return baseURL + "track/v2/projects/\(projectToken)/customers"
+        case .trackEvents: return baseURL + "track/v2/projects/\(projectToken)/customers/events"
+        case .tokenRotate: return baseURL + "data/v2/\(projectToken)/tokens/rotate"
+        case .tokenRevoke: return baseURL + "data/v2/\(projectToken)/tokens/revoke"
+        case .customersProperty: return baseURL + "data/v2/\(projectToken)/customers/property"
+        case .customersId: return baseURL + "data/v2/\(projectToken)/customers/id"
+        case .customersSegmentation: return baseURL + "data/v2/\(projectToken)/customers/segmentation"
+        case .customersExpression: return baseURL + "data/v2/\(projectToken)/customers/expression"
+        case .customersPrediction: return baseURL + "data/v2/\(projectToken)/customers/prediction"
+        case .customersRecommendation: return baseURL + "data/v2/\(projectToken)/customers/recommendation"
+        case .customersAttributes: return baseURL + "/data/v2/\(projectToken)/customers/attributes"
+        case .customersEvents: return baseURL + "/data/v2/projects/\(projectToken)/customers/events"
+        case .customersAnonymize: return baseURL + "/data/v2/\(projectToken)/customers/anonymize"
+        case .customersExportAllProperties: return baseURL + "/data/v2/\(projectToken)/customers/export-one"
+        case .customersExportAll: return baseURL + "/data/v2/\(projectToken)/customers/export"
         }
     }
 
@@ -46,10 +46,10 @@ struct APIRouter {
 struct TrackingParams {
     var customer: KeyValueModel
     var properties: [KeyValueModel]
-    var timestamp: Int?
+    var timestamp: Double?
     var eventType: String?
 
-    init(customer: KeyValueModel, properties: [KeyValueModel], timestamp: Int?, eventType: String?) {
+    init(customer: KeyValueModel, properties: [KeyValueModel], timestamp: Double?, eventType: String?) {
         self.customer = customer
         self.properties = properties
         self.timestamp = timestamp

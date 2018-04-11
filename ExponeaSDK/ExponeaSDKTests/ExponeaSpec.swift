@@ -20,16 +20,16 @@ class ExponeaSpec: QuickSpec {
 
             context("After being properly initialized token with string") {
                 it("Configuration with token string should be initialized") {
-                    Exponea.configure(projectId: "123")
+                    Exponea.configure(projectToken: "123")
                     expect(Exponea.shared.configured).to(beTrue())
-                    expect(Exponea.shared.projectId).to(equal("123"))
+                    expect(Exponea.shared.projectToken).to(equal("123"))
                 }
             }
             context("After being properly initialized token with plist") {
                 it("Configuration with plist token should be initialized") {
                     Exponea.configure(plistName: "ExponeaConfig.plist")
                     expect(Exponea.shared.configured).to(beTrue())
-                    expect(Exponea.shared.projectId).to(equal("ExponeaProjectIdKeyFromPList"))
+                    expect(Exponea.shared.projectToken).to(equal("ExponeaProjectIdKeyFromPList"))
                 }
             }
         }
@@ -40,15 +40,15 @@ class ExponeaSpec: QuickSpec {
 
             context("Get projectId (token) after it's being setup") {
                 it("ProjectId string should be returned") {
-                    expect(Exponea.shared.projectId).notTo(beNil())
-                    expect(Exponea.shared.projectId).to(equal("ExponeaProjectIdKeyFromPList"))
+                    expect(Exponea.shared.projectToken).notTo(beNil())
+                    expect(Exponea.shared.projectToken).to(equal("ExponeaProjectIdKeyFromPList"))
                 }
             }
             context("Update projectId (token)") {
                 it("ProjectId should be updated") {
-                    let oldProjectId = Exponea.shared.projectId
-                    Exponea.shared.projectId = "NewProjectId"
-                    let newProjectId = Exponea.shared.projectId
+                    let oldProjectId = Exponea.shared.projectToken
+                    Exponea.shared.projectToken = "NewProjectId"
+                    let newProjectId = Exponea.shared.projectToken
                     expect(oldProjectId).notTo(equal(newProjectId))
                     expect(newProjectId).to(equal("NewProjectId"))
                 }

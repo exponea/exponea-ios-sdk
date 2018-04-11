@@ -15,7 +15,6 @@ public class APISource {
     func prepareRequest(router: APIRouter,
                         trackingParam: TrackingParams?,
                         customersParam: CustomersParams?) -> NSMutableURLRequest {
-
         let request = NSMutableURLRequest()
         var body: Data?
 

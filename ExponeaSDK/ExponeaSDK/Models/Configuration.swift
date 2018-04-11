@@ -10,14 +10,14 @@ import Foundation
 
 struct Configuration {
 
-    internal var projectId: String?
+    internal var projectToken: String?
 
-    init(projectId: String) {
-        self.projectId = projectId
+    init(projectToken: String) {
+        self.projectToken = projectToken
     }
 
     init(plistName: String) {
-        var projectId: String?
+        var projectToken: String?
 
         for bundle in Bundle.allBundles {
             let fileName = plistName.replacingOccurrences(of: ".plist", with: "")
@@ -30,16 +30,16 @@ struct Configuration {
                     fatalError("Can't parse file \(fileName).plist")
                 }
 
-                projectId = keyDict[Constants.Keys.token] as? String
+                projectToken = keyDict[Constants.Keys.token] as? String
                 break
             }
         }
 
-        guard let finalProjectId = projectId else {
+        guard let finalProjectToken = projectToken else {
             Exponea.logger.log(.error, message: "Couldn't initialize projectId (token)")
             fatalError("Couldn't initialize projectId (token)")
         }
 
-        self.projectId = finalProjectId
+        self.projectToken = finalProjectToken
     }
 }

@@ -13,26 +13,27 @@ public class Exponea {
 
     /// The configuration object containing all the config data for the shared instance.
     fileprivate(set) var configuration: Configuration!
+    var entitiesManager: EntitiesManager!
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
-        if configuration.projectId != nil {
+        if configuration.projectToken != nil {
             return true
         }
         return false
     }
 
     /// ProjectId (token) property
-    public var projectId: String? {
+    public var projectToken: String? {
         get {
-            return configuration.projectId
+            return configuration.projectToken
         }
         set {
             guard configured else {
                 Exponea.logger.log(.error, message: "ExponeaSDK isn't configured.")
                 fatalError("ExponeaSDK isn't configured.")
             }
-            configuration.projectId = newValue
+            configuration.projectToken = newValue
         }
     }
 
@@ -42,16 +43,30 @@ public class Exponea {
     /// Shared instance of ExponeaSDK
     public static let shared = Exponea()
 
-    public init() {}
+    init(dbManager: EntitiesManager) {
+        self.entitiesManager = dbManager
+    }
+
+    public init() {
+        self.entitiesManager = EntitiesManager()
+    }
 
 }
 
-private extension Exponea {
-    private func configure(projectId: String) {
-        configuration = Configuration(projectId: projectId)
+internal extension Exponea {
+    internal func configure(projectToken: String) {
+        configuration = Configuration(projectToken: projectToken)
     }
     private func configure(plistName: String) {
         configuration = Configuration(plistName: plistName)
+    }
+    internal func addCustomerEvent(customerId: KeyValueModel, properties: [KeyValueModel],
+                                   timestamp: Double?, eventType: String?) {
+        guard configured, let token = projectToken else {
+            fatalError("Project token not configured")
+        }
+        entitiesManager.trackEvents(projectToken: token, customerId: customerId, properties: properties,
+                                    timestamp: timestamp, eventType: eventType)
     }
 }
 
@@ -60,9 +75,9 @@ public extension Exponea {
     /// Initialize the configuration with a projectId (token)
     ///
     /// - Parameters:
-    ///     - projectId: projectId (token) to be used through the SDK
-    public class func configure(projectId: String) {
-        shared.configure(projectId: projectId)
+    ///     - projectToken: Project Token to be used through the SDK
+    public class func configure(projectToken: String) {
+        shared.configure(projectToken: projectToken)
     }
 
     /// Initialize the configuration with a plist file containing the keys
@@ -73,6 +88,20 @@ public extension Exponea {
     ///     - plistName: List name containing the SDK setup keys
     public class func configure(plistName: String) {
         shared.configure(plistName: plistName)
+    }
+
+    /// Add events for a specific customer
+    ///
+    /// - Parameters:
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
+    ///     - properties: Properties that should be updated
+    ///     - timestamp: Timestamp should always be UNIX timestamp format
+    ///     - eventType: Type of event to be tracked
+    public class func addCustomerEvent(customerId: KeyValueModel, properties: [KeyValueModel],
+                                       timestamp: Double?, eventType: String?) {
+        shared.addCustomerEvent(customerId: customerId,
+                                properties: properties, timestamp: timestamp, eventType: eventType)
     }
 
 }
