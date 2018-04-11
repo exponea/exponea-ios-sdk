@@ -71,10 +71,15 @@ internal extension Exponea {
     internal func addCustomerEvent(customerId: KeyValueModel, properties: [KeyValueModel],
                                    timestamp: Double?, eventType: String?) {
         guard configured, let token = projectToken else {
+
+            // TODO: Logging
             fatalError("Project token not configured")
         }
-        entitiesManager.trackEvents(projectToken: token, customerId: customerId, properties: properties,
-                                    timestamp: timestamp, eventType: eventType)
+
+        // TODO: Fix this so that it works correctly :)
+        trackingManager.trackEvent(.install, customData: [:])
+//        entitiesManager.trackEvents(projectToken: token, customerId: customerId, properties: properties,
+//                                    timestamp: timestamp, eventType: eventType)
     }
 }
 
