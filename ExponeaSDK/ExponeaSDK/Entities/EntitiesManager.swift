@@ -28,7 +28,7 @@ public class EntitiesManager {
         let container = NSPersistentContainer(name: "EntitiesModel")
         container.loadPersistentStores(completionHandler: { (_, error) in //(storeDescription, error) in
             if let error = error {
-                Exponea.shared.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
+                Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
             }
         })
         return container
@@ -41,7 +41,7 @@ public class EntitiesManager {
             do {
                 try context.save()
             } catch {
-                Exponea.shared.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
+                Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
             }
         }
     }
@@ -125,7 +125,7 @@ extension EntitiesManager: EntitieTrack {
             let context = persistentContainer.viewContext
             trackCustomers = try context.fetch(TrackCustomers.fetchRequest())
         } catch {
-            Exponea.shared.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
+            Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
         }
 
         return trackCustomers
@@ -140,7 +140,7 @@ extension EntitiesManager: EntitieTrack {
             let context = persistentContainer.viewContext
             trackEvents = try context.fetch(TrackEvents.fetchRequest())
         } catch {
-            Exponea.shared.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
+            Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
         }
 
         return trackEvents
@@ -152,7 +152,7 @@ extension EntitiesManager: EntitieTrack {
     ///     - object: Tracking Customer Object to be deleted from CoreData
     public func deleteTrackCustomer(object: AnyObject) -> Bool {
         guard let trackObject = object as? TrackCustomers else {
-            Exponea.shared.logger.log(.error, message: "Invalid object to delete.")
+            Exponea.logger.log(.error, message: "Invalid object to delete.")
             return false
         }
 
@@ -166,7 +166,7 @@ extension EntitiesManager: EntitieTrack {
     ///     - object: Tracking Event Object to be deleted from CoreData
     public func deleteTrackEvent(object: AnyObject) -> Bool {
         guard let trackEvent = object as? TrackEvents else {
-            Exponea.shared.logger.log(.error, message: "Invalid object to delete.")
+            Exponea.logger.log(.error, message: "Invalid object to delete.")
             return false
         }
 

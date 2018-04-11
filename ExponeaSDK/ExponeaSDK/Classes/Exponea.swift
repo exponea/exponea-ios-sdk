@@ -29,7 +29,7 @@ public class Exponea {
         }
         set {
             guard configured else {
-                logger.log(.error, message: "ExponeaSDK isn't configured.")
+                Exponea.logger.log(.error, message: "ExponeaSDK isn't configured.")
                 fatalError("ExponeaSDK isn't configured.")
             }
             configuration.projectId = newValue
@@ -37,7 +37,7 @@ public class Exponea {
     }
 
     /// A logger used to log all messages from the SDK.
-    public lazy var logger: Logger = Logger()
+    public static var logger: Logger = Logger()
 
     /// Shared instance of ExponeaSDK
     public static let shared = Exponea()

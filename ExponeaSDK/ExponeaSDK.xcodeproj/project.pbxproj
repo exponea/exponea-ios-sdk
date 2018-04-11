@@ -67,7 +67,6 @@
 		F0E757EA207CFA9700FE8C21 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		F0E757ED207D025300FE8C21 /* Exponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exponea.swift; sourceTree = "<group>"; };
 		F0E757EF207D027300FE8C21 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
-		F0E757F1207D02F000FE8C21 /* ExponeaSDKTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ExponeaSDKTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSpec.swift; sourceTree = "<group>"; };
 		F0E757F4207D032500FE8C21 /* ExponeaConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExponeaConfig.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -100,6 +99,40 @@
 				0191639E207E14D9005FD174 /* LogLevel.swift */,
 			);
 			path = Logging;
+			sourceTree = "<group>";
+		};
+		01EC2D9F207E3CDB0031BFEB /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				019163A2207E15FB005FD174 /* LoggerSpec.swift */,
+				019163A4207E1904005FD174 /* LogLevelSpec.swift */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		01EC2DA0207E3CF30031BFEB /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F021E869206CF10200788ABC /* Info.plist */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		01EC2DA1207E3D000031BFEB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F0E757F4207D032500FE8C21 /* ExponeaConfig.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		01EC2DA2207E3D060031BFEB /* Specs */ = {
+			isa = PBXGroup;
+			children = (
+				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
+				01EC2D9F207E3CDB0031BFEB /* Logging */,
+			);
+			path = Specs;
 			sourceTree = "<group>";
 		};
 		A3613BD1E2C1D4616B6A9767 /* Frameworks */ = {
@@ -159,12 +192,9 @@
 		F021E866206CF10200788ABC /* ExponeaSDKTests */ = {
 			isa = PBXGroup;
 			children = (
-				F021E869206CF10200788ABC /* Info.plist */,
-				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
-				019163A2207E15FB005FD174 /* LoggerSpec.swift */,
-				019163A4207E1904005FD174 /* LogLevelSpec.swift */,
-				F0E757F1207D02F000FE8C21 /* ExponeaSDKTests-Bridging-Header.h */,
-				F0E757F4207D032500FE8C21 /* ExponeaConfig.plist */,
+				01EC2DA2207E3D060031BFEB /* Specs */,
+				01EC2DA0207E3CF30031BFEB /* Supporting Files */,
+				01EC2DA1207E3D000031BFEB /* Resources */,
 			);
 			path = ExponeaSDKTests;
 			sourceTree = "<group>";
@@ -656,11 +686,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = ExponeaSDKTests/Info.plist;
+				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "ExponeaSDKTests/ExponeaSDKTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -674,11 +703,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = ExponeaSDKTests/Info.plist;
+				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "ExponeaSDKTests/ExponeaSDKTests-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
