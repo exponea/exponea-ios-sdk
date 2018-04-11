@@ -16,7 +16,7 @@ public class Exponea {
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
-        if let _ = configuration.projectId {
+        if configuration.projectId != nil {
             return true
         }
         return false
@@ -29,12 +29,15 @@ public class Exponea {
         }
         set {
             guard configured else {
-                // FIXME: Implement Log error!
+                Exponea.logger.log(.error, message: "ExponeaSDK isn't configured.")
                 fatalError("ExponeaSDK isn't configured.")
             }
             configuration.projectId = newValue
         }
     }
+
+    /// A logger used to log all messages from the SDK.
+    public static var logger: Logger = Logger()
 
     /// Shared instance of ExponeaSDK
     public static let shared = Exponea()

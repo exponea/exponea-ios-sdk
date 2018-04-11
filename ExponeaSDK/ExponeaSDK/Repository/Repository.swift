@@ -45,7 +45,8 @@ public struct CustomerAttributesListModel {
 
 protocol TrackingRepository {
     func trackCustumer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel])
-    func trackEvents(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Int, eventType: String)
+    func trackEvents(projectId: String, customerId: KeyValueModel,
+                     properties: [KeyValueModel], timestamp: Int, eventType: String)
 }
 
 protocol TokenRepository {
@@ -59,7 +60,8 @@ protocol FetchCustomerRepository {
     func fetchSegmentation(projectId: String, customerId: KeyValueModel, id: String)
     func fetchExpression(projectId: String, customerId: KeyValueModel, id: String)
     func fetchPrediction(projectId: String, customerId: KeyValueModel, id: String)
-    func fetchRecommendation(projectId: String, customerId: KeyValueModel, id: String, recommendation: CustomerRecommendModel?)
+    func fetchRecommendation(projectId: String, customerId: KeyValueModel,
+                             id: String, recommendation: CustomerRecommendModel?)
     func fetchAttributes(projectId: String, customerId: KeyValueModel, attributes: [CustomerAttributesListModel])
     func fetchEvents(projectId: String, customerId: KeyValueModel, events: CustomerEventsModel)
     func fetchAllProperties(projectId: String, customerId: KeyValueModel)

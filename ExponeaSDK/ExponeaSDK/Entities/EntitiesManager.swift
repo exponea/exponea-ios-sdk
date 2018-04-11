@@ -12,7 +12,8 @@ import CoreData
 /// Protocol to manage Tracking events
 public protocol EntitieTrack: class {
     func trackCustomer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel])
-    func trackEvents(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Int, eventType: String)
+    func trackEvents(projectId: String, customerId: KeyValueModel,
+                     properties: [KeyValueModel], timestamp: Int, eventType: String)
     func fetchTrackCustomer() -> [TrackCustomers]?
     func fetchTrackEvents() -> [TrackEvents]?
     func deleteTrackCustomer(object: AnyObject) -> Bool
@@ -26,9 +27,8 @@ public class EntitiesManager {
     public lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "EntitiesModel")
         container.loadPersistentStores(completionHandler: { (_, error) in //(storeDescription, error) in
-            if let error = error as NSError? {
-                // TODO: Logging
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+            if let error = error {
+                Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
             }
         })
         return container
@@ -41,9 +41,7 @@ public class EntitiesManager {
             do {
                 try context.save()
             } catch {
-                // TODO: Logging
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
             }
         }
     }
@@ -94,7 +92,8 @@ extension EntitiesManager: EntitieTrack {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    public func trackEvents(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Int, eventType: String) {
+    public func trackEvents(projectId: String, customerId: KeyValueModel,
+                            properties: [KeyValueModel], timestamp: Int, eventType: String) {
 
         let trackEvents = TrackEvents(context: persistentContainer.viewContext)
         let trackEventsProperties = TrackEventsProperties(context: persistentContainer.viewContext)
@@ -126,9 +125,7 @@ extension EntitiesManager: EntitieTrack {
             let context = persistentContainer.viewContext
             trackCustomers = try context.fetch(TrackCustomers.fetchRequest())
         } catch {
-            // TODO: Logging
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
         }
 
         return trackCustomers
@@ -143,9 +140,7 @@ extension EntitiesManager: EntitieTrack {
             let context = persistentContainer.viewContext
             trackEvents = try context.fetch(TrackEvents.fetchRequest())
         } catch {
-            // TODO: Logging
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
         }
 
         return trackEvents
@@ -156,9 +151,8 @@ extension EntitiesManager: EntitieTrack {
     /// - Parameters:
     ///     - object: Tracking Customer Object to be deleted from CoreData
     public func deleteTrackCustomer(object: AnyObject) -> Bool {
-
         guard let trackObject = object as? TrackCustomers else {
-            // TODO: Logging
+            Exponea.logger.log(.error, message: "Invalid object to delete.")
             return false
         }
 
@@ -171,9 +165,8 @@ extension EntitiesManager: EntitieTrack {
     /// - Parameters:
     ///     - object: Tracking Event Object to be deleted from CoreData
     public func deleteTrackEvent(object: AnyObject) -> Bool {
-
         guard let trackEvent = object as? TrackEvents else {
-            // TODO: Logging
+            Exponea.logger.log(.error, message: "Invalid object to delete.")
             return false
         }
 
