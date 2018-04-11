@@ -1,5 +1,5 @@
 //
-//  EntitiesManager.swift
+//  DatabaseManager.swift
 //  ExponeaSDK
 //
 //  Created by Ricardo Tokashiki on 03/04/2018.
@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 
+<<<<<<< HEAD:ExponeaSDK/ExponeaSDK/Entities/EntitiesManager.swift
 /// Protocol to manage Tracking events
 protocol EntitieTrack: class {
     func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel])
@@ -29,6 +30,14 @@ class EntitiesManager {
 
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "EntitiesModel")
+=======
+/// The Entities Manager class is responsible for persist the data using CoreData Framework.
+/// Persisted data will be used to interact with the Exponea API.
+public class DatabaseManager {
+
+    public lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "DatabaseModel")
+>>>>>>> Rename database manager:ExponeaSDK/ExponeaSDK/Database/DatabaseManager.swift
         container.loadPersistentStores(completionHandler: { (_, error) in //(storeDescription, error) in
             if let error = error {
                 Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
@@ -98,7 +107,7 @@ class EntitiesManager {
 
 }
 
-extension EntitiesManager: EntitieTrack {
+extension DatabaseManager: DatabaseManagerType {
 
     /// Update the Customer properties and persists it into the CoreData in the TrackCustomer Entity.
     ///
