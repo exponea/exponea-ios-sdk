@@ -9,35 +9,12 @@
 import Foundation
 import CoreData
 
-<<<<<<< HEAD:ExponeaSDK/ExponeaSDK/Entities/EntitiesManager.swift
-/// Protocol to manage Tracking events
-protocol EntitieTrack: class {
-    func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel])
-    func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
-                     timestamp: Double?, eventType: String?)
-    func fetchTrackCustomer() -> [TrackCustomers]?
-    func fetchTrackEvents() -> [TrackEvents]?
-    func deleteTrackCustomer(object: AnyObject) -> Bool
-    func deleteTrackEvent(object: AnyObject) -> Bool
-}
-
-/// The Entities Manager class is responsible for persist the data using CoreData Framework.
-/// Persisted data will be used to interact with the Exponea API.
-class EntitiesManager {
-
-    /// Shared instance of EntitiesManager
-    //static let shared = EntitiesManager()
-
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "EntitiesModel")
-=======
 /// The Entities Manager class is responsible for persist the data using CoreData Framework.
 /// Persisted data will be used to interact with the Exponea API.
 public class DatabaseManager {
 
     public lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "DatabaseModel")
->>>>>>> Rename database manager:ExponeaSDK/ExponeaSDK/Database/DatabaseManager.swift
         container.loadPersistentStores(completionHandler: { (_, error) in //(storeDescription, error) in
             if let error = error {
                 Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")

@@ -13,7 +13,6 @@ public class Exponea {
 
     /// The configuration object containing all the config data for the shared instance.
     fileprivate(set) var configuration: Configuration!
-    var entitiesManager: EntitiesManager!
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
@@ -43,12 +42,20 @@ public class Exponea {
     /// Shared instance of ExponeaSDK
     public static let shared = Exponea()
 
-    init(dbManager: EntitiesManager) {
-        self.entitiesManager = dbManager
+    let trackingManager: TrackingManagerType
+
+    init(database: DatabaseManagerType, repository: TrackingRepository) {
+        self.trackingManager = TrackingManager(database: database, repository: repository)
     }
 
     public init() {
-        self.entitiesManager = EntitiesManager()
+        let database = DatabaseManager()
+
+        let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
+                                             contentType: Constants.Repository.contentType)
+        let repository = ConnectionManager(configuration: configuration)
+
+        self.trackingManager = TrackingManager(database: database, repository: repository)
     }
 
 }
@@ -60,6 +67,7 @@ internal extension Exponea {
     private func configure(plistName: String) {
         configuration = Configuration(plistName: plistName)
     }
+
     internal func addCustomerEvent(customerId: KeyValueModel, properties: [KeyValueModel],
                                    timestamp: Double?, eventType: String?) {
         guard configured, let token = projectToken else {

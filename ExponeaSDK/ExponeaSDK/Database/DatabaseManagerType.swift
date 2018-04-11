@@ -10,8 +10,8 @@ import Foundation
 
 /// Protocol to manage Tracking events
 public protocol DatabaseManagerType: class {
-    func trackCustomer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel])
-    func trackEvents(projectId: String, customerId: KeyValueModel,
+    func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel])
+    func trackEvents(projectToken: String, customerId: KeyValueModel,
                      properties: [KeyValueModel], timestamp: Int, eventType: String)
     func fetchTrackCustomer() -> [TrackCustomers]?
     func fetchTrackEvents() -> [TrackEvents]?

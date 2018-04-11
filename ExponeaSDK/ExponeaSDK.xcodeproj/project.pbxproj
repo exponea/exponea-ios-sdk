@@ -16,14 +16,18 @@
 		01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */; };
 		01EC2DAB207E53D90031BFEB /* CustomerExportAttributesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DAA207E53D90031BFEB /* CustomerExportAttributesModel.swift */; };
 		01EC2DAD207E53E40031BFEB /* CustomerAttributesListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DAC207E53E40031BFEB /* CustomerAttributesListModel.swift */; };
+		01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */; };
+		01EC2DB4207E58080031BFEB /* EventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB3207E58080031BFEB /* EventType.swift */; };
+		01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */; };
+		01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB9207E68BF0031BFEB /* DatabaseManager.swift */; };
+		01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */; };
+		01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */; };
 		D20134EC7D150032774DF78D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */; };
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F063BEA6207E0F8800030811 /* EventTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA5207E0F8800030811 /* EventTrackingSpec.swift */; };
 		F063BEA8207E104100030811 /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA7207E104100030811 /* EventModel.swift */; };
 		F063BEAA207E36E600030811 /* MockEntitiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockEntitiesManager.swift */; };
-		F063BEAD207E548A00030811 /* EntitiesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F063BEAB207E548A00030811 /* EntitiesModel.xcdatamodeld */; };
-		F0C1C1CD20737D80005EB697 /* EntitiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */; };
 		F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */; };
 		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */; };
@@ -58,6 +62,13 @@
 		01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerExportModel.swift; sourceTree = "<group>"; };
 		01EC2DAA207E53D90031BFEB /* CustomerExportAttributesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerExportAttributesModel.swift; sourceTree = "<group>"; };
 		01EC2DAC207E53E40031BFEB /* CustomerAttributesListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerAttributesListModel.swift; sourceTree = "<group>"; };
+		01EC2DAE207E55280031BFEB /* DatabaseManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerType.swift; sourceTree = "<group>"; };
+		01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManager.swift; sourceTree = "<group>"; };
+		01EC2DB3207E58080031BFEB /* EventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventType.swift; sourceTree = "<group>"; };
+		01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManagerType.swift; sourceTree = "<group>"; };
+		01EC2DB9207E68BF0031BFEB /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerType.swift; sourceTree = "<group>"; };
+		01EC2DBC207E68BF0031BFEB /* ExponeaDbModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExponeaDbModel.xcdatamodel; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A9541A0D49B621C7B60EAC2 /* Pods-ExponeaSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.release.xcconfig"; sourceTree = "<group>"; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -72,8 +83,6 @@
 		F063BEA5207E0F8800030811 /* EventTrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTrackingSpec.swift; sourceTree = "<group>"; };
 		F063BEA7207E104100030811 /* EventModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventModel.swift; sourceTree = "<group>"; };
 		F063BEA9207E36E600030811 /* MockEntitiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEntitiesManager.swift; sourceTree = "<group>"; };
-		F063BEAC207E548A00030811 /* EntitiesModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EntitiesModel.xcdatamodel; sourceTree = "<group>"; };
-		F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesManager.swift; sourceTree = "<group>"; };
 		F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesModel.swift; sourceTree = "<group>"; };
 		F0E757DF207CF99E00FE8C21 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfiguration.swift; sourceTree = "<group>"; };
@@ -153,6 +162,34 @@
 			path = Specs;
 			sourceTree = "<group>";
 		};
+		01EC2DB0207E55C10031BFEB /* Tracking */ = {
+			isa = PBXGroup;
+			children = (
+				01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */,
+				01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */,
+				01EC2DB3207E58080031BFEB /* EventType.swift */,
+			);
+			path = Tracking;
+			sourceTree = "<group>";
+		};
+		01EC2DB7207E68900031BFEB /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				01EC2DAE207E55280031BFEB /* DatabaseManagerType.swift */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		01EC2DB8207E68BF0031BFEB /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				01EC2DB9207E68BF0031BFEB /* DatabaseManager.swift */,
+				01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */,
+				01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
 		A3613BD1E2C1D4616B6A9767 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -181,6 +218,7 @@
 				F021E85A206CF10200788ABC /* Products */,
 				BA562F8AA107D3AB3132C40D /* Pods */,
 				A3613BD1E2C1D4616B6A9767 /* Frameworks */,
+				01EC2DB7207E68900031BFEB /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -197,11 +235,12 @@
 			isa = PBXGroup;
 			children = (
 				F0E757EC207D023A00FE8C21 /* Classes */,
+				01EC2DB0207E55C10031BFEB /* Tracking */,
+				01EC2DB8207E68BF0031BFEB /* Database */,
 				F0E757E1207CF9BE00FE8C21 /* Repository */,
 				F0E757DE207CF98600FE8C21 /* Others */,
 				0191639D207E14C9005FD174 /* Logging */,
 				F0C1C1CE207384ED005EB697 /* Models */,
-				F021E8A9206D2B0400788ABC /* Entities */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
 			);
 			path = ExponeaSDK;
@@ -224,15 +263,6 @@
 				F021E85D206CF10200788ABC /* Info.plist */,
 			);
 			path = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		F021E8A9206D2B0400788ABC /* Entities */ = {
-			isa = PBXGroup;
-			children = (
-				F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */,
-				F063BEAB207E548A00030811 /* EntitiesModel.xcdatamodeld */,
-			);
-			path = Entities;
 			sourceTree = "<group>";
 		};
 		F0C1C1CE207384ED005EB697 /* Models */ = {
@@ -264,8 +294,8 @@
 				F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */,
 				F0E757E4207CFA5300FE8C21 /* APIRouter.swift */,
 				F0E757E6207CFA6400FE8C21 /* APISource.swift */,
-				F0E757E8207CFA7A00FE8C21 /* ConnectionManager.swift */,
 				F0E757EA207CFA9700FE8C21 /* Repository.swift */,
+				F0E757E8207CFA7A00FE8C21 /* ConnectionManager.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -500,23 +530,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F063BEAD207E548A00030811 /* EntitiesModel.xcdatamodeld in Sources */,
 				F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */,
 				F0E757E5207CFA5300FE8C21 /* APIRouter.swift in Sources */,
-				F0C1C1CD20737D80005EB697 /* EntitiesManager.swift in Sources */,
 				F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* CustomerRecommendModel.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
 				01EC2DAD207E53E40031BFEB /* CustomerAttributesListModel.swift in Sources */,
+				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
+				01EC2DB4207E58080031BFEB /* EventType.swift in Sources */,
 				01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */,
+				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
+				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
 				F0E757E7207CFA6400FE8C21 /* APISource.swift in Sources */,
+				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				01EC2DA7207E4FBA0031BFEB /* CustomerEventsModel.swift in Sources */,
 				01EC2DAB207E53D90031BFEB /* CustomerExportAttributesModel.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
+				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				F063BEA8207E104100030811 /* EventModel.swift in Sources */,
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,
 			);
@@ -777,13 +811,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		F063BEAB207E548A00030811 /* EntitiesModel.xcdatamodeld */ = {
+		01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				F063BEAC207E548A00030811 /* EntitiesModel.xcdatamodel */,
+				01EC2DBC207E68BF0031BFEB /* ExponeaDbModel.xcdatamodel */,
 			);
-			currentVersion = F063BEAC207E548A00030811 /* EntitiesModel.xcdatamodel */;
-			path = EntitiesModel.xcdatamodeld;
+			currentVersion = 01EC2DBC207E68BF0031BFEB /* ExponeaDbModel.xcdatamodel */;
+			path = DatabaseModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
