@@ -29,12 +29,15 @@ public class Exponea {
         }
         set {
             guard configured else {
-                // FIXME: Implement Log error!
+                logger.log(.error, message: "ExponeaSDK isn't configured.")
                 fatalError("ExponeaSDK isn't configured.")
             }
             configuration.projectId = newValue
         }
     }
+
+    /// A logger used to log all messages from the SDK.
+    public lazy var logger: Logger = Logger()
 
     /// Shared instance of ExponeaSDK
     public static let shared = Exponea()

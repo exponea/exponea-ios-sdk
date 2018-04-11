@@ -26,9 +26,8 @@ public class EntitiesManager {
     public lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "EntitiesModel")
         container.loadPersistentStores(completionHandler: { (_, error) in //(storeDescription, error) in
-            if let error = error as NSError? {
-                // TODO: Logging
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+            if let error = error {
+                Exponea.shared.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
             }
         })
         return container
@@ -41,9 +40,7 @@ public class EntitiesManager {
             do {
                 try context.save()
             } catch {
-                // TODO: Logging
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                Exponea.shared.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
             }
         }
     }
@@ -126,9 +123,7 @@ extension EntitiesManager: EntitieTrack {
             let context = persistentContainer.viewContext
             trackCustomers = try context.fetch(TrackCustomers.fetchRequest())
         } catch {
-            // TODO: Logging
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            Exponea.shared.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
         }
 
         return trackCustomers
@@ -143,9 +138,7 @@ extension EntitiesManager: EntitieTrack {
             let context = persistentContainer.viewContext
             trackEvents = try context.fetch(TrackEvents.fetchRequest())
         } catch {
-            // TODO: Logging
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            Exponea.shared.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
         }
 
         return trackEvents
@@ -156,9 +149,8 @@ extension EntitiesManager: EntitieTrack {
     /// - Parameters:
     ///     - object: Tracking Customer Object to be deleted from CoreData
     public func deleteTrackCustomer(object: AnyObject) -> Bool {
-
         guard let trackObject = object as? TrackCustomers else {
-            // TODO: Logging
+            Exponea.shared.logger.log(.error, message: "Invalid object to delete.")
             return false
         }
 
@@ -171,9 +163,8 @@ extension EntitiesManager: EntitieTrack {
     /// - Parameters:
     ///     - object: Tracking Event Object to be deleted from CoreData
     public func deleteTrackEvent(object: AnyObject) -> Bool {
-
         guard let trackEvent = object as? TrackEvents else {
-            // TODO: Logging
+            Exponea.shared.logger.log(.error, message: "Invalid object to delete.")
             return false
         }
 

@@ -26,6 +26,7 @@ struct Configuration {
                 let object = NSDictionary(contentsOf: fileURL)
 
                 guard let keyDict = object as? [String: AnyObject] else {
+                    Exponea.shared.logger.log(.error, message: "Can't parse file \(fileName).plist")
                     fatalError("Can't parse file \(fileName).plist")
                 }
 
@@ -34,8 +35,11 @@ struct Configuration {
             }
         }
 
-        // FIXME: Logging
-        guard let finalProjectId = projectId else { fatalError("Couldn't initialize projectId (token)") }
+        guard let finalProjectId = projectId else {
+            Exponea.shared.logger.log(.error, message: "Couldn't initialize projectId (token)")
+            fatalError("Couldn't initialize projectId (token)")
+        }
+
         self.projectId = finalProjectId
     }
 }
