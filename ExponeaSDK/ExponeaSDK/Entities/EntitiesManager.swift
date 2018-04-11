@@ -10,10 +10,10 @@ import Foundation
 import CoreData
 
 /// Protocol to manage Tracking events
-public protocol EntitieTrack: class {
-    func trackCustomer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel])
-    func trackEvents(projectId: String, customerId: KeyValueModel,
-                     properties: [KeyValueModel], timestamp: Int, eventType: String)
+protocol EntitieTrack: class {
+    func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel])
+    func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
+                     timestamp: Double?, eventType: String?)
     func fetchTrackCustomer() -> [TrackCustomers]?
     func fetchTrackEvents() -> [TrackEvents]?
     func deleteTrackCustomer(object: AnyObject) -> Bool
@@ -22,9 +22,12 @@ public protocol EntitieTrack: class {
 
 /// The Entities Manager class is responsible for persist the data using CoreData Framework.
 /// Persisted data will be used to interact with the Exponea API.
-public class EntitiesManager {
+class EntitiesManager {
 
-    public lazy var persistentContainer: NSPersistentContainer = {
+    /// Shared instance of EntitiesManager
+    //static let shared = EntitiesManager()
+
+    lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "EntitiesModel")
         container.loadPersistentStores(completionHandler: { (_, error) in //(storeDescription, error) in
             if let error = error {
@@ -34,8 +37,24 @@ public class EntitiesManager {
         return container
     }()
 
+    /// Managed Context for Core Data
+    func managedObjectContext() -> NSManagedObjectContext {
+        return persistentContainer.viewContext
+    }
+    
     /// Save all changes in CoreData
-    public func saveContext () {
+    func saveContext(object: NSManagedObject) {
+        do {
+            try object.managedObjectContext?.save()
+        } catch {
+            // TODO: Logging
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+    }
+
+    /// Save all changes in CoreData
+    func saveContext () {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
@@ -47,11 +66,36 @@ public class EntitiesManager {
     }
 
     /// Delete a specific object in CoreData
-    private func deleteObject(_ object: NSManagedObject) {
-        let context = persistentContainer.viewContext
-        context.delete(object)
+    fileprivate func deleteObject(_ object: NSManagedObject) {
+        managedObjectContext().delete(object)
         saveContext()
     }
+
+    /// Returns an empty TrackCustomers object to be populated with data using standard
+    /// syntax and then to be saved to the CoreData:
+    var getEmptyTrackCustInstance: TrackCustomers {
+        guard let object = getEntityDescriptionNewObject(withEntityName: "TrackCustomers") as? TrackCustomers else {
+            fatalError("Could not load object")
+        }
+        return object
+    }
+
+    /// Returns an empty TrackCustomers object to be populated with data using standard
+    /// syntax and then to be saved to the CoreData:
+    var getEmptyTrackCustPropInstance: TrackCustomersProperties {
+        guard let object = getEntityDescriptionNewObject(withEntityName: "TrackCustomersProperties") as? TrackCustomersProperties else {
+            fatalError("Could not load object")
+        }
+        return object
+    }
+
+    /// This will return a new `insertNewObject` instance of type NSManagedObject
+    /// that can be casted down into Context, Location or Task and then to be
+    /// used to create a new record to the database.
+    private func getEntityDescriptionNewObject(withEntityName name: String) -> NSManagedObject {
+        return NSEntityDescription.insertNewObject(forEntityName: name, into: managedObjectContext())
+    }
+
 }
 
 extension EntitiesManager: EntitieTrack {
@@ -59,23 +103,23 @@ extension EntitiesManager: EntitieTrack {
     /// Update the Customer properties and persists it into the CoreData in the TrackCustomer Entity.
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
-    public func trackCustomer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
+    public func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
 
         let trackCustomer = TrackCustomers(context: persistentContainer.viewContext)
         let trackCustomerProperties = TrackCustomersProperties(context: persistentContainer.viewContext)
 
-        trackCustomer.projectId = projectId
+        trackCustomer.projectToken = projectToken
         trackCustomer.customerIdKey = customerId.key
-        trackCustomer.customerIdValue = customerId.value
-        trackCustomer.timestamp = Int32(NSDate().timeIntervalSince1970)
+        trackCustomer.customerIdValue = customerId.value as? NSObject
+        trackCustomer.timestamp = NSDate().timeIntervalSince1970
 
         // Add the customer properties to the property entity
         for property in properties {
             trackCustomerProperties.key = property.key
-            trackCustomerProperties.value = property.value
+            trackCustomerProperties.value = property.value as? NSObject
 
             trackCustomer.addToTrackCustomerProperties(trackCustomerProperties)
         }
@@ -87,28 +131,31 @@ extension EntitiesManager: EntitieTrack {
     /// Add events into a customer
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    public func trackEvents(projectId: String, customerId: KeyValueModel,
-                            properties: [KeyValueModel], timestamp: Int, eventType: String) {
-
+    public func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
+                            timestamp: Double?, eventType: String?) {
         let trackEvents = TrackEvents(context: persistentContainer.viewContext)
         let trackEventsProperties = TrackEventsProperties(context: persistentContainer.viewContext)
 
-        trackEvents.projectId = projectId
-        trackEvents.timestamp = Int32(timestamp)
-        trackEvents.eventType = eventType
+        trackEvents.projectToken = projectToken
         trackEvents.customerIdKey = customerId.key
-        trackEvents.customerIdValue = customerId.value
+        trackEvents.customerIdValue = customerId.value as? NSObject
+
+        if let timestamp = timestamp {
+            trackEvents.timestamp = timestamp
+        }
+        if let eventType = eventType {
+            trackEvents.eventType = eventType
+        }
 
         // Add the event properties to the events entity
         for property in properties {
             trackEventsProperties.key = property.key
-            trackEventsProperties.value = property.value
-
+            trackEventsProperties.value = property.value as? NSObject
             trackEvents.addToTrackEventsProperties(trackEventsProperties)
         }
 

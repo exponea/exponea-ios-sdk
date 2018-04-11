@@ -13,5 +13,5 @@ public struct KeyValueModel {
     /// Name of the key in the dictionary
     public var key: String
     /// Value for the key in the dictionary
-    public var value: String
+    public var value: Any
 }

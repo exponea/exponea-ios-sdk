@@ -26,12 +26,12 @@ extension ConnectionManager: TrackingRepository {
     /// Update the properties of a customer
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
-    func trackCustumer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
+    func trackCustumer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
 
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .trackCustomers)
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackCustomers)
         let params = TrackingParams(customer: customerId, properties: properties, timestamp: nil, eventType: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: params, customersParam: nil)
 
@@ -48,17 +48,16 @@ extension ConnectionManager: TrackingRepository {
     /// Add new events into a customer
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    func trackEvents(projectId: String, customerId: KeyValueModel,
-                     properties: [KeyValueModel], timestamp: Int, eventType: String) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .trackEvents)
-        let params = TrackingParams(customer: customerId, properties: properties,
-                                    timestamp: timestamp, eventType: eventType)
+    func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
+                     timestamp: Double?, eventType: String?) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackEvents)
+        let params = TrackingParams(customer: customerId, properties: properties, timestamp: timestamp,
+                                    eventType: eventType)
         let request = apiSource.prepareRequest(router: router, trackingParam: params, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -81,10 +80,10 @@ extension ConnectionManager: TokenRepository {
     /// old token twice will result in error, since you cannot have three tokens at the same time.
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
-    func rotateToken(projectId: String) {
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    func rotateToken(projectToken: String) {
 
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .tokenRotate)
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .tokenRotate)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -101,10 +100,10 @@ extension ConnectionManager: TokenRepository {
     /// Please note, that revoking a token can result in losing the access if you haven't revoked a new token before.
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
-    func revokeToken(projectId: String) {
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    func revokeToken(projectToken: String) {
 
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .tokenRotate)
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .tokenRotate)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -123,14 +122,13 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Fetch property for one customer.
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - property: Property that should be updated
-    func fetchProperty(projectId: String, customerId: KeyValueModel, property: String) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersProperty)
-        let customersParams = CustomersParams(customer: customerId, property: property,
-                                              id: nil, recommendation: nil, attributes: nil, events: nil, data: nil)
+    func fetchProperty(projectToken: String, customerId: KeyValueModel, property: String) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersProperty)
+        let customersParams = CustomersParams(customer: customerId, property: property, id: nil, recommendation: nil,
+                                              attributes: nil, events: nil, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -146,14 +144,13 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Fetch an identifier by another known identifier.
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchId(projectId: String, customerId: KeyValueModel, id: String) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersId)
-        let customersParams = CustomersParams(customer: customerId, property: nil,
-                                              id: id, recommendation: nil, attributes: nil, events: nil, data: nil)
+    func fetchId(projectToken: String, customerId: KeyValueModel, id: String) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersId)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
+                                              attributes: nil, events: nil, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -169,14 +166,13 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Fetch a segment by its ID for particular customer.
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchSegmentation(projectId: String, customerId: KeyValueModel, id: String) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersSegmentation)
-        let customersParams = CustomersParams(customer: customerId, property: nil,
-                                              id: id, recommendation: nil, attributes: nil, events: nil, data: nil)
+    func fetchSegmentation(projectToken: String, customerId: KeyValueModel, id: String) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersSegmentation)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
+                                              attributes: nil, events: nil, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -192,14 +188,13 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Fetch an expression by its ID for particular customer.
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchExpression(projectId: String, customerId: KeyValueModel, id: String) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersExpression)
-        let customersParams = CustomersParams(customer: customerId, property: nil,
-                                              id: id, recommendation: nil, attributes: nil, events: nil, data: nil)
+    func fetchExpression(projectToken: String, customerId: KeyValueModel, id: String) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersExpression)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
+                                              attributes: nil, events: nil, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -215,14 +210,13 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Fetch a prediction by its ID for particular customer.
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchPrediction(projectId: String, customerId: KeyValueModel, id: String) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersPrediction)
-        let customersParams = CustomersParams(customer: customerId, property: nil,
-                                              id: id, recommendation: nil, attributes: nil, events: nil, data: nil)
+    func fetchPrediction(projectToken: String, customerId: KeyValueModel, id: String) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersPrediction)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
+                                              attributes: nil, events: nil, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -238,17 +232,16 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Fetch a recommendation by its ID for particular customer.
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
     ///     - recommendation: Recommendations for the customer
-    func fetchRecommendation(projectId: String, customerId: KeyValueModel,
-                             id: String, recommendation: CustomerRecommendModel?) {
+    func fetchRecommendation(projectToken: String, customerId: KeyValueModel, id: String,
+                             recommendation: CustomerRecommendModel?) {
 
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersRecommendation)
-        let customersParams = CustomersParams(customer: customerId, property: nil,
-                                              id: id, recommendation: recommendation, attributes: nil,
-                                              events: nil, data: nil)
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersRecommendation)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: id,
+                                              recommendation: recommendation, attributes: nil, events: nil, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -264,14 +257,13 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Fetch multiple customer attributes at once
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - attributes: List of attributes you want to retrieve
-    func fetchAttributes(projectId: String, customerId: KeyValueModel, attributes: [CustomerAttributesListModel]) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersAttributes)
-        let customersParams = CustomersParams(customer: customerId, property: nil,
-                                              id: nil, recommendation: nil, attributes: attributes, events: nil, data: nil)
+    func fetchAttributes(projectToken: String, customerId: KeyValueModel, attributes: [CustomerAttributesListModel]) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersAttributes)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
+                                              attributes: attributes, events: nil, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -287,14 +279,13 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Fetch customer events by it's type
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - events: List of event types you want to retrieve
-    func fetchEvents(projectId: String, customerId: KeyValueModel, events: CustomerEventsModel) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersEvents)
-        let customersParams = CustomersParams(customer: customerId, property: nil,
-                                              id: nil, recommendation: nil, attributes: nil, events: events, data: nil)
+    func fetchEvents(projectToken: String, customerId: KeyValueModel, events: CustomerEventsModel) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersEvents)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
+                                              attributes: nil, events: events, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -310,13 +301,12 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Exports all properties, ids and events for one customer
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    func fetchAllProperties(projectId: String, customerId: KeyValueModel) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersExportAllProperties)
-        let customersParams = CustomersParams(customer: customerId, property: nil,
-                                              id: nil, recommendation: nil, attributes: nil, events: nil, data: nil)
+    func fetchAllProperties(projectToken: String, customerId: KeyValueModel) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersExportAllProperties)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
+                                              attributes: nil, events: nil, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -332,13 +322,12 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Exports all customers who exist in the project
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - data: List of properties to retrieve
-    func fetchAllCustomers(projectId: String, data: CustomerExportModel) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersExportAll)
-        let customersParams = CustomersParams(customer: nil, property: nil, id: nil,
-                                              recommendation: nil, attributes: nil, events: nil, data: data)
+    func fetchAllCustomers(projectToken: String, data: CustomerExportModel) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersExportAll)
+        let customersParams = CustomersParams(customer: nil, property: nil, id: nil, recommendation: nil,
+                                              attributes: nil, events: nil, data: data)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
@@ -355,13 +344,12 @@ extension ConnectionManager: FetchCustomerRepository {
     /// Removes all personal customer properties
     ///
     /// - Parameters:
-    ///     - projectId: Project token (you can find it in the Overview section of your project)
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    func anonymize(projectId: String, customerId: KeyValueModel) {
-
-        let router = APIRouter(baseURL: configuration.baseURL, projectId: projectId, route: .customersAnonymize)
-        let customersParams = CustomersParams(customer: customerId, property: nil,
-                                              id: nil, recommendation: nil, attributes: nil, events: nil, data: nil)
+    func anonymize(projectToken: String, customerId: KeyValueModel) {
+        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersAnonymize)
+        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
+                                              attributes: nil, events: nil, data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in

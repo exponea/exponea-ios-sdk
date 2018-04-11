@@ -44,27 +44,27 @@ public struct CustomerAttributesListModel {
 }
 
 protocol TrackingRepository {
-    func trackCustumer(projectId: String, customerId: KeyValueModel, properties: [KeyValueModel])
-    func trackEvents(projectId: String, customerId: KeyValueModel,
-                     properties: [KeyValueModel], timestamp: Int, eventType: String)
+    func trackCustumer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel])
+    func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
+                     timestamp: Double?, eventType: String?)
 }
 
 protocol TokenRepository {
-    func rotateToken(projectId: String)
-    func revokeToken(projectId: String)
+    func rotateToken(projectToken: String)
+    func revokeToken(projectToken: String)
 }
 
 protocol FetchCustomerRepository {
-    func fetchProperty(projectId: String, customerId: KeyValueModel, property: String)
-    func fetchId(projectId: String, customerId: KeyValueModel, id: String)
-    func fetchSegmentation(projectId: String, customerId: KeyValueModel, id: String)
-    func fetchExpression(projectId: String, customerId: KeyValueModel, id: String)
-    func fetchPrediction(projectId: String, customerId: KeyValueModel, id: String)
-    func fetchRecommendation(projectId: String, customerId: KeyValueModel,
-                             id: String, recommendation: CustomerRecommendModel?)
-    func fetchAttributes(projectId: String, customerId: KeyValueModel, attributes: [CustomerAttributesListModel])
-    func fetchEvents(projectId: String, customerId: KeyValueModel, events: CustomerEventsModel)
-    func fetchAllProperties(projectId: String, customerId: KeyValueModel)
-    func fetchAllCustomers(projectId: String, data: CustomerExportModel)
-    func anonymize(projectId: String, customerId: KeyValueModel)
+    func fetchProperty(projectToken: String, customerId: KeyValueModel, property: String)
+    func fetchId(projectToken: String, customerId: KeyValueModel, id: String)
+    func fetchSegmentation(projectToken: String, customerId: KeyValueModel, id: String)
+    func fetchExpression(projectToken: String, customerId: KeyValueModel, id: String)
+    func fetchPrediction(projectToken: String, customerId: KeyValueModel, id: String)
+    func fetchRecommendation(projectToken: String, customerId: KeyValueModel, id: String,
+                             recommendation: CustomerRecommendModel?)
+    func fetchAttributes(projectToken: String, customerId: KeyValueModel, attributes: [CustomerAttributesListModel])
+    func fetchEvents(projectToken: String, customerId: KeyValueModel, events: CustomerEventsModel)
+    func fetchAllProperties(projectToken: String, customerId: KeyValueModel)
+    func fetchAllCustomers(projectToken: String, data: CustomerExportModel)
+    func anonymize(projectToken: String, customerId: KeyValueModel)
 }

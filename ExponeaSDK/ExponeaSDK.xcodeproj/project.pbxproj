@@ -14,7 +14,10 @@
 		D20134EC7D150032774DF78D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */; };
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F021E8AA206D2B2E00788ABC /* EntitiesModel.xcdatamodeld */; };
+		F063BEA6207E0F8800030811 /* EventTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA5207E0F8800030811 /* EventTrackingSpec.swift */; };
+		F063BEA8207E104100030811 /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA7207E104100030811 /* EventModel.swift */; };
+		F063BEAA207E36E600030811 /* MockEntitiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockEntitiesManager.swift */; };
+		F063BEAD207E548A00030811 /* EntitiesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F063BEAB207E548A00030811 /* EntitiesModel.xcdatamodeld */; };
 		F0C1C1CD20737D80005EB697 /* EntitiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */; };
 		F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */; };
 		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
@@ -56,7 +59,10 @@
 		F021E85D206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F021E862206CF10200788ABC /* ExponeaSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExponeaSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F021E869206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExponeaDbModel.xcdatamodel; sourceTree = "<group>"; };
+		F063BEA5207E0F8800030811 /* EventTrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTrackingSpec.swift; sourceTree = "<group>"; };
+		F063BEA7207E104100030811 /* EventModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventModel.swift; sourceTree = "<group>"; };
+		F063BEA9207E36E600030811 /* MockEntitiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEntitiesManager.swift; sourceTree = "<group>"; };
+		F063BEAC207E548A00030811 /* EntitiesModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EntitiesModel.xcdatamodel; sourceTree = "<group>"; };
 		F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesManager.swift; sourceTree = "<group>"; };
 		F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesModel.swift; sourceTree = "<group>"; };
 		F0E757DF207CF99E00FE8C21 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -130,6 +136,8 @@
 			isa = PBXGroup;
 			children = (
 				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
+				F063BEA5207E0F8800030811 /* EventTrackingSpec.swift */,
+				F063BEA9207E36E600030811 /* MockEntitiesManager.swift */,
 				01EC2D9F207E3CDB0031BFEB /* Logging */,
 			);
 			path = Specs;
@@ -211,8 +219,8 @@
 		F021E8A9206D2B0400788ABC /* Entities */ = {
 			isa = PBXGroup;
 			children = (
-				F021E8AA206D2B2E00788ABC /* EntitiesModel.xcdatamodeld */,
 				F0C1C1CC20737D80005EB697 /* EntitiesManager.swift */,
+				F063BEAB207E548A00030811 /* EntitiesModel.xcdatamodeld */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -222,6 +230,7 @@
 			children = (
 				F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */,
 				F0E757EF207D027300FE8C21 /* Configuration.swift */,
+				F063BEA7207E104100030811 /* EventModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -476,18 +485,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F063BEAD207E548A00030811 /* EntitiesModel.xcdatamodeld in Sources */,
 				F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */,
 				F0E757E5207CFA5300FE8C21 /* APIRouter.swift in Sources */,
 				F0C1C1CD20737D80005EB697 /* EntitiesManager.swift in Sources */,
 				F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
-				F021E8AC206D2B2E00788ABC /* EntitiesModel.xcdatamodeld in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
 				F0E757E7207CFA6400FE8C21 /* APISource.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
+				F063BEA8207E104100030811 /* EventModel.swift in Sources */,
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -499,6 +509,8 @@
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
 				019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */,
+				F063BEA6207E0F8800030811 /* EventTrackingSpec.swift in Sources */,
+				F063BEAA207E36E600030811 /* MockEntitiesManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -745,12 +757,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		F021E8AA206D2B2E00788ABC /* EntitiesModel.xcdatamodeld */ = {
+		F063BEAB207E548A00030811 /* EntitiesModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */,
+				F063BEAC207E548A00030811 /* EntitiesModel.xcdatamodel */,
 			);
-			currentVersion = F021E8AB206D2B2E00788ABC /* ExponeaDbModel.xcdatamodel */;
+			currentVersion = F063BEAC207E548A00030811 /* EntitiesModel.xcdatamodel */;
 			path = EntitiesModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
