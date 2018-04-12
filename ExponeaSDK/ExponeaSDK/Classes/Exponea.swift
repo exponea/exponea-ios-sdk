@@ -61,7 +61,6 @@ public class Exponea {
 }
 
 internal extension Exponea {
-
     internal func configure(projectToken: String) {
         configuration = Configuration(projectToken: projectToken)
     }
@@ -112,7 +111,6 @@ internal extension Exponea {
 }
 
 public extension Exponea {
-
     /// Initialize the configuration with a projectId (token)
     ///
     /// - Parameters:
@@ -150,5 +148,4 @@ public extension Exponea {
                                 timestamp: timestamp,
                                 eventType: eventType)
     }
-
 }
