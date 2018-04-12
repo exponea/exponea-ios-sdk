@@ -22,6 +22,7 @@
 		01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB9207E68BF0031BFEB /* DatabaseManager.swift */; };
 		01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */; };
 		01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */; };
+		01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DC0207F63970031BFEB /* FlushingMode.swift */; };
 		D20134EC7D150032774DF78D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */; };
 		F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */; };
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
@@ -75,6 +76,7 @@
 		01EC2DB9207E68BF0031BFEB /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerType.swift; sourceTree = "<group>"; };
 		01EC2DBC207E68BF0031BFEB /* ExponeaDbModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExponeaDbModel.xcdatamodel; sourceTree = "<group>"; };
+		01EC2DC0207F63970031BFEB /* FlushingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingMode.swift; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A9541A0D49B621C7B60EAC2 /* Pods-ExponeaSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.release.xcconfig"; sourceTree = "<group>"; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 				01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */,
 				01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */,
 				01EC2DB3207E58080031BFEB /* EventType.swift */,
+				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -581,6 +584,7 @@
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
 				F0E757E7207CFA6400FE8C21 /* APISource.swift in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
+				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				01EC2DA7207E4FBA0031BFEB /* CustomerEventsModel.swift in Sources */,
 				01EC2DAB207E53D90031BFEB /* CustomerExportAttributesModel.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,

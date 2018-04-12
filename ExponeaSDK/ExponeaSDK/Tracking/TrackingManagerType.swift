@@ -11,4 +11,8 @@ import Foundation
 protocol TrackingManagerType: class {
     // TODO: add other methods as necessary
     func trackEvent(_ type: EventType, customData: [String: Any]?) -> Bool
+
+    // Flushing
+    var flushingMode: FlushingMode { get set }
+    func flushData()
 }

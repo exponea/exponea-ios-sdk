@@ -13,10 +13,44 @@ class TrackingManager {
     let repository: TrackingRepository
     var configuration: Configuration
 
+    var flushingTimer: Timer?
+    var flushingMode: FlushingMode = .automatic {
+        didSet {
+            updateFlushingMode()
+        }
+    }
+
     init(database: DatabaseManagerType, repository: TrackingRepository, configuration: Configuration) {
         self.database = database
         self.repository = repository
         self.configuration = configuration
+    }
+}
+
+// MARK: - Flushing -
+
+extension TrackingManager {
+    func flushData() {
+        // TODO: Upload to API, delete from DB if success
+    }
+
+    func updateFlushingMode() {
+        switch flushingMode {
+        case .manual:
+            flushingTimer?.invalidate()
+            flushingTimer = nil
+
+            let center = NotificationCenter.default
+            center.removeObserver(self, name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+            center.removeObserver(self, name: Notification.Name.UIApplicationWillResignActive, object: nil)
+
+        case .automatic:
+
+            break
+        case .periodic(let interval):
+
+            break
+        }
     }
 }
 
