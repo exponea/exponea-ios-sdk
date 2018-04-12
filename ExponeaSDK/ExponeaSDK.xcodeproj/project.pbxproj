@@ -27,8 +27,9 @@
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F063BEAA207E36E600030811 /* MockEntitiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockEntitiesManager.swift */; };
 		F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */; };
-		F0CA58F6207F612200C89A7F /* Install.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* Install.swift */; };
+		F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* DeviceProperties.swift */; };
 		F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F8207F787100C89A7F /* TrackerSpec.swift */; };
+		F0CA58FB207FA5E700C89A7F /* CampaignProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */; };
 		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */; };
 		F0E757E5207CFA5300FE8C21 /* APIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* APIRouter.swift */; };
@@ -82,8 +83,9 @@
 		F021E869206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F063BEA9207E36E600030811 /* MockEntitiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEntitiesManager.swift; sourceTree = "<group>"; };
 		F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesModel.swift; sourceTree = "<group>"; };
-		F0CA58F5207F612200C89A7F /* Install.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Install.swift; sourceTree = "<group>"; };
+		F0CA58F5207F612200C89A7F /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
 		F0CA58F8207F787100C89A7F /* TrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSpec.swift; sourceTree = "<group>"; };
+		F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignProperties.swift; sourceTree = "<group>"; };
 		F0E757DF207CF99E00FE8C21 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfiguration.swift; sourceTree = "<group>"; };
 		F0E757E4207CFA5300FE8C21 /* APIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRouter.swift; sourceTree = "<group>"; };
@@ -275,7 +277,8 @@
 				01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */,
 				01EC2DAA207E53D90031BFEB /* CustomerExportAttributesModel.swift */,
 				01EC2DAC207E53E40031BFEB /* CustomerAttributesListModel.swift */,
-				F0CA58F5207F612200C89A7F /* Install.swift */,
+				F0CA58F5207F612200C89A7F /* DeviceProperties.swift */,
+				F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -546,6 +549,7 @@
 				01EC2DAD207E53E40031BFEB /* CustomerAttributesListModel.swift in Sources */,
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
 				01EC2DB4207E58080031BFEB /* EventType.swift in Sources */,
+				F0CA58FB207FA5E700C89A7F /* CampaignProperties.swift in Sources */,
 				01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
@@ -560,7 +564,7 @@
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,
-				F0CA58F6207F612200C89A7F /* Install.swift in Sources */,
+				F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

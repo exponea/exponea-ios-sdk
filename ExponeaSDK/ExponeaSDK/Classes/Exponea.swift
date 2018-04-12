@@ -69,15 +69,20 @@ internal extension Exponea {
         configuration = Configuration(plistName: plistName)
     }
 
-    /// Installation event is fired only once for the whole lifetime of the APP on one
-    /// device when the APP is launched for the first time
-    internal func installEvent() {
+    /// Installation event is fired only once for the whole lifetime of the app on one
+    /// device when the app is launched for the first time.
+    internal func trackInstallEvent() {
+        /// Checking if the APP was launched before.
+        /// If the key value is false, means that the event was not fired before.
         guard !UserDefaults.standard.bool(forKey: Constants.Keys.launchedBefore) else {
             return
         }
+        /// In case the event was not fired, we call the track manager
+        /// passing the install event type.
         guard trackingManager.trackEvent(.install, customData: nil) else {
             return
         }
+        /// Set the value to true if event was executed successfully
         UserDefaults.standard.set(true, forKey: Constants.Keys.launchedBefore)
     }
 
@@ -114,7 +119,7 @@ public extension Exponea {
     ///     - projectToken: Project Token to be used through the SDK
     public class func configure(projectToken: String) {
         shared.configure(projectToken: projectToken)
-        shared.installEvent()
+        shared.trackInstallEvent()
     }
 
     /// Initialize the configuration with a plist file containing the keys
@@ -125,7 +130,7 @@ public extension Exponea {
     ///     - plistName: List name containing the SDK setup keys
     public class func configure(plistName: String) {
         shared.configure(plistName: plistName)
-        shared.installEvent()
+        shared.trackInstallEvent()
     }
 
     /// Add events for a specific customer
