@@ -85,28 +85,19 @@ internal extension Exponea {
         UserDefaults.standard.set(true, forKey: Constants.Keys.launchedBefore)
     }
 
-    internal func addCustomerEvent(customerId: KeyValueModel, properties: [KeyValueModel],
-                                   timestamp: Double?, eventType: String?) {
+    internal func trackCustomerEvent(customerId: KeyValueModel,
+                                     properties: [KeyValueModel],
+                                     timestamp: Double?,
+                                     eventType: String) -> Bool {
         guard configured else {
-            Exponea.logger.log(.error,
-                               message: Constants.ErrorMessages.tokenNotConfigured)
-            return
+            Exponea.logger.log(.error, message: Constants.ErrorMessages.tokenNotConfigured)
+            return false
         }
-
-        var customData: [String: Any] = ["customerId": customerId,
-                                         "properties": properties]
-
-        if let projectToken = self.projectToken {
-            customData["projectToken"] = projectToken
-        }
-        if let timestamp = timestamp {
-            customData["timestamp"] = timestamp
-        }
-        if let eventType = eventType {
-            customData["eventType"] = eventType
-        }
-
-        trackingManager.trackEvent(.event, customData: customData)
+        return trackingManager.trackEvent(.event(customerId,
+                                                 properties,
+                                                 timestamp ?? NSDate().timeIntervalSince1970,
+                                                 eventType),
+                                          customData: nil)
     }
 }
 
@@ -131,21 +122,22 @@ public extension Exponea {
         shared.trackInstallEvent()
     }
 
-    /// Add events for a specific customer
+    /// Track customer event add new events to a specific customer.
+    /// All events will be stored into coredata until it will be
+    /// flushed (send to api).
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - properties: Properties that should be updated
-    ///     - timestamp: Timestamp should always be UNIX timestamp format
-    ///     - eventType: Type of event to be tracked
-    public class func addCustomerEvent(customerId: KeyValueModel,
-                                       properties: [KeyValueModel],
-                                       timestamp: Double?,
-                                       eventType: String?) {
-        shared.addCustomerEvent(customerId: customerId,
-                                properties: properties,
-                                timestamp: timestamp,
-                                eventType: eventType)
+    ///     - customerId: Specify your customer with external id.
+    ///     - properties: Object with event values.
+    ///     - timestamp: Unix timestamp when the event was created.
+    ///     - eventType: Name of event
+    public class func trackCustomerEvent(customerId: KeyValueModel,
+                                         properties: [KeyValueModel],
+                                         timestamp: Double?,
+                                         eventType: String) {
+        shared.trackCustomerEvent(customerId: customerId,
+                                  properties: properties,
+                                  timestamp: timestamp,
+                                  eventType: eventType)
     }
 }

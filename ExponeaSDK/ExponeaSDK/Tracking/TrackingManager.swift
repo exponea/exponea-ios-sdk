@@ -22,6 +22,7 @@ extension TrackingManager: TrackingManagerType {
     func trackEvent(_ type: EventType, customData: [String: Any]?) -> Bool {
 
         guard let projectToken = Exponea.shared.projectToken else {
+            Exponea.logger.log(.error, message: Constants.ErrorMessages.tokenNotConfigured)
             return false
         }
 
