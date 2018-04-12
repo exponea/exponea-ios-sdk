@@ -18,6 +18,8 @@ enum EventType {
     case install
     case sessionStart
     case sessionEnd
+    case event
+    case track
     case custom(String)
 }
 

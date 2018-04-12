@@ -24,7 +24,7 @@ import CoreData
 ///
 /// - Author: Rafael Papallas
 
-class MockEntitiesManager: EntitiesManager {
+class MockEntitiesManager: DatabaseManager {
 //
 //    /// Returns a `NSManagedObjectContext` linking to memory instead of SQLite
 //    override func managedObjectContext() -> NSManagedObjectContext {

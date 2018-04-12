@@ -19,23 +19,41 @@ class TrackingManager {
 }
 
 extension TrackingManager: TrackingManagerType {
-    func trackEvent(_ type: EventType, customData: [String : Any]) {
+    func trackEvent(_ type: EventType, customData: [String: Any]?) -> Bool {
+
+        guard let projectToken = Exponea.shared.projectToken else {
+            return false
+        }
+
         switch type {
         case .install:
-            // TODO: save to db
-            break
-
+            return installEvent(projectToken: projectToken)
         case .sessionStart:
             // TODO: save to db
-            break
+            return false
 
         case .sessionEnd:
             // TODO: save to db
-            break
+            return false
+
+        case .event:
+            // TODO: save to db
+            return false
+
+        case .track:
+            // TODO: save to db
+            return false
 
         case .custom(let value):
             // TODO: save to db
-            break
+            return false
         }
+    }
+}
+
+extension TrackingManager {
+    func installEvent(projectToken: String) -> Bool {
+        return database.trackInstall(projectToken: projectToken,
+                                     properties: DeviceProperties().asKeyValueModel())
     }
 }

@@ -29,8 +29,8 @@ public class Exponea {
         }
         set {
             guard configured else {
-                Exponea.logger.log(.error, message: "ExponeaSDK isn't configured.")
-                fatalError("ExponeaSDK isn't configured.")
+                Exponea.logger.log(.error, message: Constants.ErrorMessages.sdkNotConfigured)
+                fatalError(Constants.ErrorMessages.sdkNotConfigured)
             }
             configuration.projectToken = newValue
         }
@@ -64,33 +64,60 @@ internal extension Exponea {
     internal func configure(projectToken: String) {
         configuration = Configuration(projectToken: projectToken)
     }
-    private func configure(plistName: String) {
+    internal func configure(plistName: String) {
         configuration = Configuration(plistName: plistName)
+    }
+
+    /// Installation event is fired only once for the whole lifetime of the app on one
+    /// device when the app is launched for the first time.
+    internal func trackInstallEvent() {
+        /// Checking if the APP was launched before.
+        /// If the key value is false, means that the event was not fired before.
+        guard !UserDefaults.standard.bool(forKey: Constants.Keys.launchedBefore) else {
+            return
+        }
+        /// In case the event was not fired, we call the track manager
+        /// passing the install event type.
+        guard trackingManager.trackEvent(.install, customData: nil) else {
+            return
+        }
+        /// Set the value to true if event was executed successfully
+        UserDefaults.standard.set(true, forKey: Constants.Keys.launchedBefore)
     }
 
     internal func addCustomerEvent(customerId: KeyValueModel, properties: [KeyValueModel],
                                    timestamp: Double?, eventType: String?) {
-        guard configured, let token = projectToken else {
-
-            // TODO: Logging
-            fatalError("Project token not configured")
+        guard configured else {
+            Exponea.logger.log(.error,
+                               message: Constants.ErrorMessages.tokenNotConfigured)
+            return
         }
 
-        // TODO: Fix this so that it works correctly :)
-        trackingManager.trackEvent(.install, customData: [:])
-//        entitiesManager.trackEvents(projectToken: token, customerId: customerId, properties: properties,
-//                                    timestamp: timestamp, eventType: eventType)
+        var customData: [String: Any] = ["customerId": customerId,
+                                         "properties": properties]
+
+        if let projectToken = self.projectToken {
+            customData["projectToken"] = projectToken
+        }
+        if let timestamp = timestamp {
+            customData["timestamp"] = timestamp
+        }
+        if let eventType = eventType {
+            customData["eventType"] = eventType
+        }
+
+        trackingManager.trackEvent(.event, customData: customData)
     }
 }
 
 public extension Exponea {
-
     /// Initialize the configuration with a projectId (token)
     ///
     /// - Parameters:
     ///     - projectToken: Project Token to be used through the SDK
     public class func configure(projectToken: String) {
         shared.configure(projectToken: projectToken)
+        shared.trackInstallEvent()
     }
 
     /// Initialize the configuration with a plist file containing the keys
@@ -101,6 +128,7 @@ public extension Exponea {
     ///     - plistName: List name containing the SDK setup keys
     public class func configure(plistName: String) {
         shared.configure(plistName: plistName)
+        shared.trackInstallEvent()
     }
 
     /// Add events for a specific customer
@@ -111,10 +139,13 @@ public extension Exponea {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    public class func addCustomerEvent(customerId: KeyValueModel, properties: [KeyValueModel],
-                                       timestamp: Double?, eventType: String?) {
+    public class func addCustomerEvent(customerId: KeyValueModel,
+                                       properties: [KeyValueModel],
+                                       timestamp: Double?,
+                                       eventType: String?) {
         shared.addCustomerEvent(customerId: customerId,
-                                properties: properties, timestamp: timestamp, eventType: eventType)
+                                properties: properties,
+                                timestamp: timestamp,
+                                eventType: eventType)
     }
-
 }

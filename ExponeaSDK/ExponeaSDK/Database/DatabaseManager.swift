@@ -27,7 +27,7 @@ public class DatabaseManager {
     func managedObjectContext() -> NSManagedObjectContext {
         return persistentContainer.viewContext
     }
-    
+
     /// Save all changes in CoreData
     func saveContext(object: NSManagedObject) {
         do {
@@ -40,46 +40,23 @@ public class DatabaseManager {
     }
 
     /// Save all changes in CoreData
-    func saveContext () {
+    func saveContext() -> Bool {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
                 try context.save()
+                return true
             } catch {
                 Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
             }
         }
+        return false
     }
 
     /// Delete a specific object in CoreData
-    fileprivate func deleteObject(_ object: NSManagedObject) {
+    fileprivate func deleteObject(_ object: NSManagedObject) -> Bool {
         managedObjectContext().delete(object)
-        saveContext()
-    }
-
-    /// Returns an empty TrackCustomers object to be populated with data using standard
-    /// syntax and then to be saved to the CoreData:
-    var getEmptyTrackCustInstance: TrackCustomers {
-        guard let object = getEntityDescriptionNewObject(withEntityName: "TrackCustomers") as? TrackCustomers else {
-            fatalError("Could not load object")
-        }
-        return object
-    }
-
-    /// Returns an empty TrackCustomers object to be populated with data using standard
-    /// syntax and then to be saved to the CoreData:
-    var getEmptyTrackCustPropInstance: TrackCustomersProperties {
-        guard let object = getEntityDescriptionNewObject(withEntityName: "TrackCustomersProperties") as? TrackCustomersProperties else {
-            fatalError("Could not load object")
-        }
-        return object
-    }
-
-    /// This will return a new `insertNewObject` instance of type NSManagedObject
-    /// that can be casted down into Context, Location or Task and then to be
-    /// used to create a new record to the database.
-    private func getEntityDescriptionNewObject(withEntityName name: String) -> NSManagedObject {
-        return NSEntityDescription.insertNewObject(forEntityName: name, into: managedObjectContext())
+        return saveContext()
     }
 
 }
@@ -92,7 +69,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
-    public func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
+    public func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) -> Bool {
 
         let trackCustomer = TrackCustomers(context: persistentContainer.viewContext)
         let trackCustomerProperties = TrackCustomersProperties(context: persistentContainer.viewContext)
@@ -111,7 +88,7 @@ extension DatabaseManager: DatabaseManagerType {
         }
 
         // Save the customer properties into CoreData
-        saveContext()
+        return saveContext()
     }
 
     /// Add events into a customer
@@ -123,7 +100,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
     public func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
-                            timestamp: Double?, eventType: String?) {
+                            timestamp: Double?, eventType: String?) -> Bool {
         let trackEvents = TrackEvents(context: persistentContainer.viewContext)
         let trackEventsProperties = TrackEventsProperties(context: persistentContainer.viewContext)
 
@@ -146,7 +123,32 @@ extension DatabaseManager: DatabaseManagerType {
         }
 
         // Save the customer properties into CoreData
-        saveContext()
+        return saveContext()
+    }
+
+    /// Track the device information when the user install the APP for the first time. This event
+    /// is fired only once for the whole APP lifetime.
+    ///
+    /// - Parameters:
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    ///     - properties: Properties that should be updated
+    ///     - eventType: Type of event to be tracked
+    public func trackInstall(projectToken: String, properties: [KeyValueModel]) -> Bool {
+        let trackEvents = TrackEvents(context: persistentContainer.viewContext)
+        let trackEventsProperties = TrackEventsProperties(context: persistentContainer.viewContext)
+
+        trackEvents.projectToken = projectToken
+        trackEvents.eventType = Constants.EventTypes.installation
+
+        // Add the event properties to the events entity
+        for property in properties {
+            trackEventsProperties.key = property.key
+            trackEventsProperties.value = property.value as? NSObject
+            trackEvents.addToTrackEventsProperties(trackEventsProperties)
+        }
+
+        // Save the customer properties into CoreData
+        return saveContext()
     }
 
     /// Fetch all Tracking Customers from CoreData
@@ -188,9 +190,7 @@ extension DatabaseManager: DatabaseManagerType {
             Exponea.logger.log(.error, message: "Invalid object to delete.")
             return false
         }
-
-        deleteObject(trackObject)
-        return true
+        return deleteObject(trackObject)
     }
 
     /// Detele a Tracking Event Object from CoreData
@@ -203,7 +203,6 @@ extension DatabaseManager: DatabaseManagerType {
             return false
         }
 
-        deleteObject(trackEvent)
-        return true
+        return deleteObject(trackEvent)
     }
 }
