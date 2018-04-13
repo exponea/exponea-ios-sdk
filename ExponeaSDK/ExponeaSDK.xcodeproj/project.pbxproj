@@ -25,6 +25,7 @@
 		D20134EC7D150032774DF78D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */; };
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F03943A42080946E00FE7759 /* TrackEventSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03943A32080946E00FE7759 /* TrackEventSpec.swift */; };
 		F063BEAA207E36E600030811 /* MockEntitiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockEntitiesManager.swift */; };
 		F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */; };
 		F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* DeviceProperties.swift */; };
@@ -81,6 +82,7 @@
 		F021E85D206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F021E862206CF10200788ABC /* ExponeaSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExponeaSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F021E869206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F03943A32080946E00FE7759 /* TrackEventSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackEventSpec.swift; sourceTree = "<group>"; };
 		F063BEA9207E36E600030811 /* MockEntitiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEntitiesManager.swift; sourceTree = "<group>"; };
 		F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesModel.swift; sourceTree = "<group>"; };
 		F0CA58F5207F612200C89A7F /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				F0CA58F8207F787100C89A7F /* TrackerSpec.swift */,
+				F03943A32080946E00FE7759 /* TrackEventSpec.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -573,6 +576,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
+				F03943A42080946E00FE7759 /* TrackEventSpec.swift in Sources */,
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
 				019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */,
 				F063BEAA207E36E600030811 /* MockEntitiesManager.swift in Sources */,

@@ -12,6 +12,8 @@ struct Configuration {
 
     internal var projectToken: String?
 
+    init() {}
+
     init(projectToken: String) {
         self.projectToken = projectToken
     }

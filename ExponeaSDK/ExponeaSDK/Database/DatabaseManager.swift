@@ -13,7 +13,7 @@ import CoreData
 /// Persisted data will be used to interact with the Exponea API.
 public class DatabaseManager {
 
-    public lazy var persistentContainer: NSPersistentContainer = {
+    lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "DatabaseModel")
         container.loadPersistentStores(completionHandler: { (_, error) in //(storeDescription, error) in
             if let error = error {
@@ -24,7 +24,7 @@ public class DatabaseManager {
     }()
 
     /// Managed Context for Core Data
-    func managedObjectContext() -> NSManagedObjectContext {
+    var managedObjectContext: NSManagedObjectContext {
         return persistentContainer.viewContext
     }
 
@@ -33,15 +33,13 @@ public class DatabaseManager {
         do {
             try object.managedObjectContext?.save()
         } catch {
-            // TODO: Logging
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
         }
     }
 
     /// Save all changes in CoreData
     func saveContext() -> Bool {
-        let context = persistentContainer.viewContext
+        let context = managedObjectContext
         if context.hasChanges {
             do {
                 try context.save()
@@ -55,7 +53,7 @@ public class DatabaseManager {
 
     /// Delete a specific object in CoreData
     fileprivate func deleteObject(_ object: NSManagedObject) -> Bool {
-        managedObjectContext().delete(object)
+        managedObjectContext.delete(object)
         return saveContext()
     }
 
@@ -71,8 +69,8 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - properties: Properties that should be updated
     public func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) -> Bool {
 
-        let trackCustomer = TrackCustomers(context: persistentContainer.viewContext)
-        let trackCustomerProperties = TrackCustomersProperties(context: persistentContainer.viewContext)
+        let trackCustomer = TrackCustomers(context: managedObjectContext)
+        let trackCustomerProperties = TrackCustomersProperties(context: managedObjectContext)
 
         trackCustomer.projectToken = projectToken
         trackCustomer.customerIdKey = customerId.key
@@ -99,10 +97,13 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    public func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
-                            timestamp: Double?, eventType: String?) -> Bool {
-        let trackEvents = TrackEvents(context: persistentContainer.viewContext)
-        let trackEventsProperties = TrackEventsProperties(context: persistentContainer.viewContext)
+    public func trackEvents(projectToken: String,
+                            customerId: KeyValueModel,
+                            properties: [KeyValueModel],
+                            timestamp: Double?,
+                            eventType: String?) -> Bool {
+        let trackEvents = TrackEvents(context: managedObjectContext)
+        let trackEventsProperties = TrackEventsProperties(context: managedObjectContext)
 
         trackEvents.projectToken = projectToken
         trackEvents.customerIdKey = customerId.key
@@ -134,8 +135,8 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - properties: Properties that should be updated
     ///     - eventType: Type of event to be tracked
     public func trackInstall(projectToken: String, properties: [KeyValueModel]) -> Bool {
-        let trackEvents = TrackEvents(context: persistentContainer.viewContext)
-        let trackEventsProperties = TrackEventsProperties(context: persistentContainer.viewContext)
+        let trackEvents = TrackEvents(context: managedObjectContext)
+        let trackEventsProperties = TrackEventsProperties(context: managedObjectContext)
 
         trackEvents.projectToken = projectToken
         trackEvents.eventType = Constants.EventTypes.installation
@@ -157,7 +158,7 @@ extension DatabaseManager: DatabaseManagerType {
         var trackCustomers = [TrackCustomers]()
 
         do {
-            let context = persistentContainer.viewContext
+            let context = managedObjectContext
             trackCustomers = try context.fetch(TrackCustomers.fetchRequest())
         } catch {
             Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
@@ -172,7 +173,7 @@ extension DatabaseManager: DatabaseManagerType {
         var trackEvents = [TrackEvents]()
 
         do {
-            let context = persistentContainer.viewContext
+            let context = managedObjectContext
             trackEvents = try context.fetch(TrackEvents.fetchRequest())
         } catch {
             Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")

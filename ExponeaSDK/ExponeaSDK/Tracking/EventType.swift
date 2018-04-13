@@ -14,11 +14,11 @@ import Foundation
 /// - sessionStart: <#sessionStart description#>
 /// - sessionEnd: <#sessionEnd description#>
 /// - custom: <#custom description#>
-enum EventType {
+indirect enum EventType {
     case install
     case sessionStart
     case sessionEnd
-    case event
+    case event(KeyValueModel, [KeyValueModel], Double, String)
     case track
     case custom(String)
 }

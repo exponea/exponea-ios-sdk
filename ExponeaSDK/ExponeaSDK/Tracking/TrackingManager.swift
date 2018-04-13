@@ -22,6 +22,7 @@ extension TrackingManager: TrackingManagerType {
     func trackEvent(_ type: EventType, customData: [String: Any]?) -> Bool {
 
         guard let projectToken = Exponea.shared.projectToken else {
+            Exponea.logger.log(.error, message: Constants.ErrorMessages.tokenNotConfigured)
             return false
         }
 
@@ -36,10 +37,12 @@ extension TrackingManager: TrackingManagerType {
             // TODO: save to db
             return false
 
-        case .event:
-            // TODO: save to db
-            return false
-
+        case .event(let customerId, let properties, let timestamp, let eventType):
+            return trackEvent(projectToken: projectToken,
+                              customerId: customerId,
+                              properties: properties,
+                              timestamp: timestamp,
+                              eventType: eventType)
         case .track:
             // TODO: save to db
             return false
@@ -55,5 +58,16 @@ extension TrackingManager {
     func installEvent(projectToken: String) -> Bool {
         return database.trackInstall(projectToken: projectToken,
                                      properties: DeviceProperties().asKeyValueModel())
+    }
+    func trackEvent(projectToken: String,
+                    customerId: KeyValueModel,
+                    properties: [KeyValueModel],
+                    timestamp: Double?,
+                    eventType: String?) -> Bool {
+        return database.trackEvents(projectToken: projectToken,
+                                    customerId: customerId,
+                                    properties: properties,
+                                    timestamp: timestamp,
+                                    eventType: eventType)
     }
 }
