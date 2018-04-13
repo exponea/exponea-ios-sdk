@@ -44,7 +44,7 @@ public class Exponea {
 
     let trackingManager: TrackingManagerType
 
-    init(database: DatabaseManagerType, repository: TrackingRepository) {
+    init(database: DatabaseManager, repository: TrackingRepository) {
         self.trackingManager = TrackingManager(database: database, repository: repository)
         self.configuration = Configuration()
     }

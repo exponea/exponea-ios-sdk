@@ -11,79 +11,34 @@ import CoreData
 
 @testable import ExponeaSDK
 
-/// Mock version of EntitiesManager for testing purposes.
-///
-/// This intent of this class it to inherit all functionality from DatabaseManager
-/// and just override the `managedObjectContext()` function to redirect the
-/// the `NSPersistentStoreCoordinator` to memory instead of the actual SQLite
-/// model.
-///
-/// This will allows us to test the functionality of the DatabaseManager
-/// independently without populating in real the database and without depending
-/// on the SQLite container.
-///
-/// - Author: Rafael Papallas
-
 class MockEntitiesManager: DatabaseManager {
-//
-//    /// Returns a `NSManagedObjectContext` linking to memory instead of SQLite
-//    override func managedObjectContext() -> NSManagedObjectContext {
-//        return managedObjectContextLazy
-//    }
 
-    /// This will return the `NSManagedObjectContext` which in this time will
-    /// be redirected to memory instead of the original DatabaseManager linking
-    /// to the SQLite file.
-    ///
-    /// Is important to highlight that Swift doesn't like creation of more than
-    /// one `NSManagedObjectContext` and therefore we had to lazly do that.
-    /// The `override func managedObjectContext()` itself can't be lazy due
-    /// to it's superclass constraints and therefore this helper computed property
-    /// had to be implemented to bridge the incompatibility.
-//    lazy var managedObjectContextLazy: NSManagedObjectContext = {
-//        let coordinator = self.persistentStoreCoordinator
-//
-//        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-//        managedObjectContext.persistentStoreCoordinator = coordinator
-//        return managedObjectContext
-//    }()
-
-    /// Gets the `NSManagedObjectModel` from the superclass
     lazy var managedObjectModel: NSManagedObjectModel = {
-        let managedObjectModel = NSManagedObjectModel.mergedModel(from: [Bundle.main])!
+        let managedObjectModel = NSManagedObjectModel.mergedModel(from: [Bundle(for: type(of: self))] )!
         return managedObjectModel
     }()
 
-    /// Redirects the `NSPersistentStoreCoordinator` to memory.
-    ///
-    /// Here is all the magic happening. The `NSPersistentStoreCoordinator` is
-    /// redirected to memory instead of SQLite.
-//    lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
-//        var coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-//
-//        do {
-//            try coordinator!.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil,
-//                                                at: nil, options: nil)
-//        } catch {
-//            coordinator = nil
-//            print("Error")
-//        }
-//
-//        return coordinator
-//    }()
+    lazy var mockPersistantContainer: NSPersistentContainer = {
 
-    override lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "EntitiesModel", managedObjectModel: managedObjectModel)
+        let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: self.managedObjectModel)
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         description.shouldAddStoreAsynchronously = false // Make it simpler in test env
+        print(container.description)
         container.persistentStoreDescriptions = [description]
-        container.loadPersistentStores(completionHandler: { (_, error) in //(storeDescription, error) in
-            if let error = error as NSError? {
-                // TODO: Logging
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+        container.loadPersistentStores { (description, error) in
+            // Check if the data store is in memory
+            precondition( description.type == NSInMemoryStoreType )
+            // Check if creating container wrong
+            if let error = error {
+                fatalError("Create an in-mem coordinator failed \(error)")
             }
-        })
+        }
         return container
     }()
+
+    override func managedObjectContext() -> NSManagedObjectContext {
+        return mockPersistantContainer.viewContext
+    }
+
 }
