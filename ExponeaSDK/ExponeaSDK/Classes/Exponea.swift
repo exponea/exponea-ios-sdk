@@ -22,7 +22,7 @@ public class Exponea {
         return false
     }
 
-    /// ProjectId (token) property
+    /// Identification of your project
     public var projectToken: String? {
         get {
             return configuration.projectToken
@@ -46,6 +46,7 @@ public class Exponea {
 
     init(database: DatabaseManagerType, repository: TrackingRepository) {
         self.trackingManager = TrackingManager(database: database, repository: repository)
+        self.configuration = Configuration()
     }
 
     public init() {
@@ -56,6 +57,7 @@ public class Exponea {
         let repository = ConnectionManager(configuration: configuration)
 
         self.trackingManager = TrackingManager(database: database, repository: repository)
+        self.configuration = Configuration()
     }
 
 }
@@ -89,10 +91,6 @@ internal extension Exponea {
                                      properties: [KeyValueModel],
                                      timestamp: Double?,
                                      eventType: String) -> Bool {
-        guard configured else {
-            Exponea.logger.log(.error, message: Constants.ErrorMessages.tokenNotConfigured)
-            return false
-        }
         return trackingManager.trackEvent(.event(customerId,
                                                  properties,
                                                  timestamp ?? NSDate().timeIntervalSince1970,
@@ -134,10 +132,10 @@ public extension Exponea {
     public class func trackCustomerEvent(customerId: KeyValueModel,
                                          properties: [KeyValueModel],
                                          timestamp: Double?,
-                                         eventType: String) {
-        shared.trackCustomerEvent(customerId: customerId,
-                                  properties: properties,
-                                  timestamp: timestamp,
-                                  eventType: eventType)
+                                         eventType: String) -> Bool {
+        return shared.trackCustomerEvent(customerId: customerId,
+                                         properties: properties,
+                                         timestamp: timestamp,
+                                         eventType: eventType)
     }
 }

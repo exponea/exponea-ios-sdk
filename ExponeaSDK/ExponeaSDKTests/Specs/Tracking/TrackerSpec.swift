@@ -18,13 +18,13 @@ class TrackerSpec: QuickSpec {
 
         describe("A tracker") {
 
-            let database = DatabaseManager()
-            let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
-                                                 contentType: Constants.Repository.contentType)
-            let repository = ConnectionManager(configuration: configuration)
+            //let database = DatabaseManager()
+            //let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
+//                                                 contentType: Constants.Repository.contentType)
+            //let repository = ConnectionManager(configuration: configuration)
 
             context("After being properly initialized") {
-                let trackingManager = TrackingManager(database: database, repository: repository)
+                //let trackingManager = TrackingManager(database: database, repository: repository)
                 it("Should not track install event") {
                     // TODO: Implement after find a way to test CoreData calls.
                 }

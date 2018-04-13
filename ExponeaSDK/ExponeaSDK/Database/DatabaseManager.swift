@@ -99,8 +99,11 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    public func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
-                            timestamp: Double?, eventType: String?) -> Bool {
+    public func trackEvents(projectToken: String,
+                            customerId: KeyValueModel,
+                            properties: [KeyValueModel],
+                            timestamp: Double?,
+                            eventType: String?) -> Bool {
         let trackEvents = TrackEvents(context: persistentContainer.viewContext)
         let trackEventsProperties = TrackEventsProperties(context: persistentContainer.viewContext)
 

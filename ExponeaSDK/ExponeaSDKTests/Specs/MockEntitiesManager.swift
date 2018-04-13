@@ -71,7 +71,7 @@ class MockEntitiesManager: DatabaseManager {
 //
 //        return coordinator
 //    }()
-    
+
     override lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "EntitiesModel", managedObjectModel: managedObjectModel)
         let description = NSPersistentStoreDescription()
