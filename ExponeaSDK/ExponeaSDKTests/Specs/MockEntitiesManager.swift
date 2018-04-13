@@ -19,7 +19,6 @@ class MockEntitiesManager: DatabaseManager {
     }()
 
     lazy var mockPersistantContainer: NSPersistentContainer = {
-
         let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: self.managedObjectModel)
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
@@ -37,8 +36,7 @@ class MockEntitiesManager: DatabaseManager {
         return container
     }()
 
-    override func managedObjectContext() -> NSManagedObjectContext {
+    override var managedObjectContext: NSManagedObjectContext {
         return mockPersistantContainer.viewContext
     }
-
 }
