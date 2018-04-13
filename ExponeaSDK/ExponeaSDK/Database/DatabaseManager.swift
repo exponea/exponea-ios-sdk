@@ -67,7 +67,8 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
-    public func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) -> Bool {
+    ///     - timestamp: Update request timestamp
+    public func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Double?) -> Bool {
 
         let trackCustomer = TrackCustomers(context: managedObjectContext)
         let trackCustomerProperties = TrackCustomersProperties(context: managedObjectContext)
@@ -75,7 +76,7 @@ extension DatabaseManager: DatabaseManagerType {
         trackCustomer.projectToken = projectToken
         trackCustomer.customerIdKey = customerId.key
         trackCustomer.customerIdValue = customerId.value as? NSObject
-        trackCustomer.timestamp = NSDate().timeIntervalSince1970
+        trackCustomer.timestamp = timestamp ?? NSDate().timeIntervalSince1970
 
         // Add the customer properties to the property entity
         for property in properties {
@@ -108,10 +109,8 @@ extension DatabaseManager: DatabaseManagerType {
         trackEvents.projectToken = projectToken
         trackEvents.customerIdKey = customerId.key
         trackEvents.customerIdValue = customerId.value as? NSObject
+        trackEvents.timestamp = timestamp ?? NSDate().timeIntervalSince1970
 
-        if let timestamp = timestamp {
-            trackEvents.timestamp = timestamp
-        }
         if let eventType = eventType {
             trackEvents.eventType = eventType
         }
