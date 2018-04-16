@@ -93,7 +93,6 @@ public class Exponea {
     }
 
     deinit {
-        //NotificationCenter.default.removeObserver(self)
         removeObservers()
     }
 }
