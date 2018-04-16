@@ -43,8 +43,7 @@ extension TrackingManager: TrackingManagerType {
                               properties: properties,
                               timestamp: timestamp,
                               eventType: eventType)
-        case .track:
-            // TODO: save to db
+        case .track(let customerId, let properties, let timestamp):
             return false
 
         case .custom(let value):
@@ -59,6 +58,7 @@ extension TrackingManager {
         return database.trackInstall(projectToken: projectToken,
                                      properties: DeviceProperties().asKeyValueModel())
     }
+
     func trackEvent(projectToken: String,
                     customerId: KeyValueModel,
                     properties: [KeyValueModel],
@@ -69,5 +69,15 @@ extension TrackingManager {
                                     properties: properties,
                                     timestamp: timestamp,
                                     eventType: eventType)
+    }
+
+    func trackProperties(projectId: String,
+                         customerId: KeyValueModel,
+                         properties: [KeyValueModel],
+                         timestamp: Double?) -> Bool {
+        return database.trackCustomer(projectToken: projectId,
+                                      customerId: customerId,
+                                      properties: properties,
+                                      timestamp: timestamp)
     }
 }

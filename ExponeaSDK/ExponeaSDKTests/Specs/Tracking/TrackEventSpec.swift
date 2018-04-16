@@ -14,19 +14,14 @@ import Nimble
 
 class TrackEventSpec: QuickSpec {
 
-    // Preparing Mock Data
-    let customerId = KeyValueModel(key: "registered", value: "john.doe@exponea.com")
-    let properties = [KeyValueModel(key: "product_name", value: "iPad"),
-                      KeyValueModel(key: "price", value: 999.99)]
-    let timestamp = NSDate().timeIntervalSince1970
-
     override func spec() {
-        describe("Track a event customer") {
+        describe("Track a customer event") {
+            let data = TrackMockData()
             context("ExponeaSDK not configured") {
                 it("Event call should return false") {
-                    let result = Exponea.shared.trackCustomerEvent(customerId: self.customerId,
-                                                                   properties: self.properties,
-                                                                   timestamp: self.timestamp,
+                    let result = Exponea.shared.trackCustomerEvent(customerId: data.customerId,
+                                                                   properties: data.properties,
+                                                                   timestamp: data.timestamp,
                                                                    eventType: "purchase")
                     expect(result).to(beFalse())
                 }
