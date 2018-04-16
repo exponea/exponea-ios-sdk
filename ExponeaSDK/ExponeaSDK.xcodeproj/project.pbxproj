@@ -33,6 +33,8 @@
 		F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* DeviceProperties.swift */; };
 		F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F8207F787100C89A7F /* TrackerSpec.swift */; };
 		F0CA58FB207FA5E700C89A7F /* CampaignProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */; };
+		F0E5C9002080E97C002CECA5 /* TrackPropertiesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5C8FF2080E97C002CECA5 /* TrackPropertiesSpec.swift */; };
+		F0E5C9022080EA21002CECA5 /* TrackMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5C9012080EA21002CECA5 /* TrackMockData.swift */; };
 		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */; };
 		F0E757E5207CFA5300FE8C21 /* APIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* APIRouter.swift */; };
@@ -92,6 +94,8 @@
 		F0CA58F5207F612200C89A7F /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
 		F0CA58F8207F787100C89A7F /* TrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSpec.swift; sourceTree = "<group>"; };
 		F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignProperties.swift; sourceTree = "<group>"; };
+		F0E5C8FF2080E97C002CECA5 /* TrackPropertiesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackPropertiesSpec.swift; sourceTree = "<group>"; };
+		F0E5C9012080EA21002CECA5 /* TrackMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackMockData.swift; sourceTree = "<group>"; };
 		F0E757DF207CF99E00FE8C21 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfiguration.swift; sourceTree = "<group>"; };
 		F0E757E4207CFA5300FE8C21 /* APIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRouter.swift; sourceTree = "<group>"; };
@@ -304,6 +308,8 @@
 				F0CA58F8207F787100C89A7F /* TrackerSpec.swift */,
 				F03943A32080946E00FE7759 /* TrackEventSpec.swift */,
 				F03E4B8620848E970051ED80 /* TrackSessionSpec.swift */,
+				F0E5C8FF2080E97C002CECA5 /* TrackPropertiesSpec.swift */,
+				F0E5C9012080EA21002CECA5 /* TrackMockData.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -592,11 +598,13 @@
 				F03E4B8720848E970051ED80 /* TrackSessionSpec.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
 				F03943A42080946E00FE7759 /* TrackEventSpec.swift in Sources */,
+				F0E5C9002080E97C002CECA5 /* TrackPropertiesSpec.swift in Sources */,
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
 				019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */,
 				F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */,
 				F063BEAA207E36E600030811 /* MockEntitiesManager.swift in Sources */,
 				F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */,
+				F0E5C9022080EA21002CECA5 /* TrackMockData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

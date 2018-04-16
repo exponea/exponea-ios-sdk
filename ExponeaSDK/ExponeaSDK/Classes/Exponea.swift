@@ -109,17 +109,18 @@ internal extension Exponea {
         addSessionObserves()
     }
 
+    /// Send data to trackmanager to store the customer events into coredata
     internal func trackCustomerEvent(customerId: KeyValueModel,
                                      properties: [KeyValueModel],
                                      timestamp: Double?,
                                      eventType: String) -> Bool {
         return trackingManager.trackEvent(.event(customerId,
                                                  properties,
-                                                 timestamp ?? NSDate().timeIntervalSince1970,
+                                                 timestamp,
                                                  eventType),
                                           customData: nil)
     }
-
+  
     @objc internal func trackSessionStart() {
         if trackingManager.trackEvent(.sessionStart, customData: nil) {
             Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStarted)
@@ -141,6 +142,16 @@ internal extension Exponea {
                                                selector: #selector(trackSessionEnd),
                                                name: .UIApplicationDidEnterBackground,
                                                object: nil)
+    }
+  
+    /// Send data to trackmanager to store the customer properties into coredata
+    internal func trackCustomerProperties(customerId: KeyValueModel,
+                                          properties: [KeyValueModel],
+                                          timestamp: Double?) -> Bool {
+        return trackingManager.trackEvent(.track(customerId,
+                                                 properties,
+                                                 timestamp),
+                                          customData: nil)
     }
 }
 
@@ -196,5 +207,20 @@ public extension Exponea {
     ///
     public class func trackSessionEnd() {
         shared.trackSessionEnd()
+    }
+    /// Update the informed properties to a specific customer.
+    /// All properties will be stored into coredata until it will be
+    /// flushed (send to api).
+    ///
+    /// - Parameters:
+    ///     - customerId: Specify your customer with external id.
+    ///     - properties: Object with properties to be updated.
+    ///     - timestamp: Unix timestamp when the event was created.
+    public class func updateCustomerProperties(customerId: KeyValueModel,
+                                               properties: [KeyValueModel],
+                                               timestamp: Double?) -> Bool {
+        return shared.trackCustomerProperties(customerId: customerId,
+                                              properties: properties,
+                                              timestamp: timestamp)
     }
 }
