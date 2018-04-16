@@ -17,7 +17,7 @@ class LoggerSpec: QuickSpec {
     override func spec() {
         describe("A Logger") {
 
-            context("after being initialised", {
+            context("after being initialized", {
                 let logger = Logger()
 
                 it("should have default log level", closure: {

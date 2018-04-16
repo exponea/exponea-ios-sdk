@@ -18,10 +18,15 @@ enum Constants {
         static let headerAccept = "Accept"
         static let headerContentLenght = "Content-length"
     }
-    /// Plist keys
+    /// Keys for plist files and userdefaults
     enum Keys {
         static let token = "exponeaProjectIdKey"
         static let launchedBefore = "launchedBefore"
+        static let sessionStarted = "sessionStarted"
+        static let sessionEnded = "sessionEnded"
+        static let timeout = "sessionTimeout"
+        static let autoSessionTrack = "automaticSessionTrack"
+        static let appVersion = "CFBundleShortVersionString"
     }
     /// SDK Info
     enum DeviceInfo {
@@ -30,13 +35,26 @@ enum Constants {
         static let sdk = "iOS SDK"
         static let sdkVersion = "1.0.0"
         static let deviceModel = UIDevice.current.model
-        static let deviceType = ""
     }
+    /// Type of customer events
     enum EventTypes {
         static let installation = "installation"
+        static let sessionEnd = "session_end"
+        static let sessionStart = "session_start"
     }
+    /// Error messages
     enum ErrorMessages {
         static let tokenNotConfigured = "Project token is not configured. Please configure it before interact with the ExponeaSDK"
         static let sdkNotConfigured = "ExponeaSDK isn't configured."
+        static let couldNotStartSession = "Could not start new session. Please verify the error log for more information"
+        static let couldNotEndSession = "Could not end session. Please verify the error log for more information"
+    }
+    /// Success messages
+    enum SuccessMessages {
+        static let sessionStarted = "Session succesfully started"
+    }
+    /// Default session values
+    enum Session {
+        static let defaultTimeout = 6.0
     }
 }
