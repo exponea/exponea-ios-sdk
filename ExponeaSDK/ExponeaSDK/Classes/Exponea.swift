@@ -74,6 +74,9 @@ public class Exponea {
                                                configuration: self.configuration)
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }
 
 internal extension Exponea {
