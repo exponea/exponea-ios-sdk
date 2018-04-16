@@ -60,7 +60,7 @@ public class DatabaseManager {
 }
 
 extension DatabaseManager: DatabaseManagerType {
-
+    
     /// Update the Customer properties and persists it into the CoreData in the TrackCustomer Entity.
     ///
     /// - Parameters:
@@ -134,7 +134,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - properties: Properties that should be updated
     ///     - eventType: Type of event to be tracked
-    public func trackInstall(projectToken: String, properties: [KeyValueModel]) -> Bool {
+    public func trackEvents(type: String, projectToken: String, properties: [KeyValueModel]) -> Bool {
         let trackEvents = TrackEvents(context: managedObjectContext)
         let trackEventsProperties = TrackEventsProperties(context: managedObjectContext)
 

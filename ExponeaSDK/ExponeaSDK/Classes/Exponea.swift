@@ -22,7 +22,7 @@ public class Exponea {
         return false
     }
 
-    /// Identification of your project
+    /// Identification of the project
     public var projectToken: String? {
         get {
             return configuration.projectToken
@@ -36,6 +36,16 @@ public class Exponea {
         }
     }
 
+    /// Default timeout value for tracking the sessions
+    public var sessionTimeout: Double {
+        get {
+            return configuration.sessionTimeout
+        }
+        set {
+            configuration.sessionTimeout = newValue
+        }
+    }
+
     /// A logger used to log all messages from the SDK.
     public static var logger: Logger = Logger()
 
@@ -45,8 +55,10 @@ public class Exponea {
     let trackingManager: TrackingManagerType
 
     init(database: DatabaseManager, repository: TrackingRepository) {
-        self.trackingManager = TrackingManager(database: database, repository: repository)
         self.configuration = Configuration()
+        self.trackingManager = TrackingManager(database: database,
+                                               repository: repository,
+                                               configuration: self.configuration)
     }
 
     public init() {
@@ -56,8 +68,10 @@ public class Exponea {
                                              contentType: Constants.Repository.contentType)
         let repository = ConnectionManager(configuration: configuration)
 
-        self.trackingManager = TrackingManager(database: database, repository: repository)
         self.configuration = Configuration()
+        self.trackingManager = TrackingManager(database: database,
+                                               repository: repository,
+                                               configuration: self.configuration)
     }
 
 }
@@ -66,6 +80,7 @@ internal extension Exponea {
     internal func configure(projectToken: String) {
         configuration = Configuration(projectToken: projectToken)
     }
+
     internal func configure(plistName: String) {
         configuration = Configuration(plistName: plistName)
     }
@@ -85,6 +100,10 @@ internal extension Exponea {
         }
         /// Set the value to true if event was executed successfully
         UserDefaults.standard.set(true, forKey: Constants.Keys.launchedBefore)
+        /// Set default timeout session time with default value
+        UserDefaults.standard.set(Constants.Session.defaultTimeout, forKey: Constants.Keys.timeout)
+        /// Add observers to start and stop tracking sessions.
+        addSessionObserves()
     }
 
     internal func trackCustomerEvent(customerId: KeyValueModel,
@@ -96,6 +115,34 @@ internal extension Exponea {
                                                  timestamp ?? NSDate().timeIntervalSince1970,
                                                  eventType),
                                           customData: nil)
+    }
+
+    internal func setTimeoutSession(_ newTimeout: Double) -> Bool {
+        UserDefaults.standard.set(newTimeout, forKey: Constants.Keys.timeout)
+        return true
+    }
+
+    @objc internal func trackSessionStart() {
+        if trackingManager.trackEvent(.sessionStart, customData: nil) {
+            Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStarted)
+        }
+    }
+
+    @objc internal func trackSessionEnd() {
+        configuration.lastSessionEndend = NSDate().timeIntervalSince1970
+    }
+
+    /// Add to notification center observers to control when the app become active
+    /// or enter in background.
+    internal func addSessionObserves() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(trackSessionStart),
+                                               name: .UIApplicationDidBecomeActive,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(trackSessionEnd),
+                                               name: .UIApplicationDidEnterBackground,
+                                               object: nil)
     }
 }
 
@@ -137,5 +184,19 @@ public extension Exponea {
                                          properties: properties,
                                          timestamp: timestamp,
                                          eventType: eventType)
+    }
+
+    /// Restart any tasks that were paused (or not yet started) while the application was inactive.
+    /// If the application was previously in the background, optionally refresh the user interface.
+    ///
+    public class func trackSessionStart() {
+        shared.trackSessionStart()
+    }
+
+    /// Restart any tasks that were paused (or not yet started) while the application was inactive.
+    /// If the application was previously in the background, optionally refresh the user interface.
+    ///
+    public class func trackSessionEnd() {
+        shared.trackSessionEnd()
     }
 }

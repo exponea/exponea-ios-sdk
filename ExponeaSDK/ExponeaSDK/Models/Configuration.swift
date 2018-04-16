@@ -11,6 +11,30 @@ import Foundation
 struct Configuration {
 
     internal var projectToken: String?
+    internal var sessionTimeout: Double {
+        get {
+            return UserDefaults.standard.double(forKey: Constants.Keys.timeout)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Constants.Keys.timeout)
+        }
+    }
+    internal var lastSessionStarted: Double {
+        get {
+            return UserDefaults.standard.double(forKey: Constants.Keys.sessionStarted)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionStarted)
+        }
+    }
+    internal var lastSessionEndend: Double {
+        get {
+            return UserDefaults.standard.double(forKey: Constants.Keys.sessionEnded)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionEnded)
+        }
+    }
 
     init() {}
 
