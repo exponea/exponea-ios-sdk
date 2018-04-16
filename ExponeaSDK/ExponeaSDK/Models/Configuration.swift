@@ -35,6 +35,14 @@ struct Configuration {
             UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionEnded)
         }
     }
+    internal var autoSessionTracking: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: Constants.Keys.autoSessionTrack)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Constants.Keys.autoSessionTrack)
+        }
+    }
 
     init() {}
 

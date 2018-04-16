@@ -46,6 +46,24 @@ public class Exponea {
         }
     }
 
+    /// Default value for tracking the sessions automatically
+    public var autoSessionTracking: Bool {
+        get {
+            return configuration.autoSessionTracking
+        }
+        set {
+            configuration.autoSessionTracking = newValue
+            /// Add the observers when the automatic session tracking is true.
+            if newValue {
+                addSessionObserves()
+            }
+            /// Remove the observers when the automatic session tracking is false.
+            else {
+                removeObservers()
+            }
+        }
+    }
+
     /// A logger used to log all messages from the SDK.
     public static var logger: Logger = Logger()
 
@@ -75,7 +93,8 @@ public class Exponea {
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        //NotificationCenter.default.removeObserver(self)
+        removeObservers()
     }
 }
 
@@ -105,8 +124,8 @@ internal extension Exponea {
         UserDefaults.standard.set(true, forKey: Constants.Keys.launchedBefore)
         /// Set default timeout session time with default value
         UserDefaults.standard.set(Constants.Session.defaultTimeout, forKey: Constants.Keys.timeout)
-        /// Add observers to start and stop tracking sessions.
-        addSessionObserves()
+        /// Seting the automatic session tracking default value
+        autoSessionTracking = true
     }
 
     /// Send data to trackmanager to store the customer events into coredata
@@ -120,7 +139,7 @@ internal extension Exponea {
                                                  eventType),
                                           customData: nil)
     }
-  
+
     @objc internal func trackSessionStart() {
         if trackingManager.trackEvent(.sessionStart, customData: nil) {
             Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStarted)
@@ -131,8 +150,8 @@ internal extension Exponea {
         configuration.lastSessionEndend = NSDate().timeIntervalSince1970
     }
 
-    /// Add to notification center observers to control when the app become active
-    /// or enter in background.
+    /// Add observers to notification center in order to control when the
+    /// app become active or enter in background.
     internal func addSessionObserves() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(trackSessionStart),
@@ -143,7 +162,11 @@ internal extension Exponea {
                                                name: .UIApplicationDidEnterBackground,
                                                object: nil)
     }
-  
+
+    internal func removeObservers() {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     /// Send data to trackmanager to store the customer properties into coredata
     internal func trackCustomerProperties(customerId: KeyValueModel,
                                           properties: [KeyValueModel],

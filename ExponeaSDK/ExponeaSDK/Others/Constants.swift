@@ -25,6 +25,7 @@ enum Constants {
         static let sessionStarted = "sessionStarted"
         static let sessionEnded = "sessionEnded"
         static let timeout = "sessionTimeout"
+        static let autoSessionTrack = "automaticSessionTrack"
         static let appVersion = "CFBundleShortVersionString"
     }
     /// SDK Info
