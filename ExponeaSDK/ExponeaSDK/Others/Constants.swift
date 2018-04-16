@@ -34,7 +34,6 @@ enum Constants {
         static let sdk = "iOS SDK"
         static let sdkVersion = "1.0.0"
         static let deviceModel = UIDevice.current.model
-        static let deviceType = ""
     }
     /// Type of customer events
     enum EventTypes {
@@ -49,6 +48,7 @@ enum Constants {
         static let couldNotStartSession = "Could not start new session. Please verify the error log for more information"
         static let couldNotEndSession = "Could not end session. Please verify the error log for more information"
     }
+    /// Success messages
     enum SuccessMessages {
         static let sessionStarted = "Session succesfully started"
     }

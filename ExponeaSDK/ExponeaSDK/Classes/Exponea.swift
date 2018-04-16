@@ -117,11 +117,6 @@ internal extension Exponea {
                                           customData: nil)
     }
 
-    internal func setTimeoutSession(_ newTimeout: Double) -> Bool {
-        UserDefaults.standard.set(newTimeout, forKey: Constants.Keys.timeout)
-        return true
-    }
-
     @objc internal func trackSessionStart() {
         if trackingManager.trackEvent(.sessionStart, customData: nil) {
             Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStarted)

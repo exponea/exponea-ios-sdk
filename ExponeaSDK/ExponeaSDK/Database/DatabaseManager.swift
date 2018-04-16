@@ -60,7 +60,7 @@ public class DatabaseManager {
 }
 
 extension DatabaseManager: DatabaseManagerType {
-    
+
     /// Update the Customer properties and persists it into the CoreData in the TrackCustomer Entity.
     ///
     /// - Parameters:
@@ -139,7 +139,7 @@ extension DatabaseManager: DatabaseManagerType {
         let trackEventsProperties = TrackEventsProperties(context: managedObjectContext)
 
         trackEvents.projectToken = projectToken
-        trackEvents.eventType = Constants.EventTypes.installation
+        trackEvents.eventType = type
 
         // Add the event properties to the events entity
         for property in properties {
