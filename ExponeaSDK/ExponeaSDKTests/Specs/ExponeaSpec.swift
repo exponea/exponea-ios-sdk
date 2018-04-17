@@ -14,53 +14,64 @@ import Nimble
 
 class ExponeaSpec: QuickSpec {
 
-    // FIXME: Adjust MockEntitiesManager and exponeaspec to test coredata properly
     override func spec() {
-/*
+
         let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
                                              contentType: Constants.Repository.contentType)
         let repository = ConnectionManager(configuration: configuration)
 
-        let exponea = Exponea(database: MockEntitiesManager(), repository: repository)
+        describe("A SDK") {
 
-        describe("Configure SDK") {
-
-            context("After being properly initialized token with string") {
-                it("Configuration with token string should be initialized") {
-                    exponea.configure(projectToken: "123")
-                    expect(exponea.configured).to(beTrue())
-                    expect(exponea.projectToken).to(equal("123"))
+            context("After beign initialized") {
+                let exponea = Exponea(repository: repository)
+                it("Should not be configured") {
+                    expect(exponea.configured).to(beFalse())
+                }
+                it("Should not return a project token") {
+                    expect(exponea.projectToken).to(beNil())
+                }
+                it("Should return the default value for timeout") {
+                    expect(exponea.sessionTimeout).toNot(equal(Constants.Session.defaultTimeout))
                 }
             }
-            context("After being properly initialized token with plist") {
-                it("Configuration with plist token should be initialized") {
-                    Exponea.configure(plistName: "ExponeaConfig.plist")
+
+            context("After beign configured from string") {
+                let exponea = Exponea(repository: repository)
+                exponea.configure(projectToken: "ProjectTokenString")
+                it("Should be configured") {
                     expect(exponea.configured).to(beTrue())
+                }
+                it("Should have a project token") {
+                    expect(exponea.projectToken).toNot(beNil())
+                }
+                it("Should return the correct project token") {
+                    expect(exponea.projectToken).to(equal("ProjectTokenString"))
+                }
+            }
+
+            context("After beign configured from plist file") {
+                let exponea = Exponea(repository: repository)
+                exponea.configure(plistName: "ExponeaConfig.plist")
+                it("Should have a project token") {
+                    expect(exponea.projectToken).toNot(beNil())
+                }
+                it("Should return the correct project token") {
                     expect(exponea.projectToken).to(equal("ExponeaProjectIdKeyFromPList"))
                 }
             }
-        }
 
-        describe("Check projectId (token)") {
-
-            Exponea.configure(plistName: "ExponeaConfig.plist")
-
-            context("Get projectId (token) after it's being setup") {
-                it("ProjectId string should be returned") {
-                    expect(exponea.projectToken).notTo(beNil())
-                    expect(exponea.projectToken).to(equal("ExponeaProjectIdKeyFromPList"))
+            context("Setting exponea properties") {
+                let exponea = Exponea(repository: repository)
+                exponea.configure(plistName: "ExponeaConfig.plist")
+                exponea.projectToken = "NewProjectToken"
+                it("Should return the new token") {
+                    expect(exponea.projectToken).to(equal("NewProjectToken"))
                 }
-            }
-            context("Update projectId (token)") {
-                it("ProjectId should be updated") {
-                    let oldProjectId = exponea.projectToken
-                    exponea.projectToken = "NewProjectId"
-                    let newProjectId = exponea.projectToken
-                    expect(oldProjectId).notTo(equal(newProjectId))
-                    expect(newProjectId).to(equal("NewProjectId"))
+                it("Should return true for auto tracking") {
+                    exponea.autoSessionTracking = true
+                    expect(exponea.autoSessionTracking).to(beTrue())
                 }
             }
         }
- */
     }
 }

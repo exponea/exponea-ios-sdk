@@ -13,15 +13,19 @@ import CoreData
 /// Persisted data will be used to interact with the Exponea API.
 public class DatabaseManager {
 
-    lazy var persistentContainer: NSPersistentContainer = {
+    internal lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "DatabaseModel")
-        container.loadPersistentStores(completionHandler: { (_, error) in //(storeDescription, error) in
+        container.loadPersistentStores(completionHandler: { (_, error) in
             if let error = error {
                 Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
             }
         })
         return container
     }()
+
+    init() {
+        persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
+    }
 
     /// Managed Context for Core Data
     var managedObjectContext: NSManagedObjectContext {
@@ -61,36 +65,7 @@ public class DatabaseManager {
 
 extension DatabaseManager: DatabaseManagerType {
 
-    /// Update the Customer properties and persists it into the CoreData in the TrackCustomer Entity.
-    ///
-    /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - properties: Properties that should be updated
-    ///     - timestamp: Update request timestamp
-    public func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Double?) -> Bool {
-
-        let trackCustomer = TrackCustomers(context: managedObjectContext)
-        let trackCustomerProperties = TrackCustomersProperties(context: managedObjectContext)
-
-        trackCustomer.projectToken = projectToken
-        trackCustomer.customerIdKey = customerId.key
-        trackCustomer.customerIdValue = customerId.value as? NSObject
-        trackCustomer.timestamp = timestamp ?? NSDate().timeIntervalSince1970
-
-        // Add the customer properties to the property entity
-        for property in properties {
-            trackCustomerProperties.key = property.key
-            trackCustomerProperties.value = property.value as? NSObject
-
-            trackCustomer.addToTrackCustomerProperties(trackCustomerProperties)
-        }
-
-        // Save the customer properties into CoreData
-        return saveContext()
-    }
-
-    /// Add events into a customer
+    /// Add any type of event into coredata.
     ///
     /// - Parameters:
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
@@ -99,7 +74,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
     public func trackEvents(projectToken: String,
-                            customerId: KeyValueModel,
+                            customerId: KeyValueModel?,
                             properties: [KeyValueModel],
                             timestamp: Double?,
                             eventType: String?) -> Bool {
@@ -107,38 +82,16 @@ extension DatabaseManager: DatabaseManagerType {
         let trackEventsProperties = TrackEventsProperties(context: managedObjectContext)
 
         trackEvents.projectToken = projectToken
-        trackEvents.customerIdKey = customerId.key
-        trackEvents.customerIdValue = customerId.value as? NSObject
         trackEvents.timestamp = timestamp ?? NSDate().timeIntervalSince1970
+
+        if let customerId = customerId {
+            trackEvents.customerIdKey = customerId.key
+            trackEvents.customerIdValue = customerId.value as? NSObject
+        }
 
         if let eventType = eventType {
             trackEvents.eventType = eventType
         }
-
-        // Add the event properties to the events entity
-        for property in properties {
-            trackEventsProperties.key = property.key
-            trackEventsProperties.value = property.value as? NSObject
-            trackEvents.addToTrackEventsProperties(trackEventsProperties)
-        }
-
-        // Save the customer properties into CoreData
-        return saveContext()
-    }
-
-    /// Track the device information when the user install the APP for the first time. This event
-    /// is fired only once for the whole APP lifetime.
-    ///
-    /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - properties: Properties that should be updated
-    ///     - eventType: Type of event to be tracked
-    public func trackEvents(type: String, projectToken: String, properties: [KeyValueModel]) -> Bool {
-        let trackEvents = TrackEvents(context: managedObjectContext)
-        let trackEventsProperties = TrackEventsProperties(context: managedObjectContext)
-
-        trackEvents.projectToken = projectToken
-        trackEvents.eventType = type
 
         // Add the event properties to the events entity
         for property in properties {

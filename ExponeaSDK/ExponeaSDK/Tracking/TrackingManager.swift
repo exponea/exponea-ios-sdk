@@ -36,14 +36,12 @@ extension TrackingManager: TrackingManagerType {
         case .sessionEnd:
             // TODO: save to db
             return false
-        case .event(let customerId, let properties, let timestamp, let eventType):
+        case .track(let customerId, let properties, let timestamp, let eventType):
             return trackEvent(projectToken: projectToken,
                               customerId: customerId,
                               properties: properties,
                               timestamp: timestamp,
                               eventType: eventType)
-        case .track(let customerId, let properties, let timestamp):
-            return false
         case .custom(let value):
             // TODO: save to db
             return false
@@ -53,9 +51,11 @@ extension TrackingManager: TrackingManagerType {
 
 extension TrackingManager {
     func installEvent(projectToken: String) -> Bool {
-        return database.trackEvents(type: Constants.EventTypes.installation,
-                                    projectToken: projectToken,
-                                    properties: DeviceProperties().asKeyValueModel())
+        return database.trackEvents(projectToken: projectToken,
+                                    customerId: nil,
+                                    properties: DeviceProperties().asKeyValueModel(),
+                                    timestamp: nil,
+                                    eventType: Constants.EventTypes.installation)
     }
 
     func trackEvent(projectToken: String,
@@ -113,14 +113,17 @@ extension TrackingManager {
         /// Prepare data to persist into coredata.
         var properties = DeviceProperties().asKeyValueModel()
         /// Adding session start properties.
-        properties.append(KeyValueModel(key: "session_start", value: configuration.lastSessionStarted))
+        properties.append(KeyValueModel(key: "event_type", value: Constants.EventTypes.sessionStart))
+        properties.append(KeyValueModel(key: "timestamp", value: configuration.lastSessionStarted))
 
         if let appVersion = Bundle.main.value(forKey: Constants.Keys.appVersion) {
             properties.append(KeyValueModel(key: "app_version", value: appVersion))
         }
-        return database.trackEvents(type: Constants.EventTypes.sessionStart,
-                                    projectToken: projectToken,
-                                    properties: properties)
+        return database.trackEvents(projectToken: projectToken,
+                                    customerId: nil,
+                                    properties: properties,
+                                    timestamp: nil,
+                                    eventType: Constants.EventTypes.sessionStart)
     }
 
     fileprivate func trackEndSession(projectToken: String) -> Bool {
@@ -129,24 +132,17 @@ extension TrackingManager {
         /// Calculate the duration of the last session.
         let duration = configuration.lastSessionStarted - configuration.lastSessionEndend
         /// Adding session end properties.
+        properties.append(KeyValueModel(key: "event_type", value: Constants.EventTypes.sessionStart))
+        properties.append(KeyValueModel(key: "timestamp", value: configuration.lastSessionEndend))
         properties.append(KeyValueModel(key: "duration", value: duration))
-        properties.append(KeyValueModel(key: "session_end", value: configuration.lastSessionEndend))
 
         if let appVersion = Bundle.main.value(forKey: Constants.Keys.appVersion) {
             properties.append(KeyValueModel(key: "app_version", value: appVersion))
         }
-        return database.trackEvents(type: Constants.EventTypes.sessionEnd,
-                                    projectToken: projectToken,
-                                    properties: properties)
-    }
-  
-    func trackProperties(projectId: String,
-                         customerId: KeyValueModel,
-                         properties: [KeyValueModel],
-                         timestamp: Double?) -> Bool {
-        return database.trackCustomer(projectToken: projectId,
-                                      customerId: customerId,
-                                      properties: properties,
-                                      timestamp: timestamp)
+        return database.trackEvents(projectToken: projectToken,
+                                    customerId: nil,
+                                    properties: properties,
+                                    timestamp: nil,
+                                    eventType: Constants.EventTypes.sessionEnd)
     }
 }

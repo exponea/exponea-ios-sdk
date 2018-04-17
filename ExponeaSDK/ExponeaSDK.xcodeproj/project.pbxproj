@@ -28,12 +28,12 @@
 		F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = F021E85C206CF10200788ABC /* ExponeaSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F03943A42080946E00FE7759 /* TrackEventSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03943A32080946E00FE7759 /* TrackEventSpec.swift */; };
 		F03E4B8720848E970051ED80 /* TrackSessionSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03E4B8620848E970051ED80 /* TrackSessionSpec.swift */; };
-		F063BEAA207E36E600030811 /* MockEntitiesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockEntitiesManager.swift */; };
+		F063BEAA207E36E600030811 /* MockPersistentContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockPersistentContainer.swift */; };
+		F06744072085E983003C0293 /* StubEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06744062085E983003C0293 /* StubEntities.swift */; };
 		F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */; };
 		F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* DeviceProperties.swift */; };
 		F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F8207F787100C89A7F /* TrackerSpec.swift */; };
 		F0CA58FB207FA5E700C89A7F /* CampaignProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */; };
-		F0E5C9002080E97C002CECA5 /* TrackPropertiesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5C8FF2080E97C002CECA5 /* TrackPropertiesSpec.swift */; };
 		F0E5C9022080EA21002CECA5 /* TrackMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5C9012080EA21002CECA5 /* TrackMockData.swift */; };
 		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */; };
@@ -89,12 +89,12 @@
 		F021E869206CF10200788ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F03943A32080946E00FE7759 /* TrackEventSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackEventSpec.swift; sourceTree = "<group>"; };
 		F03E4B8620848E970051ED80 /* TrackSessionSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackSessionSpec.swift; sourceTree = "<group>"; };
-		F063BEA9207E36E600030811 /* MockEntitiesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEntitiesManager.swift; sourceTree = "<group>"; };
+		F063BEA9207E36E600030811 /* MockPersistentContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPersistentContainer.swift; sourceTree = "<group>"; };
+		F06744062085E983003C0293 /* StubEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubEntities.swift; sourceTree = "<group>"; };
 		F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesModel.swift; sourceTree = "<group>"; };
 		F0CA58F5207F612200C89A7F /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
 		F0CA58F8207F787100C89A7F /* TrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSpec.swift; sourceTree = "<group>"; };
 		F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignProperties.swift; sourceTree = "<group>"; };
-		F0E5C8FF2080E97C002CECA5 /* TrackPropertiesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackPropertiesSpec.swift; sourceTree = "<group>"; };
 		F0E5C9012080EA21002CECA5 /* TrackMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackMockData.swift; sourceTree = "<group>"; };
 		F0E757DF207CF99E00FE8C21 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F0E757E2207CFA3100FE8C21 /* APIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfiguration.swift; sourceTree = "<group>"; };
@@ -167,7 +167,8 @@
 			isa = PBXGroup;
 			children = (
 				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
-				F063BEA9207E36E600030811 /* MockEntitiesManager.swift */,
+				F063BEA9207E36E600030811 /* MockPersistentContainer.swift */,
+				F06744062085E983003C0293 /* StubEntities.swift */,
 				F0CA58F7207F783E00C89A7F /* Tracking */,
 				01EC2D9F207E3CDB0031BFEB /* Logging */,
 				F01ADE602084D56300E20662 /* Models */,
@@ -308,7 +309,6 @@
 				F0CA58F8207F787100C89A7F /* TrackerSpec.swift */,
 				F03943A32080946E00FE7759 /* TrackEventSpec.swift */,
 				F03E4B8620848E970051ED80 /* TrackSessionSpec.swift */,
-				F0E5C8FF2080E97C002CECA5 /* TrackPropertiesSpec.swift */,
 				F0E5C9012080EA21002CECA5 /* TrackMockData.swift */,
 			);
 			path = Tracking;
@@ -598,11 +598,11 @@
 				F03E4B8720848E970051ED80 /* TrackSessionSpec.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
 				F03943A42080946E00FE7759 /* TrackEventSpec.swift in Sources */,
-				F0E5C9002080E97C002CECA5 /* TrackPropertiesSpec.swift in Sources */,
+				F06744072085E983003C0293 /* StubEntities.swift in Sources */,
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
 				019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */,
 				F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */,
-				F063BEAA207E36E600030811 /* MockEntitiesManager.swift in Sources */,
+				F063BEAA207E36E600030811 /* MockPersistentContainer.swift in Sources */,
 				F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */,
 				F0E5C9022080EA21002CECA5 /* TrackMockData.swift in Sources */,
 			);
