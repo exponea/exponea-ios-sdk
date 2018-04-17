@@ -7,12 +7,14 @@
 //
 
 import Foundation
+import CoreData
 
-///
 public class Exponea {
 
     /// The configuration object containing all the config data for the shared instance.
     fileprivate(set) var configuration: Configuration!
+    /// Database manager responsable for data persistance.
+    fileprivate(set) var database: DatabaseManager!
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
@@ -21,7 +23,6 @@ public class Exponea {
         }
         return false
     }
-
     /// Identification of the project
     public var projectToken: String? {
         get {
@@ -35,7 +36,6 @@ public class Exponea {
             configuration.projectToken = newValue
         }
     }
-
     /// Default timeout value for tracking the sessions
     public var sessionTimeout: Double {
         get {
@@ -45,7 +45,6 @@ public class Exponea {
             configuration.sessionTimeout = newValue
         }
     }
-
     /// Default value for tracking the sessions automatically
     public var autoSessionTracking: Bool {
         get {
@@ -72,22 +71,29 @@ public class Exponea {
 
     let trackingManager: TrackingManagerType
 
-    init(database: DatabaseManager, repository: TrackingRepository) {
+    init(repository: TrackingRepository, container: NSPersistentContainer) {
+        /// SDK configuration.
         self.configuration = Configuration()
+        /// Initialing database manager with specific container (mock data).
+        self.database = DatabaseManager(container: container)
+        /// Initializing tracking manager.
         self.trackingManager = TrackingManager(database: database,
                                                repository: repository,
                                                configuration: self.configuration)
     }
 
     public init() {
-        let database = DatabaseManager()
-
-        let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
-                                             contentType: Constants.Repository.contentType)
-        let repository = ConnectionManager(configuration: configuration)
-
+        /// SDK configuration.
         self.configuration = Configuration()
-        self.trackingManager = TrackingManager(database: database,
+        /// Initializing database manager with default container
+        self.database = DatabaseManager(container: self.configuration.persistentContainer)
+        /// API configuration.
+        let apiConfiguration = APIConfiguration(baseURL: Constants.Repository.baseURL,
+                                             contentType: Constants.Repository.contentType)
+        /// Initializing repository.
+        let repository = ConnectionManager(configuration: apiConfiguration)
+        /// Initializing tracking manager.
+        self.trackingManager = TrackingManager(database: self.database,
                                                repository: repository,
                                                configuration: self.configuration)
     }
@@ -128,11 +134,25 @@ internal extension Exponea {
     }
 
     /// Send data to trackmanager to store the customer events into coredata
+    /*
     internal func trackCustomerEvent(customerId: KeyValueModel,
                                      properties: [KeyValueModel],
                                      timestamp: Double?,
                                      eventType: String) -> Bool {
         return trackingManager.trackEvent(.event(customerId,
+                                                 properties,
+                                                 timestamp,
+                                                 eventType),
+                                          customData: nil)
+    }
+ */
+    
+    /// Send data to trackmanager to store the customer events into coredata
+    internal func trackEvent(customerId: KeyValueModel,
+                             properties: [KeyValueModel],
+                             timestamp: Double?,
+                             eventType: String?) -> Bool {
+        return trackingManager.trackEvent(.track(customerId,
                                                  properties,
                                                  timestamp,
                                                  eventType),
@@ -172,7 +192,8 @@ internal extension Exponea {
                                           timestamp: Double?) -> Bool {
         return trackingManager.trackEvent(.track(customerId,
                                                  properties,
-                                                 timestamp),
+                                                 timestamp,
+                                                 nil),
                                           customData: nil)
     }
 }
@@ -211,10 +232,10 @@ public extension Exponea {
                                          properties: [KeyValueModel],
                                          timestamp: Double?,
                                          eventType: String) -> Bool {
-        return shared.trackCustomerEvent(customerId: customerId,
-                                         properties: properties,
-                                         timestamp: timestamp,
-                                         eventType: eventType)
+        return shared.trackEvent(customerId: customerId,
+                                 properties: properties,
+                                 timestamp: timestamp,
+                                 eventType: eventType)
     }
 
     /// Restart any tasks that were paused (or not yet started) while the application was inactive.
@@ -230,6 +251,7 @@ public extension Exponea {
     public class func trackSessionEnd() {
         shared.trackSessionEnd()
     }
+
     /// Update the informed properties to a specific customer.
     /// All properties will be stored into coredata until it will be
     /// flushed (send to api).
@@ -241,8 +263,9 @@ public extension Exponea {
     public class func updateCustomerProperties(customerId: KeyValueModel,
                                                properties: [KeyValueModel],
                                                timestamp: Double?) -> Bool {
-        return shared.trackCustomerProperties(customerId: customerId,
-                                              properties: properties,
-                                              timestamp: timestamp)
+        return shared.trackEvent(customerId: customerId,
+                                 properties: properties,
+                                 timestamp: timestamp,
+                                 eventType: nil)
     }
 }

@@ -18,8 +18,8 @@ indirect enum EventType {
     case install
     case sessionStart
     case sessionEnd
-    case event(KeyValueModel, [KeyValueModel], Double?, String)
-    case track(KeyValueModel, [KeyValueModel], Double?)
+    //case event(KeyValueModel, [KeyValueModel], Double?, String)
+    case track(KeyValueModel, [KeyValueModel], Double?, String?)
     case custom(String)
 }
 

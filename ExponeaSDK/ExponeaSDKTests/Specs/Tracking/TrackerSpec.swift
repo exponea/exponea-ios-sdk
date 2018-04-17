@@ -16,18 +16,22 @@ class TrackerSpec: QuickSpec {
 
     override func spec() {
 
+//        let mockContainer = MockPersistentContainer()
+//        let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
+//                                             contentType: Constants.Repository.contentType)
+//        let repository = ConnectionManager(configuration: configuration)
+//        let exponea = Exponea(repository: repository, container: mockContainer.persistantContainer)
+//        let data = TrackMockData()
+
         describe("A tracker") {
 
-            //let database = DatabaseManager()
-            //let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
-//                                                 contentType: Constants.Repository.contentType)
-            //let repository = ConnectionManager(configuration: configuration)
-
-            context("After being properly initialized") {
-                //let trackingManager = TrackingManager(database: database, repository: repository)
-                it("Should not track install event") {
-                    // TODO: Implement after find a way to test CoreData calls.
-                }
+            context("After beign initialized") {
+                // FIXME: Find out how to use stubs instead of coredata classes.
+//                let customerEvent = exponea.trackCustomerEvent(customerId: data.customerId,
+//                                                               properties: data.properties,
+//                                                               timestamp: data.timestamp,
+//                                                               eventType: "purchase")
+                //expect(customerEvent).to(beTrue())
             }
         }
     }
