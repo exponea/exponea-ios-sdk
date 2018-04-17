@@ -13,10 +13,17 @@ import CoreData
 /// Persisted data will be used to interact with the Exponea API.
 public class DatabaseManager {
 
-    let persistentContainer: NSPersistentContainer
+    internal lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "DatabaseModel")
+        container.loadPersistentStores(completionHandler: { (_, error) in
+            if let error = error {
+                Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
+            }
+        })
+        return container
+    }()
 
-    init(container: NSPersistentContainer) {
-        self.persistentContainer = container
+    init() {
         persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
     }
 

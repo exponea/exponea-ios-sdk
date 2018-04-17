@@ -7,14 +7,13 @@
 //
 
 import Foundation
-import CoreData
 
 public class Exponea {
 
     /// The configuration object containing all the config data for the shared instance.
     fileprivate(set) var configuration: Configuration!
     /// Database manager responsable for data persistance.
-    fileprivate(set) var database: DatabaseManager!
+    let database: DatabaseManager
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
@@ -71,11 +70,11 @@ public class Exponea {
 
     let trackingManager: TrackingManagerType
 
-    init(repository: TrackingRepository, container: NSPersistentContainer) {
+    init(repository: TrackingRepository) {
         /// SDK configuration.
         self.configuration = Configuration()
         /// Initialing database manager with specific container (mock data).
-        self.database = DatabaseManager(container: container)
+        self.database = DatabaseManager()
         /// Initializing tracking manager.
         self.trackingManager = TrackingManager(database: database,
                                                repository: repository,
@@ -86,7 +85,7 @@ public class Exponea {
         /// SDK configuration.
         self.configuration = Configuration()
         /// Initializing database manager with default container
-        self.database = DatabaseManager(container: self.configuration.persistentContainer)
+        self.database = DatabaseManager()
         /// API configuration.
         let apiConfiguration = APIConfiguration(baseURL: Constants.Repository.baseURL,
                                              contentType: Constants.Repository.contentType)

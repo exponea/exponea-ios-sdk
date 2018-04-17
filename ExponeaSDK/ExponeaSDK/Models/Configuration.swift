@@ -44,15 +44,6 @@ struct Configuration {
             UserDefaults.standard.set(newValue, forKey: Constants.Keys.autoSessionTrack)
         }
     }
-    internal lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "DatabaseModel")
-        container.loadPersistentStores(completionHandler: { (_, error) in
-            if let error = error {
-                Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
-            }
-        })
-        return container
-    }()
 
     init() {}
 

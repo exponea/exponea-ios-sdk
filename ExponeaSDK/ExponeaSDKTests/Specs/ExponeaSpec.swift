@@ -16,7 +16,7 @@ class ExponeaSpec: QuickSpec {
 
     override func spec() {
 
-        let mockContainer = MockPersistentContainer()
+        //let mockContainer = MockPersistentContainer()
         let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
                                              contentType: Constants.Repository.contentType)
         let repository = ConnectionManager(configuration: configuration)
@@ -24,7 +24,7 @@ class ExponeaSpec: QuickSpec {
         describe("A SDK") {
 
             context("After beign initialized") {
-                let exponea = Exponea(repository: repository, container: mockContainer.persistantContainer)
+                let exponea = Exponea(repository: repository)
                 it("Should not be configured") {
                     expect(exponea.configured).to(beFalse())
                 }
@@ -37,7 +37,7 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("After beign configured from string") {
-                let exponea = Exponea(repository: repository, container: mockContainer.persistantContainer)
+                let exponea = Exponea(repository: repository)
                 exponea.configure(projectToken: "ProjectTokenString")
                 it("Should be configured") {
                     expect(exponea.configured).to(beTrue())
@@ -51,7 +51,7 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("After beign configured from plist file") {
-                let exponea = Exponea(repository: repository, container: mockContainer.persistantContainer)
+                let exponea = Exponea(repository: repository)
                 exponea.configure(plistName: "ExponeaConfig.plist")
                 it("Should have a project token") {
                     expect(exponea.projectToken).toNot(beNil())
@@ -62,7 +62,7 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("Setting exponea properties") {
-                let exponea = Exponea(repository: repository, container: mockContainer.persistantContainer)
+                let exponea = Exponea(repository: repository)
                 exponea.configure(plistName: "ExponeaConfig.plist")
                 exponea.projectToken = "NewProjectToken"
                 it("Should return the new token") {

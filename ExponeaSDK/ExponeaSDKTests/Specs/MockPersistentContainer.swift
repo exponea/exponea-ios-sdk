@@ -11,7 +11,7 @@ import CoreData
 
 @testable import ExponeaSDK
 
-class MockPersistentContainer {
+class MockPersistentContainer: DatabaseManager {
 
     lazy var managedObjectModelTest: NSManagedObjectModel = {
         let managedObjectModel = NSManagedObjectModel.mergedModel(from: [Bundle(for: type(of: self))] )!
