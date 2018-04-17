@@ -15,8 +15,8 @@ public protocol DatabaseManagerType: class {
                      properties: [KeyValueModel],
                      timestamp: Double?,
                      eventType: String?) -> Bool
-    func fetchTrackCustomer() -> [TrackCustomers]?
-    func fetchTrackEvents() -> [TrackEvents]?
+    func fetchTrackCustomer() -> [TrackCustomers]
+    func fetchTrackEvents() -> [TrackEvents]
     func deleteTrackCustomer(object: AnyObject) -> Bool
     func deleteTrackEvent(object: AnyObject) -> Bool
 }

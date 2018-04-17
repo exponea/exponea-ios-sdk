@@ -105,7 +105,7 @@ extension DatabaseManager: DatabaseManagerType {
     }
 
     /// Fetch all Tracking Customers from CoreData
-    public func fetchTrackCustomer() -> [TrackCustomers]? {
+    public func fetchTrackCustomer() -> [TrackCustomers] {
 
         var trackCustomers = [TrackCustomers]()
 
@@ -120,7 +120,7 @@ extension DatabaseManager: DatabaseManagerType {
     }
 
     /// Fetch all Tracking Events from CoreData
-    public func fetchTrackEvents() -> [TrackEvents]? {
+    public func fetchTrackEvents() -> [TrackEvents] {
 
         var trackEvents = [TrackEvents]()
 
