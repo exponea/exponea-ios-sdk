@@ -16,7 +16,6 @@ class ExponeaSpec: QuickSpec {
 
     override func spec() {
 
-        //let mockContainer = MockPersistentContainer()
         let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
                                              contentType: Constants.Repository.contentType)
         let repository = ConnectionManager(configuration: configuration)

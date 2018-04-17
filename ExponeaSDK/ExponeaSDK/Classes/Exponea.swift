@@ -73,7 +73,7 @@ public class Exponea {
     init(repository: TrackingRepository) {
         /// SDK configuration.
         self.configuration = Configuration()
-        /// Initialing database manager with specific container (mock data).
+        /// Initialing database manager with specific container.
         self.database = DatabaseManager()
         /// Initializing tracking manager.
         self.trackingManager = TrackingManager(database: database,
