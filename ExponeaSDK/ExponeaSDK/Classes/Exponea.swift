@@ -134,20 +134,6 @@ internal extension Exponea {
     }
 
     /// Send data to trackmanager to store the customer events into coredata
-    /*
-    internal func trackCustomerEvent(customerId: KeyValueModel,
-                                     properties: [KeyValueModel],
-                                     timestamp: Double?,
-                                     eventType: String) -> Bool {
-        return trackingManager.trackEvent(.event(customerId,
-                                                 properties,
-                                                 timestamp,
-                                                 eventType),
-                                          customData: nil)
-    }
- */
-    
-    /// Send data to trackmanager to store the customer events into coredata
     internal func trackEvent(customerId: KeyValueModel,
                              properties: [KeyValueModel],
                              timestamp: Double?,
