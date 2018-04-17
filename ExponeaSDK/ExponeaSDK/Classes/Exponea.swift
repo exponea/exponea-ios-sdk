@@ -62,6 +62,16 @@ public class Exponea {
         }
     }
 
+    /// Sets the flushing mode for usage
+    public var flushingMode: FlushingMode {
+        get {
+            return trackingManager.flushingMode
+        }
+        set {
+            trackingManager.flushingMode = newValue
+        }
+    }
+
     /// A logger used to log all messages from the SDK.
     public static var logger: Logger = Logger()
 
@@ -152,6 +162,10 @@ internal extension Exponea {
 
     @objc internal func trackSessionEnd() {
         configuration.lastSessionEndend = NSDate().timeIntervalSince1970
+    }
+
+    internal func flushData() {
+        trackingManager.flushData()
     }
 
     /// Add observers to notification center in order to control when the
@@ -252,5 +266,10 @@ public extension Exponea {
                                  properties: properties,
                                  timestamp: timestamp,
                                  eventType: nil)
+    }
+
+    /// This method can be used to manually flush all available data to Exponea.
+    public class func flushData() {
+        shared.flushData()
     }
 }

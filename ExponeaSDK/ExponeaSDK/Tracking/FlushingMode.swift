@@ -8,8 +8,12 @@
 
 import Foundation
 
-enum FlushingMode {
+/// Flushing mode that is used to specify how often or if data is automatically flushed.
+public enum FlushingMode {
+    /// Manual flushing mode disables any automatic upload and it's your responsibility to flush data.
     case manual
+    /// Automatic data flushing will flush data when the application will resign active state.
     case automatic
+    /// Periodic data flushing will be flushing data in your specified interval (in seconds).
     case periodic(Int)
 }
