@@ -30,26 +30,54 @@ class TrackingManager {
 // MARK: - Flushing -
 
 extension TrackingManager {
-    func flushData() {
-        // TODO: Upload to API, delete from DB if success
+    @objc func flushData() {
+        // TODO: Data flushing
+        // 1. check if data to flush
+        // 2. pull from db
+        // 3. run upload
+        // 4a. on fail, return to step 2
+        // 4b. on success, delete from db
+
+        // Pull from db
+        let events = database.fetchTrackEvents()
+        let customers = database.fetchTrackCustomer()
+
+        // Check if we have any data, otherwise bail
+        guard !events.isEmpty || !customers.isEmpty else {
+            return
+        }
+
+//        for event in events {
+//
+//        }
+//
+//        for customer in customers {
+//
+//        }
     }
 
     func updateFlushingMode() {
+        // Invalidate timers
+        flushingTimer?.invalidate()
+        flushingTimer = nil
+
+        // Remove observers
+        let center = NotificationCenter.default
+        center.removeObserver(self, name: Notification.Name.UIApplicationWillResignActive, object: nil)
+
+        // Update for new flushing mode
         switch flushingMode {
-        case .manual:
-            flushingTimer?.invalidate()
-            flushingTimer = nil
-
-            let center = NotificationCenter.default
-            center.removeObserver(self, name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
-            center.removeObserver(self, name: Notification.Name.UIApplicationWillResignActive, object: nil)
-
+        case .manual: break
         case .automatic:
+            // Automatically upload on resign active
+            let center = NotificationCenter.default
+            center.addObserver(self, selector: #selector(flushData),
+                               name: Notification.Name.UIApplicationWillResignActive, object: nil)
 
-            break
         case .periodic(let interval):
-
-            break
+            // Schedule a timer for the specified interval
+            flushingTimer = Timer(timeInterval: TimeInterval(interval), target: self,
+                                  selector: #selector(flushData), userInfo: nil, repeats: true)
         }
     }
 }
