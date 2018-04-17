@@ -164,6 +164,7 @@ internal extension Exponea {
         configuration.lastSessionEndend = NSDate().timeIntervalSince1970
     }
 
+    /// This method can be used to manually flush all available data to Exponea.
     internal func flushData() {
         trackingManager.flushData()
     }

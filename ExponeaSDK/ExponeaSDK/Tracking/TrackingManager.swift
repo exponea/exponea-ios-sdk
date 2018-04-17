@@ -13,6 +13,7 @@ class TrackingManager {
     let repository: TrackingRepository
     var configuration: Configuration
 
+    /// Used for periodic data flushing
     var flushingTimer: Timer?
     var flushingMode: FlushingMode = .automatic {
         didSet {
