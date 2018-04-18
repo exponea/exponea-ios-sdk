@@ -20,6 +20,7 @@ indirect enum EventType {
     case sessionEnd
     case trackEvent(KeyValueModel, [KeyValueModel], Double?, String?)
     case trackCustomer(KeyValueModel, [KeyValueModel], Double?)
+    case payment([KeyValueModel], Double?)
     case custom(String)
 }
 

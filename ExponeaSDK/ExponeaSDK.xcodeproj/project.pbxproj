@@ -32,6 +32,9 @@
 		F063BEAA207E36E600030811 /* MockPersistentContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockPersistentContainer.swift */; };
 		F06744072085E983003C0293 /* StubEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06744062085E983003C0293 /* StubEntities.swift */; };
 		F067440D208642AC003C0293 /* TrackCustomerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067440C208642AC003C0293 /* TrackCustomerSpec.swift */; };
+		F0674410208731F9003C0293 /* Payment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067440F208731F9003C0293 /* Payment.swift */; };
+		F0674412208732AF003C0293 /* PaymentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0674411208732AF003C0293 /* PaymentType.swift */; };
+		F067441420873813003C0293 /* PurchasedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441320873813003C0293 /* PurchasedItem.swift */; };
 		F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */; };
 		F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* DeviceProperties.swift */; };
 		F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F8207F787100C89A7F /* TrackerSpec.swift */; };
@@ -95,6 +98,9 @@
 		F063BEA9207E36E600030811 /* MockPersistentContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPersistentContainer.swift; sourceTree = "<group>"; };
 		F06744062085E983003C0293 /* StubEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubEntities.swift; sourceTree = "<group>"; };
 		F067440C208642AC003C0293 /* TrackCustomerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCustomerSpec.swift; sourceTree = "<group>"; };
+		F067440F208731F9003C0293 /* Payment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Payment.swift; sourceTree = "<group>"; };
+		F0674411208732AF003C0293 /* PaymentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentType.swift; sourceTree = "<group>"; };
+		F067441320873813003C0293 /* PurchasedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasedItem.swift; sourceTree = "<group>"; };
 		F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesModel.swift; sourceTree = "<group>"; };
 		F0CA58F5207F612200C89A7F /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
 		F0CA58F8207F787100C89A7F /* TrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSpec.swift; sourceTree = "<group>"; };
@@ -267,6 +273,7 @@
 				F0E757E1207CF9BE00FE8C21 /* Repository */,
 				F0E757DE207CF98600FE8C21 /* Others */,
 				0191639D207E14C9005FD174 /* Logging */,
+				F067440E208731CF003C0293 /* Payment */,
 				F0C1C1CE207384ED005EB697 /* Models */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
 			);
@@ -292,6 +299,15 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F067440E208731CF003C0293 /* Payment */ = {
+			isa = PBXGroup;
+			children = (
+				F067440F208731F9003C0293 /* Payment.swift */,
+				F0674411208732AF003C0293 /* PaymentType.swift */,
+			);
+			path = Payment;
+			sourceTree = "<group>";
+		};
 		F0C1C1CE207384ED005EB697 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -304,6 +320,7 @@
 				01EC2DAC207E53E40031BFEB /* CustomerAttributesListModel.swift */,
 				F0CA58F5207F612200C89A7F /* DeviceProperties.swift */,
 				F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */,
+				F067441320873813003C0293 /* PurchasedItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -578,10 +595,12 @@
 				01EC2DAD207E53E40031BFEB /* CustomerAttributesListModel.swift in Sources */,
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
 				01EC2DB4207E58080031BFEB /* EventType.swift in Sources */,
+				F0674410208731F9003C0293 /* Payment.swift in Sources */,
 				F0CA58FB207FA5E700C89A7F /* CampaignProperties.swift in Sources */,
 				01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
+				F0674412208732AF003C0293 /* PaymentType.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
@@ -591,6 +610,7 @@
 				01EC2DA7207E4FBA0031BFEB /* CustomerEventsModel.swift in Sources */,
 				01EC2DAB207E53D90031BFEB /* CustomerExportAttributesModel.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
+				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,

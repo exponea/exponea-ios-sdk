@@ -41,6 +41,7 @@ enum Constants {
         static let installation = "installation"
         static let sessionEnd = "session_end"
         static let sessionStart = "session_start"
+        static let payment = "payment"
     }
     /// Error messages
     enum ErrorMessages {
@@ -48,13 +49,20 @@ enum Constants {
         static let sdkNotConfigured = "ExponeaSDK isn't configured."
         static let couldNotStartSession = "Could not start new session. Please verify the error log for more information"
         static let couldNotEndSession = "Could not end session. Please verify the error log for more information"
+        static let couldNotTrackPayment = "The payment could not be tracked."
+        static let verifyLogError = "Please verify the error log for more information."
     }
     /// Success messages
     enum SuccessMessages {
         static let sessionStarted = "Session succesfully started"
+        static let paymentDone = "Payment was succesfully tracked!"
     }
     /// Default session values
     enum Session {
         static let defaultTimeout = 6.0
+    }
+    /// General constants
+    enum General {
+        static let iTunesStore = "iTunes Store"
     }
 }

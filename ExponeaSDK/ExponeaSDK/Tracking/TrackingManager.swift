@@ -112,6 +112,11 @@ extension TrackingManager: TrackingManagerType {
                                  customerId: customerId,
                                  properties: properties,
                                  timestamp: timestamp)
+        case .payment(let properties, let timestamp):
+            return trackPayment(projectToken: projectToken,
+                                properties: properties,
+                                eventType: Constants.EventTypes.payment,
+                                timestamp: timestamp)
         case .custom(let value):
             // TODO: save to db
             return false
@@ -148,6 +153,17 @@ extension TrackingManager {
                                       customerId: customerId,
                                       properties: properties,
                                       timestamp: timestamp)
+    }
+
+    func trackPayment(projectToken: String,
+                      properties: [KeyValueModel],
+                      eventType: String,
+                      timestamp: Double?) -> Bool {
+        return database.trackEvent(projectToken: projectToken,
+                                   customerId: nil,
+                                   properties: properties,
+                                   timestamp: timestamp,
+                                   eventType: eventType)
     }
 
     func sessionStart(projectToken: String) -> Bool {
