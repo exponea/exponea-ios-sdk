@@ -147,10 +147,10 @@ internal extension Exponea {
                              properties: [KeyValueModel],
                              timestamp: Double?,
                              eventType: String?) -> Bool {
-        return trackingManager.trackEvent(.track(customerId,
-                                                 properties,
-                                                 timestamp,
-                                                 eventType),
+        return trackingManager.trackEvent(.trackEvent(customerId,
+                                                      properties,
+                                                      timestamp,
+                                                      eventType),
                                           customData: nil)
     }
 
@@ -187,13 +187,12 @@ internal extension Exponea {
     }
 
     /// Send data to trackmanager to store the customer properties into coredata
-    internal func trackCustomerProperties(customerId: KeyValueModel,
-                                          properties: [KeyValueModel],
-                                          timestamp: Double?) -> Bool {
-        return trackingManager.trackEvent(.track(customerId,
-                                                 properties,
-                                                 timestamp,
-                                                 nil),
+    internal func trackCustomer(customerId: KeyValueModel,
+                                properties: [KeyValueModel],
+                                timestamp: Double?) -> Bool {
+        return trackingManager.trackEvent(.trackCustomer(customerId,
+                                                         properties,
+                                                         timestamp),
                                           customData: nil)
     }
 }
@@ -263,10 +262,9 @@ public extension Exponea {
     public class func updateCustomerProperties(customerId: KeyValueModel,
                                                properties: [KeyValueModel],
                                                timestamp: Double?) -> Bool {
-        return shared.trackEvent(customerId: customerId,
-                                 properties: properties,
-                                 timestamp: timestamp,
-                                 eventType: nil)
+        return shared.trackCustomer(customerId: customerId,
+                                    properties: properties,
+                                    timestamp: timestamp)
     }
 
     /// This method can be used to manually flush all available data to Exponea.

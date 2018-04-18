@@ -99,12 +99,17 @@ extension TrackingManager: TrackingManagerType {
         case .sessionEnd:
             // TODO: save to db
             return false
-        case .track(let customerId, let properties, let timestamp, let eventType):
+        case .trackEvent(let customerId, let properties, let timestamp, let eventType):
             return trackEvent(projectToken: projectToken,
                               customerId: customerId,
                               properties: properties,
                               timestamp: timestamp,
                               eventType: eventType)
+        case .trackCustomer(let customerId, let properties, let timestamp):
+            return trackCustomer(projectToken: projectToken,
+                                 customerId: customerId,
+                                 properties: properties,
+                                 timestamp: timestamp)
         case .custom(let value):
             // TODO: save to db
             return false
@@ -114,11 +119,11 @@ extension TrackingManager: TrackingManagerType {
 
 extension TrackingManager {
     func installEvent(projectToken: String) -> Bool {
-        return database.trackEvents(projectToken: projectToken,
-                                    customerId: nil,
-                                    properties: DeviceProperties().asKeyValueModel(),
-                                    timestamp: nil,
-                                    eventType: Constants.EventTypes.installation)
+        return database.trackEvent(projectToken: projectToken,
+                                   customerId: nil,
+                                   properties: DeviceProperties().asKeyValueModel(),
+                                   timestamp: nil,
+                                   eventType: Constants.EventTypes.installation)
     }
 
     func trackEvent(projectToken: String,
@@ -126,11 +131,21 @@ extension TrackingManager {
                     properties: [KeyValueModel],
                     timestamp: Double?,
                     eventType: String?) -> Bool {
-        return database.trackEvents(projectToken: projectToken,
-                                    customerId: customerId,
-                                    properties: properties,
-                                    timestamp: timestamp,
-                                    eventType: eventType)
+        return database.trackEvent(projectToken: projectToken,
+                                   customerId: customerId,
+                                   properties: properties,
+                                   timestamp: timestamp,
+                                   eventType: eventType)
+    }
+
+    func trackCustomer(projectToken: String,
+                       customerId: KeyValueModel,
+                       properties: [KeyValueModel],
+                       timestamp: Double?) -> Bool {
+        return database.trackCustomer(projectToken: projectToken,
+                                      customerId: customerId,
+                                      properties: properties,
+                                      timestamp: timestamp)
     }
 
     func sessionStart(projectToken: String) -> Bool {
@@ -182,11 +197,11 @@ extension TrackingManager {
         if let appVersion = Bundle.main.value(forKey: Constants.Keys.appVersion) {
             properties.append(KeyValueModel(key: "app_version", value: appVersion))
         }
-        return database.trackEvents(projectToken: projectToken,
-                                    customerId: nil,
-                                    properties: properties,
-                                    timestamp: nil,
-                                    eventType: Constants.EventTypes.sessionStart)
+        return database.trackEvent(projectToken: projectToken,
+                                   customerId: nil,
+                                   properties: properties,
+                                   timestamp: nil,
+                                   eventType: Constants.EventTypes.sessionStart)
     }
 
     fileprivate func trackEndSession(projectToken: String) -> Bool {
@@ -202,10 +217,10 @@ extension TrackingManager {
         if let appVersion = Bundle.main.value(forKey: Constants.Keys.appVersion) {
             properties.append(KeyValueModel(key: "app_version", value: appVersion))
         }
-        return database.trackEvents(projectToken: projectToken,
-                                    customerId: nil,
-                                    properties: properties,
-                                    timestamp: nil,
-                                    eventType: Constants.EventTypes.sessionEnd)
+        return database.trackEvent(projectToken: projectToken,
+                                   customerId: nil,
+                                   properties: properties,
+                                   timestamp: nil,
+                                   eventType: Constants.EventTypes.sessionEnd)
     }
 }
