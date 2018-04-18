@@ -14,6 +14,7 @@ struct PurchasedItem {
     var paymentSystem: String
     var productId: String
     var productTitle: String
+    var receipt: String?
     /// Returns an array with all purchased info.
     var properties: [KeyValueModel] {
         var data = [KeyValueModel]()
@@ -23,6 +24,10 @@ struct PurchasedItem {
         data.append(KeyValueModel(key: "payment_system", value: paymentSystem))
         data.append(KeyValueModel(key: "product_id", value: productId))
         data.append(KeyValueModel(key: "product_title", value: productTitle))
+
+        if let receipt = receipt {
+            data.append(KeyValueModel(key: "receipt", value: receipt))
+        }
 
         return data
     }

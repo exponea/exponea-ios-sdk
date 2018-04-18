@@ -1,5 +1,5 @@
 //
-//  PaymentType.swift
+//  PaymentManagerType.swift
 //  ExponeaSDK
 //
 //  Created by Ricardo Tokashiki on 18/04/2018.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol PaymentType {
-    func processPayments()
+protocol PaymentManagerType: class {
+    func listenPayments()
     func trackPayment(properties: [KeyValueModel]) -> Bool
 }

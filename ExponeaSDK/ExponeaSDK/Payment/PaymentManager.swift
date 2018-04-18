@@ -1,5 +1,5 @@
 //
-//  Payment.swift
+//  PaymentManager.swift
 //  ExponeaSDK
 //
 //  Created by Ricardo Tokashiki on 18/04/2018.
@@ -9,17 +9,16 @@
 import Foundation
 import StoreKit
 
-class Payment: SKPaymentQueue, PaymentType {
+class PaymentManager: SKPaymentQueue, PaymentManagerType {
 
     /// Check if is it possible to make payments through the app.
-    let canMakePurchases = SKPaymentQueue.canMakePayments
+    let canMakePurchases = SKPaymentQueue.canMakePayments()
+
     let trackingManager: TrackingManager
     let device: DeviceProperties
+    var receipt: String?
 
-    /// List of available products to buy.
-    fileprivate var products = [SKProduct]()
-
-    private init(trackingMananger: TrackingManager) {
+    init(trackingMananger: TrackingManager) {
         self.trackingManager = trackingMananger
         self.device = DeviceProperties()
     }
@@ -30,8 +29,10 @@ class Payment: SKPaymentQueue, PaymentType {
 
     /// Add the observer to the payment queue in order to receive
     /// all the payments done by the user.
-    func processPayments() {
-        SKPaymentQueue.default().add(self)
+    func listenPayments() {
+        if canMakePurchases {
+            SKPaymentQueue.default().add(self)
+        }
     }
 
     func trackPayment(properties: [KeyValueModel]) -> Bool {
@@ -40,17 +41,17 @@ class Payment: SKPaymentQueue, PaymentType {
     }
 }
 
-extension Payment: SKPaymentTransactionObserver {
-    /// Track the information for the successfully payment
+extension PaymentManager: SKPaymentTransactionObserver {
+    /// Track the information for the successfully payment and removing from the queue.
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        for transaction: AnyObject in transactions {
-            guard let trans = transaction as? SKPaymentTransaction else {
-                return
-            }
-
-            switch trans.transactionState {
+        for transaction in transactions {
+            switch transaction.transactionState {
             case .purchased:
-                break
+                guard let receiptURL = Bundle.main.appStoreReceiptURL else {
+                    break
+                }
+                receipt = NSData.init(contentsOf: receiptURL)?.base64EncodedString(options: [])
+                SKPaymentQueue.default().finishTransaction(transaction)
             default:
                 break
             }
@@ -58,15 +59,27 @@ extension Payment: SKPaymentTransactionObserver {
     }
 }
 
-extension Payment: SKProductsRequestDelegate {
+extension PaymentManager: SKProductsRequestDelegate {
     /// Retrive information from the purchase item.
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         for product in response.products {
+
+            var currencyCode = ""
+            var currency = ""
+
+            if let code = Locale.current.currencyCode {
+                currencyCode = code
+            }
+            if let curr = Locale.current.localizedString(forCurrencyCode: currencyCode) {
+                currency = curr
+            }
+
             let item = PurchasedItem(grossAmount: Double(truncating: product.price),
-                                     currency: product.priceLocale.localizedString(forCurrencyCode: Locale.current.currencyCode!)!,
+                                     currency: currency,
                                      paymentSystem: Constants.General.iTunesStore,
                                      productId: product.productIdentifier,
-                                     productTitle: product.localizedTitle)
+                                     productTitle: product.localizedTitle,
+                                     receipt: receipt)
             var properties = item.properties
             properties.append(contentsOf: device.properties)
 
