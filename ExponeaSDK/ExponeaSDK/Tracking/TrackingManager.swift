@@ -11,6 +11,7 @@ import Foundation
 class TrackingManager {
     let database: DatabaseManagerType
     let repository: TrackingRepository
+    let device: DeviceProperties
     var configuration: Configuration
 
     /// Used for periodic data flushing
@@ -25,6 +26,7 @@ class TrackingManager {
         self.database = database
         self.repository = repository
         self.configuration = configuration
+        self.device = DeviceProperties()
     }
 }
 
@@ -121,7 +123,7 @@ extension TrackingManager {
     func installEvent(projectToken: String) -> Bool {
         return database.trackEvent(projectToken: projectToken,
                                    customerId: nil,
-                                   properties: DeviceProperties().asKeyValueModel(),
+                                   properties: device.properties,
                                    timestamp: nil,
                                    eventType: Constants.EventTypes.installation)
     }
@@ -150,7 +152,7 @@ extension TrackingManager {
 
     func sessionStart(projectToken: String) -> Bool {
         /// Get the current timestamp to calculate the session period.
-        let now = NSDate().timeIntervalSince1970
+        let now = Date().timeIntervalSince1970
         /// Check the status of the previous session.
         if sessionEnded(newTimestamp: now, projectToken: projectToken) {
             /// Update the new session value.
@@ -189,7 +191,7 @@ extension TrackingManager {
 
     fileprivate func trackStartSession(projectToken: String) -> Bool {
         /// Prepare data to persist into coredata.
-        var properties = DeviceProperties().asKeyValueModel()
+        var properties = device.properties
         /// Adding session start properties.
         properties.append(KeyValueModel(key: "event_type", value: Constants.EventTypes.sessionStart))
         properties.append(KeyValueModel(key: "timestamp", value: configuration.lastSessionStarted))
@@ -206,7 +208,7 @@ extension TrackingManager {
 
     fileprivate func trackEndSession(projectToken: String) -> Bool {
         /// Prepare data to persist into coredata.
-        var properties = DeviceProperties().asKeyValueModel()
+        var properties = device.properties
         /// Calculate the duration of the last session.
         let duration = configuration.lastSessionStarted - configuration.lastSessionEndend
         /// Adding session end properties.

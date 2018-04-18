@@ -82,7 +82,7 @@ extension DatabaseManager: DatabaseManagerType {
         let trackEventsProperties = TrackEventsProperties(context: managedObjectContext)
 
         trackEvents.projectToken = projectToken
-        trackEvents.timestamp = timestamp ?? NSDate().timeIntervalSince1970
+        trackEvents.timestamp = timestamp ?? Date().timeIntervalSince1970
 
         if let customerId = customerId {
             trackEvents.customerIdKey = customerId.key
@@ -120,7 +120,7 @@ extension DatabaseManager: DatabaseManagerType {
         let trackCustomerProperties = TrackCustomersProperties(context: managedObjectContext)
 
         trackCustomers.projectToken = projectToken
-        trackCustomers.timestamp = timestamp ?? NSDate().timeIntervalSince1970
+        trackCustomers.timestamp = timestamp ?? Date().timeIntervalSince1970
         trackCustomers.customerIdKey = customerId.key
         trackCustomers.customerIdValue = customerId.value as? NSObject
 
