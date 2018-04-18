@@ -51,6 +51,7 @@ enum Constants {
         static let couldNotEndSession = "Could not end session. Please verify the error log for more information"
         static let couldNotTrackPayment = "The payment could not be tracked."
         static let verifyLogError = "Please verify the error log for more information."
+        static let couldNotLoadReceipt = "Could not load the iTunes Store receipt"
     }
     /// Success messages
     enum SuccessMessages {

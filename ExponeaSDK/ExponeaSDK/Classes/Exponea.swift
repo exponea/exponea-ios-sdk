@@ -14,6 +14,8 @@ public class Exponea {
     fileprivate(set) var configuration: Configuration!
     /// Database manager responsable for data persistance.
     let database: DatabaseManager
+    /// Payment manager responsable to track all in app payments
+    let paymentManager: PaymentManagerType
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
@@ -78,7 +80,7 @@ public class Exponea {
     /// Shared instance of ExponeaSDK
     public static let shared = Exponea()
 
-    let trackingManager: TrackingManagerType
+    let trackingManager: TrackingManager
 
     init(repository: TrackingRepository) {
         /// SDK configuration.
@@ -89,6 +91,8 @@ public class Exponea {
         self.trackingManager = TrackingManager(database: database,
                                                repository: repository,
                                                configuration: self.configuration)
+        /// Initializing payment manager.
+        self.paymentManager = PaymentManager(trackingMananger: self.trackingManager)
     }
 
     public init() {
@@ -105,6 +109,8 @@ public class Exponea {
         self.trackingManager = TrackingManager(database: self.database,
                                                repository: repository,
                                                configuration: self.configuration)
+        /// Initializing payment manager.
+        self.paymentManager = PaymentManager(trackingMananger: self.trackingManager)
     }
 
     deinit {
@@ -119,6 +125,11 @@ internal extension Exponea {
 
     internal func configure(plistName: String) {
         configuration = Configuration(plistName: plistName)
+    }
+
+    internal func sharedInitializer() {
+        trackInstallEvent()
+        paymentManager.startObservingPayments()
     }
 
     /// Installation event is fired only once for the whole lifetime of the app on one
@@ -208,7 +219,7 @@ public extension Exponea {
     ///     - projectToken: Project Token to be used through the SDK
     public class func configure(projectToken: String) {
         shared.configure(projectToken: projectToken)
-        shared.trackInstallEvent()
+        shared.sharedInitializer()
     }
 
     /// Initialize the configuration with a plist file containing the keys
@@ -219,7 +230,7 @@ public extension Exponea {
     ///     - plistName: List name containing the SDK setup keys
     public class func configure(plistName: String) {
         shared.configure(plistName: plistName)
-        shared.trackInstallEvent()
+        shared.sharedInitializer()
     }
 
     /// Track customer event add new events to a specific customer.
