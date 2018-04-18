@@ -15,7 +15,7 @@ public class Exponea {
     /// Database manager responsable for data persistance.
     let database: DatabaseManager
     /// Payment manager responsable to track all in app payments
-    let paymentManager: PaymentManager
+    let paymentManager: PaymentManagerType
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
@@ -129,7 +129,7 @@ internal extension Exponea {
 
     internal func sharedInitializer() {
         trackInstallEvent()
-        paymentManager.listenPayments()
+        paymentManager.startObservingPayments()
     }
 
     /// Installation event is fired only once for the whole lifetime of the app on one

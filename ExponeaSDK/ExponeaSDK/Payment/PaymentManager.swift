@@ -11,33 +11,35 @@ import StoreKit
 
 class PaymentManager: SKPaymentQueue, PaymentManagerType {
 
-    /// Check if is it possible to make payments through the app.
-    let canMakePurchases = SKPaymentQueue.canMakePayments()
-
-    let trackingManager: TrackingManager
+    let trackingManager: TrackingManagerType
     let device: DeviceProperties
     var receipt: String?
 
-    init(trackingMananger: TrackingManager) {
+    init(trackingMananger: TrackingManagerType) {
         self.trackingManager = trackingMananger
         self.device = DeviceProperties()
     }
 
     deinit {
-        SKPaymentQueue.default().remove(self)
+        startObservingPayments()
     }
 
     /// Add the observer to the payment queue in order to receive
     /// all the payments done by the user.
-    func listenPayments() {
-        if canMakePurchases {
+    func startObservingPayments() {
+        /// Check if it is possible to make payments through the app.
+        if SKPaymentQueue.canMakePayments() {
             SKPaymentQueue.default().add(self)
         }
     }
 
+    func stopObservingPayments() {
+        SKPaymentQueue.default().remove(self)
+    }
+
     func trackPayment(properties: [KeyValueModel]) -> Bool {
-        return trackingManager.trackPayment(with: [.timestamp(nil),
-                                                   .properties(properties)])
+        return trackingManager.trackEvent(.payment, customData: [.timestamp(nil),
+                                                          .properties(properties)])
     }
 }
 
@@ -50,7 +52,11 @@ extension PaymentManager: SKPaymentTransactionObserver {
                 guard let receiptURL = Bundle.main.appStoreReceiptURL else {
                     break
                 }
-                receipt = NSData.init(contentsOf: receiptURL)?.base64EncodedString(options: [])
+                do {
+                    receipt = try Data.init(contentsOf: receiptURL).base64EncodedString(options: [])
+                } catch {
+                    Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
+                }
                 SKPaymentQueue.default().finishTransaction(transaction)
             default:
                 break

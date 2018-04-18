@@ -9,6 +9,7 @@
 import Foundation
 
 protocol PaymentManagerType: class {
-    func listenPayments()
+    func startObservingPayments()
+    func stopObservingPayments()
     func trackPayment(properties: [KeyValueModel]) -> Bool
 }
