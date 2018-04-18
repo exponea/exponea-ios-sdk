@@ -18,10 +18,9 @@ indirect enum EventType {
     case install
     case sessionStart
     case sessionEnd
-    case trackEvent(KeyValueModel, [KeyValueModel], Double?, String?)
-    case trackCustomer(KeyValueModel, [KeyValueModel], Double?)
+    case trackEvent
+    case trackCustomer
     case payment([KeyValueModel], Double?)
-    case custom(String)
 }
 
 // TODO: add other events

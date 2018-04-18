@@ -147,11 +147,15 @@ internal extension Exponea {
                              properties: [KeyValueModel],
                              timestamp: Double?,
                              eventType: String?) -> Bool {
-        return trackingManager.trackEvent(.trackEvent(customerId,
-                                                      properties,
-                                                      timestamp,
-                                                      eventType),
-                                          customData: nil)
+        var data: [DataType] = [.customerId(customerId),
+                                .properties(properties),
+                                .timestamp(timestamp)]
+
+        if let eventType = eventType {
+            data.append(.eventType(eventType))
+        }
+
+        return trackingManager.trackEvent(.trackEvent, customData: data)
     }
 
     @objc internal func trackSessionStart() {
@@ -190,10 +194,10 @@ internal extension Exponea {
     internal func trackCustomer(customerId: KeyValueModel,
                                 properties: [KeyValueModel],
                                 timestamp: Double?) -> Bool {
-        return trackingManager.trackEvent(.trackCustomer(customerId,
-                                                         properties,
-                                                         timestamp),
-                                          customData: nil)
+        return trackingManager.trackEvent(.trackCustomer,
+                                          customData: [.customerId(customerId),
+                                                       .properties(properties),
+                                                       .timestamp(timestamp)])
     }
 }
 

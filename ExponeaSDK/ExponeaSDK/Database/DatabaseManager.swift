@@ -73,31 +73,33 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    public func trackEvent(projectToken: String,
-                           customerId: KeyValueModel?,
-                           properties: [KeyValueModel],
-                           timestamp: Double?,
-                           eventType: String?) -> Bool {
+    public func trackEvent(with data: [DataType]) -> Bool {
         let trackEvents = TrackEvents(context: managedObjectContext)
         let trackEventsProperties = TrackEventsProperties(context: managedObjectContext)
 
-        trackEvents.projectToken = projectToken
-        trackEvents.timestamp = timestamp ?? Date().timeIntervalSince1970
+        for type in data {
+            switch type {
+            case .projectToken(let token):
+                trackEvents.projectToken = token
 
-        if let customerId = customerId {
-            trackEvents.customerIdKey = customerId.key
-            trackEvents.customerIdValue = customerId.value as? NSObject
-        }
+            case .customerId(let id):
+                trackEvents.customerIdKey = id.key
+                trackEvents.customerIdValue = id.value as? NSObject
 
-        if let eventType = eventType {
-            trackEvents.eventType = eventType
-        }
+            case .eventType(let event):
+                trackEvents.eventType = event
 
-        // Add the event properties to the events entity
-        for property in properties {
-            trackEventsProperties.key = property.key
-            trackEventsProperties.value = property.value as? NSObject
-            trackEvents.addToTrackEventsProperties(trackEventsProperties)
+            case .timestamp(let time):
+                trackEvents.timestamp = time ?? Date().timeIntervalSince1970
+
+            case .properties(let properties):
+                // Add the event properties to the events entity
+                for property in properties {
+                    trackEventsProperties.key = property.key
+                    trackEventsProperties.value = property.value as? NSObject
+                    trackEvents.addToTrackEventsProperties(trackEventsProperties)
+                }
+            }
         }
 
         // Save the customer properties into CoreData
@@ -111,24 +113,32 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
-    public func trackCustomer(projectToken: String,
-                              customerId: KeyValueModel,
-                              properties: [KeyValueModel],
-                              timestamp: Double?) -> Bool {
-
+    public func trackCustomer(with data: [DataType]) -> Bool {
         let trackCustomers = TrackCustomers(context: managedObjectContext)
         let trackCustomerProperties = TrackCustomersProperties(context: managedObjectContext)
 
-        trackCustomers.projectToken = projectToken
-        trackCustomers.timestamp = timestamp ?? Date().timeIntervalSince1970
-        trackCustomers.customerIdKey = customerId.key
-        trackCustomers.customerIdValue = customerId.value as? NSObject
+        for type in data {
+            switch type {
+            case .projectToken(let token):
+                trackCustomers.projectToken = token
 
-        // Add the customer properties to the customer entity
-        for property in properties {
-            trackCustomerProperties.key = property.key
-            trackCustomerProperties.value = property.value as? NSObject
-            trackCustomers.addToTrackCustomerProperties(trackCustomerProperties)
+            case .customerId(let id):
+                trackCustomers.customerIdKey = id.key
+                trackCustomers.customerIdValue = id.value as? NSObject
+
+            case .timestamp(let time):
+                trackCustomers.timestamp = time ?? Date().timeIntervalSince1970
+
+            case .properties(let properties):
+                // Add the customer properties to the customer entity
+                for property in properties {
+                    trackCustomerProperties.key = property.key
+                    trackCustomerProperties.value = property.value as? NSObject
+                    trackCustomers.addToTrackCustomerProperties(trackCustomerProperties)
+                }
+            default:
+                break
+            }
         }
 
         // Save the customer properties into CoreData
