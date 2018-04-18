@@ -107,11 +107,8 @@ extension TrackingManager: TrackingManagerType {
             return trackEvent(with: data)
         case .trackCustomer:
             return trackCustomer(with: data)
-        case .payment(let properties, let timestamp):
-            return trackPayment(projectToken: projectToken,
-                                properties: properties,
-                                eventType: Constants.EventTypes.payment,
-                                timestamp: timestamp)
+        case .payment:
+            return trackPayment(with: data + [.eventType(Constants.EventTypes.payment)])
         }
     }
 }
@@ -131,15 +128,8 @@ extension TrackingManager {
         return database.trackCustomer(with: data)
     }
 
-    func trackPayment(projectToken: String,
-                      properties: [KeyValueModel],
-                      eventType: String,
-                      timestamp: Double?) -> Bool {
-        return database.trackEvent(projectToken: projectToken,
-                                   customerId: nil,
-                                   properties: properties,
-                                   timestamp: timestamp,
-                                   eventType: eventType)
+    func trackPayment(with data: [DataType]) -> Bool {
+        return database.trackEvent(with: data)
     }
 
     func sessionStart(projectToken: String) -> Bool {

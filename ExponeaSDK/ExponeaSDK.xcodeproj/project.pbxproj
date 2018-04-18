@@ -11,7 +11,7 @@
 		0191639F207E14D9005FD174 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639E207E14D9005FD174 /* LogLevel.swift */; };
 		019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019163A2207E15FB005FD174 /* LoggerSpec.swift */; };
 		019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019163A4207E1904005FD174 /* LogLevelSpec.swift */; };
-		019F1AC32087514700368FB1 /* DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019F1AC22087514700368FB1 /* DataType.swift */; };
+		019F1AC52087666900368FB1 /* DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019F1AC42087666800368FB1 /* DataType.swift */; };
 		01EC2DA5207E4F8F0031BFEB /* CustomerRecommendModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA4207E4F8F0031BFEB /* CustomerRecommendModel.swift */; };
 		01EC2DA7207E4FBA0031BFEB /* CustomerEventsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA6207E4FBA0031BFEB /* CustomerEventsModel.swift */; };
 		01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */; };
@@ -69,7 +69,7 @@
 		0191639E207E14D9005FD174 /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
 		019163A2207E15FB005FD174 /* LoggerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerSpec.swift; sourceTree = "<group>"; };
 		019163A4207E1904005FD174 /* LogLevelSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevelSpec.swift; sourceTree = "<group>"; };
-		019F1AC22087514700368FB1 /* DataType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataType.swift; sourceTree = "<group>"; };
+		019F1AC42087666800368FB1 /* DataType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataType.swift; sourceTree = "<group>"; };
 		01EC2DA4207E4F8F0031BFEB /* CustomerRecommendModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerRecommendModel.swift; sourceTree = "<group>"; };
 		01EC2DA6207E4FBA0031BFEB /* CustomerEventsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerEventsModel.swift; sourceTree = "<group>"; };
 		01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerExportModel.swift; sourceTree = "<group>"; };
@@ -194,7 +194,7 @@
 				01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */,
 				01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */,
 				01EC2DB3207E58080031BFEB /* EventType.swift */,
-				019F1AC22087514700368FB1 /* DataType.swift */,
+				019F1AC42087666800368FB1 /* DataType.swift */,
 				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
 			);
 			path = Tracking;
@@ -595,6 +595,7 @@
 				F0E757E3207CFA3100FE8C21 /* APIConfiguration.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* CustomerRecommendModel.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
+				019F1AC52087666900368FB1 /* DataType.swift in Sources */,
 				01EC2DAD207E53E40031BFEB /* CustomerAttributesListModel.swift in Sources */,
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
 				01EC2DB4207E58080031BFEB /* EventType.swift in Sources */,
@@ -605,7 +606,6 @@
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
 				F0674412208732AF003C0293 /* PaymentType.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */,
-				019F1AC32087514700368FB1 /* DataType.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
 				F0E757E7207CFA6400FE8C21 /* APISource.swift in Sources */,

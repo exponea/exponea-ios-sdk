@@ -35,8 +35,8 @@ class Payment: SKPaymentQueue, PaymentType {
     }
 
     func trackPayment(properties: [KeyValueModel]) -> Bool {
-        return trackingManager.trackEvent(.payment(properties, Date().timeIntervalSince1970),
-                                          customData: nil)
+        return trackingManager.trackPayment(with: [.timestamp(nil),
+                                                   .properties(properties)])
     }
 }
 
