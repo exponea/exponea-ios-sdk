@@ -51,10 +51,10 @@ public class Exponea {
     /// Default value for tracking the sessions automatically
     public var autoSessionTracking: Bool {
         get {
-            return configuration.autoSessionTracking
+            return configuration.automaticSessionTracking
         }
         set {
-            configuration.autoSessionTracking = newValue
+            configuration.automaticSessionTracking = newValue
             /// Add the observers when the automatic session tracking is true.
             if newValue {
                 addSessionObserves()
@@ -104,7 +104,7 @@ public class Exponea {
     init(database: DatabaseManagerType,
          repository: ConnectionManagerType) {
         /// SDK configuration.
-        self.configuration = Configuration()
+        self.configuration = Configuration(projectToken: "", authorization: "", baseURL: nil)
         /// Initialing database manager
         self.database = database
         /// Initializing repository.
@@ -118,7 +118,7 @@ public class Exponea {
 
     public init() {
         /// SDK configuration.
-        self.configuration = Configuration()
+        self.configuration = Configuration(projectToken: "", authorization: "", baseURL: nil)
         /// Initializing database manager
         self.database = DatabaseManager()
         /// Initializing repository.

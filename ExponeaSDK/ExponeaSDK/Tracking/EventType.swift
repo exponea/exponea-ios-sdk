@@ -16,22 +16,22 @@ import Foundation
 /// - trackEvent
 /// - trackCustomer
 /// - payment
-enum EventType {
+enum EventType: String, Decodable {
 
     /// Install event is fired only once when the app is first installed.
-    case install
+    case install = "INSTALL"
 
     /// Session start event used to mark the start of a session, typically when an app comes to foreground.
-    case sessionStart
+    case sessionStart = "SESSION_START"
 
     /// Session end event used to mark the end of a session, typically when an app goes to background.
-    case sessionEnd
+    case sessionEnd = "SESSION_END"
 
     /// Custom event tracking, used to report any custom events that you want.
-    case trackEvent
+    case trackEvent = "TRACK_EVENT"
 
     /// Tracking of customers is used to identify a current customer by some identifier.
-    case trackCustomer
+    case trackCustomer = "TRACK_CUSTOMER"
 
     /// Virtual and hard payments can be tracked to better measure conversions for example.
     case payment

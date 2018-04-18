@@ -9,20 +9,97 @@
 import Foundation
 import CoreData
 
-struct Configuration {
-
-    internal var projectToken: String?
+struct Configuration: Decodable {
+    var projectMapping: [EventType: [String]]?
+    var projectToken: String?
     internal var authorization: String?
     internal var baseURL: String = Constants.Repository.baseURL
     internal var contentType: String = Constants.Repository.contentType
-    internal var sessionTimeout: Double {
-        get {
-            return UserDefaults.standard.double(forKey: Constants.Keys.timeout)
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: Constants.Keys.timeout)
+    var sessionTimeout: Double = 20
+    var automaticSessionTracking: Bool = true
+
+    enum CodingKeys: String, CodingKey {
+        case projectMapping
+        case projectToken
+        case sessionTimeout
+        case automaticSessionTracking
+        case authorization
+        case baseUrl
+    }
+
+    private init() {}
+
+    public init(projectToken: String, authorization: String, baseURL: String?) {
+        self.projectToken = projectToken
+        self.authorization = authorization
+        if let url = baseURL {
+            self.baseURL = url
         }
     }
+
+    public init(projectMapping: [EventType: [String]]) {
+        self.projectMapping = projectMapping
+    }
+
+    public init?(plistName: String) {
+        for bundle in Bundle.allBundles {
+            let fileName = plistName.replacingOccurrences(of: ".plist", with: "")
+            if let fileURL = bundle.url(forResource: fileName, withExtension: "plist") {
+                guard let data = try? Data(contentsOf: fileURL) else {
+                    Exponea.logger.log(.error, message: "Can't read data from \(fileName).plist")
+                    return nil
+                }
+
+                do {
+                    self = try PropertyListDecoder().decode(Configuration.self, from: data)
+                    return
+                } catch {
+                    Exponea.logger.log(.error, message: """
+                        Can't parse Configuration from \(fileName).plist: \(error.localizedDescription)
+                        """)
+                    return nil
+                }
+            }
+        }
+    }
+
+    // MARK: - Decodable -
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        if let projectToken = try container.decodeIfPresent(String.self, forKey: .projectToken) {
+            self.projectToken = projectToken
+        }
+
+        if let baseUrl = try container.decodeIfPresent(String.self, forKey: .baseUrl) {
+            self.baseURL = baseUrl
+        }
+
+        if let authorization = try container.decodeIfPresent(String.self, forKey: .authorization) {
+            self.authorization = authorization
+        }
+
+        if let dictionary = try container.decodeIfPresent(Dictionary<String, [String]>.self, forKey: .projectMapping) {
+            var mapping: [EventType: [String]] = [:]
+            for (_, element: (key: event, value: tokenArray)) in dictionary.enumerated() {
+                guard let eventType = EventType(rawValue: event) else { continue }
+                mapping[eventType] = tokenArray
+            }
+            self.projectMapping = mapping
+        }
+
+        if let sessionTimeout = try container.decodeIfPresent(Double.self, forKey: .sessionTimeout) {
+            self.sessionTimeout = sessionTimeout
+        }
+
+        if let automaticSessionTracking = try container.decodeIfPresent(Bool.self, forKey: .automaticSessionTracking) {
+            self.automaticSessionTracking = automaticSessionTracking
+        }
+    }
+}
+
+extension Configuration {
     internal var lastSessionStarted: Double {
         get {
             return UserDefaults.standard.double(forKey: Constants.Keys.sessionStarted)
@@ -38,63 +115,5 @@ struct Configuration {
         set {
             UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionEnded)
         }
-    }
-    internal var autoSessionTracking: Bool {
-        get {
-            return UserDefaults.standard.bool(forKey: Constants.Keys.autoSessionTrack)
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: Constants.Keys.autoSessionTrack)
-        }
-    }
-
-    init() {}
-
-    init(projectToken: String, authorization: String, baseURL: String?) {
-        self.projectToken = projectToken
-        self.authorization = authorization
-        if let url = baseURL {
-            self.baseURL = url
-        }
-    }
-
-    init(plistName: String) {
-        var projectToken: String?
-        var authorization: String?
-        var baseURL: String?
-
-        for bundle in Bundle.allBundles {
-            let fileName = plistName.replacingOccurrences(of: ".plist", with: "")
-            if let fileURL = bundle.url(forResource: fileName, withExtension: "plist") {
-
-                let object = NSDictionary(contentsOf: fileURL)
-
-                guard let keyDict = object as? [String: AnyObject] else {
-                    Exponea.logger.log(.error, message: "Can't parse file \(fileName).plist")
-                    fatalError("Can't parse file \(fileName).plist")
-                }
-
-                projectToken = keyDict[Constants.Keys.token] as? String
-                authorization = keyDict[Constants.Keys.authorization] as? String
-                baseURL = keyDict[Constants.Keys.baseURL] as? String
-                break
-            }
-        }
-
-        guard let finalProjectToken = projectToken else {
-            Exponea.logger.log(.error, message: "Couldn't initialize project token")
-            return
-        }
-        guard let finalAuthorization = authorization else {
-            Exponea.logger.log(.error, message: "Couldn't initialize authorization header")
-            return
-        }
-
-        if let finalBaseURL = baseURL {
-            self.baseURL = finalBaseURL
-        }
-
-        self.projectToken = finalProjectToken
-        self.authorization = finalAuthorization
     }
 }
