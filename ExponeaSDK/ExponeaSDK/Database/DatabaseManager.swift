@@ -112,7 +112,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     public func trackCustomer(projectToken: String,
-                              customerId: KeyValueModel?,
+                              customerId: KeyValueModel,
                               properties: [KeyValueModel],
                               timestamp: Double?) -> Bool {
 
@@ -121,11 +121,8 @@ extension DatabaseManager: DatabaseManagerType {
 
         trackCustomers.projectToken = projectToken
         trackCustomers.timestamp = timestamp ?? NSDate().timeIntervalSince1970
-
-        if let customerId = customerId {
-            trackCustomers.customerIdKey = customerId.key
-            trackCustomers.customerIdValue = customerId.value as? NSObject
-        }
+        trackCustomers.customerIdKey = customerId.key
+        trackCustomers.customerIdValue = customerId.value as? NSObject
 
         // Add the customer properties to the customer entity
         for property in properties {

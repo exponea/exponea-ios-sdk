@@ -16,7 +16,7 @@ public protocol DatabaseManagerType: class {
                     timestamp: Double?,
                     eventType: String?) -> Bool
     func trackCustomer(projectToken: String,
-                       customerId: KeyValueModel?,
+                       customerId: KeyValueModel,
                        properties: [KeyValueModel],
                        timestamp: Double?) -> Bool
     func fetchTrackCustomer() -> [TrackCustomers]
