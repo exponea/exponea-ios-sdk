@@ -21,7 +21,7 @@ class PaymentManager: SKPaymentQueue, PaymentManagerType {
     }
 
     deinit {
-        startObservingPayments()
+        stopObservingPayments()
     }
 
     /// Add the observer to the payment queue in order to receive
