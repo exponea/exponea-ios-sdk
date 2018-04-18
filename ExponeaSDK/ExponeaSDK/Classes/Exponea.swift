@@ -14,7 +14,7 @@ public class Exponea {
     fileprivate(set) var configuration: Configuration!
     /// Database manager responsable for data persistance.
     let database: DatabaseManager
-    /// Payment manager to responsable to track all in app payments
+    /// Payment manager responsable to track all in app payments
     let paymentManager: PaymentManager
 
     /// Boolean identifier that returns if the SDK is configured or not.
