@@ -73,16 +73,16 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    public func trackEvents(projectToken: String,
-                            customerId: KeyValueModel?,
-                            properties: [KeyValueModel],
-                            timestamp: Double?,
-                            eventType: String?) -> Bool {
+    public func trackEvent(projectToken: String,
+                           customerId: KeyValueModel?,
+                           properties: [KeyValueModel],
+                           timestamp: Double?,
+                           eventType: String?) -> Bool {
         let trackEvents = TrackEvents(context: managedObjectContext)
         let trackEventsProperties = TrackEventsProperties(context: managedObjectContext)
 
         trackEvents.projectToken = projectToken
-        trackEvents.timestamp = timestamp ?? NSDate().timeIntervalSince1970
+        trackEvents.timestamp = timestamp ?? Date().timeIntervalSince1970
 
         if let customerId = customerId {
             trackEvents.customerIdKey = customerId.key
@@ -98,6 +98,37 @@ extension DatabaseManager: DatabaseManagerType {
             trackEventsProperties.key = property.key
             trackEventsProperties.value = property.value as? NSObject
             trackEvents.addToTrackEventsProperties(trackEventsProperties)
+        }
+
+        // Save the customer properties into CoreData
+        return saveContext()
+    }
+
+    /// Add customer properties into coredata.
+    ///
+    /// - Parameters:
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
+    ///     - properties: Properties that should be updated
+    ///     - timestamp: Timestamp should always be UNIX timestamp format
+    public func trackCustomer(projectToken: String,
+                              customerId: KeyValueModel,
+                              properties: [KeyValueModel],
+                              timestamp: Double?) -> Bool {
+
+        let trackCustomers = TrackCustomers(context: managedObjectContext)
+        let trackCustomerProperties = TrackCustomersProperties(context: managedObjectContext)
+
+        trackCustomers.projectToken = projectToken
+        trackCustomers.timestamp = timestamp ?? Date().timeIntervalSince1970
+        trackCustomers.customerIdKey = customerId.key
+        trackCustomers.customerIdValue = customerId.value as? NSObject
+
+        // Add the customer properties to the customer entity
+        for property in properties {
+            trackCustomerProperties.key = property.key
+            trackCustomerProperties.value = property.value as? NSObject
+            trackCustomers.addToTrackCustomerProperties(trackCustomerProperties)
         }
 
         // Save the customer properties into CoreData

@@ -21,28 +21,20 @@ struct DeviceProperties {
     /// Device model
     public var deviceModel: String = UIDevice.current.model
     /// Device type
-    public var deviceType: String = ""
-
-    init() {
-        deviceType = getDeviceType()
+    public var deviceType: String {
+        if UIDevice.current.model.hasPrefix("iPad") { return "tablet" } else { return "mobile" }
     }
+    /// Returns an array with all device properties.
+    var properties: [KeyValueModel] {
+        var data = [KeyValueModel]()
 
-    func asKeyValueModel() -> [KeyValueModel] {
-        var dict = [KeyValueModel]()
+        data.append(KeyValueModel(key: "os_name", value: osName))
+        data.append(KeyValueModel(key: "os_version", value: osVersion))
+        data.append(KeyValueModel(key: "sdk", value: sdk))
+        data.append(KeyValueModel(key: "sdk_version", value: sdkVersion))
+        data.append(KeyValueModel(key: "device_model", value: deviceModel))
+        data.append(KeyValueModel(key: "device_type", value: deviceType))
 
-        dict.append(KeyValueModel(key: "os_name", value: osName))
-        dict.append(KeyValueModel(key: "os_version", value: osVersion))
-        dict.append(KeyValueModel(key: "sdk", value: sdk))
-        dict.append(KeyValueModel(key: "sdk_version", value: sdkVersion))
-        dict.append(KeyValueModel(key: "device_model", value: deviceModel))
-        dict.append(KeyValueModel(key: "device_type", value: getDeviceType()))
-
-        return dict
-    }
-}
-
-extension DeviceProperties {
-    func getDeviceType() -> String {
-        if (UIDevice.current.model).hasPrefix("iPad") { return "tablet" } else { return "mobile" }
+        return data
     }
 }
