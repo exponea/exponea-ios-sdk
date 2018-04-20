@@ -1,5 +1,5 @@
 //
-//  CustomerRecommendModel.swift
+//  CustomerRecommendation.swift
 //  ExponeaSDK
 //
 //  Created by Dominik Hádl on 11/04/2018.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CustomerRecommendModel {
+public struct CustomerRecommendation {
     public var size: Int?
     public var strategy: String?
     public var knowItems: Bool?

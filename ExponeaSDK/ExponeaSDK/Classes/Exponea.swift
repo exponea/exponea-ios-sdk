@@ -13,13 +13,15 @@ public class Exponea {
     /// The configuration object containing all the config data for the shared instance.
     fileprivate(set) var configuration: Configuration!
     /// Database manager responsable for data persistance.
-    let database: DatabaseManager
+    let database: DatabaseManagerType
     /// Payment manager responsable to track all in app payments
     let paymentManager: PaymentManagerType
+    /// Repository responsable for http requests.
+    let repository: ConnectionManagerType
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
-        if configuration.projectToken != nil {
+        if configuration.projectToken != nil && configuration.authorization != nil {
             return true
         }
         return false
@@ -32,7 +34,7 @@ public class Exponea {
         set {
             guard configured else {
                 Exponea.logger.log(.error, message: Constants.ErrorMessages.sdkNotConfigured)
-                fatalError(Constants.ErrorMessages.sdkNotConfigured)
+                return
             }
             configuration.projectToken = newValue
         }
@@ -63,7 +65,15 @@ public class Exponea {
             }
         }
     }
-
+    /// Authorization header for authentication using the exponea access tokens.
+    public var authorization: String? {
+        get {
+            return configuration.authorization
+        }
+        set {
+            configuration.authorization = newValue
+        }
+    }
     /// Sets the flushing mode for usage
     public var flushingMode: FlushingMode {
         get {
@@ -71,6 +81,15 @@ public class Exponea {
         }
         set {
             trackingManager.flushingMode = newValue
+        }
+    }
+    /// Sets the base url for the project in exponea app
+    public var baseURL: String {
+        get {
+            return configuration.baseURL
+        }
+        set {
+            configuration.baseURL = newValue
         }
     }
 
@@ -82,14 +101,16 @@ public class Exponea {
 
     let trackingManager: TrackingManager
 
-    init(repository: TrackingRepository) {
+    init(database: DatabaseManagerType,
+         repository: ConnectionManagerType) {
         /// SDK configuration.
         self.configuration = Configuration()
-        /// Initialing database manager with specific container.
-        self.database = DatabaseManager()
+        /// Initialing database manager
+        self.database = database
+        /// Initializing repository.
+        self.repository = repository
         /// Initializing tracking manager.
         self.trackingManager = TrackingManager(database: database,
-                                               repository: repository,
                                                configuration: self.configuration)
         /// Initializing payment manager.
         self.paymentManager = PaymentManager(trackingMananger: self.trackingManager)
@@ -98,16 +119,12 @@ public class Exponea {
     public init() {
         /// SDK configuration.
         self.configuration = Configuration()
-        /// Initializing database manager with default container
+        /// Initializing database manager
         self.database = DatabaseManager()
-        /// API configuration.
-        let apiConfiguration = APIConfiguration(baseURL: Constants.Repository.baseURL,
-                                             contentType: Constants.Repository.contentType)
         /// Initializing repository.
-        let repository = ConnectionManager(configuration: apiConfiguration)
+        self.repository = ConnectionManager(configuration: self.configuration)
         /// Initializing tracking manager.
         self.trackingManager = TrackingManager(database: self.database,
-                                               repository: repository,
                                                configuration: self.configuration)
         /// Initializing payment manager.
         self.paymentManager = PaymentManager(trackingMananger: self.trackingManager)
@@ -119,8 +136,10 @@ public class Exponea {
 }
 
 internal extension Exponea {
-    internal func configure(projectToken: String) {
-        configuration = Configuration(projectToken: projectToken)
+    internal func configure(projectToken: String, authorization: String, baseURL: String?) {
+        configuration = Configuration(projectToken: projectToken,
+                                      authorization: authorization,
+                                      baseURL: baseURL)
     }
 
     internal func configure(plistName: String) {
@@ -210,6 +229,18 @@ internal extension Exponea {
                                                        .properties(properties),
                                                        .timestamp(timestamp)])
     }
+
+    internal func fetchEvents(customerId: KeyValueModel,
+                              events: CustomerEvents,
+                              completion: @escaping (Result<EventsResult>) -> Void ) {
+        guard let projectToken = projectToken else {
+            return
+        }
+        repository.fetchEvents(projectToken: projectToken,
+                               customerId: customerId,
+                               events: events,
+                               completion: completion)
+    }
 }
 
 public extension Exponea {
@@ -217,8 +248,8 @@ public extension Exponea {
     ///
     /// - Parameters:
     ///     - projectToken: Project Token to be used through the SDK
-    public class func configure(projectToken: String) {
-        shared.configure(projectToken: projectToken)
+    public class func configure(projectToken: String, authorization: String, baseURL: String?) {
+        shared.configure(projectToken: projectToken, authorization: authorization, baseURL: baseURL)
         shared.sharedInitializer()
     }
 
@@ -285,5 +316,18 @@ public extension Exponea {
     /// This method can be used to manually flush all available data to Exponea.
     public class func flushData() {
         shared.flushData()
+    }
+
+    /// Fetch all events for a specific customer
+    ///
+    /// - Parameters:
+    ///     - customerId: Specify your customer with external id.
+    ///     - events: Object containing all event types to be fetched.
+    public class func fetchCustomerEvents(customerId: KeyValueModel,
+                                          events: CustomerEvents,
+                                          completion: @escaping (Result<EventsResult>) -> Void) {
+        shared.fetchEvents(customerId: customerId,
+                           events: events,
+                           completion: completion)
     }
 }

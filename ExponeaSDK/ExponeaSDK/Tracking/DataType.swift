@@ -14,4 +14,9 @@ public enum DataType {
     case properties([KeyValueModel])
     case timestamp(Double?)
     case eventType(String)
+    case property(String)
+    case id(String)
+    case recommendation(CustomerRecommendation)
+    case attributes(CustomerAttributes)
+    case events(CustomerEvents)
 }

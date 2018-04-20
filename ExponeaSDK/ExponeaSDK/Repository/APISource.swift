@@ -20,8 +20,15 @@ public class APISource {
 
         request.url = URL(string: router.path)
         request.httpMethod = router.method.rawValue
-        request.addValue(Constants.Repository.contentType, forHTTPHeaderField: Constants.Repository.headerContentType)
-        request.addValue(Constants.Repository.contentType, forHTTPHeaderField: Constants.Repository.headerAccept)
+        request.addValue(Constants.Repository.contentType,
+                         forHTTPHeaderField: Constants.Repository.headerContentType)
+        request.addValue(Constants.Repository.contentType,
+                         forHTTPHeaderField: Constants.Repository.headerAccept)
+
+        if let authorization = Exponea.shared.authorization {
+            request.addValue(authorization,
+                             forHTTPHeaderField: Constants.Repository.headerAuthorization)
+        }
 
         var params: [String: Any]?
 

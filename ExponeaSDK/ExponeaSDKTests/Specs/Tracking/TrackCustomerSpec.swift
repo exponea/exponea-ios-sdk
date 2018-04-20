@@ -19,12 +19,12 @@ class TrackCustomerSpec: QuickSpec {
         describe("A Track Customer") {
             let data = TrackMockData()
             context("ExponeaSDK not configured") {
-                it("Event call should return false") {
-                    let result = Exponea.shared.trackCustomer(customerId: data.customerId,
-                                                              properties: data.properties,
-                                                              timestamp: data.timestamp)
-                    expect(result).to(beFalse())
-                }
+//                it("Event call should return false") {
+//                    let result = Exponea.shared.trackCustomer(customerId: data.customerId,
+//                                                              properties: data.properties,
+//                                                              timestamp: data.timestamp)
+//                    expect(result).to(beFalse())
+//                }
             }
         }
     }

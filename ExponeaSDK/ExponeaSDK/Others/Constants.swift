@@ -12,21 +12,24 @@ import Foundation
 enum Constants {
     /// Network
     enum Repository {
-        static let baseURL = "https://api.exponea.com/"
+        static let baseURL = "https://api.exponea.com"
         static let contentType = "application/json"
-        static let headerContentType = "Content-Type"
-        static let headerAccept = "Accept"
-        static let headerContentLenght = "Content-length"
+        static let headerContentType = "content-type"
+        static let headerAccept = "accept"
+        static let headerContentLenght = "content-length"
+        static let headerAuthorization = "authorization"
     }
     /// Keys for plist files and userdefaults
     enum Keys {
         static let token = "exponeaProjectIdKey"
+        static let authorization = "exponeaAuthorization"
         static let launchedBefore = "launchedBefore"
         static let sessionStarted = "sessionStarted"
         static let sessionEnded = "sessionEnded"
         static let timeout = "sessionTimeout"
         static let autoSessionTrack = "automaticSessionTrack"
         static let appVersion = "CFBundleShortVersionString"
+        static let baseURL = "exponeaBaseURL"
     }
     /// SDK Info
     enum DeviceInfo {

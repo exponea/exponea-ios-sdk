@@ -15,4 +15,3 @@ public struct KeyValueModel {
     /// Value for the key in the dictionary
     public var value: Any
 }
-

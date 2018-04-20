@@ -14,13 +14,29 @@ import Foundation
 /// - sessionStart: <#sessionStart description#>
 /// - sessionEnd: <#sessionEnd description#>
 /// - custom: <#custom description#>
-indirect enum EventType {
+enum EventType {
+    /// Tracking Events
     case install
     case sessionStart
     case sessionEnd
     case trackEvent
     case trackCustomer
     case payment
+    /// Fetching Events
+    case fetchProperty
+    case fetchId
+    case fetchSegmentation
+    case fetchExpression
+    case fetchPrediction
+    case fetchRecommendation
+    case fetchAttributes
+    case fetchEvents
+    case fetchAllProperties
+    case fetchAllCustomers
+    case fetchAnonymize
+    /// Token Events
+    case revokeToken
+    case renewToken
 }
 
 // TODO: add other events

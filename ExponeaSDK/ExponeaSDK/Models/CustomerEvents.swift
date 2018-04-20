@@ -1,5 +1,5 @@
 //
-//  CustomerEventsModel.swift
+//  CustomerEvents.swift
 //  ExponeaSDK
 //
 //  Created by Dominik Hádl on 11/04/2018.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-public struct CustomerEventsModel {
+public struct CustomerEvents {
     public var eventTypes: [String]
-    public var sortOrder: String = "asc"
-    public var limit: Int = 1
+    public var sortOrder: String = "desc"
+    public var limit: Int = 3
     public var skip: Int = 100
 }
