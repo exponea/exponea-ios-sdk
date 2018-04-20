@@ -14,15 +14,3 @@ public struct CustomerEvents {
     public var limit: Int = 3
     public var skip: Int = 100
 }
-
-public struct EventsResult: Codable {
-    let success: Bool?
-    let data: [ExportedEventType]?
-}
-
-public struct ExportedEventType: Codable {
-    let type: String?
-    let timestamp: Double?
-    let properties: [String: String]?
-    let errors: [String: String]?
-}

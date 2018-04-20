@@ -17,9 +17,13 @@ class TrackEventSpec: QuickSpec {
     override func spec() {
         describe("Track a customer event") {
             let data = TrackMockData()
+            let database = MockDatabase()
+            let configuration = Configuration(plistName: "ExponeaConfig")
+            let repository = ConnectionManager(configuration: configuration)
             context("ExponeaSDK not configured") {
                 it("Event call should return false") {
-                    let exponea = Exponea(database: MockDatabase())
+                    let exponea = Exponea(database: database,
+                                          repository: repository)
 
                     let result = exponea.trackEvent(customerId: data.customerId,
                                                     properties: data.properties,

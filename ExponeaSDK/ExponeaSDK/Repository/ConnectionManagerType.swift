@@ -33,7 +33,7 @@ protocol ConnectionManagerType: TrackingRepository, TokenRepository {
     func fetchEvents(projectToken: String,
                      customerId: KeyValueModel,
                      events: CustomerEvents,
-                     completion: @escaping (APIResult<EventsResult>) -> Void)
+                     completion: @escaping (Result<EventsResult>) -> Void)
     func fetchAllProperties(projectToken: String, customerId: KeyValueModel)
     func fetchAllCustomers(projectToken: String, data: CustomerExportModel)
     func anonymize(projectToken: String, customerId: KeyValueModel)

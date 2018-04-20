@@ -13,6 +13,8 @@ struct Configuration {
 
     internal var projectToken: String?
     internal var authorization: String?
+    internal var baseURL: String = Constants.Repository.baseURL
+    internal var contentType: String = Constants.Repository.contentType
     internal var sessionTimeout: Double {
         get {
             return UserDefaults.standard.double(forKey: Constants.Keys.timeout)
@@ -48,14 +50,18 @@ struct Configuration {
 
     init() {}
 
-    init(projectToken: String, authorization: String) {
+    init(projectToken: String, authorization: String, baseURL: String?) {
         self.projectToken = projectToken
         self.authorization = authorization
+        if let url = baseURL {
+            self.baseURL = url
+        }
     }
 
     init(plistName: String) {
         var projectToken: String?
         var authorization: String?
+        var baseURL: String?
 
         for bundle in Bundle.allBundles {
             let fileName = plistName.replacingOccurrences(of: ".plist", with: "")
@@ -70,6 +76,7 @@ struct Configuration {
 
                 projectToken = keyDict[Constants.Keys.token] as? String
                 authorization = keyDict[Constants.Keys.authorization] as? String
+                baseURL = keyDict[Constants.Keys.baseURL] as? String
                 break
             }
         }
@@ -81,6 +88,10 @@ struct Configuration {
         guard let finalAuthorization = authorization else {
             Exponea.logger.log(.error, message: "Couldn't initialize authorization header")
             return
+        }
+
+        if let finalBaseURL = baseURL {
+            self.baseURL = finalBaseURL
         }
 
         self.projectToken = finalProjectToken

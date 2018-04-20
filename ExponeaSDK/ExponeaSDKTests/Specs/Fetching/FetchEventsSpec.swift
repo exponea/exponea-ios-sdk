@@ -19,11 +19,14 @@ class FetchEventsSpec: QuickSpec {
 
         let database = MockDatabase()
         let data = FetchMockData()
+        let configuration = Configuration(plistName: "ExponeaConfig")
+        let repository = ConnectionManager(configuration: configuration)
 
-        let exponea = Exponea(database: database)
+        let exponea = Exponea(database: database,
+                              repository: repository)
 
         describe("Fetch Event") {
-            //var returnData: APIResult<EventsResult>?
+            //var returnData: Result<EventsResult>?
 
             exponea.configure(plistName: "ExponeaConfig")
             expect(exponea.authorization).toNot(beNil())

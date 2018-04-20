@@ -10,12 +10,12 @@ import Foundation
 
 final class ConnectionManager {
 
-    let configuration: APIConfiguration
+    let configuration: Configuration
     let apiSource: APISource
     private let session = URLSession.shared
 
     // Initialize the configuration for all HTTP requests
-    init(configuration: APIConfiguration) {
+    init(configuration: Configuration) {
         self.configuration = configuration
         self.apiSource = APISource()
     }
@@ -285,7 +285,7 @@ extension ConnectionManager: ConnectionManagerType {
     func fetchEvents(projectToken: String,
                      customerId: KeyValueModel,
                      events: CustomerEvents,
-                     completion: @escaping (APIResult<EventsResult>) -> Void) {
+                     completion: @escaping (Result<EventsResult>) -> Void) {
         let router = APIRouter(baseURL: configuration.baseURL,
                                projectToken: projectToken,
                                route: .customersEvents)
@@ -298,10 +298,10 @@ extension ConnectionManager: ConnectionManagerType {
                                               data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, _, error) in
             if let error = error {
                 Exponea.logger.log(.error, message: "Unresolved error \(String(error.localizedDescription))")
-                completion(APIResult.failure(error))
+                completion(Result.failure(error))
             } else {
                 guard let data = data else {
                     Exponea.logger.log(.error, message: "Could not unwrap data.")
@@ -309,10 +309,10 @@ extension ConnectionManager: ConnectionManagerType {
                 }
                 do {
                     let events = try JSONDecoder().decode(EventsResult.self, from: data)
-                    completion(APIResult.success(events))
+                    completion(Result.success(events))
                 } catch {
                     Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
-                    completion(APIResult.failure(error))
+                    completion(Result.failure(error))
                 }
             }
         })

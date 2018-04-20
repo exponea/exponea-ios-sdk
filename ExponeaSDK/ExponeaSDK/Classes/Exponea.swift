@@ -21,7 +21,7 @@ public class Exponea {
 
     /// Boolean identifier that returns if the SDK is configured or not.
     public var configured: Bool {
-        if configuration.projectToken != nil {
+        if configuration.projectToken != nil && configuration.authorization != nil {
             return true
         }
         return false
@@ -74,7 +74,6 @@ public class Exponea {
             configuration.authorization = newValue
         }
     }
-
     /// Sets the flushing mode for usage
     public var flushingMode: FlushingMode {
         get {
@@ -82,6 +81,15 @@ public class Exponea {
         }
         set {
             trackingManager.flushingMode = newValue
+        }
+    }
+    /// Sets the base url for the project in exponea app
+    public var baseURL: String {
+        get {
+            return configuration.baseURL
+        }
+        set {
+            configuration.baseURL = newValue
         }
     }
 
@@ -93,16 +101,14 @@ public class Exponea {
 
     let trackingManager: TrackingManager
 
-    init(database: DatabaseManagerType) {
+    init(database: DatabaseManagerType,
+         repository: ConnectionManagerType) {
         /// SDK configuration.
         self.configuration = Configuration()
-        /// Initialing database manager with specific container.
+        /// Initialing database manager
         self.database = database
-        /// API configuration.
-        let apiConfiguration = APIConfiguration(baseURL: Constants.Repository.baseURL,
-                                                contentType: Constants.Repository.contentType)
         /// Initializing repository.
-        self.repository = ConnectionManager(configuration: apiConfiguration)
+        self.repository = repository
         /// Initializing tracking manager.
         self.trackingManager = TrackingManager(database: database,
                                                configuration: self.configuration)
@@ -113,13 +119,10 @@ public class Exponea {
     public init() {
         /// SDK configuration.
         self.configuration = Configuration()
-        /// Initializing database manager with default container
+        /// Initializing database manager
         self.database = DatabaseManager()
-        /// API configuration.
-        let apiConfiguration = APIConfiguration(baseURL: Constants.Repository.baseURL,
-                                                contentType: Constants.Repository.contentType)
         /// Initializing repository.
-        self.repository = ConnectionManager(configuration: apiConfiguration)
+        self.repository = ConnectionManager(configuration: self.configuration)
         /// Initializing tracking manager.
         self.trackingManager = TrackingManager(database: self.database,
                                                configuration: self.configuration)
@@ -133,9 +136,10 @@ public class Exponea {
 }
 
 internal extension Exponea {
-    internal func configure(projectToken: String, authorization: String) {
+    internal func configure(projectToken: String, authorization: String, baseURL: String?) {
         configuration = Configuration(projectToken: projectToken,
-                                      authorization: authorization)
+                                      authorization: authorization,
+                                      baseURL: baseURL)
     }
 
     internal func configure(plistName: String) {
@@ -228,7 +232,7 @@ internal extension Exponea {
 
     internal func fetchEvents(customerId: KeyValueModel,
                               events: CustomerEvents,
-                              completion: @escaping (APIResult<EventsResult>) -> Void ) {
+                              completion: @escaping (Result<EventsResult>) -> Void ) {
         guard let projectToken = projectToken else {
             return
         }
@@ -244,8 +248,8 @@ public extension Exponea {
     ///
     /// - Parameters:
     ///     - projectToken: Project Token to be used through the SDK
-    public class func configure(projectToken: String, authorization: String) {
-        shared.configure(projectToken: projectToken, authorization: authorization)
+    public class func configure(projectToken: String, authorization: String, baseURL: String?) {
+        shared.configure(projectToken: projectToken, authorization: authorization, baseURL: baseURL)
         shared.sharedInitializer()
     }
 
@@ -321,7 +325,7 @@ public extension Exponea {
     ///     - events: Object containing all event types to be fetched.
     public class func fetchCustomerEvents(customerId: KeyValueModel,
                                           events: CustomerEvents,
-                                          completion: @escaping (APIResult<EventsResult>) -> Void) {
+                                          completion: @escaping (Result<EventsResult>) -> Void) {
         shared.fetchEvents(customerId: customerId,
                            events: events,
                            completion: completion)

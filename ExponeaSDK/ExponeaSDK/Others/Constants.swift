@@ -29,6 +29,7 @@ enum Constants {
         static let timeout = "sessionTimeout"
         static let autoSessionTrack = "automaticSessionTrack"
         static let appVersion = "CFBundleShortVersionString"
+        static let baseURL = "exponeaBaseURL"
     }
     /// SDK Info
     enum DeviceInfo {
