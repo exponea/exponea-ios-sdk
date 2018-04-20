@@ -38,8 +38,6 @@
 		F067441420873813003C0293 /* PurchasedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441320873813003C0293 /* PurchasedItem.swift */; };
 		F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441620878FA1003C0293 /* FetchEventsSpec.swift */; };
 		F06744192087939B003C0293 /* FetchMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06744182087939B003C0293 /* FetchMockData.swift */; };
-		F067441D2088B7A7003C0293 /* FetchingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441C2088B7A7003C0293 /* FetchingManager.swift */; };
-		F067441F2088BC7B003C0293 /* FetchingManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441E2088BC7B003C0293 /* FetchingManagerType.swift */; };
 		F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */; };
 		F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* DeviceProperties.swift */; };
 		F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F8207F787100C89A7F /* TrackerSpec.swift */; };
@@ -109,8 +107,6 @@
 		F067441320873813003C0293 /* PurchasedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasedItem.swift; sourceTree = "<group>"; };
 		F067441620878FA1003C0293 /* FetchEventsSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchEventsSpec.swift; sourceTree = "<group>"; };
 		F06744182087939B003C0293 /* FetchMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchMockData.swift; sourceTree = "<group>"; };
-		F067441C2088B7A7003C0293 /* FetchingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchingManager.swift; sourceTree = "<group>"; };
-		F067441E2088BC7B003C0293 /* FetchingManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchingManagerType.swift; sourceTree = "<group>"; };
 		F0C1C1CF2073852E005EB697 /* EntitiesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesModel.swift; sourceTree = "<group>"; };
 		F0CA58F5207F612200C89A7F /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
 		F0CA58F8207F787100C89A7F /* TrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSpec.swift; sourceTree = "<group>"; };
@@ -280,7 +276,6 @@
 			isa = PBXGroup;
 			children = (
 				F0E757EC207D023A00FE8C21 /* Classes */,
-				F067441A2088B78A003C0293 /* Fetching */,
 				01EC2DB0207E55C10031BFEB /* Tracking */,
 				01EC2DB8207E68BF0031BFEB /* Database */,
 				F0E757E1207CF9BE00FE8C21 /* Repository */,
@@ -326,15 +321,6 @@
 			children = (
 				F067441620878FA1003C0293 /* FetchEventsSpec.swift */,
 				F06744182087939B003C0293 /* FetchMockData.swift */,
-			);
-			path = Fetching;
-			sourceTree = "<group>";
-		};
-		F067441A2088B78A003C0293 /* Fetching */ = {
-			isa = PBXGroup;
-			children = (
-				F067441C2088B7A7003C0293 /* FetchingManager.swift */,
-				F067441E2088BC7B003C0293 /* FetchingManagerType.swift */,
 			);
 			path = Fetching;
 			sourceTree = "<group>";
@@ -629,7 +615,6 @@
 				01EC2DB4207E58080031BFEB /* EventType.swift in Sources */,
 				F0674410208731F9003C0293 /* PaymentManager.swift in Sources */,
 				F0CA58FB207FA5E700C89A7F /* CampaignProperties.swift in Sources */,
-				F067441F2088BC7B003C0293 /* FetchingManagerType.swift in Sources */,
 				01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
@@ -642,7 +627,6 @@
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				01EC2DA7207E4FBA0031BFEB /* CustomerEvents.swift in Sources */,
 				01EC2DAB207E53D90031BFEB /* CustomerExportAttributesModel.swift in Sources */,
-				F067441D2088B7A7003C0293 /* FetchingManager.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* ConnectionManagerType.swift in Sources */,
