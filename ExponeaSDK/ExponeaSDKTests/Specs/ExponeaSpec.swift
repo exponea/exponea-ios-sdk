@@ -60,18 +60,25 @@ class ExponeaSpec: QuickSpec {
                 it("Should return the correct project token") {
                     expect(exponea.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
                 }
+                it("Should return the default base url") {
+                    expect(exponea.baseURL).to(equal("https://api.exponea.com"))
+                }
             }
             context("Setting exponea properties") {
                 let exponea = Exponea(database: database,
                                       repository: repository)
                 exponea.configure(plistName: "ExponeaConfig")
                 exponea.projectToken = "NewProjectToken"
+                exponea.baseURL = "NewBaseURL"
                 it("Should return the new token") {
                     expect(exponea.projectToken).to(equal("NewProjectToken"))
                 }
                 it("Should return true for auto tracking") {
                     exponea.autoSessionTracking = true
                     expect(exponea.autoSessionTracking).to(beTrue())
+                }
+                it("Should change the base url") {
+                    expect(exponea.baseURL).to(equal("NewBaseURL"))
                 }
             }
         }
