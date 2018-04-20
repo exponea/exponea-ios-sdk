@@ -10,5 +10,5 @@ import Foundation
 
 public struct CustomerExportAttributesModel {
     public var type: String
-    public var list: [CustomerAttributesListModel]
+    public var list: [CustomerAttributes]
 }

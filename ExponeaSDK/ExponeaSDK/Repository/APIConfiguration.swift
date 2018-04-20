@@ -15,7 +15,8 @@ struct APIConfiguration {
     /// HTTP Header content type
     let contentType: String
 
-    init(baseURL: String = Constants.Repository.baseURL, contentType: String = Constants.Repository.contentType) {
+    init(baseURL: String = Constants.Repository.baseURL,
+         contentType: String = Constants.Repository.contentType) {
         self.baseURL = baseURL
         self.contentType = contentType
     }
@@ -47,4 +48,25 @@ public enum HTTPMethod: String {
     case get = "GET"
     case delete = "DELETE"
     case patch = "PATCH"
+}
+
+public enum APIResult<T> {
+    case success(T)
+    case failure(Error)
+
+    var value: T? {
+        if case .success(let value) = self {
+            return value
+        } else {
+            return nil
+        }
+    }
+
+    var error: Error? {
+        if case .failure(let error) = self {
+            return error
+        } else {
+            return nil
+        }
+    }
 }

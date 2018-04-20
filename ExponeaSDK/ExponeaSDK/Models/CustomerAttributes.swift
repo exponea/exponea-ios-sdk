@@ -1,5 +1,5 @@
 //
-//  CustomerAttributesListModel.swift
+//  CustomerAttributes.swift
 //  ExponeaSDK
 //
 //  Created by Dominik Hádl on 11/04/2018.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CustomerAttributesListModel {
+public struct CustomerAttributes {
     public var typeKey: String
     public var typeValue: String
     public var identificationKey: String

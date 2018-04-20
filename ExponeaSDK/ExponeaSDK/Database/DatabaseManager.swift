@@ -99,6 +99,8 @@ extension DatabaseManager: DatabaseManagerType {
                     trackEventsProperties.value = property.value as? NSObject
                     trackEvents.addToTrackEventsProperties(trackEventsProperties)
                 }
+            default:
+                break
             }
         }
 

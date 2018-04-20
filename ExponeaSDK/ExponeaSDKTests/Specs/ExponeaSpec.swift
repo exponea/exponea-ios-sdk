@@ -16,14 +16,12 @@ class ExponeaSpec: QuickSpec {
 
     override func spec() {
 
-        let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
-                                             contentType: Constants.Repository.contentType)
-        let repository = ConnectionManager(configuration: configuration)
+        let database = MockDatabase()
 
         describe("A SDK") {
 
             context("After beign initialized") {
-                let exponea = Exponea(repository: repository)
+                let exponea = Exponea(database: database)
                 it("Should not be configured") {
                     expect(exponea.configured).to(beFalse())
                 }
@@ -36,8 +34,9 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("After beign configured from string") {
-                let exponea = Exponea(repository: repository)
-                exponea.configure(projectToken: "ProjectTokenString")
+                let exponea = Exponea(database: database)
+                exponea.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97",
+                                  authorization: "Basic")
                 it("Should be configured") {
                     expect(exponea.configured).to(beTrue())
                 }
@@ -45,24 +44,24 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.projectToken).toNot(beNil())
                 }
                 it("Should return the correct project token") {
-                    expect(exponea.projectToken).to(equal("ProjectTokenString"))
+                    expect(exponea.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
                 }
             }
 
             context("After beign configured from plist file") {
-                let exponea = Exponea(repository: repository)
-                exponea.configure(plistName: "ExponeaConfig.plist")
+                let exponea = Exponea(database: database)
+                exponea.configure(plistName: "ExponeaConfig")
                 it("Should have a project token") {
                     expect(exponea.projectToken).toNot(beNil())
                 }
                 it("Should return the correct project token") {
-                    expect(exponea.projectToken).to(equal("ExponeaProjectIdKeyFromPList"))
+                    expect(exponea.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
                 }
             }
 
             context("Setting exponea properties") {
-                let exponea = Exponea(repository: repository)
-                exponea.configure(plistName: "ExponeaConfig.plist")
+                let exponea = Exponea(database: database)
+                exponea.configure(plistName: "ExponeaConfig")
                 exponea.projectToken = "NewProjectToken"
                 it("Should return the new token") {
                     expect(exponea.projectToken).to(equal("NewProjectToken"))
@@ -72,6 +71,7 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.autoSessionTracking).to(beTrue())
                 }
             }
+
         }
     }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-final public class ConnectionManager {
+final class ConnectionManager {
 
     let configuration: APIConfiguration
     let apiSource: APISource
@@ -117,7 +117,7 @@ extension ConnectionManager: TokenRepository {
     }
 }
 
-extension ConnectionManager: FetchCustomerRepository {
+extension ConnectionManager: ConnectionManagerType {
 
     /// Fetch property for one customer.
     ///
@@ -237,7 +237,7 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - id: Identifier that you want to retrieve
     ///     - recommendation: Recommendations for the customer
     func fetchRecommendation(projectToken: String, customerId: KeyValueModel, id: String,
-                             recommendation: CustomerRecommendModel?) {
+                             recommendation: CustomerRecommendation?) {
 
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersRecommendation)
         let customersParams = CustomersParams(customer: customerId, property: nil, id: id,
@@ -260,7 +260,7 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - attributes: List of attributes you want to retrieve
-    func fetchAttributes(projectToken: String, customerId: KeyValueModel, attributes: [CustomerAttributesListModel]) {
+    func fetchAttributes(projectToken: String, customerId: KeyValueModel, attributes: [CustomerAttributes]) {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersAttributes)
         let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
                                               attributes: attributes, events: nil, data: nil)
@@ -282,17 +282,38 @@ extension ConnectionManager: FetchCustomerRepository {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - events: List of event types you want to retrieve
-    func fetchEvents(projectToken: String, customerId: KeyValueModel, events: CustomerEventsModel) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersEvents)
-        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
-                                              attributes: nil, events: events, data: nil)
+    func fetchEvents(projectToken: String,
+                     customerId: KeyValueModel,
+                     events: CustomerEvents,
+                     completion: @escaping (APIResult<EventsResult>) -> Void) {
+        let router = APIRouter(baseURL: configuration.baseURL,
+                               projectToken: projectToken,
+                               route: .customersEvents)
+        let customersParams = CustomersParams(customer: customerId,
+                                              property: nil,
+                                              id: nil,
+                                              recommendation: nil,
+                                              attributes: nil,
+                                              events: events,
+                                              data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
-            if error != nil {
-                // TODO: Handle success
+            if let error = error {
+                Exponea.logger.log(.error, message: "Unresolved error \(String(error.localizedDescription))")
+                completion(APIResult.failure(error))
             } else {
-                // TODO: Handle error
+                guard let data = data else {
+                    Exponea.logger.log(.error, message: "Could not unwrap data.")
+                    return
+                }
+                do {
+                    let events = try JSONDecoder().decode(EventsResult.self, from: data)
+                    completion(APIResult.success(events))
+                } catch {
+                    Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
+                    completion(APIResult.failure(error))
+                }
             }
         })
         task.resume()

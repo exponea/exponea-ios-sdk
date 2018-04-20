@@ -1,5 +1,5 @@
 //
-//  MockPersistentContainer.swift
+//  MockDatabase.swift
 //  ExponeaSDKTests
 //
 //  Created by Ricardo Tokashiki on 11/04/2018.
@@ -11,16 +11,19 @@ import CoreData
 
 @testable import ExponeaSDK
 
-class MockPersistentContainer: DatabaseManager {
+class MockDatabase: DatabaseManager {
 
-    lazy var managedObjectModelTest: NSManagedObjectModel = {
-        let managedObjectModel = NSManagedObjectModel.mergedModel(from: [Bundle(for: type(of: self))] )!
-        return managedObjectModel
-    }()
+//    lazy var managedObjectModelTest: NSManagedObjectModel = {
+//        let managedObjectModel = NSManagedObjectModel.mergedModel(from: [Bundle(for: type(of: self))] )!
+//        return managedObjectModel
+//    }()
 
     lazy var persistantContainer: NSPersistentContainer = {
 
-        let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: self.managedObjectModelTest)
+        let modelURL = Bundle.main.url(forResource: "DatabaseModel", withExtension: "momd")!
+        let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: NSManagedObjectModel(contentsOf: modelURL)!)
+
+//        let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: self.managedObjectModelTest)
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         description.shouldAddStoreAsynchronously = false

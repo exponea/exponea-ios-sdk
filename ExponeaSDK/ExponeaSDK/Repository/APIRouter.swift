@@ -89,17 +89,17 @@ struct CustomersParams {
     var customer: KeyValueModel?
     var property: String?
     var id: String?
-    var recommendation: CustomerRecommendModel?
-    var attributes: [CustomerAttributesListModel]?
-    var events: CustomerEventsModel?
+    var recommendation: CustomerRecommendation?
+    var attributes: [CustomerAttributes]?
+    var events: CustomerEvents?
     var data: CustomerExportModel?
 
     init(customer: KeyValueModel?,
          property: String?,
          id: String?,
-         recommendation: CustomerRecommendModel?,
-         attributes: [CustomerAttributesListModel]?,
-         events: CustomerEventsModel?,
+         recommendation: CustomerRecommendation?,
+         attributes: [CustomerAttributes]?,
+         events: CustomerEvents?,
          data: CustomerExportModel?) {
 
         self.customer = customer

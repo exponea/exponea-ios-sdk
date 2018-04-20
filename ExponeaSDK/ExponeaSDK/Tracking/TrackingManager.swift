@@ -10,7 +10,6 @@ import Foundation
 
 class TrackingManager {
     let database: DatabaseManagerType
-    let repository: TrackingRepository
     let device: DeviceProperties
     var configuration: Configuration
 
@@ -22,9 +21,8 @@ class TrackingManager {
         }
     }
 
-    init(database: DatabaseManagerType, repository: TrackingRepository, configuration: Configuration) {
+    init(database: DatabaseManagerType, configuration: Configuration) {
         self.database = database
-        self.repository = repository
         self.configuration = configuration
         self.device = DeviceProperties()
     }
@@ -109,6 +107,8 @@ extension TrackingManager: TrackingManagerType {
             return trackCustomer(with: data)
         case .payment:
             return trackPayment(with: data + [.eventType(Constants.EventTypes.payment)])
+        default:
+            return false
         }
     }
 }

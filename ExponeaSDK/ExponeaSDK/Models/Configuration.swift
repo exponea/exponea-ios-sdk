@@ -12,6 +12,7 @@ import CoreData
 struct Configuration {
 
     internal var projectToken: String?
+    internal var authorization: String?
     internal var sessionTimeout: Double {
         get {
             return UserDefaults.standard.double(forKey: Constants.Keys.timeout)
@@ -47,12 +48,14 @@ struct Configuration {
 
     init() {}
 
-    init(projectToken: String) {
+    init(projectToken: String, authorization: String) {
         self.projectToken = projectToken
+        self.authorization = authorization
     }
 
     init(plistName: String) {
         var projectToken: String?
+        var authorization: String?
 
         for bundle in Bundle.allBundles {
             let fileName = plistName.replacingOccurrences(of: ".plist", with: "")
@@ -66,15 +69,21 @@ struct Configuration {
                 }
 
                 projectToken = keyDict[Constants.Keys.token] as? String
+                authorization = keyDict[Constants.Keys.authorization] as? String
                 break
             }
         }
 
         guard let finalProjectToken = projectToken else {
-            Exponea.logger.log(.error, message: "Couldn't initialize projectId (token)")
-            fatalError("Couldn't initialize projectId (token)")
+            Exponea.logger.log(.error, message: "Couldn't initialize project token")
+            return
+        }
+        guard let finalAuthorization = authorization else {
+            Exponea.logger.log(.error, message: "Couldn't initialize authorization header")
+            return
         }
 
         self.projectToken = finalProjectToken
+        self.authorization = finalAuthorization
     }
 }
