@@ -1,0 +1,17 @@
+{
+   "success":true,
+   "results":[
+      {
+         "success":true,
+         "value":"Marian"
+      },
+      {
+         "success":true,
+         "value":"Galik"
+      },
+      {
+         "success":true,
+         "value":"Payers"
+      }
+   ]
+}

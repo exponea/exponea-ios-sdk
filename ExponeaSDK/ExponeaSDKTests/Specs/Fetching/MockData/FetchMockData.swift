@@ -16,4 +16,11 @@ class FetchMockData {
                                       sortOrder: "asc",
                                       limit: 1,
                                       skip: 100)
+    let recommendation = CustomerRecommendation(type: "recommendation",
+                                                id: "592ff585fb60094e02bfaf6a",
+                                                size: nil,
+                                                strategy: nil,
+                                                knowItems: nil,
+                                                anti: nil,
+                                                items: nil)
 }
