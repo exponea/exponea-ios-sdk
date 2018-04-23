@@ -65,6 +65,7 @@ extension EventType {
         case .trackEvent: return "TRACK_EVENT"
         case .trackCustomer: return "TRACK_CUSTOMER"
         case .payment: return "PAYMENT"
+        default: return ""
         }
     }
 }
