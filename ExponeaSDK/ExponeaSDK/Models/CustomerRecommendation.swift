@@ -9,6 +9,8 @@
 import Foundation
 
 public struct CustomerRecommendation {
+    public var type: String
+    public var id: String
     public var size: Int?
     public var strategy: String?
     public var knowItems: Bool?

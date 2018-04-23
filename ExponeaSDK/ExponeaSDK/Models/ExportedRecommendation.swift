@@ -1,5 +1,5 @@
 //
-//  EventsResult.swift
+//  ExportedRecommendation.swift
 //  ExponeaSDK
 //
 //  Created by Ricardo Tokashiki on 20/04/2018.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct EventsResult: Codable {
+public struct ExportedRecommendation: Codable {
     let success: Bool?
-    let data: [ExportedEventType]?
+    let value: String?
 }

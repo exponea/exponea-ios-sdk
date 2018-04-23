@@ -230,9 +230,10 @@ internal extension Exponea {
                                                        .timestamp(timestamp)])
     }
 
+    /// Request customer events from the repository
     internal func fetchEvents(customerId: KeyValueModel,
                               events: CustomerEvents,
-                              completion: @escaping (Result<EventsResult>) -> Void ) {
+                              completion: @escaping (Result<Events>) -> Void ) {
         guard let projectToken = projectToken else {
             return
         }
@@ -240,6 +241,19 @@ internal extension Exponea {
                                customerId: customerId,
                                events: events,
                                completion: completion)
+    }
+
+    /// Request customer recommendations from the repository
+    internal func fetchRecommendation(customerId: KeyValueModel,
+                                      recommendation: CustomerRecommendation,
+                                      completion: @escaping (Result<Recommendation>) -> Void ) {
+        guard let projectToken = projectToken else {
+            return
+        }
+        repository.fetchRecommendation(projectToken: projectToken,
+                                       customerId: customerId,
+                                       recommendation: recommendation,
+                                       completion: completion)
     }
 }
 
@@ -325,9 +339,22 @@ public extension Exponea {
     ///     - events: Object containing all event types to be fetched.
     public class func fetchCustomerEvents(customerId: KeyValueModel,
                                           events: CustomerEvents,
-                                          completion: @escaping (Result<EventsResult>) -> Void) {
+                                          completion: @escaping (Result<Events>) -> Void) {
         shared.fetchEvents(customerId: customerId,
                            events: events,
                            completion: completion)
+    }
+
+    /// Fetch customer property
+    ///
+    /// - Parameters:
+    ///     - customerId: Specify your customer with external id.
+    ///     - events: Object containing all event types to be fetched.
+    public class func fetchCustomerProperty(customerId: KeyValueModel,
+                                            recommendation: CustomerRecommendation,
+                                            completion: @escaping (Result<Recommendation>) -> Void) {
+        shared.fetchRecommendation(customerId: customerId,
+                                   recommendation: recommendation,
+                                   completion: completion)
     }
 }

@@ -22,16 +22,16 @@ struct APIRouter {
 
     var path: String {
         switch self.route {
-        case .trackCustomers: return baseURL + "track/v2/projects/\(projectToken)/customers"
-        case .trackEvents: return baseURL + "track/v2/projects/\(projectToken)/customers/events"
-        case .tokenRotate: return baseURL + "data/v2/\(projectToken)/tokens/rotate"
-        case .tokenRevoke: return baseURL + "data/v2/\(projectToken)/tokens/revoke"
-        case .customersProperty: return baseURL + "data/v2/\(projectToken)/customers/property"
-        case .customersId: return baseURL + "data/v2/\(projectToken)/customers/id"
-        case .customersSegmentation: return baseURL + "data/v2/\(projectToken)/customers/segmentation"
-        case .customersExpression: return baseURL + "data/v2/\(projectToken)/customers/expression"
-        case .customersPrediction: return baseURL + "data/v2/\(projectToken)/customers/prediction"
-        case .customersRecommendation: return baseURL + "data/v2/\(projectToken)/customers/recommendation"
+        case .trackCustomers: return baseURL + "/track/v2/projects/\(projectToken)/customers"
+        case .trackEvents: return baseURL + "/track/v2/projects/\(projectToken)/customers/events"
+        case .tokenRotate: return baseURL + "/data/v2/\(projectToken)/tokens/rotate"
+        case .tokenRevoke: return baseURL + "/data/v2/\(projectToken)/tokens/revoke"
+        case .customersProperty: return baseURL + "/data/v2/\(projectToken)/customers/property"
+        case .customersId: return baseURL + "/data/v2/\(projectToken)/customers/id"
+        case .customersSegmentation: return baseURL + "/data/v2/\(projectToken)/customers/segmentation"
+        case .customersExpression: return baseURL + "/data/v2/\(projectToken)/customers/expression"
+        case .customersPrediction: return baseURL + "/data/v2/\(projectToken)/customers/prediction"
+        case .customersRecommendation: return baseURL + "/data/v2/projects/\(projectToken)/customers/attributes"
         case .customersAttributes: return baseURL + "/data/v2/\(projectToken)/customers/attributes"
         case .customersEvents: return baseURL + "/data/v2/projects/\(projectToken)/customers/events"
         case .customersAnonymize: return baseURL + "/data/v2/\(projectToken)/customers/anonymize"
@@ -138,6 +138,10 @@ struct CustomersParams {
         }
         /// Preparing recommendation param
         if let recommendation = recommendation {
+
+            preparedParam["type"] = recommendation.type
+            preparedParam["id"] = recommendation.id
+
             if let size = recommendation.size {
                 preparedParam["size"] = size
             }

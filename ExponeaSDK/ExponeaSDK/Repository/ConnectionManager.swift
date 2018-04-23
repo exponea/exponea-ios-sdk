@@ -118,7 +118,6 @@ extension ConnectionManager: TokenRepository {
 }
 
 extension ConnectionManager: ConnectionManagerType {
-
     /// Fetch property for one customer.
     ///
     /// - Parameters:
@@ -234,21 +233,40 @@ extension ConnectionManager: ConnectionManagerType {
     /// - Parameters:
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - id: Identifier that you want to retrieve
     ///     - recommendation: Recommendations for the customer
-    func fetchRecommendation(projectToken: String, customerId: KeyValueModel, id: String,
-                             recommendation: CustomerRecommendation?) {
+    func fetchRecommendation(projectToken: String,
+                             customerId: KeyValueModel,
+                             recommendation: CustomerRecommendation,
+                             completion: @escaping (Result<Recommendation>) -> Void) {
 
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersRecommendation)
-        let customersParams = CustomersParams(customer: customerId, property: nil, id: id,
-                                              recommendation: recommendation, attributes: nil, events: nil, data: nil)
+        let router = APIRouter(baseURL: configuration.baseURL,
+                               projectToken: projectToken,
+                               route: .customersRecommendation)
+        let customersParams = CustomersParams(customer: customerId,
+                                              property: nil,
+                                              id: nil,
+                                              recommendation: recommendation,
+                                              attributes: nil,
+                                              events: nil,
+                                              data: nil)
         let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
-            if error != nil {
-                // TODO: Handle success
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, result, error) in
+            if let error = error {
+                Exponea.logger.log(.error, message: "Unresolved error \(String(error.localizedDescription))")
+                completion(Result.failure(error))
             } else {
-                // TODO: Handle error
+                guard let data = data else {
+                    Exponea.logger.log(.error, message: "Could not unwrap data.")
+                    return
+                }
+                do {
+                    let recommendation = try JSONDecoder().decode(Recommendation.self, from: data)
+                    completion(Result.success(recommendation))
+                } catch {
+                    Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
+                    completion(Result.failure(error))
+                }
             }
         })
         task.resume()
@@ -285,7 +303,7 @@ extension ConnectionManager: ConnectionManagerType {
     func fetchEvents(projectToken: String,
                      customerId: KeyValueModel,
                      events: CustomerEvents,
-                     completion: @escaping (Result<EventsResult>) -> Void) {
+                     completion: @escaping (Result<Events>) -> Void) {
         let router = APIRouter(baseURL: configuration.baseURL,
                                projectToken: projectToken,
                                route: .customersEvents)
@@ -308,7 +326,7 @@ extension ConnectionManager: ConnectionManagerType {
                     return
                 }
                 do {
-                    let events = try JSONDecoder().decode(EventsResult.self, from: data)
+                    let events = try JSONDecoder().decode(Events.self, from: data)
                     completion(Result.success(events))
                 } catch {
                     Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")

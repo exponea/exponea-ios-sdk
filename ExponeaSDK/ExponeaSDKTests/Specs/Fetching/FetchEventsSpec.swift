@@ -26,11 +26,12 @@ class FetchEventsSpec: QuickSpec {
                               repository: repository)
 
         describe("Fetch Event") {
-            //var returnData: Result<EventsResult>?
+            //var returnData: Result<Events>?
 
             exponea.configure(plistName: "ExponeaConfig")
             expect(exponea.authorization).toNot(beNil())
 
+            Exponea.shared.baseURL = exponea.baseURL
             Exponea.shared.authorization = exponea.authorization
             waitUntil(timeout: 5) { done in
                 exponea.fetchEvents(customerId: data.customerId, events: data.customerData) { result in
