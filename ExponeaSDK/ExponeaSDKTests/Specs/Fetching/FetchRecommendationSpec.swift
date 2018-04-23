@@ -18,7 +18,7 @@ class FetchRecommendationSpec: QuickSpec {
 
         let database = MockDatabase()
         let data = FetchMockData()
-        let configuration = Configuration(plistName: "ExponeaConfig")
+        let configuration = Configuration(plistName: "ExponeaConfig")!
         let repository = MockFetchRepository(configuration: configuration)
 
         let exponea = Exponea(database: database,

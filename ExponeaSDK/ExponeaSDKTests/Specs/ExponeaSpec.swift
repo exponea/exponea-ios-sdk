@@ -17,18 +17,15 @@ class ExponeaSpec: QuickSpec {
     override func spec() {
 
         let database = MockDatabase()
-        let configuration = Configuration(plistName: "ExponeaConfig")
+        let configuration = Configuration(plistName: "ExponeaConfig")!
         let repository = ConnectionManager(configuration: configuration)
 
         describe("A SDK") {
             context("After beign initialized") {
                 let exponea = Exponea(database: database,
                                       repository: repository)
-                it("Should not be configured") {
-                    expect(exponea.configured).to(beFalse())
-                }
-                it("Should not return a project token") {
-                    expect(exponea.projectToken).to(beNil())
+                it("Should return an empty project token") {
+                    expect(exponea.projectToken).to(beEmpty())
                 }
                 it("Should return the default value for timeout") {
                     expect(exponea.sessionTimeout).toNot(equal(Constants.Session.defaultTimeout))
@@ -40,12 +37,6 @@ class ExponeaSpec: QuickSpec {
                 exponea.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97",
                                   authorization: "Basic",
                                   baseURL: nil)
-                it("Should be configured") {
-                    expect(exponea.configured).to(beTrue())
-                }
-                it("Should have a project token") {
-                    expect(exponea.projectToken).toNot(beNil())
-                }
                 it("Should return the correct project token") {
                     expect(exponea.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
                 }

@@ -34,7 +34,7 @@ enum EventType: String, Decodable {
     case trackCustomer = "TRACK_CUSTOMER"
 
     /// Virtual and hard payments can be tracked to better measure conversions for example.
-    case payment
+    case payment = "PAYMENT"
 
     /// Fetching Events
     case fetchProperty

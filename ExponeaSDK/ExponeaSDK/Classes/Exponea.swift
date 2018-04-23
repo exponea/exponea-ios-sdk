@@ -19,23 +19,12 @@ public class Exponea {
     /// Repository responsable for http requests.
     let repository: ConnectionManagerType
 
-    /// Boolean identifier that returns if the SDK is configured or not.
-    public var configured: Bool {
-        if configuration.projectToken != nil && configuration.authorization != nil {
-            return true
-        }
-        return false
-    }
     /// Identification of the project
     public var projectToken: String? {
         get {
             return configuration.projectToken
         }
         set {
-            guard configured else {
-                Exponea.logger.log(.error, message: Constants.ErrorMessages.sdkNotConfigured)
-                return
-            }
             configuration.projectToken = newValue
         }
     }
