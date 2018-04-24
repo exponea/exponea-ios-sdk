@@ -20,12 +20,11 @@ public class DatabaseManager {
                 Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
             }
         })
+        container.viewContext.automaticallyMergesChangesFromParent = true
         return container
     }()
 
-    init() {
-        persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
-    }
+    init() { }
 
     /// Managed Context for Core Data
     var managedObjectContext: NSManagedObjectContext {
