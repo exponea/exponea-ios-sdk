@@ -18,25 +18,35 @@ class MockDatabase: DatabaseManager {
 //        return managedObjectModel
 //    }()
 
-    lazy var persistantContainer: NSPersistentContainer = {
+    override init() {
+        super.init()
 
-        let modelURL = Bundle.main.url(forResource: "DatabaseModel", withExtension: "momd")!
-        let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: NSManagedObjectModel(contentsOf: modelURL)!)
-
-//        let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: self.managedObjectModelTest)
-        let description = NSPersistentStoreDescription()
-        description.type = NSInMemoryStoreType
-        description.shouldAddStoreAsynchronously = false
-
-        container.persistentStoreDescriptions = [description]
-        container.loadPersistentStores { (description, error) in
-            // Check if the data store is in memory
-            precondition( description.type == NSInMemoryStoreType )
-            // Check if creating container wrong
-            if let error = error {
-                fatalError("Create an in-mem coordinator failed \(error)")
+        self.persistentContainer = {
+            var url: URL?
+            for bundle in Bundle.allFrameworks {
+                url = bundle.url(forResource: "DatabaseModel", withExtension: "momd")
+                if url != nil {
+                    break
+                }
             }
-        }
-        return container
-    }()
+
+            let container = NSPersistentContainer(name: "DatabaseModel",
+                                                  managedObjectModel: NSManagedObjectModel(contentsOf: url!)!)
+
+            let description = NSPersistentStoreDescription()
+            description.type = NSInMemoryStoreType
+            description.shouldAddStoreAsynchronously = false
+
+            container.persistentStoreDescriptions = [description]
+            container.loadPersistentStores { (description, error) in
+                // Check if the data store is in memory
+                precondition( description.type == NSInMemoryStoreType )
+                // Check if creating container wrong
+                if let error = error {
+                    fatalError("Create an in-mem coordinator failed \(error)")
+                }
+            }
+            return container
+        }()
+    }
 }

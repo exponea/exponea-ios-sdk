@@ -8,11 +8,29 @@
 
 import Foundation
 
+/// Data types that can be associated with tracked events (described in `EventType`).
+///
+/// - projectToken
+/// - customerId
+/// - properties
+/// - timestamp
+/// - eventType
 public enum DataType {
+
+    /// The token of the project that the tracking should be uploaded to.
     case projectToken(String)
+
+    /// Identifier of your customer, can be anything from an email to UUIDs.
     case customerId(KeyValueModel)
+
+    /// Custom properties that you would like to add to the tracking event,
+    /// these can include any relevant information for you.
     case properties([KeyValueModel])
+
+    /// Timestamp of the tracked event in UNIX epoch time, if value is `nil` current date is used.
     case timestamp(Double?)
+
+    /// For some tracked events you can also provide an event type
     case eventType(String)
     case property(String)
     case id(String)

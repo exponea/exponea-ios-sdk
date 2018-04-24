@@ -85,31 +85,47 @@ extension TrackingManager {
 
 extension TrackingManager: TrackingManagerType {
     func trackEvent(_ type: EventType, customData: [DataType]?) -> Bool {
-
-        guard let projectToken = Exponea.shared.projectToken else {
+        /// Make sure we're configured.
+        guard Exponea.shared.configuration.isConfigured else {
             Exponea.logger.log(.error, message: Constants.ErrorMessages.tokenNotConfigured)
             return false
         }
 
-        let data: [DataType] = [.projectToken(projectToken)] + (customData ?? [])
-
-        switch type {
-        case .install:
-            return installEvent(projectToken: projectToken)
-        case .sessionStart:
-            return sessionStart(projectToken: projectToken)
-        case .sessionEnd:
-            // TODO: save to db
-            return false
-        case .trackEvent:
-            return trackEvent(with: data)
-        case .trackCustomer:
-            return trackCustomer(with: data)
-        case .payment:
-            return trackPayment(with: data + [.eventType(Constants.EventTypes.payment)])
-        default:
+        /// Get token mapping or fail if no token provided.
+        let tokens = Exponea.shared.configuration.tokens(for: type)
+        if tokens.isEmpty {
+            Exponea.logger.log(.error, message: Constants.ErrorMessages.tokenNotConfigured)
             return false
         }
+
+        // FIXME: Refactor the success tracking and add more logging.
+        var success = false
+
+        /// For each project token we have, track the data.
+        for projectToken in tokens {
+            let data: [DataType] = [.projectToken(projectToken)] + (customData ?? [])
+
+            switch type {
+            case .install:
+                success = success || installEvent(projectToken: projectToken)
+            case .sessionStart:
+                success = success || sessionStart(projectToken: projectToken)
+            case .sessionEnd:
+                // TODO: save to db
+                continue
+            case .trackEvent:
+                success = success || trackEvent(with: data)
+            case .trackCustomer:
+                success = success || trackCustomer(with: data)
+            case .payment:
+                success = success || trackPayment(with: data + [.eventType(Constants.EventTypes.payment)])
+            default:
+                Exponea.logger.log(.error, message: "Tracking of event type \(type) is not supported.")
+                continue
+            }
+        }
+
+        return success
     }
 }
 

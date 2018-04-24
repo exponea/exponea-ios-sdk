@@ -18,7 +18,7 @@ class TrackEventSpec: QuickSpec {
         describe("Track a customer event") {
             let data = TrackMockData()
             let database = MockDatabase()
-            let configuration = Configuration(plistName: "ExponeaConfig")
+            let configuration = Configuration(plistName: "ExponeaConfig")!
             let repository = ConnectionManager(configuration: configuration)
             context("ExponeaSDK not configured") {
                 it("Event call should return false") {

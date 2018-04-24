@@ -12,7 +12,7 @@ import Foundation
 
 class MockFetchRepository: FetchRepository {
 
-    let configuration: Configuration
+    var configuration: Configuration
     let apiSource = APISource()
 
     init(configuration: Configuration) {
@@ -54,7 +54,8 @@ class MockFetchRepository: FetchRepository {
                                               attributes: nil,
                                               events: nil,
                                               data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization,
+                                                       trackingParam: nil, customersParam: customersParams)
         let bundle = Bundle(for: type(of: self))
 
         guard request.url != nil else {

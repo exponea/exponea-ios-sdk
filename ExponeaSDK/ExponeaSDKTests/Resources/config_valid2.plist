@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>sessionTimeout</key>
+	<integer>20</integer>
+	<key>projectMapping</key>
+	<dict>
+		<key>INSTALL</key>
+		<array>
+			<string>testToken1</string>
+		</array>
+		<key>TRACK_EVENT</key>
+		<array>
+			<string>testToken2</string>
+			<string>testToken3</string>
+		</array>
+		<key>PAYMENT</key>
+		<array>
+			<string>paymentToken</string>
+		</array>
+	</dict>
+	<key>lastSessionStarted</key>
+	<integer>0</integer>
+	<key>lastSessionEnded</key>
+	<integer>0</integer>
+	<key>autoSessionTracking</key>
+	<false/>
+</dict>
+</plist>

@@ -41,4 +41,6 @@ protocol FetchRepository {
     func anonymize(projectToken: String, customerId: KeyValueModel)
 }
 
-protocol ConnectionManagerType: TrackingRepository, TokenRepository, FetchRepository {}
+protocol ConnectionManagerType: class, TrackingRepository, TokenRepository, FetchRepository {
+    var configuration: Configuration { get set }
+}

@@ -10,14 +10,12 @@ import Foundation
 
 final class ConnectionManager {
 
-    let configuration: Configuration
-    let apiSource: APISource
+    public internal(set) var configuration: Configuration
     private let session = URLSession.shared
 
     // Initialize the configuration for all HTTP requests
     init(configuration: Configuration) {
         self.configuration = configuration
-        self.apiSource = APISource()
     }
 }
 
@@ -33,7 +31,7 @@ extension ConnectionManager: TrackingRepository {
 
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackCustomers)
         let params = TrackingParams(customer: customerId, properties: properties, timestamp: nil, eventType: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: params, customersParam: nil)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: params, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -58,7 +56,7 @@ extension ConnectionManager: TrackingRepository {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackEvents)
         let params = TrackingParams(customer: customerId, properties: properties, timestamp: timestamp,
                                     eventType: eventType)
-        let request = apiSource.prepareRequest(router: router, trackingParam: params, customersParam: nil)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: params, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -84,7 +82,7 @@ extension ConnectionManager: TokenRepository {
     func rotateToken(projectToken: String) {
 
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .tokenRotate)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: nil)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -104,7 +102,7 @@ extension ConnectionManager: TokenRepository {
     func revokeToken(projectToken: String) {
 
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .tokenRotate)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: nil)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: nil)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -128,7 +126,7 @@ extension ConnectionManager: ConnectionManagerType {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersProperty)
         let customersParams = CustomersParams(customer: customerId, property: property, id: nil, recommendation: nil,
                                               attributes: nil, events: nil, data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -150,7 +148,7 @@ extension ConnectionManager: ConnectionManagerType {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersId)
         let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
                                               attributes: nil, events: nil, data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -172,7 +170,7 @@ extension ConnectionManager: ConnectionManagerType {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersSegmentation)
         let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
                                               attributes: nil, events: nil, data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -194,7 +192,7 @@ extension ConnectionManager: ConnectionManagerType {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersExpression)
         let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
                                               attributes: nil, events: nil, data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -216,7 +214,7 @@ extension ConnectionManager: ConnectionManagerType {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersPrediction)
         let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
                                               attributes: nil, events: nil, data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -249,7 +247,7 @@ extension ConnectionManager: ConnectionManagerType {
                                               attributes: nil,
                                               events: nil,
                                               data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, result, error) in
             if let error = error {
@@ -282,7 +280,7 @@ extension ConnectionManager: ConnectionManagerType {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersAttributes)
         let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
                                               attributes: attributes, events: nil, data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -314,7 +312,7 @@ extension ConnectionManager: ConnectionManagerType {
                                               attributes: nil,
                                               events: events,
                                               data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, _, error) in
             if let error = error {
@@ -346,7 +344,7 @@ extension ConnectionManager: ConnectionManagerType {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersExportAllProperties)
         let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
                                               attributes: nil, events: nil, data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -367,7 +365,7 @@ extension ConnectionManager: ConnectionManagerType {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersExportAll)
         let customersParams = CustomersParams(customer: nil, property: nil, id: nil, recommendation: nil,
                                               attributes: nil, events: nil, data: data)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -389,7 +387,8 @@ extension ConnectionManager: ConnectionManagerType {
         let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersAnonymize)
         let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
                                               attributes: nil, events: nil, data: nil)
-        let request = apiSource.prepareRequest(router: router, trackingParam: nil, customersParam: customersParams)
+        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization,
+                                                       trackingParam: nil, customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
             if error != nil {
@@ -401,4 +400,45 @@ extension ConnectionManager: ConnectionManagerType {
         task.resume()
     }
 
+}
+
+extension ConnectionManager {
+    static func prepareRequest(router: APIRouter,
+                               authorization: String?,
+                               trackingParam: TrackingParams?,
+                               customersParam: CustomersParams?) -> NSMutableURLRequest {
+        let request = NSMutableURLRequest()
+        var body: Data?
+
+        request.url = URL(string: router.path)
+        request.httpMethod = router.method.rawValue
+        request.addValue(Constants.Repository.contentType,
+                         forHTTPHeaderField: Constants.Repository.headerContentType)
+        request.addValue(Constants.Repository.contentType,
+                         forHTTPHeaderField: Constants.Repository.headerAccept)
+
+        if let authorization = authorization {
+            request.addValue(authorization,
+                             forHTTPHeaderField: Constants.Repository.headerAuthorization)
+        }
+
+        var params: [String: Any]?
+
+        switch router.route {
+        case .trackCustomers, .trackEvents:
+            params = trackingParam?.params
+        case .tokenRotate, .tokenRevoke:
+            params = nil
+        default:
+            params = customersParam?.params
+        }
+
+        if let params = params {
+            body = try? JSONSerialization.data(withJSONObject: params, options: [])
+        }
+
+        request.httpBody = body
+
+        return request
+    }
 }
