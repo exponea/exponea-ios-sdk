@@ -11,7 +11,12 @@ import Foundation
 public class Exponea {
 
     /// The configuration object containing all the config data for the shared instance.
-    fileprivate(set) var configuration: Configuration!
+    public var configuration: Configuration! {
+        didSet {
+            repository.configuration = configuration
+        }
+    }
+
     /// Database manager responsable for data persistance.
     let database: DatabaseManagerType
     /// Payment manager responsable to track all in app payments
@@ -19,15 +24,6 @@ public class Exponea {
     /// Repository responsable for http requests.
     let repository: ConnectionManagerType
 
-    /// Identification of the project
-    public var projectToken: String? {
-        get {
-            return configuration.projectToken
-        }
-        set {
-            configuration.projectToken = newValue
-        }
-    }
     /// Default timeout value for tracking the sessions
     public var sessionTimeout: Double {
         get {
@@ -54,15 +50,7 @@ public class Exponea {
             }
         }
     }
-    /// Authorization header for authentication using the exponea access tokens.
-    public var authorization: String? {
-        get {
-            return configuration.authorization
-        }
-        set {
-            configuration.authorization = newValue
-        }
-    }
+
     /// Sets the flushing mode for usage
     public var flushingMode: FlushingMode {
         get {
@@ -70,15 +58,6 @@ public class Exponea {
         }
         set {
             trackingManager.flushingMode = newValue
-        }
-    }
-    /// Sets the base url for the project in exponea app
-    public var baseURL: String {
-        get {
-            return configuration.baseURL
-        }
-        set {
-            configuration.baseURL = newValue
         }
     }
 
@@ -93,7 +72,7 @@ public class Exponea {
     init(database: DatabaseManagerType,
          repository: ConnectionManagerType) {
         /// SDK configuration.
-        self.configuration = Configuration(projectToken: "", authorization: "", baseURL: nil)
+        self.configuration = Configuration(projectToken: nil, authorization: "", baseURL: nil)
         /// Initialing database manager
         self.database = database
         /// Initializing repository.
@@ -107,16 +86,16 @@ public class Exponea {
 
     public init() {
         /// SDK configuration.
-        self.configuration = Configuration(projectToken: "", authorization: "", baseURL: nil)
+        self.configuration = Configuration(projectToken: nil, authorization: "", baseURL: nil)
         /// Initializing database manager
         self.database = DatabaseManager()
-        /// Initializing repository.
-        self.repository = ConnectionManager(configuration: self.configuration)
         /// Initializing tracking manager.
         self.trackingManager = TrackingManager(database: self.database,
                                                configuration: self.configuration)
         /// Initializing payment manager.
         self.paymentManager = PaymentManager(trackingMananger: self.trackingManager)
+        /// Initializing repository.
+        self.repository = ConnectionManager(configuration: configuration)
     }
 
     deinit {
@@ -220,12 +199,10 @@ internal extension Exponea {
     }
 
     /// Request customer events from the repository
-    internal func fetchEvents(customerId: KeyValueModel,
+    internal func fetchEvents(projectToken: String,
+                              customerId: KeyValueModel,
                               events: CustomerEvents,
-                              completion: @escaping (Result<Events>) -> Void ) {
-        guard let projectToken = projectToken else {
-            return
-        }
+                              completion: @escaping (Result<Events>) -> Void) {
         repository.fetchEvents(projectToken: projectToken,
                                customerId: customerId,
                                events: events,
@@ -233,12 +210,10 @@ internal extension Exponea {
     }
 
     /// Request customer recommendations from the repository
-    internal func fetchRecommendation(customerId: KeyValueModel,
+    internal func fetchRecommendation(projectToken: String,
+                                      customerId: KeyValueModel,
                                       recommendation: CustomerRecommendation,
-                                      completion: @escaping (Result<Recommendation>) -> Void ) {
-        guard let projectToken = projectToken else {
-            return
-        }
+                                      completion: @escaping (Result<Recommendation>) -> Void) {
         repository.fetchRecommendation(projectToken: projectToken,
                                        customerId: customerId,
                                        recommendation: recommendation,
@@ -326,10 +301,12 @@ public extension Exponea {
     /// - Parameters:
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
-    public class func fetchCustomerEvents(customerId: KeyValueModel,
+    public class func fetchCustomerEvents(projectToken: String,
+                                          customerId: KeyValueModel,
                                           events: CustomerEvents,
                                           completion: @escaping (Result<Events>) -> Void) {
-        shared.fetchEvents(customerId: customerId,
+        shared.fetchEvents(projectToken: projectToken,
+                           customerId: customerId,
                            events: events,
                            completion: completion)
     }
@@ -339,10 +316,12 @@ public extension Exponea {
     /// - Parameters:
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
-    public class func fetchCustomerProperty(customerId: KeyValueModel,
+    public class func fetchCustomerProperty(projectToken: String,
+                                            customerId: KeyValueModel,
                                             recommendation: CustomerRecommendation,
                                             completion: @escaping (Result<Recommendation>) -> Void) {
-        shared.fetchRecommendation(customerId: customerId,
+        shared.fetchRecommendation(projectToken: projectToken,
+                                   customerId: customerId,
                                    recommendation: recommendation,
                                    completion: completion)
     }

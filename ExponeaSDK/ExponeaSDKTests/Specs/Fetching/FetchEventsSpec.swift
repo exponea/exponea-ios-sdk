@@ -29,12 +29,11 @@ class FetchEventsSpec: QuickSpec {
             //var returnData: Result<Events>?
 
             exponea.configure(plistName: "ExponeaConfig")
-            expect(exponea.authorization).toNot(beNil())
-
-            Exponea.shared.baseURL = exponea.baseURL
-            Exponea.shared.authorization = exponea.authorization
+            expect(exponea.configuration.authorization).toNot(beNil())
             waitUntil(timeout: 5) { done in
-                exponea.fetchEvents(customerId: data.customerId, events: data.customerData) { result in
+                exponea.fetchEvents(projectToken: configuration.projectToken!,
+                                    customerId: data.customerId,
+                                    events: data.customerData) { result in
                     it("Should not return error") {
                         expect(result.error).to(beNil())
                     }

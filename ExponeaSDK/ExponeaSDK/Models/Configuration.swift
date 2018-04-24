@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-struct Configuration: Decodable {
+public struct Configuration: Decodable {
     var projectMapping: [EventType: [String]]?
     var projectToken: String?
     internal var authorization: String?
@@ -29,16 +29,16 @@ struct Configuration: Decodable {
 
     private init() {}
 
-    public init(projectToken: String, authorization: String, baseURL: String?) {
+    public init(projectToken: String?,
+                projectMapping: [EventType: [String]]? = nil,
+                authorization: String,
+                baseURL: String?) {
         self.projectToken = projectToken
+        self.projectMapping = projectMapping
         self.authorization = authorization
         if let url = baseURL {
             self.baseURL = url
         }
-    }
-
-    public init(projectMapping: [EventType: [String]]) {
-        self.projectMapping = projectMapping
     }
 
     public init?(plistName: String) {
@@ -114,6 +114,45 @@ extension Configuration {
         }
         set {
             UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionEnded)
+        }
+    }
+}
+
+extension Configuration {
+    var isConfigured: Bool {
+        return projectToken != nil || projectMapping != nil
+    }
+
+    func tokens(for eventType: EventType) -> [String] {
+        /// Check if we have project mapping, otherwise fall back to project token if present.
+        guard let mapping = projectMapping else {
+            guard let projectToken = projectToken else {
+                Exponea.logger.log(.error, message: "No project token or token mapping found.")
+                return []
+            }
+
+            return [projectToken]
+        }
+
+        /// Return correct token mapping if present and not empty.
+        if let tokens = mapping[eventType], !tokens.isEmpty {
+            return tokens
+        } else {
+            /// First check if we have default token
+            if let token = projectToken {
+                Exponea.logger.log(.error, message: "No project token found.")
+                return [token]
+            }
+
+            /// If we whae no project token nor token mapping, fail and log error.
+            guard let first = mapping.first else {
+                Exponea.logger.log(.error, message: "No project token found.")
+                return []
+            }
+
+            /// Otherwise grab first token in token mapping and warn about falling back to it.
+            Exponea.logger.log(.warning, message: "No token mapping found for event, falling back to \(first.key).")
+            return first.value
         }
     }
 }

@@ -18,10 +18,16 @@ class MockDatabase: DatabaseManager {
 //        return managedObjectModel
 //    }()
 
-    lazy var persistantContainer: NSPersistentContainer = {
+    override lazy var persistentContainer: NSPersistentContainer = {
+        var url: URL?
+        for bundle in Bundle.allFrameworks {
+            url = bundle.url(forResource: "DatabaseModel", withExtension: "momd")
+            if url != nil {
+                break
+            }
+        }
 
-        let modelURL = Bundle.main.url(forResource: "DatabaseModel", withExtension: "momd")!
-        let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: NSManagedObjectModel(contentsOf: modelURL)!)
+        let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: NSManagedObjectModel(contentsOf: url!)!)
 
 //        let container = NSPersistentContainer(name: "DatabaseModel", managedObjectModel: self.managedObjectModelTest)
         let description = NSPersistentStoreDescription()
