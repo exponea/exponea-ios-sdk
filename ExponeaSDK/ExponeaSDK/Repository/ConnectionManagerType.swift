@@ -9,8 +9,8 @@
 import Foundation
 
 protocol TrackingRepository {
-    func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel])
-    func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
+    func trackCustomer(projectToken: String, customerId: KeyValueItem, properties: [KeyValueItem])
+    func trackEvents(projectToken: String, customerId: KeyValueItem, properties: [KeyValueItem],
                      timestamp: Double?, eventType: String?)
 }
 
@@ -20,25 +20,25 @@ protocol TokenRepository {
 }
 
 protocol FetchRepository {
-    func fetchProperty(projectToken: String, customerId: KeyValueModel, property: String)
-    func fetchId(projectToken: String, customerId: KeyValueModel, id: String)
-    func fetchSegmentation(projectToken: String, customerId: KeyValueModel, id: String)
-    func fetchExpression(projectToken: String, customerId: KeyValueModel, id: String)
-    func fetchPrediction(projectToken: String, customerId: KeyValueModel, id: String)
+    func fetchProperty(projectToken: String, customerId: KeyValueItem, property: String)
+    func fetchId(projectToken: String, customerId: KeyValueItem, id: String)
+    func fetchSegmentation(projectToken: String, customerId: KeyValueItem, id: String)
+    func fetchExpression(projectToken: String, customerId: KeyValueItem, id: String)
+    func fetchPrediction(projectToken: String, customerId: KeyValueItem, id: String)
     func fetchRecommendation(projectToken: String,
-                             customerId: KeyValueModel,
+                             customerId: KeyValueItem,
                              recommendation: CustomerRecommendation,
                              completion: @escaping (Result<Recommendation>) -> Void)
     func fetchAttributes(projectToken: String,
-                         customerId: KeyValueModel,
+                         customerId: KeyValueItem,
                          attributes: [CustomerAttributes])
     func fetchEvents(projectToken: String,
-                     customerId: KeyValueModel,
-                     events: CustomerEvents,
-                     completion: @escaping (Result<Events>) -> Void)
-    func fetchAllProperties(projectToken: String, customerId: KeyValueModel)
+                     customerId: KeyValueItem,
+                     events: FetchEventsRequest,
+                     completion: @escaping (Result<FetchEventsResponse>) -> Void)
+    func fetchAllProperties(projectToken: String, customerId: KeyValueItem)
     func fetchAllCustomers(projectToken: String, data: CustomerExportModel)
-    func anonymize(projectToken: String, customerId: KeyValueModel)
+    func anonymize(projectToken: String, customerId: KeyValueItem)
 }
 
 protocol ConnectionManagerType: class, TrackingRepository, TokenRepository, FetchRepository {

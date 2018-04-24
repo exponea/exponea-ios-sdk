@@ -1,5 +1,5 @@
 //
-//  CustomerEvents.swift
+//  FetchEventsRequest.swift
 //  ExponeaSDK
 //
 //  Created by Dominik Hádl on 11/04/2018.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CustomerEvents {
+public struct FetchEventsRequest {
     public var eventTypes: [String]
     public var sortOrder: String = "desc"
     public var limit: Int = 3

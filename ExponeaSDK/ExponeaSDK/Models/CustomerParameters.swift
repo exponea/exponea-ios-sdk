@@ -9,20 +9,20 @@
 import Foundation
 
 struct CustomerParameters {
-    var customer: KeyValueModel?
+    var customer: KeyValueItem?
     var property: String?
     var id: String?
     var recommendation: CustomerRecommendation?
     var attributes: [CustomerAttributes]?
-    var events: CustomerEvents?
+    var events: FetchEventsRequest?
     var data: CustomerExportModel?
 
-    init(customer: KeyValueModel?,
+    init(customer: KeyValueItem?,
          property: String?,
          id: String?,
          recommendation: CustomerRecommendation?,
          attributes: [CustomerAttributes]?,
-         events: CustomerEvents?,
+         events: FetchEventsRequest?,
          data: CustomerExportModel?) {
 
         self.customer = customer

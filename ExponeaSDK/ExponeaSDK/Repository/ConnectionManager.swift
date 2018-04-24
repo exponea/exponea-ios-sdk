@@ -27,7 +27,7 @@ extension ConnectionManager: TrackingRepository {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
-    func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
+    func trackCustomer(projectToken: String, customerId: KeyValueItem, properties: [KeyValueItem]) {
 
         let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackCustomers)
         let params = TrackingParameters(customer: customerId, properties: properties, timestamp: nil, eventType: nil)
@@ -53,7 +53,7 @@ extension ConnectionManager: TrackingRepository {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
+    func trackEvents(projectToken: String, customerId: KeyValueItem, properties: [KeyValueItem],
                      timestamp: Double?, eventType: String?) {
         let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackEvents)
         let params = TrackingParameters(customer: customerId, properties: properties, timestamp: timestamp,
@@ -129,7 +129,7 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - property: Property that should be updated
-    func fetchProperty(projectToken: String, customerId: KeyValueModel, property: String) {
+    func fetchProperty(projectToken: String, customerId: KeyValueItem, property: String) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersProperty)
@@ -155,7 +155,7 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchId(projectToken: String, customerId: KeyValueModel, id: String) {
+    func fetchId(projectToken: String, customerId: KeyValueItem, id: String) {
         let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersId)
         let customersParams = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
                                                  attributes: nil, events: nil, data: nil)
@@ -179,7 +179,7 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchSegmentation(projectToken: String, customerId: KeyValueModel, id: String) {
+    func fetchSegmentation(projectToken: String, customerId: KeyValueItem, id: String) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersSegmentation)
@@ -205,7 +205,7 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchExpression(projectToken: String, customerId: KeyValueModel, id: String) {
+    func fetchExpression(projectToken: String, customerId: KeyValueItem, id: String) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersExpression)
@@ -231,7 +231,7 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchPrediction(projectToken: String, customerId: KeyValueModel, id: String) {
+    func fetchPrediction(projectToken: String, customerId: KeyValueItem, id: String) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersPrediction)
@@ -258,7 +258,7 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - recommendation: Recommendations for the customer
     func fetchRecommendation(projectToken: String,
-                             customerId: KeyValueModel,
+                             customerId: KeyValueItem,
                              recommendation: CustomerRecommendation,
                              completion: @escaping (Result<Recommendation>) -> Void) {
 
@@ -303,7 +303,7 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - attributes: List of attributes you want to retrieve
-    func fetchAttributes(projectToken: String, customerId: KeyValueModel, attributes: [CustomerAttributes]) {
+    func fetchAttributes(projectToken: String, customerId: KeyValueItem, attributes: [CustomerAttributes]) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersAttributes)
@@ -330,9 +330,9 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - events: List of event types you want to retrieve
     func fetchEvents(projectToken: String,
-                     customerId: KeyValueModel,
-                     events: CustomerEvents,
-                     completion: @escaping (Result<Events>) -> Void) {
+                     customerId: KeyValueItem,
+                     events: FetchEventsRequest,
+                     completion: @escaping (Result<FetchEventsResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersEvents)
@@ -357,7 +357,7 @@ extension ConnectionManager: ConnectionManagerType {
                     return
                 }
                 do {
-                    let events = try JSONDecoder().decode(Events.self, from: data)
+                    let events = try JSONDecoder().decode(FetchEventsResponse.self, from: data)
                     completion(Result.success(events))
                 } catch {
                     Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription)")
@@ -373,7 +373,7 @@ extension ConnectionManager: ConnectionManagerType {
     /// - Parameters:
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    func fetchAllProperties(projectToken: String, customerId: KeyValueModel) {
+    func fetchAllProperties(projectToken: String, customerId: KeyValueItem) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersExportAllProperties)
@@ -429,7 +429,7 @@ extension ConnectionManager: ConnectionManagerType {
     /// - Parameters:
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    func anonymize(projectToken: String, customerId: KeyValueModel) {
+    func anonymize(projectToken: String, customerId: KeyValueItem) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersAnonymize)

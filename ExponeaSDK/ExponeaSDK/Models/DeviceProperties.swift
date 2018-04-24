@@ -25,15 +25,15 @@ struct DeviceProperties {
         if UIDevice.current.model.hasPrefix("iPad") { return "tablet" } else { return "mobile" }
     }
     /// Returns an array with all device properties.
-    var properties: [KeyValueModel] {
-        var data = [KeyValueModel]()
+    var properties: [KeyValueItem] {
+        var data = [KeyValueItem]()
 
-        data.append(KeyValueModel(key: "os_name", value: osName))
-        data.append(KeyValueModel(key: "os_version", value: osVersion))
-        data.append(KeyValueModel(key: "sdk", value: sdk))
-        data.append(KeyValueModel(key: "sdk_version", value: sdkVersion))
-        data.append(KeyValueModel(key: "device_model", value: deviceModel))
-        data.append(KeyValueModel(key: "device_type", value: deviceType))
+        data.append(KeyValueItem(key: "os_name", value: osName))
+        data.append(KeyValueItem(key: "os_version", value: osVersion))
+        data.append(KeyValueItem(key: "sdk", value: sdk))
+        data.append(KeyValueItem(key: "sdk_version", value: sdkVersion))
+        data.append(KeyValueItem(key: "device_model", value: deviceModel))
+        data.append(KeyValueItem(key: "device_type", value: deviceType))
 
         return data
     }

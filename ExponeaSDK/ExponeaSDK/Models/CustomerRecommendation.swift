@@ -15,5 +15,5 @@ public struct CustomerRecommendation {
     public var strategy: String?
     public var knowItems: Bool?
     public var anti: Bool?
-    public var items: [KeyValueModel]?
+    public var items: [KeyValueItem]?
 }

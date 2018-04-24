@@ -11,8 +11,8 @@ import Foundation
 @testable import ExponeaSDK
 
 class FetchMockData {
-    let customerId = KeyValueModel(key: "registered", value: "rito@nodesagency.com")
-    let customerData = CustomerEvents(eventTypes: ["session_start", "install"],
+    let customerId = KeyValueItem(key: "registered", value: "rito@nodesagency.com")
+    let customerData = FetchEventsRequest(eventTypes: ["session_start", "install"],
                                       sortOrder: "asc",
                                       limit: 1,
                                       skip: 100)

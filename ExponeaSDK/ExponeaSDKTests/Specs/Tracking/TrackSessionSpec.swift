@@ -33,9 +33,9 @@ class TrackSessionSpec: QuickSpec {
                 }
             }
             context("Setting new default timeout value") {
-                Exponea.shared.sessionTimeout = 8.0
+                Exponea.shared.configuration.sessionTimeout = 8.0
                 it("new timeout session should be setted") {
-                    expect(Exponea.shared.sessionTimeout).to(equal(8.0))
+                    expect(Exponea.shared.configuration.sessionTimeout).to(equal(8.0))
                 }
             }
         }

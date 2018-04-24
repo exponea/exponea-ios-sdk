@@ -10,7 +10,7 @@ import Foundation
 
 public struct CustomerExportModel {
     public var attributes: CustomerExportAttributesModel
-    public var filter: [KeyValueModel]
+    public var filter: [KeyValueItem]
     public var executionTime: Int
     public var timezone: String
     public var responseFormat: String

@@ -13,34 +13,33 @@ import Foundation
 class MockFetchRepository: FetchRepository {
 
     var configuration: Configuration
-    let apiSource = APISource()
 
     init(configuration: Configuration) {
         self.configuration = configuration
     }
 
-    func fetchProperty(projectToken: String, customerId: KeyValueModel, property: String) {
+    func fetchProperty(projectToken: String, customerId: KeyValueItem, property: String) {
         return
     }
 
-    func fetchId(projectToken: String, customerId: KeyValueModel, id: String) {
+    func fetchId(projectToken: String, customerId: KeyValueItem, id: String) {
         return
     }
 
-    func fetchSegmentation(projectToken: String, customerId: KeyValueModel, id: String) {
+    func fetchSegmentation(projectToken: String, customerId: KeyValueItem, id: String) {
         return
     }
 
-    func fetchExpression(projectToken: String, customerId: KeyValueModel, id: String) {
+    func fetchExpression(projectToken: String, customerId: KeyValueItem, id: String) {
         return
     }
 
-    func fetchPrediction(projectToken: String, customerId: KeyValueModel, id: String) {
+    func fetchPrediction(projectToken: String, customerId: KeyValueItem, id: String) {
         return
     }
 
     func fetchRecommendation(projectToken: String,
-                             customerId: KeyValueModel,
+                             customerId: KeyValueItem,
                              recommendation: CustomerRecommendation,
                              completion: @escaping (Result<Recommendation>) -> Void) {
 
@@ -54,8 +53,8 @@ class MockFetchRepository: FetchRepository {
                                               attributes: nil,
                                               events: nil,
                                               data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization,
-                                                       trackingParam: nil, customersParam: customersParams)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil, customersParam: customersParams)
         let bundle = Bundle(for: type(of: self))
 
         guard request.url != nil else {
@@ -75,18 +74,18 @@ class MockFetchRepository: FetchRepository {
         completion(result)
     }
 
-    func fetchAttributes(projectToken: String, customerId: KeyValueModel, attributes: [CustomerAttributes]) {
+    func fetchAttributes(projectToken: String, customerId: KeyValueItem, attributes: [CustomerAttributes]) {
         return
     }
 
     func fetchEvents(projectToken: String,
-                     customerId: KeyValueModel,
-                     events: CustomerEvents,
-                     completion: @escaping (Result<Events>) -> Void) {
+                     customerId: KeyValueItem,
+                     events: FetchEventsRequest,
+                     completion: @escaping (Result<FetchEventsResponse>) -> Void) {
         return
     }
 
-    func fetchAllProperties(projectToken: String, customerId: KeyValueModel) {
+    func fetchAllProperties(projectToken: String, customerId: KeyValueItem) {
         return
     }
 
@@ -94,7 +93,7 @@ class MockFetchRepository: FetchRepository {
         return
     }
 
-    func anonymize(projectToken: String, customerId: KeyValueModel) {
+    func anonymize(projectToken: String, customerId: KeyValueItem) {
         return
     }
 
@@ -102,14 +101,14 @@ class MockFetchRepository: FetchRepository {
 
 extension MockFetchRepository: ConnectionManagerType {
     func trackCustomer(projectToken: String,
-                       customerId: KeyValueModel,
-                       properties: [KeyValueModel]) {
+                       customerId: KeyValueItem,
+                       properties: [KeyValueItem]) {
         return
     }
 
     func trackEvents(projectToken: String,
-                     customerId: KeyValueModel,
-                     properties: [KeyValueModel],
+                     customerId: KeyValueItem,
+                     properties: [KeyValueItem],
                      timestamp: Double?,
                      eventType: String?) {
         return

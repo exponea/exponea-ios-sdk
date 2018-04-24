@@ -37,9 +37,13 @@ enum Constants {
     enum DeviceInfo {
         static let osName = "iOS"
         static let osVersion = UIDevice.current.systemVersion
-        static let sdk = "iOS SDK"
-        static let sdkVersion = "1.0.0"
+        static let sdk = "Exponea iOS SDK"
         static let deviceModel = UIDevice.current.model
+        static let sdkVersion: String = {
+            let bundle = Bundle(for: Exponea.self)
+            let version = bundle.infoDictionary?["CFBundleShortVersionString"] as? String
+            return version ?? "Unknown version"
+        }()
     }
 
     /// Type of customer events

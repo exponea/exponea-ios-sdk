@@ -1,5 +1,5 @@
 //
-//  EntitiesModel.swift
+//  KeyValueItem.swift
 //  ExponeaSDK
 //
 //  Created by Ricardo Tokashiki on 03/04/2018.
@@ -9,7 +9,7 @@
 import Foundation
 
 /// Generic model to set the Key and Value for Dictionaries
-public struct KeyValueModel {
+public struct KeyValueItem {
     /// Name of the key in the dictionary
     public var key: String
     /// Value for the key in the dictionary

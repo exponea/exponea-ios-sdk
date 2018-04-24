@@ -28,7 +28,7 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.configuration.projectToken).to(beNil())
                 }
                 it("Should not return the default value for timeout") {
-                    expect(exponea.sessionTimeout).toNot(equal(Constants.Session.defaultTimeout))
+                    expect(exponea.configuration.sessionTimeout).toNot(equal(Constants.Session.defaultTimeout))
                 }
             }
             context("After beign configured from string") {
@@ -65,8 +65,8 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.configuration.projectToken).to(equal("NewProjectToken"))
                 }
                 it("Should return true for auto tracking") {
-                    exponea.autoSessionTracking = true
-                    expect(exponea.autoSessionTracking).to(beTrue())
+                    exponea.configuration.automaticSessionTracking = true
+                    expect(exponea.configuration.automaticSessionTracking).to(beTrue())
                 }
                 it("Should change the base url") {
                     expect(exponea.configuration.baseURL).to(equal("NewBaseURL"))

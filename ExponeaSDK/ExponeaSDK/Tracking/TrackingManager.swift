@@ -190,11 +190,11 @@ extension TrackingManager {
         /// Prepare data to persist into coredata.
         var properties = device.properties
         /// Adding session start properties.
-        properties.append(KeyValueModel(key: "event_type", value: Constants.EventTypes.sessionStart))
-        properties.append(KeyValueModel(key: "timestamp", value: configuration.lastSessionStarted))
+        properties.append(KeyValueItem(key: "event_type", value: Constants.EventTypes.sessionStart))
+        properties.append(KeyValueItem(key: "timestamp", value: configuration.lastSessionStarted))
 
         if let appVersion = Bundle.main.value(forKey: Constants.Keys.appVersion) {
-            properties.append(KeyValueModel(key: "app_version", value: appVersion))
+            properties.append(KeyValueItem(key: "app_version", value: appVersion))
         }
         return database.trackEvent(with: [.projectToken(projectToken),
                                           .properties(properties),
@@ -207,12 +207,12 @@ extension TrackingManager {
         /// Calculate the duration of the last session.
         let duration = configuration.lastSessionStarted - configuration.lastSessionEndend
         /// Adding session end properties.
-        properties.append(KeyValueModel(key: "event_type", value: Constants.EventTypes.sessionStart))
-        properties.append(KeyValueModel(key: "timestamp", value: configuration.lastSessionEndend))
-        properties.append(KeyValueModel(key: "duration", value: duration))
+        properties.append(KeyValueItem(key: "event_type", value: Constants.EventTypes.sessionStart))
+        properties.append(KeyValueItem(key: "timestamp", value: configuration.lastSessionEndend))
+        properties.append(KeyValueItem(key: "duration", value: duration))
 
         if let appVersion = Bundle.main.value(forKey: Constants.Keys.appVersion) {
-            properties.append(KeyValueModel(key: "app_version", value: appVersion))
+            properties.append(KeyValueItem(key: "app_version", value: appVersion))
         }
         return database.trackEvent(with: [.projectToken(projectToken),
                                           .properties(properties),

@@ -14,6 +14,14 @@ public class Exponea {
     public var configuration: Configuration! {
         didSet {
             repository.configuration = configuration
+
+            if configuration.automaticSessionTracking {
+                /// Add the observers when the automatic session tracking is true.
+                addSessionObserves()
+            } else {
+                /// Remove the observers when the automatic session tracking is false.
+                removeSessionObservers()
+            }
         }
     }
 
@@ -23,24 +31,6 @@ public class Exponea {
     let paymentManager: PaymentManagerType
     /// Repository responsable for http requests.
     let repository: ConnectionManagerType
-
-    /// Default value for tracking the sessions automatically
-    public var autoSessionTracking: Bool {
-        get {
-            return configuration.automaticSessionTracking
-        }
-        set {
-            configuration.automaticSessionTracking = newValue
-            /// Add the observers when the automatic session tracking is true.
-            if newValue {
-                addSessionObserves()
-            }
-            /// Remove the observers when the automatic session tracking is false.
-            else {
-                removeObservers()
-            }
-        }
-    }
 
     /// Sets the flushing mode for usage
     public var flushingMode: FlushingMode {
@@ -90,7 +80,7 @@ public class Exponea {
     }
 
     deinit {
-        removeObservers()
+        removeSessionObservers()
     }
 }
 
@@ -127,13 +117,11 @@ internal extension Exponea {
         UserDefaults.standard.set(true, forKey: Constants.Keys.launchedBefore)
         /// Set default timeout session time with default value
         UserDefaults.standard.set(Constants.Session.defaultTimeout, forKey: Constants.Keys.timeout)
-        /// Seting the automatic session tracking default value
-        autoSessionTracking = true
     }
 
     /// Send data to trackmanager to store the customer events into coredata
-    internal func trackEvent(customerId: KeyValueModel,
-                             properties: [KeyValueModel],
+    internal func trackEvent(customerId: KeyValueItem,
+                             properties: [KeyValueItem],
                              timestamp: Double?,
                              eventType: String?) -> Bool {
         var data: [DataType] = [.customerId(customerId),
@@ -165,6 +153,9 @@ internal extension Exponea {
     /// Add observers to notification center in order to control when the
     /// app become active or enter in background.
     internal func addSessionObserves() {
+        // Make sure we remove session observers first, if we are already observing.
+        removeSessionObservers()
+
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(trackSessionStart),
                                                name: .UIApplicationDidBecomeActive,
@@ -175,13 +166,15 @@ internal extension Exponea {
                                                object: nil)
     }
 
-    internal func removeObservers() {
-        NotificationCenter.default.removeObserver(self)
+    /// Removes session observers.
+    internal func removeSessionObservers() {
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: nil)
     }
 
     /// Send data to trackmanager to store the customer properties into coredata
-    internal func trackCustomer(customerId: KeyValueModel,
-                                properties: [KeyValueModel],
+    internal func trackCustomer(customerId: KeyValueItem,
+                                properties: [KeyValueItem],
                                 timestamp: Double?) -> Bool {
         return trackingManager.track(.trackCustomer,
                                           with: [.customerId(customerId),
@@ -191,9 +184,9 @@ internal extension Exponea {
 
     /// Request customer events from the repository
     internal func fetchEvents(projectToken: String,
-                              customerId: KeyValueModel,
-                              events: CustomerEvents,
-                              completion: @escaping (Result<Events>) -> Void) {
+                              customerId: KeyValueItem,
+                              events: FetchEventsRequest,
+                              completion: @escaping (Result<FetchEventsResponse>) -> Void) {
         repository.fetchEvents(projectToken: projectToken,
                                customerId: customerId,
                                events: events,
@@ -202,7 +195,7 @@ internal extension Exponea {
 
     /// Request customer recommendations from the repository
     internal func fetchRecommendation(projectToken: String,
-                                      customerId: KeyValueModel,
+                                      customerId: KeyValueItem,
                                       recommendation: CustomerRecommendation,
                                       completion: @escaping (Result<Recommendation>) -> Void) {
         repository.fetchRecommendation(projectToken: projectToken,
@@ -242,8 +235,8 @@ public extension Exponea {
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
     ///     - eventType: Name of event
-    public class func trackCustomerEvent(customerId: KeyValueModel,
-                                         properties: [KeyValueModel],
+    public class func trackCustomerEvent(customerId: KeyValueItem,
+                                         properties: [KeyValueItem],
                                          timestamp: Double?,
                                          eventType: String) -> Bool {
         return shared.trackEvent(customerId: customerId,
@@ -274,8 +267,8 @@ public extension Exponea {
     ///     - customerId: Specify your customer with external id.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
-    public class func updateCustomerProperties(customerId: KeyValueModel,
-                                               properties: [KeyValueModel],
+    public class func updateCustomerProperties(customerId: KeyValueItem,
+                                               properties: [KeyValueItem],
                                                timestamp: Double?) -> Bool {
         return shared.trackCustomer(customerId: customerId,
                                     properties: properties,
@@ -293,9 +286,9 @@ public extension Exponea {
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
     public class func fetchCustomerEvents(projectToken: String,
-                                          customerId: KeyValueModel,
-                                          events: CustomerEvents,
-                                          completion: @escaping (Result<Events>) -> Void) {
+                                          customerId: KeyValueItem,
+                                          events: FetchEventsRequest,
+                                          completion: @escaping (Result<FetchEventsResponse>) -> Void) {
         shared.fetchEvents(projectToken: projectToken,
                            customerId: customerId,
                            events: events,
@@ -308,7 +301,7 @@ public extension Exponea {
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
     public class func fetchCustomerProperty(projectToken: String,
-                                            customerId: KeyValueModel,
+                                            customerId: KeyValueItem,
                                             recommendation: CustomerRecommendation,
                                             completion: @escaping (Result<Recommendation>) -> Void) {
         shared.fetchRecommendation(projectToken: projectToken,

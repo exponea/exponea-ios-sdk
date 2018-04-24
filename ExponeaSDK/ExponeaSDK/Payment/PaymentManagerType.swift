@@ -11,5 +11,5 @@ import Foundation
 protocol PaymentManagerType: class {
     func startObservingPayments()
     func stopObservingPayments()
-    func trackPayment(properties: [KeyValueModel]) -> Bool
+    func trackPayment(properties: [KeyValueItem]) -> Bool
 }

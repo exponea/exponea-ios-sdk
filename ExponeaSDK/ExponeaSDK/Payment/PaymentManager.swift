@@ -37,7 +37,7 @@ class PaymentManager: SKPaymentQueue, PaymentManagerType {
         SKPaymentQueue.default().remove(self)
     }
 
-    func trackPayment(properties: [KeyValueModel]) -> Bool {
+    func trackPayment(properties: [KeyValueItem]) -> Bool {
         return trackingManager.track(.payment, with: [.timestamp(nil),
                                                           .properties(properties)])
     }

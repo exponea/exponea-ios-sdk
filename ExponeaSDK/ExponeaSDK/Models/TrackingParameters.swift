@@ -9,12 +9,12 @@
 import Foundation
 
 struct TrackingParameters {
-    var customer: KeyValueModel
-    var properties: [KeyValueModel]
+    var customer: KeyValueItem
+    var properties: [KeyValueItem]
     var timestamp: Double?
     var eventType: String?
 
-    init(customer: KeyValueModel, properties: [KeyValueModel], timestamp: Double?, eventType: String?) {
+    init(customer: KeyValueItem, properties: [KeyValueItem], timestamp: Double?, eventType: String?) {
         self.customer = customer
         self.properties = properties
         self.timestamp = timestamp

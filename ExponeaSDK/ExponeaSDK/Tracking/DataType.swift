@@ -21,11 +21,11 @@ public enum DataType {
     case projectToken(String)
 
     /// Identifier of your customer, can be anything from an email to UUIDs.
-    case customerId(KeyValueModel)
+    case customerId(KeyValueItem)
 
     /// Custom properties that you would like to add to the tracking event,
     /// these can include any relevant information for you.
-    case properties([KeyValueModel])
+    case properties([KeyValueItem])
 
     /// Timestamp of the tracked event in UNIX epoch time, if value is `nil` current date is used.
     case timestamp(Double?)
@@ -36,5 +36,5 @@ public enum DataType {
     case id(String)
     case recommendation(CustomerRecommendation)
     case attributes(CustomerAttributes)
-    case events(CustomerEvents)
+    case events(FetchEventsRequest)
 }
