@@ -24,15 +24,6 @@ public class Exponea {
     /// Repository responsable for http requests.
     let repository: ConnectionManagerType
 
-    /// Default timeout value for tracking the sessions
-    public var sessionTimeout: Double {
-        get {
-            return configuration.sessionTimeout
-        }
-        set {
-            configuration.sessionTimeout = newValue
-        }
-    }
     /// Default value for tracking the sessions automatically
     public var autoSessionTracking: Bool {
         get {
@@ -129,7 +120,7 @@ internal extension Exponea {
         }
         /// In case the event was not fired, we call the track manager
         /// passing the install event type.
-        guard trackingManager.trackEvent(.install, customData: nil) else {
+        guard trackingManager.track(.install, with: nil) else {
             return
         }
         /// Set the value to true if event was executed successfully
@@ -153,11 +144,11 @@ internal extension Exponea {
             data.append(.eventType(eventType))
         }
 
-        return trackingManager.trackEvent(.trackEvent, customData: data)
+        return trackingManager.track(.trackEvent, with: data)
     }
 
     @objc internal func trackSessionStart() {
-        if trackingManager.trackEvent(.sessionStart, customData: nil) {
+        if trackingManager.track(.sessionStart, with: nil) {
             Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStarted)
         }
     }
@@ -192,8 +183,8 @@ internal extension Exponea {
     internal func trackCustomer(customerId: KeyValueModel,
                                 properties: [KeyValueModel],
                                 timestamp: Double?) -> Bool {
-        return trackingManager.trackEvent(.trackCustomer,
-                                          customData: [.customerId(customerId),
+        return trackingManager.track(.trackCustomer,
+                                          with: [.customerId(customerId),
                                                        .properties(properties),
                                                        .timestamp(timestamp)])
     }

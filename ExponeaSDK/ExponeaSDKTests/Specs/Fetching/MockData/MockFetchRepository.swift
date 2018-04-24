@@ -44,10 +44,10 @@ class MockFetchRepository: FetchRepository {
                              recommendation: CustomerRecommendation,
                              completion: @escaping (Result<Recommendation>) -> Void) {
 
-        let router = APIRouter(baseURL: configuration.baseURL,
+        let router = RequestFactory(baseURL: configuration.baseURL,
                                projectToken: projectToken,
                                route: .customersRecommendation)
-        let customersParams = CustomersParams(customer: customerId,
+        let customersParams = CustomerParameters(customer: customerId,
                                               property: nil,
                                               id: nil,
                                               recommendation: recommendation,
@@ -101,12 +101,20 @@ class MockFetchRepository: FetchRepository {
 }
 
 extension MockFetchRepository: ConnectionManagerType {
-    func trackCustumer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
+    func trackCustomer(projectToken: String,
+                       customerId: KeyValueModel,
+                       properties: [KeyValueModel]) {
         return
     }
-    func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel], timestamp: Double?, eventType: String?) {
+
+    func trackEvents(projectToken: String,
+                     customerId: KeyValueModel,
+                     properties: [KeyValueModel],
+                     timestamp: Double?,
+                     eventType: String?) {
         return
     }
+
     func rotateToken(projectToken: String) {
         return
     }

@@ -35,23 +35,6 @@ public enum EventType: String, Decodable {
 
     /// Virtual and hard payments can be tracked to better measure conversions for example.
     case payment = "PAYMENT"
-
-    /// Fetching Events
-    case fetchProperty
-    case fetchId
-    case fetchSegmentation
-    case fetchExpression
-    case fetchPrediction
-    case fetchRecommendation
-    case fetchAttributes
-    case fetchEvents
-    case fetchAllProperties
-    case fetchAllCustomers
-    case fetchAnonymize
-
-    /// Token Events
-    case revokeToken
-    case renewToken
 }
 
 extension EventType {
@@ -65,7 +48,6 @@ extension EventType {
         case .trackEvent: return "TRACK_EVENT"
         case .trackCustomer: return "TRACK_CUSTOMER"
         case .payment: return "PAYMENT"
-        default: return ""
         }
     }
 }

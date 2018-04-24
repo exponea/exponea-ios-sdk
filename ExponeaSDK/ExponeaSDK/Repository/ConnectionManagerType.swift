@@ -9,7 +9,7 @@
 import Foundation
 
 protocol TrackingRepository {
-    func trackCustumer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel])
+    func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel])
     func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
                      timestamp: Double?, eventType: String?)
 }

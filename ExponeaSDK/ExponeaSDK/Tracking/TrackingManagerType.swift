@@ -9,8 +9,7 @@
 import Foundation
 
 protocol TrackingManagerType: class {
-    // TODO: add other methods as necessary
-    func trackEvent(_ type: EventType, customData: [DataType]?) -> Bool
+    func track(_ type: EventType, with data: [DataType]?) -> Bool
 
     // MARK: - Flushing -
 

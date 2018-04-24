@@ -15,6 +15,8 @@
 		019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019163A2207E15FB005FD174 /* LoggerSpec.swift */; };
 		019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019163A4207E1904005FD174 /* LogLevelSpec.swift */; };
 		019F1AC52087666900368FB1 /* DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019F1AC42087666800368FB1 /* DataType.swift */; };
+		01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C2AD4B208F60ED0012F663 /* TrackingParameters.swift */; };
+		01C2AD4E208F61000012F663 /* CustomerParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C2AD4D208F61000012F663 /* CustomerParameters.swift */; };
 		01EC2DA5207E4F8F0031BFEB /* CustomerRecommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA4207E4F8F0031BFEB /* CustomerRecommendation.swift */; };
 		01EC2DA7207E4FBA0031BFEB /* CustomerEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA6207E4FBA0031BFEB /* CustomerEvents.swift */; };
 		01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */; };
@@ -57,8 +59,7 @@
 		F0CA58FB207FA5E700C89A7F /* CampaignProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */; };
 		F0E5C9022080EA21002CECA5 /* TrackMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5C9012080EA21002CECA5 /* TrackMockData.swift */; };
 		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
-		F0E757E5207CFA5300FE8C21 /* APIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* APIRouter.swift */; };
-		F0E757E7207CFA6400FE8C21 /* APISource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E6207CFA6400FE8C21 /* APISource.swift */; };
+		F0E757E5207CFA5300FE8C21 /* RequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */; };
 		F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E8207CFA7A00FE8C21 /* ConnectionManager.swift */; };
 		F0E757EB207CFA9700FE8C21 /* ConnectionManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757EA207CFA9700FE8C21 /* ConnectionManagerType.swift */; };
 		F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757ED207D025300FE8C21 /* Exponea.swift */; };
@@ -87,6 +88,8 @@
 		019163A2207E15FB005FD174 /* LoggerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerSpec.swift; sourceTree = "<group>"; };
 		019163A4207E1904005FD174 /* LogLevelSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevelSpec.swift; sourceTree = "<group>"; };
 		019F1AC42087666800368FB1 /* DataType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataType.swift; sourceTree = "<group>"; };
+		01C2AD4B208F60ED0012F663 /* TrackingParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingParameters.swift; sourceTree = "<group>"; };
+		01C2AD4D208F61000012F663 /* CustomerParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerParameters.swift; sourceTree = "<group>"; };
 		01EC2DA4207E4F8F0031BFEB /* CustomerRecommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerRecommendation.swift; sourceTree = "<group>"; };
 		01EC2DA6207E4FBA0031BFEB /* CustomerEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerEvents.swift; sourceTree = "<group>"; };
 		01EC2DA8207E4FC10031BFEB /* CustomerExportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerExportModel.swift; sourceTree = "<group>"; };
@@ -138,8 +141,7 @@
 		F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignProperties.swift; sourceTree = "<group>"; };
 		F0E5C9012080EA21002CECA5 /* TrackMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackMockData.swift; sourceTree = "<group>"; };
 		F0E757DF207CF99E00FE8C21 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		F0E757E4207CFA5300FE8C21 /* APIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRouter.swift; sourceTree = "<group>"; };
-		F0E757E6207CFA6400FE8C21 /* APISource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISource.swift; sourceTree = "<group>"; };
+		F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestFactory.swift; sourceTree = "<group>"; };
 		F0E757E8207CFA7A00FE8C21 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
 		F0E757EA207CFA9700FE8C21 /* ConnectionManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManagerType.swift; sourceTree = "<group>"; };
 		F0E757ED207D025300FE8C21 /* Exponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exponea.swift; sourceTree = "<group>"; };
@@ -380,6 +382,8 @@
 				F0CA58F5207F612200C89A7F /* DeviceProperties.swift */,
 				F0CA58FA207FA5E700C89A7F /* CampaignProperties.swift */,
 				F067441320873813003C0293 /* PurchasedItem.swift */,
+				01C2AD4B208F60ED0012F663 /* TrackingParameters.swift */,
+				01C2AD4D208F61000012F663 /* CustomerParameters.swift */,
 				F029BF28208A099500342498 /* Routes.swift */,
 				F029BF26208A096900342498 /* HTTPMethod.swift */,
 				F029BF24208A08F800342498 /* Result.swift */,
@@ -410,10 +414,9 @@
 		F0E757E1207CF9BE00FE8C21 /* Repository */ = {
 			isa = PBXGroup;
 			children = (
-				F0E757E4207CFA5300FE8C21 /* APIRouter.swift */,
-				F0E757E6207CFA6400FE8C21 /* APISource.swift */,
 				F0E757EA207CFA9700FE8C21 /* ConnectionManagerType.swift */,
 				F0E757E8207CFA7A00FE8C21 /* ConnectionManager.swift */,
+				F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -653,7 +656,7 @@
 			files = (
 				F0C1C1D02073852E005EB697 /* EntitiesModel.swift in Sources */,
 				F029BF21208A089C00342498 /* Events.swift in Sources */,
-				F0E757E5207CFA5300FE8C21 /* APIRouter.swift in Sources */,
+				F0E757E5207CFA5300FE8C21 /* RequestFactory.swift in Sources */,
 				F029BF2B208A2BC300342498 /* Recommendation.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* CustomerRecommendation.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
@@ -668,17 +671,18 @@
 				F029BF27208A096900342498 /* HTTPMethod.swift in Sources */,
 				01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
+				01C2AD4E208F61000012F663 /* CustomerParameters.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
 				F0674412208732AF003C0293 /* PaymentManagerType.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
-				F0E757E7207CFA6400FE8C21 /* APISource.swift in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				01EC2DA7207E4FBA0031BFEB /* CustomerEvents.swift in Sources */,
 				01EC2DAB207E53D90031BFEB /* CustomerExportAttributesModel.swift in Sources */,
 				F029BF29208A099500342498 /* Routes.swift in Sources */,
+				01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* ConnectionManagerType.swift in Sources */,

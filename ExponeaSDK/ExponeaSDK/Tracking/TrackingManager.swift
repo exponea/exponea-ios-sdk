@@ -84,7 +84,7 @@ extension TrackingManager {
 }
 
 extension TrackingManager: TrackingManagerType {
-    func trackEvent(_ type: EventType, customData: [DataType]?) -> Bool {
+    func track(_ type: EventType, with data: [DataType]?) -> Bool {
         /// Make sure we're configured.
         guard Exponea.shared.configuration.isConfigured else {
             Exponea.logger.log(.error, message: Constants.ErrorMessages.tokenNotConfigured)
@@ -103,7 +103,7 @@ extension TrackingManager: TrackingManagerType {
 
         /// For each project token we have, track the data.
         for projectToken in tokens {
-            let data: [DataType] = [.projectToken(projectToken)] + (customData ?? [])
+            let payload: [DataType] = [.projectToken(projectToken)] + (data ?? [])
 
             switch type {
             case .install:
@@ -114,14 +114,11 @@ extension TrackingManager: TrackingManagerType {
                 // TODO: save to db
                 continue
             case .trackEvent:
-                success = success || trackEvent(with: data)
+                success = success || trackEvent(with: payload)
             case .trackCustomer:
-                success = success || trackCustomer(with: data)
+                success = success || trackCustomer(with: payload)
             case .payment:
-                success = success || trackPayment(with: data + [.eventType(Constants.EventTypes.payment)])
-            default:
-                Exponea.logger.log(.error, message: "Tracking of event type \(type) is not supported.")
-                continue
+                success = success || trackPayment(with: payload + [.eventType(Constants.EventTypes.payment)])
             }
         }
 
@@ -173,14 +170,16 @@ extension TrackingManager {
 
 extension TrackingManager {
     fileprivate func sessionEnded(newTimestamp: Double, projectToken: String) -> Bool {
-        /// Check only if session has ended before.
+        /// Check only if session has ended before
         guard configuration.lastSessionEndend > 0 else {
             return false
         }
-        /// Calculate the session duration.
+
+        /// Calculate the session duration
         let sessionDuration = newTimestamp - configuration.lastSessionEndend
-        /// Session should be ended.
-        if sessionDuration > Exponea.shared.sessionTimeout {
+
+        /// Session should be ended
+        if sessionDuration > configuration.sessionTimeout {
             return true
         } else {
             return false

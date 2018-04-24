@@ -1,91 +1,14 @@
 //
-//  APIRouter.swift
+//  CustomerParameters.swift
 //  ExponeaSDK
 //
-//  Created by Ricardo Tokashiki on 09/04/2018.
+//  Created by Dominik Hádl on 24/04/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
 //
 
 import Foundation
 
-/// Path route with projectId
-struct APIRouter {
-    var baseURL: String
-    var projectToken: String
-    var route: Routes
-
-    init(baseURL: String, projectToken: String, route: Routes) {
-        self.baseURL = baseURL
-        self.projectToken = projectToken
-        self.route = route
-    }
-
-    var path: String {
-        switch self.route {
-        case .trackCustomers: return baseURL + "/track/v2/projects/\(projectToken)/customers"
-        case .trackEvents: return baseURL + "/track/v2/projects/\(projectToken)/customers/events"
-        case .tokenRotate: return baseURL + "/data/v2/\(projectToken)/tokens/rotate"
-        case .tokenRevoke: return baseURL + "/data/v2/\(projectToken)/tokens/revoke"
-        case .customersProperty: return baseURL + "/data/v2/\(projectToken)/customers/property"
-        case .customersId: return baseURL + "/data/v2/\(projectToken)/customers/id"
-        case .customersSegmentation: return baseURL + "/data/v2/\(projectToken)/customers/segmentation"
-        case .customersExpression: return baseURL + "/data/v2/\(projectToken)/customers/expression"
-        case .customersPrediction: return baseURL + "/data/v2/\(projectToken)/customers/prediction"
-        case .customersRecommendation: return baseURL + "/data/v2/projects/\(projectToken)/customers/attributes"
-        case .customersAttributes: return baseURL + "/data/v2/\(projectToken)/customers/attributes"
-        case .customersEvents: return baseURL + "/data/v2/projects/\(projectToken)/customers/events"
-        case .customersAnonymize: return baseURL + "/data/v2/\(projectToken)/customers/anonymize"
-        case .customersExportAllProperties: return baseURL + "/data/v2/\(projectToken)/customers/export-one"
-        case .customersExportAll: return baseURL + "/data/v2/\(projectToken)/customers/export"
-        }
-    }
-
-    var method: HTTPMethod { return .post }
-}
-
-struct TrackingParams {
-    var customer: KeyValueModel
-    var properties: [KeyValueModel]
-    var timestamp: Double?
-    var eventType: String?
-
-    init(customer: KeyValueModel, properties: [KeyValueModel], timestamp: Double?, eventType: String?) {
-        self.customer = customer
-        self.properties = properties
-        self.timestamp = timestamp
-        self.eventType = eventType
-    }
-
-    var params: [String: Any]? {
-
-        var preparedParam: [String: Any] = [:]
-
-        /// Preparing customers_ids params
-        var customerParam: [String: Any] {
-            return [
-                customer.key: customer.value
-            ]
-        }
-        preparedParam["customer_ids"] = customerParam
-
-        /// Preparing properties param
-        let propertiesParam = properties.flatMap({[$0.key: $0.value]})
-        preparedParam["properties"] = propertiesParam
-
-        /// Preparing timestamp param
-        if let timestamp = timestamp {
-            preparedParam["timestamp"] = timestamp
-        }
-        /// Preparing eventType param
-        if let eventType = eventType {
-            preparedParam["event_type"] = eventType
-        }
-
-        return preparedParam
-    }
-}
-
-struct CustomersParams {
+struct CustomerParameters {
     var customer: KeyValueModel?
     var property: String?
     var id: String?
@@ -110,8 +33,10 @@ struct CustomersParams {
         self.events = events
         self.data = data
     }
+}
 
-    var params: [String: Any]? {
+extension CustomerParameters {
+    var parameters: [String: Any]? {
 
         var preparedParam: [String: Any] = [:]
         var list: [String: Any] = [:]

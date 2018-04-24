@@ -11,20 +11,9 @@ import Foundation
 public enum Result<T> {
     case success(T)
     case failure(Error)
+}
 
-    var value: T? {
-        if case .success(let value) = self {
-            return value
-        } else {
-            return nil
-        }
-    }
-
-    var error: Error? {
-        if case .failure(let error) = self {
-            return error
-        } else {
-            return nil
-        }
-    }
+public enum EmptyResult {
+    case success
+    case failure(Error)
 }

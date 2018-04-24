@@ -27,13 +27,15 @@ extension ConnectionManager: TrackingRepository {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
-    func trackCustumer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
+    func trackCustomer(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel]) {
 
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackCustomers)
-        let params = TrackingParams(customer: customerId, properties: properties, timestamp: nil, eventType: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: params, customersParam: nil)
+        let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackCustomers)
+        let params = TrackingParameters(customer: customerId, properties: properties, timestamp: nil, eventType: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: params,
+                                            customersParam: nil)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -53,12 +55,14 @@ extension ConnectionManager: TrackingRepository {
     ///     - eventType: Type of event to be tracked
     func trackEvents(projectToken: String, customerId: KeyValueModel, properties: [KeyValueModel],
                      timestamp: Double?, eventType: String?) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackEvents)
-        let params = TrackingParams(customer: customerId, properties: properties, timestamp: timestamp,
-                                    eventType: eventType)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: params, customersParam: nil)
+        let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .trackEvents)
+        let params = TrackingParameters(customer: customerId, properties: properties, timestamp: timestamp,
+                                        eventType: eventType)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: params,
+                                            customersParam: nil)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -80,11 +84,12 @@ extension ConnectionManager: TokenRepository {
     /// - Parameters:
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     func rotateToken(projectToken: String) {
+        let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .tokenRotate)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: nil)
 
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .tokenRotate)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: nil)
-
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -101,10 +106,12 @@ extension ConnectionManager: TokenRepository {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     func revokeToken(projectToken: String) {
 
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .tokenRotate)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: nil)
+        let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .tokenRotate)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: nil)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -123,12 +130,16 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - property: Property that should be updated
     func fetchProperty(projectToken: String, customerId: KeyValueModel, property: String) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersProperty)
-        let customersParams = CustomersParams(customer: customerId, property: property, id: nil, recommendation: nil,
-                                              attributes: nil, events: nil, data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersProperty)
+        let customersParams = CustomerParameters(customer: customerId, property: property, id: nil, recommendation: nil,
+                                                 attributes: nil, events: nil, data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -145,12 +156,14 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
     func fetchId(projectToken: String, customerId: KeyValueModel, id: String) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersId)
-        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
-                                              attributes: nil, events: nil, data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersId)
+        let customersParams = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
+                                                 attributes: nil, events: nil, data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -167,12 +180,16 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
     func fetchSegmentation(projectToken: String, customerId: KeyValueModel, id: String) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersSegmentation)
-        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
-                                              attributes: nil, events: nil, data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersSegmentation)
+        let customersParams = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
+                                                 attributes: nil, events: nil, data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -189,12 +206,16 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
     func fetchExpression(projectToken: String, customerId: KeyValueModel, id: String) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersExpression)
-        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
-                                              attributes: nil, events: nil, data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersExpression)
+        let customersParams = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
+                                                 attributes: nil, events: nil, data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -211,12 +232,16 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
     func fetchPrediction(projectToken: String, customerId: KeyValueModel, id: String) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersPrediction)
-        let customersParams = CustomersParams(customer: customerId, property: nil, id: id, recommendation: nil,
-                                              attributes: nil, events: nil, data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersPrediction)
+        let customersParams = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
+                                                 attributes: nil, events: nil, data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -237,19 +262,21 @@ extension ConnectionManager: ConnectionManagerType {
                              recommendation: CustomerRecommendation,
                              completion: @escaping (Result<Recommendation>) -> Void) {
 
-        let router = APIRouter(baseURL: configuration.baseURL,
-                               projectToken: projectToken,
-                               route: .customersRecommendation)
-        let customersParams = CustomersParams(customer: customerId,
-                                              property: nil,
-                                              id: nil,
-                                              recommendation: recommendation,
-                                              attributes: nil,
-                                              events: nil,
-                                              data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersRecommendation)
+        let customersParams = CustomerParameters(customer: customerId,
+                                                 property: nil,
+                                                 id: nil,
+                                                 recommendation: recommendation,
+                                                 attributes: nil,
+                                                 events: nil,
+                                                 data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, result, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, _, error) in
             if let error = error {
                 Exponea.logger.log(.error, message: "Unresolved error \(String(error.localizedDescription))")
                 completion(Result.failure(error))
@@ -277,12 +304,16 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - attributes: List of attributes you want to retrieve
     func fetchAttributes(projectToken: String, customerId: KeyValueModel, attributes: [CustomerAttributes]) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersAttributes)
-        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
-                                              attributes: attributes, events: nil, data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersAttributes)
+        let customersParams = CustomerParameters(customer: customerId, property: nil, id: nil, recommendation: nil,
+                                                 attributes: attributes, events: nil, data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -302,17 +333,19 @@ extension ConnectionManager: ConnectionManagerType {
                      customerId: KeyValueModel,
                      events: CustomerEvents,
                      completion: @escaping (Result<Events>) -> Void) {
-        let router = APIRouter(baseURL: configuration.baseURL,
-                               projectToken: projectToken,
-                               route: .customersEvents)
-        let customersParams = CustomersParams(customer: customerId,
-                                              property: nil,
-                                              id: nil,
-                                              recommendation: nil,
-                                              attributes: nil,
-                                              events: events,
-                                              data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersEvents)
+        let customersParams = CustomerParameters(customer: customerId,
+                                                 property: nil,
+                                                 id: nil,
+                                                 recommendation: nil,
+                                                 attributes: nil,
+                                                 events: events,
+                                                 data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
         let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, _, error) in
             if let error = error {
@@ -341,12 +374,21 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     func fetchAllProperties(projectToken: String, customerId: KeyValueModel) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersExportAllProperties)
-        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
-                                              attributes: nil, events: nil, data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersExportAllProperties)
+        let customersParams = CustomerParameters(customer: customerId,
+                                                 property: nil,
+                                                 id: nil,
+                                                 recommendation: nil,
+                                                 attributes: nil,
+                                                 events: nil,
+                                                 data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -362,12 +404,16 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - data: List of properties to retrieve
     func fetchAllCustomers(projectToken: String, data: CustomerExportModel) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersExportAll)
-        let customersParams = CustomersParams(customer: nil, property: nil, id: nil, recommendation: nil,
-                                              attributes: nil, events: nil, data: data)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization, trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersExportAll)
+        let customersParams = CustomerParameters(customer: nil, property: nil, id: nil, recommendation: nil,
+                                                 attributes: nil, events: nil, data: data)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -384,13 +430,16 @@ extension ConnectionManager: ConnectionManagerType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     func anonymize(projectToken: String, customerId: KeyValueModel) {
-        let router = APIRouter(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersAnonymize)
-        let customersParams = CustomersParams(customer: customerId, property: nil, id: nil, recommendation: nil,
-                                              attributes: nil, events: nil, data: nil)
-        let request = ConnectionManager.prepareRequest(router: router, authorization: configuration.authorization,
-                                                       trackingParam: nil, customersParam: customersParams)
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: projectToken,
+                                    route: .customersAnonymize)
+        let customersParams = CustomerParameters(customer: customerId, property: nil, id: nil, recommendation: nil,
+                                                 attributes: nil, events: nil, data: nil)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            trackingParam: nil,
+                                            customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) in
+        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -400,45 +449,4 @@ extension ConnectionManager: ConnectionManagerType {
         task.resume()
     }
 
-}
-
-extension ConnectionManager {
-    static func prepareRequest(router: APIRouter,
-                               authorization: String?,
-                               trackingParam: TrackingParams?,
-                               customersParam: CustomersParams?) -> NSMutableURLRequest {
-        let request = NSMutableURLRequest()
-        var body: Data?
-
-        request.url = URL(string: router.path)
-        request.httpMethod = router.method.rawValue
-        request.addValue(Constants.Repository.contentType,
-                         forHTTPHeaderField: Constants.Repository.headerContentType)
-        request.addValue(Constants.Repository.contentType,
-                         forHTTPHeaderField: Constants.Repository.headerAccept)
-
-        if let authorization = authorization {
-            request.addValue(authorization,
-                             forHTTPHeaderField: Constants.Repository.headerAuthorization)
-        }
-
-        var params: [String: Any]?
-
-        switch router.route {
-        case .trackCustomers, .trackEvents:
-            params = trackingParam?.params
-        case .tokenRotate, .tokenRevoke:
-            params = nil
-        default:
-            params = customersParam?.params
-        }
-
-        if let params = params {
-            body = try? JSONSerialization.data(withJSONObject: params, options: [])
-        }
-
-        request.httpBody = body
-
-        return request
-    }
 }
