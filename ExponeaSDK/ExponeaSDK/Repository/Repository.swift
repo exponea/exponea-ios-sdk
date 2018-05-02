@@ -1,5 +1,5 @@
 //
-//  ConnectionManagerType.swift
+//  Repository.swift
 //  ExponeaSDK
 //
 //  Created by Ricardo Tokashiki on 04/04/2018.

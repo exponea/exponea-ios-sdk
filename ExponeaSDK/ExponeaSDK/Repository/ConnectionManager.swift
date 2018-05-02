@@ -35,7 +35,7 @@ extension ConnectionManager: TrackingRepository {
                                             trackingParam: params,
                                             customersParam: nil)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -62,7 +62,7 @@ extension ConnectionManager: TrackingRepository {
                                             trackingParam: params,
                                             customersParam: nil)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -89,7 +89,7 @@ extension ConnectionManager: TokenRepository {
                                             trackingParam: nil,
                                             customersParam: nil)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -111,7 +111,7 @@ extension ConnectionManager: TokenRepository {
                                             trackingParam: nil,
                                             customersParam: nil)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -139,7 +139,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -163,7 +163,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -189,7 +189,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -215,7 +215,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -241,7 +241,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -276,7 +276,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (data, _, error) in
             if let error = error {
                 Exponea.logger.log(.error, message: "Unresolved error \(String(error.localizedDescription))")
                 completion(Result.failure(error))
@@ -313,7 +313,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -347,7 +347,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (data, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (data, _, error) in
             if let error = error {
                 Exponea.logger.log(.error, message: "Unresolved error \(String(error.localizedDescription))")
                 completion(Result.failure(error))
@@ -388,7 +388,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -413,7 +413,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {
@@ -439,7 +439,7 @@ extension ConnectionManager: ConnectionManagerType {
                                             trackingParam: nil,
                                             customersParam: customersParams)
 
-        let task = session.dataTask(with: request as URLRequest, completionHandler: { (_, _, error) in
+        let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
                 // TODO: Handle success
             } else {

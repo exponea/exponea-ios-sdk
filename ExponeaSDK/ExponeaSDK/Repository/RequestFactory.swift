@@ -46,11 +46,10 @@ struct RequestFactory {
 extension RequestFactory {
     func prepareRequest(authorization: String?,
                         trackingParam: TrackingParameters? = nil,
-                        customersParam: CustomerParameters? = nil) -> NSMutableURLRequest {
-        let request = NSMutableURLRequest()
+                        customersParam: CustomerParameters? = nil) -> URLRequest {
+        var request = URLRequest(url: URL(string: path)!)
 
         // Create the basic request
-        request.url = URL(string: path)!
         request.httpMethod = method.rawValue
         request.addValue(Constants.Repository.contentType,
                          forHTTPHeaderField: Constants.Repository.headerContentType)
