@@ -14,7 +14,8 @@ struct TrackingParameters {
     var timestamp: Double?
     var eventType: String?
 
-    init(customer: KeyValueItem, properties: [KeyValueItem], timestamp: Double?, eventType: String?) {
+    init(customer: KeyValueItem, properties: [KeyValueItem],
+         timestamp: Double? = nil, eventType: String? = nil) {
         self.customer = customer
         self.properties = properties
         self.timestamp = timestamp

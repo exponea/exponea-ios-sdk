@@ -1,5 +1,5 @@
 //
-//  ExportedRecommendation.swift
+//  ValueResponse.swift
 //  ExponeaSDK
 //
 //  Created by Ricardo Tokashiki on 20/04/2018.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ExportedRecommendation: Codable {
+public struct ValueResponse: Codable {
     let success: Bool?
     let value: String?
 }

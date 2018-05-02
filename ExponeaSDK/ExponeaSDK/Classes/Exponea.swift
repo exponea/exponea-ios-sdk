@@ -13,6 +13,7 @@ public class Exponea {
     /// The configuration object containing all the config data for the shared instance.
     public var configuration: Configuration! {
         didSet {
+            // Update the configuration in repository
             repository.configuration = configuration
 
             if configuration.automaticSessionTracking {

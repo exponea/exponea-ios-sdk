@@ -10,5 +10,5 @@ import Foundation
 
 public struct Recommendation: Codable {
     let success: Bool?
-    let results: [ExportedRecommendation]?
+    let results: [ValueResponse]?
 }

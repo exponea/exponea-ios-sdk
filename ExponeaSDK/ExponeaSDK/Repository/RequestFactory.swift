@@ -86,4 +86,36 @@ extension RequestFactory {
 
         return request
     }
+    
+    typealias CompletionHandler = ((Data?, URLResponse?, Error?) -> Void)
+    
+    func handler(with completion: @escaping ((EmptyResult) -> Void)) -> CompletionHandler {
+        return { (_, _, error) in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success)
+            }
+        }
+    }
+    
+    func handler<T: Decodable>(with completion: @escaping ((Result<T>) -> Void)) -> CompletionHandler {
+        return { (data, response, error) in
+            if let error = error {
+                completion(.failure(error))
+            } else if let data = data {
+                let decoder = JSONDecoder()
+                do {
+                    let object = try decoder.decode(T.self, from: data)
+                    completion(.success(object))
+                } catch {
+                    completion(.failure(error))
+                }
+            } else {
+                // FIXME: Fix this
+                let error = NSError(domain: "", code: 0, userInfo: nil)
+                completion(.failure(error))
+            }
+        }
+    }
 }
