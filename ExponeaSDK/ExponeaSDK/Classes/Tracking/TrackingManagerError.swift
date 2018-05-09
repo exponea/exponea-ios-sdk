@@ -8,11 +8,15 @@
 
 import Foundation
 
-enum TrackingManagerError: Error {
+/// <#Description#>
+///
+/// - missingData: <#missingData description#>
+/// - unknownError: <#unknownError description#>
+public enum TrackingManagerError: Error {
     case missingData(EventType, [DataType])
     case unknownError(String?)
     
-    var localizedDescription: String {
+    public var localizedDescription: String {
         switch self {
         case .missingData(let type, let data):
             return "Event of type \(type) is missing required data: \(data)."

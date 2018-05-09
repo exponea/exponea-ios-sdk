@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17E199" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Customer" representedClassName="Customer" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="Transformable" syncable="YES"/>
+    </entity>
     <entity name="TrackCustomer" representedClassName="TrackCustomer" syncable="YES" codeGenerationType="class">
         <attribute name="customerIdKey" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="customerIdValue" optional="YES" attributeType="Transformable" syncable="YES"/>
@@ -30,5 +33,6 @@
         <element name="TrackCustomerProperties" positionX="-36" positionY="9" width="128" height="90"/>
         <element name="TrackEvent" positionX="-27" positionY="54" width="128" height="135"/>
         <element name="TrackEventProperties" positionX="0" positionY="72" width="128" height="90"/>
+        <element name="Customer" positionX="-27" positionY="72" width="128" height="60"/>
     </elements>
 </model>

@@ -9,18 +9,18 @@
 import Foundation
 
 /// Path route with projectId
-struct RequestFactory {
-    var baseURL: String
-    var projectToken: String
-    var route: Routes
+public struct RequestFactory {
+    public var baseURL: String
+    public var projectToken: String
+    public var route: Routes
 
-    init(baseURL: String, projectToken: String, route: Routes) {
+    public init(baseURL: String, projectToken: String, route: Routes) {
         self.baseURL = baseURL
         self.projectToken = projectToken
         self.route = route
     }
 
-    var path: String {
+    public var path: String {
         switch self.route {
         case .trackCustomer: return baseURL + "/track/v2/projects/\(projectToken)/customers"
         case .trackEvent: return baseURL + "/track/v2/projects/\(projectToken)/customers/events"
@@ -40,7 +40,7 @@ struct RequestFactory {
         }
     }
 
-    var method: HTTPMethod { return .post }
+    public var method: HTTPMethod { return .post }
 }
 
 extension RequestFactory {

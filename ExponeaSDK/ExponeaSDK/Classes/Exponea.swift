@@ -22,7 +22,7 @@ public class Exponea {
     /// The setter of this variable will setup all required tools and managers if the value is not nil,
     /// otherwise will deactivate everything. This can be useful if you want the user to be able to opt-out of
     /// Exponea tracking for example in a settings screen of your application.
-    public var configuration: Configuration? {
+    public internal(set) var configuration: Configuration? {
         get {
             guard let repository = repository else {
                 Exponea.logger.log(.warning, message: "Exponea not configured, can't return configuration.")
@@ -141,11 +141,15 @@ internal extension Exponea {
         trackingManager: TrackingManagerType
     )
     
+    /// <#Description#>
+    ///
+    /// - Returns: <#return value description#>
+    /// - Throws: <#throws value description#>
     internal func getDependenciesIfConfigured() throws -> Dependencies {
         guard let configuration = configuration,
             let repository = repository,
             let trackingManager = trackingManager else {
-                throw NSError(domain: "", code: 0, userInfo: nil)
+                throw ExponeaError.notConfigured
         }
         return (configuration, repository, trackingManager)
     }

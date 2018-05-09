@@ -29,7 +29,6 @@
 		01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */; };
 		01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */; };
 		01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DC0207F63970031BFEB /* FlushingMode.swift */; };
-		C05DE81E20A38731007138AE /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05DE81D20A38731007138AE /* Customer.swift */; };
 		C07F1BC7209A474A004FE933 /* EntityValueResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */; };
 		C0D9B07920A38A8C0066FB1E /* PaymentManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */; };
 		C0D9B07B20A3B2410066FB1E /* TrackingManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */; };
@@ -119,7 +118,6 @@
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		B57907D0B9C15901B882D6C2 /* Pods-ExponeaSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.debug.xcconfig"; sourceTree = "<group>"; };
-		C05DE81D20A38731007138AE /* Customer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityValueResponse.swift; sourceTree = "<group>"; };
 		C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManagerDelegate.swift; sourceTree = "<group>"; };
 		C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManagerError.swift; sourceTree = "<group>"; };
@@ -411,7 +409,6 @@
 				019F1AC42087666800368FB1 /* DataType.swift */,
 				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
 				F0E757EF207D027300FE8C21 /* Configuration.swift */,
-				C05DE81D20A38731007138AE /* Customer.swift */,
 				F0C1C1CF2073852E005EB697 /* KeyValueItem.swift */,
 				01EC2DA6207E4FBA0031BFEB /* FetchEventsRequest.swift */,
 				F029BF20208A089C00342498 /* FetchEventsResponse.swift */,
@@ -751,7 +748,6 @@
 				F029BF29208A099500342498 /* Routes.swift in Sources */,
 				01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
-				C05DE81E20A38731007138AE /* Customer.swift in Sources */,
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,

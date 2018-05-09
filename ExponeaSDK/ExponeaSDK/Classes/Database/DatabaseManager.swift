@@ -146,6 +146,29 @@ extension DatabaseManager: DatabaseManagerType {
         try saveContext()
     }
 
+    public func fetchOrCreateCustomer() -> Customer {
+        let context = managedObjectContext
+        
+        do {
+            let customer: [Customer] = try context.fetch(Customer.fetchRequest())
+            return customer.first!
+        } catch {
+            Exponea.logger.log(.warning, message: "No customer found saved in database, will create. \(error)")
+        }
+        
+        let customer = Customer(context: context)
+        customer.id = NSUUID()
+        
+        do {
+            try saveContext()
+        } catch {
+            let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription).localizedDescription
+            Exponea.logger.log(.error, message: error)
+        }
+        
+        return customer
+    }
+    
     /// Fetch all Tracking Customers from CoreData
     ///
     /// - Returns: An array of tracking customer updates, if any are stored in the database.

@@ -11,6 +11,7 @@ import Foundation
 enum DatabaseManagerError: Error {
     case objectDoesNotExist
     case wrongObjectType
+    case saveCustomerFailed(String)
     case unknownError(String?)
     
     var localizedDescription: String {
@@ -20,6 +21,9 @@ enum DatabaseManagerError: Error {
             
         case .wrongObjectType:
             return "The object you want to modify is of different type than expected."
+        
+        case .saveCustomerFailed(let details):
+            return "Saving a new customer failed: \(details)."
             
         case .unknownError(let details):
             return "Unknown error. \(details != nil ? details! : "")"

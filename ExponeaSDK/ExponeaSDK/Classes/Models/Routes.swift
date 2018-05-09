@@ -9,7 +9,7 @@
 import Foundation
 
 /// Identification of endpoints for Exponea API
-enum Routes {
+public enum Routes {
     case trackCustomer
     case trackEvent
     case tokenRotate

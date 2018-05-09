@@ -21,8 +21,9 @@ open class TrackingManager {
         }
     }
     
-    // FIXME: FIX
-    let customer: Customer = Customer(id: UUID())
+    internal lazy var customer: Customer = {
+       return database.fetchOrCreateCustomer()
+    }()
     
     /// Used for periodic data flushing
     internal var flushingTimer: Timer?
