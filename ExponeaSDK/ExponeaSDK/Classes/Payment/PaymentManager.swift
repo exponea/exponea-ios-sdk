@@ -9,15 +9,17 @@
 import Foundation
 import StoreKit
 
-class PaymentManager: SKPaymentQueue, PaymentManagerType {
-
-    let trackingManager: TrackingManagerType
-    let device: DeviceProperties
-    var receipt: String?
-
-    init(trackingMananger: TrackingManagerType) {
-        self.trackingManager = trackingMananger
-        self.device = DeviceProperties()
+public class PaymentManager: NSObject, PaymentManagerType {
+    internal var deviceProperties = DeviceProperties()
+    internal var receipt: String?
+    
+    /// The delegat that is responsible for tracking payment events.
+    public weak var delegate: PaymentManagerDelegate?
+    
+    public override init() { }
+    
+    init(delegate: PaymentManagerDelegate) {
+        self.delegate = delegate
     }
 
     deinit {
@@ -37,15 +39,22 @@ class PaymentManager: SKPaymentQueue, PaymentManagerType {
         SKPaymentQueue.default().remove(self)
     }
 
-    func trackPayment(properties: [KeyValueItem]) -> Bool {
-        return trackingManager.track(.payment, with: [.timestamp(nil),
-                                                          .properties(properties)])
+    func trackPayment(properties: [KeyValueItem]) {
+        guard let delegate = delegate else {
+            Exponea.logger.log(.warning, message: """
+                No delegate for `PaymentManager` set.
+                Payment has been observer, but not tracked.
+                """)
+            return
+        }
+        
+        delegate.trackPaymentEvent(with: [.timestamp(nil), .properties(properties)])
     }
 }
 
 extension PaymentManager: SKPaymentTransactionObserver {
     /// Track the information for the successfully payment and removing from the queue.
-    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+    public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         for transaction in transactions {
             switch transaction.transactionState {
             case .purchased:
@@ -67,19 +76,11 @@ extension PaymentManager: SKPaymentTransactionObserver {
 
 extension PaymentManager: SKProductsRequestDelegate {
     /// Retrive information from the purchase item.
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+    public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         for product in response.products {
-
-            var currencyCode = ""
-            var currency = ""
-
-            if let code = Locale.current.currencyCode {
-                currencyCode = code
-            }
-            if let curr = Locale.current.localizedString(forCurrencyCode: currencyCode) {
-                currency = curr
-            }
-
+            let currencyCode = Locale.current.currencyCode ?? "N/A"
+            let currency = Locale.current.localizedString(forCurrencyCode: currencyCode) ?? "N/A"
+            
             let item = PurchasedItem(grossAmount: Double(truncating: product.price),
                                      currency: currency,
                                      paymentSystem: Constants.General.iTunesStore,
@@ -87,14 +88,9 @@ extension PaymentManager: SKProductsRequestDelegate {
                                      productTitle: product.localizedTitle,
                                      receipt: receipt)
             var properties = item.properties
-            properties.append(contentsOf: device.properties)
+            properties.append(contentsOf: deviceProperties.properties)
 
-            if trackPayment(properties: properties) {
-                Exponea.logger.log(.verbose, message: Constants.SuccessMessages.paymentDone)
-            } else {
-                Exponea.logger.log(.error, message: Constants.ErrorMessages.couldNotTrackPayment +
-                                                    Constants.ErrorMessages.verifyLogError)
-            }
+            trackPayment(properties: properties)
         }
     }
 }

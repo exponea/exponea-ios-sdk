@@ -9,7 +9,9 @@
 import Foundation
 
 protocol PaymentManagerType: class {
+    var delegate: PaymentManagerDelegate? { get set }
+    
     func startObservingPayments()
     func stopObservingPayments()
-    func trackPayment(properties: [KeyValueItem]) -> Bool
+    func trackPayment(properties: [KeyValueItem])
 }

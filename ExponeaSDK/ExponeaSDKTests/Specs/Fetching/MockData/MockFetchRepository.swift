@@ -106,7 +106,7 @@ extension MockFetchRepository: ConnectionManagerType {
         return
     }
 
-    func trackEvents(projectToken: String,
+    func trackEvent(projectToken: String,
                      customerId: KeyValueItem,
                      properties: [KeyValueItem],
                      timestamp: Double?,

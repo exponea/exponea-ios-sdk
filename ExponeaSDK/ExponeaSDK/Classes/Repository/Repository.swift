@@ -10,7 +10,7 @@ import Foundation
 
 protocol TrackingRepository {
     func trackCustomer(with data: [DataType], completion: @escaping ((EmptyResult) -> Void))
-    func trackEvents(with data: [DataType], completion: @escaping ((EmptyResult) -> Void))
+    func trackEvent(with data: [DataType], completion: @escaping ((EmptyResult) -> Void))
 }
 
 protocol TokenRepository {
@@ -54,6 +54,6 @@ protocol FetchRepository {
     func anonymize(projectToken: String, customerId: KeyValueItem)
 }
 
-protocol ConnectionManagerType: class, TrackingRepository, TokenRepository, FetchRepository {
+protocol RepositoryType: class, TrackingRepository, TokenRepository, FetchRepository {
     var configuration: Configuration { get set }
 }

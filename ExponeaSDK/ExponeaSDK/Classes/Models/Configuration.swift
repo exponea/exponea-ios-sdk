@@ -100,25 +100,6 @@ public struct Configuration: Decodable {
 }
 
 extension Configuration {
-    internal var lastSessionStarted: Double {
-        get {
-            return UserDefaults.standard.double(forKey: Constants.Keys.sessionStarted)
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionStarted)
-        }
-    }
-    internal var lastSessionEndend: Double {
-        get {
-            return UserDefaults.standard.double(forKey: Constants.Keys.sessionEnded)
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionEnded)
-        }
-    }
-}
-
-extension Configuration {
     var isConfigured: Bool {
         return projectToken != nil || projectMapping != nil
     }

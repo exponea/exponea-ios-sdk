@@ -36,12 +36,9 @@ extension ConnectionManager: TrackingRepository {
         
         for item in data {
             switch item {
-            case .projectToken(let string):
-                token = string
-            case .customerId(let id):
-                customerId = id
-            case .properties(let props):
-                properties += props
+            case .projectToken(let string): token = string
+            case .customerId(let id): customerId = id
+            case .properties(let props): properties += props
             default: continue
             }
         }
@@ -61,7 +58,7 @@ extension ConnectionManager: TrackingRepository {
         // Setup router
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
-                                    route: .trackCustomers)
+                                    route: .trackCustomer)
         
         // Prepare parameters and request
         let params = TrackingParameters(customer: customer, properties: properties)
@@ -82,7 +79,7 @@ extension ConnectionManager: TrackingRepository {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    func trackEvents(with data: [DataType], completion: @escaping ((EmptyResult) -> Void)) {
+    func trackEvent(with data: [DataType], completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
         var customerId: KeyValueItem?
         var properties: [KeyValueItem] = []
@@ -113,7 +110,7 @@ extension ConnectionManager: TrackingRepository {
         // Setup router
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
-                                    route: .trackEvents)
+                                    route: .trackEvent)
         
         // Prepare parameters and request
         let params = TrackingParameters(customer: customer, properties: properties,
@@ -164,7 +161,7 @@ extension ConnectionManager: TokenRepository {
     }
 }
 
-extension ConnectionManager: ConnectionManagerType {
+extension ConnectionManager: RepositoryType {
     /// Fetch property for one customer.
     ///
     /// - Parameters:

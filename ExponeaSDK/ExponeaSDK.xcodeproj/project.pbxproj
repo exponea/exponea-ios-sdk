@@ -29,7 +29,12 @@
 		01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */; };
 		01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */; };
 		01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DC0207F63970031BFEB /* FlushingMode.swift */; };
+		C05DE81E20A38731007138AE /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05DE81D20A38731007138AE /* Customer.swift */; };
 		C07F1BC7209A474A004FE933 /* EntityValueResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */; };
+		C0D9B07920A38A8C0066FB1E /* PaymentManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */; };
+		C0D9B07B20A3B2410066FB1E /* TrackingManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */; };
+		C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */; };
+		C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07E20A3B8070066FB1E /* DatabaseManagerError.swift */; };
 		C0F6C4E32098A1AB00834E21 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */; };
 		C0F6C4E52098A1AB00834E21 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F6C4E42098A1AB00834E21 /* ViewController.swift */; };
 		C0F6C4E82098A1AB00834E21 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4E62098A1AB00834E21 /* Main.storyboard */; };
@@ -114,7 +119,12 @@
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		B57907D0B9C15901B882D6C2 /* Pods-ExponeaSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		C05DE81D20A38731007138AE /* Customer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityValueResponse.swift; sourceTree = "<group>"; };
+		C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManagerDelegate.swift; sourceTree = "<group>"; };
+		C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManagerError.swift; sourceTree = "<group>"; };
+		C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaError.swift; sourceTree = "<group>"; };
+		C0D9B07E20A3B8070066FB1E /* DatabaseManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerError.swift; sourceTree = "<group>"; };
 		C0F6C4E02098A1AB00834E21 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C0F6C4E42098A1AB00834E21 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -246,10 +256,8 @@
 			isa = PBXGroup;
 			children = (
 				01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */,
+				C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */,
 				01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */,
-				01EC2DB3207E58080031BFEB /* EventType.swift */,
-				019F1AC42087666800368FB1 /* DataType.swift */,
-				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -267,6 +275,7 @@
 			children = (
 				01EC2DB9207E68BF0031BFEB /* DatabaseManager.swift */,
 				01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */,
+				C0D9B07E20A3B8070066FB1E /* DatabaseManagerError.swift */,
 				01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */,
 			);
 			path = Database;
@@ -341,13 +350,6 @@
 			isa = PBXGroup;
 			children = (
 				F0E757EC207D023A00FE8C21 /* Classes */,
-				01EC2DB0207E55C10031BFEB /* Tracking */,
-				01EC2DB8207E68BF0031BFEB /* Database */,
-				F0E757E1207CF9BE00FE8C21 /* Repository */,
-				F0E757DE207CF98600FE8C21 /* Others */,
-				0191639D207E14C9005FD174 /* Logging */,
-				F067440E208731CF003C0293 /* Payment */,
-				F0C1C1CE207384ED005EB697 /* Models */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
 			);
 			path = ExponeaSDK;
@@ -387,6 +389,7 @@
 			children = (
 				F067440F208731F9003C0293 /* PaymentManager.swift */,
 				F0674411208732AF003C0293 /* PaymentManagerType.swift */,
+				C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */,
 			);
 			path = Payment;
 			sourceTree = "<group>";
@@ -404,7 +407,11 @@
 		F0C1C1CE207384ED005EB697 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				01EC2DB3207E58080031BFEB /* EventType.swift */,
+				019F1AC42087666800368FB1 /* DataType.swift */,
+				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
 				F0E757EF207D027300FE8C21 /* Configuration.swift */,
+				C05DE81D20A38731007138AE /* Customer.swift */,
 				F0C1C1CF2073852E005EB697 /* KeyValueItem.swift */,
 				01EC2DA6207E4FBA0031BFEB /* FetchEventsRequest.swift */,
 				F029BF20208A089C00342498 /* FetchEventsResponse.swift */,
@@ -462,6 +469,14 @@
 			isa = PBXGroup;
 			children = (
 				F0E757ED207D025300FE8C21 /* Exponea.swift */,
+				C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */,
+				01EC2DB0207E55C10031BFEB /* Tracking */,
+				F0E757E1207CF9BE00FE8C21 /* Repository */,
+				01EC2DB8207E68BF0031BFEB /* Database */,
+				F0C1C1CE207384ED005EB697 /* Models */,
+				F067440E208731CF003C0293 /* Payment */,
+				0191639D207E14C9005FD174 /* Logging */,
+				F0E757DE207CF98600FE8C21 /* Others */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -706,6 +721,7 @@
 				F029BF21208A089C00342498 /* FetchEventsResponse.swift in Sources */,
 				F0E757E5207CFA5300FE8C21 /* RequestFactory.swift in Sources */,
 				F029BF2B208A2BC300342498 /* Recommendation.swift in Sources */,
+				C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* CustomerRecommendation.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
@@ -719,9 +735,11 @@
 				F029BF27208A096900342498 /* HTTPMethod.swift in Sources */,
 				01EC2DA9207E4FC10031BFEB /* CustomerExportModel.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
+				C0D9B07920A38A8C0066FB1E /* PaymentManagerDelegate.swift in Sources */,
 				01C2AD4E208F61000012F663 /* CustomerParameters.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
 				F0674412208732AF003C0293 /* PaymentManagerType.swift in Sources */,
+				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ConnectionManager.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
@@ -729,9 +747,11 @@
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				01EC2DA7207E4FBA0031BFEB /* FetchEventsRequest.swift in Sources */,
 				01EC2DAB207E53D90031BFEB /* CustomerExportAttributesModel.swift in Sources */,
+				C0D9B07B20A3B2410066FB1E /* TrackingManagerError.swift in Sources */,
 				F029BF29208A099500342498 /* Routes.swift in Sources */,
 				01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
+				C05DE81E20A38731007138AE /* Customer.swift in Sources */,
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,

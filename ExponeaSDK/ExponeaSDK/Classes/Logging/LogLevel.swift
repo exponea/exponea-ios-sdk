@@ -28,9 +28,9 @@ public enum LogLevel: Int {
     public var name: String {
         switch self {
         case .none: return ""
-        case .error: return "ERROR"
-        case .warning: return "WARNING"
-        case .verbose: return "VERBOSE"
+        case .error: return "❗️ ERROR"
+        case .warning: return "⚠️ WARNING"
+        case .verbose: return "ℹ️ VERBOSE"
         }
     }
 }

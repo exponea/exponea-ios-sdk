@@ -19,11 +19,11 @@ class StubEntities {
         self.container = container
     }
 
-    func trackCustomers(projectToken: String,
+    func trackCustomer(projectToken: String,
                         timestamp: Double,
                         customerIdKey: String?,
-                        customerIdValue: String? ) -> TrackCustomers? {
-        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackCustomers",
+                        customerIdValue: String? ) -> TrackCustomer? {
+        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackCustomer",
                                                         into: container.viewContext)
 
         objct.setValue(projectToken, forKey: "projectToken")
@@ -31,26 +31,26 @@ class StubEntities {
         objct.setValue(customerIdKey, forKey: "customerIdKey")
         objct.setValue(customerIdValue, forKey: "customerIdValue")
 
-        return objct as? TrackCustomers
+        return objct as? TrackCustomer
     }
 
-    func trackCustomersProperties(key: String,
-                                  value: Any ) -> TrackCustomersProperties? {
-        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackCustomersProperties",
+    func trackCustomerProperties(key: String,
+                                  value: Any ) -> TrackCustomerProperties? {
+        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackCustomerProperties",
                                                         into: container.viewContext)
 
         objct.setValue(key, forKey: "key")
         objct.setValue(value, forKey: "value")
 
-        return objct as? TrackCustomersProperties
+        return objct as? TrackCustomerProperties
     }
 
-    func trackEvents(projectToken: String,
+    func trackEvent(projectToken: String,
                      timestamp: Double,
                      eventType: String,
                      customerIdKey: String?,
-                     customerIdValue: String? ) -> TrackEvents? {
-        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackEvents",
+                     customerIdValue: String? ) -> TrackEvent? {
+        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackEvent",
                                                         into: container.viewContext)
 
         objct.setValue(projectToken, forKey: "projectToken")
@@ -59,17 +59,17 @@ class StubEntities {
         objct.setValue(customerIdKey, forKey: "customerIdKey")
         objct.setValue(customerIdValue, forKey: "customerIdValue")
 
-        return objct as? TrackEvents
+        return objct as? TrackEvent
     }
 
-    func trackEventsProperties(key: String,
-                               value: Any ) -> TrackEventsProperties? {
-        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackEventsProperties",
+    func trackEventProperties(key: String,
+                               value: Any ) -> TrackEventProperties? {
+        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackEventProperties",
                                                         into: container.viewContext)
 
         objct.setValue(key, forKey: "key")
         objct.setValue(value, forKey: "value")
 
-        return objct as? TrackEventsProperties
+        return objct as? TrackEventProperties
     }
 }
