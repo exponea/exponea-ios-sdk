@@ -12,7 +12,7 @@ import CoreData
 public struct Configuration: Decodable {
     var projectMapping: [EventType: [String]]?
     var projectToken: String?
-    internal var authorization: String?
+    internal var authorization: Authorization = .none
     internal var baseURL: String = Constants.Repository.baseURL
     internal var contentType: String = Constants.Repository.contentType
     var sessionTimeout: Double = 20
@@ -31,7 +31,7 @@ public struct Configuration: Decodable {
 
     public init(projectToken: String?,
                 projectMapping: [EventType: [String]]? = nil,
-                authorization: String,
+                authorization: Authorization,
                 baseURL: String?) {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
@@ -77,7 +77,13 @@ public struct Configuration: Decodable {
         }
 
         if let authorization = try container.decodeIfPresent(String.self, forKey: .authorization) {
-            self.authorization = authorization
+            let components = authorization.split(separator: " ")
+            
+            if components.count == 2, components.first == "Token" {
+                self.authorization = .token(String(components[1]))
+            } else if components.count == 2, components.first == "Basic" {
+                self.authorization = .basic(String(components[1]))
+            }
         }
 
         if let dictionary = try container.decodeIfPresent(Dictionary<String, [String]>.self, forKey: .projectMapping) {

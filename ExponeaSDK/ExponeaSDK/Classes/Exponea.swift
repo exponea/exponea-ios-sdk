@@ -165,7 +165,7 @@ public extension Exponea {
     ///
     /// - Parameters:
     ///     - projectToken: Project Token to be used through the SDK
-    public class func configure(projectToken: String, authorization: String, baseURL: String? = nil) {
+    public class func configure(projectToken: String, authorization: Authorization, baseURL: String? = nil) {
         let configuration = Configuration(projectToken: projectToken, authorization: authorization, baseURL: baseURL)
         shared.configuration = configuration
     }
@@ -192,7 +192,7 @@ public extension Exponea {
     ///   - baseURL: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     public class func configure(projectToken: String,
                                 projectMapping: [EventType: [String]],
-                                authorization: String,
+                                authorization: Authorization,
                                 baseURL: String? = nil) {
         let configuration = Configuration(projectToken: nil,
                                           projectMapping: projectMapping,

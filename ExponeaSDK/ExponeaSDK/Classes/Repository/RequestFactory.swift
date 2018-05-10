@@ -44,7 +44,7 @@ public struct RequestFactory {
 }
 
 extension RequestFactory {
-    func prepareRequest(authorization: String?,
+    func prepareRequest(authorization: Authorization,
                         trackingParam: TrackingParameters? = nil,
                         customersParam: CustomerParameters? = nil) -> URLRequest {
         var request = URLRequest(url: URL(string: path)!)
@@ -57,8 +57,13 @@ extension RequestFactory {
                          forHTTPHeaderField: Constants.Repository.headerAccept)
 
         // Add authorization if it was provided
-        if let authorization = authorization {
-            request.addValue(authorization,
+        switch authorization {
+        case .none: break
+        case .token(let token):
+            request.addValue("Token \(token)",
+                             forHTTPHeaderField: Constants.Repository.headerAuthorization)
+        case .basic(let secret):
+            request.addValue("Basic \(secret)",
                              forHTTPHeaderField: Constants.Repository.headerAuthorization)
         }
 
