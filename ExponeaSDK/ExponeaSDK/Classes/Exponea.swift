@@ -194,7 +194,7 @@ public extension Exponea {
                                 projectMapping: [EventType: [String]],
                                 authorization: Authorization,
                                 baseURL: String? = nil) {
-        let configuration = Configuration(projectToken: nil,
+        let configuration = Configuration(projectToken: projectToken,
                                           projectMapping: projectMapping,
                                           authorization: authorization,
                                           baseURL: baseURL)

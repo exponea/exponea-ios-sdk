@@ -71,26 +71,17 @@ extension TrackingManager: TrackingManagerType {
             throw TrackingManagerError.unknownError("No project tokens provided.")
         }
         
-        // FIXME: Refactor the success tracking and add more logging.
-        
         /// For each project token we have, track the data.
         for projectToken in tokens {
             let payload: [DataType] = [.projectToken(projectToken)] + (data ?? [])
             
             switch type {
-            case .install:
-                try installEvent(projectToken: projectToken)
-            case .sessionStart:
-                try sessionStart(projectToken: projectToken)
-            case .sessionEnd:
-                // TODO: save to db
-                throw TrackingManagerError.unknownError("Not implemented")
-            case .trackEvent:
-                try trackEvent(with: payload)
-            case .trackCustomer:
-                try trackCustomer(with: payload)
-            case .payment:
-                try trackPayment(with: payload + [.eventType(Constants.EventTypes.payment)])
+            case .install: try installEvent(projectToken: projectToken)
+            case .sessionStart: try trackStartSession(projectToken: projectToken)
+            case .sessionEnd: try trackEndSession(projectToken: projectToken)
+            case .trackEvent: try trackEvent(with: payload)
+            case .trackCustomer: try trackCustomer(with: payload)
+            case .payment: try trackPayment(with: payload + [.eventType(Constants.EventTypes.payment)])
             }
         }
     }
@@ -114,42 +105,23 @@ extension TrackingManager {
     open func trackPayment(with data: [DataType]) throws {
         try database.trackEvent(with: data)
     }
-    
-    open func sessionStart(projectToken: String) throws {
-        /// Get the current timestamp to calculate the session period.
-        let now = Date().timeIntervalSince1970
-        
-        /// Check the status of the previous session.
-        if sessionEnded(newTimestamp: now, projectToken: projectToken) {
-            /// Update the new session value.
-            currentSessionStart = now
-            
-            // Restart the session
-            try trackEndSession(projectToken: projectToken)
-            try trackStartSession(projectToken: projectToken)
-        } else {
-            currentSessionStart = now
-            try trackStartSession(projectToken: projectToken)
-        }
-    }
 }
 
 // MARK: - Sessions
 
 extension TrackingManager {
-    internal var currentSessionStart: Double {
+    internal var sessionStartTime: Double {
         get {
-            let time = UserDefaults.standard.double(forKey: Constants.Keys.sessionStarted)
-            return time == 0 ? NSDate().timeIntervalSince1970 : time
+            return UserDefaults.standard.double(forKey: Constants.Keys.sessionStarted)
         }
         set {
             UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionStarted)
         }
     }
-    internal var currentSessionEnd: Double {
+    
+    internal var sessionEndTime: Double {
         get {
-            let time = UserDefaults.standard.double(forKey: Constants.Keys.sessionEnded)
-            return time == 0 ? NSDate().timeIntervalSince1970 : time
+            return UserDefaults.standard.double(forKey: Constants.Keys.sessionEnded)
         }
         set {
             UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionEnded)
@@ -162,50 +134,93 @@ extension TrackingManager {
         // Make sure we remove session observers first, if we are already observing.
         removeSessionObservers()
         
+        // Subscribe to notifications
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(trackSessionStart),
+                                               selector: #selector(applicationDidBecomeActive),
                                                name: .UIApplicationDidBecomeActive,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(trackSessionEnd),
-                                               name: .UIApplicationDidEnterBackground,
+                                               selector: #selector(applicationWillResignActive),
+                                               name: .UIApplicationWillResignActive,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(applicationWillTerminate),
+                                               name: .UIApplicationWillTerminate,
                                                object: nil)
     }
     
     /// Removes session observers.
     internal func removeSessionObservers() {
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillResignActive, object: nil)
         NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillTerminate, object: nil)
     }
     
-    @objc internal func trackSessionStart() {
-        do {
-            try track(.sessionStart, with: nil)
-            Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStart)
-        } catch {
-            Exponea.logger.log(.error, message: error.localizedDescription)
+    @objc internal func applicationDidBecomeActive() {
+        // If this is first session start, then
+        guard sessionStartTime != 0 else {
+            sessionStartTime = Date().timeIntervalSince1970
+            return
+        }
+        
+        // Check first if we're past session timeout. If yes, track end of a session.
+        if shouldTrackCurrentSession {
+            do {
+                // Track session end
+                try track(.sessionEnd, with: nil)
+                
+                // Reset session
+                sessionStartTime = Date().timeIntervalSince1970
+                sessionEndTime = 0
+                
+                Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStart)
+            } catch {
+                Exponea.logger.log(.error, message: error.localizedDescription)
+            }
+        } else {
+            Exponea.logger.log(.verbose, message: "Skipping tracking session end as within timeout or not started.'")
         }
     }
     
-    @objc internal func trackSessionEnd() {
+    @objc internal func applicationWillResignActive() {
+        // Set the session end to the time when the app resigns active state
+        sessionEndTime = Date().timeIntervalSince1970
+    }
+    
+    @objc internal func applicationWillTerminate() {
+        // Set the session end to the time when the app terminates
+        sessionEndTime = Date().timeIntervalSince1970
+        
+        // Track session end (when terminating)
         do {
             try track(.sessionEnd, with: nil)
+            
+            // Reset session times
+            sessionStartTime = 0
+            sessionEndTime = 0
+            
             Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionEnd)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
     }
-}
-
-extension TrackingManager {
-    fileprivate func sessionEnded(newTimestamp: Double, projectToken: String) -> Bool {
-        /// Check only if session has ended before
-        guard currentSessionEnd > 0 else {
+    
+    fileprivate var shouldTrackCurrentSession: Bool {
+        /// Make sure a session was started
+        guard sessionStartTime > 0 else {
+            Exponea.logger.log(.warning, message: """
+            Session not started - you need to first start a session before ending it.
+            """)
+            return false
+        }
+        
+        // If current session didn't end yet, then we shouldn't track it
+        guard sessionEndTime > 0 else {
             return false
         }
         
         /// Calculate the session duration
-        let sessionDuration = newTimestamp - currentSessionEnd
+        let sessionDuration = sessionStartTime - sessionEndTime
         
         /// Session should be ended
         if sessionDuration > repository.configuration.sessionTimeout {
@@ -215,12 +230,12 @@ extension TrackingManager {
         }
     }
     
-    fileprivate func trackStartSession(projectToken: String) throws {
+    internal func trackStartSession(projectToken: String) throws {
         /// Prepare data to persist into coredata.
         var properties = device.properties
         /// Adding session start properties.
         properties.append(KeyValueItem(key: "event_type", value: Constants.EventTypes.sessionStart))
-        properties.append(KeyValueItem(key: "timestamp", value: currentSessionStart))
+        properties.append(KeyValueItem(key: "timestamp", value: sessionStartTime))
         properties.append(KeyValueItem(key: "app_version", value: device.appVersion))
         
         try database.trackEvent(with: [.projectToken(projectToken),
@@ -228,14 +243,14 @@ extension TrackingManager {
                                        .eventType(Constants.EventTypes.sessionStart)])
     }
     
-    fileprivate func trackEndSession(projectToken: String) throws {
+    internal func trackEndSession(projectToken: String) throws {
         /// Prepare data to persist into coredata.
         var properties = device.properties
         /// Calculate the duration of the last session.
-        let duration = currentSessionStart - currentSessionEnd
+        let duration = sessionStartTime - sessionEndTime
         /// Adding session end properties.
         properties.append(KeyValueItem(key: "event_type", value: Constants.EventTypes.sessionStart))
-        properties.append(KeyValueItem(key: "timestamp", value: currentSessionEnd))
+        properties.append(KeyValueItem(key: "timestamp", value: sessionEndTime))
         properties.append(KeyValueItem(key: "duration", value: duration))
         properties.append(KeyValueItem(key: "app_version", value: device.appVersion))
         
