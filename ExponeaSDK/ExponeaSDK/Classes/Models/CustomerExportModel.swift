@@ -8,10 +8,21 @@
 
 import Foundation
 
+/// <#Description#>
 public struct CustomerExportModel {
+    
+    /// <#Description#>
     public var attributes: CustomerExportAttributesModel
+    
+    /// <#Description#>
     public var filter: [KeyValueItem]
+    
+    /// <#Description#>
     public var executionTime: Int
+    
+    /// <#Description#>
     public var timezone: String
+    
+    /// <#Description#>
     public var responseFormat: String
 }

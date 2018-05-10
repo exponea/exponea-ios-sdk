@@ -8,12 +8,27 @@
 
 import Foundation
 
+/// <#Description#>
 public struct CustomerRecommendation {
+    
+    /// <#Description#>
     public var type: String
+    
+    /// <#Description#>
     public var id: String
+    
+    /// <#Description#>
     public var size: Int?
+    
+    /// <#Description#>
     public var strategy: String?
+    
+    /// <#Description#>
     public var knowItems: Bool?
+    
+    /// <#Description#>
     public var anti: Bool?
+    
+    /// <#Description#>
     public var items: [KeyValueItem]?
 }

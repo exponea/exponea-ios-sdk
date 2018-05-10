@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17E199" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17E202" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Customer" representedClassName="Customer" syncable="YES" codeGenerationType="class">
-        <attribute name="id" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="cookie" optional="YES" attributeType="Transformable" customClassName="UUID" syncable="YES"/>
+        <attribute name="ids" optional="YES" attributeType="Transformable" customClassName="[String]" syncable="YES"/>
     </entity>
     <entity name="TrackCustomer" representedClassName="TrackCustomer" syncable="YES" codeGenerationType="class">
         <attribute name="customerIdKey" optional="YES" attributeType="String" syncable="YES"/>
@@ -29,10 +30,10 @@
         <relationship name="trackEvent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackEvent" inverseName="trackEventProperties" inverseEntity="TrackEvent" syncable="YES"/>
     </entity>
     <elements>
+        <element name="Customer" positionX="-27" positionY="72" width="128" height="75"/>
         <element name="TrackCustomer" positionX="-63" positionY="-18" width="128" height="120"/>
         <element name="TrackCustomerProperties" positionX="-36" positionY="9" width="128" height="90"/>
         <element name="TrackEvent" positionX="-27" positionY="54" width="128" height="135"/>
         <element name="TrackEventProperties" positionX="0" positionY="72" width="128" height="90"/>
-        <element name="Customer" positionX="-27" positionY="72" width="128" height="60"/>
     </elements>
 </model>

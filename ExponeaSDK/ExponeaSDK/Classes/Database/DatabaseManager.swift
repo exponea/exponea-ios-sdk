@@ -157,7 +157,7 @@ extension DatabaseManager: DatabaseManagerType {
         }
         
         let customer = Customer(context: context)
-        customer.id = NSUUID()
+        customer.cookie = UUID()
         
         do {
             try saveContext()

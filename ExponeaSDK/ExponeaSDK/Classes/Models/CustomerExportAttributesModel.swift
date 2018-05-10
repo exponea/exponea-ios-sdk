@@ -8,7 +8,12 @@
 
 import Foundation
 
+/// <#Description#>
 public struct CustomerExportAttributesModel {
+    
+    /// <#Description#>
     public var type: String
+    
+    /// <#Description#>
     public var list: [CustomerAttributes]
 }

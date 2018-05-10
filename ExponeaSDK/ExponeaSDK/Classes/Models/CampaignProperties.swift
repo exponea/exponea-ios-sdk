@@ -12,17 +12,13 @@ import Foundation
 public struct CampaignProperties {
     /// Campaign name
     public var campaign: String?
+    
     /// Campaign identification
     public var campaignId: String?
+    
     /// Source of installation link
     public var link: String?
+    
     /// IP address
     public var ipAddress: String?
-
-    init(campaign: String?, campaignId: String?, link: String?, ipAddress: String?) {
-        self.campaign = campaign
-        self.campaignId = campaignId
-        self.link = link
-        self.ipAddress = ipAddress
-    }
 }

@@ -8,7 +8,12 @@
 
 import Foundation
 
+/// <#Description#>
 public struct FetchEventsResponse: Codable {
-    let success: Bool?
-    let data: [ExportedEventType]?
+    
+    /// <#Description#>
+    public let success: Bool?
+    
+    /// <#Description#>
+    public let data: [ExportedEventType]?
 }

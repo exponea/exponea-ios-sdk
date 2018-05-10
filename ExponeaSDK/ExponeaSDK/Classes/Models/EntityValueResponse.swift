@@ -8,8 +8,15 @@
 
 import Foundation
 
+/// <#Description#>
 public struct EntityValueResponse: Codable {
-    let success: Bool
-    let value: Double
-    let entityName: String
+    
+    /// <#Description#>
+    public let success: Bool
+    
+    /// <#Description#>
+    public let value: Double
+    
+    /// <#Description#>
+    public let entityName: String
 }

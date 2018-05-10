@@ -8,7 +8,12 @@
 
 import Foundation
 
+/// <#Description#>
 public struct ValueResponse: Codable {
-    let success: Bool?
-    let value: String?
+    
+    /// <#Description#>
+    public let success: Bool?
+    
+    /// <#Description#>
+    public let value: String?
 }

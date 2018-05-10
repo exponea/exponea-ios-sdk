@@ -8,9 +8,18 @@
 
 import Foundation
 
+/// <#Description#>
 public struct FetchEventsRequest {
+    
+    /// <#Description#>
     public var eventTypes: [String]
+    
+    /// <#Description#>
     public var sortOrder: String = "desc"
+    
+    /// <#Description#>
     public var limit: Int = 3
+    
+    /// <#Description#>
     public var skip: Int = 100
 }

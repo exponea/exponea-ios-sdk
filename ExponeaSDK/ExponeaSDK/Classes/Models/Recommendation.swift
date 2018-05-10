@@ -8,7 +8,12 @@
 
 import Foundation
 
+/// <#Description#>
 public struct Recommendation: Codable {
-    let success: Bool?
-    let results: [ValueResponse]?
+    
+    /// <#Description#>
+    public let success: Bool?
+    
+    /// <#Description#>
+    public let results: [ValueResponse]?
 }
