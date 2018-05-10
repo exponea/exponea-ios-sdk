@@ -24,6 +24,7 @@ public struct RequestFactory {
         switch self.route {
         case .trackCustomer: return baseURL + "/track/v2/projects/\(projectToken)/customers"
         case .trackEvent: return baseURL + "/track/v2/projects/\(projectToken)/customers/events"
+        case .trackBatch: return baseURL + "/track/v2/projects/\(projectToken)/batch"
         case .tokenRotate: return baseURL + "/data/v2/\(projectToken)/tokens/rotate"
         case .tokenRevoke: return baseURL + "/data/v2/\(projectToken)/tokens/revoke"
         case .customersProperty: return baseURL + "/data/v2/\(projectToken)/customers/property"
@@ -84,8 +85,9 @@ extension RequestFactory {
             do {
                 request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
             } catch {
-                Exponea.logger.log(.error, message: "Failed to serialise request body into JSON.")
-                Exponea.logger.log(.verbose, message: "Request body: \(parameters)")
+                Exponea.logger.log(.error,
+                                   message: "Failed to serialise request body into JSON: \(error.localizedDescription)")
+                Exponea.logger.log(.verbose, message: "Request parameters: \(parameters)")
             }
         }
 
@@ -117,9 +119,7 @@ extension RequestFactory {
                     completion(.failure(error))
                 }
             } else {
-                // FIXME: Fix this
-                let error = NSError(domain: "", code: 0, userInfo: nil)
-                completion(.failure(error))
+                completion(.failure(RepositoryError.invalidResponse(response)))
             }
         }
     }

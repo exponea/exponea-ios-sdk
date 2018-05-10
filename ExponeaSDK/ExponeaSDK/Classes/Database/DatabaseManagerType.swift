@@ -11,7 +11,10 @@ import Foundation
 /// Protocol to manage Tracking events
 public protocol DatabaseManagerType: class {
     func trackEvent(with data: [DataType]) throws
+    func trackEvent(with event: TrackEvent) throws
+    
     func trackCustomer(with data: [DataType]) throws
+    func trackCustomer(with customer: TrackCustomer) throws
     
     func fetchOrCreateCustomer() -> Customer
     func fetchTrackCustomer() throws -> [TrackCustomer]

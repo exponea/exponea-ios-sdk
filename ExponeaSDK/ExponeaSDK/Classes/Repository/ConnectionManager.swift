@@ -43,15 +43,13 @@ extension ConnectionManager: TrackingRepository {
             }
         }
         
-        // FIXME: fix this
-        
         guard let projectToken = token else {
-            completion(.failure(NSError(domain: "", code: 0, userInfo: nil)))
+            completion(.failure(RepositoryError.missingData("Project token not provided.")))
             return
         }
         
         guard let customer = customerId else {
-            completion(.failure(NSError(domain: "", code: 0, userInfo: nil)))
+            completion(.failure(RepositoryError.missingData("Customer IDs are missing.")))
             return
         }
         
@@ -98,12 +96,12 @@ extension ConnectionManager: TrackingRepository {
         }
         
         guard let projectToken = token else {
-            completion(.failure(NSError(domain: "", code: 0, userInfo: nil)))
+            completion(.failure(RepositoryError.missingData("Project token not provided.")))
             return
         }
         
         guard let customer = customerId else {
-            completion(.failure(NSError(domain: "", code: 0, userInfo: nil)))
+            completion(.failure(RepositoryError.missingData("Customer IDs are missing.")))
             return
         }
         
@@ -122,6 +120,11 @@ extension ConnectionManager: TrackingRepository {
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
+    }
+    
+    func trackEvents(with data: [[DataType]], completion: @escaping ((EmptyResult) -> Void)) {
+        // Group by project token
+        
     }
 }
 

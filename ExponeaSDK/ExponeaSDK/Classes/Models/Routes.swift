@@ -12,6 +12,7 @@ import Foundation
 public enum Routes {
     case trackCustomer
     case trackEvent
+    case trackBatch
     case tokenRotate
     case tokenRevoke
     case customersProperty
