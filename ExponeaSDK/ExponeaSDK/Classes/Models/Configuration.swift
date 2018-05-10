@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-
 /// <#Description#>
 public struct Configuration: Decodable {
     public internal(set) var projectMapping: [EventType: [String]]?
@@ -17,7 +16,7 @@ public struct Configuration: Decodable {
     public internal(set) var authorization: Authorization = .none
     public internal(set) var baseURL: String = Constants.Repository.baseURL
     public internal(set) var contentType: String = Constants.Repository.contentType
-    public var sessionTimeout: Double = 20
+    public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
 
     enum CodingKeys: String, CodingKey {

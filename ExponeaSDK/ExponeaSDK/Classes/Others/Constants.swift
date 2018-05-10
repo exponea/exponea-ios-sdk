@@ -56,19 +56,7 @@ enum Constants {
 
     /// Error messages
     enum ErrorMessages {
-        static let tokenNotConfigured = """
-        Project token is not configured. Please configure it before interact with the ExponeaSDK
-        """
         static let sdkNotConfigured = "ExponeaSDK isn't configured."
-        static let sessionStart = """
-        Could not start new session. Please verify the error log for more information.
-        """
-        static let sessionEnd = """
-        Could not end current session. Please verify the error log for more information.
-        """
-        static let couldNotTrackPayment = "The payment could not be tracked."
-        static let verifyLogError = "Please verify the error log for more information."
-        static let couldNotLoadReceipt = "Could not load the iTunes Store receipt"
     }
 
     /// Success messages
