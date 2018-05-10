@@ -166,8 +166,14 @@ public extension Exponea {
     /// - Parameters:
     ///     - projectToken: Project Token to be used through the SDK
     public class func configure(projectToken: String, authorization: Authorization, baseURL: String? = nil) {
-        let configuration = Configuration(projectToken: projectToken, authorization: authorization, baseURL: baseURL)
-        shared.configuration = configuration
+        do {
+            let configuration = try Configuration(projectToken: projectToken,
+                                                  authorization: authorization,
+                                                  baseURL: baseURL)
+            shared.configuration = configuration
+        } catch {
+            Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
+        }
     }
     
     // TODO: Write all mandatory keys
@@ -178,8 +184,14 @@ public extension Exponea {
     /// - Parameters:
     ///     - plistName: List name containing the SDK setup keys
     public class func configure(plistName: String) {
-        let configuration = Configuration(plistName: plistName)
-        shared.configuration = configuration
+        do {
+            let configuration = try Configuration(plistName: plistName)
+            shared.configuration = configuration
+        } catch {
+            Exponea.logger.log(.error, message: """
+                Can't parse Configuration from file \(plistName): \(error.localizedDescription).
+                """)
+        }
     }
     
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
@@ -194,11 +206,15 @@ public extension Exponea {
                                 projectMapping: [EventType: [String]],
                                 authorization: Authorization,
                                 baseURL: String? = nil) {
-        let configuration = Configuration(projectToken: projectToken,
-                                          projectMapping: projectMapping,
-                                          authorization: authorization,
-                                          baseURL: baseURL)
-        shared.configuration = configuration
+        do {
+            let configuration = try Configuration(projectToken: projectToken,
+                                                  projectMapping: projectMapping,
+                                                  authorization: authorization,
+                                                  baseURL: baseURL)
+            shared.configuration = configuration
+        } catch {
+            Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
+        }
     }
     
     // MARK: Tracking

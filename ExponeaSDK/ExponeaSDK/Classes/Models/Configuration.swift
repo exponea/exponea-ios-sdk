@@ -9,14 +9,16 @@
 import Foundation
 import CoreData
 
+
+/// <#Description#>
 public struct Configuration: Decodable {
-    var projectMapping: [EventType: [String]]?
-    var projectToken: String?
-    internal var authorization: Authorization = .none
-    internal var baseURL: String = Constants.Repository.baseURL
-    internal var contentType: String = Constants.Repository.contentType
-    var sessionTimeout: Double = 20
-    var automaticSessionTracking: Bool = true
+    public internal(set) var projectMapping: [EventType: [String]]?
+    public internal(set) var projectToken: String?
+    public internal(set) var authorization: Authorization = .none
+    public internal(set) var baseURL: String = Constants.Repository.baseURL
+    public internal(set) var contentType: String = Constants.Repository.contentType
+    public var sessionTimeout: Double = 20
+    public var automaticSessionTracking: Bool = true
 
     enum CodingKeys: String, CodingKey {
         case projectMapping
@@ -29,10 +31,21 @@ public struct Configuration: Decodable {
 
     private init() {}
 
+    /// <#Description#>
+    ///
+    /// - Parameters:
+    ///   - projectToken: <#projectToken description#>
+    ///   - projectMapping: <#projectMapping description#>
+    ///   - authorization: <#authorization description#>
+    ///   - baseURL: <#baseURL description#>
     public init(projectToken: String?,
                 projectMapping: [EventType: [String]]? = nil,
                 authorization: Authorization,
-                baseURL: String?) {
+                baseURL: String?) throws {
+        guard let projectToken = projectToken else {
+            throw ExponeaError.configurationError("No project token provided.")
+        }
+        
         self.projectToken = projectToken
         self.projectMapping = projectMapping
         self.authorization = authorization
@@ -41,30 +54,37 @@ public struct Configuration: Decodable {
         }
     }
 
-    public init?(plistName: String) {
+    /// <#Description#>
+    ///
+    /// - Parameter plistName: <#plistName description#>
+    public init(plistName: String) throws {
         for bundle in Bundle.allBundles {
             let fileName = plistName.replacingOccurrences(of: ".plist", with: "")
-            if let fileURL = bundle.url(forResource: fileName, withExtension: "plist") {
-                guard let data = try? Data(contentsOf: fileURL) else {
-                    Exponea.logger.log(.error, message: "Can't read data from \(fileName).plist")
-                    return nil
-                }
-
-                do {
-                    self = try PropertyListDecoder().decode(Configuration.self, from: data)
-                    return
-                } catch {
-                    Exponea.logger.log(.error, message: """
-                        Can't parse Configuration from \(fileName).plist: \(error.localizedDescription)
-                        """)
-                    return nil
-                }
+            guard let fileURL = bundle.url(forResource: fileName, withExtension: "plist") else {
+                continue
             }
+            
+            Exponea.logger.log(.verbose, message: """
+                Found configuration file with name \(fileName) in bundle: \(bundle.bundlePath)
+                """)
+            
+            // Load the data
+            let data = try Data(contentsOf: fileURL)
+            
+            // Decode from plist
+            self = try PropertyListDecoder().decode(Configuration.self, from: data)
+            
+            // Stop if we found the file and decoded successfully
+            return
         }
     }
 
     // MARK: - Decodable -
 
+    /// <#Description#>
+    ///
+    /// - Parameter decoder: <#decoder description#>
+    /// - Throws: <#throws value description#>
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -106,10 +126,11 @@ public struct Configuration: Decodable {
 }
 
 extension Configuration {
-    var isConfigured: Bool {
-        return projectToken != nil || projectMapping != nil
-    }
-
+    
+    /// <#Description#>
+    ///
+    /// - Parameter eventType: <#eventType description#>
+    /// - Returns: <#return value description#>
     func tokens(for eventType: EventType) -> [String] {
         /// Check if we have project mapping, otherwise fall back to project token if present.
         guard let mapping = projectMapping else {
