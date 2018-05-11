@@ -154,6 +154,20 @@ extension DatabaseManager: DatabaseManagerType {
         // Save the customer properties into CoreData
         try saveContext()
     }
+    
+    public func trackCustomer(with customer: TrackCustomer) throws {
+        let request: NSFetchRequest<TrackCustomer> = TrackCustomer.fetchRequest()
+        request.predicate = NSPredicate(format: "objectID == %@", customer.objectID)
+        
+        guard try managedObjectContext.count(for: request) == 0 else {
+            Exponea.logger.log(.warning, message: "Object already exists in database, skipping tracking.")
+            return
+        }
+        
+        // Insert and save
+        managedObjectContext.insert(customer)
+        try saveContext()
+    }
 
     public func fetchOrCreateCustomer() -> Customer {
         let context = managedObjectContext
