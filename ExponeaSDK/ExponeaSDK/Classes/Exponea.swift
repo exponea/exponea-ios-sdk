@@ -93,7 +93,7 @@ public class Exponea {
         Exponea.logger.log(.verbose, message: "Intialising Exponea with provided configuration.")
         
         // Recreate repository
-        let repository = ConnectionManager(configuration: configuration)
+        let repository = ServerRepository(configuration: configuration)
         self.repository = repository
         
         // Setup tracking manager

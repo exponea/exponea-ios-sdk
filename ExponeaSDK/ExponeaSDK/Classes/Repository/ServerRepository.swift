@@ -10,7 +10,7 @@ import Foundation
 
 // FIXME: Validate documentation
 
-final class ConnectionManager {
+final class ServerRepository {
     
     public internal(set) var configuration: Configuration
     private let session = URLSession.shared
@@ -21,7 +21,7 @@ final class ConnectionManager {
     }
 }
 
-extension ConnectionManager: TrackingRepository {
+extension ServerRepository: TrackingRepository {
     
     /// Update the properties of a customer
     ///
@@ -128,7 +128,7 @@ extension ConnectionManager: TrackingRepository {
     }
 }
 
-extension ConnectionManager: TokenRepository {
+extension ServerRepository: TokenRepository {
     
     /// Rotates the token
     /// The old token will still work for next 48 hours. You cannot have more than two private
@@ -164,7 +164,7 @@ extension ConnectionManager: TokenRepository {
     }
 }
 
-extension ConnectionManager: RepositoryType {
+extension ServerRepository: RepositoryType {
     /// Fetch property for one customer.
     ///
     /// - Parameters:

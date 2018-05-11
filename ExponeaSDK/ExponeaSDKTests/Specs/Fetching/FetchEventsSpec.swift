@@ -20,7 +20,7 @@ class FetchEventsSpec: QuickSpec {
         let database = MockDatabase()
         let data = FetchMockData()
         let configuration = Configuration(plistName: "ExponeaConfig")!
-        let repository = ConnectionManager(configuration: configuration)
+        let repository = ServerRepository(configuration: configuration)
 
         let exponea = Exponea(database: database,
                               repository: repository)

@@ -18,7 +18,7 @@ class ExponeaSpec: QuickSpec {
 
         let database = MockDatabase()
         let configuration = Configuration(plistName: "ExponeaConfig")!
-        let repository = ConnectionManager(configuration: configuration)
+        let repository = ServerRepository(configuration: configuration)
 
         describe("A SDK") {
             context("After beign initialized") {
