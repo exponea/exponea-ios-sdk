@@ -8,16 +8,16 @@
 
 import Foundation
 
-enum RepositoryError: Error {
+public enum RepositoryError: LocalizedError {
     case missingData(String)
     case invalidResponse(URLResponse?)
     
-    var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
         case .missingData(let details):
-            return "Request is missing required data: \(details)."
+            return "Request is missing required data: \(details)"
         case .invalidResponse(let response):
-            return "An invalid response was received from the API: \(response != nil ? "\(response!)" : "No response.")"
+            return "An invalid response was received from the API: \(response != nil ? "\(response!)" : "No response")"
         }
     }
 }

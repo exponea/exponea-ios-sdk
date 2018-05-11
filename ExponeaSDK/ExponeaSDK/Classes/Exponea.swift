@@ -25,7 +25,6 @@ public class Exponea {
     public internal(set) var configuration: Configuration? {
         get {
             guard let repository = repository else {
-                Exponea.logger.log(.warning, message: "Exponea not configured, can't return configuration.")
                 return nil
             }
             
@@ -33,21 +32,21 @@ public class Exponea {
         }
         
         set {
-            guard configuration != nil else {
+            guard let newValue = newValue else {
                 Exponea.logger.log(.warning, message: "Removing Exponea configuration and resetting everything.")
                 trackingManager = nil
                 repository = nil
                 return
             }
             
-            if repository != nil || trackingManager != nil {
-                Exponea.logger.log(.warning, message: "Exponea was still configured while it shouldn't be. Resetting.")
+            if configuration != nil {
+                Exponea.logger.log(.warning, message: "Resetting previous Exponea configuration.")
                 trackingManager = nil
                 repository = nil
             }
             
             // Initialise everything
-            sharedInitializer()
+            sharedInitializer(configuration: newValue)
         }
     }
     
@@ -84,12 +83,7 @@ public class Exponea {
         Exponea.logger.log(.error, message: "Exponea has deallocated. This should never happen.")
     }
     
-    internal func sharedInitializer() {
-        guard let configuration = configuration else {
-            Exponea.logger.log(.error, message: Constants.ErrorMessages.sdkNotConfigured)
-            return
-        }
-        
+    internal func sharedInitializer(configuration: Configuration) {
         Exponea.logger.log(.verbose, message: "Intialising Exponea with provided configuration.")
         
         // Recreate repository

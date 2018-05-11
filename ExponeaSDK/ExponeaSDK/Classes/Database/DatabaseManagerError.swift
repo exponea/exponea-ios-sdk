@@ -8,13 +8,13 @@
 
 import Foundation
 
-enum DatabaseManagerError: Error {
+public enum DatabaseManagerError: LocalizedError {
     case objectDoesNotExist
     case wrongObjectType
     case saveCustomerFailed(String)
     case unknownError(String?)
     
-    var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
         case .objectDoesNotExist:
             return "Object does not exist."

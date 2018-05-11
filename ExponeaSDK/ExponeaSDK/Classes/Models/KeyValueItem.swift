@@ -14,4 +14,9 @@ public struct KeyValueItem {
     public var key: String
     /// Value for the key in the dictionary
     public var value: Any
+    
+    public init(key: String, value: Any) {
+        self.key = key
+        self.value = value
+    }
 }

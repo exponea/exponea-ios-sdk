@@ -271,6 +271,8 @@ extension TrackingManager {
         // 4a. on fail, return to step 2
         // 4b. on success, delete from db
         
+        Exponea.logger.log(.verbose, message: "Flushing data now.")
+        
         // Pull from db
         do {
             let events = try database.fetchTrackEvent()
@@ -281,13 +283,30 @@ extension TrackingManager {
                 return
             }
         
-        //        for event in events {
-        //
-        //        }
-        //
-        //        for customer in customers {
-        //
-        //        }
+            for event in events {
+                Exponea.logger.log(.verbose, message: "Uploading event: \(event.objectID).")
+                
+                repository.trackEvent(with: event.dataTypes) { [weak self] (result) in
+                    switch result {
+                    case .success:
+                        Exponea.logger.log(.verbose, message: "Successfully uploaded event: \(event.objectID).")
+                        do {
+                            try self?.database.delete(event)
+                        } catch {
+                            Exponea.logger.log(.error, message: """
+                                Failed to remove object from database: \(event.objectID). \(error.localizedDescription)
+                                """)
+                        }
+                    case .failure(let error):
+                        Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
+                    }
+                }
+                
+            }
+    
+//            for customer in customers {
+    
+//            }
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }

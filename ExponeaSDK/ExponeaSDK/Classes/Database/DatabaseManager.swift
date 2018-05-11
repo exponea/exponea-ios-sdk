@@ -14,20 +14,48 @@ import CoreData
 public class DatabaseManager {
 
     internal lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "DatabaseModel")
+        let bundle = Bundle(for: DatabaseManager.self)
+        let container = NSPersistentContainer(name: "DatabaseModel", bundle: bundle)!
+        
         container.loadPersistentStores(completionHandler: { (_, error) in
             if let error = error {
                 Exponea.logger.log(.error, message: "Unresolved error \(error.localizedDescription).")
             }
         })
+        
         container.viewContext.automaticallyMergesChangesFromParent = true
+        
         return container
     }()
 
-    init() { }
+    init() {
+        #if DISABLE_PERSISTENCE
+        Exponea.logger.log(.warning, message: "Disable persistence flag is active, clearing database contents.")
+        
+        let coordinator = persistentContainer.persistentStoreCoordinator
+        guard let url = persistentContainer.persistentStoreDescriptions.first?.url else {
+            Exponea.logger.log(.error, message: "Can't get url of persistent store, clearing failed.")
+            return
+        }
+    
+        do {
+            try coordinator.destroyPersistentStore(at: url, ofType: NSSQLiteStoreType, options: nil)
+            Exponea.logger.log(.verbose, message: "Database contents cleared.")
+            
+            persistentContainer.loadPersistentStores(completionHandler: { _, error in
+                if let error = error {
+                    Exponea.logger.log(.error, message: "Failed to create new database: \(error.localizedDescription).")
+                }
+            })
+            
+        } catch {
+            Exponea.logger.log(.error, message: "Error clearing database: \(error.localizedDescription)")
+        }
+        #endif
+    }
 
     /// Managed Context for Core Data
-    var managedObjectContext: NSManagedObjectContext {
+    var context: NSManagedObjectContext {
         return persistentContainer.viewContext
     }
 
@@ -42,7 +70,6 @@ public class DatabaseManager {
 
     /// Save all changes in CoreData
     func saveContext() throws {
-        let context = managedObjectContext
         if context.hasChanges {
             try context.save()
         }
@@ -50,7 +77,7 @@ public class DatabaseManager {
 
     /// Delete a specific object in CoreData
     fileprivate func deleteObject(_ object: NSManagedObject) throws {
-        managedObjectContext.delete(object)
+        context.delete(object)
         try saveContext()
     }
 
@@ -67,14 +94,13 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
     public func trackEvent(with data: [DataType]) throws {
-        let trackEvent = TrackEvent(context: managedObjectContext)
-        let trackEventProperties = TrackEventProperties(context: managedObjectContext)
+        let trackEvent = TrackEvent(context: context)
 
         for type in data {
             switch type {
             case .projectToken(let token):
                 trackEvent.projectToken = token
-
+                
             case .customerId(let id):
                 trackEvent.customerIdKey = id.key
                 trackEvent.customerIdValue = id.value as? NSObject
@@ -88,6 +114,7 @@ extension DatabaseManager: DatabaseManagerType {
             case .properties(let properties):
                 // Add the event properties to the events entity
                 for property in properties {
+                    let trackEventProperties = TrackEventProperty(context: context)
                     trackEventProperties.key = property.key
                     trackEventProperties.value = property.value as? NSObject
                     trackEvent.addToTrackEventProperties(trackEventProperties)
@@ -96,7 +123,12 @@ extension DatabaseManager: DatabaseManagerType {
                 break
             }
         }
+        
+        Exponea.logger.log(.verbose, message: "Adding track event to database: \(trackEvent.objectID)")
 
+        // Insert the object into the database
+        context.insert(trackEvent)
+        
         // Save the customer properties into CoreData
         try saveContext()
     }
@@ -105,13 +137,13 @@ extension DatabaseManager: DatabaseManagerType {
         let request: NSFetchRequest<TrackEvent> = TrackEvent.fetchRequest()
         request.predicate = NSPredicate(format: "objectID == %@", event.objectID)
         
-        guard try managedObjectContext.count(for: request) == 0 else {
+        guard try context.count(for: request) == 0 else {
             Exponea.logger.log(.warning, message: "Object already exists in database, skipping tracking.")
             return
         }
         
         // Insert and save
-        managedObjectContext.insert(event)
+        context.insert(event)
         try saveContext()
     }
     
@@ -124,8 +156,8 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `timestamp`
     /// - Throws: <#throws value description#>
     public func trackCustomer(with data: [DataType]) throws {
-        let trackCustomer = TrackCustomer(context: managedObjectContext)
-        let trackCustomerProperties = TrackCustomerProperties(context: managedObjectContext)
+        let trackCustomer = TrackCustomer(context: context)
+        let trackCustomerProperties = TrackCustomerProperties(context: context)
 
         for type in data {
             switch type {
@@ -159,19 +191,17 @@ extension DatabaseManager: DatabaseManagerType {
         let request: NSFetchRequest<TrackCustomer> = TrackCustomer.fetchRequest()
         request.predicate = NSPredicate(format: "objectID == %@", customer.objectID)
         
-        guard try managedObjectContext.count(for: request) == 0 else {
+        guard try context.count(for: request) == 0 else {
             Exponea.logger.log(.warning, message: "Object already exists in database, skipping tracking.")
             return
         }
         
         // Insert and save
-        managedObjectContext.insert(customer)
+        context.insert(customer)
         try saveContext()
     }
 
     public func fetchOrCreateCustomer() -> Customer {
-        let context = managedObjectContext
-        
         do {
             let customer: [Customer] = try context.fetch(Customer.fetchRequest())
             return customer.first!
@@ -196,7 +226,6 @@ extension DatabaseManager: DatabaseManagerType {
     ///
     /// - Returns: An array of tracking customer updates, if any are stored in the database.
     public func fetchTrackCustomer() throws -> [TrackCustomer] {
-        let context = managedObjectContext
         return try context.fetch(TrackCustomer.fetchRequest())
     }
     
@@ -204,7 +233,6 @@ extension DatabaseManager: DatabaseManagerType {
     ///
     /// - Returns: An array of tracking events, if any are stored in the database.
     public func fetchTrackEvent() throws -> [TrackEvent] {
-        let context = managedObjectContext
         return try context.fetch(TrackEvent.fetchRequest())
     }
 

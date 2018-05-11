@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ExponeaSDK
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        Exponea.logger.logLevel = .verbose
+        Exponea.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97", authorization: .none)
+        Exponea.shared.flushingMode = .manual
+        
         return true
     }
 
