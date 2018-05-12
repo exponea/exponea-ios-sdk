@@ -222,13 +222,9 @@ public extension Exponea {
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
     ///     - eventType: Name of event
-    public class func trackCustomerEvent(customerId: KeyValueItem,
-                                         properties: [KeyValueItem],
-                                         timestamp: Double?,
-                                         eventType: String?) {
+    public class func trackEvent(properties: [KeyValueItem], timestamp: Double?, eventType: String?) {
         // Create initial data
-        var data: [DataType] = [.customerId(customerId),
-                                .properties(properties),
+        var data: [DataType] = [.properties(properties),
                                 .timestamp(timestamp)]
         
         // If event type was provided, use it
@@ -239,7 +235,7 @@ public extension Exponea {
         do {
             // Get dependencies and do the actual tracking
             let dependencies = try shared.getDependenciesIfConfigured()
-            try dependencies.trackingManager.track(.trackEvent, with: data)
+            try dependencies.trackingManager.track(.customEvent, with: data)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
@@ -277,12 +273,12 @@ public extension Exponea {
     ///     - customerId: Specify your customer with external id.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
-    public class func updateCustomerProperties(customerId: KeyValueItem,
+    public class func updateCustomerProperties(customerId: CustomerIds,
                                                properties: [KeyValueItem],
                                                timestamp: Double?) {
         do {
             let dependencies = try shared.getDependenciesIfConfigured()
-            try dependencies.trackingManager.track(.trackCustomer,
+            try dependencies.trackingManager.track(.identifyCustomer,
                                                    with: [.customerId(customerId),
                                                           .properties(properties),
                                                           .timestamp(timestamp)])

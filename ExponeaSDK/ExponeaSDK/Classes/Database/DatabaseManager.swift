@@ -102,8 +102,11 @@ extension DatabaseManager: DatabaseManagerType {
                 trackEvent.projectToken = token
                 
             case .customerId(let id):
-                trackEvent.customerIdKey = id.key
-                trackEvent.customerIdValue = id.value as? NSObject
+                var ids = [id.uuid.key: id.uuid.value]
+                if let registered = id.registeredId {
+                    ids[registered.key] = registered.value
+                }
+                trackEvent.customerIds = ids
 
             case .eventType(let event):
                 trackEvent.eventType = event
@@ -203,20 +206,28 @@ extension DatabaseManager: DatabaseManagerType {
 
     public func fetchOrCreateCustomer() -> Customer {
         do {
-            let customer: [Customer] = try context.fetch(Customer.fetchRequest())
-            return customer.first!
+            let customers: [Customer] = try context.fetch(Customer.fetchRequest())
+            
+            // If we have customer return it, otherwise create a new one
+            if let customer = customers.first {
+                Exponea.logger.log(.verbose, message: "Existing customer found: \(customer.uuid!)")
+                return customer
+            }
         } catch {
             Exponea.logger.log(.warning, message: "No customer found saved in database, will create. \(error)")
         }
         
+        // Create and insert the object
         let customer = Customer(context: context)
-        customer.cookie = UUID()
+        customer.uuid = UUID()
+        context.insert(customer)
         
         do {
             try saveContext()
+            Exponea.logger.log(.verbose, message: "New customer created with UUID: \(customer.uuid!)")
         } catch {
-            let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription).localizedDescription
-            Exponea.logger.log(.error, message: error)
+            let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription)
+            Exponea.logger.log(.error, message: error.localizedDescription)
         }
         
         return customer

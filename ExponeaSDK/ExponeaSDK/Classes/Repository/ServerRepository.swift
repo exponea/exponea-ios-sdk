@@ -31,13 +31,13 @@ extension ServerRepository: TrackingRepository {
     ///     - properties: Properties that should be updated
     func trackCustomer(with data: [DataType], completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
-        var customerId: KeyValueItem?
+        var customerIds: (KeyValueItem, KeyValueItem?)?
         var properties: [KeyValueItem] = []
         
         for item in data {
             switch item {
             case .projectToken(let string): token = string
-            case .customerId(let id): customerId = id
+            case .customerId(let id): customerIds = id
             case .properties(let props): properties += props
             default: continue
             }
@@ -48,7 +48,7 @@ extension ServerRepository: TrackingRepository {
             return
         }
         
-        guard let customer = customerId else {
+        guard let customer = customerIds else {
             completion(.failure(RepositoryError.missingData("Customer IDs are missing.")))
             return
         }
@@ -56,7 +56,7 @@ extension ServerRepository: TrackingRepository {
         // Setup router
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
-                                    route: .trackCustomer)
+                                    route: .identifyCustomer)
         
         // Prepare parameters and request
         let params = TrackingParameters(customer: customer, properties: properties)
@@ -79,7 +79,7 @@ extension ServerRepository: TrackingRepository {
     ///     - eventType: Type of event to be tracked
     func trackEvent(with data: [DataType], completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
-        var customerId: KeyValueItem?
+        var customerId: CustomerIds?
         var properties: [KeyValueItem] = []
         var timestamp: Double?
         var eventType: String?
@@ -108,7 +108,7 @@ extension ServerRepository: TrackingRepository {
         // Setup router
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
-                                    route: .trackEvent)
+                                    route: .customEvent)
         
         // Prepare parameters and request
         let params = TrackingParameters(customer: customer, properties: properties,

@@ -21,11 +21,12 @@ open class TrackingManager {
         }
     }
     
+    /// The object used to store Customer information.
     internal lazy var customer: Customer = {
        return database.fetchOrCreateCustomer()
     }()
     
-    /// Used for periodic data flushing
+    /// Used for periodic data flushing.
     internal var flushingTimer: Timer?
     public var flushingMode: FlushingMode = .automatic {
         didSet {
@@ -43,7 +44,6 @@ open class TrackingManager {
         self.device = device
         self.paymentManager = paymentManager
         
-        // TODO: Refactor
         initialSetup()
     }
     
@@ -71,24 +71,26 @@ extension TrackingManager: TrackingManagerType {
             throw TrackingManagerError.unknownError("No project tokens provided.")
         }
         
+        Exponea.logger.log(.verbose, message: "Tracking event of type: \(type).")
+        
         /// For each project token we have, track the data.
         for projectToken in tokens {
             let payload: [DataType] = [.projectToken(projectToken)] + (data ?? [])
             
             switch type {
-            case .install: try installEvent(projectToken: projectToken)
+            case .install: try trackInstall(projectToken: projectToken)
             case .sessionStart: try trackStartSession(projectToken: projectToken)
             case .sessionEnd: try trackEndSession(projectToken: projectToken)
-            case .trackEvent: try trackEvent(with: payload)
-            case .trackCustomer: try trackCustomer(with: payload)
-            case .payment: try trackPayment(with: payload + [.eventType(Constants.EventTypes.payment)])
+            case .customEvent: try trackEvent(with: payload)
+            case .identifyCustomer: try identifyCustomer(with: payload)
+            case .payment: try trackPayment(with: payload)
             }
         }
     }
 }
 
 extension TrackingManager {
-    open func installEvent(projectToken: String) throws {
+    open func trackInstall(projectToken: String) throws {
         try database.trackEvent(with: [.projectToken(projectToken),
                                        .properties(device.properties),
                                        .eventType(Constants.EventTypes.installation)])
@@ -98,12 +100,12 @@ extension TrackingManager {
         try database.trackEvent(with: data)
     }
     
-    open func trackCustomer(with data: [DataType]) throws {
+    open func identifyCustomer(with data: [DataType]) throws {
         try database.trackCustomer(with: data)
     }
     
     open func trackPayment(with data: [DataType]) throws {
-        try database.trackEvent(with: data)
+        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.payment)])
     }
 }
 
@@ -178,7 +180,7 @@ extension TrackingManager {
                 Exponea.logger.log(.error, message: error.localizedDescription)
             }
         } else {
-            Exponea.logger.log(.verbose, message: "Skipping tracking session end as within timeout or not started.'")
+            Exponea.logger.log(.verbose, message: "Skipping tracking session end as within timeout or not started.")
         }
     }
     

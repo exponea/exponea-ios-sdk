@@ -41,7 +41,7 @@ class ConfigurationSpec: QuickSpec {
 
                         let mapping: [EventType: [String]] = [
                             .install: ["testToken1"],
-                            .trackEvent: ["testToken2", "testToken3"],
+                            .customEvent: ["testToken2", "testToken3"],
                             .payment: ["paymentToken"]
                             ]
 

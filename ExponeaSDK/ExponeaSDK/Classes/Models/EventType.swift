@@ -28,10 +28,10 @@ public enum EventType: String, Decodable {
     case sessionEnd = "SESSION_END"
 
     /// Custom event tracking, used to report any custom events that you want.
-    case trackEvent = "TRACK_EVENT"
+    case customEvent = "TRACK_EVENT"
 
     /// Tracking of customers is used to identify a current customer by some identifier.
-    case trackCustomer = "TRACK_CUSTOMER"
+    case identifyCustomer = "TRACK_CUSTOMER"
 
     /// Virtual and hard payments can be tracked to better measure conversions for example.
     case payment = "PAYMENT"
@@ -45,8 +45,8 @@ extension EventType {
         case .install: return "INSTALL"
         case .sessionStart: return "SESSION_START"
         case .sessionEnd: return "SESSION_END"
-        case .trackEvent: return "TRACK_EVENT"
-        case .trackCustomer: return "TRACK_CUSTOMER"
+        case .customEvent: return "TRACK_EVENT"
+        case .identifyCustomer: return "TRACK_CUSTOMER"
         case .payment: return "PAYMENT"
         }
     }

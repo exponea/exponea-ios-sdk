@@ -22,8 +22,8 @@ public struct RequestFactory {
 
     public var path: String {
         switch self.route {
-        case .trackCustomer: return baseURL + "/track/v2/projects/\(projectToken)/customers"
-        case .trackEvent: return baseURL + "/track/v2/projects/\(projectToken)/customers/events"
+        case .identifyCustomer: return baseURL + "/track/v2/projects/\(projectToken)/customers"
+        case .customEvent: return baseURL + "/track/v2/projects/\(projectToken)/customers/events"
         case .trackBatch: return baseURL + "/track/v2/projects/\(projectToken)/batch"
         case .tokenRotate: return baseURL + "/data/v2/\(projectToken)/tokens/rotate"
         case .tokenRevoke: return baseURL + "/data/v2/\(projectToken)/tokens/revoke"
@@ -72,7 +72,7 @@ extension RequestFactory {
 
         // Assign parameters if necessary
         switch route {
-        case .trackCustomer, .trackEvent:
+        case .identifyCustomer, .customEvent:
             parameters = trackingParam?.parameters
         case .tokenRotate, .tokenRevoke:
             parameters = nil
