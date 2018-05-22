@@ -21,7 +21,7 @@ public enum DataType {
     case projectToken(String)
 
     /// Identifier of your customer, can be anything from an email to UUIDs.
-    case customerId(CustomerIds)
+    case customerId(String)
 
     /// Custom properties that you would like to add to the tracking event,
     /// these can include any relevant information for you.

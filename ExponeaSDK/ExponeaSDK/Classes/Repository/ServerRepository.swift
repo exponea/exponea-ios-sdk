@@ -29,15 +29,13 @@ extension ServerRepository: TrackingRepository {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - properties: Properties that should be updated
-    func trackCustomer(with data: [DataType], completion: @escaping ((EmptyResult) -> Void)) {
+    func trackCustomer(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
-        var customerIds: (KeyValueItem, KeyValueItem?)?
         var properties: [KeyValueItem] = []
         
         for item in data {
             switch item {
             case .projectToken(let string): token = string
-            case .customerId(let id): customerIds = id
             case .properties(let props): properties += props
             default: continue
             }
@@ -48,18 +46,13 @@ extension ServerRepository: TrackingRepository {
             return
         }
         
-        guard let customer = customerIds else {
-            completion(.failure(RepositoryError.missingData("Customer IDs are missing.")))
-            return
-        }
-        
         // Setup router
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .identifyCustomer)
         
         // Prepare parameters and request
-        let params = TrackingParameters(customer: customer, properties: properties)
+        let params = TrackingParameters(customerIds: customer.ids, properties: properties)
         let request = router.prepareRequest(authorization: configuration.authorization,
                                             trackingParam: params)
         
@@ -77,9 +70,8 @@ extension ServerRepository: TrackingRepository {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    func trackEvent(with data: [DataType], completion: @escaping ((EmptyResult) -> Void)) {
+    func trackEvent(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
-        var customerId: CustomerIds?
         var properties: [KeyValueItem] = []
         var timestamp: Double?
         var eventType: String?
@@ -87,7 +79,6 @@ extension ServerRepository: TrackingRepository {
         for item in data {
             switch item {
             case .projectToken(let string): token = string
-            case .customerId(let id): customerId = id
             case .properties(let props): properties += props
             case .timestamp(let timeInterval): timestamp = timeInterval ?? Date().timeIntervalSince1970
             case .eventType(let type): eventType = type
@@ -100,18 +91,13 @@ extension ServerRepository: TrackingRepository {
             return
         }
         
-        guard let customer = customerId else {
-            completion(.failure(RepositoryError.missingData("Customer IDs are missing.")))
-            return
-        }
-        
         // Setup router
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customEvent)
         
         // Prepare parameters and request
-        let params = TrackingParameters(customer: customer, properties: properties,
+        let params = TrackingParameters(customerIds: customer.ids, properties: properties,
                                         timestamp: timestamp, eventType: eventType)
         let request = router.prepareRequest(authorization: configuration.authorization,
                                             trackingParam: params)
@@ -122,9 +108,9 @@ extension ServerRepository: TrackingRepository {
             .resume()
     }
     
-    func trackEvents(with data: [[DataType]], completion: @escaping ((EmptyResult) -> Void)) {
+    func trackEvents(with data: [[DataType]], for customer: Customer, completion: @escaping ((EmptyResult) -> Void)) {
         // Group by project token
-        
+        // FIXME: Fix this
     }
 }
 

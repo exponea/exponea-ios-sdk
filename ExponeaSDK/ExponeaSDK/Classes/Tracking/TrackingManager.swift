@@ -21,11 +21,6 @@ open class TrackingManager {
         }
     }
     
-    /// The object used to store Customer information.
-    internal lazy var customer: Customer = {
-       return database.fetchOrCreateCustomer()
-    }()
-    
     /// Used for periodic data flushing.
     internal var flushingTimer: Timer?
     public var flushingMode: FlushingMode = .automatic {
@@ -288,7 +283,7 @@ extension TrackingManager {
             for event in events {
                 Exponea.logger.log(.verbose, message: "Uploading event: \(event.objectID).")
                 
-                repository.trackEvent(with: event.dataTypes) { [weak self] (result) in
+                repository.trackEvent(with: event.dataTypes, for: database.customer) { [weak self] (result) in
                     switch result {
                     case .success:
                         Exponea.logger.log(.verbose, message: "Successfully uploaded event: \(event.objectID).")

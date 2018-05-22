@@ -9,14 +9,14 @@
 import Foundation
 
 struct TrackingParameters {
-    var customer: CustomerIds
+    var customerIds: [String: String]
     var properties: [KeyValueItem]
     var timestamp: Double?
     var eventType: String?
 
-    init(customer: CustomerIds, properties: [KeyValueItem],
+    init(customerIds: [String: String], properties: [KeyValueItem],
          timestamp: Double? = nil, eventType: String? = nil) {
-        self.customer = customer
+        self.customerIds = customerIds
         self.properties = properties
         self.timestamp = timestamp
         self.eventType = eventType
@@ -29,12 +29,7 @@ extension TrackingParameters {
         var preparedParam: [String: Any] = [:]
 
         /// Preparing customers_ids params
-        var customerParameters: [String: Any] = [customer.uuid.key: customer.uuid.value]
-        if let id = customer.registeredId {
-            customerParameters[id.key] = id.value
-        }
-        
-        preparedParam["customer_ids"] = customerParameters
+        preparedParam["customer_ids"] = customerIds
 
         /// Preparing properties param
         let propertiesParam = properties.flatMap({[$0.key: $0.value]})

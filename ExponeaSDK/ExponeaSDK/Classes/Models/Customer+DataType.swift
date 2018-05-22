@@ -9,24 +9,14 @@
 import Foundation
 import CoreData
 
-// API Expected structure
-//
-// customer_ids[0] = [cookie = "aaa", "registered" : "something", "emial" : "some"]
-
-public typealias CustomerIds = (uuid: KeyValueItem, registeredId: KeyValueItem?)
-
 extension Customer {
-    var ids: CustomerIds {
-        var registeredItem: KeyValueItem?
+    var ids: [String: String] {
+        var ids: [String: String] = ["cookie": uuid!.uuidString]
         
-        if let id = registeredId {
-            registeredItem = KeyValueItem(key: "registered", value: id)
+        if let registeredId = registeredId {
+            ids["registered"] = registeredId
         }
         
-        return (KeyValueItem(key: "cookie", value: uuid!.uuidString), registeredItem)
-    }
-    
-    var asDataType: DataType {
-        return .customerId(ids)
+        return ids
     }
 }

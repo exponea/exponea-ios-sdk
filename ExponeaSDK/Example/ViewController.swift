@@ -15,9 +15,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            Exponea.trackCustomerEvent(customerId: KeyValueItem(key: "registered", value: ["test@test.com"]),
-                                       properties: [KeyValueItem(key: "customValue", value: ["test"])],
-                                       timestamp: nil, eventType: "test")
+            Exponea.trackEvent(properties: [KeyValueItem(key: "customValue", value: ["test"])],
+                               timestamp: nil, eventType: "test")
         }
     }
 
@@ -28,6 +27,5 @@ class ViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-
 }
 

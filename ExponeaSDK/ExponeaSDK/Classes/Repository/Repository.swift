@@ -9,9 +9,9 @@
 import Foundation
 
 protocol TrackingRepository {
-    func trackCustomer(with data: [DataType], completion: @escaping ((EmptyResult) -> Void))
-    func trackEvent(with data: [DataType], completion: @escaping ((EmptyResult) -> Void))
-    func trackEvents(with data: [[DataType]], completion: @escaping ((EmptyResult) -> Void))
+    func trackCustomer(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void))
+    func trackEvent(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void))
+    func trackEvents(with data: [[DataType]], for customer: Customer, completion: @escaping ((EmptyResult) -> Void))
 }
 
 protocol TokenRepository {

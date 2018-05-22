@@ -52,6 +52,9 @@ public class DatabaseManager {
             Exponea.logger.log(.error, message: "Error clearing database: \(error.localizedDescription)")
         }
         #endif
+        
+        // Initialise customer
+        _ = customer
     }
 
     /// Managed Context for Core Data
@@ -80,7 +83,52 @@ public class DatabaseManager {
         context.delete(object)
         try saveContext()
     }
+}
 
+extension DatabaseManager {
+    public var customer: Customer {
+        do {
+            let customers: [Customer] = try context.fetch(Customer.fetchRequest())
+            
+            // If we have customer return it, otherwise create a new one
+            if let customer = customers.first {
+                Exponea.logger.log(.verbose, message: "Existing customer found: \(customer.uuid!)")
+                return customer
+            }
+        } catch {
+            Exponea.logger.log(.warning, message: "No customer found saved in database, will create. \(error)")
+        }
+        
+        // Create and insert the object
+        let customer = Customer(context: context)
+        customer.uuid = UUID()
+        context.insert(customer)
+        
+        do {
+            try saveContext()
+            Exponea.logger.log(.verbose, message: "New customer created with UUID: \(customer.uuid!)")
+        } catch {
+            let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription)
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+        
+        return customer
+    }
+    
+    func fetchCustomerAndUpdate(with id: String) -> Customer {
+        let customer = self.customer
+        customer.registeredId = id
+        
+        do {
+            try saveContext()
+            Exponea.logger.log(.verbose, message: "New customer created with UUID: \(customer.uuid!)")
+        } catch {
+            let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription)
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+        
+        return customer
+    }
 }
 
 extension DatabaseManager: DatabaseManagerType {
@@ -95,6 +143,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - eventType: Type of event to be tracked
     public func trackEvent(with data: [DataType]) throws {
         let trackEvent = TrackEvent(context: context)
+        trackEvent.customer = customer
 
         for type in data {
             switch type {
@@ -102,11 +151,7 @@ extension DatabaseManager: DatabaseManagerType {
                 trackEvent.projectToken = token
                 
             case .customerId(let id):
-                var ids = [id.uuid.key: id.uuid.value]
-                if let registered = id.registeredId {
-                    ids[registered.key] = registered.value
-                }
-                trackEvent.customerIds = ids
+                trackEvent.customer = fetchCustomerAndUpdate(with: id)
 
             case .eventType(let event):
                 trackEvent.eventType = event
@@ -120,6 +165,7 @@ extension DatabaseManager: DatabaseManagerType {
                     let trackEventProperties = TrackEventProperty(context: context)
                     trackEventProperties.key = property.key
                     trackEventProperties.value = property.value as? NSObject
+                    context.insert(trackEventProperties)
                     trackEvent.addToTrackEventProperties(trackEventProperties)
                 }
             default:
@@ -168,8 +214,7 @@ extension DatabaseManager: DatabaseManagerType {
                 trackCustomer.projectToken = token
 
             case .customerId(let id):
-                trackCustomer.customerIdKey = id.key
-                trackCustomer.customerIdValue = id.value as? NSObject
+                trackCustomer.customer = fetchCustomerAndUpdate(with: id)
 
             case .timestamp(let time):
                 trackCustomer.timestamp = time ?? Date().timeIntervalSince1970
@@ -202,35 +247,6 @@ extension DatabaseManager: DatabaseManagerType {
         // Insert and save
         context.insert(customer)
         try saveContext()
-    }
-
-    public func fetchOrCreateCustomer() -> Customer {
-        do {
-            let customers: [Customer] = try context.fetch(Customer.fetchRequest())
-            
-            // If we have customer return it, otherwise create a new one
-            if let customer = customers.first {
-                Exponea.logger.log(.verbose, message: "Existing customer found: \(customer.uuid!)")
-                return customer
-            }
-        } catch {
-            Exponea.logger.log(.warning, message: "No customer found saved in database, will create. \(error)")
-        }
-        
-        // Create and insert the object
-        let customer = Customer(context: context)
-        customer.uuid = UUID()
-        context.insert(customer)
-        
-        do {
-            try saveContext()
-            Exponea.logger.log(.verbose, message: "New customer created with UUID: \(customer.uuid!)")
-        } catch {
-            let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription)
-            Exponea.logger.log(.error, message: error.localizedDescription)
-        }
-        
-        return customer
     }
     
     /// Fetch all Tracking Customers from CoreData

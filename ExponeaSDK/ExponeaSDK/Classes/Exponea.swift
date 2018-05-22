@@ -270,18 +270,23 @@ public extension Exponea {
     /// flushed (send to api).
     ///
     /// - Parameters:
-    ///     - customerId: Specify your customer with external id.
+    ///     - customerId: Specify your customer with external id, for example an email address.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
-    public class func updateCustomerProperties(customerId: CustomerIds,
+    public class func updateCustomerProperties(customerId: String?,
                                                properties: [KeyValueItem],
                                                timestamp: Double?) {
         do {
             let dependencies = try shared.getDependenciesIfConfigured()
-            try dependencies.trackingManager.track(.identifyCustomer,
-                                                   with: [.customerId(customerId),
-                                                          .properties(properties),
-                                                          .timestamp(timestamp)])
+            
+            // Prepare data
+            var data: [DataType] = [.properties(properties),
+                                    .timestamp(timestamp)]
+            if let id = customerId {
+                data.append(.customerId(id))
+            }
+            
+            try dependencies.trackingManager.track(.identifyCustomer, with: data)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
