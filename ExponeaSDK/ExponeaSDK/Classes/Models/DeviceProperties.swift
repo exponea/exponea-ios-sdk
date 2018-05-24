@@ -32,7 +32,7 @@ struct DeviceProperties {
     
     /// App version number, eg. "1.0".
     public var appVersion: String {
-        return Bundle.main.value(forKey: Constants.Keys.appVersion) as? String ?? "N/A"
+        return Bundle.main.infoDictionary?[Constants.Keys.appVersion] as? String ?? "N/A"
     }
     
     /// Returns an array with all device properties.

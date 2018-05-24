@@ -18,21 +18,22 @@ class FetchRecommendationSpec: QuickSpec {
 
         let database = MockDatabase()
         let data = FetchMockData()
-        let configuration = Configuration(plistName: "ExponeaConfig")!
+        let configuration = try! Configuration(plistName: "ExponeaConfig")
         let repository = MockFetchRepository(configuration: configuration)
 
-        let exponea = Exponea(database: database,
-                              repository: repository)
+        let exponea = Exponea()
+        Exponea.shared = exponea
+        Exponea.configure(plistName: "ExponeaConfig")
+        exponea.trackingManager = TrackingManager(repository: repository, database: database)
+        exponea.repository = repository
 
         describe("Fetch recommendation") {
 
-            exponea.configure(plistName: "ExponeaConfig")
-
             context("Fetch recommendation from exponea api") {
 
-                expect(exponea.configuration.authorization).toNot(beNil())
+                expect(exponea.configuration?.authorization).toNot(beNil())
                 waitUntil(timeout: 5) { done in
-                    exponea.fetchRecommendation(projectToken: configuration.projectToken!,
+                    Exponea.fetchRecommendation(projectToken: configuration.projectToken!,
                                                 customerId: data.customerId,
                                                 recommendation: data.recommendation) { result in
                         it("Should not return error") {
@@ -51,7 +52,7 @@ class FetchRecommendationSpec: QuickSpec {
             }
 
             context("Fetch recommendation from mock data") {
-                guard let projectToken = exponea.configuration.projectToken else {
+                guard let projectToken = exponea.configuration?.projectToken else {
                     fatalError("There is no project token configured")
                 }
                 repository.fetchRecommendation(projectToken: projectToken,

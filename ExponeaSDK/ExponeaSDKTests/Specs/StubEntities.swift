@@ -63,13 +63,13 @@ class StubEntities {
     }
 
     func trackEventProperties(key: String,
-                               value: Any ) -> TrackEventProperties? {
+                               value: Any) -> TrackEventProperty? {
         let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackEventProperties",
                                                         into: container.viewContext)
 
         objct.setValue(key, forKey: "key")
         objct.setValue(value, forKey: "value")
 
-        return objct as? TrackEventProperties
+        return objct as? TrackEventProperty
     }
 }

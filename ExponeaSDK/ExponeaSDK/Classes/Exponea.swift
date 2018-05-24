@@ -76,11 +76,17 @@ public class Exponea {
         }
     }
     
+    internal static let isBeingTested: Bool = {
+        return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+    }()
+    
     /// The initialiser is internal, so that only the singleton can exist.
     internal init() {}
     
     deinit {
-        Exponea.logger.log(.error, message: "Exponea has deallocated. This should never happen.")
+        if !Exponea.isBeingTested {
+            Exponea.logger.log(.error, message: "Exponea has deallocated. This should never happen.")
+        }
     }
     
     internal func sharedInitializer(configuration: Configuration) {

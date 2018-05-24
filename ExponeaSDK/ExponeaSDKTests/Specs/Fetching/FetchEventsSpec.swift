@@ -19,21 +19,23 @@ class FetchEventsSpec: QuickSpec {
 
         let database = MockDatabase()
         let data = FetchMockData()
-        let configuration = Configuration(plistName: "ExponeaConfig")!
+        let configuration = try! Configuration(plistName: "ExponeaConfig")
         let repository = ServerRepository(configuration: configuration)
 
-        let exponea = Exponea(database: database,
-                              repository: repository)
+        let exponea = Exponea()
+        Exponea.shared = exponea
+        Exponea.configure(plistName: "ExponeaConfig")
+        exponea.trackingManager = TrackingManager(repository: repository, database: database)
+        exponea.repository = repository
 
         describe("Fetch Event") {
             //var returnData: Result<Events>?
 
-            exponea.configure(plistName: "ExponeaConfig")
-            expect(exponea.configuration.authorization).toNot(beNil())
+            expect(exponea.configuration?.authorization).toNot(beNil())
             waitUntil(timeout: 5) { done in
-                exponea.fetchEvents(projectToken: configuration.projectToken!,
-                                    customerId: data.customerId,
-                                    events: data.customerData) { result in
+                Exponea.fetchCustomerEvents(projectToken: configuration.projectToken!,
+                                            customerId: data.customerId,
+                                            events: data.customerData) { result in
                     it("Should not return error") {
                         expect(result.error).to(beNil())
                     }

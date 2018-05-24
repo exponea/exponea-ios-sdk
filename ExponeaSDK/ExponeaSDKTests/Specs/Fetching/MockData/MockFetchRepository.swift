@@ -11,7 +11,7 @@ import Foundation
 @testable import ExponeaSDK
 
 class MockFetchRepository: FetchRepository {
-
+    
     var configuration: Configuration
 
     init(configuration: Configuration) {
@@ -37,6 +37,22 @@ class MockFetchRepository: FetchRepository {
     func fetchPrediction(projectToken: String, customerId: [String: JSONConvertible], id: String) {
         return
     }
+    
+    func fetchProperty(projectToken: String, customerId: [String : JSONConvertible], property: String, completion: @escaping (Result<ValueResponse>) -> Void) {
+        return
+    }
+    
+    func fetchId(projectToken: String, customerId: [String : JSONConvertible], id: String, completion: @escaping (Result<ValueResponse>) -> Void) {
+        return
+    }
+    
+    func fetchExpression(projectToken: String, customerId: [String : JSONConvertible], id: String, completion: @escaping (Result<EntityValueResponse>) -> Void) {
+        return
+    }
+    
+    func fetchPrediction(projectToken: String, customerId: [String : JSONConvertible], id: String, completion: @escaping (Result<EntityValueResponse>) -> Void) {
+        return
+    }
 
     func fetchRecommendation(projectToken: String,
                              customerId: [String: JSONConvertible],
@@ -53,8 +69,7 @@ class MockFetchRepository: FetchRepository {
                                               attributes: nil,
                                               events: nil,
                                               data: nil)
-        let request = router.prepareRequest(authorization: configuration.authorization,
-                                            trackingParam: nil, customersParam: parameters)
+        let request = router.prepareRequest(authorization: configuration.authorization, parameters: parameters)
         let bundle = Bundle(for: type(of: self))
 
         guard request.url != nil else {
@@ -99,25 +114,24 @@ class MockFetchRepository: FetchRepository {
 
 }
 
-extension MockFetchRepository: ConnectionManagerType {
-    func trackCustomer(projectToken: String,
-                       customerId: [String: JSONConvertible],
-                       properties: [[String: JSONConvertible]]) {
+extension MockFetchRepository: RepositoryType {
+    func trackCustomer(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void)) {
         return
     }
-
-    func trackEvent(projectToken: String,
-                     customerId: [String: JSONConvertible],
-                     properties: [[String: JSONConvertible]],
-                     timestamp: Double?,
-                     eventType: String?) {
+    
+    func trackEvent(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void)) {
         return
     }
-
-    func rotateToken(projectToken: String) {
+    
+    func trackEvents(with data: [[DataType]], for customer: Customer, completion: @escaping ((EmptyResult) -> Void)) {
         return
     }
-    func revokeToken(projectToken: String) {
+    
+    func rotateToken(projectToken: String, completion: @escaping ((EmptyResult) -> Void)) {
+        return
+    }
+    
+    func revokeToken(projectToken: String, completion: @escaping ((EmptyResult) -> Void)) {
         return
     }
 }

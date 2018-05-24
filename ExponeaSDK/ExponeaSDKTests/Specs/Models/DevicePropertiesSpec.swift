@@ -24,9 +24,6 @@ class DevicePropertiesSpec: QuickSpec {
                 it("Should have a valid device type") {
                     expect(device.deviceType).to(equal("mobile"))
                 }
-                it("Should return a dictionary of type [KeyValueModel]") {
-                    expect(device.properties).to(beAnInstanceOf([[String: JSONConvertible]].self))
-                }
             }
         }
     }

@@ -12,8 +12,7 @@ import Foundation
 
 // Mocking data for tracking tests
 class TrackMockData {
-    let customerId = [String: JSONConvertible](key: "registered", value: "john.doe@exponea.com")
-    let properties = [[String: JSONConvertible](key: "product_name", value: "iPad"),
-                      [String: JSONConvertible](key: "price", value: 999.99)]
+    let customerId: [String: JSONConvertible] = ["registered": "john.doe@exponea.com"]
+    let properties: [String: JSONConvertible] = ["product_name": "iPad", "price": 999.99]
     let timestamp = NSDate().timeIntervalSince1970
 }

@@ -27,7 +27,7 @@ class LogLevelSpec: QuickSpec {
             })
 
             it("should have a name", closure: {
-                expect(level.name).to(equal("ERROR"))
+                expect(level.name).to(equal("❗️ ERROR"))
             })
         }
 
@@ -42,7 +42,7 @@ class LogLevelSpec: QuickSpec {
             })
 
             it("should have a name", closure: {
-                expect(level.name).to(equal("WARNING"))
+                expect(level.name).to(equal("⚠️ WARNING"))
             })
         }
 
@@ -58,7 +58,7 @@ class LogLevelSpec: QuickSpec {
             })
 
             it("should have a name", closure: {
-                expect(level.name).to(equal("VERBOSE"))
+                expect(level.name).to(equal("ℹ️ VERBOSE"))
             })
         }
 

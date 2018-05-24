@@ -17,59 +17,56 @@ class ExponeaSpec: QuickSpec {
     override func spec() {
 
         let database = MockDatabase()
-        let configuration = Configuration(plistName: "ExponeaConfig")!
+        let configuration = try! Configuration(plistName: "ExponeaConfig")
         let repository = ServerRepository(configuration: configuration)
 
         describe("A SDK") {
             context("After beign initialized") {
-                let exponea = Exponea(database: database,
-                                      repository: repository)
-                it("Should return a nil token") {
-                    expect(exponea.configuration.projectToken).to(beNil())
-                }
-                it("Should not return the default value for timeout") {
-                    expect(exponea.configuration.sessionTimeout).toNot(equal(Constants.Session.defaultTimeout))
+                let exponea = Exponea()
+                it("Should return a nil configuration") {
+                    expect(exponea.configuration?.projectToken).to(beNil())
                 }
             }
             context("After beign configured from string") {
-                let exponea = Exponea(database: database,
-                                      repository: repository)
-                exponea.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97",
-                                  authorization: "Basic",
-                                  baseURL: nil)
+                let exponea = Exponea()
+                Exponea.shared = exponea
+                Exponea.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97", authorization: .basic(""))
+                
                 it("Should return the correct project token") {
-                    expect(exponea.configuration.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
+                    expect(exponea.configuration?.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
                 }
             }
             context("After beign configured from plist file") {
-                let exponea = Exponea(database: database,
-                                      repository: repository)
-                exponea.configure(plistName: "ExponeaConfig")
+                let exponea = Exponea()
+                Exponea.shared = exponea
+                Exponea.configure(plistName: "ExponeaConfig")
+                
                 it("Should have a project token") {
-                    expect(exponea.configuration.projectToken).toNot(beNil())
+                    expect(exponea.configuration?.projectToken).toNot(beNil())
                 }
                 it("Should return the correct project token") {
-                    expect(exponea.configuration.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
+                    expect(exponea.configuration?.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
                 }
                 it("Should return the default base url") {
-                    expect(exponea.configuration.baseURL).to(equal("https://api.exponea.com"))
+                    expect(exponea.configuration?.baseURL).to(equal("https://api.exponea.com"))
                 }
             }
             context("Setting exponea properties") {
-                let exponea = Exponea(database: database,
-                                      repository: repository)
-                exponea.configure(plistName: "ExponeaConfig")
-                exponea.configuration.projectToken = "NewProjectToken"
-                exponea.configuration.baseURL = "NewBaseURL"
+                let exponea = Exponea()
+                Exponea.shared = exponea
+                Exponea.configure(plistName: "ExponeaConfig")
+                
+                exponea.configuration?.projectToken = "NewProjectToken"
+                exponea.configuration?.baseURL = "NewBaseURL"
                 it("Should return the new token") {
-                    expect(exponea.configuration.projectToken).to(equal("NewProjectToken"))
+                    expect(exponea.configuration?.projectToken).to(equal("NewProjectToken"))
                 }
                 it("Should return true for auto tracking") {
-                    exponea.configuration.automaticSessionTracking = true
-                    expect(exponea.configuration.automaticSessionTracking).to(beTrue())
+                    exponea.configuration?.automaticSessionTracking = true
+                    expect(exponea.configuration?.automaticSessionTracking).to(beTrue())
                 }
                 it("Should change the base url") {
-                    expect(exponea.configuration.baseURL).to(equal("NewBaseURL"))
+                    expect(exponea.configuration?.baseURL).to(equal("NewBaseURL"))
                 }
             }
         }

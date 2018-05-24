@@ -18,7 +18,7 @@ class TrackEventSpec: QuickSpec {
         describe("Track a customer event") {
             let data = TrackMockData()
             let database = MockDatabase()
-            let configuration = Configuration(plistName: "ExponeaConfig")!
+            let configuration = try! Configuration(plistName: "ExponeaConfig")
             let repository = ServerRepository(configuration: configuration)
             let tracker = TrackingManager(repository: repository)
             context("ExponeaSDK not configured") {
@@ -30,11 +30,7 @@ class TrackEventSpec: QuickSpec {
                     
                     Exponea.shared = exponea
 
-                    
-                    Exponea.trackCustomerEvent(customerId: data.customerId,
-                                               properties: data.properties,
-                                               timestamp: data.timestamp,
-                                               eventType: "purchase")
+                    Exponea.trackEvent(properties: data.properties, timestamp: data.timestamp, eventType: "purchase")
                     
 //                    expect(result).to(beFalse())
                 }
