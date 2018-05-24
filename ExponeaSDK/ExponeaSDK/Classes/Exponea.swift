@@ -222,7 +222,7 @@ public extension Exponea {
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
     ///     - eventType: Name of event
-    public class func trackEvent(properties: [KeyValueItem], timestamp: Double?, eventType: String?) {
+    public class func trackEvent(properties: [String: JSONConvertible], timestamp: Double?, eventType: String?) {
         // Create initial data
         var data: [DataType] = [.properties(properties),
                                 .timestamp(timestamp)]
@@ -274,7 +274,7 @@ public extension Exponea {
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
     public class func updateCustomerProperties(customerId: String?,
-                                               properties: [KeyValueItem],
+                                               properties: [String: JSONConvertible],
                                                timestamp: Double?) {
         do {
             let dependencies = try shared.getDependenciesIfConfigured()
@@ -310,7 +310,7 @@ public extension Exponea {
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
     public class func fetchCustomerEvents(projectToken: String,
-                                          customerId: KeyValueItem,
+                                          customerId: [String: JSONConvertible],
                                           events: FetchEventsRequest,
                                           completion: @escaping (Result<FetchEventsResponse>) -> Void) {
         do {
@@ -331,7 +331,7 @@ public extension Exponea {
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
     public class func fetchRecommendation(projectToken: String,
-                                          customerId: KeyValueItem,
+                                          customerId: [String: JSONConvertible],
                                           recommendation: CustomerRecommendation,
                                           completion: @escaping (Result<Recommendation>) -> Void) {
         do {

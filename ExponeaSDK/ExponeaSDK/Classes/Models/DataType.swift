@@ -25,7 +25,7 @@ public enum DataType {
 
     /// Custom properties that you would like to add to the tracking event,
     /// these can include any relevant information for you.
-    case properties([KeyValueItem])
+    case properties([String: JSONConvertible])
 
     /// Timestamp of the tracked event in UNIX epoch time, if value is `nil` current date is used.
     case timestamp(Double?)

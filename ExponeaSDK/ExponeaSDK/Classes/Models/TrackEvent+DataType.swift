@@ -19,7 +19,9 @@ extension TrackEvent {
         
         // Convert all properties to key value items
         if let properties = trackEventProperties as? Set<TrackEventProperty> {
-            data.append(.properties(properties.map({ $0.keyValueItem })))
+            var props: [String: JSONConvertible] = [:]
+            properties.forEach({ props[$0.key!] = $0.value! })
+            data.append(.properties(props))
         }
         
         // Add event type
@@ -31,11 +33,5 @@ extension TrackEvent {
         data.append(.timestamp(timestamp == 0 ? nil : timestamp))
         
         return data
-    }
-}
-
-extension TrackEventProperty {
-    var keyValueItem: KeyValueItem {
-        return KeyValueItem(key: key!, value: value as Any)
     }
 }

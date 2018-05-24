@@ -13,5 +13,5 @@ protocol PaymentManagerType: class {
     
     func startObservingPayments()
     func stopObservingPayments()
-    func trackPayment(properties: [KeyValueItem])
+    func trackPayment(properties: [String: JSONConvertible])
 }

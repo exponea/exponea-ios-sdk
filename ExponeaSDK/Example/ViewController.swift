@@ -15,7 +15,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            Exponea.trackEvent(properties: [KeyValueItem(key: "customValue", value: ["test"])],
+            Exponea.trackEvent(properties: ["customValue" : ["test"]],
                                timestamp: nil, eventType: "test")
         }
     }

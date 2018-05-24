@@ -16,17 +16,17 @@ struct PurchasedItem {
     var productTitle: String
     var receipt: String?
     /// Returns an array with all purchased info.
-    var properties: [KeyValueItem] {
-        var data = [KeyValueItem]()
+    var properties: [String: JSONConvertible] {
+        var data = [String: JSONConvertible]()
 
-        data.append(KeyValueItem(key: "gross_amount", value: grossAmount))
-        data.append(KeyValueItem(key: "currency", value: currency))
-        data.append(KeyValueItem(key: "payment_system", value: paymentSystem))
-        data.append(KeyValueItem(key: "product_id", value: productId))
-        data.append(KeyValueItem(key: "product_title", value: productTitle))
+        data["gross_amount"] = grossAmount
+        data["currency"] = currency
+        data["payment_system"] = paymentSystem
+        data["product_id"] = productId
+        data["product_title"] = productTitle
 
         if let receipt = receipt {
-            data.append(KeyValueItem(key: "receipt", value: receipt))
+            data["receipt"] = receipt
         }
 
         return data

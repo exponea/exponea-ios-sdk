@@ -30,5 +30,5 @@ public struct CustomerRecommendation {
     public var anti: Bool?
     
     /// <#Description#>
-    public var items: [KeyValueItem]?
+    public var items: [String: JSONConvertible]?
 }

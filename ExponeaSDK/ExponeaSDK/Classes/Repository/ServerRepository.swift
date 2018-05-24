@@ -31,12 +31,12 @@ extension ServerRepository: TrackingRepository {
     ///     - properties: Properties that should be updated
     func trackCustomer(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
-        var properties: [KeyValueItem] = []
+        var properties: [String: JSONConvertible] = [:]
         
         for item in data {
             switch item {
             case .projectToken(let string): token = string
-            case .properties(let props): properties += props
+            case .properties(let props): properties.merge(props, uniquingKeysWith: { first, _ in return first })
             default: continue
             }
         }
@@ -54,7 +54,7 @@ extension ServerRepository: TrackingRepository {
         // Prepare parameters and request
         let params = TrackingParameters(customerIds: customer.ids, properties: properties)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            trackingParam: params)
+                                            parameters: params)
         
         // Run the data task
         session
@@ -72,14 +72,14 @@ extension ServerRepository: TrackingRepository {
     ///     - eventType: Type of event to be tracked
     func trackEvent(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
-        var properties: [KeyValueItem] = []
+        var properties: [String: JSONConvertible] = [:]
         var timestamp: Double?
         var eventType: String?
         
         for item in data {
             switch item {
             case .projectToken(let string): token = string
-            case .properties(let props): properties += props
+            case .properties(let props): properties.merge(props, uniquingKeysWith: { first, _ in return first })
             case .timestamp(let timeInterval): timestamp = timeInterval ?? Date().timeIntervalSince1970
             case .eventType(let type): eventType = type
             default: continue
@@ -100,7 +100,7 @@ extension ServerRepository: TrackingRepository {
         let params = TrackingParameters(customerIds: customer.ids, properties: properties,
                                         timestamp: timestamp, eventType: eventType)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            trackingParam: params)
+                                            parameters: params)
         
         // Run the data task
         session
@@ -157,15 +157,15 @@ extension ServerRepository: RepositoryType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - property: Property that should be updated
-    func fetchProperty(projectToken: String, customerId: KeyValueItem,
+    func fetchProperty(projectToken: String, customerId: [String: JSONConvertible],
                        property: String, completion: @escaping ((Result<ValueResponse>) -> Void)) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersProperty)
-        let customersParams = CustomerParameters(customer: customerId, property: property, id: nil, recommendation: nil,
+        let parameters = CustomerParameters(customer: customerId, property: property, id: nil, recommendation: nil,
                                                  attributes: nil, events: nil, data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
@@ -177,13 +177,13 @@ extension ServerRepository: RepositoryType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchId(projectToken: String, customerId: KeyValueItem, id: String,
+    func fetchId(projectToken: String, customerId: [String: JSONConvertible], id: String,
                  completion: @escaping (Result<ValueResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersId)
-        let customersParams = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
+        let parameters = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
                                                  attributes: nil, events: nil, data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         
         session.dataTask(with: request, completionHandler: router.handler(with: completion)).resume()
     }
@@ -194,14 +194,14 @@ extension ServerRepository: RepositoryType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchSegmentation(projectToken: String, customerId: KeyValueItem, id: String) {
+    func fetchSegmentation(projectToken: String, customerId: [String: JSONConvertible], id: String) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersSegmentation)
-        let customersParams = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
+        let parameters = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
                                                  attributes: nil, events: nil, data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         
         let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
@@ -219,15 +219,15 @@ extension ServerRepository: RepositoryType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchExpression(projectToken: String, customerId: KeyValueItem, id: String,
+    func fetchExpression(projectToken: String, customerId: [String: JSONConvertible], id: String,
                          completion: @escaping (Result<EntityValueResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersExpression)
-        let customersParams = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
+        let parameters = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
                                                  attributes: nil, events: nil, data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         
         session.dataTask(with: request, completionHandler: router.handler(with: completion)).resume()
     }
@@ -238,15 +238,15 @@ extension ServerRepository: RepositoryType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchPrediction(projectToken: String, customerId: KeyValueItem, id: String,
+    func fetchPrediction(projectToken: String, customerId: [String: JSONConvertible], id: String,
                          completion: @escaping (Result<EntityValueResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersPrediction)
-        let customersParams = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
+        let parameters = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
                                                  attributes: nil, events: nil, data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         
         session.dataTask(with: request, completionHandler: router.handler(with: completion)).resume()
         
@@ -259,13 +259,13 @@ extension ServerRepository: RepositoryType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - recommendation: Recommendations for the customer
     func fetchRecommendation(projectToken: String,
-                             customerId: KeyValueItem,
+                             customerId: [String: JSONConvertible],
                              recommendation: CustomerRecommendation,
                              completion: @escaping (Result<Recommendation>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersRecommendation)
-        let customersParams = CustomerParameters(customer: customerId,
+        let parameters = CustomerParameters(customer: customerId,
                                                  property: nil,
                                                  id: nil,
                                                  recommendation: recommendation,
@@ -273,7 +273,7 @@ extension ServerRepository: RepositoryType {
                                                  events: nil,
                                                  data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         
         session.dataTask(with: request, completionHandler: router.handler(with: completion)).resume()
     }
@@ -284,14 +284,16 @@ extension ServerRepository: RepositoryType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - attributes: List of attributes you want to retrieve
-    func fetchAttributes(projectToken: String, customerId: KeyValueItem, attributes: [CustomerAttributes]) {
+    func fetchAttributes(projectToken: String,
+                         customerId: [String: JSONConvertible],
+                         attributes: [CustomerAttributes]) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersAttributes)
-        let customersParams = CustomerParameters(customer: customerId, property: nil, id: nil, recommendation: nil,
+        let parameters = CustomerParameters(customer: customerId, property: nil, id: nil, recommendation: nil,
                                                  attributes: attributes, events: nil, data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         
         let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
@@ -310,13 +312,13 @@ extension ServerRepository: RepositoryType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - events: List of event types you want to retrieve
     func fetchEvents(projectToken: String,
-                     customerId: KeyValueItem,
+                     customerId: [String: JSONConvertible],
                      events: FetchEventsRequest,
                      completion: @escaping (Result<FetchEventsResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersEvents)
-        let customersParams = CustomerParameters(customer: customerId,
+        let parameters = CustomerParameters(customer: customerId,
                                                  property: nil,
                                                  id: nil,
                                                  recommendation: nil,
@@ -324,7 +326,7 @@ extension ServerRepository: RepositoryType {
                                                  events: events,
                                                  data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         session.dataTask(with: request, completionHandler: router.handler(with: completion)).resume()
     }
     
@@ -333,11 +335,11 @@ extension ServerRepository: RepositoryType {
     /// - Parameters:
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    func fetchAllProperties(projectToken: String, customerId: KeyValueItem) {
+    func fetchAllProperties(projectToken: String, customerId: [String: JSONConvertible]) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersExportAllProperties)
-        let customersParams = CustomerParameters(customer: customerId,
+        let parameters = CustomerParameters(customer: customerId,
                                                  property: nil,
                                                  id: nil,
                                                  recommendation: nil,
@@ -345,7 +347,7 @@ extension ServerRepository: RepositoryType {
                                                  events: nil,
                                                  data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         
         let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
@@ -366,10 +368,10 @@ extension ServerRepository: RepositoryType {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersExportAll)
-        let customersParams = CustomerParameters(customer: nil, property: nil, id: nil, recommendation: nil,
+        let parameters = CustomerParameters(customer: nil, property: nil, id: nil, recommendation: nil,
                                                  attributes: nil, events: nil, data: data)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         
         let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {
@@ -387,14 +389,14 @@ extension ServerRepository: RepositoryType {
     /// - Parameters:
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    func anonymize(projectToken: String, customerId: KeyValueItem) {
+    func anonymize(projectToken: String, customerId: [String: JSONConvertible]) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersAnonymize)
-        let customersParams = CustomerParameters(customer: customerId, property: nil, id: nil, recommendation: nil,
+        let parameters = CustomerParameters(customer: customerId, property: nil, id: nil, recommendation: nil,
                                                  attributes: nil, events: nil, data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            customersParam: customersParams)
+                                            parameters: parameters)
         
         let task = session.dataTask(with: request, completionHandler: { (_, _, error) in
             if error != nil {

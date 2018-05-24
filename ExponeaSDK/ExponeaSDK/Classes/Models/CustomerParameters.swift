@@ -8,8 +8,12 @@
 
 import Foundation
 
+protocol RequestParametersType {
+    var parameters: [String: JSONConvertible] { get }
+}
+
 struct CustomerParameters {
-    var customer: KeyValueItem?
+    var customer: [String: JSONConvertible]?
     var property: String?
     var id: String?
     var recommendation: CustomerRecommendation?
@@ -17,7 +21,7 @@ struct CustomerParameters {
     var events: FetchEventsRequest?
     var data: CustomerExportModel?
 
-    init(customer: KeyValueItem?,
+    init(customer: [String: JSONConvertible]?,
          property: String?,
          id: String?,
          recommendation: CustomerRecommendation?,
@@ -35,23 +39,18 @@ struct CustomerParameters {
     }
 }
 
-extension CustomerParameters {
-    var parameters: [String: Any]? {
-
-        var preparedParam: [String: Any] = [:]
-        var list: [String: Any] = [:]
+extension CustomerParameters: RequestParametersType {
+    var parameters: [String: JSONConvertible] {
+        
+        var preparedParam: [String: JSONConvertible] = [:]
+        var list: [String: JSONConvertible] = [:]
         var listAppend = [list]
-        var filterList: [String: Any] = [:]
-        var attributeComplete: [String: Any] = [:]
-
+        var filterList: [String: JSONConvertible] = [:]
+        var attributeComplete: [String: JSONConvertible] = [:]
+        
         /// Preparing customers_ids params
         if let customer = customer {
-            var customerParam: [String: Any] {
-                return [
-                    customer.key: customer.value
-                ]
-            }
-            preparedParam["customer_ids"] = customerParam
+            preparedParam["customer_ids"] = customer
         }
         /// Preparing property param
         if let property = property {
@@ -63,10 +62,10 @@ extension CustomerParameters {
         }
         /// Preparing recommendation param
         if let recommendation = recommendation {
-
+            
             preparedParam["type"] = recommendation.type
             preparedParam["id"] = recommendation.id
-
+            
             if let size = recommendation.size {
                 preparedParam["size"] = size
             }
@@ -94,7 +93,7 @@ extension CustomerParameters {
                 list[attribute.identificationKey] = attribute.identificationValue
                 listAppend.append(list)
             }
-
+            
             preparedParam["attributes"] = listAppend
             listAppend.removeAll()
             list.removeAll()
@@ -113,24 +112,24 @@ extension CustomerParameters {
                 list[attrib.identificationKey] = attrib.identificationValue
                 listAppend.append(list)
             }
-
+            
             for filter in data.filter {
                 filterList[filter.key] = filter.value
             }
-
+            
             attributeComplete["type"] = data.attributes.type
             attributeComplete["list"] = listAppend
-
+            
             preparedParam["attributes"] = attributeComplete
             preparedParam["filter"] = filterList
             preparedParam["execution_time"] = data.executionTime
             preparedParam["timezone"] = data.timezone
             preparedParam["format"] = data.responseFormat
-
+            
             list.removeAll()
             listAppend.removeAll()
         }
-
+        
         return preparedParam
     }
 }

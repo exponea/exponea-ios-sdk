@@ -230,10 +230,10 @@ extension TrackingManager {
     internal func trackStartSession(projectToken: String) throws {
         /// Prepare data to persist into coredata.
         var properties = device.properties
+        
         /// Adding session start properties.
-        properties.append(KeyValueItem(key: "event_type", value: Constants.EventTypes.sessionStart))
-        properties.append(KeyValueItem(key: "timestamp", value: sessionStartTime))
-        properties.append(KeyValueItem(key: "app_version", value: device.appVersion))
+        properties["event_type"] = Constants.EventTypes.sessionStart
+        properties["timestamp"] = sessionStartTime
         
         try database.trackEvent(with: [.projectToken(projectToken),
                                        .properties(properties),
@@ -243,13 +243,14 @@ extension TrackingManager {
     internal func trackEndSession(projectToken: String) throws {
         /// Prepare data to persist into coredata.
         var properties = device.properties
+        
         /// Calculate the duration of the last session.
         let duration = sessionStartTime - sessionEndTime
+        
         /// Adding session end properties.
-        properties.append(KeyValueItem(key: "event_type", value: Constants.EventTypes.sessionStart))
-        properties.append(KeyValueItem(key: "timestamp", value: sessionEndTime))
-        properties.append(KeyValueItem(key: "duration", value: duration))
-        properties.append(KeyValueItem(key: "app_version", value: device.appVersion))
+        properties["event_type"] = Constants.EventTypes.sessionEnd
+        properties["timestamp"] = sessionStartTime
+        properties["duration"] = duration
         
         try database.trackEvent(with: [.projectToken(projectToken),
                                        .properties(properties),

@@ -9,12 +9,12 @@
 import Foundation
 
 struct TrackingParameters {
-    var customerIds: [String: String]
-    var properties: [KeyValueItem]
+    var customerIds: [String: JSONConvertible]
+    var properties: [String: JSONConvertible]
     var timestamp: Double?
     var eventType: String?
 
-    init(customerIds: [String: String], properties: [KeyValueItem],
+    init(customerIds: [String: JSONConvertible], properties: [String: JSONConvertible],
          timestamp: Double? = nil, eventType: String? = nil) {
         self.customerIds = customerIds
         self.properties = properties
@@ -24,26 +24,25 @@ struct TrackingParameters {
 
 }
 
-extension TrackingParameters {
-    var parameters: [String: Any]? {
-        var preparedParam: [String: Any] = [:]
+extension TrackingParameters: RequestParametersType {
+    var parameters: [String: JSONConvertible] {
+        var parameters: [String: JSONConvertible] = [:]
 
         /// Preparing customers_ids params
-        preparedParam["customer_ids"] = customerIds
-
+        parameters["customer_ids"] = customerIds
+        
         /// Preparing properties param
-        let propertiesParam = properties.flatMap({[$0.key: $0.value]})
-        preparedParam["properties"] = propertiesParam
+        parameters["properties"] = properties
 
         /// Preparing timestamp param
         if let timestamp = timestamp {
-            preparedParam["timestamp"] = timestamp
+            parameters["timestamp"] = timestamp
         }
         /// Preparing eventType param
         if let eventType = eventType {
-            preparedParam["event_type"] = eventType
+            parameters["event_type"] = eventType
         }
 
-        return preparedParam
+        return parameters
     }
 }

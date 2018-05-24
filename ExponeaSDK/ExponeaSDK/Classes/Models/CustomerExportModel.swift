@@ -15,7 +15,7 @@ public struct CustomerExportModel {
     public var attributes: CustomerExportAttributesModel
     
     /// <#Description#>
-    public var filter: [KeyValueItem]
+    public var filter: [String: JSONConvertible]
     
     /// <#Description#>
     public var executionTime: Int

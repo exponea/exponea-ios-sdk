@@ -18,35 +18,35 @@ class MockFetchRepository: FetchRepository {
         self.configuration = configuration
     }
 
-    func fetchProperty(projectToken: String, customerId: KeyValueItem, property: String) {
+    func fetchProperty(projectToken: String, customerId: [String: JSONConvertible], property: String) {
         return
     }
 
-    func fetchId(projectToken: String, customerId: KeyValueItem, id: String) {
+    func fetchId(projectToken: String, customerId: [String: JSONConvertible], id: String) {
         return
     }
 
-    func fetchSegmentation(projectToken: String, customerId: KeyValueItem, id: String) {
+    func fetchSegmentation(projectToken: String, customerId: [String: JSONConvertible], id: String) {
         return
     }
 
-    func fetchExpression(projectToken: String, customerId: KeyValueItem, id: String) {
+    func fetchExpression(projectToken: String, customerId: [String: JSONConvertible], id: String) {
         return
     }
 
-    func fetchPrediction(projectToken: String, customerId: KeyValueItem, id: String) {
+    func fetchPrediction(projectToken: String, customerId: [String: JSONConvertible], id: String) {
         return
     }
 
     func fetchRecommendation(projectToken: String,
-                             customerId: KeyValueItem,
+                             customerId: [String: JSONConvertible],
                              recommendation: CustomerRecommendation,
                              completion: @escaping (Result<Recommendation>) -> Void) {
 
         let router = RequestFactory(baseURL: configuration.baseURL,
                                projectToken: projectToken,
                                route: .customersRecommendation)
-        let customersParams = CustomerParameters(customer: customerId,
+        let parameters = CustomerParameters(customer: customerId,
                                               property: nil,
                                               id: nil,
                                               recommendation: recommendation,
@@ -54,7 +54,7 @@ class MockFetchRepository: FetchRepository {
                                               events: nil,
                                               data: nil)
         let request = router.prepareRequest(authorization: configuration.authorization,
-                                            trackingParam: nil, customersParam: customersParams)
+                                            trackingParam: nil, customersParam: parameters)
         let bundle = Bundle(for: type(of: self))
 
         guard request.url != nil else {
@@ -74,18 +74,18 @@ class MockFetchRepository: FetchRepository {
         completion(result)
     }
 
-    func fetchAttributes(projectToken: String, customerId: KeyValueItem, attributes: [CustomerAttributes]) {
+    func fetchAttributes(projectToken: String, customerId: [String: JSONConvertible], attributes: [CustomerAttributes]) {
         return
     }
 
     func fetchEvents(projectToken: String,
-                     customerId: KeyValueItem,
+                     customerId: [String: JSONConvertible],
                      events: FetchEventsRequest,
                      completion: @escaping (Result<FetchEventsResponse>) -> Void) {
         return
     }
 
-    func fetchAllProperties(projectToken: String, customerId: KeyValueItem) {
+    func fetchAllProperties(projectToken: String, customerId: [String: JSONConvertible]) {
         return
     }
 
@@ -93,7 +93,7 @@ class MockFetchRepository: FetchRepository {
         return
     }
 
-    func anonymize(projectToken: String, customerId: KeyValueItem) {
+    func anonymize(projectToken: String, customerId: [String: JSONConvertible]) {
         return
     }
 
@@ -101,14 +101,14 @@ class MockFetchRepository: FetchRepository {
 
 extension MockFetchRepository: ConnectionManagerType {
     func trackCustomer(projectToken: String,
-                       customerId: KeyValueItem,
-                       properties: [KeyValueItem]) {
+                       customerId: [String: JSONConvertible],
+                       properties: [[String: JSONConvertible]]) {
         return
     }
 
     func trackEvent(projectToken: String,
-                     customerId: KeyValueItem,
-                     properties: [KeyValueItem],
+                     customerId: [String: JSONConvertible],
+                     properties: [[String: JSONConvertible]],
                      timestamp: Double?,
                      eventType: String?) {
         return

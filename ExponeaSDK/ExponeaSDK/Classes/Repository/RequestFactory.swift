@@ -46,8 +46,7 @@ public struct RequestFactory {
 
 extension RequestFactory {
     func prepareRequest(authorization: Authorization,
-                        trackingParam: TrackingParameters? = nil,
-                        customersParam: CustomerParameters? = nil) -> URLRequest {
+                        parameters: RequestParametersType? = nil) -> URLRequest {
         var request = URLRequest(url: URL(string: path)!)
 
         // Create the basic request
@@ -68,20 +67,8 @@ extension RequestFactory {
                              forHTTPHeaderField: Constants.Repository.headerAuthorization)
         }
 
-        var parameters: [String: Any]?
-
-        // Assign parameters if necessary
-        switch route {
-        case .identifyCustomer, .customEvent:
-            parameters = trackingParam?.parameters
-        case .tokenRotate, .tokenRevoke:
-            parameters = nil
-        default:
-            parameters = customersParam?.parameters
-        }
-
-        // Add parameters as request body in JSON format, if we have any.
-        if let parameters = parameters {
+        // Add parameters as request body in JSON format, if we have any
+        if let parameters = parameters?.parameters {
             do {
                 request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
             } catch {

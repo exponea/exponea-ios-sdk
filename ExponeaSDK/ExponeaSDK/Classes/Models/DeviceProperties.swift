@@ -36,16 +36,16 @@ struct DeviceProperties {
     }
     
     /// Returns an array with all device properties.
-    var properties: [KeyValueItem] {
-        var data = [KeyValueItem]()
+    var properties: [String: JSONConvertible] {
+        var data = [String: JSONConvertible]()
 
-        data.append(KeyValueItem(key: "os_name", value: osName))
-        data.append(KeyValueItem(key: "os_version", value: osVersion))
-        data.append(KeyValueItem(key: "sdk", value: sdk))
-        data.append(KeyValueItem(key: "sdk_version", value: sdkVersion))
-        data.append(KeyValueItem(key: "device_model", value: deviceModel))
-        data.append(KeyValueItem(key: "device_type", value: deviceType))
-        data.append(KeyValueItem(key: "app_version", value: deviceType))
+        data["os_name"] = osName
+        data["os_version"] = osVersion
+        data["sdk"] = sdk
+        data["sdk_version"] = sdkVersion
+        data["device_model"] = deviceModel
+        data["device_type"] = deviceType
+        data["app_version"] = appVersion
 
         return data
     }
