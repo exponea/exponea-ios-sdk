@@ -9,12 +9,12 @@
 import Foundation
 
 struct TrackingParameters {
-    var customerIds: [String: JSONConvertible]
-    var properties: [String: JSONConvertible]
+    var customerIds: [AnyHashable: JSONConvertible]
+    var properties: [AnyHashable: JSONConvertible]
     var timestamp: Double?
     var eventType: String?
 
-    init(customerIds: [String: JSONConvertible], properties: [String: JSONConvertible],
+    init(customerIds: [AnyHashable: JSONConvertible], properties: [AnyHashable: JSONConvertible],
          timestamp: Double? = nil, eventType: String? = nil) {
         self.customerIds = customerIds
         self.properties = properties
@@ -25,8 +25,8 @@ struct TrackingParameters {
 }
 
 extension TrackingParameters: RequestParametersType {
-    var parameters: [String: JSONConvertible] {
-        var parameters: [String: JSONConvertible] = [:]
+    var parameters: [AnyHashable: JSONConvertible] {
+        var parameters: [AnyHashable: JSONConvertible] = [:]
 
         /// Preparing customers_ids params
         parameters["customer_ids"] = customerIds

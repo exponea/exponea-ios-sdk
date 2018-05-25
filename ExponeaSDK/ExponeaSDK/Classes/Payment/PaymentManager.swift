@@ -39,7 +39,7 @@ public class PaymentManager: NSObject, PaymentManagerType {
         SKPaymentQueue.default().remove(self)
     }
 
-    func trackPayment(properties: [String: JSONConvertible]) {
+    func trackPayment(properties: [AnyHashable: JSONConvertible]) {
         guard let delegate = delegate else {
             Exponea.logger.log(.warning, message: """
                 No delegate for `PaymentManager` set.

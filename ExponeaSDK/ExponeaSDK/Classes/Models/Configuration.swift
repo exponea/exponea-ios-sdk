@@ -18,12 +18,14 @@ public struct Configuration: Decodable {
     public internal(set) var contentType: String = Constants.Repository.contentType
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
+    public var automaticPushNotificationTracking: Bool = true
 
     enum CodingKeys: String, CodingKey {
         case projectMapping
         case projectToken
         case sessionTimeout
         case automaticSessionTracking
+        case automaticPushNotificationTracking
         case authorization
         case baseUrl
     }

@@ -92,7 +92,6 @@ extension DatabaseManager {
             
             // If we have customer return it, otherwise create a new one
             if let customer = customers.first {
-                Exponea.logger.log(.verbose, message: "Existing customer found: \(customer.uuid!)")
                 return customer
             }
         } catch {
@@ -163,7 +162,7 @@ extension DatabaseManager: DatabaseManagerType {
                 // Add the event properties to the events entity
                 for property in properties {
                     let trackEventProperties = TrackEventProperty(context: context)
-                    trackEventProperties.key = property.key
+                    trackEventProperties.key = property.key as? String
                     trackEventProperties.value = property.value as? NSObject
                     context.insert(trackEventProperties)
                     trackEvent.addToTrackEventProperties(trackEventProperties)
@@ -206,7 +205,7 @@ extension DatabaseManager: DatabaseManagerType {
     /// - Throws: <#throws value description#>
     public func trackCustomer(with data: [DataType]) throws {
         let trackCustomer = TrackCustomer(context: context)
-        let trackCustomerProperties = TrackCustomerProperties(context: context)
+        trackCustomer.customer = customer
 
         for type in data {
             switch type {
@@ -222,10 +221,17 @@ extension DatabaseManager: DatabaseManagerType {
             case .properties(let properties):
                 // Add the customer properties to the customer entity
                 for property in properties {
-                    trackCustomerProperties.key = property.key
+                    let trackCustomerProperties = TrackCustomerProperty(context: context)
+                    trackCustomerProperties.key = property.key as? String
                     trackCustomerProperties.value = property.value as? NSObject
                     trackCustomer.addToTrackCustomerProperties(trackCustomerProperties)
                 }
+            case .pushNotificationToken(let token):
+                let trackCustomerProperties = TrackCustomerProperty(context: context)
+                trackCustomerProperties.key = "apple_push_notification_id"
+                trackCustomerProperties.value = token as NSObject
+                trackCustomer.addToTrackCustomerProperties(trackCustomerProperties)
+                
             default:
                 break
             }

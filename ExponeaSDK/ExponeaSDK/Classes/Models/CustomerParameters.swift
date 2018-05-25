@@ -9,11 +9,11 @@
 import Foundation
 
 protocol RequestParametersType {
-    var parameters: [String: JSONConvertible] { get }
+    var parameters: [AnyHashable: JSONConvertible] { get }
 }
 
 struct CustomerParameters {
-    var customer: [String: JSONConvertible]?
+    var customer: [AnyHashable: JSONConvertible]?
     var property: String?
     var id: String?
     var recommendation: CustomerRecommendation?
@@ -21,7 +21,7 @@ struct CustomerParameters {
     var events: FetchEventsRequest?
     var data: CustomerExportModel?
 
-    init(customer: [String: JSONConvertible]?,
+    init(customer: [AnyHashable: JSONConvertible]?,
          property: String?,
          id: String?,
          recommendation: CustomerRecommendation?,
@@ -40,13 +40,13 @@ struct CustomerParameters {
 }
 
 extension CustomerParameters: RequestParametersType {
-    var parameters: [String: JSONConvertible] {
+    var parameters: [AnyHashable: JSONConvertible] {
         
-        var preparedParam: [String: JSONConvertible] = [:]
-        var list: [String: JSONConvertible] = [:]
+        var preparedParam: [AnyHashable: JSONConvertible] = [:]
+        var list: [AnyHashable: JSONConvertible] = [:]
         var listAppend = [list]
-        var filterList: [String: JSONConvertible] = [:]
-        var attributeComplete: [String: JSONConvertible] = [:]
+        var filterList: [AnyHashable: JSONConvertible] = [:]
+        var attributeComplete: [AnyHashable: JSONConvertible] = [:]
         
         /// Preparing customers_ids params
         if let customer = customer {

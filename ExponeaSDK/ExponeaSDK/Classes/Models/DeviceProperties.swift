@@ -36,8 +36,8 @@ struct DeviceProperties {
     }
     
     /// Returns an array with all device properties.
-    var properties: [String: JSONConvertible] {
-        var data = [String: JSONConvertible]()
+    var properties: [AnyHashable: JSONConvertible] {
+        var data = [AnyHashable: JSONConvertible]()
 
         data["os_name"] = osName
         data["os_version"] = osVersion

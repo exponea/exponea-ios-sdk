@@ -22,4 +22,21 @@ public struct FetchEventsRequest {
     
     /// <#Description#>
     public var skip: Int = 100
+    
+    /// <#Description#>
+    ///
+    /// - Parameters:
+    ///   - evenTypes: <#evenTypes description#>
+    ///   - sortOrder: <#sortOrder description#>
+    ///   - limit: <#limit description#>
+    ///   - skip: <#skip description#>
+    public init(eventTypes: [String],
+                sortOrder: String = "desc",
+                limit: Int = 3,
+                skip: Int = 100) {
+        self.eventTypes = eventTypes
+        self.sortOrder = sortOrder
+        self.limit = limit
+        self.skip = skip
+    }
 }

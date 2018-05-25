@@ -25,7 +25,7 @@ public enum DataType {
 
     /// Custom properties that you would like to add to the tracking event,
     /// these can include any relevant information for you.
-    case properties([String: JSONConvertible])
+    case properties([AnyHashable: JSONConvertible])
 
     /// Timestamp of the tracked event in UNIX epoch time, if value is `nil` current date is used.
     case timestamp(Double?)
@@ -37,4 +37,5 @@ public enum DataType {
     case recommendation(CustomerRecommendation)
     case attributes(CustomerAttributes)
     case events(FetchEventsRequest)
+    case pushNotificationToken(String)
 }

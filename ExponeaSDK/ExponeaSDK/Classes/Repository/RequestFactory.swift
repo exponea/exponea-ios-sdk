@@ -86,9 +86,13 @@ extension RequestFactory {
     func handler(with completion: @escaping ((EmptyResult) -> Void)) -> CompletionHandler {
         return { (_, _, error) in
             if let error = error {
-                completion(.failure(error))
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             } else {
-                completion(.success)
+                DispatchQueue.main.async {
+                    completion(.success)
+                }
             }
         }
     }
@@ -101,9 +105,13 @@ extension RequestFactory {
                 let decoder = JSONDecoder()
                 do {
                     let object = try decoder.decode(T.self, from: data)
-                    completion(.success(object))
+                    DispatchQueue.main.async {
+                        completion(.success(object))
+                    }
                 } catch {
-                    completion(.failure(error))
+                    DispatchQueue.main.async {
+                        completion(.failure(error))
+                    }
                 }
             } else {
                 completion(.failure(RepositoryError.invalidResponse(response)))

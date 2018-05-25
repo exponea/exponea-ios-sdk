@@ -35,19 +35,10 @@ public enum EventType: String, Decodable {
 
     /// Virtual and hard payments can be tracked to better measure conversions for example.
     case payment = "PAYMENT"
-}
-
-extension EventType {
-    /// Key used to map values from plist configuration to respective event types.
-    /// This value is identical to the enum case name with all leters uppercased and spaces added as '_'.
-    var plistKey: String {
-        switch self {
-        case .install: return "INSTALL"
-        case .sessionStart: return "SESSION_START"
-        case .sessionEnd: return "SESSION_END"
-        case .customEvent: return "TRACK_EVENT"
-        case .identifyCustomer: return "TRACK_CUSTOMER"
-        case .payment: return "PAYMENT"
-        }
-    }
+    
+    /// Event used for registering the push notifications token of the device with Exponea.
+    case registerPushToken = "PUSH_TOKEN"
+    
+    /// For tracking that a push notification has been opened.
+    case pushOpened = "PUSH_OPENED"
 }

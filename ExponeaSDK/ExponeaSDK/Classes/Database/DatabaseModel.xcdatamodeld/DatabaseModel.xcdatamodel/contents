@@ -12,7 +12,7 @@
         <relationship name="customer" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="trackCustomer" inverseEntity="Customer" syncable="YES"/>
         <relationship name="trackCustomerProperties" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TrackCustomerProperty" inverseName="trackCustomer" inverseEntity="TrackCustomerProperty" syncable="YES"/>
     </entity>
-    <entity name="TrackCustomerProperty" representedClassName=".TrackCustomerProperties" syncable="YES" codeGenerationType="class">
+    <entity name="TrackCustomerProperty" representedClassName=".TrackCustomerProperty" syncable="YES" codeGenerationType="class">
         <attribute name="key" attributeType="String" syncable="YES"/>
         <attribute name="value" attributeType="Transformable" syncable="YES"/>
         <relationship name="trackCustomer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackCustomer" inverseName="trackCustomerProperties" inverseEntity="TrackCustomer" syncable="YES"/>

@@ -21,6 +21,9 @@ open class TrackingManager {
         }
     }
     
+    /// The manager for automatic push registration and delivery tracking
+    internal var pushManager: PushNotificationManager?
+    
     /// Used for periodic data flushing.
     internal var flushingTimer: Timer?
     public var flushingMode: FlushingMode = .automatic {
@@ -43,17 +46,19 @@ open class TrackingManager {
     }
     
     deinit {
-        Exponea.logger.log(.verbose, message: "TrackingManager deallocated.")
         removeSessionObservers()
+        Exponea.logger.log(.verbose, message: "TrackingManager deallocated.")
     }
     
     func initialSetup() {
+        /// Add the observers when the automatic session tracking is true.
         if repository.configuration.automaticSessionTracking {
-            /// Add the observers when the automatic session tracking is true.
             addSessionObserves()
-        } else {
-            /// Remove the observers when the automatic session tracking is false.
-            removeSessionObservers()
+        }
+        
+        /// Add the observers when the automatic push notification tracking is true.
+        if repository.configuration.automaticPushNotificationTracking {
+            pushManager = PushNotificationManager(trackingManager: self)
         }
     }
 }
@@ -79,6 +84,8 @@ extension TrackingManager: TrackingManagerType {
             case .customEvent: try trackEvent(with: payload)
             case .identifyCustomer: try identifyCustomer(with: payload)
             case .payment: try trackPayment(with: payload)
+            case .registerPushToken: try trackPushToken(with: payload)
+            case .pushOpened: try trackPushOpened(with: payload)
             }
         }
     }
@@ -101,6 +108,14 @@ extension TrackingManager {
     
     open func trackPayment(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.payment)])
+    }
+    
+    open func trackPushToken(with data: [DataType]) throws {
+        try database.trackCustomer(with: data)
+    }
+    
+    open func trackPushOpened(with data: [DataType]) throws {
+        // TODO: push tracking
     }
 }
 
@@ -262,28 +277,45 @@ extension TrackingManager {
 
 extension TrackingManager {
     @objc func flushData() {
-        // TODO: Data flushing
-        // 1. check if data to flush
-        // 2. pull from db
-        // 3. run upload
-        // 4a. on fail, return to step 2
-        // 4b. on success, delete from db
-        
-        Exponea.logger.log(.verbose, message: "Flushing data now.")
-        
         // Pull from db
         do {
-            let events = try database.fetchTrackEvent()
-            let customers = try database.fetchTrackCustomer()
+            let events = try database.fetchTrackEvent().reversed()
+            let customers = try database.fetchTrackCustomer().reversed()
+            
+            Exponea.logger.log(.verbose, message: """
+                Flushing data: \(events.count + customers.count) total objects to upload, \
+                \(events.count) events and \(customers.count) customer updates.
+                """)
             
             // Check if we have any data, otherwise bail
             guard !events.isEmpty || !customers.isEmpty else {
                 return
             }
-        
+            
+            for customer in customers {
+                repository.trackCustomer(with: customer.dataTypes, for: database.customer) { [weak self] (result) in
+                    switch result {
+                    case .success:
+                        Exponea.logger.log(.verbose, message: """
+                            Successfully uploaded customer update: \(customer.objectID).
+                            """)
+                        do {
+                            try self?.database.delete(customer)
+                        } catch {
+                            Exponea.logger.log(.error, message: """
+                                Failed to remove object from database: \(customer.objectID).
+                                \(error.localizedDescription)
+                                """)
+                        }
+                    case .failure(let error):
+                        Exponea.logger.log(.error, message: """
+                            Failed to upload customer update. \(error.localizedDescription)
+                            """)
+                    }
+                }
+            }
+            
             for event in events {
-                Exponea.logger.log(.verbose, message: "Uploading event: \(event.objectID).")
-                
                 repository.trackEvent(with: event.dataTypes, for: database.customer) { [weak self] (result) in
                     switch result {
                     case .success:
@@ -299,12 +331,8 @@ extension TrackingManager {
                         Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
                     }
                 }
-                
             }
-    
-//            for customer in customers {
-    
-//            }
+            
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }

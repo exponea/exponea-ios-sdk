@@ -56,6 +56,14 @@ public class Exponea {
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
     
+    /// Custom user defaults to track basic information
+    internal var userDefaults: UserDefaults = {
+        if UserDefaults(suiteName: "ExponeaSDK") == nil {
+            UserDefaults.standard.addSuite(named: "ExponeaSDK")
+        }
+        return UserDefaults(suiteName: "ExponeaSDK")!
+    }()
+    
     /// Sets the flushing mode for usage
     public var flushingMode: FlushingMode {
         get {
@@ -79,6 +87,8 @@ public class Exponea {
     internal static let isBeingTested: Bool = {
         return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     }()
+    
+    // MARK: - Init -
     
     /// The initialiser is internal, so that only the singleton can exist.
     internal init() {}
@@ -113,7 +123,7 @@ internal extension Exponea {
     internal func trackInstallEvent() {
         /// Checking if the APP was launched before.
         /// If the key value is false, means that the event was not fired before.
-        guard !UserDefaults.standard.bool(forKey: Constants.Keys.launchedBefore) else {
+        guard !userDefaults.bool(forKey: Constants.Keys.launchedBefore) else {
             Exponea.logger.log(.verbose, message: "Install event was already tracked, skipping.")
             return
         }
@@ -126,9 +136,9 @@ internal extension Exponea {
             try dependencies.trackingManager.track(.install, with: nil)
         
             /// Set the value to true if event was executed successfully
-            UserDefaults.standard.set(true, forKey: Constants.Keys.launchedBefore)
+            userDefaults.set(true, forKey: Constants.Keys.launchedBefore)
             /// Set default timeout session time with default value
-            UserDefaults.standard.set(Constants.Session.defaultTimeout, forKey: Constants.Keys.timeout)
+            userDefaults.set(Constants.Session.defaultTimeout, forKey: Constants.Keys.timeout)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
@@ -159,7 +169,7 @@ internal extension Exponea {
 
 public extension Exponea {
     
-    // MARK: Configure
+    // MARK: - Configure -
     
     /// Initialize the configuration with a projectId (token)
     ///
@@ -176,7 +186,7 @@ public extension Exponea {
         }
     }
     
-    // TODO: Write all mandatory keys
+    // FIXME: Write all mandatory keys
     /// Initialize the configuration with a plist file containing the keys
     /// for the ExponeaSDK.
     /// Mandatory keys: exponeaProjectIdKey
@@ -217,7 +227,7 @@ public extension Exponea {
         }
     }
     
-    // MARK: Tracking
+    // MARK: - Tracking -
     
     /// Track customer event add new events to a specific customer.
     /// All events will be stored into coredata until it will be
@@ -228,7 +238,7 @@ public extension Exponea {
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
     ///     - eventType: Name of event
-    public class func trackEvent(properties: [String: JSONConvertible], timestamp: Double?, eventType: String?) {
+    public class func trackEvent(properties: [AnyHashable: JSONConvertible], timestamp: Double?, eventType: String?) {
         // Create initial data
         var data: [DataType] = [.properties(properties),
                                 .timestamp(timestamp)]
@@ -246,6 +256,48 @@ public extension Exponea {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
     }
+    
+    /// This method can be used to manually flush all available data to Exponea.
+    public class func flushData() {
+        do {
+            let dependencies = try shared.getDependenciesIfConfigured()
+            dependencies.trackingManager.flushData()
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+    }
+    
+    // MARK: Push Notifications
+    
+    /// <#Description#>
+    ///
+    /// - Parameter token: <#token description#>
+    public class func trackPushToken(_ token: Data) {
+        // Convert token data to String
+        trackPushToken(token.tokenString)
+    }
+    
+    /// <#Description#>
+    ///
+    /// - Parameter token: <#token description#>
+    public class func trackPushToken(_ token: String) {
+        let data: [DataType] = [.pushNotificationToken(token)]
+        
+        do {
+            // Get dependencies and do the actual tracking
+            let dependencies = try shared.getDependenciesIfConfigured()
+            try dependencies.trackingManager.track(.identifyCustomer, with: data)
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+    }
+    
+    /// <#Description#>
+    public class func trackPushClicked() {
+        
+    }
+    
+    // MARK: Sessions
     
     /// Restart any tasks that were paused (or not yet started) while the application was inactive.
     /// If the application was previously in the background, optionally refresh the user interface.
@@ -280,7 +332,7 @@ public extension Exponea {
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
     public class func updateCustomerProperties(customerId: String?,
-                                               properties: [String: JSONConvertible],
+                                               properties: [AnyHashable: JSONConvertible],
                                                timestamp: Double?) {
         do {
             let dependencies = try shared.getDependenciesIfConfigured()
@@ -298,16 +350,6 @@ public extension Exponea {
         }
     }
     
-    /// This method can be used to manually flush all available data to Exponea.
-    public class func flushData() {
-        do {
-            let dependencies = try shared.getDependenciesIfConfigured()
-            dependencies.trackingManager.flushData()
-        } catch {
-            Exponea.logger.log(.error, message: error.localizedDescription)
-        }
-    }
-    
     // MARK: Fetching
     
     /// Fetch all events for a specific customer
@@ -316,7 +358,7 @@ public extension Exponea {
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
     public class func fetchCustomerEvents(projectToken: String,
-                                          customerId: [String: JSONConvertible],
+                                          customerId: [AnyHashable: JSONConvertible],
                                           events: FetchEventsRequest,
                                           completion: @escaping (Result<FetchEventsResponse>) -> Void) {
         do {
@@ -337,7 +379,7 @@ public extension Exponea {
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
     public class func fetchRecommendation(projectToken: String,
-                                          customerId: [String: JSONConvertible],
+                                          customerId: [AnyHashable: JSONConvertible],
                                           recommendation: CustomerRecommendation,
                                           completion: @escaping (Result<Recommendation>) -> Void) {
         do {

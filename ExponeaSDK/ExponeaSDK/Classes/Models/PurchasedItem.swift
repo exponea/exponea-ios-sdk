@@ -16,8 +16,8 @@ struct PurchasedItem {
     var productTitle: String
     var receipt: String?
     /// Returns an array with all purchased info.
-    var properties: [String: JSONConvertible] {
-        var data = [String: JSONConvertible]()
+    var properties: [AnyHashable: JSONConvertible] {
+        var data = [AnyHashable: JSONConvertible]()
 
         data["gross_amount"] = grossAmount
         data["currency"] = currency
