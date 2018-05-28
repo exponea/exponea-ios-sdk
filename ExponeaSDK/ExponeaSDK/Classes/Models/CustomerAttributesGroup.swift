@@ -9,11 +9,11 @@
 import Foundation
 
 /// <#Description#>
-public struct CustomerExportAttributesModel {
+public struct CustomerAttributesGroup {
     
     /// <#Description#>
     public var type: String
     
     /// <#Description#>
-    public var list: [CustomerAttributes]
+    public var list: [CustomerAttribute]
 }

@@ -359,8 +359,8 @@ public extension Exponea {
     ///     - events: Object containing all event types to be fetched.
     public class func fetchCustomerEvents(projectToken: String,
                                           customerId: [AnyHashable: JSONConvertible],
-                                          events: FetchEventsRequest,
-                                          completion: @escaping (Result<FetchEventsResponse>) -> Void) {
+                                          events: EventsRequest,
+                                          completion: @escaping (Result<EventsResponse>) -> Void) {
         do {
             let dependencies = try shared.getDependenciesIfConfigured()
             dependencies.repository.fetchEvents(projectToken: projectToken,
@@ -380,8 +380,8 @@ public extension Exponea {
     ///     - events: Object containing all event types to be fetched.
     public class func fetchRecommendation(projectToken: String,
                                           customerId: [AnyHashable: JSONConvertible],
-                                          recommendation: CustomerRecommendation,
-                                          completion: @escaping (Result<Recommendation>) -> Void) {
+                                          recommendation: RecommendationRequest,
+                                          completion: @escaping (Result<RecommendationResponse>) -> Void) {
         do {
             let dependencies = try shared.getDependenciesIfConfigured()
             dependencies.repository.fetchRecommendation(projectToken: projectToken,

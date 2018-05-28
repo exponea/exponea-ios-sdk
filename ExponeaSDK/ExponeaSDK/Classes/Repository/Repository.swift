@@ -21,10 +21,10 @@ protocol TokenRepository {
 
 protocol FetchRepository {
     func fetchProperty(projectToken: String, customerId: [AnyHashable: JSONConvertible],
-                       property: String, completion: @escaping (Result<ValueResponse>) -> Void)
+                       property: String, completion: @escaping (Result<StringResponse>) -> Void)
     
     func fetchId(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
-                 completion: @escaping (Result<ValueResponse>) -> Void)
+                 completion: @escaping (Result<StringResponse>) -> Void)
     
     func fetchSegmentation(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String)
     
@@ -36,21 +36,21 @@ protocol FetchRepository {
     
     func fetchRecommendation(projectToken: String,
                              customerId: [AnyHashable: JSONConvertible],
-                             recommendation: CustomerRecommendation,
-                             completion: @escaping (Result<Recommendation>) -> Void)
+                             recommendation: RecommendationRequest,
+                             completion: @escaping (Result<RecommendationResponse>) -> Void)
     
     func fetchAttributes(projectToken: String,
                          customerId: [AnyHashable: JSONConvertible],
-                         attributes: [CustomerAttributes])
+                         attributes: [CustomerAttribute])
     
     func fetchEvents(projectToken: String,
                      customerId: [AnyHashable: JSONConvertible],
-                     events: FetchEventsRequest,
-                     completion: @escaping (Result<FetchEventsResponse>) -> Void)
+                     events: EventsRequest,
+                     completion: @escaping (Result<EventsResponse>) -> Void)
     
     func fetchAllProperties(projectToken: String, customerId: [AnyHashable: JSONConvertible])
     
-    func fetchAllCustomers(projectToken: String, data: CustomerExportModel)
+    func fetchAllCustomers(projectToken: String, data: CustomerExport)
     
     func anonymize(projectToken: String, customerId: [AnyHashable: JSONConvertible])
 }

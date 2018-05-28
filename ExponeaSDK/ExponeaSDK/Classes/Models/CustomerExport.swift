@@ -9,10 +9,10 @@
 import Foundation
 
 /// <#Description#>
-public struct CustomerExportModel {
+public struct CustomerExport {
     
     /// <#Description#>
-    public var attributes: CustomerExportAttributesModel
+    public var attributes: CustomerAttributesGroup
     
     /// <#Description#>
     public var filter: [AnyHashable: JSONConvertible]

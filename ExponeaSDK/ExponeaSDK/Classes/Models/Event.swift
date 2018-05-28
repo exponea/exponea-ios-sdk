@@ -9,9 +9,17 @@
 import Foundation
 
 /// <#Description#>
-public struct ExportedEventType: Codable {
+public struct Event: Codable {
+    
+    /// <#Description#>
     public let type: String?
+    
+    /// <#Description#>
     public let timestamp: Double?
+    
+    /// <#Description#>
     public let properties: [String: String]?
+    
+    /// <#Description#>
     public let errors: [String: String]?
 }

@@ -21,7 +21,6 @@ struct TrackingParameters {
         self.timestamp = timestamp
         self.eventType = eventType
     }
-
 }
 
 extension TrackingParameters: RequestParametersType {

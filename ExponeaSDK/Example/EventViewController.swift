@@ -23,7 +23,7 @@ class EventViewController: UIViewController {
     }
 
     @IBAction func recommendationPressed(_ sender: Any) {
-        let recomm = CustomerRecommendation(type: "", id: "", size: nil,
+        let recomm = RecommendationRequest(type: "", id: "", size: nil,
                                             strategy: nil, knowItems: nil, anti: nil, items: nil)
         Exponea.fetchRecommendation(
             projectToken: Exponea.shared.configuration!.projectToken!,
@@ -39,7 +39,7 @@ class EventViewController: UIViewController {
     }
     
     @IBAction func personalisationPressed(_ sender: Any) {
-        let req = FetchEventsRequest(eventTypes: ["my_custom_event_type"])
+        let req = EventsRequest(eventTypes: ["my_custom_event_type"])
         Exponea.fetchCustomerEvents(
             projectToken: Exponea.shared.configuration!.projectToken!,
             customerId: [:],
@@ -54,7 +54,7 @@ class EventViewController: UIViewController {
     }
     
     @IBAction func attributesPressed(_ sender: Any) {
-        let req = FetchEventsRequest(eventTypes: ["my_custom_event_type"])
+        let req = EventsRequest(eventTypes: ["my_custom_event_type"])
         Exponea.fetchCustomerEvents(
             projectToken: Exponea.shared.configuration!.projectToken!,
             customerId: [:],
@@ -69,7 +69,7 @@ class EventViewController: UIViewController {
     }
     
     @IBAction func eventsPressed(_ sender: Any) {
-        let req = FetchEventsRequest(eventTypes: ["my_custom_event_type"])
+        let req = EventsRequest(eventTypes: ["my_custom_event_type"])
         Exponea.fetchCustomerEvents(
             projectToken: Exponea.shared.configuration!.projectToken!,
             customerId: [:],

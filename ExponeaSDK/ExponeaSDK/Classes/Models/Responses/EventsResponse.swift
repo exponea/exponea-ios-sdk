@@ -9,11 +9,11 @@
 import Foundation
 
 /// <#Description#>
-public struct FetchEventsResponse: Codable {
+public struct EventsResponse: Codable {
     
     /// <#Description#>
     public let success: Bool?
     
     /// <#Description#>
-    public let data: [ExportedEventType]?
+    public let data: [Event]?
 }

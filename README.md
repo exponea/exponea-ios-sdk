@@ -1,64 +1,74 @@
-# Exponea SDK
+<p align="center">
+  <img src="./Documentation/logo_yellow.png?raw=true" alt="Exponea"/>
+</p>
 
-[![Carthage Compatible](https://img.shields.io/badge/carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![CocoaPods](https://img.shields.io/cocoapods/v/Exponea.svg)](https://cocoapods.org/pods/Exponea)
-![Plaforms](https://img.shields.io/badge/platforms-iOS-lightgrey.svg)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nodes-ios/Serpent/blob/master/LICENSE)
+![Platform](https://img.shields.io/badge/Platform-iOS-lightgrey.svg?style=flat)
+![Platform](https://img.shields.io/badge/Swift-4.1-green.svg?style=flat)
+[![License](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://opensource.org/licenses/Apache-2.0) 
 
-> TODO
+## Exponea iOS SDK
 
-## 📑 Table of Contents
+This library allows you to interact from your application or game with the Exponea App. Exponea empowers B2C marketers to raise conversion rates, improve acquisition ROI, and maximize customer lifetime value.
 
-- [📝 Requirements](#-requirements)
-- [📦 Installation](#-installation)
-- [🔧 Setup](#-setup)
-- [💻 Usage](#-usage)
-- [👥 Credits](#-credits)
-- [📄 License](#-license)
+It has been written 100% in Swift with ❤️
 
-## About Exponea SDK
-
-> TODO
-
-## 📝 Requirements
-
-* iOS 10.3+
-* Swift 4.1+  
 
 ## 📦 Installation
 
-### Carthage
-
-> TODO
-
 ### CocoaPods
 
-> TODO
+```ruby
+pod "exponea-sdk-ios" "~> 1.0"
+```
 
-## 🔧 Setup
+### Carthage
 
-> TODO
+```
+github "exponea/exponea-sdk-ios" ~> 1.0
+```
+
+## 📱 Demo Application
+
+Check out our [sample project](https://github.com/exponea/exponea-ios-sdk/tree/master/app) to try it yourself! 😉
 
 ## 💻 Usage
 
-> TODO
+### Getting Started
 
-### Getting started
-> TODO
+To implement the Exponea SDK you must configure the SDK first:
 
-### Usage
-> TODO
+* [Configuration](./Documentation/CONFIG.md);
 
-### Tracking
-> TODO
+Then you can start using all the amazing features we developed for you:
 
-### Data Handling
-> TODO
+* [Track Events / Customer properties](./Documentation/TRACK.md);
+* [Push Notification Events](./Documentation/PUSH.md);
+* [Flush](./Documentation/FLUSH.md)
+* [Fetch Data](./Documentation/FETCH.md);
+* [Payments](./Documentation/PAYMENT.md)
 
-### Push Notifications
-> TODO
+## 🔗 Useful links
+
+* [Exponea Developer Hub](https://developers.exponea.com)
+* [Exponea App](https://app.exponea.com/login)
+
 
 ## 📄 License
-> TODO
 
-**Exponea SDK** is available under the MIT license. See the [LICENSE](https://github.com/nodes-projects/exponea-sdk-ios/blob/master/LICENSE) file for more info.
+**ExponeaSDK** is available under the Apache 2.0 license. See the [LICENSE](https://opensource.org/licenses/Apache-2.0) file for more info.
+
+```
+   Copyright 2018 Exponea
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+```

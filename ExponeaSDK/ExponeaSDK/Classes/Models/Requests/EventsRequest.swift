@@ -9,7 +9,7 @@
 import Foundation
 
 /// <#Description#>
-public struct FetchEventsRequest {
+public struct EventsRequest {
     
     /// <#Description#>
     public var eventTypes: [String]

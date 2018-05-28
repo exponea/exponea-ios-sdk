@@ -8,15 +8,28 @@
 
 import Foundation
 
-struct PurchasedItem {
-    var grossAmount: Double
-    var currency: String
-    var paymentSystem: String
-    var productId: String
-    var productTitle: String
-    var receipt: String?
+internal struct PurchasedItem {
+    
+    /// <#Description#>
+    internal var grossAmount: Double
+    
+    /// <#Description#>
+    internal var currency: String
+    
+    /// <#Description#>
+    internal var paymentSystem: String
+    
+    /// <#Description#>
+    internal var productId: String
+    
+    /// <#Description#>
+    internal var productTitle: String
+    
+    /// <#Description#>
+    internal var receipt: String?
+    
     /// Returns an array with all purchased info.
-    var properties: [AnyHashable: JSONConvertible] {
+    internal var properties: [AnyHashable: JSONConvertible] {
         var data = [AnyHashable: JSONConvertible]()
 
         data["gross_amount"] = grossAmount

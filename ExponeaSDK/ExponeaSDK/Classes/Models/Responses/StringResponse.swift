@@ -9,7 +9,7 @@
 import Foundation
 
 /// <#Description#>
-public struct ValueResponse: Codable {
+public struct StringResponse: Codable {
     
     /// <#Description#>
     public let success: Bool?

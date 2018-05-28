@@ -158,7 +158,7 @@ extension ServerRepository: RepositoryType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - property: Property that should be updated
     func fetchProperty(projectToken: String, customerId: [AnyHashable: JSONConvertible],
-                       property: String, completion: @escaping ((Result<ValueResponse>) -> Void)) {
+                       property: String, completion: @escaping ((Result<StringResponse>) -> Void)) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersProperty)
@@ -178,7 +178,7 @@ extension ServerRepository: RepositoryType {
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
     func fetchId(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
-                 completion: @escaping (Result<ValueResponse>) -> Void) {
+                 completion: @escaping (Result<StringResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersId)
         let parameters = CustomerParameters(customer: customerId, property: nil, id: id, recommendation: nil,
                                                  attributes: nil, events: nil, data: nil)
@@ -260,8 +260,8 @@ extension ServerRepository: RepositoryType {
     ///     - recommendation: Recommendations for the customer
     func fetchRecommendation(projectToken: String,
                              customerId: [AnyHashable: JSONConvertible],
-                             recommendation: CustomerRecommendation,
-                             completion: @escaping (Result<Recommendation>) -> Void) {
+                             recommendation: RecommendationRequest,
+                             completion: @escaping (Result<RecommendationResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersRecommendation)
@@ -286,7 +286,7 @@ extension ServerRepository: RepositoryType {
     ///     - attributes: List of attributes you want to retrieve
     func fetchAttributes(projectToken: String,
                          customerId: [AnyHashable: JSONConvertible],
-                         attributes: [CustomerAttributes]) {
+                         attributes: [CustomerAttribute]) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersAttributes)
@@ -313,8 +313,8 @@ extension ServerRepository: RepositoryType {
     ///     - events: List of event types you want to retrieve
     func fetchEvents(projectToken: String,
                      customerId: [AnyHashable: JSONConvertible],
-                     events: FetchEventsRequest,
-                     completion: @escaping (Result<FetchEventsResponse>) -> Void) {
+                     events: EventsRequest,
+                     completion: @escaping (Result<EventsResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersEvents)
@@ -364,7 +364,7 @@ extension ServerRepository: RepositoryType {
     /// - Parameters:
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - data: List of properties to retrieve
-    func fetchAllCustomers(projectToken: String, data: CustomerExportModel) {
+    func fetchAllCustomers(projectToken: String, data: CustomerExport) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
                                     route: .customersExportAll)

@@ -39,15 +39,44 @@ internal class Swizzler {
                                with newSelector: Selector,
                                for aClass: AnyClass,
                                name: String,
-                               block: @escaping SwizzleBlock) {
+                               block: @escaping SwizzleBlock,
+                               addingMethodIfNecessary: Bool = false) {
         
-        guard let originalMethod = class_getInstanceMethod(aClass, originalSelector),
-            let swizzledMethod = class_getInstanceMethod(aClass, newSelector) else {
+        guard let swizzledMethod = class_getInstanceMethod(aClass, newSelector) else {
                 Exponea.logger.log(.error, message: """
                     Swizzling error: Cannot find method for \
                     \(NSStringFromSelector(originalSelector)) on \(NSStringFromClass(aClass))
                     """)
                 return
+        }
+        
+        let originalMethod: Method
+        
+        if addingMethodIfNecessary {
+            if let method = class_getInstanceMethod(aClass, originalSelector) {
+                originalMethod = method
+            } else {
+                let block: () -> Void = { print("empty implementation") }
+                let emptyImp = imp_implementationWithBlock(unsafeBitCast(block, to: AnyObject.self))
+                let didAddMethod = class_addMethod(aClass, originalSelector, emptyImp, "")
+                guard didAddMethod else {
+                    Exponea.logger.log(.error, message: """
+                        Swizzling error: Cannot find method for \
+                        \(NSStringFromSelector(originalSelector)) on \(NSStringFromClass(aClass))
+                        """)
+                    return
+                }
+                originalMethod = class_getInstanceMethod(aClass, originalSelector)!
+            }
+        } else {
+            guard let method = class_getInstanceMethod(aClass, originalSelector) else {
+                Exponea.logger.log(.error, message: """
+                    Swizzling error: Cannot find method for \
+                    \(NSStringFromSelector(originalSelector)) on \(NSStringFromClass(aClass))
+                    """)
+                return
+            }
+            originalMethod = method
         }
         
         let swizzledMethodImplementation = method_getImplementation(swizzledMethod)
@@ -93,6 +122,10 @@ internal class Swizzler {
         }
     }
     
+    class func unswizzle(_ swizzle: Swizzle) {
+        unswizzleSelector(swizzle.selector, aClass: swizzle.aClass)
+        removeSwizzle(for: swizzle.originalMethod)
+    }
 }
 extension Swizzler {
     class Swizzle: CustomStringConvertible {

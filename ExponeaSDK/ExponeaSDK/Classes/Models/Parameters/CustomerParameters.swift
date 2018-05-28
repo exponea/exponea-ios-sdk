@@ -8,26 +8,22 @@
 
 import Foundation
 
-protocol RequestParametersType {
-    var parameters: [AnyHashable: JSONConvertible] { get }
-}
-
 struct CustomerParameters {
     var customer: [AnyHashable: JSONConvertible]?
     var property: String?
     var id: String?
-    var recommendation: CustomerRecommendation?
-    var attributes: [CustomerAttributes]?
-    var events: FetchEventsRequest?
-    var data: CustomerExportModel?
+    var recommendation: RecommendationRequest?
+    var attributes: [CustomerAttribute]?
+    var events: EventsRequest?
+    var data: CustomerExport?
 
     init(customer: [AnyHashable: JSONConvertible]?,
          property: String?,
          id: String?,
-         recommendation: CustomerRecommendation?,
-         attributes: [CustomerAttributes]?,
-         events: FetchEventsRequest?,
-         data: CustomerExportModel?) {
+         recommendation: RecommendationRequest?,
+         attributes: [CustomerAttribute]?,
+         events: EventsRequest?,
+         data: CustomerExport?) {
 
         self.customer = customer
         self.property = property

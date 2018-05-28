@@ -12,11 +12,11 @@ import Foundation
 
 class FetchMockData {
     let customerId: [AnyHashable: JSONConvertible] = ["registered": "rito@nodesagency.com"]
-    let customerData = FetchEventsRequest(eventTypes: ["session_start", "install"],
+    let customerData = EventsRequest(eventTypes: ["session_start", "install"],
                                       sortOrder: "asc",
                                       limit: 1,
                                       skip: 100)
-    let recommendation = CustomerRecommendation(type: "recommendation",
+    let recommendation = RecommendationRequest(type: "recommendation",
                                                 id: "592ff585fb60094e02bfaf6a",
                                                 size: nil,
                                                 strategy: nil,

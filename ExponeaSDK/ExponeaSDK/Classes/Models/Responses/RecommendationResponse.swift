@@ -9,11 +9,11 @@
 import Foundation
 
 /// <#Description#>
-public struct Recommendation: Codable {
+public struct RecommendationResponse: Codable {
     
     /// <#Description#>
     public let success: Bool?
     
     /// <#Description#>
-    public let results: [ValueResponse]?
+    public let results: [StringResponse]?
 }

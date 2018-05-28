@@ -44,7 +44,7 @@ extension PushNotificationManager {
         Swizzler.swizzleSelector(PushSelectorMapping.registration.original,
                                  with: PushSelectorMapping.registration.swizzled,
                                  for: appDelegateClass,
-                                 name: "PushTokenRegistration") { [weak self] (_, _, _, dataObject) in
+                                 name: "PushTokenRegistration", block: { [weak self] (_, _, _, dataObject) in
             print("swizzle push regi")
             guard let tokenData = dataObject as? Data else {
                 return
@@ -55,7 +55,7 @@ extension PushNotificationManager {
             } catch {
                 Exponea.logger.log(.error, message: "Error logging push token. \(error.localizedDescription)")
             }
-        }
+        }, addingMethodIfNecessary: true)
         
         // Monitor push delivery
         if let UNDelegate = UNUserNotificationCenter.current().delegate {
@@ -97,7 +97,7 @@ extension PushNotificationManager {
         Swizzler.swizzleSelector(mapping.original,
                                  with: mapping.swizzled,
                                  for: newClass ?? appDelegateClass,
-                                 name: "notification opened",
+                                 name: "NotificationOpened",
                                  block: block)
     }
     
@@ -105,6 +105,10 @@ extension PushNotificationManager {
         if let observer = pushObserver {
             observer.invalidate()
             pushObserver = nil
+        }
+        
+        for swizzle in Swizzler.swizzles {
+            Swizzler.unswizzle(swizzle.value)
         }
     }
     

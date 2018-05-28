@@ -34,8 +34,8 @@ public enum DataType {
     case eventType(String)
     case property(String)
     case id(String)
-    case recommendation(CustomerRecommendation)
-    case attributes(CustomerAttributes)
-    case events(FetchEventsRequest)
+    case recommendation(RecommendationRequest)
+    case attributes(CustomerAttribute)
+    case events(EventsRequest)
     case pushNotificationToken(String)
 }

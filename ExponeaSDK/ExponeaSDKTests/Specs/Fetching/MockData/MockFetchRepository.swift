@@ -38,11 +38,11 @@ class MockFetchRepository: FetchRepository {
         return
     }
     
-    func fetchProperty(projectToken: String, customerId: [String : JSONConvertible], property: String, completion: @escaping (Result<ValueResponse>) -> Void) {
+    func fetchProperty(projectToken: String, customerId: [String : JSONConvertible], property: String, completion: @escaping (Result<StringResponse>) -> Void) {
         return
     }
     
-    func fetchId(projectToken: String, customerId: [String : JSONConvertible], id: String, completion: @escaping (Result<ValueResponse>) -> Void) {
+    func fetchId(projectToken: String, customerId: [String : JSONConvertible], id: String, completion: @escaping (Result<StringResponse>) -> Void) {
         return
     }
     
@@ -56,8 +56,8 @@ class MockFetchRepository: FetchRepository {
 
     func fetchRecommendation(projectToken: String,
                              customerId: [AnyHashable: JSONConvertible],
-                             recommendation: CustomerRecommendation,
-                             completion: @escaping (Result<Recommendation>) -> Void) {
+                             recommendation: RecommendationRequest,
+                             completion: @escaping (Result<RecommendationResponse>) -> Void) {
 
         let router = RequestFactory(baseURL: configuration.baseURL,
                                projectToken: projectToken,
@@ -79,7 +79,7 @@ class MockFetchRepository: FetchRepository {
         guard
             let file = bundle.url(forResource: "get-recommendation", withExtension: "json"),
             let data = try? Data(contentsOf: file),
-            let recommendation = try? JSONDecoder().decode(Recommendation.self, from: data)
+            let recommendation = try? JSONDecoder().decode(RecommendationResponse.self, from: data)
             else {
                 fatalError("Something is horribly wrong with the data.")
         }
@@ -89,14 +89,14 @@ class MockFetchRepository: FetchRepository {
         completion(result)
     }
 
-    func fetchAttributes(projectToken: String, customerId: [AnyHashable: JSONConvertible], attributes: [CustomerAttributes]) {
+    func fetchAttributes(projectToken: String, customerId: [AnyHashable: JSONConvertible], attributes: [CustomerAttribute]) {
         return
     }
 
     func fetchEvents(projectToken: String,
                      customerId: [AnyHashable: JSONConvertible],
-                     events: FetchEventsRequest,
-                     completion: @escaping (Result<FetchEventsResponse>) -> Void) {
+                     events: EventsRequest,
+                     completion: @escaping (Result<EventsResponse>) -> Void) {
         return
     }
 
@@ -104,7 +104,7 @@ class MockFetchRepository: FetchRepository {
         return
     }
 
-    func fetchAllCustomers(projectToken: String, data: CustomerExportModel) {
+    func fetchAllCustomers(projectToken: String, data: CustomerExport) {
         return
     }
 
