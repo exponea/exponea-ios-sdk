@@ -25,7 +25,7 @@ class TrackingViewController: UIViewController {
     }
     
     @IBAction func customEventPressed(_ sender: Any) {
-        Exponea.trackEvent(properties: [
+        Exponea.shared.trackEvent(properties: [
             "my_property_1" : "my property 1 value",
             "info" : "test from exponea SDK sample app",
             "some_number" : 5
@@ -38,7 +38,7 @@ class TrackingViewController: UIViewController {
     }
     
     @IBAction func identifyCustomerPressed(_ sender: Any) {
-        Exponea.updateCustomerProperties(customerId: "test@test.com",
+        Exponea.shared.identifyCustomer(customerId: "test@test.com",
                                          properties: ["custom_property" : "somevalue"],
                                          timestamp: nil)
     }

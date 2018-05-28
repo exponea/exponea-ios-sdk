@@ -16,7 +16,7 @@ class FlushingViewController: UIViewController {
     }
     
     @IBAction func flushData(_ sender: Any) {
-        Exponea.flushData()
+        Exponea.shared.flushData()
     }
     
     @IBAction func logoutPressed(_ sender: Any) {

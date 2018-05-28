@@ -9,7 +9,7 @@
 import Foundation
 
 /// <#Description#>
-public class Exponea {
+public class Exponea: ExponeaType {
     
     /// Shared instance of ExponeaSDK.
     public internal(set) static var shared = Exponea()
@@ -134,7 +134,7 @@ internal extension Exponea {
             // Get depdencies and track install event
             let dependencies = try getDependenciesIfConfigured()
             try dependencies.trackingManager.track(.install, with: nil)
-        
+            
             /// Set the value to true if event was executed successfully
             userDefaults.set(true, forKey: Constants.Keys.launchedBefore)
             /// Set default timeout session time with default value
@@ -175,12 +175,12 @@ public extension Exponea {
     ///
     /// - Parameters:
     ///     - projectToken: Project Token to be used through the SDK
-    public class func configure(projectToken: String, authorization: Authorization, baseURL: String? = nil) {
+    public func configure(projectToken: String, authorization: Authorization, baseURL: String? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   authorization: authorization,
                                                   baseURL: baseURL)
-            shared.configuration = configuration
+            self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
@@ -193,10 +193,10 @@ public extension Exponea {
     ///
     /// - Parameters:
     ///     - plistName: List name containing the SDK setup keys
-    public class func configure(plistName: String) {
+    public func configure(plistName: String) {
         do {
             let configuration = try Configuration(plistName: plistName)
-            shared.configuration = configuration
+            self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: """
                 Can't parse Configuration from file \(plistName): \(error.localizedDescription).
@@ -212,16 +212,16 @@ public extension Exponea {
     ///   - projectMapping: The project token mapping dictionary providing all the tokens.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
     ///   - baseURL: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
-    public class func configure(projectToken: String,
-                                projectMapping: [EventType: [String]],
-                                authorization: Authorization,
-                                baseURL: String? = nil) {
+    public func configure(projectToken: String,
+                          projectMapping: [EventType: [String]],
+                          authorization: Authorization,
+                          baseURL: String? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   projectMapping: projectMapping,
                                                   authorization: authorization,
                                                   baseURL: baseURL)
-            shared.configuration = configuration
+            self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
@@ -238,7 +238,7 @@ public extension Exponea {
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
     ///     - eventType: Name of event
-    public class func trackEvent(properties: [AnyHashable: JSONConvertible], timestamp: Double?, eventType: String?) {
+    public func trackEvent(properties: [AnyHashable: JSONConvertible], timestamp: Double?, eventType: String?) {
         // Create initial data
         var data: [DataType] = [.properties(properties),
                                 .timestamp(timestamp)]
@@ -250,7 +250,7 @@ public extension Exponea {
         
         do {
             // Get dependencies and do the actual tracking
-            let dependencies = try shared.getDependenciesIfConfigured()
+            let dependencies = try getDependenciesIfConfigured()
             try dependencies.trackingManager.track(.customEvent, with: data)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
@@ -258,9 +258,9 @@ public extension Exponea {
     }
     
     /// This method can be used to manually flush all available data to Exponea.
-    public class func flushData() {
+    public func flushData() {
         do {
-            let dependencies = try shared.getDependenciesIfConfigured()
+            let dependencies = try getDependenciesIfConfigured()
             dependencies.trackingManager.flushData()
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
@@ -272,7 +272,7 @@ public extension Exponea {
     /// <#Description#>
     ///
     /// - Parameter token: <#token description#>
-    public class func trackPushToken(_ token: Data) {
+    public func trackPushToken(_ token: Data) {
         // Convert token data to String
         trackPushToken(token.tokenString)
     }
@@ -280,12 +280,12 @@ public extension Exponea {
     /// <#Description#>
     ///
     /// - Parameter token: <#token description#>
-    public class func trackPushToken(_ token: String) {
+    public func trackPushToken(_ token: String) {
         let data: [DataType] = [.pushNotificationToken(token)]
         
         do {
             // Get dependencies and do the actual tracking
-            let dependencies = try shared.getDependenciesIfConfigured()
+            let dependencies = try getDependenciesIfConfigured()
             try dependencies.trackingManager.track(.identifyCustomer, with: data)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
@@ -293,7 +293,7 @@ public extension Exponea {
     }
     
     /// <#Description#>
-    public class func trackPushClicked() {
+    public func trackPushClicked() {
         
     }
     
@@ -302,9 +302,9 @@ public extension Exponea {
     /// Restart any tasks that were paused (or not yet started) while the application was inactive.
     /// If the application was previously in the background, optionally refresh the user interface.
     ///
-    public class func trackSessionStart() {
+    public func trackSessionStart() {
         do {
-            let dependencies = try shared.getDependenciesIfConfigured()
+            let dependencies = try getDependenciesIfConfigured()
             try dependencies.trackingManager.track(.sessionStart, with: nil)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
@@ -314,9 +314,9 @@ public extension Exponea {
     /// Restart any tasks that were paused (or not yet started) while the application was inactive.
     /// If the application was previously in the background, optionally refresh the user interface.
     ///
-    public class func trackSessionEnd() {
+    public func trackSessionEnd() {
         do {
-            let dependencies = try shared.getDependenciesIfConfigured()
+            let dependencies = try getDependenciesIfConfigured()
             try dependencies.trackingManager.track(.sessionEnd, with: nil)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
@@ -335,7 +335,7 @@ public extension Exponea {
                                  properties: [AnyHashable: JSONConvertible],
                                  timestamp: Double?) {
         do {
-            let dependencies = try shared.getDependenciesIfConfigured()
+            let dependencies = try getDependenciesIfConfigured()
             
             // Prepare data
             var data: [DataType] = [.properties(properties),
@@ -357,16 +357,25 @@ public extension Exponea {
     /// - Parameters:
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
-    public class func fetchCustomerEvents(projectToken: String,
-                                          customerId: [AnyHashable: JSONConvertible],
-                                          events: EventsRequest,
-                                          completion: @escaping (Result<EventsResponse>) -> Void) {
+    public func fetchEvents(with request: EventsRequest, completion: @escaping (Result<EventsResponse>) -> Void) {
         do {
-            let dependencies = try shared.getDependenciesIfConfigured()
-            dependencies.repository.fetchEvents(projectToken: projectToken,
-                                                customerId: customerId,
-                                                events: events,
+            let dependencies = try getDependenciesIfConfigured()
+            dependencies.repository.fetchEvents(events: request,
+                                                for: dependencies.trackingManager.customerIds,
                                                 completion: completion)
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
+            completion(.failure(error))
+        }
+    }
+    
+    public func fetchAttributes(with request: CustomerAttribute,
+                                completion: @escaping (Result<CustomerAttributesGroup>) -> Void) {
+        do {
+            let dependencies = try getDependenciesIfConfigured()
+            dependencies.repository.fetchAttributes(attributes: [request],
+                                                    for: dependencies.trackingManager.customerIds,
+                                                    completion: completion)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
             completion(.failure(error))
@@ -378,15 +387,12 @@ public extension Exponea {
     /// - Parameters:
     ///     - customerId: Specify your customer with external id.
     ///     - events: Object containing all event types to be fetched.
-    public class func fetchRecommendation(projectToken: String,
-                                          customerId: [AnyHashable: JSONConvertible],
-                                          recommendation: RecommendationRequest,
-                                          completion: @escaping (Result<RecommendationResponse>) -> Void) {
+    public func fetchRecommendation(with request: RecommendationRequest,
+                                    completion: @escaping (Result<RecommendationResponse>) -> Void) {
         do {
-            let dependencies = try shared.getDependenciesIfConfigured()
-            dependencies.repository.fetchRecommendation(projectToken: projectToken,
-                                                        customerId: customerId,
-                                                        recommendation: recommendation,
+            let dependencies = try getDependenciesIfConfigured()
+            dependencies.repository.fetchRecommendation(recommendation: request,
+                                                        for: dependencies.trackingManager.customerIds,
                                                         completion: completion)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)

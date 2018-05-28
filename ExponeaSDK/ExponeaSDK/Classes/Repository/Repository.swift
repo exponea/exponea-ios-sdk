@@ -9,9 +9,13 @@
 import Foundation
 
 protocol TrackingRepository {
-    func trackCustomer(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void))
-    func trackEvent(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void))
-    func trackEvents(with data: [[DataType]], for customer: Customer, completion: @escaping ((EmptyResult) -> Void))
+    func trackCustomer(with data: [DataType],
+                       for customerIds: [AnyHashable: JSONConvertible],
+                       completion: @escaping ((EmptyResult) -> Void))
+    
+    func trackEvent(with data: [DataType],
+                    for customerIds: [AnyHashable: JSONConvertible],
+                    completion: @escaping ((EmptyResult) -> Void))
 }
 
 protocol TokenRepository {
@@ -20,39 +24,30 @@ protocol TokenRepository {
 }
 
 protocol FetchRepository {
-    func fetchProperty(projectToken: String, customerId: [AnyHashable: JSONConvertible],
-                       property: String, completion: @escaping (Result<StringResponse>) -> Void)
+    func fetchProperty(property: String, for customerIds: [AnyHashable: JSONConvertible],
+                       completion: @escaping (Result<StringResponse>) -> Void)
+    func fetchAllProperties(for customerIds: [AnyHashable: JSONConvertible],
+                            completion: @escaping (Result<[StringResponse]>) -> Void)
     
-    func fetchId(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
+    func fetchId(id: String, for customerIds: [AnyHashable: JSONConvertible],
                  completion: @escaping (Result<StringResponse>) -> Void)
-    
-    func fetchSegmentation(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String)
-    
-    func fetchExpression(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
+    func fetchSegmentation(id: String, for customerIds: [AnyHashable: JSONConvertible],
+                           completion: @escaping (Result<StringResponse>) -> Void)
+    func fetchExpression(id: String, for customerIds: [AnyHashable: JSONConvertible],
                          completion: @escaping (Result<EntityValueResponse>) -> Void)
-    
-    func fetchPrediction(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
+    func fetchPrediction(id: String, for customerIds: [AnyHashable: JSONConvertible],
                          completion: @escaping (Result<EntityValueResponse>) -> Void)
-    
-    func fetchRecommendation(projectToken: String,
-                             customerId: [AnyHashable: JSONConvertible],
-                             recommendation: RecommendationRequest,
+    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [AnyHashable: JSONConvertible],
                              completion: @escaping (Result<RecommendationResponse>) -> Void)
-    
-    func fetchAttributes(projectToken: String,
-                         customerId: [AnyHashable: JSONConvertible],
-                         attributes: [CustomerAttribute])
-    
-    func fetchEvents(projectToken: String,
-                     customerId: [AnyHashable: JSONConvertible],
-                     events: EventsRequest,
+    func fetchAttributes(attributes: [CustomerAttribute], for customerIds: [AnyHashable: JSONConvertible],
+                         completion: @escaping (Result<CustomerAttributesGroup>) -> Void)
+    func fetchEvents(events: EventsRequest, for customerIds: [AnyHashable: JSONConvertible],
                      completion: @escaping (Result<EventsResponse>) -> Void)
+    func fetchAllCustomers(data: CustomerExport,
+                           completion: @escaping (Result<[StringResponse]>) -> Void)
     
-    func fetchAllProperties(projectToken: String, customerId: [AnyHashable: JSONConvertible])
-    
-    func fetchAllCustomers(projectToken: String, data: CustomerExport)
-    
-    func anonymize(projectToken: String, customerId: [AnyHashable: JSONConvertible])
+    func anonymize(customerIds: [AnyHashable: JSONConvertible],
+                   completion: @escaping (Result<StringResponse>) -> Void)
 }
 
 protocol RepositoryType: class, TrackingRepository, TokenRepository, FetchRepository {

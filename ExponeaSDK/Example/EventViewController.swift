@@ -25,10 +25,7 @@ class EventViewController: UIViewController {
     @IBAction func recommendationPressed(_ sender: Any) {
         let recomm = RecommendationRequest(type: "", id: "", size: nil,
                                             strategy: nil, knowItems: nil, anti: nil, items: nil)
-        Exponea.fetchRecommendation(
-            projectToken: Exponea.shared.configuration!.projectToken!,
-            customerId: [:],
-            recommendation: recomm) { (result) in
+        Exponea.shared.fetchRecommendation(with: recomm) { (result) in
                 switch result {
                 case .success(let recom):
                     self.textView.text = "\(recom)"
@@ -40,10 +37,7 @@ class EventViewController: UIViewController {
     
     @IBAction func personalisationPressed(_ sender: Any) {
         let req = EventsRequest(eventTypes: ["my_custom_event_type"])
-        Exponea.fetchCustomerEvents(
-            projectToken: Exponea.shared.configuration!.projectToken!,
-            customerId: [:],
-            events: req) { (result) in
+        Exponea.shared.fetchEvents(with: req) { (result) in
                 switch result {
                 case .success(let recom):
                     self.textView.text = "\(recom)"
@@ -54,11 +48,8 @@ class EventViewController: UIViewController {
     }
     
     @IBAction func attributesPressed(_ sender: Any) {
-        let req = EventsRequest(eventTypes: ["my_custom_event_type"])
-        Exponea.fetchCustomerEvents(
-            projectToken: Exponea.shared.configuration!.projectToken!,
-            customerId: [:],
-            events: req) { (result) in
+        let req = CustomerAttribute(key: "a", value: "b", identificationKey: "", identificationValue: "")
+        Exponea.shared.fetchAttributes(with: req) { (result) in
                 switch result {
                 case .success(let recom):
                     self.textView.text = "\(recom)"
@@ -70,10 +61,7 @@ class EventViewController: UIViewController {
     
     @IBAction func eventsPressed(_ sender: Any) {
         let req = EventsRequest(eventTypes: ["my_custom_event_type"])
-        Exponea.fetchCustomerEvents(
-            projectToken: Exponea.shared.configuration!.projectToken!,
-            customerId: [:],
-            events: req) { (result) in
+        Exponea.shared.fetchEvents(with: req) { (result) in
                 switch result {
                 case .success(let recom):
                     self.textView.text = "\(recom)"
