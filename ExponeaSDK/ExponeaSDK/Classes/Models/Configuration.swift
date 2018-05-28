@@ -153,7 +153,7 @@ extension Configuration {
                 return [token]
             }
 
-            /// If we whae no project token nor token mapping, fail and log error.
+            /// If we have no project token nor token mapping, fail and log error.
             guard let first = mapping.first else {
                 Exponea.logger.log(.error, message: "No project token found.")
                 return []
@@ -163,5 +163,17 @@ extension Configuration {
             Exponea.logger.log(.warning, message: "No token mapping found for event, falling back to \(first.key).")
             return first.value
         }
+    }
+    
+    var fetchingToken: String {
+        guard let projectToken = projectToken else {
+            Exponea.logger.log(.warning, message: """
+            No default project token found, falling back to token for identify customer event type, if possible.
+            """)
+            let token = tokens(for: .identifyCustomer)
+            return token.first ?? ""
+        }
+        
+        return projectToken
     }
 }
