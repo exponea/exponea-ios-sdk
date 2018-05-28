@@ -48,7 +48,7 @@ class EventViewController: UIViewController {
     }
     
     @IBAction func attributesPressed(_ sender: Any) {
-        let req = CustomerAttribute(key: "a", value: "b", identificationKey: "", identificationValue: "")
+        let req = AttributesDescription(key: "a", value: "b", identificationKey: "", identificationValue: "")
         Exponea.shared.fetchAttributes(with: req) { (result) in
                 switch result {
                 case .success(let recom):

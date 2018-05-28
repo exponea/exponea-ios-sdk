@@ -89,7 +89,7 @@ class MockFetchRepository: FetchRepository {
         completion(result)
     }
 
-    func fetchAttributes(projectToken: String, customerId: [AnyHashable: JSONConvertible], attributes: [CustomerAttribute]) {
+    func fetchAttributes(projectToken: String, customerId: [AnyHashable: JSONConvertible], attributes: [AttributesDescription]) {
         return
     }
 

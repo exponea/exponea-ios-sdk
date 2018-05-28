@@ -35,7 +35,7 @@ public enum DataType {
     case property(String)
     case id(String)
     case recommendation(RecommendationRequest)
-    case attributes(CustomerAttribute)
+    case attributes(AttributesDescription)
     case events(EventsRequest)
     case pushNotificationToken(String)
 }

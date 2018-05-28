@@ -26,9 +26,6 @@ protocol TokenRepository {
 protocol FetchRepository {
     func fetchProperty(property: String, for customerIds: [AnyHashable: JSONConvertible],
                        completion: @escaping (Result<StringResponse>) -> Void)
-    func fetchAllProperties(for customerIds: [AnyHashable: JSONConvertible],
-                            completion: @escaping (Result<[StringResponse]>) -> Void)
-    
     func fetchId(id: String, for customerIds: [AnyHashable: JSONConvertible],
                  completion: @escaping (Result<StringResponse>) -> Void)
     func fetchSegmentation(id: String, for customerIds: [AnyHashable: JSONConvertible],
@@ -39,10 +36,13 @@ protocol FetchRepository {
                          completion: @escaping (Result<EntityValueResponse>) -> Void)
     func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [AnyHashable: JSONConvertible],
                              completion: @escaping (Result<RecommendationResponse>) -> Void)
-    func fetchAttributes(attributes: [CustomerAttribute], for customerIds: [AnyHashable: JSONConvertible],
-                         completion: @escaping (Result<CustomerAttributesGroup>) -> Void)
+    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [AnyHashable: JSONConvertible],
+                         completion: @escaping (Result<AttributesListDescription>) -> Void)
     func fetchEvents(events: EventsRequest, for customerIds: [AnyHashable: JSONConvertible],
                      completion: @escaping (Result<EventsResponse>) -> Void)
+    
+    func fetchAllProperties(for customerIds: [AnyHashable: JSONConvertible],
+                            completion: @escaping (Result<[StringResponse]>) -> Void)
     func fetchAllCustomers(data: CustomerExport,
                            completion: @escaping (Result<[StringResponse]>) -> Void)
     

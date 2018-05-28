@@ -20,8 +20,8 @@
 		01EC2DA5207E4F8F0031BFEB /* RecommendationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA4207E4F8F0031BFEB /* RecommendationRequest.swift */; };
 		01EC2DA7207E4FBA0031BFEB /* EventsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA6207E4FBA0031BFEB /* EventsRequest.swift */; };
 		01EC2DA9207E4FC10031BFEB /* CustomerExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DA8207E4FC10031BFEB /* CustomerExport.swift */; };
-		01EC2DAB207E53D90031BFEB /* CustomerAttributesGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DAA207E53D90031BFEB /* CustomerAttributesGroup.swift */; };
-		01EC2DAD207E53E40031BFEB /* CustomerAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DAC207E53E40031BFEB /* CustomerAttribute.swift */; };
+		01EC2DAB207E53D90031BFEB /* AttributesListDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DAA207E53D90031BFEB /* AttributesListDescription.swift */; };
+		01EC2DAD207E53E40031BFEB /* AttributesDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DAC207E53E40031BFEB /* AttributesDescription.swift */; };
 		01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */; };
 		01EC2DB4207E58080031BFEB /* EventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB3207E58080031BFEB /* EventType.swift */; };
 		01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */; };
@@ -142,8 +142,8 @@
 		01EC2DA4207E4F8F0031BFEB /* RecommendationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationRequest.swift; sourceTree = "<group>"; };
 		01EC2DA6207E4FBA0031BFEB /* EventsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsRequest.swift; sourceTree = "<group>"; };
 		01EC2DA8207E4FC10031BFEB /* CustomerExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerExport.swift; sourceTree = "<group>"; };
-		01EC2DAA207E53D90031BFEB /* CustomerAttributesGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerAttributesGroup.swift; sourceTree = "<group>"; };
-		01EC2DAC207E53E40031BFEB /* CustomerAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerAttribute.swift; sourceTree = "<group>"; };
+		01EC2DAA207E53D90031BFEB /* AttributesListDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesListDescription.swift; sourceTree = "<group>"; };
+		01EC2DAC207E53E40031BFEB /* AttributesDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesDescription.swift; sourceTree = "<group>"; };
 		01EC2DAE207E55280031BFEB /* DatabaseManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerType.swift; sourceTree = "<group>"; };
 		01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManager.swift; sourceTree = "<group>"; };
 		01EC2DB3207E58080031BFEB /* EventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventType.swift; sourceTree = "<group>"; };
@@ -371,6 +371,8 @@
 			children = (
 				01EC2DA6207E4FBA0031BFEB /* EventsRequest.swift */,
 				01EC2DA4207E4F8F0031BFEB /* RecommendationRequest.swift */,
+				01EC2DAA207E53D90031BFEB /* AttributesListDescription.swift */,
+				01EC2DAC207E53E40031BFEB /* AttributesDescription.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -539,8 +541,6 @@
 				F0CA58F5207F612200C89A7F /* DeviceProperties.swift */,
 				F029BF22208A08CE00342498 /* Event.swift */,
 				01EC2DA8207E4FC10031BFEB /* CustomerExport.swift */,
-				01EC2DAA207E53D90031BFEB /* CustomerAttributesGroup.swift */,
-				01EC2DAC207E53E40031BFEB /* CustomerAttribute.swift */,
 				F067441320873813003C0293 /* PurchasedItem.swift */,
 			);
 			path = Models;
@@ -857,7 +857,7 @@
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
 				019F1AC52087666900368FB1 /* DataType.swift in Sources */,
 				C0753E9220A574AE00A779FF /* TrackEvent+DataType.swift in Sources */,
-				01EC2DAD207E53E40031BFEB /* CustomerAttribute.swift in Sources */,
+				01EC2DAD207E53E40031BFEB /* AttributesDescription.swift in Sources */,
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
 				C0E6775F20A6E3F800789861 /* Customer+DataType.swift in Sources */,
 				01EC2DB4207E58080031BFEB /* EventType.swift in Sources */,
@@ -880,7 +880,7 @@
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				01EC2DA7207E4FBA0031BFEB /* EventsRequest.swift in Sources */,
-				01EC2DAB207E53D90031BFEB /* CustomerAttributesGroup.swift in Sources */,
+				01EC2DAB207E53D90031BFEB /* AttributesListDescription.swift in Sources */,
 				C0EB5D8C20B70D5000F1031F /* Swizzler.swift in Sources */,
 				C0D9B07B20A3B2410066FB1E /* TrackingManagerError.swift in Sources */,
 				F029BF29208A099500342498 /* Routes.swift in Sources */,

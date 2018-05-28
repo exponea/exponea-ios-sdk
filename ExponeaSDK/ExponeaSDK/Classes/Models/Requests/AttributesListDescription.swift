@@ -9,11 +9,11 @@
 import Foundation
 
 /// <#Description#>
-public struct CustomerAttributesGroup: Decodable {
+public struct AttributesListDescription: Decodable {
     
     /// <#Description#>
     public var type: String
     
     /// <#Description#>
-    public var list: [CustomerAttribute]
+    public var list: [AttributesDescription]
 }

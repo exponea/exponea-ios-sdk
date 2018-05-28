@@ -45,8 +45,8 @@ public protocol ExponeaType: class {
     func fetchEvents(with request: EventsRequest,
                      completion: @escaping (Result<EventsResponse>) -> Void)
     
-    func fetchAttributes(with request: CustomerAttribute,
-                         completion: @escaping (Result<CustomerAttributesGroup>) -> Void)
+    func fetchAttributes(with request: AttributesDescription,
+                         completion: @escaping (Result<AttributesListDescription>) -> Void)
     
     func fetchRecommendation(with request: RecommendationRequest,
                              completion: @escaping (Result<RecommendationResponse>) -> Void)

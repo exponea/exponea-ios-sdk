@@ -9,7 +9,7 @@
 import Foundation
 
 /// <#Description#>
-public struct CustomerAttribute: Decodable {
+public struct AttributesDescription: Decodable {
     
     /// <#Description#>
     public var typeKey: String

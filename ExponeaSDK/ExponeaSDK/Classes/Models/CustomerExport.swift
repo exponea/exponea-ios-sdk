@@ -12,7 +12,7 @@ import Foundation
 public struct CustomerExport {
     
     /// <#Description#>
-    public var attributes: CustomerAttributesGroup
+    public var attributes: AttributesListDescription
     
     /// <#Description#>
     public var filter: [AnyHashable: JSONConvertible]

@@ -272,8 +272,8 @@ extension ServerRepository: RepositoryType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - attributes: List of attributes you want to retrieve
-    func fetchAttributes(attributes: [CustomerAttribute], for customerIds: [AnyHashable: JSONConvertible],
-                         completion: @escaping (Result<CustomerAttributesGroup>) -> Void) {
+    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [AnyHashable: JSONConvertible],
+                         completion: @escaping (Result<AttributesListDescription>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
                                     route: .customersAttributes)

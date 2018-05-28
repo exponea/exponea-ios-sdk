@@ -13,7 +13,7 @@ struct CustomerParameters {
     var property: String?
     var id: String?
     var recommendation: RecommendationRequest?
-    var attributes: [CustomerAttribute]?
+    var attributes: [AttributesDescription]?
     var events: EventsRequest?
     var data: CustomerExport?
 
@@ -21,7 +21,7 @@ struct CustomerParameters {
          property: String? = nil,
          id: String? = nil,
          recommendation: RecommendationRequest? = nil,
-         attributes: [CustomerAttribute]? = nil,
+         attributes: [AttributesDescription]? = nil,
          events: EventsRequest? = nil,
          data: CustomerExport? = nil) {
 

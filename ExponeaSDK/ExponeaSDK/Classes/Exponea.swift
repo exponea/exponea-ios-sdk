@@ -369,8 +369,8 @@ public extension Exponea {
         }
     }
     
-    public func fetchAttributes(with request: CustomerAttribute,
-                                completion: @escaping (Result<CustomerAttributesGroup>) -> Void) {
+    public func fetchAttributes(with request: AttributesDescription,
+                                completion: @escaping (Result<AttributesListDescription>) -> Void) {
         do {
             let dependencies = try getDependenciesIfConfigured()
             dependencies.repository.fetchAttributes(attributes: [request],
