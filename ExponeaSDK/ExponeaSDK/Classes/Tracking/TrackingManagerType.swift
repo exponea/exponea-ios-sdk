@@ -10,6 +10,10 @@ import Foundation
 
 /// Class of type `TrackingManagerType` is responsible for all event and customer tracking.
 protocol TrackingManagerType: class {
+    
+    /// The identifiers of the the current customer.
+    var customerIds: [AnyHashable: JSONConvertible] { get }
+    
     /// Main function used to track events to Exponea.
     ///
     /// - Parameters:

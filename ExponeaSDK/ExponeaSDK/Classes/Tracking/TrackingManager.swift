@@ -13,6 +13,11 @@ open class TrackingManager {
     let repository: RepositoryType
     let device: DeviceProperties
     
+    /// The identifiers of the the current customer.
+    var customerIds: [AnyHashable: JSONConvertible] {
+        return database.customer.ids
+    }
+    
     /// Payment manager responsible to track all in app payments.
     internal var paymentManager: PaymentManagerType {
         didSet {
@@ -26,6 +31,9 @@ open class TrackingManager {
     
     /// Used for periodic data flushing.
     internal var flushingTimer: Timer?
+    
+    /// Flushing mode specifies how often and if should data be automatically flushed to Exponea.
+    /// See `FlushingMode` for available values.
     public var flushingMode: FlushingMode = .automatic {
         didSet {
             Exponea.logger.log(.verbose, message: "Flushing mode updated to: \(flushingMode).")
@@ -293,7 +301,7 @@ extension TrackingManager {
             }
             
             for customer in customers {
-                repository.trackCustomer(with: customer.dataTypes, for: database.customer) { [weak self] (result) in
+                repository.trackCustomer(with: customer.dataTypes, for: customerIds) { [weak self] (result) in
                     switch result {
                     case .success:
                         Exponea.logger.log(.verbose, message: """
@@ -316,7 +324,7 @@ extension TrackingManager {
             }
             
             for event in events {
-                repository.trackEvent(with: event.dataTypes, for: database.customer) { [weak self] (result) in
+                repository.trackEvent(with: event.dataTypes, for: customerIds) { [weak self] (result) in
                     switch result {
                     case .success:
                         Exponea.logger.log(.verbose, message: "Successfully uploaded event: \(event.objectID).")
