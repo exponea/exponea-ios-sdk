@@ -9,7 +9,7 @@
 import Foundation
 
 struct CustomerParameters {
-    var customer: [AnyHashable: JSONConvertible]?
+    var customer: [AnyHashable: JSONConvertible]
     var property: String?
     var id: String?
     var recommendation: RecommendationRequest?
@@ -17,13 +17,13 @@ struct CustomerParameters {
     var events: EventsRequest?
     var data: CustomerExport?
 
-    init(customer: [AnyHashable: JSONConvertible]?,
-         property: String?,
-         id: String?,
-         recommendation: RecommendationRequest?,
-         attributes: [CustomerAttribute]?,
-         events: EventsRequest?,
-         data: CustomerExport?) {
+    init(customer: [AnyHashable: JSONConvertible],
+         property: String? = nil,
+         id: String? = nil,
+         recommendation: RecommendationRequest? = nil,
+         attributes: [CustomerAttribute]? = nil,
+         events: EventsRequest? = nil,
+         data: CustomerExport? = nil) {
 
         self.customer = customer
         self.property = property
@@ -45,9 +45,8 @@ extension CustomerParameters: RequestParametersType {
         var attributeComplete: [AnyHashable: JSONConvertible] = [:]
         
         /// Preparing customers_ids params
-        if let customer = customer {
-            preparedParam["customer_ids"] = customer
-        }
+        preparedParam["customer_ids"] = customer
+        
         /// Preparing property param
         if let property = property {
             preparedParam["property"] = property
