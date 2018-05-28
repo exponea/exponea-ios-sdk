@@ -162,13 +162,15 @@ extension TrackingManager {
                                                name: .UIApplicationDidBecomeActive,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationWillResignActive),
-                                               name: .UIApplicationWillResignActive,
+                                               selector: #selector(applicationDidEnterBackground),
+                                               name: .UIApplicationDidEnterBackground,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationWillTerminate),
                                                name: .UIApplicationWillTerminate,
                                                object: nil)
+        
+        try? track(.sessionStart, with: nil)
     }
     
     /// Removes session observers.
@@ -204,7 +206,7 @@ extension TrackingManager {
         }
     }
     
-    @objc internal func applicationWillResignActive() {
+    @objc internal func applicationDidEnterBackground() {
         // Set the session end to the time when the app resigns active state
         sessionEndTime = Date().timeIntervalSince1970
     }
@@ -242,7 +244,7 @@ extension TrackingManager {
         }
         
         /// Calculate the session duration
-        let sessionDuration = sessionStartTime - sessionEndTime
+        let sessionDuration = sessionEndTime - sessionStartTime
         
         /// Session should be ended
         if sessionDuration > repository.configuration.sessionTimeout {
@@ -270,7 +272,7 @@ extension TrackingManager {
         var properties = device.properties
         
         /// Calculate the duration of the last session.
-        let duration = sessionStartTime - sessionEndTime
+        let duration = sessionEndTime - sessionStartTime
         
         /// Adding session end properties.
         properties["event_type"] = Constants.EventTypes.sessionEnd
