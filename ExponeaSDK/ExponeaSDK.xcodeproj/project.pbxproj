@@ -55,6 +55,8 @@
 		C0EB5D9F20BB530000F1031F /* ExponeaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9E20BB530000F1031F /* ExponeaType.swift */; };
 		C0EB5DA620BB59BD00F1031F /* RequestParametersType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5DA520BB59BD00F1031F /* RequestParametersType.swift */; };
 		C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406920BC38EC00CAF7CE /* Swizzle.swift */; };
+		C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */; };
+		C0F2406E20BC511500CAF7CE /* Exponea+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */; };
 		C0F6C4E32098A1AB00834E21 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */; };
 		C0F6C4E52098A1AB00834E21 /* AuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */; };
 		C0F6C4E82098A1AB00834E21 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4E62098A1AB00834E21 /* Main.storyboard */; };
@@ -182,6 +184,8 @@
 		C0EB5D9E20BB530000F1031F /* ExponeaType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaType.swift; sourceTree = "<group>"; };
 		C0EB5DA520BB59BD00F1031F /* RequestParametersType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestParametersType.swift; sourceTree = "<group>"; };
 		C0F2406920BC38EC00CAF7CE /* Swizzle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swizzle.swift; sourceTree = "<group>"; };
+		C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+Fetching.swift"; sourceTree = "<group>"; };
+		C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+Tracking.swift"; sourceTree = "<group>"; };
 		C0F6C4E02098A1AB00834E21 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationViewController.swift; sourceTree = "<group>"; };
@@ -589,6 +593,8 @@
 			isa = PBXGroup;
 			children = (
 				F0E757ED207D025300FE8C21 /* Exponea.swift */,
+				C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */,
+				C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 				C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */,
 				01EC2DB0207E55C10031BFEB /* Tracking */,
@@ -855,6 +861,7 @@
 				F029BF2B208A2BC300342498 /* RecommendationResponse.swift in Sources */,
 				C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */,
 				C0EB5D8A20B6EABC00F1031F /* TrackCustomer+DataType.swift in Sources */,
+				C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* RecommendationRequest.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
@@ -870,6 +877,7 @@
 				01EC2DA9207E4FC10031BFEB /* CustomerExport.swift in Sources */,
 				C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
+				C0F2406E20BC511500CAF7CE /* Exponea+Tracking.swift in Sources */,
 				C0D9B07920A38A8C0066FB1E /* PaymentManagerDelegate.swift in Sources */,
 				01C2AD4E208F61000012F663 /* CustomerParameters.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,

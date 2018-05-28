@@ -55,8 +55,7 @@ protocol FetchRepository {
     /// Fetchs the property for a customer.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     ///   - property: Property that should be fetched.
     ///   - completion: Object containing the request result.
     func fetchProperty(property: String, for customerIds: [AnyHashable: JSONConvertible],
@@ -64,8 +63,7 @@ protocol FetchRepository {
     /// Fetchs a identifier by another known identifier.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     ///   - id: Identifier that you want to retrieve.
     ///   - completion: Object containing the request result.
     func fetchId(id: String, for customerIds: [AnyHashable: JSONConvertible],
@@ -74,8 +72,7 @@ protocol FetchRepository {
     /// Fetch a segment by its ID for particular customer.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     ///   - id: Identifier that you want to retrieve.
     func fetchSegmentation(id: String, for customerIds: [AnyHashable: JSONConvertible],
                            completion: @escaping (Result<StringResponse>) -> Void)
@@ -83,8 +80,7 @@ protocol FetchRepository {
     /// Fetch an expression by its ID for particular customer.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     ///   - id: Identifier that you want to retrieve.
     ///   - completion: Object containing the request result.
     func fetchExpression(id: String, for customerIds: [AnyHashable: JSONConvertible],
@@ -93,8 +89,7 @@ protocol FetchRepository {
     /// Fetch a prediction by its ID for particular customer.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     ///   - id: Identifier that you want to retrieve
     ///   - completion: Object containing the request result.
     func fetchPrediction(id: String, for customerIds: [AnyHashable: JSONConvertible],
@@ -103,8 +98,7 @@ protocol FetchRepository {
     /// Fetch a recommendation by its ID for particular customer.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     ///   - recommendation: Recommendations for the customer.
     ///   - completion: Object containing the request result.
     func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [AnyHashable: JSONConvertible],
@@ -113,8 +107,7 @@ protocol FetchRepository {
     /// Fetch multiple customer attributes at once
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     ///   - attributes: List of attributes you want to retrieve.
     func fetchAttributes(attributes: [AttributesDescription], for customerIds: [AnyHashable: JSONConvertible],
                          completion: @escaping (Result<AttributesListDescription>) -> Void)
@@ -122,25 +115,22 @@ protocol FetchRepository {
     /// Fetch customer events by its type.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     ///   - events: List of event types to be retrieve.
     ///   - completion: Object containing the request result.
     func fetchEvents(events: EventsRequest, for customerIds: [AnyHashable: JSONConvertible],
                      completion: @escaping (Result<EventsResponse>) -> Void)
     
-    /// Exports all properties, ids and events for one customer
+    /// Exports all properties, ids and events for one customer.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     func fetchAllProperties(for customerIds: [AnyHashable: JSONConvertible],
                             completion: @escaping (Result<[StringResponse]>) -> Void)
 
-    /// Exports all customers who exist in the project
+    /// Exports all customers who exist in the project.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
     ///   - data: List of properties to retrieve.
     func fetchAllCustomers(data: CustomerExport,
                            completion: @escaping (Result<[StringResponse]>) -> Void)
@@ -149,8 +139,7 @@ protocol FetchRepository {
     /// Removes all personal customer properties.
     ///
     /// - Parameters:
-    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
-    ///   - customerId: Identification of a customer.
+    ///   - customerIds: Identification of a customer.
     func anonymize(customerIds: [AnyHashable: JSONConvertible],
                    completion: @escaping (Result<StringResponse>) -> Void)
 }
