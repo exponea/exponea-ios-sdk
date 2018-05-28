@@ -25,7 +25,7 @@ public protocol ExponeaType: class {
     // MARK: - Tracking -
     
     func trackEvent(properties: [AnyHashable: JSONConvertible], timestamp: Double?, eventType: String?)
-    func updateCustomerProperties(customerId: String?, properties: [AnyHashable: JSONConvertible], timestamp: Double?)
+    func identifyCustomer(customerId: String?, properties: [AnyHashable: JSONConvertible], timestamp: Double?)
     
     func flushData()
     

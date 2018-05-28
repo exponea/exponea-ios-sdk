@@ -331,9 +331,9 @@ public extension Exponea {
     ///     - customerId: Specify your customer with external id, for example an email address.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
-    public class func updateCustomerProperties(customerId: String?,
-                                               properties: [AnyHashable: JSONConvertible],
-                                               timestamp: Double?) {
+    public func identifyCustomer(customerId: String?,
+                                 properties: [AnyHashable: JSONConvertible],
+                                 timestamp: Double?) {
         do {
             let dependencies = try shared.getDependenciesIfConfigured()
             
