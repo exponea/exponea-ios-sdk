@@ -8,13 +8,22 @@
 
 import Foundation
 
+/// A Group of parameters used to update any kind of customer properties.
+/// Depending on what king of tracking, you can use a combination of properties.
 struct CustomerParameters {
+    /// Customer identification.
     var customer: [AnyHashable: JSONConvertible]
+    /// Name of the property.
     var property: String?
+    /// Customer identification.
     var id: String?
+    /// Customer recommendation.
     var recommendation: RecommendationRequest?
+    /// Array of customer attribytes.
     var attributes: [AttributesDescription]?
+    /// Customer events.
     var events: EventsRequest?
+    /// Customer data to export multiple properties.
     var data: CustomerExport?
 
     init(customer: [AnyHashable: JSONConvertible],

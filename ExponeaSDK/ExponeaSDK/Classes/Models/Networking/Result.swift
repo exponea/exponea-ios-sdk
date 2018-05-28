@@ -8,6 +8,11 @@
 
 import Foundation
 
+/// Data type used to return the result of a http call. It returns the status and
+/// the object in case of success, otherwise return the error from the Exponea API.
+///
+/// - success(T)
+/// - failure(Error)
 public enum Result<T> {
     case success(T)
     case failure(Error)
@@ -29,6 +34,12 @@ public enum Result<T> {
     }
 }
 
+/// Data type used for request http calls when the sdk does not return any value
+/// when the result is success. For error messages it return the error from the Exponea API.
+/// Used for cases like flushing the data to the Exponea API.
+///
+/// - success
+/// - failure(Error)
 public enum EmptyResult {
     case success
     case failure(Error)

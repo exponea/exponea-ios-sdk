@@ -8,6 +8,8 @@
 
 import Foundation
 
+/// The Tracking Manager class is responsible to manage the automatic tracking events when
+/// it's enable and persist the data according to each event type.
 open class TrackingManager {
     let database: DatabaseManagerType
     let repository: RepositoryType
@@ -285,8 +287,8 @@ extension TrackingManager {
 
 extension TrackingManager {
     @objc func flushData() {
-        // Pull from db
         do {
+            // Pull from db
             let events = try database.fetchTrackEvent().reversed()
             let customers = try database.fetchTrackCustomer().reversed()
             
@@ -300,49 +302,55 @@ extension TrackingManager {
                 return
             }
             
-            for customer in customers {
-                repository.trackCustomer(with: customer.dataTypes, for: customerIds) { [weak self] (result) in
-                    switch result {
-                    case .success:
-                        Exponea.logger.log(.verbose, message: """
-                            Successfully uploaded customer update: \(customer.objectID).
-                            """)
-                        do {
-                            try self?.database.delete(customer)
-                        } catch {
-                            Exponea.logger.log(.error, message: """
-                                Failed to remove object from database: \(customer.objectID).
-                                \(error.localizedDescription)
-                                """)
-                        }
-                    case .failure(let error):
-                        Exponea.logger.log(.error, message: """
-                            Failed to upload customer update. \(error.localizedDescription)
-                            """)
-                    }
-                }
-            }
-            
-            for event in events {
-                repository.trackEvent(with: event.dataTypes, for: customerIds) { [weak self] (result) in
-                    switch result {
-                    case .success:
-                        Exponea.logger.log(.verbose, message: "Successfully uploaded event: \(event.objectID).")
-                        do {
-                            try self?.database.delete(event)
-                        } catch {
-                            Exponea.logger.log(.error, message: """
-                                Failed to remove object from database: \(event.objectID). \(error.localizedDescription)
-                                """)
-                        }
-                    case .failure(let error):
-                        Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
-                    }
-                }
-            }
-            
+            flushCustomerTracking(Array(customers))
+            flushEventTracking(Array(events))
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+    }
+    
+    func flushCustomerTracking(_ customers: [TrackCustomer]) {
+        for customer in customers {
+            repository.trackCustomer(with: customer.dataTypes, for: customerIds) { [weak self] (result) in
+                switch result {
+                case .success:
+                    Exponea.logger.log(.verbose, message: """
+                        Successfully uploaded customer update: \(customer.objectID).
+                        """)
+                    do {
+                        try self?.database.delete(customer)
+                    } catch {
+                        Exponea.logger.log(.error, message: """
+                            Failed to remove object from database: \(customer.objectID).
+                            \(error.localizedDescription)
+                            """)
+                    }
+                case .failure(let error):
+                    Exponea.logger.log(.error, message: """
+                        Failed to upload customer update. \(error.localizedDescription)
+                        """)
+                }
+            }
+        }
+    }
+    
+    func flushEventTracking(_ events: [TrackEvent]) {
+        for event in events {
+            repository.trackEvent(with: event.dataTypes, for: customerIds) { [weak self] (result) in
+                switch result {
+                case .success:
+                    Exponea.logger.log(.verbose, message: "Successfully uploaded event: \(event.objectID).")
+                    do {
+                        try self?.database.delete(event)
+                    } catch {
+                        Exponea.logger.log(.error, message: """
+                            Failed to remove object from database: \(event.objectID). \(error.localizedDescription)
+                            """)
+                    }
+                case .failure(let error):
+                    Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
+                }
+            }
         }
     }
     

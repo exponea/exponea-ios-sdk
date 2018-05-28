@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Protocol that group all the parameter types.
 protocol RequestParametersType {
     var parameters: [AnyHashable: JSONConvertible] { get }
 }

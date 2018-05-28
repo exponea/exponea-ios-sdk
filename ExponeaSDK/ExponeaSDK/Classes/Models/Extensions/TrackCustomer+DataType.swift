@@ -12,12 +12,12 @@ extension TrackCustomer {
     var dataTypes: [DataType] {
         var data: [DataType] = []
         
-        // Add project token
+        // Add project token.
         if let token = projectToken {
             data.append(.projectToken(token))
         }
 
-        // Convert all properties to key value items
+        // Convert all properties to key value items.
         if let properties = trackCustomerProperties as? Set<TrackCustomerProperty> {
             var props: [AnyHashable: JSONConvertible] = [:]
             properties.forEach({ props[$0.key!] = $0.value! })

@@ -8,40 +8,43 @@
 
 import Foundation
 
-/// <#Description#>
+/// Data type used to receive the customer recommendation parameters
+/// to fetch the recommended items for a customer.
 public struct RecommendationRequest {
     
-    /// <#Description#>
+    /// Type of recommendation to be retrieve.
     public var type: String
     
-    /// <#Description#>
+    /// Recommendation identification.
     public var id: String
     
-    /// <#Description#>
+    /// Number of items to fetch
     public var size: Int?
     
-    /// <#Description#>
+    /// Recommendation strategy. Eg.: `winner`, `mix`, `priority`.
     public var strategy: String?
     
-    /// <#Description#>
+    /// Indicates if should include items that customer has interacted with in the past.
     public var knowItems: Bool?
     
-    /// <#Description#>
+    /// Indicates if the we should return items most surprising to the customer
     public var anti: Bool?
     
-    /// <#Description#>
+    /// If present the recommendations are related not only to a customer,
+    /// but to products with IDs specified in this hash.
     public var items: [AnyHashable: JSONConvertible]?
     
-    /// <#Description#>
+    /// Recommendation initializer.
     ///
     /// - Parameters:
-    ///   - type: <#type description#>
-    ///   - id: <#id description#>
-    ///   - size: <#size description#>
-    ///   - strategy: <#strategy description#>
-    ///   - knowItems: <#knowItems description#>
-    ///   - anti: <#anti description#>
-    ///   - items: <#items description#>
+    ///   - type: Type of recommendation to be retrieve.
+    ///   - id: Recommendation identification.
+    ///   - size: Number of items to fetch.
+    ///   - strategy: Recommendation strategy. Eg.: `winner`, `mix`, `priority`.
+    ///   - knowItems: Indicates if should include items that customer has interacted with in the past.
+    ///   - anti: Indicates if the we should return items most surprising to the customer.
+    ///   - items: When recommendations are related not only to a customer,
+    ///            but to products with IDs specified in this hash.
     public init(type: String,
                 id: String,
                 size: Int?,

@@ -8,6 +8,8 @@
 
 import Foundation
 
+/// Data type to identify which kind of authorization the sdk should use
+/// when making http calls for the Exponea API.
 public enum Authorization {
     case none
     case token(String)

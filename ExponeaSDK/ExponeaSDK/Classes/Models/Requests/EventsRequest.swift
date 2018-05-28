@@ -8,28 +8,29 @@
 
 import Foundation
 
-/// <#Description#>
+/// Data type used to receive the customer events parameters
+/// to fetch the event types of a selected customer.
 public struct EventsRequest {
     
-    /// <#Description#>
+    /// List of event that you want to fetch.
     public var eventTypes: [String]
     
-    /// <#Description#>
+    /// Order of exported events by timestamp (asc/desc).
     public var sortOrder: String = "desc"
     
-    /// <#Description#>
+    /// Number of items to return.
     public var limit: Int = 3
     
-    /// <#Description#>
+    /// Number of items to be skipped from the beginning
     public var skip: Int = 100
     
-    /// <#Description#>
+    /// Events request initializer
     ///
     /// - Parameters:
-    ///   - evenTypes: <#evenTypes description#>
-    ///   - sortOrder: <#sortOrder description#>
-    ///   - limit: <#limit description#>
-    ///   - skip: <#skip description#>
+    ///   - evenTypes: List of event that you want to fetch.
+    ///   - sortOrder: Order of exported events by timestamp (asc/desc).
+    ///   - limit: Number of items to return.
+    ///   - skip: Number of items to be skipped from the beginning
     public init(eventTypes: [String],
                 sortOrder: String = "desc",
                 limit: Int = 3,

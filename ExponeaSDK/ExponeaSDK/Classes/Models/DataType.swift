@@ -38,4 +38,5 @@ public enum DataType {
     case attributes(AttributesDescription)
     case events(EventsRequest)
     case pushNotificationToken(String)
+    case pushNotificationPayload([AnyHashable: Any])
 }

@@ -8,12 +8,16 @@
 
 import Foundation
 
-/// <#Description#>
+/// Data type used to return the fetch result of a event in a API call.
+/// It returns the status and the object in case of success, otherwise
+/// return the error from the Exponea API.
+/// This struct is conform to the Codable protocol who are responsible
+/// to serialize and deserialize the data.
 public struct EventsResponse: Codable {
     
-    /// <#Description#>
+    /// Status of the http response.
     public let success: Bool?
     
-    /// <#Description#>
+    /// Holds the returned event data from the Exponea API.
     public let data: [Event]?
 }

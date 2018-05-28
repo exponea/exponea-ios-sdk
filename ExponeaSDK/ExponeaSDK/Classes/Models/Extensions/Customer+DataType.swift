@@ -13,6 +13,7 @@ extension Customer {
     var ids: [String: String] {
         var ids: [String: String] = ["cookie": uuid!.uuidString]
         
+        // Add customer identification.
         if let registeredId = registeredId {
             ids["registered"] = registeredId
         }

@@ -10,7 +10,6 @@ import Foundation
 
 /// <#Description#>
 public class Exponea: ExponeaType {
-    
     /// Shared instance of ExponeaSDK.
     public internal(set) static var shared = Exponea()
     
@@ -171,10 +170,12 @@ public extension Exponea {
     
     // MARK: - Configure -
     
-    /// Initialize the configuration with a projectId (token)
+    /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
     ///
     /// - Parameters:
-    ///     - projectToken: Project Token to be used through the SDK
+    ///   - projectToken: Project token to be used through the SDK.
+    ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
+    ///   - baseURL: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     public func configure(projectToken: String, authorization: Authorization, baseURL: String? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
@@ -186,13 +187,14 @@ public extension Exponea {
         }
     }
     
-    // FIXME: Write all mandatory keys
-    /// Initialize the configuration with a plist file containing the keys
-    /// for the ExponeaSDK.
-    /// Mandatory keys: exponeaProjectIdKey
+    /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
     ///
     /// - Parameters:
-    ///     - plistName: List name containing the SDK setup keys
+    ///   - plistName: Property list name containing the SDK setup keys
+    ///
+    /// Mandatory keys:
+    ///  - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
+    ///  - authorization: The authorization type used to authenticate with some Exponea endpoints.
     public func configure(plistName: String) {
         do {
             let configuration = try Configuration(plistName: plistName)
@@ -229,12 +231,10 @@ public extension Exponea {
     
     // MARK: - Tracking -
     
-    /// Track customer event add new events to a specific customer.
-    /// All events will be stored into coredata until it will be
-    /// flushed (send to api).
+    /// Adds new events to a customer. All events will be stored into coredata
+    /// until it will be flushed (send to api).
     ///
     /// - Parameters:
-    ///     - customerId: Specify your customer with external id.
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
     ///     - eventType: Name of event
@@ -269,17 +269,17 @@ public extension Exponea {
     
     // MARK: Push Notifications
     
-    /// <#Description#>
+    /// Tracks the push notification token to Exponea API with struct.
     ///
-    /// - Parameter token: <#token description#>
+    /// - Parameter token: Token data.
     public func trackPushToken(_ token: Data) {
         // Convert token data to String
         trackPushToken(token.tokenString)
     }
     
-    /// <#Description#>
+    /// Tracks the push notification token to Exponea API with string.
     ///
-    /// - Parameter token: <#token description#>
+    /// - Parameter token: String containing the push notification token.
     public func trackPushToken(_ token: String) {
         let data: [DataType] = [.pushNotificationToken(token)]
         
@@ -292,8 +292,17 @@ public extension Exponea {
         }
     }
     
-    /// <#Description#>
-    public func trackPushClicked() {
+    /// Tracks the push notification clicked event to Exponea API.
+    public func trackPushOpened(with userInfo: [AnyHashable: Any]) {
+        let data: [DataType] = [.timestamp(nil), .pushNotificationPayload(userInfo)]
+        
+        do {
+            // Get dependencies and do the actual tracking
+            let dependencies = try getDependenciesIfConfigured()
+            try dependencies.trackingManager.track(.pushOpened, with: data)
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
         
     }
     
@@ -301,7 +310,6 @@ public extension Exponea {
     
     /// Restart any tasks that were paused (or not yet started) while the application was inactive.
     /// If the application was previously in the background, optionally refresh the user interface.
-    ///
     public func trackSessionStart() {
         do {
             let dependencies = try getDependenciesIfConfigured()
@@ -313,7 +321,6 @@ public extension Exponea {
     
     /// Restart any tasks that were paused (or not yet started) while the application was inactive.
     /// If the application was previously in the background, optionally refresh the user interface.
-    ///
     public func trackSessionEnd() {
         do {
             let dependencies = try getDependenciesIfConfigured()
@@ -324,8 +331,7 @@ public extension Exponea {
     }
     
     /// Update the informed properties to a specific customer.
-    /// All properties will be stored into coredata until it will be
-    /// flushed (send to api).
+    /// All properties will be stored into coredata until it will be flushed (send to api).
     ///
     /// - Parameters:
     ///     - customerId: Specify your customer with external id, for example an email address.

@@ -8,6 +8,11 @@
 
 import Foundation
 
+/// Data types that thrown the possible errors on the configuration object.
+///
+/// - notConfigured
+/// - configurationError(String)
+/// - unknownError(String?)
 public enum ExponeaError: Error {
     case notConfigured
     case configurationError(String)
