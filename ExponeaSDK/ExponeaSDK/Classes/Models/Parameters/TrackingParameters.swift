@@ -8,10 +8,16 @@
 
 import Foundation
 
+/// A Group of parameters used to track any kind of event.
+/// Depending on what king of tracking, you can use a combination of properties.
 struct TrackingParameters {
+    /// Customer identification.
     var customerIds: [AnyHashable: JSONConvertible]
+    /// Object with customer properties.
     var properties: [AnyHashable: JSONConvertible]
+    /// Timestamp should always be UNIX timestamp format
     var timestamp: Double?
+    /// Name of the tracking event.
     var eventType: String?
 
     init(customerIds: [AnyHashable: JSONConvertible], properties: [AnyHashable: JSONConvertible],

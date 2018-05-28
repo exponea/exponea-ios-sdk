@@ -8,6 +8,12 @@
 
 import Foundation
 
+/// Data types that thrown the possible errors while trying to save data into coredata.
+///
+/// - objectDoesNotExist: Object requested does not exist.
+/// - wrongObjectType: Error while trying to cast the coredata objects.
+/// - saveCustomerFailed: Error while trying to save a customer data into coredata.
+/// - unknownError: Invalid error while trying to manipulate the data.
 public enum DatabaseManagerError: LocalizedError {
     case objectDoesNotExist
     case wrongObjectType

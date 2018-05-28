@@ -8,15 +8,19 @@
 
 import Foundation
 
-/// <#Description#>
+/// Data type used to return the fetch entity response in a API call.
+/// It returns the status and the object in case of success, otherwise
+/// return the error from the Exponea API.
+/// This struct is conform to the Codable protocol who are responsible
+/// to serialize and deserialize the data.
 public struct EntityValueResponse: Codable {
     
-    /// <#Description#>
+    /// Status of the http response.
     public let success: Bool
     
-    /// <#Description#>
+    /// Value of the entity requested.
     public let value: Double
     
-    /// <#Description#>
+    /// Name of the entity requested.
     public let entityName: String
 }

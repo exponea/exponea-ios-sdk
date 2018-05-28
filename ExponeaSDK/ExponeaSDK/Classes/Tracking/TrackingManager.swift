@@ -8,6 +8,8 @@
 
 import Foundation
 
+/// The Tracking Manager class is responsible to manage the automatic tracking events when
+/// it's enable and persist the data according to each event type.
 open class TrackingManager {
     let database: DatabaseManagerType
     let repository: RepositoryType

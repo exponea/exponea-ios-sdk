@@ -8,8 +8,7 @@
 
 import Foundation
 
-// FIXME: Validate documentation
-
+/// The Server Repository class is responsible to manage all the requests for the Exponea API.
 final class ServerRepository {
     
     public internal(set) var configuration: Configuration
@@ -23,12 +22,12 @@ final class ServerRepository {
 
 extension ServerRepository: TrackingRepository {
     
-    /// Update the properties of a customer
+    /// Tracks the data of the data type property for a customer.
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - properties: Properties that should be updated
+    ///     - data: Object containing the data to be used to track a customer data.
+    ///     - customer: Customer identification.
+    ///     - completion: Object containing the request result.
     func trackCustomer(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
         var properties: [AnyHashable: JSONConvertible] = [:]
@@ -151,12 +150,14 @@ extension ServerRepository: TokenRepository {
 }
 
 extension ServerRepository: RepositoryType {
-    /// Fetch property for one customer.
+    
+    /// Fetchs the property for a customer.
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - property: Property that should be updated
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - property: Property that should be fetched.
+    ///   - completion: Object containing the request result.
     func fetchProperty(projectToken: String, customerId: [AnyHashable: JSONConvertible],
                        property: String, completion: @escaping ((Result<StringResponse>) -> Void)) {
         let router = RequestFactory(baseURL: configuration.baseURL,
@@ -171,12 +172,13 @@ extension ServerRepository: RepositoryType {
             .resume()
     }
     
-    /// Fetch an identifier by another known identifier.
+    /// Fetchs a identifier by another known identifier.
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - id: Identifier that you want to retrieve
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - id: Identifier that you want to retrieve.
+    ///   - completion: Object containing the request result.
     func fetchId(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
                  completion: @escaping (Result<StringResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL, projectToken: projectToken, route: .customersId)
@@ -191,9 +193,9 @@ extension ServerRepository: RepositoryType {
     /// Fetch a segment by its ID for particular customer.
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - id: Identifier that you want to retrieve
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - id: Identifier that you want to retrieve.
     func fetchSegmentation(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
@@ -216,9 +218,10 @@ extension ServerRepository: RepositoryType {
     /// Fetch an expression by its ID for particular customer.
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - id: Identifier that you want to retrieve
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - id: Identifier that you want to retrieve.
+    ///   - completion: Object containing the request result.
     func fetchExpression(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
                          completion: @escaping (Result<EntityValueResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
@@ -235,9 +238,10 @@ extension ServerRepository: RepositoryType {
     /// Fetch a prediction by its ID for particular customer.
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - id: Identifier that you want to retrieve
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    ///   - customerId: Identification of a customer.
+    ///   - id: Identifier that you want to retrieve
+    ///   - completion: Object containing the request result.
     func fetchPrediction(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
                          completion: @escaping (Result<EntityValueResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
@@ -255,9 +259,10 @@ extension ServerRepository: RepositoryType {
     /// Fetch a recommendation by its ID for particular customer.
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - recommendation: Recommendations for the customer
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - recommendation: Recommendations for the customer.
+    ///   - completion: Object containing the request result.
     func fetchRecommendation(projectToken: String,
                              customerId: [AnyHashable: JSONConvertible],
                              recommendation: RecommendationRequest,
@@ -281,9 +286,9 @@ extension ServerRepository: RepositoryType {
     /// Fetch multiple customer attributes at once
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - attributes: List of attributes you want to retrieve
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - attributes: List of attributes you want to retrieve.
     func fetchAttributes(projectToken: String,
                          customerId: [AnyHashable: JSONConvertible],
                          attributes: [CustomerAttribute]) {
@@ -308,9 +313,10 @@ extension ServerRepository: RepositoryType {
     /// Fetch customer events by it's type
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - events: List of event types you want to retrieve
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    ///   - customerId: Identification of a customer.
+    ///   - events: List of event types to be retrieve.
+    ///   - completion: Object containing the request result.
     func fetchEvents(projectToken: String,
                      customerId: [AnyHashable: JSONConvertible],
                      events: EventsRequest,
@@ -333,8 +339,8 @@ extension ServerRepository: RepositoryType {
     /// Exports all properties, ids and events for one customer
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    ///   - customerId: Identification of a customer.
     func fetchAllProperties(projectToken: String, customerId: [AnyHashable: JSONConvertible]) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
@@ -362,8 +368,8 @@ extension ServerRepository: RepositoryType {
     /// Exports all customers who exist in the project
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - data: List of properties to retrieve
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - data: List of properties to retrieve.
     func fetchAllCustomers(projectToken: String, data: CustomerExport) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,
@@ -384,11 +390,11 @@ extension ServerRepository: RepositoryType {
     }
     
     /// Removes all the external identifiers and assigns a new cookie id.
-    /// Removes all personal customer properties
+    /// Removes all personal customer properties.
     ///
     /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
     func anonymize(projectToken: String, customerId: [AnyHashable: JSONConvertible]) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: projectToken,

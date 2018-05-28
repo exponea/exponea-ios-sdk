@@ -8,50 +8,152 @@
 
 import Foundation
 
+/// Protocol containing the possibles tracking methods.
 protocol TrackingRepository {
+    
+    /// Tracks the data of the data type property for a customer.
+    ///
+    /// - Parameters:
+    ///     - data: Object containing the data to be used to track a customer data.
+    ///     - customer: Customer identification.
+    ///     - completion: Object containing the request result.
     func trackCustomer(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void))
+    
+    /// Tracks new events for a customer.
+    ///
+    /// - Parameters:
+    ///     - data: Object containing the data to be used to track a customer data.
+    ///     - customer: Customer identification.
+    ///     - completion: Object containing the request result.
     func trackEvent(with data: [DataType], for customer: Customer, completion: @escaping ((EmptyResult) -> Void))
+    
     func trackEvents(with data: [[DataType]], for customer: Customer, completion: @escaping ((EmptyResult) -> Void))
 }
 
 protocol TokenRepository {
+    
+    /// Rotates the token
+    /// The old token will still work for next 48 hours. You cannot have more than two private
+    /// tokens for one public token, therefore rotating the newly fetched token while the old
+    /// token is still working will result in revoking that old token right away. Rotating the
+    /// old token twice will result in error, since you cannot have three tokens at the same time.
+    ///
+    /// - Parameters:
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     func rotateToken(projectToken: String, completion: @escaping ((EmptyResult) -> Void))
+
+    /// Revoke the token
+    /// Please note, that revoking a token can result in losing the access if you haven't revoked a new token before.
+    ///
+    /// - Parameters:
+    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     func revokeToken(projectToken: String, completion: @escaping ((EmptyResult) -> Void))
 }
 
 protocol FetchRepository {
+
+    /// Fetchs the property for a customer.
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - property: Property that should be fetched.
+    ///   - completion: Object containing the request result.
     func fetchProperty(projectToken: String, customerId: [AnyHashable: JSONConvertible],
                        property: String, completion: @escaping (Result<StringResponse>) -> Void)
     
+    /// Fetchs a identifier by another known identifier.
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - id: Identifier that you want to retrieve.
+    ///   - completion: Object containing the request result.
     func fetchId(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
                  completion: @escaping (Result<StringResponse>) -> Void)
-    
+
+    /// Fetch a segment by its ID for particular customer.
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - id: Identifier that you want to retrieve.
     func fetchSegmentation(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String)
     
+    /// Fetch an expression by its ID for particular customer.
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - id: Identifier that you want to retrieve.
+    ///   - completion: Object containing the request result.
     func fetchExpression(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
                          completion: @escaping (Result<EntityValueResponse>) -> Void)
     
+    /// Fetch a prediction by its ID for particular customer.
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    ///   - customerId: Identification of a customer.
+    ///   - id: Identifier that you want to retrieve
+    ///   - completion: Object containing the request result.
     func fetchPrediction(projectToken: String, customerId: [AnyHashable: JSONConvertible], id: String,
                          completion: @escaping (Result<EntityValueResponse>) -> Void)
     
+    /// Fetch a recommendation by its ID for particular customer.
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - recommendation: Recommendations for the customer.
+    ///   - completion: Object containing the request result.
     func fetchRecommendation(projectToken: String,
                              customerId: [AnyHashable: JSONConvertible],
                              recommendation: RecommendationRequest,
                              completion: @escaping (Result<RecommendationResponse>) -> Void)
     
+    /// Fetch multiple customer attributes at once
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
+    ///   - attributes: List of attributes you want to retrieve.
     func fetchAttributes(projectToken: String,
                          customerId: [AnyHashable: JSONConvertible],
                          attributes: [CustomerAttribute])
     
+    /// Fetch customer events by it's type
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    ///   - customerId: Identification of a customer.
+    ///   - events: List of event types to be retrieve.
+    ///   - completion: Object containing the request result.
     func fetchEvents(projectToken: String,
                      customerId: [AnyHashable: JSONConvertible],
                      events: EventsRequest,
                      completion: @escaping (Result<EventsResponse>) -> Void)
     
+    /// Exports all properties, ids and events for one customer
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project)
+    ///   - customerId: Identification of a customer.
     func fetchAllProperties(projectToken: String, customerId: [AnyHashable: JSONConvertible])
     
+    /// Exports all customers who exist in the project
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - data: List of properties to retrieve.
     func fetchAllCustomers(projectToken: String, data: CustomerExport)
-    
+
+    /// Removes all the external identifiers and assigns a new cookie id.
+    /// Removes all personal customer properties.
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token (you can find it in the overview section of your Exponea project).
+    ///   - customerId: Identification of a customer.
     func anonymize(projectToken: String, customerId: [AnyHashable: JSONConvertible])
 }
 

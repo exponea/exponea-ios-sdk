@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-/// The Entities Manager class is responsible for persist the data using CoreData Framework.
+/// The Database Manager class is responsible for persist the data using CoreData Framework.
 /// Persisted data will be used to interact with the Exponea API.
 public class DatabaseManager {
 
@@ -134,12 +134,12 @@ extension DatabaseManager: DatabaseManagerType {
 
     /// Add any type of event into coredata.
     ///
-    /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - properties: Properties that should be updated
-    ///     - timestamp: Timestamp should always be UNIX timestamp format
-    ///     - eventType: Type of event to be tracked
+    /// - Parameter data: See `DataType` for more information. Types specified below are required at minimum.
+    ///     - `projectToken`
+    ///     - `customerId`
+    ///     - `properties`
+    ///     - `timestamp`
+    ///     - `eventType`
     public func trackEvent(with data: [DataType]) throws {
         let trackEvent = TrackEvent(context: context)
         trackEvent.customer = customer

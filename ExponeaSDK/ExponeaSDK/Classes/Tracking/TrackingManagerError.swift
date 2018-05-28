@@ -8,14 +8,15 @@
 
 import Foundation
 
-/// <#Description#>
+/// Data types that thrown the possible errors when tracking the events.
 ///
-/// - missingData: <#missingData description#>
-/// - unknownError: <#unknownError description#>
+/// - missingData: Holds the missing data while trying to track the events.
+/// - unknownError: Holds the generic error while trying to track the events.
 public enum TrackingManagerError: LocalizedError {
     case missingData(EventType, [DataType])
     case unknownError(String?)
     
+    /// Return a formatted error message when sending the events to the Exponea API.
     public var errorDescription: String? {
         switch self {
         case .missingData(let type, let data):
