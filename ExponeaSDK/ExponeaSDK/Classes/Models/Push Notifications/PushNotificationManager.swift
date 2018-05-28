@@ -16,6 +16,35 @@ class PushNotificationManager: NSObject {
     /// Used for knowing if we have added push notifications observer
     internal weak var pushObserver: NSKeyValueObservation?
     
+    // TODO: refactor & test
+    func handlePushOpened(userInfoObject: AnyObject?) {
+        guard let userInfo = userInfoObject as? [AnyHashable: JSONConvertible] else {
+            Exponea.logger.log(.error, message: "Failed to convert push payload.")
+            return
+        }
+        
+        do {
+            try trackingManager?.track(.pushOpened, with: [.properties(userInfo)])
+        } catch {
+            Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
+        }
+    }
+    
+    func handlePushTokenRegistered(dataObject: AnyObject?) {
+        print("swizzled push registration")
+        
+        guard let tokenData = dataObject as? Data else {
+            return
+        }
+        
+        do {
+            let data = [DataType.pushNotificationToken(tokenData.tokenString)]
+            try trackingManager?.track(.registerPushToken, with: data)
+        } catch {
+            Exponea.logger.log(.error, message: "Error logging push token. \(error.localizedDescription)")
+        }
+    }
+    
     init(trackingManager: TrackingManagerType) {
         self.trackingManager = trackingManager
         
@@ -44,18 +73,10 @@ extension PushNotificationManager {
         Swizzler.swizzleSelector(PushSelectorMapping.registration.original,
                                  with: PushSelectorMapping.registration.swizzled,
                                  for: appDelegateClass,
-                                 name: "PushTokenRegistration", block: { [weak self] (_, _, _, dataObject) in
-            print("swizzle push regi")
-            guard let tokenData = dataObject as? Data else {
-                return
-            }
-            let token = tokenData.tokenString
-            do {
-                try self?.trackingManager?.track(.registerPushToken, with: [DataType.pushNotificationToken(token)])
-            } catch {
-                Exponea.logger.log(.error, message: "Error logging push token. \(error.localizedDescription)")
-            }
-        }, addingMethodIfNecessary: true)
+                                 name: "PushTokenRegistration",
+                                 block: { [weak self] (_, _, _, dataObject) in
+                                    self?.handlePushTokenRegistered(dataObject: dataObject) },
+                                 addingMethodIfNecessary: true)
         
         // Monitor push delivery
         if let UNDelegate = UNUserNotificationCenter.current().delegate {
@@ -82,23 +103,14 @@ extension PushNotificationManager {
             return
         }
         
-        let block: Swizzler.SwizzleBlock = { [weak self] (_, _, _, param2: AnyObject?) in
-            if let userInfo = param2 as? [AnyHashable: JSONConvertible] {
-                // TODO: refactor
-                do {
-                    try self?.trackingManager?.track(.pushOpened, with: [.properties(userInfo)])
-                } catch {
-                    Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
-                }
-            }
-        }
-        
         // Do the swizzling
         Swizzler.swizzleSelector(mapping.original,
                                  with: mapping.swizzled,
                                  for: newClass ?? appDelegateClass,
                                  name: "NotificationOpened",
-                                 block: block)
+                                 block: { [weak self] (_, _, _, userInfoObject) in
+                                    self?.handlePushOpened(userInfoObject: userInfoObject)
+        })
     }
     
     internal func removeAutomaticPushTracking() {
@@ -121,22 +133,14 @@ extension PushNotificationManager {
             return
         }
         
-        let block: Swizzler.SwizzleBlock = { [weak self] (_, _, _, param2: AnyObject?) in
-            if let userInfo = param2 as? [AnyHashable: JSONConvertible] {
-                // TODO: refactor
-                do {
-                    try self?.trackingManager?.track(.pushOpened, with: [.properties(userInfo)])
-                } catch {
-                    Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
-                }
-            }
-        }
-        
         // Swizzle the notification delegate notification received function
         Swizzler.swizzleSelector(selector,
                                  with: PushSelectorMapping.newReceive.swizzled,
                                  for: delegateClass,
-                                 name: "notification opened", block: block)
+                                 name: "NotificationOpened",
+                                 block: { [weak self] (_, _, _, userInfoObject) in
+                                    self?.handlePushOpened(userInfoObject: userInfoObject)
+        })
     }
 }
 
@@ -144,52 +148,59 @@ extension UIResponder {
     @objc func application(_ application: UIApplication,
                            newDidReceiveRemoteNotification userInfo: [AnyHashable: Any],
                            fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        // Get the swizzle
         let selector = PushSelectorMapping.handlerReceive.original
         guard let originalMethod = class_getInstanceMethod(type(of: self), selector),
             let swizzle = Swizzler.swizzles[originalMethod] else {
                 return
         }
         
-        typealias MyCFunction = @convention(c) (AnyObject, Selector, UIApplication,
-            NSDictionary, (UIBackgroundFetchResult) -> Void) -> Void
-        
-        let curriedImplementation = unsafeBitCast(swizzle.originalMethod, to: MyCFunction.self)
+        // Perform the original implementation first
+        let curriedImplementation = unsafeBitCast(swizzle.originalMethod,
+                                                  to: PushSelectorMapping.Signatures.handlerReceive)
         curriedImplementation(self, selector, application, userInfo as NSDictionary, completionHandler)
         
+        // Now call our own implementations
         for (_, block) in swizzle.blocks {
             block(self, swizzle.selector, application as AnyObject?, userInfo as AnyObject?)
         }
     }
     
     @objc func application(_ application: UIApplication, newDidReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+        // Get the swizzle
         let selector = PushSelectorMapping.deprecatedReceive.original
-        if let originalMethod = class_getInstanceMethod(type(of: self), selector),
-            let swizzle = Swizzler.swizzles[originalMethod] {
-            
-            typealias MyCFunction = @convention(c) (AnyObject, Selector, UIApplication, NSDictionary) -> Void
-            
-            let curriedImplementation = unsafeBitCast(swizzle.originalMethod, to: MyCFunction.self)
-            curriedImplementation(self, selector, application, userInfo as NSDictionary)
-            
-            for (_, block) in swizzle.blocks {
-                block(self, swizzle.selector, application as AnyObject?, userInfo as AnyObject?)
-            }
+        guard let originalMethod = class_getInstanceMethod(type(of: self), selector),
+            let swizzle = Swizzler.swizzles[originalMethod] else {
+                return
+        }
+        
+        // Perform the original implementation first
+        let curriedImplementation = unsafeBitCast(swizzle.originalMethod,
+                                                  to: PushSelectorMapping.Signatures.deprecatedReceive)
+        curriedImplementation(self, selector, application, userInfo as NSDictionary)
+        
+        // Now call our own implementations
+        for (_, block) in swizzle.blocks {
+            block(self, swizzle.selector, application as AnyObject?, userInfo as AnyObject?)
         }
     }
     
-    @objc func applicationSwizzle(
-        _ application: UIApplication,
-        didRegisterPushToken deviceToken: Data) {
+    @objc func applicationSwizzle(_ application: UIApplication, didRegisterPushToken deviceToken: Data) {
+        // Get the swizzle
         let selector = PushSelectorMapping.registration.original
-        if let originalMethod = class_getInstanceMethod(type(of: self), selector),
-            let swizzle = Swizzler.swizzles[originalMethod] {
-            typealias MyCFunction = @convention(c) (AnyObject, Selector, UIApplication, Data) -> Void
-            let curriedImplementation = unsafeBitCast(swizzle.originalMethod, to: MyCFunction.self)
-            curriedImplementation(self, selector, application, deviceToken)
-            
-            for (_, block) in swizzle.blocks {
-                block(self, swizzle.selector, application as AnyObject?, deviceToken as AnyObject?)
-            }
+        guard let originalMethod = class_getInstanceMethod(type(of: self), selector),
+            let swizzle = Swizzler.swizzles[originalMethod] else {
+                return
+        }
+        
+        // Perform the original implementation first
+        let curriedImplementation = unsafeBitCast(swizzle.originalMethod,
+                                                  to: PushSelectorMapping.Signatures.registration)
+        curriedImplementation(self, selector, application, deviceToken)
+        
+        // Now call our own implementations
+        for (_, block) in swizzle.blocks {
+            block(self, swizzle.selector, application as AnyObject?, deviceToken as AnyObject?)
         }
     }
 }
@@ -205,11 +216,8 @@ extension NSObject {
                 return
         }
         
-        typealias MyCFunction = @convention(c) (
-            AnyObject, Selector, UNUserNotificationCenter, UNNotificationResponse,
-            () -> Void) -> Void
-        
-        let curriedImplementation = unsafeBitCast(swizzle.originalMethod, to: MyCFunction.self)
+        let curriedImplementation = unsafeBitCast(swizzle.originalMethod,
+                                                  to: PushSelectorMapping.Signatures.newReceive)
         curriedImplementation(self, selector, center, response, completionHandler)
         
         for (_, block) in swizzle.blocks {

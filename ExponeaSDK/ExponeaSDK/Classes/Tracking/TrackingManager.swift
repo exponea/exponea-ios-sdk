@@ -125,7 +125,7 @@ extension TrackingManager {
     }
     
     open func trackPushOpened(with data: [DataType]) throws {
-        // TODO: push tracking
+        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushOpen)])
     }
 }
 

@@ -55,6 +55,10 @@ public class DatabaseManager {
         
         // Initialise customer
         _ = customer
+        Exponea.logger.log(.verbose, message: """
+            Database initialised with customer:
+            \(customer.ids)
+            """)
     }
 
     /// Managed Context for Core Data

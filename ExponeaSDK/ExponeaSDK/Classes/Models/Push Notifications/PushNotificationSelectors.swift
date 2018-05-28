@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UserNotifications
 
 internal enum PushSelectorMapping {
     internal typealias Mapping = (original: Selector, swizzled: Selector)
@@ -45,6 +46,17 @@ internal enum PushSelectorMapping {
         static let deprecatedReceive = #selector(
             UIResponder.application(_:newDidReceiveRemoteNotification:)
         )
+    }
+    
+    internal enum Signatures {
+        static let registration = (@convention(c) (
+            AnyObject, Selector, UIApplication, Data) -> Void).self
+        static let newReceive = (@convention(c) (
+            AnyObject, Selector, UNUserNotificationCenter, UNNotificationResponse, () -> Void) -> Void).self
+        static let handlerReceive = (@convention(c)
+            (AnyObject, Selector, UIApplication, NSDictionary, (UIBackgroundFetchResult) -> Void) -> Void).self
+        static let deprecatedReceive = (@convention(c)
+            (AnyObject, Selector, UIApplication, NSDictionary) -> Void).self
     }
     
     internal static let registration: Mapping = (Original.registration, Swizzled.registration)

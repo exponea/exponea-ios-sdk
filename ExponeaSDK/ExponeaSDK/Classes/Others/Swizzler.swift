@@ -12,8 +12,8 @@ internal class Swizzler {
     internal typealias SwizzleBlock = (
         _ view: AnyObject?,
         _ command: Selector,
-        _ param1: AnyObject?,
-        _ param2: AnyObject?) -> Void
+        _ parameter1: AnyObject?,
+        _ parameter2: AnyObject?) -> Void
     
     internal static var swizzles: [Method: Swizzle] = [:]
     
@@ -35,48 +35,33 @@ internal class Swizzler {
         swizzles[method] = swizzle
     }
     
-    class func swizzleSelector(_ originalSelector: Selector,
-                               with newSelector: Selector,
-                               for aClass: AnyClass,
-                               name: String,
-                               block: @escaping SwizzleBlock,
-                               addingMethodIfNecessary: Bool = false) {
+    class func swizzleSelector(_ originalSelector: Selector, with newSelector: Selector, for aClass: AnyClass,
+                               name: String, block: @escaping SwizzleBlock, addingMethodIfNecessary: Bool = false) {
         
         guard let swizzledMethod = class_getInstanceMethod(aClass, newSelector) else {
                 Exponea.logger.log(.error, message: """
                     Swizzling error: Cannot find method for \
-                    \(NSStringFromSelector(originalSelector)) on \(NSStringFromClass(aClass))
+                    \(NSStringFromSelector(newSelector)) on \(NSStringFromClass(aClass))
                     """)
                 return
         }
         
-        let originalMethod: Method
+        var method: Method? = class_getInstanceMethod(aClass, originalSelector)
         
-        if addingMethodIfNecessary {
-            if let method = class_getInstanceMethod(aClass, originalSelector) {
-                originalMethod = method
-            } else {
-                let block: () -> Void = { print("empty implementation") }
-                let emptyImp = imp_implementationWithBlock(unsafeBitCast(block, to: AnyObject.self))
-                let didAddMethod = class_addMethod(aClass, originalSelector, emptyImp, "")
-                guard didAddMethod else {
-                    Exponea.logger.log(.error, message: """
-                        Swizzling error: Cannot find method for \
-                        \(NSStringFromSelector(originalSelector)) on \(NSStringFromClass(aClass))
-                        """)
-                    return
-                }
-                originalMethod = class_getInstanceMethod(aClass, originalSelector)!
-            }
-        } else {
-            guard let method = class_getInstanceMethod(aClass, originalSelector) else {
-                Exponea.logger.log(.error, message: """
-                    Swizzling error: Cannot find method for \
-                    \(NSStringFromSelector(originalSelector)) on \(NSStringFromClass(aClass))
-                    """)
-                return
-            }
-            originalMethod = method
+        // If we can't get original method, try to add an empty method with same signature
+        if method == nil && addingMethodIfNecessary {
+            let block: (@convention(block) () -> Void) = {}
+            let impl = imp_implementationWithBlock(block)
+            method = addMethod(to: aClass, with: originalSelector, implementation: impl)
+        }
+        
+        // Make sure we have a method that we want to swizzle
+        guard let originalMethod = method else {
+            Exponea.logger.log(.error, message: """
+                Swizzling error: Cannot find method for \
+                \(NSStringFromSelector(originalSelector)) on \(NSStringFromClass(aClass))
+                """)
+            return
         }
         
         let swizzledMethodImplementation = method_getImplementation(swizzledMethod)
@@ -85,19 +70,14 @@ internal class Swizzler {
         var swizzle = getSwizzle(for: originalMethod)
         
         if swizzle == nil {
-            swizzle = Swizzle(block: block,
-                              name: name,
-                              aClass: aClass,
-                              selector: originalSelector,
+            swizzle = Swizzle(block: block, name: name, aClass: aClass, selector: originalSelector,
                               originalMethod: originalMethodImplementation)
             setSwizzle(swizzle!, for: originalMethod)
         } else {
             swizzle?.blocks[name] = block
         }
         
-        let didAddMethod = class_addMethod(aClass,
-                                           originalSelector,
-                                           swizzledMethodImplementation,
+        let didAddMethod = class_addMethod(aClass, originalSelector, swizzledMethodImplementation,
                                            method_getTypeEncoding(swizzledMethod))
         if didAddMethod {
             setSwizzle(swizzle!, for: class_getInstanceMethod(aClass, originalSelector)!)
@@ -106,6 +86,23 @@ internal class Swizzler {
         }
         
         Exponea.logger.log(.verbose, message: "Adding a swizzle: \(swizzle!.description)")
+    }
+    
+    class func addMethod(to aClass: AnyClass, with selector: Selector, implementation: IMP) -> Method? {
+        if let method = class_getInstanceMethod(aClass, selector) {
+            return method
+        }
+
+        let didAddMethod = class_addMethod(aClass, selector, implementation, "")
+        guard didAddMethod else {
+            Exponea.logger.log(.error, message: """
+                Swizzling error: Cannot find method for \
+                \(NSStringFromSelector(selector)) on \(NSStringFromClass(aClass))
+                """)
+            return nil
+        }
+        
+        return class_getInstanceMethod(aClass, selector)!
     }
     
     class func unswizzleSelector(_ selector: Selector, aClass: AnyClass, name: String? = nil) {
@@ -125,32 +122,5 @@ internal class Swizzler {
     class func unswizzle(_ swizzle: Swizzle) {
         unswizzleSelector(swizzle.selector, aClass: swizzle.aClass)
         removeSwizzle(for: swizzle.originalMethod)
-    }
-}
-extension Swizzler {
-    class Swizzle: CustomStringConvertible {
-        let aClass: AnyClass
-        let selector: Selector
-        let originalMethod: IMP
-        var blocks = [String: SwizzleBlock]()
-        
-        init(block: @escaping SwizzleBlock,
-             name: String,
-             aClass: AnyClass,
-             selector: Selector,
-             originalMethod: IMP) {
-            self.aClass = aClass
-            self.selector = selector
-            self.originalMethod = originalMethod
-            self.blocks[name] = block
-        }
-        
-        var description: String {
-            var retValue = "Swizzle on \(NSStringFromClass(type(of: self)))::\(NSStringFromSelector(selector)) ["
-            for (key, value) in blocks {
-                retValue += "\t\(key) : \(value)\n"
-            }
-            return retValue + "]"
-        }
     }
 }

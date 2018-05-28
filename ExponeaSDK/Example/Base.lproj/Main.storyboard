@@ -185,6 +185,26 @@
                                     <action selector="identifyCustomerPressed:" destination="IHP-ii-3Rl" eventType="touchUpInside" id="1sH-UU-Mva"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" horizontalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SVt-kb-1MI">
+                                <rect key="frame" x="15" y="266" width="167" height="45"/>
+                                <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="vG4-tW-jdU"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                <state key="normal" title="Register for Push">
+                                    <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="registerForPush" destination="IHP-ii-3Rl" eventType="touchUpInside" id="6qX-xV-OAn"/>
+                                </connections>
+                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tracking" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3cH-2o-JJx">
                                 <rect key="frame" x="151.5" y="35" width="71.5" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
@@ -197,7 +217,7 @@
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="aaa" translatesAutoresizingMaskIntoConstraints="NO" id="HtL-bf-8F7">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="aaa" translatesAutoresizingMaskIntoConstraints="NO" id="HtL-bf-8F7">
                                 <rect key="frame" x="15" y="353" width="345" height="250"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -222,9 +242,11 @@
                             <constraint firstItem="PVS-MB-xbX" firstAttribute="leading" secondItem="6la-35-d1i" secondAttribute="leading" id="Nla-Ax-mTB"/>
                             <constraint firstItem="3cH-2o-JJx" firstAttribute="centerX" secondItem="laM-na-f2a" secondAttribute="centerX" id="P37-be-Mil"/>
                             <constraint firstItem="bAm-Al-qsN" firstAttribute="bottom" secondItem="HtL-bf-8F7" secondAttribute="bottom" constant="15" id="QHi-p1-Jm9"/>
+                            <constraint firstItem="SVt-kb-1MI" firstAttribute="top" secondItem="NbE-xk-cSE" secondAttribute="bottom" constant="20" id="V0H-pd-dF5"/>
                             <constraint firstItem="HtL-bf-8F7" firstAttribute="leading" secondItem="bAm-Al-qsN" secondAttribute="leading" constant="15" id="Vie-wq-DbE"/>
                             <constraint firstItem="u7b-Rz-WUS" firstAttribute="centerY" secondItem="NbE-xk-cSE" secondAttribute="centerY" id="WOV-pS-YDC"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="6la-35-d1i" secondAttribute="trailing" constant="20" symbolic="YES" id="Wm7-ex-mUb"/>
+                            <constraint firstItem="SVt-kb-1MI" firstAttribute="leading" secondItem="NbE-xk-cSE" secondAttribute="leading" id="cV1-CL-SIO"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="PVS-MB-xbX" secondAttribute="trailing" constant="20" symbolic="YES" id="eJp-Hq-OZd"/>
                             <constraint firstItem="bAm-Al-qsN" firstAttribute="trailing" secondItem="HtL-bf-8F7" secondAttribute="trailing" constant="15" id="f7Z-PW-9fv"/>
                             <constraint firstItem="NbE-xk-cSE" firstAttribute="top" secondItem="PVS-MB-xbX" secondAttribute="bottom" constant="20" id="fJ5-ys-52M"/>
@@ -409,7 +431,7 @@
                                     <action selector="personalisationPressed:" destination="TFH-0C-ErW" eventType="touchUpInside" id="95a-FQ-pbc"/>
                                 </connections>
                             </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="aaa" translatesAutoresizingMaskIntoConstraints="NO" id="c4R-zp-GXC">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="aaa" translatesAutoresizingMaskIntoConstraints="NO" id="c4R-zp-GXC">
                                 <rect key="frame" x="15" y="353" width="345" height="250"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
