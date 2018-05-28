@@ -9,7 +9,7 @@
 import Foundation
 
 /// <#Description#>
-public struct CustomerAttribute {
+public struct CustomerAttribute: Decodable {
     
     /// <#Description#>
     public var typeKey: String
@@ -22,4 +22,11 @@ public struct CustomerAttribute {
     
     /// <#Description#>
     public var identificationValue: String
+    
+    public init(key: String, value: String, identificationKey: String, identificationValue: String) {
+        self.typeKey = key
+        self.typeValue = value
+        self.identificationKey = identificationKey
+        self.identificationValue = identificationValue
+    }
 }
