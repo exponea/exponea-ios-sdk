@@ -12,17 +12,37 @@ import Foundation
 public struct CustomerExport {
     
     /// <#Description#>
-    public var attributes: AttributesListDescription
+    public var attributes: AttributesListDescription?
     
     /// <#Description#>
-    public var filter: [AnyHashable: JSONConvertible]
+    public var filter: [AnyHashable: JSONConvertible]?
     
     /// <#Description#>
-    public var executionTime: Int
+    public var executionTime: Int?
     
     /// <#Description#>
-    public var timezone: String
+    public var timezone: String?
     
     /// <#Description#>
-    public var responseFormat: String
+    public var responseFormat: ExportFormat
+    
+    /// <#Description#>
+    ///
+    /// - Parameters:
+    ///   - attributes: <#attributes description#>
+    ///   - filter: <#filter description#>
+    ///   - executionTime: <#executionTime description#>
+    ///   - timezone: <#timezone description#>
+    ///   - responseFormat: <#responseFormat description#>
+    public init(attributes: AttributesListDescription? = nil,
+                filter: [AnyHashable: JSONConvertible]? = nil,
+                executionTime: Int? = nil,
+                timezone: String? = nil,
+                responseFormat: ExportFormat) {
+        self.attributes = attributes
+        self.filter = filter
+        self.executionTime = executionTime
+        self.timezone = timezone
+        self.responseFormat = responseFormat
+    }
 }

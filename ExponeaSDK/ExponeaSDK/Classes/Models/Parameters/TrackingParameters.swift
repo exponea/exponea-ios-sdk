@@ -20,8 +20,10 @@ struct TrackingParameters {
     /// Name of the tracking event.
     var eventType: String?
 
-    init(customerIds: [AnyHashable: JSONConvertible], properties: [AnyHashable: JSONConvertible],
-         timestamp: Double? = nil, eventType: String? = nil) {
+    init(customerIds: [AnyHashable: JSONConvertible],
+         properties: [AnyHashable: JSONConvertible],
+         timestamp: Double? = nil,
+         eventType: String? = nil) {
         self.customerIds = customerIds
         self.properties = properties
         self.timestamp = timestamp

@@ -53,6 +53,7 @@ enum Constants {
         static let sessionStart = "session_start"
         static let payment = "payment"
         static let pushOpen = "push_open"
+        static let pushDelivered = "push_delivered"
     }
 
     /// Error messages

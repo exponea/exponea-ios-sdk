@@ -16,8 +16,8 @@ import Foundation
 public struct EventsResponse: Codable {
     
     /// Status of the http response.
-    public let success: Bool?
+    public let success: Bool
     
     /// Holds the returned event data from the Exponea API.
-    public let data: [Event]?
+    public let data: [Event]
 }

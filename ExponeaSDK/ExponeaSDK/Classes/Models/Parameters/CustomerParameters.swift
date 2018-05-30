@@ -111,24 +111,29 @@ extension CustomerParameters: RequestParametersType {
         }
         /// Preparing data param
         if let data = data {
-            for attrib in data.attributes.list {
-                list[attrib.typeKey] = attrib.typeValue
-                list[attrib.identificationKey] = attrib.identificationValue
-                listAppend.append(list)
+            if let attributes = data.attributes {
+                for attrib in attributes.list {
+                    list[attrib.typeKey] = attrib.typeValue
+                    list[attrib.identificationKey] = attrib.identificationValue
+                    listAppend.append(list)
+                }
+                
+                attributeComplete["type"] = attributes.type
             }
             
-            for filter in data.filter {
-                filterList[filter.key] = filter.value
+            if let filters = data.filter {
+                for filter in filters {
+                    filterList[filter.key] = filter.value
+                }
             }
             
-            attributeComplete["type"] = data.attributes.type
             attributeComplete["list"] = listAppend
             
             preparedParam["attributes"] = attributeComplete
             preparedParam["filter"] = filterList
             preparedParam["execution_time"] = data.executionTime
             preparedParam["timezone"] = data.timezone
-            preparedParam["format"] = data.responseFormat
+            preparedParam["format"] = data.responseFormat.rawValue
             
             list.removeAll()
             listAppend.removeAll()

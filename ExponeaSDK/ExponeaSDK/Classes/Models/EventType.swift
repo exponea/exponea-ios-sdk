@@ -39,6 +39,10 @@ public enum EventType: String, Decodable {
     /// Event used for registering the push notifications token of the device with Exponea.
     case registerPushToken = "PUSH_TOKEN"
     
+    /// For tracking that a push notification has been delivered, this has to be done manually using a push service
+    /// extension implemented in the host application. See the documentation for more information.
+    case pushDelivered = "PUSH_DELIVERED"
+    
     /// For tracking that a push notification has been opened.
     case pushOpened = "PUSH_OPENED"
 }

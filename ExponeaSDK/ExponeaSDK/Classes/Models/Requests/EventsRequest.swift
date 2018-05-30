@@ -16,13 +16,13 @@ public struct EventsRequest {
     public var eventTypes: [String]
     
     /// Order of exported events by timestamp (asc/desc).
-    public var sortOrder: String = "desc"
+    public var sortOrder: String?
     
     /// Number of items to return.
-    public var limit: Int = 3
+    public var limit: Int?
     
     /// Number of items to be skipped from the beginning
-    public var skip: Int = 100
+    public var skip: Int?
     
     /// Events request initializer
     ///
@@ -32,9 +32,9 @@ public struct EventsRequest {
     ///   - limit: Number of items to return.
     ///   - skip: Number of items to be skipped from the beginning
     public init(eventTypes: [String],
-                sortOrder: String = "desc",
-                limit: Int = 3,
-                skip: Int = 100) {
+                sortOrder: String? = nil,
+                limit: Int? = nil,
+                skip: Int? = nil) {
         self.eventTypes = eventTypes
         self.sortOrder = sortOrder
         self.limit = limit

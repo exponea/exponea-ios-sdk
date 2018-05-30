@@ -96,6 +96,7 @@ extension TrackingManager: TrackingManagerType {
             case .payment: try trackPayment(with: payload)
             case .registerPushToken: try trackPushToken(with: payload)
             case .pushOpened: try trackPushOpened(with: payload)
+            case .pushDelivered: try trackPushDelivered(with: payload)
             }
         }
     }
@@ -127,6 +128,10 @@ extension TrackingManager {
     open func trackPushOpened(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushOpen)])
     }
+    
+    open func trackPushDelivered(with data: [DataType]) throws {
+        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushDelivered)])
+    }
 }
 
 // MARK: - Sessions
@@ -134,19 +139,19 @@ extension TrackingManager {
 extension TrackingManager {
     internal var sessionStartTime: Double {
         get {
-            return UserDefaults.standard.double(forKey: Constants.Keys.sessionStarted)
+            return Exponea.shared.userDefaults.double(forKey: Constants.Keys.sessionStarted)
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionStarted)
+            Exponea.shared.userDefaults.set(newValue, forKey: Constants.Keys.sessionStarted)
         }
     }
     
     internal var sessionEndTime: Double {
         get {
-            return UserDefaults.standard.double(forKey: Constants.Keys.sessionEnded)
+            return Exponea.shared.userDefaults.double(forKey: Constants.Keys.sessionEnded)
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: Constants.Keys.sessionEnded)
+            Exponea.shared.userDefaults.set(newValue, forKey: Constants.Keys.sessionEnded)
         }
     }
     

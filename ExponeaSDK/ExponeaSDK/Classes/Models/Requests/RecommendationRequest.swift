@@ -47,11 +47,11 @@ public struct RecommendationRequest {
     ///            but to products with IDs specified in this hash.
     public init(type: String,
                 id: String,
-                size: Int?,
-                strategy: String?,
-                knowItems: Bool?,
-                anti: Bool?,
-                items: [AnyHashable: JSONConvertible]?) {
+                size: Int? = nil,
+                strategy: String? = nil,
+                knowItems: Bool? = nil,
+                anti: Bool? = nil,
+                items: [AnyHashable: JSONConvertible]? = nil) {
         self.type = type
         self.id = id
         self.size = size

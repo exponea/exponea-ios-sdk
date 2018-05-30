@@ -30,6 +30,7 @@ public class Exponea: ExponeaType {
         }
         
         set {
+            // If we want to reset Exponea, warn about it and reset everything
             guard let newValue = newValue else {
                 Exponea.logger.log(.warning, message: "Removing Exponea configuration and resetting everything.")
                 trackingManager = nil
@@ -37,6 +38,7 @@ public class Exponea: ExponeaType {
                 return
             }
             
+            // If we want to re-configure Exponea, warn about it, reset everything and continue setting up with new
             if configuration != nil {
                 Exponea.logger.log(.warning, message: "Resetting previous Exponea configuration.")
                 trackingManager = nil

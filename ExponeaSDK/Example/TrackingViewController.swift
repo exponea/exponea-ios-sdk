@@ -12,18 +12,6 @@ import UserNotifications
 
 class TrackingViewController: UIViewController {
 
-    @IBOutlet weak var textView: UITextView!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        textView.text = ""
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    
     @IBAction func customEventPressed(_ sender: Any) {
         Exponea.shared.trackEvent(properties: [
             "my_property_1" : "my property 1 value",
@@ -39,7 +27,7 @@ class TrackingViewController: UIViewController {
     
     @IBAction func identifyCustomerPressed(_ sender: Any) {
         Exponea.shared.identifyCustomer(customerId: "test@test.com",
-                                         properties: ["custom_property" : "somevalue"],
+                                        properties: ["custom_property" : "Some Property Value", "first_name" : "test"],
                                          timestamp: nil)
     }
     

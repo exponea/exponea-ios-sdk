@@ -11,10 +11,6 @@ import ExponeaSDK
 
 class FlushingViewController: UIViewController {
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    
     @IBAction func flushData(_ sender: Any) {
         Exponea.shared.flushData()
     }

@@ -49,7 +49,7 @@
 		C0EB5D9020B7F8A900F1031F /* DispatchQueue+OnceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D8F20B7F8A900F1031F /* DispatchQueue+OnceTracker.swift */; };
 		C0EB5D9320B811F900F1031F /* PushNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9220B811F900F1031F /* PushNotificationManager.swift */; };
 		C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9420B8123200F1031F /* PushNotificationSelectors.swift */; };
-		C0EB5D9720B8190500F1031F /* EventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9620B8190500F1031F /* EventViewController.swift */; };
+		C0EB5D9720B8190500F1031F /* FetchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9620B8190500F1031F /* FetchViewController.swift */; };
 		C0EB5D9B20B8193200F1031F /* FlushingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9A20B8193200F1031F /* FlushingViewController.swift */; };
 		C0EB5D9D20B8193A00F1031F /* TrackingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */; };
 		C0EB5D9F20BB530000F1031F /* ExponeaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9E20BB530000F1031F /* ExponeaType.swift */; };
@@ -57,6 +57,9 @@
 		C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406920BC38EC00CAF7CE /* Swizzle.swift */; };
 		C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */; };
 		C0F2406E20BC511500CAF7CE /* Exponea+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */; };
+		C0F2407020BD98EB00CAF7CE /* MemoryLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406F20BD98EB00CAF7CE /* MemoryLogger.swift */; };
+		C0F2407220BD9A5500CAF7CE /* LogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2407120BD9A5500CAF7CE /* LogViewController.swift */; };
+		C0F2407420BDA42600CAF7CE /* ExportFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2407320BDA42600CAF7CE /* ExportFormat.swift */; };
 		C0F6C4E32098A1AB00834E21 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */; };
 		C0F6C4E52098A1AB00834E21 /* AuthenticationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */; };
 		C0F6C4E82098A1AB00834E21 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4E62098A1AB00834E21 /* Main.storyboard */; };
@@ -178,7 +181,7 @@
 		C0EB5D8F20B7F8A900F1031F /* DispatchQueue+OnceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+OnceTracker.swift"; sourceTree = "<group>"; };
 		C0EB5D9220B811F900F1031F /* PushNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManager.swift; sourceTree = "<group>"; };
 		C0EB5D9420B8123200F1031F /* PushNotificationSelectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationSelectors.swift; sourceTree = "<group>"; };
-		C0EB5D9620B8190500F1031F /* EventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventViewController.swift; sourceTree = "<group>"; };
+		C0EB5D9620B8190500F1031F /* FetchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchViewController.swift; sourceTree = "<group>"; };
 		C0EB5D9A20B8193200F1031F /* FlushingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingViewController.swift; sourceTree = "<group>"; };
 		C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingViewController.swift; sourceTree = "<group>"; };
 		C0EB5D9E20BB530000F1031F /* ExponeaType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaType.swift; sourceTree = "<group>"; };
@@ -186,6 +189,9 @@
 		C0F2406920BC38EC00CAF7CE /* Swizzle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swizzle.swift; sourceTree = "<group>"; };
 		C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+Fetching.swift"; sourceTree = "<group>"; };
 		C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+Tracking.swift"; sourceTree = "<group>"; };
+		C0F2406F20BD98EB00CAF7CE /* MemoryLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryLogger.swift; sourceTree = "<group>"; };
+		C0F2407120BD9A5500CAF7CE /* LogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewController.swift; sourceTree = "<group>"; };
+		C0F2407320BDA42600CAF7CE /* ExportFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportFormat.swift; sourceTree = "<group>"; };
 		C0F6C4E02098A1AB00834E21 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationViewController.swift; sourceTree = "<group>"; };
@@ -431,9 +437,11 @@
 				C0843CF020B6DC6000FAF0CB /* Example.entitlements */,
 				C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */,
 				C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */,
-				C0EB5D9620B8190500F1031F /* EventViewController.swift */,
+				C0EB5D9620B8190500F1031F /* FetchViewController.swift */,
 				C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */,
 				C0EB5D9A20B8193200F1031F /* FlushingViewController.swift */,
+				C0F2407120BD9A5500CAF7CE /* LogViewController.swift */,
+				C0F2406F20BD98EB00CAF7CE /* MemoryLogger.swift */,
 				C0F6C4E62098A1AB00834E21 /* Main.storyboard */,
 				C0F6C4E92098A1AC00834E21 /* Assets.xcassets */,
 				C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */,
@@ -548,6 +556,7 @@
 				F029BF22208A08CE00342498 /* Event.swift */,
 				01EC2DA8207E4FC10031BFEB /* CustomerExport.swift */,
 				F067441320873813003C0293 /* PurchasedItem.swift */,
+				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -583,8 +592,8 @@
 			children = (
 				F0E757EA207CFA9700FE8C21 /* Repository.swift */,
 				C0753E8F20A43D3900A779FF /* RepositoryError.swift */,
-				F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */,
 				F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */,
+				F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -844,9 +853,11 @@
 			files = (
 				C0EB5D9D20B8193A00F1031F /* TrackingViewController.swift in Sources */,
 				C0F6C4E52098A1AB00834E21 /* AuthenticationViewController.swift in Sources */,
+				C0F2407020BD98EB00CAF7CE /* MemoryLogger.swift in Sources */,
 				C0F6C4E32098A1AB00834E21 /* AppDelegate.swift in Sources */,
 				C0EB5D9B20B8193200F1031F /* FlushingViewController.swift in Sources */,
-				C0EB5D9720B8190500F1031F /* EventViewController.swift in Sources */,
+				C0F2407220BD9A5500CAF7CE /* LogViewController.swift in Sources */,
+				C0EB5D9720B8190500F1031F /* FetchViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +917,7 @@
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,
 				C0EB5D8E20B710A900F1031F /* Data+TokenString.swift in Sources */,
 				F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */,
+				C0F2407420BDA42600CAF7CE /* ExportFormat.swift in Sources */,
 				C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */,
 				C0EB5DA620BB59BD00F1031F /* RequestParametersType.swift in Sources */,
 				F029BF2D208A2C5200342498 /* StringResponse.swift in Sources */,

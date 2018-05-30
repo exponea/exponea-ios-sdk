@@ -48,10 +48,6 @@ class AuthenticationViewController: UIViewController {
         tokenUpdated()
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    
     @objc func tokenUpdated() {
         startButton.isEnabled = (tokenField.text ?? "").count > 0
         startButton.alpha = startButton.isEnabled ? 1.0 : 0.4
