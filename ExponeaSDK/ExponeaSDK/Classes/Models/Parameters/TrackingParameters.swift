@@ -12,16 +12,16 @@ import Foundation
 /// Depending on what king of tracking, you can use a combination of properties.
 struct TrackingParameters {
     /// Customer identification.
-    var customerIds: [AnyHashable: JSONConvertible]
+    var customerIds: [String: String]
     /// Object with customer properties.
-    var properties: [AnyHashable: JSONConvertible]
+    var properties: [String: JSONValue]
     /// Timestamp should always be UNIX timestamp format
     var timestamp: Double?
     /// Name of the tracking event.
     var eventType: String?
 
-    init(customerIds: [AnyHashable: JSONConvertible],
-         properties: [AnyHashable: JSONConvertible],
+    init(customerIds: [String: String],
+         properties: [String: JSONValue],
          timestamp: Double? = nil,
          eventType: String? = nil) {
         self.customerIds = customerIds
@@ -32,22 +32,22 @@ struct TrackingParameters {
 }
 
 extension TrackingParameters: RequestParametersType {
-    var parameters: [AnyHashable: JSONConvertible] {
-        var parameters: [AnyHashable: JSONConvertible] = [:]
+    var parameters: [String: JSONValue] {
+        var parameters: [String: JSONValue] = [:]
 
         /// Preparing customers_ids params
-        parameters["customer_ids"] = customerIds
+        parameters["customer_ids"] = .dictionary(customerIds.mapValues({ JSONValue.string($0) }))
         
         /// Preparing properties param
-        parameters["properties"] = properties
+        parameters["properties"] = .dictionary(properties)
 
         /// Preparing timestamp param
         if let timestamp = timestamp {
-            parameters["timestamp"] = timestamp
+            parameters["timestamp"] = .double(timestamp)
         }
         /// Preparing eventType param
         if let eventType = eventType {
-            parameters["event_type"] = eventType
+            parameters["event_type"] = .string(eventType)
         }
 
         return parameters

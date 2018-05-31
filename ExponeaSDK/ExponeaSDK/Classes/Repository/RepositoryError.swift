@@ -14,6 +14,8 @@ import Foundation
 /// - invalidResponse: Holds any invalid response when calling the Exponea API.
 public enum RepositoryError: LocalizedError {
     case missingData(String)
+    case serverError(ErrorResponse?)
+    case urlNotFound(ErrorResponse?)
     case invalidResponse(URLResponse?)
     
     /// Return a formatted error message while doing API calls to Exponea.
@@ -23,6 +25,10 @@ public enum RepositoryError: LocalizedError {
             return "Request is missing required data: \(details)"
         case .invalidResponse(let response):
             return "An invalid response was received from the API: \(response != nil ? "\(response!)" : "No response")"
+        case .serverError(let response):
+            return response?.errors.description ?? "There was a server error, please try again later."
+        case .urlNotFound(let response):
+            return response?.errors.description ?? "Requested URL was not found."
         }
     }
 }

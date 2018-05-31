@@ -17,7 +17,7 @@ protocol TrackingRepository {
     ///     - customerIds: Customer identification.
     ///     - completion: Object containing the request result.
     func trackCustomer(with data: [DataType],
-                       for customerIds: [AnyHashable: JSONConvertible],
+                       for customerIds: [String: String],
                        completion: @escaping ((EmptyResult) -> Void))
 
     /// Tracks new events for a customer.
@@ -27,7 +27,7 @@ protocol TrackingRepository {
     ///     - customerIds: Customer identification.
     ///     - completion: Object containing the request result.
     func trackEvent(with data: [DataType],
-                    for customerIds: [AnyHashable: JSONConvertible],
+                    for customerIds: [String: String],
                     completion: @escaping ((EmptyResult) -> Void))
 }
 
@@ -58,7 +58,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - property: Property that should be fetched.
     ///   - completion: Object containing the request result.
-    func fetchProperty(property: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchProperty(property: String, for customerIds: [String: String],
                        completion: @escaping (Result<StringResponse>) -> Void)
     /// Fetchs a identifier by another known identifier.
     ///
@@ -66,7 +66,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - id: Identifier that you want to retrieve.
     ///   - completion: Object containing the request result.
-    func fetchId(id: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchId(id: String, for customerIds: [String: String],
                  completion: @escaping (Result<StringResponse>) -> Void)
     
     /// Fetch a segment by its ID for particular customer.
@@ -74,7 +74,7 @@ protocol FetchRepository {
     /// - Parameters:
     ///   - customerIds: Identification of a customer.
     ///   - id: Identifier that you want to retrieve.
-    func fetchSegmentation(id: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchSegmentation(id: String, for customerIds: [String: String],
                            completion: @escaping (Result<StringResponse>) -> Void)
 
     /// Fetch an expression by its ID for particular customer.
@@ -83,7 +83,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - id: Identifier that you want to retrieve.
     ///   - completion: Object containing the request result.
-    func fetchExpression(id: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchExpression(id: String, for customerIds: [String: String],
                          completion: @escaping (Result<EntityValueResponse>) -> Void)
     
     /// Fetch a prediction by its ID for particular customer.
@@ -92,7 +92,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - id: Identifier that you want to retrieve
     ///   - completion: Object containing the request result.
-    func fetchPrediction(id: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchPrediction(id: String, for customerIds: [String: String],
                          completion: @escaping (Result<EntityValueResponse>) -> Void)
 
     /// Fetch a recommendation by its ID for particular customer.
@@ -101,7 +101,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - recommendation: Recommendations for the customer.
     ///   - completion: Object containing the request result.
-    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String: String],
                              completion: @escaping (Result<RecommendationResponse>) -> Void)
 
     /// Fetch multiple customer attributes at once
@@ -109,7 +109,7 @@ protocol FetchRepository {
     /// - Parameters:
     ///   - customerIds: Identification of a customer.
     ///   - attributes: List of attributes you want to retrieve.
-    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [AnyHashable: JSONConvertible],
+    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String: String],
                          completion: @escaping (Result<AttributesListDescription>) -> Void)
 
     /// Fetch customer events by its type.
@@ -118,14 +118,14 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - events: List of event types to be retrieve.
     ///   - completion: Object containing the request result.
-    func fetchEvents(events: EventsRequest, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchEvents(events: EventsRequest, for customerIds: [String: String],
                      completion: @escaping (Result<EventsResponse>) -> Void)
     
     /// Exports all properties, ids and events for one customer.
     ///
     /// - Parameters:
     ///   - customerIds: Identification of a customer.
-    func fetchAllProperties(for customerIds: [AnyHashable: JSONConvertible],
+    func fetchAllProperties(for customerIds: [String: String],
                             completion: @escaping (Result<[StringResponse]>) -> Void)
 
     /// Exports all customers who exist in the project.
@@ -140,7 +140,7 @@ protocol FetchRepository {
     ///
     /// - Parameters:
     ///   - customerIds: Identification of a customer.
-    func anonymize(customerIds: [AnyHashable: JSONConvertible],
+    func anonymize(customerIds: [String: String],
                    completion: @escaping (Result<StringResponse>) -> Void)
 }
 

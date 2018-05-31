@@ -25,6 +25,7 @@ class FetchViewController: UIViewController {
                     AppDelegate.memoryLogger.logMessage("\(recom)")
                 case .failure(let error):
                     AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                    self.showAlert(title: "Error", message: error.localizedDescription)
                 }
         }
     }
@@ -42,7 +43,9 @@ class FetchViewController: UIViewController {
                     Success: \(property.success ?? false)
                     Content: \(property.value ?? "N/A")
                     """)
-            case .failure(let error): AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -56,7 +59,9 @@ class FetchViewController: UIViewController {
                     Success: \(property.success ?? false)
                     Content: \(property.value ?? "N/A")
                     """)
-            case .failure(let error): AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -72,7 +77,9 @@ class FetchViewController: UIViewController {
                             Entity = \(property.entityName)
                             Value = \(property.value)
                     """)
-            case .failure(let error): AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -88,7 +95,9 @@ class FetchViewController: UIViewController {
                             Entity = \(property.entityName)
                             Value = \(property.value)
                     """)
-            case .failure(let error): AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -97,8 +106,15 @@ class FetchViewController: UIViewController {
         let recomm = RecommendationRequest(type: "", id: "")
         Exponea.shared.fetchRecommendation(with: recomm) { (result) in
             switch result {
-            case .success(let recom): AppDelegate.memoryLogger.logMessage("\(recom)")
-            case .failure(let error): AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+            case .success(let recom):
+                AppDelegate.memoryLogger.logMessage("\(recom)")
+                self.showAlert(title: "Fetch Recommendation", message: """
+                    Success: \(recom.success ?? false)
+                    Content: \(recom.results ?? [])
+                    """)
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -113,7 +129,9 @@ class FetchViewController: UIViewController {
                     Success: \(events.success)
                     Content: \(events.data)
                     """)
-            case .failure(let error): AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -122,8 +140,15 @@ class FetchViewController: UIViewController {
         let req = AttributesDescription(key: "a", value: "b", identificationKey: "", identificationValue: "")
         Exponea.shared.fetchAttributes(with: req) { (result) in
             switch result {
-            case .success(let recom): AppDelegate.memoryLogger.logMessage("\(recom)")
-            case .failure(let error): AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+            case .success(let recom):
+                AppDelegate.memoryLogger.logMessage("\(recom)")
+                self.showAlert(title: "Fetch Attributes", message: """
+                    Type: \(recom.type)
+                    List: \(recom.list)
+                    """)
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -131,8 +156,11 @@ class FetchViewController: UIViewController {
     @IBAction func fetchAllProperties(_ sender: Any) {
         Exponea.shared.fetchAllProperties { (result) in
             switch result {
-            case .success(let property): AppDelegate.memoryLogger.logMessage("\(property)")
-            case .failure(let error): AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+            case .success(let property):
+                AppDelegate.memoryLogger.logMessage("\(property)")
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }
@@ -141,8 +169,11 @@ class FetchViewController: UIViewController {
         let export = CustomerExport(responseFormat: .csv)
         Exponea.shared.fetchAllCustomers(with: export) { (result) in
             switch result {
-            case .success(let property): AppDelegate.memoryLogger.logMessage("\(property)")
-            case .failure(let error): AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+            case .success(let property):
+                AppDelegate.memoryLogger.logMessage("\(property)")
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: error.localizedDescription)
             }
         }
     }

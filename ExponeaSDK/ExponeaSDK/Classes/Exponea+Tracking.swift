@@ -17,9 +17,9 @@ extension Exponea {
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
     ///     - eventType: Name of event
-    public func trackEvent(properties: [AnyHashable: JSONConvertible], timestamp: Double?, eventType: String?) {
+    public func trackEvent(properties: [String: JSONConvertible], timestamp: Double?, eventType: String?) {
         // Create initial data
-        var data: [DataType] = [.properties(properties),
+        var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })),
                                 .timestamp(timestamp)]
         
         // If event type was provided, use it
@@ -44,13 +44,13 @@ extension Exponea {
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
     public func identifyCustomer(customerId: String?,
-                                 properties: [AnyHashable: JSONConvertible],
+                                 properties: [String: JSONConvertible],
                                  timestamp: Double?) {
         do {
             let dependencies = try getDependenciesIfConfigured()
             
             // Prepare data
-            var data: [DataType] = [.properties(properties),
+            var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })),
                                     .timestamp(timestamp)]
             if let id = customerId {
                 data.append(.customerId(id))

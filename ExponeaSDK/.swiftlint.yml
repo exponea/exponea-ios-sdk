@@ -46,3 +46,4 @@ identifier_name:
     - sdk
     - now
     - csv
+    - int

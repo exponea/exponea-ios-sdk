@@ -68,7 +68,7 @@ extension RequestFactory {
         }
 
         // Add parameters as request body in JSON format, if we have any
-        if let parameters = parameters?.parameters {
+        if let parameters = parameters?.requestParameters {
             do {
                 request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
             } catch {
@@ -99,18 +99,44 @@ extension RequestFactory {
     
     func handler<T: Decodable>(with completion: @escaping ((Result<T>) -> Void)) -> CompletionHandler {
         return { (data, response, error) in
+            guard let httpResponse = response as? HTTPURLResponse else {
+                DispatchQueue.main.async {
+                    completion(.failure(RepositoryError.invalidResponse(response)))
+                }
+                return
+            }
+
             if let error = error {
                 completion(.failure(error))
             } else if let data = data {
                 let decoder = JSONDecoder()
-                do {
-                    let object = try decoder.decode(T.self, from: data)
+                
+                // Switch on status code
+                switch httpResponse.statusCode {
+                case 400..<500:
+                    let errorResponse = try? decoder.decode(ErrorResponse.self, from: data)
                     DispatchQueue.main.async {
-                        completion(.success(object))
+                        completion(.failure(RepositoryError.urlNotFound(errorResponse)))
                     }
-                } catch {
+                    
+                case 500...Int.max:
+                    let errorResponse = try? decoder.decode(ErrorResponse.self, from: data)
                     DispatchQueue.main.async {
-                        completion(.failure(error))
+                        completion(.failure(RepositoryError.serverError(errorResponse)))
+                    }
+                    
+                default:
+                    
+                    // If all is good continue serialising
+                    do {
+                        let object = try decoder.decode(T.self, from: data)
+                        DispatchQueue.main.async {
+                            completion(.success(object))
+                        }
+                    } catch {
+                        DispatchQueue.main.async {
+                            completion(.failure(error))
+                        }
                     }
                 }
             } else {

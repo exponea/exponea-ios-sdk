@@ -16,7 +16,7 @@ open class TrackingManager {
     let device: DeviceProperties
     
     /// The identifiers of the the current customer.
-    var customerIds: [AnyHashable: JSONConvertible] {
+    var customerIds: [String: String] {
         return database.customer.ids
     }
     
@@ -264,8 +264,8 @@ extension TrackingManager {
         var properties = device.properties
         
         /// Adding session start properties.
-        properties["event_type"] = Constants.EventTypes.sessionStart
-        properties["timestamp"] = sessionStartTime
+        properties["event_type"] = .string(Constants.EventTypes.sessionStart)
+        properties["timestamp"] = .double(sessionStartTime)
         
         try database.trackEvent(with: [.projectToken(projectToken),
                                        .properties(properties),
@@ -280,9 +280,9 @@ extension TrackingManager {
         let duration = sessionEndTime - sessionStartTime
         
         /// Adding session end properties.
-        properties["event_type"] = Constants.EventTypes.sessionEnd
-        properties["timestamp"] = sessionStartTime
-        properties["duration"] = duration
+        properties["event_type"] = .string(Constants.EventTypes.sessionEnd)
+        properties["timestamp"] = .double(sessionStartTime)
+        properties["duration"] = .double(duration)
         
         try database.trackEvent(with: [.projectToken(projectToken),
                                        .properties(properties),

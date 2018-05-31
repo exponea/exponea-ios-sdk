@@ -15,7 +15,7 @@ public struct CustomerExport {
     public var attributes: AttributesListDescription?
     
     /// <#Description#>
-    public var filter: [AnyHashable: JSONConvertible]?
+    public var filter: [String: JSONValue]?
     
     /// <#Description#>
     public var executionTime: Int?
@@ -35,7 +35,7 @@ public struct CustomerExport {
     ///   - timezone: <#timezone description#>
     ///   - responseFormat: <#responseFormat description#>
     public init(attributes: AttributesListDescription? = nil,
-                filter: [AnyHashable: JSONConvertible]? = nil,
+                filter: [String: JSONValue]? = nil,
                 executionTime: Int? = nil,
                 timezone: String? = nil,
                 responseFormat: ExportFormat) {

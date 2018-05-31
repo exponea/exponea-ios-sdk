@@ -29,10 +29,10 @@
 		01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */; };
 		01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */; };
 		01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DC0207F63970031BFEB /* FlushingMode.swift */; };
+		C01E19EA20C02A4D00DF64F9 /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01E19E920C02A4D00DF64F9 /* ErrorResponse.swift */; };
 		C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */; };
 		C0753E9020A43D3900A779FF /* RepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E8F20A43D3900A779FF /* RepositoryError.swift */; };
 		C0753E9220A574AE00A779FF /* TrackEvent+DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E9120A574AE00A779FF /* TrackEvent+DataType.swift */; };
-		C0753E9520A5793600A779FF /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */; };
 		C07F1BC7209A474A004FE933 /* EntityValueResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */; };
 		C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
@@ -163,6 +163,7 @@
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		B57907D0B9C15901B882D6C2 /* Pods-ExponeaSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		C01E19E920C02A4D00DF64F9 /* ErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
 		C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
 		C0753E8F20A43D3900A779FF /* RepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryError.swift; sourceTree = "<group>"; };
 		C0753E9120A574AE00A779FF /* TrackEvent+DataType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackEvent+DataType.swift"; sourceTree = "<group>"; };
@@ -245,7 +246,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */,
-				C0753E9520A5793600A779FF /* ExponeaSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +396,7 @@
 				F029BF2A208A2BC300342498 /* RecommendationResponse.swift */,
 				F029BF2C208A2C5200342498 /* StringResponse.swift */,
 				C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */,
+				C01E19E920C02A4D00DF64F9 /* ErrorResponse.swift */,
 			);
 			path = Responses;
 			sourceTree = "<group>";
@@ -698,7 +699,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0930;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = Exponea;
 				TargetAttributes = {
 					C0F6C4DF2098A1AB00834E21 = {
@@ -910,6 +911,7 @@
 				C0D9B08120A3C0D50066FB1E /* Authorization.swift in Sources */,
 				01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
+				C01E19EA20C02A4D00DF64F9 /* ErrorResponse.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,

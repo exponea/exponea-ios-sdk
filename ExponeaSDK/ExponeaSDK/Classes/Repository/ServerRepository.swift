@@ -28,10 +28,10 @@ extension ServerRepository: TrackingRepository {
     ///     - data: Object containing the data to be used to track a customer data.
     ///     - customer: Customer identification.
     ///     - completion: Object containing the request result.
-    func trackCustomer(with data: [DataType], for customerIds: [AnyHashable: JSONConvertible],
+    func trackCustomer(with data: [DataType], for customerIds: [String: String],
                        completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
-        var properties: [AnyHashable: JSONConvertible] = [:]
+        var properties: [String: JSONValue] = [:]
         
         for item in data {
             switch item {
@@ -70,10 +70,10 @@ extension ServerRepository: TrackingRepository {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    func trackEvent(with data: [DataType], for customerIds: [AnyHashable: JSONConvertible],
+    func trackEvent(with data: [DataType], for customerIds: [String: String],
                     completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
-        var properties: [AnyHashable: JSONConvertible] = [:]
+        var properties: [String: JSONValue] = [:]
         var timestamp: Double?
         var eventType: String?
         
@@ -154,7 +154,7 @@ extension ServerRepository: RepositoryType {
     ///   - customerIds: Identification of a customer.
     ///   - property: Property that should be fetched.
     ///   - completion: Object containing the request result.
-    func fetchProperty(property: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchProperty(property: String, for customerIds: [String: String],
                        completion: @escaping ((Result<StringResponse>) -> Void)) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -173,7 +173,7 @@ extension ServerRepository: RepositoryType {
     ///   - customerId: Identification of a customer.
     ///   - id: Identifier that you want to retrieve.
     ///   - completion: Object containing the request result.
-    func fetchId(id: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchId(id: String, for customerIds: [String: String],
                  completion: @escaping (Result<StringResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -193,7 +193,7 @@ extension ServerRepository: RepositoryType {
     /// - Parameters:
     ///   - customerId: Identification of a customer.
     ///   - id: Identifier that you want to retrieve.
-    func fetchSegmentation(id: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchSegmentation(id: String, for customerIds: [String: String],
                            completion: @escaping (Result<StringResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -215,7 +215,7 @@ extension ServerRepository: RepositoryType {
     ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
     ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
     ///     - id: Identifier that you want to retrieve
-    func fetchExpression(id: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchExpression(id: String, for customerIds: [String: String],
                          completion: @escaping (Result<EntityValueResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -233,7 +233,7 @@ extension ServerRepository: RepositoryType {
     ///   - id: Identifier that you want to retrieve
     ///   - customerIds: Identification of a customer.
     ///   - completion: Object containing the request result.
-    func fetchPrediction(id: String, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchPrediction(id: String, for customerIds: [String: String],
                          completion: @escaping (Result<EntityValueResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -254,7 +254,7 @@ extension ServerRepository: RepositoryType {
     ///   - recommendation: Recommendations for the customer.
     ///   - customerIds: Identification of a customer.
     ///   - completion: Object containing the request result.
-    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String: String],
                              completion: @escaping (Result<RecommendationResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -272,7 +272,7 @@ extension ServerRepository: RepositoryType {
     /// - Parameters:
     ///   - attributes: List of attributes you want to retrieve.
     ///   - customerIds: Identification of a customer.
-    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [AnyHashable: JSONConvertible],
+    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String: String],
                          completion: @escaping (Result<AttributesListDescription>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -292,7 +292,7 @@ extension ServerRepository: RepositoryType {
     ///   - events: List of event types to be retrieve.
     ///   - customerId: Identification of a customer.
     ///   - completion: Object containing the request result.
-    func fetchEvents(events: EventsRequest, for customerIds: [AnyHashable: JSONConvertible],
+    func fetchEvents(events: EventsRequest, for customerIds: [String: String],
                      completion: @escaping (Result<EventsResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -310,7 +310,7 @@ extension ServerRepository: RepositoryType {
     /// - Parameters:
     ///   - customerId: Identification of a customer.
     ///   - completion: Object containing the request result.
-    func fetchAllProperties(for customerIds: [AnyHashable: JSONConvertible],
+    func fetchAllProperties(for customerIds: [String: String],
                             completion: @escaping (Result<[StringResponse]>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -349,7 +349,7 @@ extension ServerRepository: RepositoryType {
     /// - Parameters:
     ///   - customerId: Identification of a customer.
     ///   - completion: Object containing the request result.
-    func anonymize(customerIds: [AnyHashable: JSONConvertible],
+    func anonymize(customerIds: [String: String],
                    completion: @escaping (Result<StringResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,

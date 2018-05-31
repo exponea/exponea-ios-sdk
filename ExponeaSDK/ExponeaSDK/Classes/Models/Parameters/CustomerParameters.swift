@@ -12,7 +12,7 @@ import Foundation
 /// Depending on what king of tracking, you can use a combination of properties.
 struct CustomerParameters {
     /// Customer identification.
-    var customer: [AnyHashable: JSONConvertible]
+    var customer: [String: String]
     /// Name of the property.
     var property: String?
     /// Customer identification.
@@ -26,7 +26,7 @@ struct CustomerParameters {
     /// Customer data to export multiple properties.
     var data: CustomerExport?
 
-    init(customer: [AnyHashable: JSONConvertible],
+    init(customer: [String: String],
          property: String? = nil,
          id: String? = nil,
          recommendation: RecommendationRequest? = nil,
@@ -45,80 +45,87 @@ struct CustomerParameters {
 }
 
 extension CustomerParameters: RequestParametersType {
-    var parameters: [AnyHashable: JSONConvertible] {
+    var parameters: [String: JSONValue] {
         
-        var preparedParam: [AnyHashable: JSONConvertible] = [:]
-        var list: [AnyHashable: JSONConvertible] = [:]
+        var preparedParam: [String: JSONValue] = [:]
+        var list: [String: JSONValue] = [:]
         var listAppend = [list]
-        var filterList: [AnyHashable: JSONConvertible] = [:]
-        var attributeComplete: [AnyHashable: JSONConvertible] = [:]
+        var filterList: [String: JSONValue] = [:]
+        var attributeComplete: [String: JSONValue] = [:]
         
         /// Preparing customers_ids params
-        preparedParam["customer_ids"] = customer
+        preparedParam["customer_ids"] =  .dictionary(customer.mapValues({ JSONValue.string($0) }))
         
         /// Preparing property param
         if let property = property {
-            preparedParam["property"] = property
+            preparedParam["property"] = .string(property)
         }
         /// Preparing id param
         if let id = id {
-            preparedParam["id"] = id
+            preparedParam["id"] = .string(id)
         }
         /// Preparing recommendation param
         if let recommendation = recommendation {
             
-            preparedParam["type"] = recommendation.type
-            preparedParam["id"] = recommendation.id
+            preparedParam["type"] = .string(recommendation.type)
+            preparedParam["id"] = .string(recommendation.id)
             
             if let size = recommendation.size {
-                preparedParam["size"] = size
+                preparedParam["size"] = .int(size)
             }
             if let strategy = recommendation.strategy {
-                preparedParam["strategy"] = strategy
+                preparedParam["strategy"] = .string(strategy)
             }
             if let knowItems = recommendation.knowItems {
-                preparedParam["consider_known_items"] = knowItems
+                preparedParam["consider_known_items"] = .bool(knowItems)
             }
             if let anti = recommendation.anti {
-                preparedParam["anti"] = anti
+                preparedParam["anti"] = .bool(anti)
             }
             if let items = recommendation.items {
                 for item in items {
                     list[item.key] = item.value
                 }
-                preparedParam["item"] = list
+                preparedParam["item"] = .dictionary(list)
                 list.removeAll()
             }
         }
         /// Preparing attributes param
         if let attributes = attributes {
             for attribute in attributes {
-                list[attribute.typeKey] = attribute.typeValue
-                list[attribute.identificationKey] = attribute.identificationValue
+                list[attribute.typeKey] = .string(attribute.typeValue)
+                list[attribute.identificationKey] = .string(attribute.identificationValue)
                 listAppend.append(list)
             }
             
-            preparedParam["attributes"] = listAppend
+            preparedParam["attributes"] = .array(listAppend.map({ JSONValue.dictionary($0) }))
             listAppend.removeAll()
             list.removeAll()
         }
         /// Preparing events param
         if let events = events {
-            preparedParam["event_types"] = events.eventTypes
-            preparedParam["order"] = events.sortOrder
-            preparedParam["limit"] = events.limit
-            preparedParam["skip"] = events.skip
+            preparedParam["event_types"] = .array(events.eventTypes.map({ JSONValue.string($0) }))
+            if let sortOrder = events.sortOrder {
+                preparedParam["order"] = .string(sortOrder)
+            }
+            if let limit = events.limit {
+                preparedParam["limit"] = .int(limit)
+            }
+            
+            if let skip = events.skip {
+                preparedParam["skip"] = .int(skip)
+            }
         }
         /// Preparing data param
         if let data = data {
             if let attributes = data.attributes {
                 for attrib in attributes.list {
-                    list[attrib.typeKey] = attrib.typeValue
-                    list[attrib.identificationKey] = attrib.identificationValue
+                    list[attrib.typeKey] = .string(attrib.typeValue)
+                    list[attrib.identificationKey] = .string(attrib.identificationValue)
                     listAppend.append(list)
                 }
                 
-                attributeComplete["type"] = attributes.type
+                attributeComplete["type"] = .string(attributes.type)
             }
             
             if let filters = data.filter {
@@ -127,13 +134,19 @@ extension CustomerParameters: RequestParametersType {
                 }
             }
             
-            attributeComplete["list"] = listAppend
+            attributeComplete["list"] = .array(listAppend.map({ JSONValue.dictionary($0) }))
             
-            preparedParam["attributes"] = attributeComplete
-            preparedParam["filter"] = filterList
-            preparedParam["execution_time"] = data.executionTime
-            preparedParam["timezone"] = data.timezone
-            preparedParam["format"] = data.responseFormat.rawValue
+            preparedParam["attributes"] = .dictionary(attributeComplete)
+            preparedParam["filter"] = .dictionary(filterList)
+            
+            if let time = data.executionTime {
+                preparedParam["execution_time"] = .int(time)
+            }
+            
+            if let timezone = data.timezone {
+                preparedParam["timezone"] = .string(timezone)
+            }
+            preparedParam["format"] = .string(data.responseFormat.rawValue)
             
             list.removeAll()
             listAppend.removeAll()

@@ -165,9 +165,13 @@ extension DatabaseManager: DatabaseManagerType {
             case .properties(let properties):
                 // Add the event properties to the events entity
                 for property in properties {
+                    guard case let .string(value) = property.value else {
+                        Exponea.logger.log(.error, message: "Non string property value - skipping \(property.value).")
+                        continue
+                    }
                     let trackEventProperties = TrackEventProperty(context: context)
-                    trackEventProperties.key = property.key as? String
-                    trackEventProperties.value = property.value as? NSObject
+                    trackEventProperties.key = property.key
+                    trackEventProperties.value = value
                     context.insert(trackEventProperties)
                     trackEvent.addToTrackEventProperties(trackEventProperties)
                 }
@@ -225,15 +229,19 @@ extension DatabaseManager: DatabaseManagerType {
             case .properties(let properties):
                 // Add the customer properties to the customer entity
                 for property in properties {
+                    guard case let .string(value) = property.value else {
+                        Exponea.logger.log(.error, message: "Non string property value - skipping \(property.value).")
+                        continue
+                    }
                     let trackCustomerProperties = TrackCustomerProperty(context: context)
-                    trackCustomerProperties.key = property.key as? String
-                    trackCustomerProperties.value = property.value as? NSObject
+                    trackCustomerProperties.key = property.key
+                    trackCustomerProperties.value = value
                     trackCustomer.addToTrackCustomerProperties(trackCustomerProperties)
                 }
             case .pushNotificationToken(let token):
                 let trackCustomerProperties = TrackCustomerProperty(context: context)
                 trackCustomerProperties.key = "apple_push_notification_id"
-                trackCustomerProperties.value = token as NSObject
+                trackCustomerProperties.value = token
                 trackCustomer.addToTrackCustomerProperties(trackCustomerProperties)
                 
             default:

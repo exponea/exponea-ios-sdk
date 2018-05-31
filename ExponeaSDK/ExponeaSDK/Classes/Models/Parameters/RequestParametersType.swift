@@ -10,5 +10,12 @@ import Foundation
 
 /// Protocol that group all the parameter types.
 protocol RequestParametersType {
-    var parameters: [AnyHashable: JSONConvertible] { get }
+    var parameters: [String: JSONValue] { get }
+    var requestParameters: [String: Any] { get }
+}
+
+extension RequestParametersType {
+    var requestParameters: [String: Any] {
+        return parameters.mapValues { $0.rawValue }
+    }
 }

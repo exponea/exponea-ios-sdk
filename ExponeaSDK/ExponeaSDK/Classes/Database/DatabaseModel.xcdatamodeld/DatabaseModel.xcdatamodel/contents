@@ -14,7 +14,7 @@
     </entity>
     <entity name="TrackCustomerProperty" representedClassName=".TrackCustomerProperty" syncable="YES" codeGenerationType="class">
         <attribute name="key" attributeType="String" syncable="YES"/>
-        <attribute name="value" attributeType="Transformable" syncable="YES"/>
+        <attribute name="value" attributeType="String" syncable="YES"/>
         <relationship name="trackCustomer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackCustomer" inverseName="trackCustomerProperties" inverseEntity="TrackCustomer" syncable="YES"/>
     </entity>
     <entity name="TrackEvent" representedClassName=".TrackEvent" syncable="YES" codeGenerationType="class">
@@ -26,7 +26,7 @@
     </entity>
     <entity name="TrackEventProperty" representedClassName=".TrackEventProperty" syncable="YES" codeGenerationType="class">
         <attribute name="key" attributeType="String" syncable="YES"/>
-        <attribute name="value" attributeType="Transformable" syncable="YES"/>
+        <attribute name="value" attributeType="String" syncable="YES"/>
         <relationship name="trackEvent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackEvent" inverseName="trackEventProperties" inverseEntity="TrackEvent" syncable="YES"/>
     </entity>
     <elements>

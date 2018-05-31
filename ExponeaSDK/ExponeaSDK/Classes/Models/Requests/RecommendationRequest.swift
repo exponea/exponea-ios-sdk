@@ -32,7 +32,7 @@ public struct RecommendationRequest {
     
     /// If present the recommendations are related not only to a customer,
     /// but to products with IDs specified in this hash.
-    public var items: [AnyHashable: JSONConvertible]?
+    public var items: [String: JSONValue]?
     
     /// Recommendation initializer.
     ///
@@ -51,7 +51,7 @@ public struct RecommendationRequest {
                 strategy: String? = nil,
                 knowItems: Bool? = nil,
                 anti: Bool? = nil,
-                items: [AnyHashable: JSONConvertible]? = nil) {
+                items: [String: JSONValue]? = nil) {
         self.type = type
         self.id = id
         self.size = size

@@ -18,7 +18,7 @@ class PushNotificationManager: NSObject {
     
     // TODO: refactor & test
     func handlePushOpened(userInfoObject: AnyObject?) {
-        guard let userInfo = userInfoObject as? [AnyHashable: JSONConvertible] else {
+        guard let userInfo = userInfoObject as? [String: JSONValue] else {
             Exponea.logger.log(.error, message: "Failed to convert push payload.")
             return
         }

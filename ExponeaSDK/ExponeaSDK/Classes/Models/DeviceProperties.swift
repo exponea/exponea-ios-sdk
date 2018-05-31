@@ -36,16 +36,16 @@ struct DeviceProperties {
     }
     
     /// Returns an array with all device properties.
-    var properties: [AnyHashable: JSONConvertible] {
-        var data = [AnyHashable: JSONConvertible]()
+    var properties: [String: JSONValue] {
+        var data = [String: JSONValue]()
 
-        data["os_name"] = osName
-        data["os_version"] = osVersion
-        data["sdk"] = sdk
-        data["sdk_version"] = sdkVersion
-        data["device_model"] = deviceModel
-        data["device_type"] = deviceType
-        data["app_version"] = appVersion
+        data["os_name"] = .string(osName)
+        data["os_version"] = .string(osVersion)
+        data["sdk"] = .string(sdk)
+        data["sdk_version"] = .string(sdkVersion)
+        data["device_model"] = .string(deviceModel)
+        data["device_type"] = .string(deviceType)
+        data["app_version"] = .string(appVersion)
 
         return data
     }

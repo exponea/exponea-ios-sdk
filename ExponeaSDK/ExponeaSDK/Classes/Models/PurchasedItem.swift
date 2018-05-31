@@ -29,17 +29,17 @@ internal struct PurchasedItem {
     internal var receipt: String?
     
     /// Returns an array with all purchased info.
-    internal var properties: [AnyHashable: JSONConvertible] {
-        var data = [AnyHashable: JSONConvertible]()
+    internal var properties: [String: JSONValue] {
+        var data = [String: JSONValue]()
 
-        data["gross_amount"] = grossAmount
-        data["currency"] = currency
-        data["payment_system"] = paymentSystem
-        data["product_id"] = productId
-        data["product_title"] = productTitle
+        data["gross_amount"] = .double(grossAmount)
+        data["currency"] = .string(currency)
+        data["payment_system"] = .string(paymentSystem)
+        data["product_id"] = .string(productId)
+        data["product_title"] = .string(productTitle)
 
         if let receipt = receipt {
-            data["receipt"] = receipt
+            data["receipt"] = .string(receipt)
         }
 
         return data

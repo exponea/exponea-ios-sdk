@@ -11,7 +11,7 @@ import Foundation
 @testable import ExponeaSDK
 
 class FetchMockData {
-    let customerId: [AnyHashable: JSONConvertible] = ["registered": "rito@nodesagency.com"]
+    let customerId: [String: JSONValue] = ["registered": "rito@nodesagency.com"]
     let customerData = EventsRequest(eventTypes: ["session_start", "install"],
                                       sortOrder: "asc",
                                       limit: 1,

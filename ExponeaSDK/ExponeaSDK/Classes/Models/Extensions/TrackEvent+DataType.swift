@@ -19,8 +19,8 @@ extension TrackEvent {
         
         // Convert all properties to key value items.
         if let properties = trackEventProperties as? Set<TrackEventProperty> {
-            var props: [AnyHashable: JSONConvertible] = [:]
-            properties.forEach({ props[$0.key!] = $0.value! })
+            var props: [String: JSONValue] = [:]
+            properties.forEach({ props[$0.key!] = .string($0.value!) })
             data.append(.properties(props))
         }
         
