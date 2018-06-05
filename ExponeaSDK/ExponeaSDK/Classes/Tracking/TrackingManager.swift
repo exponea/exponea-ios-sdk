@@ -164,15 +164,15 @@ extension TrackingManager {
         // Subscribe to notifications
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidBecomeActive),
-                                               name: .UIApplicationDidBecomeActive,
+                                               name: UIApplication.didBecomeActiveNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidEnterBackground),
-                                               name: .UIApplicationDidEnterBackground,
+                                               name: UIApplication.didEnterBackgroundNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationWillTerminate),
-                                               name: .UIApplicationWillTerminate,
+                                               name: UIApplication.willTerminateNotification,
                                                object: nil)
         
         try? track(.sessionStart, with: nil)
@@ -180,9 +180,9 @@ extension TrackingManager {
     
     /// Removes session observers.
     internal func removeSessionObservers() {
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillResignActive, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillTerminate, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willTerminateNotification, object: nil)
     }
     
     @objc internal func applicationDidBecomeActive() {
@@ -368,7 +368,7 @@ extension TrackingManager {
         
         // Remove observers
         let center = NotificationCenter.default
-        center.removeObserver(self, name: Notification.Name.UIApplicationWillResignActive, object: nil)
+        center.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
         
         // Update for new flushing mode
         switch flushingMode {
@@ -377,7 +377,7 @@ extension TrackingManager {
             // Automatically upload on resign active
             let center = NotificationCenter.default
             center.addObserver(self, selector: #selector(flushData),
-                               name: Notification.Name.UIApplicationWillResignActive, object: nil)
+                               name: UIApplication.willResignActiveNotification, object: nil)
             
         case .periodic(let interval):
             // Schedule a timer for the specified interval

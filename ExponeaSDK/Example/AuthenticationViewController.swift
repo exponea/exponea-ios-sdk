@@ -13,7 +13,7 @@ class AuthenticationViewController: UIViewController {
     
     @IBOutlet weak var tokenField: UITextField! {
         didSet {
-            tokenField.addTarget(self, action: #selector(tokenUpdated), for: .editingChanged)
+            tokenField.addTarget(self, action: #selector(tokenUpdated), for: UIControl.Event.editingChanged)
         }
     }
     @IBOutlet weak var authField: UITextField!
