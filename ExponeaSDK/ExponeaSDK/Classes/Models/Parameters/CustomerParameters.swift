@@ -24,7 +24,7 @@ struct CustomerParameters {
     /// Customer events.
     var events: EventsRequest?
     /// Customer data to export multiple properties.
-    var data: CustomerExport?
+    var data: CustomerExportRequest?
 
     init(customer: [String: String],
          property: String? = nil,
@@ -32,7 +32,7 @@ struct CustomerParameters {
          recommendation: RecommendationRequest? = nil,
          attributes: [AttributesDescription]? = nil,
          events: EventsRequest? = nil,
-         data: CustomerExport? = nil) {
+         data: CustomerExportRequest? = nil) {
 
         self.customer = customer
         self.property = property

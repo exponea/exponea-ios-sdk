@@ -132,7 +132,7 @@ protocol FetchRepository {
     ///
     /// - Parameters:
     ///   - data: List of properties to retrieve.
-    func fetchAllCustomers(data: CustomerExport,
+    func fetchAllCustomers(data: CustomerExportRequest,
                            completion: @escaping (Result<[StringResponse]>) -> Void)
 
     /// Removes all the external identifiers and assigns a new cookie id.

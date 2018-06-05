@@ -166,7 +166,7 @@ class FetchViewController: UIViewController {
     }
     
     @IBAction func fetchAllCustomers(_ sender: Any) {
-        let export = CustomerExport(responseFormat: .csv)
+        let export = CustomerExportRequest(responseFormat: .csv)
         Exponea.shared.fetchAllCustomers(with: export) { (result) in
             switch result {
             case .success(let property):

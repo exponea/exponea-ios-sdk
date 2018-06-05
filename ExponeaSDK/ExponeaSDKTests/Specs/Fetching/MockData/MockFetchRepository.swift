@@ -104,7 +104,7 @@ class MockFetchRepository: FetchRepository {
         return
     }
 
-    func fetchAllCustomers(projectToken: String, data: CustomerExport) {
+    func fetchAllCustomers(projectToken: String, data: CustomerExportRequest) {
         return
     }
 

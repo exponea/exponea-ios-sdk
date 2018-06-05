@@ -330,7 +330,7 @@ extension ServerRepository: RepositoryType {
     /// - Parameters:
     ///   - data: List of properties to retrieve.
     ///   - completion: Object containing the request result.
-    func fetchAllCustomers(data: CustomerExport, completion: @escaping (Result<[StringResponse]>) -> Void) {
+    func fetchAllCustomers(data: CustomerExportRequest, completion: @escaping (Result<[StringResponse]>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
                                     route: .customersExportAll)

@@ -1,5 +1,5 @@
 //
-//  CustomerExportModel.swift
+//  CustomerExportRequest.swift
 //  ExponeaSDK
 //
 //  Created by Dominik Hádl on 11/04/2018.
@@ -9,7 +9,7 @@
 import Foundation
 
 /// <#Description#>
-public struct CustomerExport {
+public struct CustomerExportRequest {
     
     /// <#Description#>
     public var attributes: AttributesListDescription?

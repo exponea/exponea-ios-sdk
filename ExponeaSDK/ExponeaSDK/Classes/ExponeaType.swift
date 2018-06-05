@@ -153,7 +153,7 @@ public protocol ExponeaType: class {
     /// - Parameters:
     ///     - request: Customer attribues from a specific customer to be retrieve.
     ///     - completion: Object containing the data requested.
-    func fetchAllCustomers(with request: CustomerExport,
+    func fetchAllCustomers(with request: CustomerExportRequest,
                            completion: @escaping (Result<[StringResponse]>) -> Void)
     
     /// Removes all the external identifiers and assigns a new cookie id.

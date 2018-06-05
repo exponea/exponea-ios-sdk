@@ -79,7 +79,7 @@ extension Exponea {
         }, completion: completion)
     }
     
-    public func fetchAllCustomers(with request: CustomerExport,
+    public func fetchAllCustomers(with request: CustomerExportRequest,
                                   completion: @escaping (Result<[StringResponse]>) -> Void) {
         executeWithDependencies({
             $0.repository.fetchAllCustomers(data: request, completion: completion)
