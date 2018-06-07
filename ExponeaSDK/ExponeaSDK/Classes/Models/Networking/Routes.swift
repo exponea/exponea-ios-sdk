@@ -12,18 +12,7 @@ import Foundation
 public enum Routes {
     case identifyCustomer
     case customEvent
-    case trackBatch
-    case tokenRotate
-    case tokenRevoke
-    case customersProperty
-    case customersId
-    case customersSegmentation
-    case customersExpression
-    case customersPrediction
-    case customersRecommendation
-    case customersAttributes
-    case customersEvents
-    case customersAnonymize
-    case customersExportAllProperties
-    case customersExportAll
+    case customerRecommendation
+    case customerAttributes
+    case customerEvents
 }

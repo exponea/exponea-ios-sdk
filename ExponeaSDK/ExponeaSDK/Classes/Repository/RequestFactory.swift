@@ -24,20 +24,9 @@ public struct RequestFactory {
         switch self.route {
         case .identifyCustomer: return baseURL + "/track/v2/projects/\(projectToken)/customers"
         case .customEvent: return baseURL + "/track/v2/projects/\(projectToken)/customers/events"
-        case .trackBatch: return baseURL + "/track/v2/projects/\(projectToken)/batch"
-        case .tokenRotate: return baseURL + "/data/v2/\(projectToken)/tokens/rotate"
-        case .tokenRevoke: return baseURL + "/data/v2/\(projectToken)/tokens/revoke"
-        case .customersProperty: return baseURL + "/data/v2/\(projectToken)/customers/property"
-        case .customersId: return baseURL + "/data/v2/\(projectToken)/customers/id"
-        case .customersSegmentation: return baseURL + "/data/v2/\(projectToken)/customers/segmentation"
-        case .customersExpression: return baseURL + "/data/v2/\(projectToken)/customers/expression"
-        case .customersPrediction: return baseURL + "/data/v2/\(projectToken)/customers/prediction"
-        case .customersRecommendation: return baseURL + "/data/v2/projects/\(projectToken)/customers/attributes"
-        case .customersAttributes: return baseURL + "/data/v2/\(projectToken)/customers/attributes"
-        case .customersEvents: return baseURL + "/data/v2/projects/\(projectToken)/customers/events"
-        case .customersAnonymize: return baseURL + "/data/v2/\(projectToken)/customers/anonymize"
-        case .customersExportAllProperties: return baseURL + "/data/v2/\(projectToken)/customers/export-one"
-        case .customersExportAll: return baseURL + "/data/v2/\(projectToken)/customers/export"
+        case .customerRecommendation: return baseURL + "/data/v2/projects/\(projectToken)/customers/attributes"
+        case .customerAttributes: return baseURL + "/data/v2/\(projectToken)/customers/attributes"
+        case .customerEvents: return baseURL + "/data/v2/projects/\(projectToken)/customers/events"
         }
     }
 

@@ -90,34 +90,6 @@ public protocol ExponeaType: class {
     
     // MARK: - Data Fetching -
     
-    /// Fetches the id for a customer.
-    ///
-    /// - Parameters:
-    ///     - type: Type of the property you want to retrieve.
-    ///     - completion: Object containing the data requested.
-    func fetchProperty(with type: String, completion: @escaping (Result<StringResponse>) -> Void)
-
-    /// Fetches the id for a customer.
-    ///
-    /// - Parameters:
-    ///     - id: Identifier that you want to retrieve.
-    ///     - completion: Object containing the data requested.
-    func fetchId(with id: String, completion: @escaping (Result<StringResponse>) -> Void)
-    
-    /// Fetches an expression by its ID for a customer.
-    ///
-    /// - Parameters:
-    ///     - id: Identifier of the expression that you want to retrieve.
-    ///     - completion: Object containing the data requested.
-    func fetchExpression(with id: String, completion: @escaping (Result<EntityValueResponse>) -> Void)
-    
-    /// Fetches a prediction by its ID for a customer.
-    ///
-    /// - Parameters:
-    ///     - id: Identifier of the prediction that you want to retrieve.
-    ///     - completion: Object containing the data requested.
-    func fetchPrediction(with id: String, completion: @escaping (Result<EntityValueResponse>) -> Void)
-
     /// Fetches the recommendation for a customer.
     ///
     /// - Parameters:
@@ -140,26 +112,4 @@ public protocol ExponeaType: class {
     ///     - completion: Object containing the data requested.
     func fetchAttributes(with request: AttributesDescription,
                          completion: @escaping (Result<AttributesListDescription>) -> Void)
-    
-    /// Exports all properties, ids and events for one customer.
-    ///
-    /// - Parameters:
-    ///     - request: Customer attribues from a specific customer to be retrieve.
-    ///     - completion: Object containing the data requested.
-    func fetchAllProperties(completion: @escaping (Result<[StringResponse]>) -> Void)
-    
-    /// Exports all customers who exist in the project.
-    ///
-    /// - Parameters:
-    ///     - request: Customer attribues from a specific customer to be retrieve.
-    ///     - completion: Object containing the data requested.
-    func fetchAllCustomers(with request: CustomerExportRequest,
-                           completion: @escaping (Result<[StringResponse]>) -> Void)
-    
-    /// Removes all the external identifiers and assigns a new cookie id.
-    /// Removes all personal customer properties.
-    ///
-    /// - Parameters:
-    ///     - completion: Object containing the data requested.
-    func anonymize(completion: @escaping (Result<StringResponse>) -> Void)
 }

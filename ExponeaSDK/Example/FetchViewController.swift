@@ -30,78 +30,6 @@ class FetchViewController: UIViewController {
         }
     }
 
-    @IBAction func fetchCustomer(_ sender: Any) {
-        
-    }
-    
-    @IBAction func fetchProperty(_ sender: Any) {
-        Exponea.shared.fetchProperty(with: "first_name") { (result) in
-            switch result {
-            case .success(let property):
-                AppDelegate.memoryLogger.logMessage("\(property)")
-                self.showAlert(title: "Fetch Property", message: """
-                    Success: \(property.success ?? false)
-                    Content: \(property.value ?? "N/A")
-                    """)
-            case .failure(let error):
-                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
-                self.showAlert(title: "Error", message: error.localizedDescription)
-            }
-        }
-    }
-    
-    @IBAction func fetchId(_ sender: Any) {
-        Exponea.shared.fetchId(with: "registered") { (result) in
-            switch result {
-            case .success(let property):
-                AppDelegate.memoryLogger.logMessage("\(property)")
-                self.showAlert(title: "Fetch ID", message: """
-                    Success: \(property.success ?? false)
-                    Content: \(property.value ?? "N/A")
-                    """)
-            case .failure(let error):
-                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
-                self.showAlert(title: "Error", message: error.localizedDescription)
-            }
-        }
-    }
-    
-    @IBAction func fetchExpression(_ sender: Any) {
-        Exponea.shared.fetchExpression(with: "my_expression") { (result) in
-            switch result {
-            case .success(let property):
-                AppDelegate.memoryLogger.logMessage("\(property)")
-                self.showAlert(title: "Fetch Prediction", message: """
-                    Success: \(property.success)
-                    Content:
-                            Entity = \(property.entityName)
-                            Value = \(property.value)
-                    """)
-            case .failure(let error):
-                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
-                self.showAlert(title: "Error", message: error.localizedDescription)
-            }
-        }
-    }
-    
-    @IBAction func fetchPrediction(_ sender: Any) {
-        Exponea.shared.fetchPrediction(with: "my_prediction") { (result) in
-            switch result {
-            case .success(let property):
-                AppDelegate.memoryLogger.logMessage("\(property)")
-                self.showAlert(title: "Fetch Prediction", message: """
-                    Success: \(property.success)
-                    Content:
-                            Entity = \(property.entityName)
-                            Value = \(property.value)
-                    """)
-            case .failure(let error):
-                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
-                self.showAlert(title: "Error", message: error.localizedDescription)
-            }
-        }
-    }
-    
     @IBAction func fetchRecommendation(_ sender: Any) {
         let recomm = RecommendationRequest(type: "", id: "")
         Exponea.shared.fetchRecommendation(with: recomm) { (result) in
@@ -146,31 +74,6 @@ class FetchViewController: UIViewController {
                     Type: \(recom.type)
                     List: \(recom.list)
                     """)
-            case .failure(let error):
-                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
-                self.showAlert(title: "Error", message: error.localizedDescription)
-            }
-        }
-    }
-    
-    @IBAction func fetchAllProperties(_ sender: Any) {
-        Exponea.shared.fetchAllProperties { (result) in
-            switch result {
-            case .success(let property):
-                AppDelegate.memoryLogger.logMessage("\(property)")
-            case .failure(let error):
-                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
-                self.showAlert(title: "Error", message: error.localizedDescription)
-            }
-        }
-    }
-    
-    @IBAction func fetchAllCustomers(_ sender: Any) {
-        let export = CustomerExportRequest(responseFormat: .csv)
-        Exponea.shared.fetchAllCustomers(with: export) { (result) in
-            switch result {
-            case .success(let property):
-                AppDelegate.memoryLogger.logMessage("\(property)")
             case .failure(let error):
                 AppDelegate.memoryLogger.logMessage(error.localizedDescription)
                 self.showAlert(title: "Error", message: error.localizedDescription)
