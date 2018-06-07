@@ -8,7 +8,7 @@ target 'ExponeaSDK' do
   use_frameworks!
 
   # Pods for ExponeaSDK
-  pod 'SwiftLint'
+  pod 'SwiftLint', "~>0.25.0"
 
   target 'ExponeaSDKTests' do
     inherit! :search_paths

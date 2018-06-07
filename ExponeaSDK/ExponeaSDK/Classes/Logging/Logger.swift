@@ -13,7 +13,7 @@ import Foundation
 open class Logger {
 
     /// Date formatter is used for timestamps in the log. Default date format is `yyyy-MM-dd hh:mm:ssSSS`.
-    open let dateFormatter: DateFormatter = {
+    public let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd hh:mm:ssSSS"
         formatter.locale = Locale.current
