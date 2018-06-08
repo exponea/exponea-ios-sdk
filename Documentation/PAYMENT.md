@@ -2,12 +2,12 @@
 
 #### In-App Purchases
 
-In order to use the automatic payment tracking, the Exponea SDK needs to set the BillingClient class listeners.
+In order to use the automatic payment tracking, the Exponea SDK needs to add observers in the SKPaymentQueue to interacts with the server-side payment queue.
 
 All In-App Purchase will handle all the purchases made inside the
-app using the Google Play Store. After capture the purchased item, it will be send to the database in order to be flushed and send to the Exponea API.
+app using the Apple Store. After capture the purchased item, it will be send to the database in order to be flushed and send to the Exponea API.
 
-The listeners can be activate or deactivated by setting the `automaticSessionTracking` property in Exponea Configuration.
+The observers can be activate or deactivated by setting the `automaticSessionTracking` property in Exponea Configuration.
 
 Purchase events contain all basic information about the device (OS, OS version, SDK, SDK version and device model) combined with additional purchase attributes brutto, item_id and item_title. Brutto attribute contains price paid by the player. Attribute item_title consists of human-friendly name of the bought item (e.g. Silver sword) and item_id corresponds to the product identifier for the in-app purchase.
 
@@ -31,18 +31,18 @@ val item = PurchasedItem(
         value = 0.911702,
         currency = "EUR",
         paymentSystem = "Virtual",
-        productId = "android.test.purchased",
+        productId = "ios.test.purchased",
         productTitle = "Silver sword",
-        deviceModel = "LGE Nexus 5",
+        deviceModel = "iPhone 8",
         deviceType = "mobile",
         ip = "10.0.1.58",
-        osName = "Android",
-        osVersion = "5.0.1",
-        sdk = "AndroidSDK",
-        sdkVersion = "1.1.4"
+        osName = "iOS",
+        osVersion = "11.0",
+        sdk = "Exponea iOS SDK",
+        sdkVersion = "1.0"
 )
 
-// Call fetchCustomerAttributes to get the customer attributes.
+// Call trackVirtualPayment to send the payment data.
 Exponea.trackVirtualPayment(
         customerId = customerIds,
         item = item
@@ -70,15 +70,15 @@ val item = PurchasedItem(
         value = 0.911702,
         currency = "EUR",
         paymentSystem = "Virtual",
-        productId = "android.test.purchased",
+        productId = "ios.test.purchased",
         productTitle = "Silver sword",
-        deviceModel = "LGE Nexus 5",
+        deviceModel = "iPhone 8",
         deviceType = "mobile",
         ip = "10.0.1.58",
-        osName = "Android",
-        osVersion = "5.0.1",
-        sdk = "AndroidSDK",
-        sdkVersion = "1.1.4"
+        osName = "iOS",
+        osVersion = "11.0",
+        sdk = "Exponea iOS SDK",
+        sdkVersion = "1.0"
 )
 
 // Call trackPayment to track the virtual payment.

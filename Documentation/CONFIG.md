@@ -2,56 +2,29 @@
 
 The configuration object must be configured before starting using the SDK.
 
-It's possible to initialize the configuration through a ExponeaConfiguration object or providing a configuration file with the same structure (keys).
+It's possible to initialize the configuration providing a configuration file with the same structure (keys) from the Configuration structure or just using the configuration methods available in the SDK.
 
 ```
-data class ExponeaConfiguration(
-        // Default project token.
-        var projectToken: String = "",
-        // Map routes and project tokens to be send to Exponea API.
-        var projectTokenRouteMap: HashMap<Route, MutableList<String>> = hashMapOf(),
-        // Authorization http header.
-        var authorization: String? = null,
-        // Base url for http requests to Exponea API.
-        var baseURL: String = Constants.Repository.baseURL,
-        // Content type value to make http requests.
-        var contentType: String = Constants.Repository.contentType,
-        // Maximum retries value to flush data to api.
-        var maxTries: Int = 10,
-        // Timeout session value considered for app usage.
-        var sessionTimeout: Int = 20,
-        // Flag to control automatic tracking for In-App purchases
-        var automaticSessionTracking: Boolean = true,
-        // Flag to control if the App will handle push notifications automatically.
-        var automaticPushNotification: Boolean = true,
-        // Icon to be showed in push notifications.
-        var pushIcon: Int? = null,
-        // Channel name for push notifications. Only for API level 26+.
-        var pushChannelName: String = "Exponea",
-        // Channel description for push notifications. Only for API level 26+.
-        var pushChannelDescription: String = "Notifications",
-        // Channel ID for push notifications. Only for API level 26+.
-        var pushChannelId: String = "0",
-        // Notification importance for the notification channel. Only for API level 26+.
-        var pushNotificationImportance: Int = NotificationManager.IMPORTANCE_DEFAULT
-)
+public struct Configuration: Decodable {
+    public internal(set) var projectMapping: [EventType: [String]]?
+    public internal(set) var projectToken: String?
+    public internal(set) var authorization: Authorization = .none
+    public internal(set) var baseURL: String = Constants.Repository.baseURL
+    public internal(set) var contentType: String = Constants.Repository.contentType
+    public var sessionTimeout: Double = Constants.Session.defaultTimeout
+    public var automaticSessionTracking: Bool = true
+    public var automaticPushNotificationTracking: Bool = true
+}
 ```
+
+
+#### projectMapping
+
+* In case you have more than one project token to track for one event, you should provide which "event types" each project token should be track.
+
 #### projectToken
 
 * Is your project token which can be found in the Exponea APP ```Project``` -> ```Overview```
-
-#### projectTokenRouteMap
-
-* In case you have more than one project token to track for one event, you should provide which "Routes" (tracking events) each project token should be track.
-
-Eg:
-
-```
-var projectTokenRouteMap = hashMapOf<Route, MutableList<String>> (
-        Pair(Route.TRACK_CUSTOMERS, mutableListOf("ProjectTokenA", "ProjectTokenB")),
-        Pair(Route.TRACK_EVENTS, mutableListOf("ProjectTokenA", "ProjectTokenC"))
-)
-```
 
 #### authorization
 
@@ -68,45 +41,69 @@ var projectTokenRouteMap = hashMapOf<Route, MutableList<String>> (
 * Content type value to make http requests. 
 * Default value `application/json`
 
-#### maxTries
-
-* Maximum number of retries to flush data to Exponea API. 
-* SDK will consider the value to be flushed if this number is exceed and delete from the queue.
- 
 #### sessionTimeout
 
 * Session is a real time spent in the App, it starts when the App is launched and ends when the App goes to background. 
 * This value will be used to calculate the session timing.
- 
+* Default value `6.0`
+
 #### automaticSessionTracking
  
 * Flag to control the automatic tracking for In-App purchases done at the Google Play Store. 
 * When active, the SDK will add the Billing service listeners in order to get payments done in the App.
+* Default value `true`
 
-#### automaticPushNotification
+#### automaticPushNotificationTracking
 
 * Controls if the SDK will handle push notifications automatically.
+* Default value `true`
 
-#### pushIcon
 
-* Icon to be displayed when show a push notification.
+### In order to configure your project, you can use one of the following methods:
 
-#### pushChannelName
+#### Setting the configuration with project token, authorization and your base URL:
 
-* Name of the Channel to be created for the push notifications. 
-* Only available for API level 26+. More info [here](https://developer.android.com/training/notify-user/channels)
+```
+public func configure(projectToken: String, 
+                      authorization: Authorization, 
+                      baseURL: String? = nil)
+```
 
-#### pushChannelDescription
+#### 💻 Usage
 
-* Description of the Channel to be created for the push notifications.
-* Only available for API level 26+. More info [here](https://developer.android.com/training/notify-user/channels)
+```
+Exponea.shared.configure(projectToken: "ProjectTokenA",
+                         authorization: Authorization.basic("YOUR AUTHORIZATION HASH"),
+                         baseURL: "YOUR BASE URL")
+```
 
-#### pushChannelId
+#### Setting the configuration using configuration file:
 
-* Channel ID for push notifications. 
-* Only available for API level 26+. More info [here](https://developer.android.com/training/notify-user/channels)
+```
+public func configure(plistName: String)
+```
 
-#### pushNotificationImportance
+#### 💻 Usage
 
-* Notification importance for the notification channel.
-* Only available for API level 26+. More info [here](https://developer.android.com/training/notify-user/channels) 
+```
+Exponea.shared.configure(plistName: "ExponeaConfig.plist")
+```
+
+#### Setting the configuration using a projectMapping (token mapping) for each type of event. This allows you to track events to multiple projects, even the same event to more project at once.
+
+```
+public func configure(projectToken: String,
+                      projectMapping: [EventType: [String]],
+                      authorization: Authorization,
+                      baseURL: String? = nil)
+```
+
+#### 💻 Usage
+
+```
+Exponea.shared.configure(projectToken: "ProjectTokenA",
+                         projectMapping: [EventType.identifyCustomer: ["ProjectTokenA", "ProjectTokenB"],
+                                          EventType.customEvent: ["ProjectTokenD"]],
+                         authorization: Authorization.basic("YOUR AUTHORIZATION HASH"),
+                         baseURL: "YOUR BASE URL")
+```
