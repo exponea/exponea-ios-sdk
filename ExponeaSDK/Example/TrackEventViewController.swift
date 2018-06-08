@@ -12,48 +12,50 @@ import ExponeaSDK
 class TrackEventViewController: UIViewController {
     
     @IBOutlet var eventTypeField: UITextField!
-    @IBOutlet var textView: UITextView!
+    
+    @IBOutlet var keyField1: UITextField!
+    @IBOutlet var valueField1: UITextField!
+    
+    @IBOutlet var keyField2: UITextField!
+    @IBOutlet var valueField2: UITextField!
+    
+    @IBOutlet var keyField3: UITextField!
+    @IBOutlet var valueField3: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         eventTypeField.placeholder = "default = \"custom_event\""
-        
-        textView.text = """
-        {
-        "my_property_1" : "my value",
-        "info" : "some other info"
-        }
-        """
+        keyField1.placeholder = "custom_key_1"
+        keyField2.placeholder = "custom_key_2"
+        keyField3.placeholder = "custom_key_3"
+    }
+    
+    @IBAction func hideKeyboard() {
+        view.endEditing(true)
+    }
+    
+    @IBAction func cancelPressed() {
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction func trackPressed(_ sender: Any) {
         let eventType = eventTypeField.text ?? "custom_event"
-        let textData = textView.text.data(using: .utf8)!
+        var properties: [String: String] = [:]
         
-        do {
-            let object = try JSONSerialization.jsonObject(with: textData, options: [])
-            print(object)
-            
-            let dict = object as? [String: Any]
-            print(dict)
-            
-            guard let conv = dict as? [String: JSONConvertible] else {
-                print("not convertible")
-                return
-            }
-        
-            Exponea.shared.trackEvent(properties: conv, timestamp: nil, eventType: eventType)
-            dismiss(animated: true, completion: nil)
-        } catch {
-            print("Error \(error.localizedDescription)")
+        if let key1 = keyField1.text, !key1.isEmpty {
+            properties[key1] = valueField1.text ?? ""
         }
+        
+        if let key2 = keyField2.text, !key2.isEmpty {
+            properties[key2] = valueField2.text ?? ""
+        }
+        
+        if let key3 = keyField3.text, !key3.isEmpty {
+            properties[key3] = valueField3.text ?? ""
+        }
+        
+        Exponea.shared.trackEvent(properties: properties, timestamp: nil, eventType: eventType)
+        dismiss(animated: true, completion: nil)
     }
-
-//    Exponea.shared.trackEvent(properties: [
-//    "my_property_1" : "my property 1 value",
-//    "info" : "test from exponea SDK sample app",
-//    "some_number" : 5
-//    ], timestamp: nil, eventType: "my_custom_event_type")
-
 }
