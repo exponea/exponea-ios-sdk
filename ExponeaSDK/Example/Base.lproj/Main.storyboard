@@ -448,7 +448,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="EGp-60-pFN">
-                                <rect key="frame" x="15" y="75.5" width="345" height="225"/>
+                                <rect key="frame" x="15" y="75.5" width="345" height="285"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XE9-RJ-fEr">
                                         <rect key="frame" x="0.0" y="0.0" width="345" height="45"/>
@@ -518,7 +518,7 @@
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
-                                        <state key="normal" title="Personalisation">
+                                        <state key="normal" title="Banners">
                                             <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <userDefinedRuntimeAttributes>
@@ -527,7 +527,27 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
-                                            <action selector="fetchPersonalisation:" destination="TFH-0C-ErW" eventType="touchUpInside" id="I9o-tr-g9W"/>
+                                            <action selector="fetchBanners:" destination="TFH-0C-ErW" eventType="touchUpInside" id="yBC-Vb-zqf"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R6f-g8-99Y">
+                                        <rect key="frame" x="0.0" y="240" width="345" height="45"/>
+                                        <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="m0d-yj-4vY"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                        <state key="normal" title="Personalization">
+                                            <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="4"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="fetchPersonalization:" destination="TFH-0C-ErW" eventType="touchUpInside" id="2A0-Pj-sGN"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -640,7 +660,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Properties" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iTF-WJ-xgO">
-                                <rect key="frame" x="15" y="109" width="77" height="18"/>
+                                <rect key="frame" x="15" y="109" width="345" height="18"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -652,6 +672,7 @@
                             <constraint firstItem="xpl-IM-BNj" firstAttribute="trailing" secondItem="cNT-9Y-qYe" secondAttribute="trailing" constant="15" id="0gU-ol-hTV"/>
                             <constraint firstItem="cfw-Ct-0kn" firstAttribute="leading" secondItem="CZR-1o-YrL" secondAttribute="leading" constant="15" id="0nc-5V-mEv"/>
                             <constraint firstItem="xpl-IM-BNj" firstAttribute="bottom" secondItem="cfw-Ct-0kn" secondAttribute="bottom" constant="15" id="1rt-3b-0eM"/>
+                            <constraint firstItem="xpl-IM-BNj" firstAttribute="trailing" secondItem="iTF-WJ-xgO" secondAttribute="trailing" constant="15" id="4z3-XO-Qu1"/>
                             <constraint firstItem="xpl-IM-BNj" firstAttribute="trailing" secondItem="1XB-R3-XoP" secondAttribute="trailing" constant="15" id="5Ac-fg-SZP"/>
                             <constraint firstItem="25p-LW-rgr" firstAttribute="centerX" secondItem="CZR-1o-YrL" secondAttribute="centerX" id="ARm-Ov-5Sy"/>
                             <constraint firstItem="25p-LW-rgr" firstAttribute="top" secondItem="xpl-IM-BNj" secondAttribute="top" constant="15" id="CzY-1j-wG9"/>

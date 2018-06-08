@@ -27,6 +27,9 @@ public struct RequestFactory {
         case .customerRecommendation: return baseURL + "/data/v2/projects/\(projectToken)/customers/attributes"
         case .customerAttributes: return baseURL + "/data/v2/\(projectToken)/customers/attributes"
         case .customerEvents: return baseURL + "/data/v2/projects/\(projectToken)/customers/events"
+        case .banners: return baseURL + "/data/v2/projects/\(projectToken)/configuration/banners"
+        case .personalization:
+            return baseURL + "/data/v2/projects/\(projectToken)/customers/personalisation/show-banners"
         }
     }
 
@@ -35,7 +38,8 @@ public struct RequestFactory {
 
 extension RequestFactory {
     func prepareRequest(authorization: Authorization,
-                        parameters: RequestParametersType? = nil) -> URLRequest {
+                        parameters: RequestParametersType? = nil,
+                        customerIds: [String: String]? = nil) -> URLRequest {
         var request = URLRequest(url: URL(string: path)!)
 
         // Create the basic request
@@ -58,12 +62,19 @@ extension RequestFactory {
 
         // Add parameters as request body in JSON format, if we have any
         if let parameters = parameters?.requestParameters {
+            var params = parameters
+            
+            // Add customer ids if separate
+            if let customerIds = customerIds {
+                params["customer_ids"] = customerIds
+            }
+            
             do {
-                request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
+                request.httpBody = try JSONSerialization.data(withJSONObject: params, options: [])
             } catch {
                 Exponea.logger.log(.error,
                                    message: "Failed to serialise request body into JSON: \(error.localizedDescription)")
-                Exponea.logger.log(.verbose, message: "Request parameters: \(parameters)")
+                Exponea.logger.log(.verbose, message: "Request parameters: \(params)")
             }
         }
 
@@ -102,7 +113,13 @@ extension RequestFactory {
                 
                 // Switch on status code
                 switch httpResponse.statusCode {
-                case 400..<500:
+                case 400, 405..<500:
+                    //let errorResponse = try? decoder.decode(ErrorResponse.self, from: data)
+                    DispatchQueue.main.async {
+                        let text = String(data: data, encoding: .utf8)
+                        completion(.failure(RepositoryError.missingData(text ?? response?.description ?? "N/A")))
+                    }
+                case 404:
                     let errorResponse = try? decoder.decode(ErrorResponse.self, from: data)
                     DispatchQueue.main.async {
                         completion(.failure(RepositoryError.urlNotFound(errorResponse)))

@@ -36,6 +36,15 @@
 		C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */; };
 		C07E41FD20C930C400920809 /* TrackEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E41FC20C930C400920809 /* TrackEventViewController.swift */; };
 		C07E41FF20C930E400920809 /* IdentifyCustomerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E41FE20C930E400920809 /* IdentifyCustomerViewController.swift */; };
+		C07E420120CA896B00920809 /* PersonalizationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E420020CA896B00920809 /* PersonalizationResponse.swift */; };
+		C07E420520CA898700920809 /* BannerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E420420CA898700920809 /* BannerResponse.swift */; };
+		C07E420920CA89DE00920809 /* PersonalizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E420820CA89DE00920809 /* PersonalizationRequest.swift */; };
+		C07E420B20CA8A3300920809 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E420A20CA8A3300920809 /* Banner.swift */; };
+		C07E420D20CA8A3C00920809 /* Personalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E420C20CA8A3C00920809 /* Personalization.swift */; };
+		C07E420F20CA8AF700920809 /* DateFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E420E20CA8AF700920809 /* DateFilter.swift */; };
+		C07E421220CA8B9900920809 /* DeviceTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E421120CA8B9900920809 /* DeviceTarget.swift */; };
+		C07E421420CA8C1B00920809 /* BannerFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E421320CA8C1B00920809 /* BannerFrequency.swift */; };
+		C07E421620CA8D1800920809 /* BannerTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E421520CA8D1800920809 /* BannerTrigger.swift */; };
 		C07F1BC7209A474A004FE933 /* EntityValueResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */; };
 		C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -173,6 +182,15 @@
 		C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPersistentContainer+Bundle.swift"; sourceTree = "<group>"; };
 		C07E41FC20C930C400920809 /* TrackEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackEventViewController.swift; sourceTree = "<group>"; };
 		C07E41FE20C930E400920809 /* IdentifyCustomerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyCustomerViewController.swift; sourceTree = "<group>"; };
+		C07E420020CA896B00920809 /* PersonalizationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationResponse.swift; sourceTree = "<group>"; };
+		C07E420420CA898700920809 /* BannerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerResponse.swift; sourceTree = "<group>"; };
+		C07E420820CA89DE00920809 /* PersonalizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationRequest.swift; sourceTree = "<group>"; };
+		C07E420A20CA8A3300920809 /* Banner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banner.swift; sourceTree = "<group>"; };
+		C07E420C20CA8A3C00920809 /* Personalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Personalization.swift; sourceTree = "<group>"; };
+		C07E420E20CA8AF700920809 /* DateFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFilter.swift; sourceTree = "<group>"; };
+		C07E421120CA8B9900920809 /* DeviceTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTarget.swift; sourceTree = "<group>"; };
+		C07E421320CA8C1B00920809 /* BannerFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerFrequency.swift; sourceTree = "<group>"; };
+		C07E421520CA8D1800920809 /* BannerTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTrigger.swift; sourceTree = "<group>"; };
 		C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityValueResponse.swift; sourceTree = "<group>"; };
 		C0843CF020B6DC6000FAF0CB /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
 		C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManagerDelegate.swift; sourceTree = "<group>"; };
@@ -374,6 +392,19 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		C07E421020CA8B0900920809 /* Personalization */ = {
+			isa = PBXGroup;
+			children = (
+				C07E420C20CA8A3C00920809 /* Personalization.swift */,
+				C07E420A20CA8A3300920809 /* Banner.swift */,
+				C07E420E20CA8AF700920809 /* DateFilter.swift */,
+				C07E421120CA8B9900920809 /* DeviceTarget.swift */,
+				C07E421320CA8C1B00920809 /* BannerFrequency.swift */,
+				C07E421520CA8D1800920809 /* BannerTrigger.swift */,
+			);
+			path = Personalization;
+			sourceTree = "<group>";
+		};
 		C0EB5D9120B811DE00F1031F /* Push Notifications */ = {
 			isa = PBXGroup;
 			children = (
@@ -392,6 +423,7 @@
 				01EC2DAA207E53D90031BFEB /* AttributesListDescription.swift */,
 				01EC2DAC207E53E40031BFEB /* AttributesDescription.swift */,
 				01EC2DA8207E4FC10031BFEB /* CustomerExportRequest.swift */,
+				C07E420820CA89DE00920809 /* PersonalizationRequest.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -404,6 +436,8 @@
 				F029BF2C208A2C5200342498 /* StringResponse.swift */,
 				C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */,
 				C01E19E920C02A4D00DF64F9 /* ErrorResponse.swift */,
+				C07E420020CA896B00920809 /* PersonalizationResponse.swift */,
+				C07E420420CA898700920809 /* BannerResponse.swift */,
 			);
 			path = Responses;
 			sourceTree = "<group>";
@@ -565,6 +599,7 @@
 				F0CA58F5207F612200C89A7F /* DeviceProperties.swift */,
 				F029BF22208A08CE00342498 /* Event.swift */,
 				F067441320873813003C0293 /* PurchasedItem.swift */,
+				C07E421020CA8B0900920809 /* Personalization */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
 			);
 			path = Models;
@@ -884,12 +919,16 @@
 				F029BF2B208A2BC300342498 /* RecommendationResponse.swift in Sources */,
 				C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */,
 				C0EB5D8A20B6EABC00F1031F /* TrackCustomer+DataType.swift in Sources */,
+				C07E420920CA89DE00920809 /* PersonalizationRequest.swift in Sources */,
 				C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* RecommendationRequest.swift in Sources */,
+				C07E421420CA8C1B00920809 /* BannerFrequency.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
 				019F1AC52087666900368FB1 /* DataType.swift in Sources */,
+				C07E420B20CA8A3300920809 /* Banner.swift in Sources */,
 				C0753E9220A574AE00A779FF /* TrackEvent+DataType.swift in Sources */,
+				C07E420F20CA8AF700920809 /* DateFilter.swift in Sources */,
 				01EC2DAD207E53E40031BFEB /* AttributesDescription.swift in Sources */,
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
 				C0E6775F20A6E3F800789861 /* Customer+DataType.swift in Sources */,
@@ -913,6 +952,7 @@
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
+				C07E420120CA896B00920809 /* PersonalizationResponse.swift in Sources */,
 				01EC2DA7207E4FBA0031BFEB /* EventsRequest.swift in Sources */,
 				01EC2DAB207E53D90031BFEB /* AttributesListDescription.swift in Sources */,
 				C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */,
@@ -928,12 +968,16 @@
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,
+				C07E420520CA898700920809 /* BannerResponse.swift in Sources */,
+				C07E420D20CA8A3C00920809 /* Personalization.swift in Sources */,
 				C0EB5D8E20B710A900F1031F /* Data+TokenString.swift in Sources */,
 				F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */,
 				C0F2407420BDA42600CAF7CE /* ExportFormat.swift in Sources */,
 				C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */,
+				C07E421620CA8D1800920809 /* BannerTrigger.swift in Sources */,
 				C0EB5DA620BB59BD00F1031F /* RequestParametersType.swift in Sources */,
 				F029BF2D208A2C5200342498 /* StringResponse.swift in Sources */,
+				C07E421220CA8B9900920809 /* DeviceTarget.swift in Sources */,
 				C0EB5D9020B7F8A900F1031F /* DispatchQueue+OnceTracker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

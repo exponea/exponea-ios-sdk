@@ -15,4 +15,6 @@ public enum Routes {
     case customerRecommendation
     case customerAttributes
     case customerEvents
+    case banners
+    case personalization
 }

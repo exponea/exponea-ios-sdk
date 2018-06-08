@@ -48,4 +48,19 @@ extension Exponea {
                                       completion: completion)
         }, completion: completion)
     }
+    
+    public func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
+        executeWithDependencies({
+            $0.repository.fetchBanners(completion: completion)
+        }, completion: completion)
+    }
+    
+    public func fetchPersonalization(with request: PersonalizationRequest,
+                                     completion: @escaping (Result<PersonalizationResponse>) -> Void) {
+        executeWithDependencies({
+            $0.repository.fetchPersonalization(with: request,
+                                               for: $0.trackingManager.customerIds,
+                                               completion: completion)
+        }, completion: completion)
+    }
 }

@@ -135,7 +135,8 @@ extension ServerRepository: RepositoryType {
     /// - Parameters:
     ///   - attributes: List of attributes you want to retrieve.
     ///   - customerIds: Identification of a customer.
-    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String: String],
+    func fetchAttributes(attributes: [AttributesDescription],
+                         for customerIds: [String: String],
                          completion: @escaping (Result<AttributesListDescription>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -155,7 +156,8 @@ extension ServerRepository: RepositoryType {
     ///   - events: List of event types to be retrieve.
     ///   - customerId: Identification of a customer.
     ///   - completion: Object containing the request result.
-    func fetchEvents(events: EventsRequest, for customerIds: [String: String],
+    func fetchEvents(events: EventsRequest,
+                     for customerIds: [String: String],
                      completion: @escaping (Result<EventsResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -163,6 +165,40 @@ extension ServerRepository: RepositoryType {
         let parameters = CustomerParameters(customer: customerIds, events: events)
         let request = router.prepareRequest(authorization: configuration.authorization,
                                             parameters: parameters)
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
+    
+    /// Fetch all available banners.
+    ///
+    /// - Parameters:
+    ///   - completion: Object containing the request result.
+    func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: configuration.fetchingToken,
+                                    route: .banners)
+        let request = router.prepareRequest(authorization: configuration.authorization)
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
+    
+    /// Fetch personalization (all banners) for current customer.
+    ///
+    /// - Parameters:
+    ///   - request: Personalization request containing all the information about the request banners.
+    ///   - customerIds: Identification of a customer.
+    ///   - completion: Object containing the request result.
+    func fetchPersonalization(with request: PersonalizationRequest,
+                              for customerIds: [String : String],
+                              completion: @escaping (Result<PersonalizationResponse>) -> Void) {
+        let router = RequestFactory(baseURL: configuration.baseURL,
+                                    projectToken: configuration.fetchingToken,
+                                    route: .personalization)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            parameters: request,
+                                            customerIds: customerIds)
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()

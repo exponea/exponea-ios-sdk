@@ -57,6 +57,22 @@ protocol FetchRepository {
     ///   - completion: Object containing the request result.
     func fetchEvents(events: EventsRequest, for customerIds: [String: String],
                      completion: @escaping (Result<EventsResponse>) -> Void)
+    
+    /// Fetch all available banners.
+    ///
+    /// - Parameters:
+    ///   - completion: Object containing the request result.
+    func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void)
+    
+    /// Fetch personalization (all banners) for current customer.
+    ///
+    /// - Parameters:
+    ///   - request: Personalization request containing all the information about the request banners.
+    ///   - customerIds: Identification of a customer.
+    ///   - completion: Object containing the request result.
+    func fetchPersonalization(with request: PersonalizationRequest,
+                              for customerIds: [String: String],
+                              completion: @escaping (Result<PersonalizationResponse>) -> Void)
 }
 
 protocol RepositoryType: class, TrackingRepository, FetchRepository {
