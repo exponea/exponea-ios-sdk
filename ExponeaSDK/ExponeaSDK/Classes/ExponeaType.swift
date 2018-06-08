@@ -53,6 +53,22 @@ public protocol ExponeaType: class {
     
     // MARK: - Tracking -
     
+    /// Adds new events to a customer. All events will be stored into coredata
+    /// until it will be flushed (send to api).
+    ///
+    /// - Parameters:
+    ///     - properties: Object with event values.
+    ///     - timestamp: Unix timestamp when the event was created.
+    ///     - eventType: Name of event
+    func trackEvent(properties: [String: JSONConvertible], timestamp: Double?, eventType: String?)
+    
+    /// Adds new payment event to a customer.
+    ///
+    /// - Parameters:
+    ///     - properties: Object with event values.
+    ///     - timestamp: Unix timestamp when the event was created.
+    func trackPayment(properties: [String: JSONConvertible], timestamp: Double?)
+    
     /// Update the informed properties to a specific customer.
     /// All properties will be stored into coredata until it will be flushed (send to api).
     ///

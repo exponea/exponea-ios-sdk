@@ -36,6 +36,25 @@ extension Exponea {
         }
     }
     
+    /// Adds new payment event to a customer.
+    ///
+    /// - Parameters:
+    ///     - properties: Object with event values.
+    ///     - timestamp: Unix timestamp when the event was created.
+    public func trackPayment(properties: [String : JSONConvertible], timestamp: Double?) {
+        // Create initial data
+        let data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })),
+                                .timestamp(timestamp)]
+        
+        do {
+            // Get dependencies and do the actual tracking
+            let dependencies = try getDependenciesIfConfigured()
+            try dependencies.trackingManager.track(.payment, with: data)
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+    }
+    
     /// Update the informed properties to a specific customer.
     /// All properties will be stored into coredata until it will be flushed (send to api).
     ///

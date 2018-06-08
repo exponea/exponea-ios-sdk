@@ -34,6 +34,8 @@
 		C0753E9020A43D3900A779FF /* RepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E8F20A43D3900A779FF /* RepositoryError.swift */; };
 		C0753E9220A574AE00A779FF /* TrackEvent+DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E9120A574AE00A779FF /* TrackEvent+DataType.swift */; };
 		C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */; };
+		C07E41FD20C930C400920809 /* TrackEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E41FC20C930C400920809 /* TrackEventViewController.swift */; };
+		C07E41FF20C930E400920809 /* IdentifyCustomerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E41FE20C930E400920809 /* IdentifyCustomerViewController.swift */; };
 		C07F1BC7209A474A004FE933 /* EntityValueResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */; };
 		C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -158,6 +160,7 @@
 		01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerType.swift; sourceTree = "<group>"; };
 		01EC2DBC207E68BF0031BFEB /* DatabaseModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DatabaseModel.xcdatamodel; sourceTree = "<group>"; };
 		01EC2DC0207F63970031BFEB /* FlushingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingMode.swift; sourceTree = "<group>"; };
+		0288F5494383F31AB19EF5E0 /* Pods_ExponeaSDK_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A9541A0D49B621C7B60EAC2 /* Pods-ExponeaSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.release.xcconfig"; sourceTree = "<group>"; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -168,6 +171,8 @@
 		C0753E8F20A43D3900A779FF /* RepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryError.swift; sourceTree = "<group>"; };
 		C0753E9120A574AE00A779FF /* TrackEvent+DataType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackEvent+DataType.swift"; sourceTree = "<group>"; };
 		C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPersistentContainer+Bundle.swift"; sourceTree = "<group>"; };
+		C07E41FC20C930C400920809 /* TrackEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackEventViewController.swift; sourceTree = "<group>"; };
+		C07E41FE20C930E400920809 /* IdentifyCustomerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyCustomerViewController.swift; sourceTree = "<group>"; };
 		C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityValueResponse.swift; sourceTree = "<group>"; };
 		C0843CF020B6DC6000FAF0CB /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
 		C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManagerDelegate.swift; sourceTree = "<group>"; };
@@ -353,6 +358,7 @@
 			children = (
 				E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */,
 				080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */,
+				0288F5494383F31AB19EF5E0 /* Pods_ExponeaSDK_Example.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -441,6 +447,8 @@
 				C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */,
 				C0EB5D9620B8190500F1031F /* FetchViewController.swift */,
 				C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */,
+				C07E41FC20C930C400920809 /* TrackEventViewController.swift */,
+				C07E41FE20C930E400920809 /* IdentifyCustomerViewController.swift */,
 				C0EB5D9A20B8193200F1031F /* FlushingViewController.swift */,
 				C0F2407120BD9A5500CAF7CE /* LogViewController.swift */,
 				C0F2406F20BD98EB00CAF7CE /* MemoryLogger.swift */,
@@ -859,6 +867,8 @@
 				C0EB5D9B20B8193200F1031F /* FlushingViewController.swift in Sources */,
 				C0F2407220BD9A5500CAF7CE /* LogViewController.swift in Sources */,
 				C0EB5D9720B8190500F1031F /* FetchViewController.swift in Sources */,
+				C07E41FF20C930E400920809 /* IdentifyCustomerViewController.swift in Sources */,
+				C07E41FD20C930C400920809 /* TrackEventViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

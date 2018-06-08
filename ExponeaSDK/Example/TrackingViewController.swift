@@ -12,23 +12,8 @@ import UserNotifications
 
 class TrackingViewController: UIViewController {
 
-    @IBAction func customEventPressed(_ sender: Any) {
-        Exponea.shared.trackEvent(properties: [
-            "my_property_1" : "my property 1 value",
-            "info" : "test from exponea SDK sample app",
-            "some_number" : 5
-            ], timestamp: nil, eventType: "my_custom_event_type")
-    }
-    
-    
     @IBAction func paymentPressed(_ sender: Any) {
-        
-    }
-    
-    @IBAction func identifyCustomerPressed(_ sender: Any) {
-        Exponea.shared.identifyCustomer(customerId: "test@test.com",
-                                        properties: ["custom_property" : "Some Property Value", "first_name" : "test"],
-                                         timestamp: nil)
+        Exponea.shared.trackPayment(properties: ["value" : "99", "custom_info" : "sample payment"], timestamp: nil)
     }
     
     @IBAction func registerForPush() {

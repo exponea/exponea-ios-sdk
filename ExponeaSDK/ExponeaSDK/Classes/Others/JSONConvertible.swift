@@ -12,6 +12,18 @@ public protocol JSONConvertible {
     var jsonValue: JSONValue { get }
 }
 
+extension NSString: JSONConvertible {
+    public var jsonValue: JSONValue {
+        return .string(self as String)
+    }
+}
+
+//extension NSValue: JSONConvertible {
+//    public var jsonValue: JSONValue {
+//        
+//    }
+//}
+
 extension String: JSONConvertible {
     public var jsonValue: JSONValue {
         return .string(self)

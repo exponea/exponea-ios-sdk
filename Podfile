@@ -16,5 +16,4 @@ target 'ExponeaSDK' do
     pod 'Quick'
     pod 'Nimble'
   end
-
 end

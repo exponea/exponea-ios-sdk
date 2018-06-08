@@ -31,8 +31,6 @@ class PushNotificationManager: NSObject {
     }
     
     func handlePushTokenRegistered(dataObject: AnyObject?) {
-        print("swizzled push registration")
-        
         guard let tokenData = dataObject as? Data else {
             return
         }

@@ -134,7 +134,7 @@
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
-                                        <state key="normal" title="Custom Event">
+                                        <state key="normal" title="Custom Event *">
                                             <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <userDefinedRuntimeAttributes>
@@ -143,18 +143,38 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
-                                            <action selector="customEventPressed:" destination="IHP-ii-3Rl" eventType="touchUpInside" id="Mrc-Iv-r0Y"/>
+                                            <segue destination="e8o-xo-BzZ" kind="presentation" id="WHy-6F-dC0"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" horizontalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NbE-xk-cSE">
+                                        <rect key="frame" x="0.0" y="60" width="345" height="45"/>
+                                        <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="csT-l4-qCL"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                        <state key="normal" title="Identify Customer *">
+                                            <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="4"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <segue destination="3dx-bP-Rug" kind="presentation" id="RRY-xs-7et"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PVS-MB-xbX">
-                                        <rect key="frame" x="0.0" y="60" width="345" height="45"/>
+                                        <rect key="frame" x="0.0" y="120" width="345" height="45"/>
                                         <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="Q01-kb-cLW"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
-                                        <state key="normal" title="Track Payment">
+                                        <state key="normal" title="Payment">
                                             <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <userDefinedRuntimeAttributes>
@@ -164,26 +184,6 @@
                                         </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="paymentPressed:" destination="IHP-ii-3Rl" eventType="touchUpInside" id="WrD-82-bWx"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" horizontalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NbE-xk-cSE">
-                                        <rect key="frame" x="0.0" y="120" width="345" height="45"/>
-                                        <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="45" id="csT-l4-qCL"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
-                                        <state key="normal" title="Identify Customer">
-                                            <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        </state>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                <integer key="value" value="4"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                        <connections>
-                                            <action selector="identifyCustomerPressed:" destination="IHP-ii-3Rl" eventType="touchUpInside" id="1sH-UU-Mva"/>
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="254" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="&quot;registered&quot; will be set to test@test.com" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u7b-Rz-WUS">
@@ -240,6 +240,76 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kSg-bV-cha" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-722" y="-43"/>
+        </scene>
+        <!--Tracking-->
+        <scene sceneID="IBF-qE-fnr">
+            <objects>
+                <viewController id="3dx-bP-Rug" customClass="IdentifyCustomerViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ckz-VS-gUb">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Identify Customer" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eig-Wy-ScU">
+                                <rect key="frame" x="119" y="35" width="137" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" horizontalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rg4-qQ-CWf">
+                                <rect key="frame" x="15" y="607" width="345" height="45"/>
+                                <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="SDs-il-EKh"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                <state key="normal" title="Track">
+                                    <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="registerForPush" destination="3dx-bP-Rug" eventType="touchUpInside" id="Z7M-qI-dBK"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="247" verticalCompressionResistancePriority="748" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aD1-EF-2wT">
+                                <rect key="frame" x="15" y="70.5" width="345" height="526.5"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.96470588239999999" green="0.96470588239999999" blue="0.96470588239999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" red="1" green="0.81176470590000005" blue="0.0078431372550000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="rg4-qQ-CWf" firstAttribute="top" secondItem="aD1-EF-2wT" secondAttribute="bottom" constant="10" id="FJr-Th-y2X"/>
+                            <constraint firstItem="aD1-EF-2wT" firstAttribute="leading" secondItem="rni-m4-HIr" secondAttribute="leading" constant="15" id="LUC-1f-ejI"/>
+                            <constraint firstItem="eig-Wy-ScU" firstAttribute="centerX" secondItem="Ckz-VS-gUb" secondAttribute="centerX" id="NPx-hb-e6j"/>
+                            <constraint firstItem="eig-Wy-ScU" firstAttribute="top" secondItem="rni-m4-HIr" secondAttribute="top" constant="15" id="Ruq-dj-EuF"/>
+                            <constraint firstItem="aD1-EF-2wT" firstAttribute="top" secondItem="eig-Wy-ScU" secondAttribute="bottom" constant="15" id="gbR-dU-AXQ"/>
+                            <constraint firstItem="rg4-qQ-CWf" firstAttribute="leading" secondItem="rni-m4-HIr" secondAttribute="leading" constant="15" id="ibJ-GV-mEo"/>
+                            <constraint firstItem="rni-m4-HIr" firstAttribute="bottom" secondItem="rg4-qQ-CWf" secondAttribute="bottom" constant="15" id="sb1-iB-4VL"/>
+                            <constraint firstItem="rni-m4-HIr" firstAttribute="trailing" secondItem="rg4-qQ-CWf" secondAttribute="trailing" constant="15" id="tQb-ZR-Spq"/>
+                            <constraint firstItem="rni-m4-HIr" firstAttribute="trailing" secondItem="aD1-EF-2wT" secondAttribute="trailing" constant="15" id="z1u-VD-Xaj"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="rni-m4-HIr"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Tracking" image="track" id="I7F-Jw-j20">
+                        <color key="badgeColor" red="1" green="0.81176470590000005" blue="0.0078431372550000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </tabBarItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mwg-WJ-WgI" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1151" y="640"/>
         </scene>
         <!--Flushing-->
         <scene sceneID="LIa-6n-aSD">
@@ -509,6 +579,106 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JYz-Km-XZy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-721" y="-929"/>
+        </scene>
+        <!--Tracking-->
+        <scene sceneID="OaK-GI-sLF">
+            <objects>
+                <viewController id="e8o-xo-BzZ" customClass="TrackEventViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="CZR-1o-YrL">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Track Custom Event" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="25p-LW-rgr">
+                                <rect key="frame" x="111" y="35" width="153.5" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" horizontalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cfw-Ct-0kn">
+                                <rect key="frame" x="15" y="607" width="345" height="45"/>
+                                <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="zVZ-LZ-uNN"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                <state key="normal" title="Track">
+                                    <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="registerForPush" destination="3dx-bP-Rug" eventType="touchUpInside" id="rLC-YU-wqq"/>
+                                    <action selector="trackPressed:" destination="e8o-xo-BzZ" eventType="touchUpInside" id="V5P-Wb-Yx9"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="247" verticalCompressionResistancePriority="748" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1XB-R3-XoP">
+                                <rect key="frame" x="15" y="142" width="345" height="455"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </textView>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cNT-9Y-qYe">
+                                <rect key="frame" x="106" y="70" width="254" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Event Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z5g-fl-mDK">
+                                <rect key="frame" x="15" y="76" width="76" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Properties" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iTF-WJ-xgO">
+                                <rect key="frame" x="15" y="109" width="77" height="18"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.96470588239999999" green="0.96470588239999999" blue="0.96470588239999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" red="1" green="0.81176470590000005" blue="0.0078431372550000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="xpl-IM-BNj" firstAttribute="trailing" secondItem="cNT-9Y-qYe" secondAttribute="trailing" constant="15" id="0gU-ol-hTV"/>
+                            <constraint firstItem="cfw-Ct-0kn" firstAttribute="leading" secondItem="CZR-1o-YrL" secondAttribute="leading" constant="15" id="0nc-5V-mEv"/>
+                            <constraint firstItem="xpl-IM-BNj" firstAttribute="bottom" secondItem="cfw-Ct-0kn" secondAttribute="bottom" constant="15" id="1rt-3b-0eM"/>
+                            <constraint firstItem="xpl-IM-BNj" firstAttribute="trailing" secondItem="1XB-R3-XoP" secondAttribute="trailing" constant="15" id="5Ac-fg-SZP"/>
+                            <constraint firstItem="25p-LW-rgr" firstAttribute="centerX" secondItem="CZR-1o-YrL" secondAttribute="centerX" id="ARm-Ov-5Sy"/>
+                            <constraint firstItem="25p-LW-rgr" firstAttribute="top" secondItem="xpl-IM-BNj" secondAttribute="top" constant="15" id="CzY-1j-wG9"/>
+                            <constraint firstItem="iTF-WJ-xgO" firstAttribute="leading" secondItem="z5g-fl-mDK" secondAttribute="leading" id="EAC-PX-wja"/>
+                            <constraint firstItem="cfw-Ct-0kn" firstAttribute="top" secondItem="1XB-R3-XoP" secondAttribute="bottom" constant="10" id="NHO-L5-NHI"/>
+                            <constraint firstItem="xpl-IM-BNj" firstAttribute="trailing" secondItem="cfw-Ct-0kn" secondAttribute="trailing" constant="15" id="OG2-Mn-caw"/>
+                            <constraint firstItem="z5g-fl-mDK" firstAttribute="leading" secondItem="xpl-IM-BNj" secondAttribute="leading" constant="15" id="OhR-jX-hY9"/>
+                            <constraint firstItem="iTF-WJ-xgO" firstAttribute="top" secondItem="z5g-fl-mDK" secondAttribute="bottom" constant="15" id="Zwp-W0-NnY"/>
+                            <constraint firstItem="1XB-R3-XoP" firstAttribute="leading" secondItem="xpl-IM-BNj" secondAttribute="leading" constant="15" id="hqd-j6-MqN"/>
+                            <constraint firstItem="z5g-fl-mDK" firstAttribute="top" secondItem="25p-LW-rgr" secondAttribute="bottom" constant="20.5" id="iIr-yg-wVi"/>
+                            <constraint firstItem="cNT-9Y-qYe" firstAttribute="leading" secondItem="z5g-fl-mDK" secondAttribute="trailing" constant="15" id="mbr-6x-tTs"/>
+                            <constraint firstItem="cNT-9Y-qYe" firstAttribute="centerY" secondItem="z5g-fl-mDK" secondAttribute="centerY" id="nS3-QX-ND1"/>
+                            <constraint firstItem="1XB-R3-XoP" firstAttribute="top" secondItem="iTF-WJ-xgO" secondAttribute="bottom" constant="15" id="pGr-lZ-OBD"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="xpl-IM-BNj"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Tracking" image="track" id="k8G-iS-GOF">
+                        <color key="badgeColor" red="1" green="0.81176470590000005" blue="0.0078431372550000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </tabBarItem>
+                    <connections>
+                        <outlet property="eventTypeField" destination="cNT-9Y-qYe" id="SyY-hd-F96"/>
+                        <outlet property="textView" destination="1XB-R3-XoP" id="da4-VD-oDl"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hnN-dw-agQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-306.39999999999998" y="638.2308845577212"/>
         </scene>
     </scenes>
     <resources>
