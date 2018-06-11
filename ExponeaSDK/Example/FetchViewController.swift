@@ -35,37 +35,87 @@ class FetchViewController: UIViewController {
     }
 
     @IBAction func fetchEvents(_ sender: Any) {
-        let req = EventsRequest(eventTypes: ["my_custom_event_type"])
-        Exponea.shared.fetchEvents(with: req) { (result) in
-            switch result {
-            case .success(let events):
-                AppDelegate.memoryLogger.logMessage("\(events)")
-                self.showAlert(title: "Fetch Events", message: """
-                    Success: \(events.success)
-                    Content: \(events.data)
-                    """)
-            case .failure(let error):
-                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
-                self.showAlert(title: "Error", message: error.localizedDescription)
-            }
+        let alertController = UIAlertController(title: "Input event types",
+                                                message: "You can input multiple, comma separated values.",
+                                                preferredStyle: .alert)
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "ID"
         }
+        let saveAction = UIAlertAction(title: "Fetch", style: .default, handler: { alert -> Void in
+            let idField = alertController.textFields![0] as UITextField
+            let req = EventsRequest(eventTypes: [idField.text ?? ""])
+            
+            DispatchQueue.main.async {
+                
+                Exponea.shared.fetchEvents(with: req) { (result) in
+                    switch result {
+                    case .success(let events):
+                        AppDelegate.memoryLogger.logMessage("\(events)")
+                        self.showAlert(title: "Fetch Events", message: """
+                            Success: \(events.success)
+                            Content: \(events.data)
+                            """)
+                    case .failure(let error):
+                        AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                        self.showAlert(title: "Error", message: error.localizedDescription)
+                    }
+                }
+            }
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(saveAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     @IBAction func fetchAttributes(_ sender: Any) {
-        let req = AttributesDescription(key: "a", value: "b", identificationKey: "", identificationValue: "")
-        Exponea.shared.fetchAttributes(with: req) { (result) in
-            switch result {
-            case .success(let recom):
-                AppDelegate.memoryLogger.logMessage("\(recom)")
-                self.showAlert(title: "Fetch Attributes", message: """
-                    Type: \(recom.type)
-                    List: \(recom.list)
-                    """)
-            case .failure(let error):
-                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
-                self.showAlert(title: "Error", message: error.localizedDescription)
-            }
+        let alertController = UIAlertController(title: "Fetch Attributes Config", message: nil, preferredStyle: .alert)
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Key"
         }
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Value"
+        }
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Identification Key"
+        }
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Identification Value"
+        }
+        let saveAction = UIAlertAction(title: "Fetch", style: .default, handler: { alert -> Void in
+            let keyField = alertController.textFields![0] as UITextField
+            let valueField = alertController.textFields![1] as UITextField
+            let idKeyField = alertController.textFields![2] as UITextField
+            let idValueField = alertController.textFields![3] as UITextField
+            let req = AttributesDescription(key: keyField.text ?? "",
+                                            value: valueField.text ?? "",
+                                            identificationKey: idKeyField.text ?? "",
+                                            identificationValue: idValueField.text ?? "")
+            
+            DispatchQueue.main.async {
+                Exponea.shared.fetchAttributes(with: req) { (result) in
+                    switch result {
+                    case .success(let recom):
+                        AppDelegate.memoryLogger.logMessage("\(recom)")
+                        self.showAlert(title: "Fetch Attributes", message: """
+                            Type: \(recom.type)
+                            List: \(recom.list)
+                            """)
+                    case .failure(let error):
+                        AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                        self.showAlert(title: "Error", message: error.localizedDescription)
+                    }
+                }
+            }
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(saveAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     @IBAction func fetchBanners(_ sender: Any) {
