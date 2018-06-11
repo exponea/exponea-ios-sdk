@@ -20,7 +20,11 @@ extension TrackCustomer {
         // Convert all properties to key value items.
         if let properties = trackCustomerProperties as? Set<TrackCustomerProperty> {
             var props: [String: JSONValue] = [:]
-            properties.forEach({ props[$0.key!] = .string($0.value!) })
+            properties.forEach({
+                DatabaseManager.processProperty(key: $0.key,
+                                                value: $0.value,
+                                                into: &props)
+            })
             data.append(.properties(props))
         }
         

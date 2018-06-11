@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17E202" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14270.9" systemVersion="" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Customer" representedClassName=".Customer" syncable="YES" codeGenerationType="class">
         <attribute name="registeredId" optional="YES" attributeType="String" customClassName="[String]" syncable="YES"/>
         <attribute name="uuid" attributeType="Transformable" customClassName="UUID" syncable="YES"/>
@@ -14,7 +14,7 @@
     </entity>
     <entity name="TrackCustomerProperty" representedClassName=".TrackCustomerProperty" syncable="YES" codeGenerationType="class">
         <attribute name="key" attributeType="String" syncable="YES"/>
-        <attribute name="value" attributeType="String" syncable="YES"/>
+        <attribute name="value" attributeType="Transformable" syncable="YES"/>
         <relationship name="trackCustomer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackCustomer" inverseName="trackCustomerProperties" inverseEntity="TrackCustomer" syncable="YES"/>
     </entity>
     <entity name="TrackEvent" representedClassName=".TrackEvent" syncable="YES" codeGenerationType="class">
@@ -26,14 +26,14 @@
     </entity>
     <entity name="TrackEventProperty" representedClassName=".TrackEventProperty" syncable="YES" codeGenerationType="class">
         <attribute name="key" attributeType="String" syncable="YES"/>
-        <attribute name="value" attributeType="String" syncable="YES"/>
+        <attribute name="value" attributeType="Transformable" syncable="YES"/>
         <relationship name="trackEvent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackEvent" inverseName="trackEventProperties" inverseEntity="TrackEvent" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Customer" positionX="-27" positionY="72" width="128" height="105"/>
-        <element name="TrackCustomer" positionX="-63" positionY="-18" width="128" height="105"/>
-        <element name="TrackCustomerProperty" positionX="-36" positionY="9" width="128" height="90"/>
-        <element name="TrackEvent" positionX="-27" positionY="54" width="128" height="120"/>
-        <element name="TrackEventProperty" positionX="0" positionY="72" width="128" height="90"/>
+        <element name="Customer" positionX="-29.83203125" positionY="-178.51171875" width="128" height="105"/>
+        <element name="TrackCustomer" positionX="-326.96875" positionY="-110.0859375" width="128" height="105"/>
+        <element name="TrackCustomerProperty" positionX="-25.9296875" positionY="-3.7109375" width="128" height="90"/>
+        <element name="TrackEvent" positionX="176.1796875" positionY="-46.76953125" width="128" height="120"/>
+        <element name="TrackEventProperty" positionX="357.73828125" positionY="-17.6171875" width="128" height="90"/>
     </elements>
 </model>

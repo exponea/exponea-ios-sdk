@@ -18,12 +18,6 @@ extension NSString: JSONConvertible {
     }
 }
 
-//extension NSValue: JSONConvertible {
-//    public var jsonValue: JSONValue {
-//        
-//    }
-//}
-
 extension String: JSONConvertible {
     public var jsonValue: JSONValue {
         return .string(self)
@@ -134,6 +128,19 @@ extension JSONValue: Codable, Equatable {
         case (.array(let array1), .array(let array2)): return array1 == array2
         case (.dictionary(let dict1), .dictionary(let dict2)): return dict1 == dict2
         default: return false
+        }
+    }
+}
+
+extension JSONValue {
+    var objectValue: NSObject {
+        switch self {
+        case .bool(let bool): return NSNumber(value: bool)
+        case .int(let int): return NSNumber(value: int)
+        case .string(let string): return NSString(string: string)
+        case .array(let array): return array as NSArray
+        case .double(let double): return NSNumber(value: double)
+        case .dictionary(let dictionary): return dictionary as NSDictionary
         }
     }
 }

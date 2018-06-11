@@ -107,42 +107,14 @@ public class Exponea: ExponeaType {
         self.repository = repository
         
         // Setup tracking manager
-        self.trackingManager = TrackingManager(repository: repository)
-        
-        // Do initial tracking if necessary
-        trackInstallEvent()
+        self.trackingManager = TrackingManager(repository: repository,
+                                               userDefaults: userDefaults)
     }
 }
 
 // MARK: - Tracking -
 
 internal extension Exponea {
-    
-    /// Installation event is fired only once for the whole lifetime of the app on one
-    /// device when the app is launched for the first time.
-    internal func trackInstallEvent() {
-        /// Checking if the APP was launched before.
-        /// If the key value is false, means that the event was not fired before.
-        guard !userDefaults.bool(forKey: Constants.Keys.launchedBefore) else {
-            Exponea.logger.log(.verbose, message: "Install event was already tracked, skipping.")
-            return
-        }
-        
-        /// In case the event was not fired, we call the track manager
-        /// passing the install event type.
-        do {
-            // Get depdencies and track install event
-            let dependencies = try getDependenciesIfConfigured()
-            try dependencies.trackingManager.track(.install, with: nil)
-            
-            /// Set the value to true if event was executed successfully
-            userDefaults.set(true, forKey: Constants.Keys.launchedBefore)
-            /// Set default timeout session time with default value
-            userDefaults.set(Constants.Session.defaultTimeout, forKey: Constants.Keys.timeout)
-        } catch {
-            Exponea.logger.log(.error, message: error.localizedDescription)
-        }
-    }
     
     /// Alias for dependencies required across various internal and public functions of Exponea.
     internal typealias Dependencies = (

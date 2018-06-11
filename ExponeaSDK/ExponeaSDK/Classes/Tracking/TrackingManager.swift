@@ -34,6 +34,9 @@ open class TrackingManager {
     /// Used for periodic data flushing.
     internal var flushingTimer: Timer?
     
+    /// User defaults used to store basic data and flags.
+    internal let userDefaults: UserDefaults
+    
     /// Flushing mode specifies how often and if should data be automatically flushed to Exponea.
     /// See `FlushingMode` for available values.
     public var flushingMode: FlushingMode = .automatic {
@@ -46,11 +49,13 @@ open class TrackingManager {
     init(repository: RepositoryType,
          database: DatabaseManagerType = DatabaseManager(),
          device: DeviceProperties = DeviceProperties(),
-         paymentManager: PaymentManagerType = PaymentManager()) {
+         paymentManager: PaymentManagerType = PaymentManager(),
+         userDefaults: UserDefaults) {
         self.repository = repository
         self.database = database
         self.device = device
         self.paymentManager = paymentManager
+        self.userDefaults = userDefaults
         
         initialSetup()
     }
@@ -61,6 +66,9 @@ open class TrackingManager {
     }
     
     func initialSetup() {
+        // Track initial install event if necessary.
+        trackInstallEvent()
+        
         /// Add the observers when the automatic session tracking is true.
         if repository.configuration.automaticSessionTracking {
             addSessionObserves()
@@ -69,6 +77,31 @@ open class TrackingManager {
         /// Add the observers when the automatic push notification tracking is true.
         if repository.configuration.automaticPushNotificationTracking {
             pushManager = PushNotificationManager(trackingManager: self)
+        }
+    }
+    
+    /// Installation event is fired only once for the whole lifetime of the app on one
+    /// device when the app is launched for the first time.
+    internal func trackInstallEvent() {
+        /// Checking if the APP was launched before.
+        /// If the key value is false, means that the event was not fired before.
+        guard !userDefaults.bool(forKey: Constants.Keys.launchedBefore) else {
+            Exponea.logger.log(.verbose, message: "Install event was already tracked, skipping.")
+            return
+        }
+        
+        /// In case the event was not fired, we call the track manager
+        /// passing the install event type.
+        do {
+            // Get depdencies and track install event
+            try track(.install, with: nil)
+            
+            /// Set the value to true if event was executed successfully
+            userDefaults.set(true, forKey: Constants.Keys.launchedBefore)
+            /// Set default timeout session time with default value
+            userDefaults.set(Constants.Session.defaultTimeout, forKey: Constants.Keys.timeout)
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
         }
     }
 }
@@ -139,19 +172,19 @@ extension TrackingManager {
 extension TrackingManager {
     internal var sessionStartTime: Double {
         get {
-            return Exponea.shared.userDefaults.double(forKey: Constants.Keys.sessionStarted)
+            return userDefaults.double(forKey: Constants.Keys.sessionStarted)
         }
         set {
-            Exponea.shared.userDefaults.set(newValue, forKey: Constants.Keys.sessionStarted)
+            userDefaults.set(newValue, forKey: Constants.Keys.sessionStarted)
         }
     }
     
     internal var sessionEndTime: Double {
         get {
-            return Exponea.shared.userDefaults.double(forKey: Constants.Keys.sessionEnded)
+            return userDefaults.double(forKey: Constants.Keys.sessionEnded)
         }
         set {
-            Exponea.shared.userDefaults.set(newValue, forKey: Constants.Keys.sessionEnded)
+            userDefaults.set(newValue, forKey: Constants.Keys.sessionEnded)
         }
     }
     
