@@ -161,7 +161,6 @@
 		01EC2DA8207E4FC10031BFEB /* CustomerExportRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerExportRequest.swift; sourceTree = "<group>"; };
 		01EC2DAA207E53D90031BFEB /* AttributesListDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesListDescription.swift; sourceTree = "<group>"; };
 		01EC2DAC207E53E40031BFEB /* AttributesDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesDescription.swift; sourceTree = "<group>"; };
-		01EC2DAE207E55280031BFEB /* DatabaseManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerType.swift; sourceTree = "<group>"; };
 		01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManager.swift; sourceTree = "<group>"; };
 		01EC2DB3207E58080031BFEB /* EventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventType.swift; sourceTree = "<group>"; };
 		01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManagerType.swift; sourceTree = "<group>"; };
@@ -350,14 +349,6 @@
 				01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */,
 			);
 			path = Tracking;
-			sourceTree = "<group>";
-		};
-		01EC2DB7207E68900031BFEB /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				01EC2DAE207E55280031BFEB /* DatabaseManagerType.swift */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		01EC2DB8207E68BF0031BFEB /* Database */ = {
@@ -568,7 +559,6 @@
 				F021E85A206CF10200788ABC /* Products */,
 				BA562F8AA107D3AB3132C40D /* Pods */,
 				A3613BD1E2C1D4616B6A9767 /* Frameworks */,
-				01EC2DB7207E68900031BFEB /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1289,6 +1279,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
