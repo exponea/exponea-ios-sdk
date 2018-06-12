@@ -111,7 +111,6 @@
 		F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757EF207D027300FE8C21 /* Configuration.swift */; };
 		F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */; };
 		F0E757F5207D032500FE8C21 /* ExponeaConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0E757F4207D032500FE8C21 /* ExponeaConfig.plist */; };
-		FFE74F5792FF87D90A822C1A /* Pods_ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -170,10 +169,8 @@
 		01EC2DC0207F63970031BFEB /* FlushingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingMode.swift; sourceTree = "<group>"; };
 		0288F5494383F31AB19EF5E0 /* Pods_ExponeaSDK_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6A9541A0D49B621C7B60EAC2 /* Pods-ExponeaSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.release.xcconfig"; sourceTree = "<group>"; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
-		B57907D0B9C15901B882D6C2 /* Pods-ExponeaSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		C01E19E920C02A4D00DF64F9 /* ErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
 		C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
 		C0753E8F20A43D3900A779FF /* RepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryError.swift; sourceTree = "<group>"; };
@@ -275,7 +272,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FFE74F5792FF87D90A822C1A /* Pods_ExponeaSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,8 +371,6 @@
 		BA562F8AA107D3AB3132C40D /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B57907D0B9C15901B882D6C2 /* Pods-ExponeaSDK.debug.xcconfig */,
-				6A9541A0D49B621C7B60EAC2 /* Pods-ExponeaSDK.release.xcconfig */,
 				7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */,
 				B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */,
 			);
@@ -745,8 +739,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F021E86D206CF10200788ABC /* Build configuration list for PBXNativeTarget "ExponeaSDK" */;
 			buildPhases = (
-				C274BBDE503AE53257B1623E /* [CP] Check Pods Manifest.lock */,
-				01A62DCD206D193600E4EACE /* SwiftLint */,
 				F021E854206CF10200788ABC /* Sources */,
 				F021E855206CF10200788ABC /* Frameworks */,
 				F021E856206CF10200788ABC /* Headers */,
@@ -865,20 +857,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		01A62DCD206D193600E4EACE /* SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = SwiftLint;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
-		};
 		66B6C7F3C0CC28444D9F6CED /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -915,24 +893,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C274BBDE503AE53257B1623E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ExponeaSDK-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1243,7 +1203,6 @@
 		};
 		F021E86E206CF10200788ABC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B57907D0B9C15901B882D6C2 /* Pods-ExponeaSDK.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -1269,7 +1228,6 @@
 		};
 		F021E86F206CF10200788ABC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6A9541A0D49B621C7B60EAC2 /* Pods-ExponeaSDK.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
