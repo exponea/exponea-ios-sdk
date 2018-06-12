@@ -38,9 +38,9 @@ open class TrackingManager {
     internal let userDefaults: UserDefaults
     
     // Background task, if there is any - used to track sessions and flush data.
-    internal var backgroundTask: UIBackgroundTaskIdentifier = .invalid {
+    internal var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid {
         didSet {
-            if backgroundTask == .invalid && backgroundWorkItem != nil {
+            if backgroundTask == UIBackgroundTaskInvalid && backgroundWorkItem != nil {
                 Exponea.logger.log(.verbose, message: "Background task ended, stopping backgroun work item.")
                 backgroundWorkItem?.cancel()
                 backgroundWorkItem = nil
@@ -51,10 +51,10 @@ open class TrackingManager {
     internal var backgroundWorkItem: DispatchWorkItem? {
         didSet {
             // Stop background taks if work item is done
-            if backgroundWorkItem == nil && backgroundTask != .invalid {
+            if backgroundWorkItem == nil && backgroundTask != UIBackgroundTaskInvalid {
                 Exponea.logger.log(.verbose, message: "Stopping background task after work item done/cancelled.")
                 UIApplication.shared.endBackgroundTask(backgroundTask)
-                backgroundTask = .invalid
+                backgroundTask = UIBackgroundTaskInvalid
             }
         }
     }
@@ -219,15 +219,15 @@ extension TrackingManager {
         // Subscribe to notifications
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidBecomeActive),
-                                               name: UIApplication.didBecomeActiveNotification,
+                                               name: .UIApplicationDidBecomeActive,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidEnterBackground),
-                                               name: UIApplication.didEnterBackgroundNotification,
+                                               name: .UIApplicationDidEnterBackground,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationWillTerminate),
-                                               name: UIApplication.willTerminateNotification,
+                                               name: .UIApplicationWillTerminate,
                                                object: nil)
         
         try? track(.sessionStart, with: nil)
@@ -235,9 +235,9 @@ extension TrackingManager {
     
     /// Removes session observers.
     internal func removeSessionObservers() {
-        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.willTerminateNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillTerminate, object: nil)
     }
     
     @objc internal func applicationDidBecomeActive() {
@@ -283,7 +283,7 @@ extension TrackingManager {
     @objc internal func applicationDidEnterBackground() {
         backgroundTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
             UIApplication.shared.endBackgroundTask(self.backgroundTask)
-            self.backgroundTask = .invalid
+            self.backgroundTask = UIBackgroundTaskInvalid
         })
         
         // Dispatch after default session timeout
@@ -297,7 +297,7 @@ extension TrackingManager {
             }
             
             UIApplication.shared.endBackgroundTask(self.backgroundTask)
-            self.backgroundTask = .invalid
+            self.backgroundTask = UIBackgroundTaskInvalid
         }
         
         backgroundWorkItem = item
@@ -307,7 +307,7 @@ extension TrackingManager {
     @objc internal func applicationWillTerminate() {
         backgroundTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
             UIApplication.shared.endBackgroundTask(self.backgroundTask)
-            self.backgroundTask = .invalid
+            self.backgroundTask = UIBackgroundTaskInvalid
         })
         triggerEndSession()
         
@@ -469,7 +469,7 @@ extension TrackingManager {
         
         // Remove observers
         let center = NotificationCenter.default
-        center.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        center.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
         
         // Update for new flushing mode
         switch flushingMode {
@@ -478,7 +478,7 @@ extension TrackingManager {
             // Automatically upload on resign active
             let center = NotificationCenter.default
             center.addObserver(self, selector: #selector(flushData),
-                               name: UIApplication.willResignActiveNotification, object: nil)
+                               name: .UIApplicationDidEnterBackground, object: nil)
             
         case .periodic(let interval):
             // Schedule a timer for the specified interval
