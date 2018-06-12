@@ -405,6 +405,71 @@
 			path = Personalization;
 			sourceTree = "<group>";
 		};
+		C0EA5FCD20CE95EE00660802 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C0F6C4E92098A1AC00834E21 /* Assets.xcassets */,
+				C0F6C4E62098A1AB00834E21 /* Main.storyboard */,
+				C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */,
+				C0F6C4EE2098A1AC00834E21 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		C0EA5FCE20CE960700660802 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */,
+				C0EA5FD120CE962500660802 /* Fetching */,
+				C0EA5FD020CE961F00660802 /* Tracking */,
+				C0EA5FD220CE962B00660802 /* Flushing */,
+				C0EA5FD320CE963100660802 /* Logging */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C0EA5FCF20CE961000660802 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				C0F2406F20BD98EB00CAF7CE /* MemoryLogger.swift */,
+			);
+			path = Other;
+			sourceTree = "<group>";
+		};
+		C0EA5FD020CE961F00660802 /* Tracking */ = {
+			isa = PBXGroup;
+			children = (
+				C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */,
+				C07E41FC20C930C400920809 /* TrackEventViewController.swift */,
+				C07E41FE20C930E400920809 /* IdentifyCustomerViewController.swift */,
+			);
+			path = Tracking;
+			sourceTree = "<group>";
+		};
+		C0EA5FD120CE962500660802 /* Fetching */ = {
+			isa = PBXGroup;
+			children = (
+				C0EB5D9620B8190500F1031F /* FetchViewController.swift */,
+			);
+			path = Fetching;
+			sourceTree = "<group>";
+		};
+		C0EA5FD220CE962B00660802 /* Flushing */ = {
+			isa = PBXGroup;
+			children = (
+				C0EB5D9A20B8193200F1031F /* FlushingViewController.swift */,
+			);
+			path = Flushing;
+			sourceTree = "<group>";
+		};
+		C0EA5FD320CE963100660802 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				C0F2407120BD9A5500CAF7CE /* LogViewController.swift */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
 		C0EB5D9120B811DE00F1031F /* Push Notifications */ = {
 			isa = PBXGroup;
 			children = (
@@ -478,18 +543,9 @@
 			children = (
 				C0843CF020B6DC6000FAF0CB /* Example.entitlements */,
 				C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */,
-				C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */,
-				C0EB5D9620B8190500F1031F /* FetchViewController.swift */,
-				C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */,
-				C07E41FC20C930C400920809 /* TrackEventViewController.swift */,
-				C07E41FE20C930E400920809 /* IdentifyCustomerViewController.swift */,
-				C0EB5D9A20B8193200F1031F /* FlushingViewController.swift */,
-				C0F2407120BD9A5500CAF7CE /* LogViewController.swift */,
-				C0F2406F20BD98EB00CAF7CE /* MemoryLogger.swift */,
-				C0F6C4E62098A1AB00834E21 /* Main.storyboard */,
-				C0F6C4E92098A1AC00834E21 /* Assets.xcassets */,
-				C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */,
-				C0F6C4EE2098A1AC00834E21 /* Info.plist */,
+				C0EA5FCE20CE960700660802 /* Views */,
+				C0EA5FCF20CE961000660802 /* Other */,
+				C0EA5FCD20CE95EE00660802 /* Resources */,
 			);
 			path = Example;
 			sourceTree = "<group>";
@@ -1049,7 +1105,7 @@
 				CODE_SIGN_ENTITLEMENTS = Example/Example.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = HW27H6H98R;
-				INFOPLIST_FILE = Example/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nodes.ExponeaSDK;
@@ -1068,7 +1124,7 @@
 				CODE_SIGN_ENTITLEMENTS = Example/Example.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = HW27H6H98R;
-				INFOPLIST_FILE = Example/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nodes.ExponeaSDK;

@@ -37,6 +37,8 @@ class MemoryLogger: Logger {
         
         print(message)
         
-        delegate?.logUpdated()
+        DispatchQueue.main.async {
+            self.delegate?.logUpdated()
+        }
     }
 }

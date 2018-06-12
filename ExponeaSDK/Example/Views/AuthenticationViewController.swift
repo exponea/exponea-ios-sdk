@@ -37,7 +37,7 @@ class AuthenticationViewController: UIViewController {
         }
         
         Exponea.shared.configure(projectToken: token, authorization: auth)
-        Exponea.shared.flushingMode = .manual
+        Exponea.shared.flushingMode = .automatic
         
         performSegue(withIdentifier: "showMain", sender: nil)
     }
