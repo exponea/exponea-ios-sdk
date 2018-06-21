@@ -18,7 +18,7 @@ It has been written 100% in Swift with ❤️
 ### CocoaPods
 
 ```ruby
-pod "exponea-sdk-ios" "~> 0.9"
+pod "ExponeaSDK" "~> 0.9.1"
 ```
 
 ### Carthage
