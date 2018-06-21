@@ -29,7 +29,7 @@ github "exponea/exponea-sdk-ios" ~> 0.9.0
 
 ## 📱 Demo Application
 
-Check out our [sample project](https://github.com/exponea/exponea-ios-sdk/tree/master/app) to try it yourself! 😉
+Check out our [sample project](https://github.com/exponea/exponea-ios-sdk/tree/master/ExponeaSDK/Example) to try it yourself! 😉
 
 ## 💻 Usage
 
