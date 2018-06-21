@@ -15,8 +15,8 @@ Pod::Spec.new do |s|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  s.name         = "exponea-ios-sdk"
-  s.version      = "0.9.0"
+  s.name         = "ExponeaSDK"
+  s.version      = "0.9.1"
   s.summary      = "Exponea SDK used to track and fetch data from Exponea Experience Cloud."
 
   # This description is used to generate tags and improve search results.
@@ -58,7 +58,7 @@ Pod::Spec.new do |s|
   #  the deployment target. You can optionally include the target after the platform.
   #
 
-  s.platform     = :ios, "11.0"
+  s.platform     = :ios, "10.0"
   s.swift_version = '4.1.2'
 
   # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -88,6 +88,6 @@ Pod::Spec.new do |s|
   #  non-essential files like tests, examples and documentation.
   #
   
-  s.resource_bundles = {'ExponeaSDK' => ['ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld']}
+  s.resources = ['ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld']
 
 end
