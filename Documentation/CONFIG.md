@@ -4,7 +4,7 @@ The configuration object must be configured before starting using the SDK.
 
 It's possible to initialize the configuration providing a configuration file with the same structure (keys) from the Configuration structure or just using the configuration methods available in the SDK.
 
-```
+```swift
 public struct Configuration: Decodable {
     public internal(set) var projectMapping: [EventType: [String]]?
     public internal(set) var projectToken: String?
@@ -63,7 +63,7 @@ public struct Configuration: Decodable {
 
 #### Setting the configuration with project token, authorization and your base URL:
 
-```
+```swift
 public func configure(projectToken: String, 
                       authorization: Authorization, 
                       baseURL: String? = nil)
@@ -71,7 +71,7 @@ public func configure(projectToken: String,
 
 #### 💻 Usage
 
-```
+```swift
 Exponea.shared.configure(projectToken: "ProjectTokenA",
                          authorization: Authorization.basic("YOUR AUTHORIZATION HASH"),
                          baseURL: "YOUR BASE URL")
@@ -79,19 +79,19 @@ Exponea.shared.configure(projectToken: "ProjectTokenA",
 
 #### Setting the configuration using configuration file:
 
-```
+```swift
 public func configure(plistName: String)
 ```
 
 #### 💻 Usage
 
-```
+```swift
 Exponea.shared.configure(plistName: "ExponeaConfig.plist")
 ```
 
 #### Setting the configuration using a projectMapping (token mapping) for each type of event. This allows you to track events to multiple projects, even the same event to more project at once.
 
-```
+```swift
 public func configure(projectToken: String,
                       projectMapping: [EventType: [String]],
                       authorization: Authorization,
@@ -100,7 +100,7 @@ public func configure(projectToken: String,
 
 #### 💻 Usage
 
-```
+```swift
 Exponea.shared.configure(projectToken: "ProjectTokenA",
                          projectMapping: [EventType.identifyCustomer: ["ProjectTokenA", "ProjectTokenB"],
                                           EventType.customEvent: ["ProjectTokenD"]],
