@@ -11,7 +11,8 @@ import ExponeaSDK
 
 class IdentifyCustomerViewController: UIViewController {
     
-    @IBOutlet var registeredIdField: UITextField!
+    @IBOutlet var idKeyField: UITextField!
+    @IBOutlet var idValueField: UITextField!
 
     @IBOutlet var keyField1: UITextField!
     @IBOutlet var valueField1: UITextField!
@@ -25,7 +26,8 @@ class IdentifyCustomerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        registeredIdField.placeholder = "fx. email@address.com"
+        idKeyField.placeholder = "registered"
+        idValueField.placeholder = "fx. email@address.com"
         
         keyField1.placeholder = "custom_key_1"
         keyField2.placeholder = "custom_key_2"
@@ -41,11 +43,12 @@ class IdentifyCustomerViewController: UIViewController {
     }
     
     @IBAction func trackPressed(_ sender: Any) {
-        let id: String?
-        if let registeredId = registeredIdField.text, !registeredId.isEmpty {
-            id = registeredId
+        let ids: [String: String]?
+        if let idKey = idKeyField.text, !idKey.isEmpty,
+            let idValue = idValueField.text, !idValue.isEmpty {
+            ids = [idKey : idValue]
         } else {
-            id = nil
+            ids = nil
         }
         
         var properties: [String: String] = [:]
@@ -62,7 +65,7 @@ class IdentifyCustomerViewController: UIViewController {
             properties[key3] = valueField3.text ?? ""
         }
         
-        Exponea.shared.identifyCustomer(customerId: id, properties: properties, timestamp: nil)
+        Exponea.shared.identifyCustomer(customerIds: ids, properties: properties, timestamp: nil)
         dismiss(animated: true, completion: nil)
     }
 

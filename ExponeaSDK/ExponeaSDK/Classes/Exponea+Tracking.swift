@@ -62,7 +62,7 @@ extension Exponea {
     ///     - customerId: Specify your customer with external id, for example an email address.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
-    public func identifyCustomer(customerId: String?,
+    public func identifyCustomer(customerIds: [String: JSONConvertible]?,
                                  properties: [String: JSONConvertible],
                                  timestamp: Double?) {
         do {
@@ -71,8 +71,16 @@ extension Exponea {
             // Prepare data
             var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })),
                                     .timestamp(timestamp)]
-            if let id = customerId {
-                data.append(.customerId(id))
+            if var ids = customerIds {
+                // Check for overriding cookie
+                if ids["cookie"] != nil {
+                    ids.removeValue(forKey: "cookie")
+                    Exponea.logger.log(.warning, message: """
+                    You should never set cookie ID directly on a customer. Ignoring.
+                    """)
+                }
+                
+                data.append(.customerIds(ids.mapValues({ $0.jsonValue })))
             }
             
             try dependencies.trackingManager.track(.identifyCustomer, with: data)

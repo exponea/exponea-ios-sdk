@@ -118,9 +118,34 @@ extension DatabaseManager {
         return customer
     }
     
-    func fetchCustomerAndUpdate(with id: String) -> Customer {
+    func fetchCustomerAndUpdate(with ids: [String: JSONValue]) -> Customer {
         let customer = self.customer
-        customer.registeredId = id
+        
+        // Add the ids to the customer entity
+        for id in ids {
+            // Check if we have existing
+            if let item = customer.customIds?.first(where: { (existing) -> Bool in
+                guard let existing = existing as? KeyValueItem else { return false }
+                return existing.key == id.key
+            }) as? KeyValueItem {
+                // Update value, since it has changed
+                item.value = id.value.objectValue
+                Exponea.logger.log(.verbose, message: """
+                    Updating value of existing customerId (\(id.key)) with value: \(id.value.jsonConvertible).
+                    """)
+            } else {
+                // Create item and insert it
+                let item = KeyValueItem(context: context)
+                item.key = id.key
+                item.value = id.value.objectValue
+                context.insert(item)
+                customer.addToCustomIds(item)
+                
+                Exponea.logger.log(.verbose, message: """
+                    Creating new customerId (\(id.key)) with value: \(id.value.jsonConvertible).
+                    """)
+            }
+        }
         
         do {
             try saveContext()
@@ -153,9 +178,6 @@ extension DatabaseManager: DatabaseManagerType {
             case .projectToken(let token):
                 trackEvent.projectToken = token
                 
-            case .customerId(let id):
-                trackEvent.customer = fetchCustomerAndUpdate(with: id)
-
             case .eventType(let event):
                 trackEvent.eventType = event
 
@@ -216,8 +238,8 @@ extension DatabaseManager: DatabaseManagerType {
             case .projectToken(let token):
                 trackCustomer.projectToken = token
 
-            case .customerId(let id):
-                trackCustomer.customer = fetchCustomerAndUpdate(with: id)
+            case .customerIds(let ids):
+                trackCustomer.customer = fetchCustomerAndUpdate(with: ids)
 
             case .timestamp(let time):
                 trackCustomer.timestamp = time ?? Date().timeIntervalSince1970
