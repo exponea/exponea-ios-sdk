@@ -37,10 +37,10 @@ Exponea.shared.trackEvent(properties: properties,
         
 ## 🔍 Identify Customer
 
-Save or update your customer data in the Exponea APP through this method.
+Save or update your customer data in the Exponea App through this method.
 
 ```
-public func identifyCustomer(customerId: String?,
+public func identifyCustomer(customerIds: [String : JSONConvertible]?,
                              properties: [String: JSONConvertible],
                              timestamp: Double?)
 ```
@@ -48,7 +48,7 @@ public func identifyCustomer(customerId: String?,
 #### 💻 Usage
 
 ```
-Exponea.shared.identifyCustomer(customerId: "test@test.com",
+Exponea.shared.identifyCustomer(customerIds: ["registered" : "test@test.com"],
                                 properties: ["custom_property" : "Some Property Value", "first_name" : "test"],
                                 timestamp: nil)
 ```
