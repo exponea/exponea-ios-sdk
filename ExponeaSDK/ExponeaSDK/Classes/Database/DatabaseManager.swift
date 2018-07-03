@@ -110,8 +110,10 @@ extension DatabaseManager {
         do {
             try saveContext()
             Exponea.logger.log(.verbose, message: "New customer created with UUID: \(customer.uuid!)")
+        } catch let saveError as NSError {
+            let error = DatabaseManagerError.saveCustomerFailed(saveError.localizedDescription)
+            Exponea.logger.log(.error, message: error.localizedDescription)
         } catch {
-            let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription)
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
         
@@ -187,11 +189,11 @@ extension DatabaseManager: DatabaseManagerType {
             case .properties(let properties):
                 // Add the event properties to the events entity
                 for property in properties {
-                    let trackEventProperties = TrackEventProperty(context: context)
-                    trackEventProperties.key = property.key
-                    trackEventProperties.value = property.value.objectValue
-                    context.insert(trackEventProperties)
-                    trackEvent.addToTrackEventProperties(trackEventProperties)
+                    let item = KeyValueItem(context: context)
+                    item.key = property.key
+                    item.value = property.value.objectValue
+                    context.insert(item)
+                    trackEvent.addToProperties(item)
                 }
             default:
                 break
@@ -247,16 +249,16 @@ extension DatabaseManager: DatabaseManagerType {
             case .properties(let properties):
                 // Add the customer properties to the customer entity
                 for property in properties {
-                    let trackCustomerProperties = TrackCustomerProperty(context: context)
-                    trackCustomerProperties.key = property.key
-                    trackCustomerProperties.value = property.value.objectValue
-                    trackCustomer.addToTrackCustomerProperties(trackCustomerProperties)
+                    let item = KeyValueItem(context: context)
+                    item.key = property.key
+                    item.value = property.value.objectValue
+                    trackCustomer.addToProperties(item)
                 }
             case .pushNotificationToken(let token):
-                let trackCustomerProperties = TrackCustomerProperty(context: context)
-                trackCustomerProperties.key = "apple_push_notification_id"
-                trackCustomerProperties.value = token as NSString
-                trackCustomer.addToTrackCustomerProperties(trackCustomerProperties)
+                let item = KeyValueItem(context: context)
+                item.key = "apple_push_notification_id"
+                item.value = token as NSString
+                trackCustomer.addToProperties(item)
                 
             default:
                 break

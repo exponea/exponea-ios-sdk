@@ -17,7 +17,7 @@ protocol TrackingRepository {
     ///     - customerIds: Customer identification.
     ///     - completion: Object containing the request result.
     func trackCustomer(with data: [DataType],
-                       for customerIds: [String: String],
+                       for customerIds: [String: JSONValue],
                        completion: @escaping ((EmptyResult) -> Void))
 
     /// Tracks new events for a customer.
@@ -27,7 +27,7 @@ protocol TrackingRepository {
     ///     - customerIds: Customer identification.
     ///     - completion: Object containing the request result.
     func trackEvent(with data: [DataType],
-                    for customerIds: [String: String],
+                    for customerIds: [String: JSONValue],
                     completion: @escaping ((EmptyResult) -> Void))
 }
 
@@ -38,7 +38,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - recommendation: Recommendations for the customer.
     ///   - completion: Object containing the request result.
-    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String: String],
+    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String: JSONValue],
                              completion: @escaping (Result<RecommendationResponse>) -> Void)
 
     /// Fetch multiple customer attributes at once
@@ -46,7 +46,7 @@ protocol FetchRepository {
     /// - Parameters:
     ///   - customerIds: Identification of a customer.
     ///   - attributes: List of attributes you want to retrieve.
-    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String: String],
+    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String: JSONValue],
                          completion: @escaping (Result<AttributesListDescription>) -> Void)
 
     /// Fetch customer events by its type.
@@ -55,7 +55,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - events: List of event types to be retrieve.
     ///   - completion: Object containing the request result.
-    func fetchEvents(events: EventsRequest, for customerIds: [String: String],
+    func fetchEvents(events: EventsRequest, for customerIds: [String: JSONValue],
                      completion: @escaping (Result<EventsResponse>) -> Void)
     
     /// Fetch all available banners.
@@ -71,7 +71,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - completion: Object containing the request result.
     func fetchPersonalization(with request: PersonalizationRequest,
-                              for customerIds: [String: String],
+                              for customerIds: [String: JSONValue],
                               completion: @escaping (Result<PersonalizationResponse>) -> Void)
 }
 

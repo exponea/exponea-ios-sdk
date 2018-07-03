@@ -28,7 +28,7 @@ extension ServerRepository: TrackingRepository {
     ///     - data: Object containing the data to be used to track a customer data.
     ///     - customer: Customer identification.
     ///     - completion: Object containing the request result.
-    func trackCustomer(with data: [DataType], for customerIds: [String: String],
+    func trackCustomer(with data: [DataType], for customerIds: [String: JSONValue],
                        completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
         var properties: [String: JSONValue] = [:]
@@ -70,7 +70,7 @@ extension ServerRepository: TrackingRepository {
     ///     - properties: Properties that should be updated
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
-    func trackEvent(with data: [DataType], for customerIds: [String: String],
+    func trackEvent(with data: [DataType], for customerIds: [String: JSONValue],
                     completion: @escaping ((EmptyResult) -> Void)) {
         var token: String?
         var properties: [String: JSONValue] = [:]
@@ -117,7 +117,7 @@ extension ServerRepository: RepositoryType {
     ///   - recommendation: Recommendations for the customer.
     ///   - customerIds: Identification of a customer.
     ///   - completion: Object containing the request result.
-    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String: String],
+    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String: JSONValue],
                              completion: @escaping (Result<RecommendationResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -136,7 +136,7 @@ extension ServerRepository: RepositoryType {
     ///   - attributes: List of attributes you want to retrieve.
     ///   - customerIds: Identification of a customer.
     func fetchAttributes(attributes: [AttributesDescription],
-                         for customerIds: [String: String],
+                         for customerIds: [String: JSONValue],
                          completion: @escaping (Result<AttributesListDescription>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -157,7 +157,7 @@ extension ServerRepository: RepositoryType {
     ///   - customerId: Identification of a customer.
     ///   - completion: Object containing the request result.
     func fetchEvents(events: EventsRequest,
-                     for customerIds: [String: String],
+                     for customerIds: [String: JSONValue],
                      completion: @escaping (Result<EventsResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,
@@ -191,7 +191,7 @@ extension ServerRepository: RepositoryType {
     ///   - customerIds: Identification of a customer.
     ///   - completion: Object containing the request result.
     func fetchPersonalization(with request: PersonalizationRequest,
-                              for customerIds: [String : String],
+                              for customerIds: [String : JSONValue],
                               completion: @escaping (Result<PersonalizationResponse>) -> Void) {
         let router = RequestFactory(baseURL: configuration.baseURL,
                                     projectToken: configuration.fetchingToken,

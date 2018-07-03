@@ -12,7 +12,7 @@ import Foundation
 protocol TrackingManagerType: class {
     
     /// The identifiers of the the current customer.
-    var customerIds: [String: String] { get }
+    var customerIds: [String: JSONValue] { get }
     
     /// Main function used to track events to Exponea.
     ///

@@ -12,7 +12,7 @@ import Foundation
 /// Depending on what king of tracking, you can use a combination of properties.
 struct TrackingParameters {
     /// Customer identification.
-    var customerIds: [String: String]
+    var customerIds: [String: JSONValue]
     /// Object with customer properties.
     var properties: [String: JSONValue]
     /// Timestamp should always be UNIX timestamp format
@@ -20,7 +20,7 @@ struct TrackingParameters {
     /// Name of the tracking event.
     var eventType: String?
 
-    init(customerIds: [String: String],
+    init(customerIds: [String: JSONValue],
          properties: [String: JSONValue],
          timestamp: Double? = nil,
          eventType: String? = nil) {
@@ -36,7 +36,7 @@ extension TrackingParameters: RequestParametersType {
         var parameters: [String: JSONValue] = [:]
 
         /// Preparing customers_ids params
-        parameters["customer_ids"] = .dictionary(customerIds.mapValues({ JSONValue.string($0) }))
+        parameters["customer_ids"] = .dictionary(customerIds)
         
         /// Preparing properties param
         parameters["properties"] = .dictionary(properties)

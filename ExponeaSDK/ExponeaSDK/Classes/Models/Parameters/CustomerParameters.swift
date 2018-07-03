@@ -12,7 +12,7 @@ import Foundation
 /// Depending on what king of tracking, you can use a combination of properties.
 struct CustomerParameters {
     /// Customer identification.
-    var customer: [String: String]
+    var customer: [String: JSONValue]
     /// Name of the property.
     var property: String?
     /// Customer identification.
@@ -26,7 +26,7 @@ struct CustomerParameters {
     /// Customer data to export multiple properties.
     var data: CustomerExportRequest?
 
-    init(customer: [String: String],
+    init(customer: [String: JSONValue],
          property: String? = nil,
          id: String? = nil,
          recommendation: RecommendationRequest? = nil,
@@ -54,7 +54,7 @@ extension CustomerParameters: RequestParametersType {
         var attributeComplete: [String: JSONValue] = [:]
         
         /// Preparing customers_ids params
-        preparedParam["customer_ids"] =  .dictionary(customer.mapValues({ JSONValue.string($0) }))
+        preparedParam["customer_ids"] =  .dictionary(customer)
         
         /// Preparing property param
         if let property = property {
