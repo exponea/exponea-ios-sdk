@@ -20,7 +20,8 @@ class TrackEventSpec: QuickSpec {
             let database = MockDatabase()
             let configuration = try! Configuration(plistName: "ExponeaConfig")
             let repository = ServerRepository(configuration: configuration)
-            let tracker = TrackingManager(repository: repository)
+            // FIXME: Fix injection
+            let tracker = TrackingManager(repository: repository, userDefaults: UserDefaults.standard)
             context("ExponeaSDK not configured") {
                 it("Event call should return false") {
                     let exponea = Exponea()
@@ -29,10 +30,8 @@ class TrackEventSpec: QuickSpec {
                     exponea.trackingManager = tracker
                     
                     Exponea.shared = exponea
-
-                    Exponea.trackEvent(properties: data.properties, timestamp: data.timestamp, eventType: "purchase")
+                    Exponea.shared.trackPayment(properties: data.properties, timestamp: data.timestamp)
                     
-//                    expect(result).to(beFalse())
                 }
             }
         }

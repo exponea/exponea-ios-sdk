@@ -23,8 +23,9 @@ class FetchRecommendationSpec: QuickSpec {
 
         let exponea = Exponea()
         Exponea.shared = exponea
-        Exponea.configure(plistName: "ExponeaConfig")
-        exponea.trackingManager = TrackingManager(repository: repository, database: database)
+        Exponea.shared.configure(plistName: "ExponeaConfig")
+        // FIXME: Fix injection
+        exponea.trackingManager = TrackingManager(repository: repository, database: database, userDefaults: UserDefaults.standard)
         exponea.repository = repository
 
         describe("Fetch recommendation") {
@@ -33,9 +34,7 @@ class FetchRecommendationSpec: QuickSpec {
 
                 expect(exponea.configuration?.authorization).toNot(beNil())
                 waitUntil(timeout: 5) { done in
-                    Exponea.fetchRecommendation(projectToken: configuration.projectToken!,
-                                                customerId: data.customerId,
-                                                recommendation: data.recommendation) { result in
+                    Exponea.shared.fetchRecommendation(with: data.recommendation) { result in
                         it("Should not return error") {
                             expect(result.error).to(beNil())
                         }
@@ -55,9 +54,9 @@ class FetchRecommendationSpec: QuickSpec {
                 guard let projectToken = exponea.configuration?.projectToken else {
                     fatalError("There is no project token configured")
                 }
-                repository.fetchRecommendation(projectToken: projectToken,
-                                               customerId: data.customerId,
-                                               recommendation: data.recommendation) { (result) in
+                // FIXME: MAke sure customer id is correct
+                repository.fetchRecommendation(recommendation: data.recommendation,
+                                               for: [:], completion: { (result) in
                     it("error should be nil") {
                         expect(result.error).to(beNil())
                     }
@@ -70,7 +69,7 @@ class FetchRecommendationSpec: QuickSpec {
                     it("first item should be Marian") {
                         expect(result.value?.results?.first?.value).to(equal("Marian"))
                     }
-                }
+                })
             }
         }
     }

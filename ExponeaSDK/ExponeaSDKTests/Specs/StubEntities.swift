@@ -34,15 +34,14 @@ class StubEntities {
         return objct as? TrackCustomer
     }
 
-    func trackCustomerProperties(key: String,
-                                  value: Any ) -> TrackCustomerProperties? {
-        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackCustomerProperties",
+    func keyValueItem(key: String, value: Any) -> KeyValueItem? {
+        let objct = NSEntityDescription.insertNewObject(forEntityName: "KeyValueItem",
                                                         into: container.viewContext)
 
         objct.setValue(key, forKey: "key")
         objct.setValue(value, forKey: "value")
 
-        return objct as? TrackCustomerProperties
+        return objct as? KeyValueItem
     }
 
     func trackEvent(projectToken: String,
@@ -63,13 +62,13 @@ class StubEntities {
     }
 
     func trackEventProperties(key: String,
-                               value: Any) -> TrackEventProperty? {
-        let objct = NSEntityDescription.insertNewObject(forEntityName: "TrackEventProperties",
+                               value: Any) -> KeyValueItem? {
+        let objct = NSEntityDescription.insertNewObject(forEntityName: "KeyValueItem",
                                                         into: container.viewContext)
 
         objct.setValue(key, forKey: "key")
         objct.setValue(value, forKey: "value")
 
-        return objct as? TrackEventProperty
+        return objct as? KeyValueItem
     }
 }

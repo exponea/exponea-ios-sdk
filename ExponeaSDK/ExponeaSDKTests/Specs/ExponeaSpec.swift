@@ -30,7 +30,7 @@ class ExponeaSpec: QuickSpec {
             context("After beign configured from string") {
                 let exponea = Exponea()
                 Exponea.shared = exponea
-                Exponea.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97", authorization: .basic(""))
+                Exponea.shared.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97", authorization: .basic(""))
                 
                 it("Should return the correct project token") {
                     expect(exponea.configuration?.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
@@ -39,7 +39,7 @@ class ExponeaSpec: QuickSpec {
             context("After beign configured from plist file") {
                 let exponea = Exponea()
                 Exponea.shared = exponea
-                Exponea.configure(plistName: "ExponeaConfig")
+                Exponea.shared.configure(plistName: "ExponeaConfig")
                 
                 it("Should have a project token") {
                     expect(exponea.configuration?.projectToken).toNot(beNil())
@@ -54,7 +54,7 @@ class ExponeaSpec: QuickSpec {
             context("Setting exponea properties") {
                 let exponea = Exponea()
                 Exponea.shared = exponea
-                Exponea.configure(plistName: "ExponeaConfig")
+                Exponea.shared.configure(plistName: "ExponeaConfig")
                 
                 exponea.configuration?.projectToken = "NewProjectToken"
                 exponea.configuration?.baseURL = "NewBaseURL"

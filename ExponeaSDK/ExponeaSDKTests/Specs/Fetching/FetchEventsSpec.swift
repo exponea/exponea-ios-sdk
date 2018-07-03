@@ -24,8 +24,9 @@ class FetchEventsSpec: QuickSpec {
 
         let exponea = Exponea()
         Exponea.shared = exponea
-        Exponea.configure(plistName: "ExponeaConfig")
-        exponea.trackingManager = TrackingManager(repository: repository, database: database)
+        Exponea.shared.configure(plistName: "ExponeaConfig")
+        // FIXME: Fix injection
+        exponea.trackingManager = TrackingManager(repository: repository, database: database, userDefaults: UserDefaults.standard)
         exponea.repository = repository
 
         describe("Fetch Event") {
@@ -33,9 +34,7 @@ class FetchEventsSpec: QuickSpec {
 
             expect(exponea.configuration?.authorization).toNot(beNil())
             waitUntil(timeout: 5) { done in
-                Exponea.fetchCustomerEvents(projectToken: configuration.projectToken!,
-                                            customerId: data.customerId,
-                                            events: data.customerData) { result in
+                Exponea.shared.fetchEvents(with: data.customerData, completion: { (result) in
                     it("Should not return error") {
                         expect(result.error).to(beNil())
                     }
@@ -47,7 +46,7 @@ class FetchEventsSpec: QuickSpec {
 //                        expect(result.value?.data?.count).to(beGreaterThan(0))
 //                    }
                     done()
-                }
+                })
             }
         }
     }
