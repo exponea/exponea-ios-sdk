@@ -9,7 +9,7 @@ public struct Configuration: Decodable {
     public internal(set) var projectMapping: [EventType: [String]]?
     public internal(set) var projectToken: String?
     public internal(set) var authorization: Authorization = .none
-    public internal(set) var baseURL: String = Constants.Repository.baseURL
+    public internal(set) var baseURL: String = Constants.Repository.baseUrl
     public internal(set) var contentType: String = Constants.Repository.contentType
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
@@ -31,7 +31,7 @@ public struct Configuration: Decodable {
 * Basic authentication supported by a combination of public/private token. 
 * For more information, please click [here](https://developers.exponea.com/v2/reference#basic-authentication)
 
-#### baseURL
+#### baseUrl
 
 * If you have you custom base URL, you can set up this property.
 * Default value `https://api.exponea.com`
