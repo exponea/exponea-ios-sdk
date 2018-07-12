@@ -90,8 +90,11 @@ public class Exponea: ExponeaType {
     
     // MARK: - Init -
     
-    /// The initialiser is internal, so that only the singleton can exist.
-    internal init() {}
+    /// The initialiser is internal, so that only the singleton can exist when used in production.
+    internal init() {
+        let version = Bundle(for: Exponea.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        Exponea.logger.logMessage("⚙️ Starting ExponeaSDK, version \(version).")
+    }
     
     deinit {
         if !Exponea.isBeingTested {
@@ -100,7 +103,7 @@ public class Exponea: ExponeaType {
     }
     
     internal func sharedInitializer(configuration: Configuration) {
-        Exponea.logger.log(.verbose, message: "Intialising Exponea with provided configuration.")
+        Exponea.logger.log(.verbose, message: "Configuring Exponea with provided configuration:\n\(configuration)")
         
         // Recreate repository
         let repository = ServerRepository(configuration: configuration)
@@ -148,12 +151,12 @@ public extension Exponea {
     /// - Parameters:
     ///   - projectToken: Project token to be used through the SDK.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
-    ///   - baseURL: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
-    public func configure(projectToken: String, authorization: Authorization, baseURL: String? = nil) {
+    ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
+    public func configure(projectToken: String, authorization: Authorization, baseUrl: String? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   authorization: authorization,
-                                                  baseURL: baseURL)
+                                                  baseUrl: baseUrl)
             self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
@@ -186,16 +189,16 @@ public extension Exponea {
     ///   - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
     ///   - projectMapping: The project token mapping dictionary providing all the tokens.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
-    ///   - baseURL: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
+    ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     public func configure(projectToken: String,
                           projectMapping: [EventType: [String]],
                           authorization: Authorization,
-                          baseURL: String? = nil) {
+                          baseUrl: String? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   projectMapping: projectMapping,
                                                   authorization: authorization,
-                                                  baseURL: baseURL)
+                                                  baseUrl: baseUrl)
             self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")

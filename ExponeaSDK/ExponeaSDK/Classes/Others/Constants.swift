@@ -12,7 +12,7 @@ import Foundation
 enum Constants {
     /// Network
     enum Repository {
-        static let baseURL = "https://api.exponea.com"
+        static let baseUrl = "https://api.exponea.com"
         static let contentType = "application/json"
         static let headerContentType = "content-type"
         static let headerAccept = "accept"
@@ -30,7 +30,7 @@ enum Constants {
         static let timeout = "sessionTimeout"
         static let autoSessionTrack = "automaticSessionTrack"
         static let appVersion = "CFBundleShortVersionString"
-        static let baseURL = "exponeaBaseURL"
+        static let baseUrl = "exponeaBaseURL"
     }
 
     /// SDK Info

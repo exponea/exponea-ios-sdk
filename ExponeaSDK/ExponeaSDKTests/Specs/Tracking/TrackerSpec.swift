@@ -17,7 +17,7 @@ class TrackerSpec: QuickSpec {
     override func spec() {
 
 //        let mockContainer = MockPersistentContainer()
-//        let configuration = APIConfiguration(baseURL: Constants.Repository.baseURL,
+//        let configuration = APIConfiguration(baseUrl: Constants.Repository.baseUrl,
 //                                             contentType: Constants.Repository.contentType)
 //        let repository = ConnectionManager(configuration: configuration)
 //        let exponea = Exponea(repository: repository, container: mockContainer.persistantContainer)

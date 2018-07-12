@@ -6,7 +6,7 @@
 	<string>0aef3a96-3804-11e8-b710-141877340e97</string>
 	<key>authorization</key>
 	<string>Basic enN5dTh1bnBreG80dXE0OTVhZWc4Y2E2MzdtbTF1Y3NmeXRram1sdDd4bzBjeXh1bnU5eWpiYjU3MHE1aGlsdDpkN2w3aGEzNGV6cWNjMmRzbnV3Zm9tZnl3ZTU1a2J0NHRhNG1pcjhsanYwbHhuZHFiODk2eGoxaGJnN3A5b2p0</string>
-	<key>baseURL</key>
+	<key>baseUrl</key>
 	<string>https://api.exponea.com</string>
 </dict>
 </plist>

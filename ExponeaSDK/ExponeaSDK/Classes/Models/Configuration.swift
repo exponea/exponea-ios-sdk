@@ -14,7 +14,7 @@ public struct Configuration: Decodable {
     public internal(set) var projectMapping: [EventType: [String]]?
     public internal(set) var projectToken: String?
     public internal(set) var authorization: Authorization = .none
-    public internal(set) var baseURL: String = Constants.Repository.baseURL
+    public internal(set) var baseUrl: String = Constants.Repository.baseUrl
     public internal(set) var contentType: String = Constants.Repository.contentType
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
@@ -38,11 +38,11 @@ public struct Configuration: Decodable {
     ///   - projectToken: <#projectToken description#>
     ///   - projectMapping: <#projectMapping description#>
     ///   - authorization: <#authorization description#>
-    ///   - baseURL: <#baseURL description#>
+    ///   - baseUrl: <#baseUrl description#>
     public init(projectToken: String?,
                 projectMapping: [EventType: [String]]? = nil,
                 authorization: Authorization,
-                baseURL: String?) throws {
+                baseUrl: String?) throws {
         guard let projectToken = projectToken else {
             throw ExponeaError.configurationError("No project token provided.")
         }
@@ -50,8 +50,8 @@ public struct Configuration: Decodable {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
         self.authorization = authorization
-        if let url = baseURL {
-            self.baseURL = url
+        if let url = baseUrl {
+            self.baseUrl = url
         }
     }
 
@@ -94,15 +94,13 @@ public struct Configuration: Decodable {
         }
 
         if let baseUrl = try container.decodeIfPresent(String.self, forKey: .baseUrl) {
-            self.baseURL = baseUrl
+            self.baseUrl = baseUrl
         }
 
         if let authorization = try container.decodeIfPresent(String.self, forKey: .authorization) {
             let components = authorization.split(separator: " ")
             
-            if components.count == 2, components.first == "Token" {
-                self.authorization = .token(String(components[1]))
-            } else if components.count == 2, components.first == "Basic" {
+            if components.count == 2, components.first == "Basic" {
                 self.authorization = .basic(String(components[1]))
             }
         }
@@ -165,6 +163,8 @@ extension Configuration {
         }
     }
     
+    /// Returns a single token suitable for fetching customer data.
+    /// By default uses same token as for the `ActionType` value `.identifyCustomer`.
     var fetchingToken: String {
         guard let projectToken = projectToken else {
             Exponea.logger.log(.warning, message: """
@@ -175,5 +175,31 @@ extension Configuration {
         }
         
         return projectToken
+    }
+}
+
+extension Configuration: CustomStringConvertible {
+    public var description: String {
+        var text = "[Configuration]\n"
+        
+        if let mapping = projectMapping {
+            text += "Project Token Mapping: \(mapping)\n"
+        }
+        
+        if let token = projectToken {
+            text += "Project Token: \(token)\n"
+        }
+        
+        text += """
+        Authorization: \(authorization)
+        Base URL: \(baseUrl)
+        Content Type: \(contentType)
+        Session Timeout: \(sessionTimeout)
+        Automatic Session Tracking: \(automaticSessionTracking)
+        Automatic Push Notification Tracking: \(automaticPushNotificationTracking)
+        
+        """
+        
+        return text
     }
 }

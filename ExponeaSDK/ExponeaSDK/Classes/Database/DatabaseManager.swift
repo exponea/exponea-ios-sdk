@@ -55,10 +55,7 @@ public class DatabaseManager {
         
         // Initialise customer
         _ = customer
-        Exponea.logger.log(.verbose, message: """
-            Database initialised with customer:
-            \(customer.ids)
-            """)
+        Exponea.logger.log(.verbose, message: "Database initialised with customer:\n\(customer)")
     }
 
     /// Managed Context for Core Data
@@ -151,7 +148,6 @@ extension DatabaseManager {
         
         do {
             try saveContext()
-            Exponea.logger.log(.verbose, message: "New customer created with UUID: \(customer.uuid!)")
         } catch {
             let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription)
             Exponea.logger.log(.error, message: error.localizedDescription)

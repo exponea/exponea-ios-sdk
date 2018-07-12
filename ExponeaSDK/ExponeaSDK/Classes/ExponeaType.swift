@@ -27,8 +27,8 @@ public protocol ExponeaType: class {
     /// - Parameters:
     ///   - projectToken: Project token to be used through the SDK.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
-    ///   - baseURL: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
-    func configure(projectToken: String, authorization: Authorization, baseURL: String?)
+    ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
+    func configure(projectToken: String, authorization: Authorization, baseUrl: String?)
     
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
     /// you to track events to multiple projects, even the same event to more project at once.
@@ -37,9 +37,9 @@ public protocol ExponeaType: class {
     ///   - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
     ///   - projectMapping: The project token mapping dictionary providing all the tokens.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
-    ///   - baseURL: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
+    ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     func configure(projectToken: String, projectMapping: [EventType: [String]],
-                   authorization: Authorization, baseURL: String?)
+                   authorization: Authorization, baseUrl: String?)
 
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
     ///

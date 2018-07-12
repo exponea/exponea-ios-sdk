@@ -37,7 +37,30 @@ public class Customer: NSManagedObject {
 
 }
 
-// MARK: Generated accessors for customIds
+// MARK: - CustomStringConvertible -
+
+extension Customer {
+    public override var description: String {
+        var text = "[Customer]\n"
+        
+        // Add cookie
+        text += "UUID (cookie): \(uuid != nil ? uuid!.uuidString : "N/A")\n"
+        
+        if let ids = customIds as? Set<KeyValueItem>, ids.count > 0 {
+            text += "Custom IDs: "
+            for id in ids {
+                text += "\"\(id.key!)\" = \(id.value!), "
+            }
+        }
+
+        text += "\n"
+        
+        return text
+    }
+}
+
+// MARK: - Core Data -
+
 extension Customer {
     
     @objc(addCustomIdsObject:)
@@ -54,7 +77,6 @@ extension Customer {
     
 }
 
-// MARK: Generated accessors for trackCustomer
 extension Customer {
     
     @objc(addTrackCustomerObject:)
@@ -71,7 +93,6 @@ extension Customer {
     
 }
 
-// MARK: Generated accessors for trackEvent
 extension Customer {
     
     @objc(addTrackEventObject:)

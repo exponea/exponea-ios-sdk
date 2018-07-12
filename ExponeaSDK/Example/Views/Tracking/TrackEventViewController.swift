@@ -40,7 +40,14 @@ class TrackEventViewController: UIViewController {
     }
     
     @IBAction func trackPressed(_ sender: Any) {
-        let eventType = eventTypeField.text ?? "custom_event"
+        let eventType: String = {
+            if let text = eventTypeField.text, !text.isEmpty {
+                return text
+            }
+            return ""
+//            return "custom_event"
+        }()
+        
         var properties: [String: String] = [:]
         
         if let key1 = keyField1.text, !key1.isEmpty {

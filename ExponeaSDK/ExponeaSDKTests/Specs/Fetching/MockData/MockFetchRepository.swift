@@ -22,7 +22,7 @@ extension MockFetchRepository: FetchRepository {
     
     func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String : JSONValue], completion: @escaping (Result<RecommendationResponse>) -> Void) {
         
-        let router = RequestFactory(baseURL: configuration.baseURL,
+        let router = RequestFactory(baseUrl: configuration.baseUrl,
                                     projectToken: Exponea.shared.configuration!.fetchingToken,
                                     route: .customerRecommendation)
         let parameters = CustomerParameters(customer: customerIds, recommendation: recommendation)

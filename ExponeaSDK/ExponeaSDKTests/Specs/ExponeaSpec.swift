@@ -48,7 +48,7 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.configuration?.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
                 }
                 it("Should return the default base url") {
-                    expect(exponea.configuration?.baseURL).to(equal("https://api.exponea.com"))
+                    expect(exponea.configuration?.baseUrl).to(equal("https://api.exponea.com"))
                 }
             }
             context("Setting exponea properties") {
@@ -57,7 +57,7 @@ class ExponeaSpec: QuickSpec {
                 Exponea.shared.configure(plistName: "ExponeaConfig")
                 
                 exponea.configuration?.projectToken = "NewProjectToken"
-                exponea.configuration?.baseURL = "NewBaseURL"
+                exponea.configuration?.baseUrl = "NewBaseURL"
                 it("Should return the new token") {
                     expect(exponea.configuration?.projectToken).to(equal("NewProjectToken"))
                 }
@@ -66,7 +66,7 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.configuration?.automaticSessionTracking).to(beTrue())
                 }
                 it("Should change the base url") {
-                    expect(exponea.configuration?.baseURL).to(equal("NewBaseURL"))
+                    expect(exponea.configuration?.baseUrl).to(equal("NewBaseURL"))
                 }
             }
         }
