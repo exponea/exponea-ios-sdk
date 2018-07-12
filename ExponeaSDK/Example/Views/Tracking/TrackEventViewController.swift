@@ -44,8 +44,7 @@ class TrackEventViewController: UIViewController {
             if let text = eventTypeField.text, !text.isEmpty {
                 return text
             }
-            return ""
-//            return "custom_event"
+            return "custom_event"
         }()
         
         var properties: [String: String] = [:]
