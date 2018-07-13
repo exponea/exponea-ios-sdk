@@ -125,7 +125,7 @@
 			remoteGlobalIDString = F021E858206CF10200788ABC;
 			remoteInfo = ExponeaSDK;
 		};
-		F021E864206CF10200788ABC /* PBXContainerItemProxy */ = {
+		C0861C0120F919CF00C57997 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F021E850206CF10200788ABC /* Project object */;
 			proxyType = 1;
@@ -778,7 +778,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				F021E865206CF10200788ABC /* PBXTargetDependency */,
+				C0861C0220F919CF00C57997 /* PBXTargetDependency */,
 			);
 			name = ExponeaSDKTests;
 			productName = ExponeaSDKTests;
@@ -1035,10 +1035,10 @@
 			target = F021E858206CF10200788ABC /* ExponeaSDK */;
 			targetProxy = C0753E9320A5793200A779FF /* PBXContainerItemProxy */;
 		};
-		F021E865206CF10200788ABC /* PBXTargetDependency */ = {
+		C0861C0220F919CF00C57997 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F021E858206CF10200788ABC /* ExponeaSDK */;
-			targetProxy = F021E864206CF10200788ABC /* PBXContainerItemProxy */;
+			targetProxy = C0861C0120F919CF00C57997 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1274,12 +1274,12 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HW27H6H98R;
 				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1290,11 +1290,11 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HW27H6H98R;
 				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
