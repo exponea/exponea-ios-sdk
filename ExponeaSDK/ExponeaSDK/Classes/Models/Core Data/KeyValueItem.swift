@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 
+@objc(KeyValueItem)
 public class KeyValueItem: NSManagedObject {
     
     @nonobjc public class func fetchRequest() -> NSFetchRequest<KeyValueItem> {

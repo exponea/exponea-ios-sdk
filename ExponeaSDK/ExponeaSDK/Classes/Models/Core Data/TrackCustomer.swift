@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 
+@objc(TrackCustomer)
 public class TrackCustomer: NSManagedObject {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackCustomer> {
