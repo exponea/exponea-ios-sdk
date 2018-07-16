@@ -184,13 +184,8 @@ extension DatabaseManager: DatabaseManagerType {
 
             case .properties(let properties):
                 // Add the event properties to the events entity
-                for property in properties {
-                    let item = KeyValueItem(context: context)
-                    item.key = property.key
-                    item.value = property.value.objectValue
-                    context.insert(item)
-                    trackEvent.addToProperties(item)
-                }
+                processProperties(properties, into: trackEvent)
+                
             default:
                 break
             }
@@ -202,20 +197,6 @@ extension DatabaseManager: DatabaseManagerType {
         context.insert(trackEvent)
         
         // Save the customer properties into CoreData
-        try saveContext()
-    }
-    
-    public func trackEvent(with event: TrackEvent) throws {
-        let request: NSFetchRequest<TrackEvent> = TrackEvent.fetchRequest()
-        request.predicate = NSPredicate(format: "objectID == %@", event.objectID)
-        
-        guard try context.count(for: request) == 0 else {
-            Exponea.logger.log(.warning, message: "Object already exists in database, skipping tracking.")
-            return
-        }
-        
-        // Insert and save
-        context.insert(event)
         try saveContext()
     }
     
@@ -244,12 +225,8 @@ extension DatabaseManager: DatabaseManagerType {
 
             case .properties(let properties):
                 // Add the customer properties to the customer entity
-                for property in properties {
-                    let item = KeyValueItem(context: context)
-                    item.key = property.key
-                    item.value = property.value.objectValue
-                    trackCustomer.addToProperties(item)
-                }
+                processProperties(properties, into: trackCustomer)
+                
             case .pushNotificationToken(let token):
                 let item = KeyValueItem(context: context)
                 item.key = "apple_push_notification_id"
@@ -264,19 +241,21 @@ extension DatabaseManager: DatabaseManagerType {
         // Save the customer properties into CoreData
         try saveContext()
     }
-    
-    public func trackCustomer(with customer: TrackCustomer) throws {
-        let request: NSFetchRequest<TrackCustomer> = TrackCustomer.fetchRequest()
-        request.predicate = NSPredicate(format: "objectID == %@", customer.objectID)
-        
-        guard try context.count(for: request) == 0 else {
-            Exponea.logger.log(.warning, message: "Object already exists in database, skipping tracking.")
-            return
+
+    /// <#Description#>
+    ///
+    /// - Parameters:
+    ///   - properties: <#properties description#>
+    ///   - object: <#object description#>
+    internal func processProperties(_ properties: [String: JSONValue],
+                                    into object: HasKeyValueProperties) {
+        for property in properties {
+            let item = KeyValueItem(context: context)
+            item.key = property.key
+            item.value = property.value.objectValue
+            context.insert(item)
+            object.addToProperties(item)
         }
-        
-        // Insert and save
-        context.insert(customer)
-        try saveContext()
     }
     
     /// Fetch all Tracking Customers from CoreData

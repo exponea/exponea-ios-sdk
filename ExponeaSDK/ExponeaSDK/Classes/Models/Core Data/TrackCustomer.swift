@@ -46,7 +46,7 @@ public class TrackCustomer: NSManagedObject {
 
 // MARK: - Core Data -
 
-extension TrackCustomer {
+extension TrackCustomer: HasKeyValueProperties {
     @objc(addPropertiesObject:)
     @NSManaged public func addToProperties(_ value: KeyValueItem)
     

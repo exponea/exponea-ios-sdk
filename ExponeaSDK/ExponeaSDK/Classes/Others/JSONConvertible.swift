@@ -138,9 +138,12 @@ extension JSONValue {
         case .bool(let bool): return NSNumber(value: bool)
         case .int(let int): return NSNumber(value: int)
         case .string(let string): return NSString(string: string)
-        case .array(let array): return array as NSArray
+        case .array(let array): return array.map({ $0.objectValue }) as NSArray
         case .double(let double): return NSNumber(value: double)
-        case .dictionary(let dictionary): return dictionary as NSDictionary
+        case .dictionary(_):
+            // Dictionaries are not yet supported
+            Exponea.logger.log(.error, message: "Nested dictionaries are not supported.")
+            return NSNull()
         }
     }
 }

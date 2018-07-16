@@ -59,7 +59,7 @@ extension TrackEvent {
 
 // MARK: - Core Data -
 
-extension TrackEvent {
+extension TrackEvent: HasKeyValueProperties {
     @objc(addPropertiesObject:)
     @NSManaged public func addToProperties(_ value: KeyValueItem)
     

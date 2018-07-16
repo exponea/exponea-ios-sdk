@@ -9,6 +9,13 @@
 import Foundation
 import CoreData
 
+public protocol HasKeyValueProperties: class {
+    func addToProperties(_ value: KeyValueItem)
+    func removeFromProperties(_ value: KeyValueItem)
+    func addToProperties(_ values: NSSet)
+    func removeFromProperties(_ values: NSSet)
+}
+
 @objc(KeyValueItem)
 public class KeyValueItem: NSManagedObject {
     
