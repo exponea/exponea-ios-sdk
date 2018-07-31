@@ -13,10 +13,28 @@ class AuthenticationViewController: UIViewController {
     
     @IBOutlet weak var tokenField: UITextField! {
         didSet {
+            tokenField.delegate = self
             tokenField.addTarget(self, action: #selector(tokenUpdated), for: .editingChanged)
+            
+            // load cached
+            tokenField.text = UserDefaults.standard.string(forKey: "savedToken")
         }
     }
-    @IBOutlet weak var authField: UITextField!
+    @IBOutlet weak var authField: UITextField! {
+        didSet {
+            authField.delegate = self
+            // load cached
+            authField.text = UserDefaults.standard.string(forKey: "savedAuth")
+        }
+    }
+    
+    @IBOutlet weak var urlField: UITextField! {
+        didSet {
+            urlField.delegate = self
+            // load cached
+            urlField.text = UserDefaults.standard.string(forKey: "savedUrl") ?? "https://api.exponea.com"
+        }
+    }
     @IBOutlet weak var startButton: UIButton!
     
     override func viewDidLoad() {
@@ -36,21 +54,36 @@ class AuthenticationViewController: UIViewController {
             auth = .basic(text)
         }
         
-        Exponea.shared.configure(projectToken: token, authorization: auth)
+        Exponea.shared.configure(projectToken: token,
+                                 authorization: auth,
+                                 baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text)
+        
         Exponea.shared.flushingMode = .automatic
         
         performSegue(withIdentifier: "showMain", sender: nil)
     }
     
-    @IBAction func prefillPressed() {
-        tokenField.text = "0aef3a96-3804-11e8-b710-141877340e97"
-        authField.text = "enN5dTh1bnBreG80dXE0OTVhZWc4Y2E2MzdtbTF1Y3NmeXRram1sdDd4bzBjeXh1bnU5eWpiYjU3MHE1aGlsdDpkN2w3aGEzNGV6cWNjMmRzbnV3Zm9tZnl3ZTU1a2J0NHRhNG1pcjhsanYwbHhuZHFiODk2eGoxaGJnN3A5b2p0"
-        tokenUpdated()
-    }
-
     @objc func tokenUpdated() {
         startButton.isEnabled = (tokenField.text ?? "").count > 0
         startButton.alpha = startButton.isEnabled ? 1.0 : 0.4
+    }
+}
+
+extension AuthenticationViewController: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        switch textField {
+        case tokenField:
+            UserDefaults.standard.set(textField.text, forKey: "savedToken")
+            
+        case authField where authField.text?.isEmpty == false:
+            UserDefaults.standard.set(textField.text, forKey: "savedAuth")
+            
+        case urlField where urlField.text?.isEmpty == false:
+            UserDefaults.standard.set(textField.text, forKey: "savedUrl")
+            
+        default:
+            break
+        }
     }
 }
 
