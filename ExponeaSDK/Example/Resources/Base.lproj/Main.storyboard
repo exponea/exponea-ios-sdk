@@ -7,7 +7,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -43,8 +42,15 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Base (API) URL" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qHW-dd-hdr">
+                                <rect key="frame" x="20" y="273.5" width="335" height="40"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RmJ-xq-uRf">
-                                <rect key="frame" x="221" y="273.5" width="134" height="45"/>
+                                <rect key="frame" x="20" y="328.5" width="335" height="45"/>
                                 <color key="backgroundColor" red="1" green="0.83529411764705885" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="fuD-Tt-Kbo"/>
@@ -62,45 +68,25 @@
                                     <action selector="startPressed" destination="BYZ-38-t0r" eventType="touchUpInside" id="fN7-eP-sgv"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q0j-tj-wJX">
-                                <rect key="frame" x="20" y="273.5" width="134" height="45"/>
-                                <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="AEw-zM-LZy"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Use Test Info">
-                                    <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="4"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="prefillPressed" destination="BYZ-38-t0r" eventType="touchUpInside" id="5jJ-y1-COf"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.96470588239999999" green="0.96470588239999999" blue="0.96470588239999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="RmJ-xq-uRf" firstAttribute="leading" secondItem="New-Sc-ct3" secondAttribute="leading" id="0w4-qu-1KO"/>
                             <constraint firstItem="New-Sc-ct3" firstAttribute="trailing" secondItem="UdZ-x9-xZO" secondAttribute="trailing" id="3hk-xW-mPq"/>
-                            <constraint firstItem="RmJ-xq-uRf" firstAttribute="width" secondItem="New-Sc-ct3" secondAttribute="width" multiplier="0.4" id="9Wo-jU-wG9"/>
-                            <constraint firstItem="Q0j-tj-wJX" firstAttribute="leading" secondItem="New-Sc-ct3" secondAttribute="leading" id="AR9-C9-1cc"/>
                             <constraint firstItem="RmJ-xq-uRf" firstAttribute="trailing" secondItem="New-Sc-ct3" secondAttribute="trailing" id="AdO-Ve-lCU"/>
+                            <constraint firstItem="RmJ-xq-uRf" firstAttribute="top" secondItem="qHW-dd-hdr" secondAttribute="bottom" constant="15" id="B0F-vj-Wuq"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="UdZ-x9-xZO" secondAttribute="trailing" constant="20" id="Cyk-9d-0Uo"/>
-                            <constraint firstItem="Q0j-tj-wJX" firstAttribute="centerY" secondItem="RmJ-xq-uRf" secondAttribute="centerY" id="FYW-JM-30z"/>
+                            <constraint firstItem="qHW-dd-hdr" firstAttribute="leading" secondItem="New-Sc-ct3" secondAttribute="leading" id="EoR-aU-Gb5"/>
                             <constraint firstAttribute="trailing" secondItem="yhz-tc-rLC" secondAttribute="trailing" constant="50" id="Fo9-d4-db3"/>
                             <constraint firstItem="UdZ-x9-xZO" firstAttribute="top" secondItem="yhz-tc-rLC" secondAttribute="bottom" constant="10" id="HfD-uv-MZf"/>
+                            <constraint firstItem="qHW-dd-hdr" firstAttribute="top" secondItem="New-Sc-ct3" secondAttribute="bottom" constant="15" id="Nw3-TR-oPq"/>
                             <constraint firstItem="UdZ-x9-xZO" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="PrY-Em-lh5"/>
-                            <constraint firstItem="Q0j-tj-wJX" firstAttribute="width" secondItem="RmJ-xq-uRf" secondAttribute="width" id="Sg5-tO-EgM"/>
                             <constraint firstItem="yhz-tc-rLC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="lII-02-vdL"/>
+                            <constraint firstItem="qHW-dd-hdr" firstAttribute="trailing" secondItem="New-Sc-ct3" secondAttribute="trailing" id="mwY-e1-wyt"/>
                             <constraint firstItem="New-Sc-ct3" firstAttribute="leading" secondItem="UdZ-x9-xZO" secondAttribute="leading" id="pQ7-rZ-cyh"/>
                             <constraint firstItem="New-Sc-ct3" firstAttribute="top" secondItem="UdZ-x9-xZO" secondAttribute="bottom" constant="15" id="pwj-ss-dr5"/>
                             <constraint firstItem="yhz-tc-rLC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="50" id="qAL-Sd-IZV"/>
-                            <constraint firstItem="RmJ-xq-uRf" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" symbolic="YES" id="qJ4-5n-0PF"/>
-                            <constraint firstItem="RmJ-xq-uRf" firstAttribute="top" secondItem="New-Sc-ct3" secondAttribute="bottom" constant="15" id="sZo-da-6Ob"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Q0j-tj-wJX" secondAttribute="trailing" constant="20" symbolic="YES" id="u2t-sB-fBs"/>
+                            <constraint firstItem="qHW-dd-hdr" firstAttribute="height" secondItem="New-Sc-ct3" secondAttribute="height" id="yiV-jZ-o5e"/>
                             <constraint firstItem="New-Sc-ct3" firstAttribute="height" secondItem="UdZ-x9-xZO" secondAttribute="height" id="zwE-J6-vPd"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -110,6 +96,7 @@
                         <outlet property="authField" destination="New-Sc-ct3" id="Oa3-Y2-SNr"/>
                         <outlet property="startButton" destination="RmJ-xq-uRf" id="BdW-lL-Mz3"/>
                         <outlet property="tokenField" destination="UdZ-x9-xZO" id="Yyz-pk-6EA"/>
+                        <outlet property="urlField" destination="qHW-dd-hdr" id="V92-cx-ZXJ"/>
                         <segue destination="xGW-uH-AoN" kind="presentation" identifier="showMain" id="2Mn-8V-JzE"/>
                     </connections>
                 </viewController>
