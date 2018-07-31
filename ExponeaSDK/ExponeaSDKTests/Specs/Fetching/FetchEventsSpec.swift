@@ -21,7 +21,7 @@ class FetchEventsSpec: QuickSpec {
         let data = FetchMockData()
         let configuration = try! Configuration(plistName: "ExponeaConfig")
         let repository = ServerRepository(configuration: configuration)
-
+/*
         let exponea = Exponea()
         Exponea.shared = exponea
         Exponea.shared.configure(plistName: "ExponeaConfig")
@@ -49,5 +49,6 @@ class FetchEventsSpec: QuickSpec {
                 })
             }
         }
+ */
     }
 }
