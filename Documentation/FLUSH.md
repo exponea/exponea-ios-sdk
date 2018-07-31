@@ -1,6 +1,8 @@
 ## 🔍 Flush events
 
-> By default, Exponea SDK automatically takes care of flushing events to the Exponea API. This feature can be turned off setting the property FlushMode to `.manual`. Be careful when turning automatic flushing off, because if you do then you need to manually flush the data every time there is something to flush.
+> By default, Exponea SDK automatically takes care of flushing events to the Exponea API (using the `.automatic` mode). 
+> 
+> This feature can be turned off setting the property FlushMode to `.manual`. Be careful when turning automatic flushing off, because if you do then you need to manually flush the data every time there is something to flush.
 
 All tracked events and track customer properties are stored in the internal database in the Exponea SDK. When a event was successfully sent to Exponea API, the object will be deleted from the local database.
 
@@ -18,8 +20,12 @@ public enum FlushingMode {
     /// Automatic data flushing will flush data when the application will resign active state.
     case automatic
     
-    /// Periodic data flushing will be flushing data in your specified interval (in seconds).
+    /// Periodic data flushing will be flushing data in your specified interval (in seconds)
+    /// and when you background or quit the application.
     case periodic(Int)
+    
+    /// Flushes all data immediately as it is received.
+    case immediate
 }
 ```
 
