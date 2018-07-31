@@ -17,9 +17,10 @@ class RecommendationRequestSpec: QuickSpec {
         describe("A recommedation request") {
             context("Setting events for a customer") {
                 
-                let recommendationRequest =
-
+                let mock = MockData()
                 
+                let recommendationRequest = mock.recommendRequest
+
                 it("Should return type recommendation") {
                     expect(recommendationRequest.type).to(equal("recommendation"))
                 }
