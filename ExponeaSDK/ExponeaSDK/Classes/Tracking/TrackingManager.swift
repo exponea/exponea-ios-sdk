@@ -169,6 +169,11 @@ extension TrackingManager: TrackingManagerType {
             case .pushDelivered: try trackPushDelivered(with: payload)
             }
         }
+        
+        // If we have immediate flushing mode, flush after tracking
+        if case .immediate = flushingMode {
+            flushData()
+        }
     }
 }
 
@@ -298,7 +303,7 @@ extension TrackingManager {
                 // Continue to flush data on line below
                 fallthrough
                 
-            case .automatic:
+            case .automatic, .immediate:
                 self.flushData()
                 
             default: break
@@ -332,10 +337,11 @@ extension TrackingManager {
             // Continue to flush data on line below
             fallthrough
             
-        case .automatic:
+        case .automatic, .immediate:
             flushData()
             
-        default: break
+        default:
+            break
         }
     }
     
@@ -491,12 +497,16 @@ extension TrackingManager {
         
         // Update for new flushing mode
         switch flushingMode {
+        case .immediate:
+            // Immediately flush any data we might have
+            flushData()
+            
         case .periodic(let interval):
             // Schedule a timer for the specified interval
             flushingTimer = Timer(timeInterval: TimeInterval(interval), target: self,
                                   selector: #selector(flushData), userInfo: nil, repeats: true)
         default:
-            // No need to do anything for manual or automatic (tracked on app events)
+            // No need to do anything for manual or automatic (tracked on app events) or immediate
             break
         }
     }

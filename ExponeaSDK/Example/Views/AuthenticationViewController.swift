@@ -57,7 +57,7 @@ class AuthenticationViewController: UIViewController {
         Exponea.shared.configure(projectToken: token,
                                  authorization: auth,
                                  baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text)
-        
+        Exponea.shared.flushingMode = .immediate
         performSegue(withIdentifier: "showMain", sender: nil)
     }
     

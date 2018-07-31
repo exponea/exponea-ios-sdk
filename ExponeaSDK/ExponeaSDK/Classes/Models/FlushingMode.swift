@@ -16,4 +16,6 @@ public enum FlushingMode {
     case automatic
     /// Periodic data flushing will be flushing data in your specified interval (in seconds).
     case periodic(Int)
+    /// Flushes all data immediately as it is received.
+    case immediate
 }
