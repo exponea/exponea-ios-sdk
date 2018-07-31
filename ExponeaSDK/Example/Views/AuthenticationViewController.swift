@@ -50,16 +50,14 @@ class AuthenticationViewController: UIViewController {
         
         var auth: ExponeaSDK.Authorization = .none
         
-        if let text = authField.text {
+        if let text = authField.text, !text.isEmpty {
             auth = .basic(text)
         }
         
         Exponea.shared.configure(projectToken: token,
                                  authorization: auth,
                                  baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text)
-        
-        Exponea.shared.flushingMode = .automatic
-        
+        Exponea.shared.flushingMode = .immediate
         performSegue(withIdentifier: "showMain", sender: nil)
     }
     

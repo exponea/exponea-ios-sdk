@@ -14,6 +14,9 @@ public enum FlushingMode {
     case manual
     /// Automatic data flushing will flush data when the application will resign active state.
     case automatic
-    /// Periodic data flushing will be flushing data in your specified interval (in seconds).
+    /// Periodic data flushing will be flushing data in your specified interval (in seconds)
+    /// and when you background or quit the application.
     case periodic(Int)
+    /// Flushes all data immediately as it is received.
+    case immediate
 }

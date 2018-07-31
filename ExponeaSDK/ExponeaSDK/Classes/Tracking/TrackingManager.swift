@@ -83,7 +83,6 @@ open class TrackingManager {
     }
     
     deinit {
-        removeSessionObservers()
         Exponea.logger.log(.verbose, message: "TrackingManager deallocated.")
     }
     
@@ -93,13 +92,29 @@ open class TrackingManager {
         
         /// Add the observers when the automatic session tracking is true.
         if repository.configuration.automaticSessionTracking {
-            addSessionObserves()
+            try? track(.sessionStart, with: nil)
         }
         
         /// Add the observers when the automatic push notification tracking is true.
         if repository.configuration.automaticPushNotificationTracking {
             pushManager = PushNotificationManager(trackingManager: self)
         }
+        
+        // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(applicationDidBecomeActive),
+                                               name: .UIApplicationDidBecomeActive,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(applicationDidEnterBackground),
+                                               name: .UIApplicationDidEnterBackground,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(applicationWillTerminate),
+                                               name: .UIApplicationWillTerminate,
+                                               object: nil)
     }
     
     /// Installation event is fired only once for the whole lifetime of the app on one
@@ -153,6 +168,11 @@ extension TrackingManager: TrackingManagerType {
             case .pushOpened: try trackPushOpened(with: payload)
             case .pushDelivered: try trackPushDelivered(with: payload)
             }
+        }
+        
+        // If we have immediate flushing mode, flush after tracking
+        if case .immediate = flushingMode {
+            flushData()
         }
     }
 }
@@ -210,41 +230,22 @@ extension TrackingManager {
         }
     }
     
-    /// Add observers to notification center in order to control when the
-    /// app become active or enter in background.
-    internal func addSessionObserves() {
-        // Make sure we remove session observers first, if we are already observing.
-        removeSessionObservers()
-        
-        // Subscribe to notifications
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidBecomeActive),
-                                               name: .UIApplicationDidBecomeActive,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidEnterBackground),
-                                               name: .UIApplicationDidEnterBackground,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationWillTerminate),
-                                               name: .UIApplicationWillTerminate,
-                                               object: nil)
-        
-        try? track(.sessionStart, with: nil)
-    }
-    
-    /// Removes session observers.
-    internal func removeSessionObservers() {
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationDidBecomeActive, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillTerminate, object: nil)
-    }
-    
     @objc internal func applicationDidBecomeActive() {
-        // Cancel background tasm if we have any
+        // Cancel background task if we have any
         if let item = backgroundWorkItem {
             item.cancel()
             backgroundWorkItem = nil
+            return
+        }
+        
+        // Reschedule flushing timer if using periodic flushing mode
+        if case let .periodic(interval) = flushingMode {
+            flushingTimer = Timer(timeInterval: TimeInterval(interval), target: self,
+                                  selector: #selector(flushData), userInfo: nil, repeats: true)
+        }
+        
+        // Make sure we are allowed to automatically track sessions
+        if !repository.configuration.automaticSessionTracking {
             return
         }
         
@@ -289,10 +290,22 @@ extension TrackingManager {
         // Dispatch after default session timeout
         let queue = DispatchQueue.global(qos: .background)
         let item = DispatchWorkItem {
-            self.triggerEndSession()
+            if self.repository.configuration.automaticSessionTracking {
+                self.triggerEndSession()
+            }
             
             switch self.flushingMode {
-            case .automatic: self.flushData()
+            case .periodic(_):
+                // Invalidate the timer
+                self.flushingTimer?.invalidate()
+                self.flushingTimer = nil
+                
+                // Continue to flush data on line below
+                fallthrough
+                
+            case .automatic, .immediate:
+                self.flushData()
+                
             default: break
             }
             
@@ -309,11 +322,26 @@ extension TrackingManager {
             UIApplication.shared.endBackgroundTask(self.backgroundTask)
             self.backgroundTask = UIBackgroundTaskInvalid
         })
-        triggerEndSession()
+        
+        // If we track sessions automaticall
+        if repository.configuration.automaticSessionTracking {
+            triggerEndSession()
+        }
         
         switch flushingMode {
-        case .automatic: flushData()
-        default: break
+        case .periodic(_):
+            // Invalidate the timer
+            flushingTimer?.invalidate()
+            flushingTimer = nil
+            
+            // Continue to flush data on line below
+            fallthrough
+            
+        case .automatic, .immediate:
+            flushData()
+            
+        default:
+            break
         }
     }
     
@@ -467,23 +495,19 @@ extension TrackingManager {
         flushingTimer?.invalidate()
         flushingTimer = nil
         
-        // Remove observers
-        let center = NotificationCenter.default
-        center.removeObserver(self, name: .UIApplicationDidEnterBackground, object: nil)
-        
         // Update for new flushing mode
         switch flushingMode {
-        case .manual: break
-        case .automatic:
-            // Automatically upload on resign active
-            let center = NotificationCenter.default
-            center.addObserver(self, selector: #selector(flushData),
-                               name: .UIApplicationDidEnterBackground, object: nil)
+        case .immediate:
+            // Immediately flush any data we might have
+            flushData()
             
         case .periodic(let interval):
             // Schedule a timer for the specified interval
             flushingTimer = Timer(timeInterval: TimeInterval(interval), target: self,
                                   selector: #selector(flushData), userInfo: nil, repeats: true)
+        default:
+            // No need to do anything for manual or automatic (tracked on app events) or immediate
+            break
         }
     }
 }
