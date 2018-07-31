@@ -37,14 +37,14 @@ Check out our [sample project](https://github.com/exponea/exponea-ios-sdk/tree/m
 
 To implement the Exponea SDK you must configure the SDK first:
 
-* [Configuration](./Documentation/CONFIG.md);
+* [Configuration](./Documentation/CONFIG.md)
 
-Then you can start using all the amazing features we developed for you:
+Then you can start using all the other features:
 
-* [Track Events / Customer properties](./Documentation/TRACK.md);
-* [Push Notification Events](./Documentation/PUSH.md);
-* [Flush](./Documentation/FLUSH.md)
-* [Fetch Data](./Documentation/FETCH.md);
+* [Track Events & Customer Properties](./Documentation/TRACK.md)
+* [Data Flushing](./Documentation/FLUSH.md)
+* [Push Notification Events](./Documentation/PUSH.md)
+* [Fetch Data](./Documentation/FETCH.md)
 * [Payments](./Documentation/PAYMENT.md)
 
 ## 🔗 Useful links
