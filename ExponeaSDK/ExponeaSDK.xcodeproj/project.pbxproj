@@ -104,6 +104,14 @@
 		F067441420873813003C0293 /* PurchasedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441320873813003C0293 /* PurchasedItem.swift */; };
 		F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441620878FA1003C0293 /* FetchEventsSpec.swift */; };
 		F06744192087939B003C0293 /* FetchMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06744182087939B003C0293 /* FetchMockData.swift */; };
+		F0BE60F221105FF70082ABD8 /* EventTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */; };
+		F0BE60F5211064450082ABD8 /* EventsRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60F4211064450082ABD8 /* EventsRequestSpec.swift */; };
+		F0BE60F9211067B20082ABD8 /* RecommendationRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60F8211067B20082ABD8 /* RecommendationRequestSpec.swift */; };
+		F0BE60FB21106A7A0082ABD8 /* AttributesListDescriptionSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60FA21106A7A0082ABD8 /* AttributesListDescriptionSpec.swift */; };
+		F0BE60FD21106FB40082ABD8 /* CustomerExportRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60FC21106FB40082ABD8 /* CustomerExportRequestSpec.swift */; };
+		F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60FF21107D3A0082ABD8 /* TrackingParametersSpec.swift */; };
+		F0BE6105211080F30082ABD8 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE6104211080F30082ABD8 /* MockData.swift */; };
+		F0BE610721108E070082ABD8 /* CustomerParametersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE610621108E070082ABD8 /* CustomerParametersSpec.swift */; };
 		F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* DeviceProperties.swift */; };
 		F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F8207F787100C89A7F /* TrackerSpec.swift */; };
 		F0E5C9022080EA21002CECA5 /* TrackMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5C9012080EA21002CECA5 /* TrackMockData.swift */; };
@@ -254,6 +262,14 @@
 		F067441320873813003C0293 /* PurchasedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasedItem.swift; sourceTree = "<group>"; };
 		F067441620878FA1003C0293 /* FetchEventsSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchEventsSpec.swift; sourceTree = "<group>"; };
 		F06744182087939B003C0293 /* FetchMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchMockData.swift; sourceTree = "<group>"; };
+		F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTypeSpec.swift; sourceTree = "<group>"; };
+		F0BE60F4211064450082ABD8 /* EventsRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsRequestSpec.swift; sourceTree = "<group>"; };
+		F0BE60F8211067B20082ABD8 /* RecommendationRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationRequestSpec.swift; sourceTree = "<group>"; };
+		F0BE60FA21106A7A0082ABD8 /* AttributesListDescriptionSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesListDescriptionSpec.swift; sourceTree = "<group>"; };
+		F0BE60FC21106FB40082ABD8 /* CustomerExportRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerExportRequestSpec.swift; sourceTree = "<group>"; };
+		F0BE60FF21107D3A0082ABD8 /* TrackingParametersSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingParametersSpec.swift; sourceTree = "<group>"; };
+		F0BE6104211080F30082ABD8 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
+		F0BE610621108E070082ABD8 /* CustomerParametersSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerParametersSpec.swift; sourceTree = "<group>"; };
 		F0CA58F5207F612200C89A7F /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
 		F0CA58F8207F787100C89A7F /* TrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSpec.swift; sourceTree = "<group>"; };
 		F0E5C9012080EA21002CECA5 /* TrackMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackMockData.swift; sourceTree = "<group>"; };
@@ -548,8 +564,11 @@
 		F01ADE602084D56300E20662 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F0BE60FE21107D290082ABD8 /* Parameters */,
+				F0BE60F3211064370082ABD8 /* Request */,
 				F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */,
 				01764BC32087742100D0D673 /* ConfigurationSpec.swift */,
+				F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -588,6 +607,7 @@
 		F021E866206CF10200788ABC /* ExponeaSDKTests */ = {
 			isa = PBXGroup;
 			children = (
+				F0BE610121107E7D0082ABD8 /* MockData */,
 				01EC2DA2207E3D060031BFEB /* Specs */,
 				01EC2DA0207E3CF30031BFEB /* Supporting Files */,
 				01EC2DA1207E3D000031BFEB /* Resources */,
@@ -632,6 +652,34 @@
 				F029BF2E208A386E00342498 /* FetchRecommendationSpec.swift */,
 			);
 			path = Fetching;
+			sourceTree = "<group>";
+		};
+		F0BE60F3211064370082ABD8 /* Request */ = {
+			isa = PBXGroup;
+			children = (
+				F0BE60F4211064450082ABD8 /* EventsRequestSpec.swift */,
+				F0BE60F8211067B20082ABD8 /* RecommendationRequestSpec.swift */,
+				F0BE60FA21106A7A0082ABD8 /* AttributesListDescriptionSpec.swift */,
+				F0BE60FC21106FB40082ABD8 /* CustomerExportRequestSpec.swift */,
+			);
+			path = Request;
+			sourceTree = "<group>";
+		};
+		F0BE60FE21107D290082ABD8 /* Parameters */ = {
+			isa = PBXGroup;
+			children = (
+				F0BE60FF21107D3A0082ABD8 /* TrackingParametersSpec.swift */,
+				F0BE610621108E070082ABD8 /* CustomerParametersSpec.swift */,
+			);
+			path = Parameters;
+			sourceTree = "<group>";
+		};
+		F0BE610121107E7D0082ABD8 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				F0BE6104211080F30082ABD8 /* MockData.swift */,
+			);
+			path = MockData;
 			sourceTree = "<group>";
 		};
 		F0C1C1CE207384ED005EB697 /* Models */ = {
@@ -1008,9 +1056,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0BE610721108E070082ABD8 /* CustomerParametersSpec.swift in Sources */,
+				F0BE60F9211067B20082ABD8 /* RecommendationRequestSpec.swift in Sources */,
 				F03E4B8720848E970051ED80 /* TrackSessionSpec.swift in Sources */,
+				F0BE6105211080F30082ABD8 /* MockData.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
 				F03943A42080946E00FE7759 /* TrackEventSpec.swift in Sources */,
+				F0BE60FB21106A7A0082ABD8 /* AttributesListDescriptionSpec.swift in Sources */,
+				F0BE60FD21106FB40082ABD8 /* CustomerExportRequestSpec.swift in Sources */,
 				F06744072085E983003C0293 /* StubEntities.swift in Sources */,
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
 				01764BC42087742100D0D673 /* ConfigurationSpec.swift in Sources */,
@@ -1018,12 +1071,15 @@
 				F029BF2F208A386E00342498 /* FetchRecommendationSpec.swift in Sources */,
 				F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */,
 				F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */,
+				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,
 				F067440D208642AC003C0293 /* TrackCustomerSpec.swift in Sources */,
 				F029BF33208A41FC00342498 /* MockFetchRepository.swift in Sources */,
 				F063BEAA207E36E600030811 /* MockDatabase.swift in Sources */,
 				F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */,
 				F06744192087939B003C0293 /* FetchMockData.swift in Sources */,
+				F0BE60F221105FF70082ABD8 /* EventTypeSpec.swift in Sources */,
 				F0E5C9022080EA21002CECA5 /* TrackMockData.swift in Sources */,
+				F0BE60F5211064450082ABD8 /* EventsRequestSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
