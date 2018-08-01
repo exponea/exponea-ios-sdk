@@ -40,6 +40,25 @@ extension Double: JSONConvertible {
     }
 }
 
+/// --------
+
+/// When Swift 4.2 is released, use the following and remove workarounds.
+
+//extension Dictionary: JSONConvertible where Key == String, Value == JSONConvertible {
+//    public var jsonValue: JSONValue {
+//        return .dictionary(self.mapValues({ $0.jsonValue }))
+//    }
+//}
+
+
+//extension Array: JSONConvertible where Element == JSONConvertible {
+//    public var jsonValue: JSONValue {
+//        return .array(self.map({ $0.jsonValue }))
+//    }
+//}
+
+/// --------
+
 extension Dictionary: JSONConvertible where Key == String, Value == JSONValue {
     public var jsonValue: JSONValue {
         return .dictionary(self)
@@ -140,10 +159,7 @@ extension JSONValue {
         case .string(let string): return NSString(string: string)
         case .array(let array): return array.map({ $0.objectValue }) as NSArray
         case .double(let double): return NSNumber(value: double)
-        case .dictionary(_):
-            // Dictionaries are not yet supported
-            Exponea.logger.log(.error, message: "Nested dictionaries are not supported.")
-            return NSNull()
+        case .dictionary(let dictionary): return dictionary.mapValues({ $0.objectValue }) as NSDictionary
         }
     }
 }

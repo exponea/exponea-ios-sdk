@@ -34,6 +34,7 @@
 		C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C028C3A12110980600B03ED4 /* JSONValueSpec.swift */; };
 		C0329E5F20F76EB00051F5DF /* URLRequest+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */; };
 		C0329E6120F76EBF0051F5DF /* URLResponse+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */; };
+		C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */; };
 		C0753E9020A43D3900A779FF /* RepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E8F20A43D3900A779FF /* RepositoryError.swift */; };
 		C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */; };
 		C07E41FD20C930C400920809 /* TrackEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E41FC20C930C400920809 /* TrackEventViewController.swift */; };
@@ -189,6 +190,7 @@
 		C028C3A12110980600B03ED4 /* JSONValueSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueSpec.swift; sourceTree = "<group>"; };
 		C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Debug.swift"; sourceTree = "<group>"; };
 		C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLResponse+Debug.swift"; sourceTree = "<group>"; };
+		C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerProcessingSpec.swift; sourceTree = "<group>"; };
 		C0753E8F20A43D3900A779FF /* RepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryError.swift; sourceTree = "<group>"; };
 		C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPersistentContainer+Bundle.swift"; sourceTree = "<group>"; };
 		C07E41FC20C930C400920809 /* TrackEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackEventViewController.swift; sourceTree = "<group>"; };
@@ -409,6 +411,7 @@
 			isa = PBXGroup;
 			children = (
 				C028C3A12110980600B03ED4 /* JSONValueSpec.swift */,
+				C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -1079,6 +1082,7 @@
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
 				01764BC42087742100D0D673 /* ConfigurationSpec.swift in Sources */,
 				019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */,
+				C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */,
 				F029BF2F208A386E00342498 /* FetchRecommendationSpec.swift in Sources */,
 				F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */,
 				F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */,

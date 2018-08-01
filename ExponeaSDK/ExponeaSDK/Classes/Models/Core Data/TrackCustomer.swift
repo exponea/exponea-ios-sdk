@@ -33,9 +33,15 @@ public class TrackCustomer: NSManagedObject {
         if let properties = properties as? Set<KeyValueItem> {
             var props: [String: JSONValue] = [:]
             properties.forEach({
-                DatabaseManager.processProperty(key: $0.key,
-                                                value: $0.value,
-                                                into: &props)
+                guard let key = $0.key, let object = $0.value else {
+                    Exponea.logger.log(.warning, message: """
+                        Skipping KeyValueItem with empty key (\($0.key ?? "N/A"))) \
+                        or value (\(String(describing: $0.value))).
+                        """)
+                    return
+                }
+                
+                props[key] = DatabaseManager.processObject(object)
             })
             data.append(.properties(props))
         }
