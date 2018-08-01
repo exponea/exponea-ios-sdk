@@ -15,27 +15,24 @@ import Nimble
 class CustomerParametersSpec: QuickSpec {
     override func spec() {
         describe("A customer parameter") {
+            
             context("Setting group of customer parameters to track") {
                 
                 let mockData = MockData()
+                let param = mockData.customerParameters
                 
-                let param = CustomerParameters(
-                    customer: mockData.customerIds,
-                    property: "myProperty",
-                    id: "123",
-                    recommendation: nil,
-                    attributes: nil,
-                    events: nil,
-                    data: nil)
-
                 it("Should not return nil") {
                     expect(param.parameters).toNot(beEmpty())
                 }
                 
-                it("Should get the property value from the parameters") {
-                    let parameters = param.parameters
-                    let value = parameters["property"]
+                it("Should get the value from the property key on parameters") {
+                    let value = param.parameters["property"]
                     expect(value).to(equal(.string("myProperty")))
+                }
+                
+                it("Should get the value for the id key on parameters") {
+                    let value = param.parameters["id"]
+                    expect(value).to(equal(.string("123")))
                 }
             }
         }

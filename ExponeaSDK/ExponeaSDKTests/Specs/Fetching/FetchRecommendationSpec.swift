@@ -15,64 +15,55 @@ import Nimble
 class FetchRecommendationSpec: QuickSpec {
 
     override func spec() {
-
-        let database = MockDatabase()
-        let data = FetchMockData()
-        let configuration = try! Configuration(plistName: "ExponeaConfig")
-        let repository = MockFetchRepository(configuration: configuration)
-
-        /*
-        let exponea = Exponea()
-        Exponea.shared = exponea
-        Exponea.shared.configure(plistName: "ExponeaConfig")
-        // FIXME: Fix injection
-        exponea.trackingManager = TrackingManager(repository: repository, database: database, userDefaults: UserDefaults.standard)
-        exponea.repository = repository
-
         describe("Fetch recommendation") {
-/
-            context("Fetch recommendation from exponea api") {
-
-                expect(exponea.configuration?.authorization).toNot(beNil())
-                waitUntil(timeout: 5) { done in
-                    Exponea.shared.fetchRecommendation(with: data.recommendation) { result in
-                        it("Should not return error") {
+            context("Fetch recommendation from mock repository") {
+                
+                let configuration = try! Configuration(plistName: "ExponeaConfig")
+                let mockRepo = MockRepository(configuration: configuration)
+                let mockData = MockData()
+                
+                let data = mockData.recommendRequest
+                
+                waitUntil(timeout: 3) { done in
+                    mockRepo.fetchRecommendation(recommendation: data, for: mockData.customerIds) { (result) in
+                        it("Result error should be nil") {
                             expect(result.error).to(beNil())
                         }
-                        it("Should return success") {
+                        
+                        it("Result should be true ") {
                             expect(result.value?.success).to(beTrue())
                         }
-                        // FIXME: API returning 0 values
-                        //                    it("Should return any response") {
-                        //                        expect(result.value?.data?.count).to(beGreaterThan(0))
-                        //                    }
+                        it("Result values should have 3 items") {
+                            expect(result.value?.results?.count).to(equal(3))
+                        }
+                        
+                        context("Check the values returned from json file") {
+                            
+                            guard let values =  result.value?.results else {
+                                fatalError("Get recommendation should not be empty")
+                            }
+                            
+                            it("First item should have value [Marian]") {
+                                let firstItem = values[0]
+                                expect(firstItem.success).to(beTrue())
+                                expect(firstItem.value).to(equal("Marian"))
+                            }
+                            it("Second item should have value [Galik]") {
+                                let firstItem = values[1]
+                                expect(firstItem.success).to(beTrue())
+                                expect(firstItem.value).to(equal("Galik"))
+                            }
+                            it("Third item should have value [Payers]") {
+                                let firstItem = values[2]
+                                expect(firstItem.success).to(beTrue())
+                                expect(firstItem.value).to(equal("Payers"))
+                            }
+                        }
+
                         done()
                     }
                 }
             }
-
-            context("Fetch recommendation from mock data") {
-                guard let projectToken = exponea.configuration?.projectToken else {
-                    fatalError("There is no project token configured")
-                }
-                // FIXME: MAke sure customer id is correct
-                repository.fetchRecommendation(recommendation: data.recommendation,
-                                               for: [:], completion: { (result) in
-                    it("error should be nil") {
-                        expect(result.error).to(beNil())
-                    }
-                    it("should return success") {
-                        expect(result.value?.success).to(beTrue())
-                    }
-                    it("should return 3 items") {
-                        expect(result.value?.results?.count).to(equal(3))
-                    }
-                    it("first item should be Marian") {
-                        expect(result.value?.results?.first?.value).to(equal("Marian"))
-                    }
-                })
-            }
         }
- */
     }
 }

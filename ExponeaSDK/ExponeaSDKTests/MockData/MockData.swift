@@ -12,26 +12,37 @@ import Foundation
 
 struct MockData {
     
-    let customerIds: [String: JSONValue] = [
-        "registered": .string("marian.galik@exponea.com")]
+    let projectToken = "TokenForUnitTest"
     
-    let properties: [String: JSONValue] = [
-        "properties": .dictionary([
-            "first_name": .string("Marian"),
-            "last_name": .string("Galik"),
-            "email": .string("marian.galik@exponea.com")])
-    ]
+    let customerIds: [String: JSONValue] = {
+        return ["registered": .string("marian.galik@exponea.com")]
+    }()
     
-    let eventTypes: [String] = ["install",
-                                "session_start",
-                                "session_end"]
+    let properties: [String: JSONValue] = {
+        return [
+            "properties": .dictionary([
+                "first_name": .string("Marian"),
+                "last_name": .string("Galik"),
+                "email": .string("marian.galik@exponea.com")])
+        ]
+    }()
     
-    let items: [String: JSONValue] = [
-        "items": .dictionary([
-            "item01": .int(1),
-            "item02": .int(2)
-        ])
-    ]
+    let eventTypes: [String] = {
+        return ["install",
+                "session_start",
+                "session_end"]
+    }()
+    
+    let items: [String: JSONValue] = {
+        return [
+            "items": JSONValue.dictionary(
+                [
+                    "item01": .int(1),
+                    "item02": .int(2)
+                ]
+            )
+        ]
+    }()
     
     let recommendRequest = RecommendationRequest(type: "recommendation",
                                                  id: "592ff585fb60094e02bfaf6a",
@@ -39,7 +50,11 @@ struct MockData {
                                                  strategy: "winner",
                                                  knowItems: false,
                                                  anti: false,
-                                                 items: nil)
+                                                 items: [
+                                                    "items": JSONValue.dictionary([
+                                                            "item01": .int(1),
+                                                            "item02": .int(2)])
+                                                ])
     
     let attributesDesc = AttributesDescription(key: "id",
                                                value: "registered",
@@ -59,5 +74,30 @@ struct MockData {
                                                       timezone: nil,
                                                       responseFormat: ExportFormat.csv)
     
+    let personalizationRequest = PersonalizationRequest(ids: ["1","2","3"],
+                                                        timeout: 5,
+                                                        timezone: "GMT+2",
+                                                        customParameters: nil)
+    
+    let customerParameters = CustomerParameters(customer: ["registered": .string("marian.galik@exponea.com")],
+                                                property: "myProperty",
+                                                id: "123",
+                                                recommendation: nil,
+                                                attributes: nil,
+                                                events: nil,
+                                                data: nil)
+        
+    let event = Event(type: "purchase",
+                      timestamp: nil,
+                      properties: ["name": .string("iPad"),
+                                   "description": .string("Tablet")],
+                      errors: nil)
+
+    let purchasedItem = PurchasedItem(grossAmount: 10.0,
+                                      currency: "EUR",
+                                      paymentSystem: "Bank Transfer",
+                                      productId: "123",
+                                      productTitle: "iPad",
+                                      receipt: nil)
     
 }
