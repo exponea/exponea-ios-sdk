@@ -14,41 +14,89 @@ import Nimble
 
 class FetchEventsSpec: QuickSpec {
 
-    // TODO: Finish implementation of unit tests with mock data
     override func spec() {
-
-        let database = MockDatabase()
-        let data = FetchMockData()
-        let configuration = try! Configuration(plistName: "ExponeaConfig")
-        let repository = ServerRepository(configuration: configuration)
-/*
-        let exponea = Exponea()
-        Exponea.shared = exponea
-        Exponea.shared.configure(plistName: "ExponeaConfig")
-        // FIXME: Fix injection
-        exponea.trackingManager = TrackingManager(repository: repository, database: database, userDefaults: UserDefaults.standard)
-        exponea.repository = repository
-
-        describe("Fetch Event") {
-            //var returnData: Result<Events>?
-
-            expect(exponea.configuration?.authorization).toNot(beNil())
-            waitUntil(timeout: 5) { done in
-                Exponea.shared.fetchEvents(with: data.customerData, completion: { (result) in
-                    it("Should not return error") {
-                        expect(result.error).to(beNil())
+        describe("Fetch Events") {
+            context("Fetch events from mock repository") {
+                
+                let configuration = try! Configuration(plistName: "ExponeaConfig")
+                let mockRepo = MockRepository(configuration: configuration)
+                let mockData = MockData()
+                
+                waitUntil(timeout: 3) { done in
+                    mockRepo.fetchEvents(events: mockData.eventRequest, for: mockData.customerIds) { (result) in
+                        it("Result error should be nil") {
+                            expect(result.error).to(beNil())
+                        }
+                        
+                        it("Result should be true ") {
+                            expect(result.value?.success).to(beTrue())
+                        }
+                        it("Result values should have 3 items") {
+                            expect(result.value?.data.count).to(equal(3))
+                        }
+                        
+                        context("Check the values returned from json file") {
+                            
+                            guard let values =  result.value?.data else {
+                                fatalError("Get events should not be empty")
+                            }
+                            
+                            context("Validating the first item") {
+                                let firstItem = values[0]
+                                it("First item should have type [session_start]") {
+                                    expect(firstItem.type).to(equal("session_start"))
+                                }
+                                it("First item should have propertie [browser: Chorme]") {
+                                    expect(firstItem.properties?["browser"]).to(equal(.string("Chrome")))
+                                }
+                                it("First item should have propertie [device: Other]") {
+                                    expect(firstItem.properties?["device"]).to(equal(.string("Other")))
+                                }
+                                it("First item should have propertie [location: https://app.exponea.com/]") {
+                                    expect(firstItem.properties?["location"]).to(equal(.string("https://app.exponea.com/")))
+                                }
+                                it("First item should have propertie [os: Linux]") {
+                                    expect(firstItem.properties?["os"]).to(equal(.string("Linux")))
+                                }
+                            }
+                            
+                            context("Validating the second item") {
+                                let firstItem = values[1]
+                                it("First item should have type [purchase]") {
+                                    expect(firstItem.type).to(equal("purchase"))
+                                }
+                                it("First item should have propertie [price: 100]") {
+                                    expect(firstItem.properties?["price"]).to(equal(.int(100)))
+                                }
+                                it("First item should have propertie [product_name: iPad]") {
+                                    expect(firstItem.properties?["product_name"]).to(equal(.string("iPad")))
+                                }
+                            }
+                            
+                            context("Validating the thrid item") {
+                                let firstItem = values[2]
+                                it("First item should have type [session_end]") {
+                                    expect(firstItem.type).to(equal("session_end"))
+                                }
+                                it("First item should have propertie [browser: Safari]") {
+                                    expect(firstItem.properties?["browser"]).to(equal(.string("Safari")))
+                                }
+                                it("First item should have propertie [device: MacBook]") {
+                                    expect(firstItem.properties?["device"]).to(equal(.string("MacBook")))
+                                }
+                                it("First item should have propertie [location: https://app.exponea.com/]") {
+                                    expect(firstItem.properties?["location"]).to(equal(.string("https://app.exponea.com/")))
+                                }
+                                it("First item should have propertie [os: macOS High Sierra]") {
+                                    expect(firstItem.properties?["os"]).to(equal(.string("macOS High Sierra")))
+                                }
+                            }
+                        }
+                        
+                        done()
                     }
-                    it("Should return success") {
-                        expect(result.value?.success).to(beTrue())
-                    }
-                    // FIXME: API returning 0 values
-//                    it("Should return any response") {
-//                        expect(result.value?.data?.count).to(beGreaterThan(0))
-//                    }
-                    done()
-                })
+                }
             }
         }
- */
     }
 }

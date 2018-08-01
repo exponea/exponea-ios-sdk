@@ -92,7 +92,6 @@
 		F029BF2B208A2BC300342498 /* RecommendationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF2A208A2BC300342498 /* RecommendationResponse.swift */; };
 		F029BF2D208A2C5200342498 /* StringResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF2C208A2C5200342498 /* StringResponse.swift */; };
 		F029BF2F208A386E00342498 /* FetchRecommendationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF2E208A386E00342498 /* FetchRecommendationSpec.swift */; };
-		F029BF33208A41FC00342498 /* MockFetchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF32208A41FC00342498 /* MockFetchRepository.swift */; };
 		F029BF35208DBE1200342498 /* get-recommendation.json in Resources */ = {isa = PBXBuildFile; fileRef = F029BF34208DBE1100342498 /* get-recommendation.json */; };
 		F03943A42080946E00FE7759 /* TrackEventSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03943A32080946E00FE7759 /* TrackEventSpec.swift */; };
 		F03E4B8720848E970051ED80 /* TrackSessionSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03E4B8620848E970051ED80 /* TrackSessionSpec.swift */; };
@@ -106,6 +105,7 @@
 		F04BEA972111A1E900591950 /* PersonalizationRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA962111A1E900591950 /* PersonalizationRequestSpec.swift */; };
 		F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA9A2111AF7E00591950 /* RequestParametersTypeSpec.swift */; };
 		F04BEA9D2111B5DF00591950 /* MockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA9C2111B5DF00591950 /* MockRepository.swift */; };
+		F04BEAA12111EA8700591950 /* get-events.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA02111EA8700591950 /* get-events.json */; };
 		F063BEAA207E36E600030811 /* MockDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockDatabase.swift */; };
 		F06744072085E983003C0293 /* StubEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06744062085E983003C0293 /* StubEntities.swift */; };
 		F067440D208642AC003C0293 /* TrackCustomerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067440C208642AC003C0293 /* TrackCustomerSpec.swift */; };
@@ -113,7 +113,6 @@
 		F0674412208732AF003C0293 /* PaymentManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0674411208732AF003C0293 /* PaymentManagerType.swift */; };
 		F067441420873813003C0293 /* PurchasedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441320873813003C0293 /* PurchasedItem.swift */; };
 		F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441620878FA1003C0293 /* FetchEventsSpec.swift */; };
-		F06744192087939B003C0293 /* FetchMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06744182087939B003C0293 /* FetchMockData.swift */; };
 		F0BE60F221105FF70082ABD8 /* EventTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */; };
 		F0BE60F5211064450082ABD8 /* EventsRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60F4211064450082ABD8 /* EventsRequestSpec.swift */; };
 		F0BE60F9211067B20082ABD8 /* RecommendationRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60F8211067B20082ABD8 /* RecommendationRequestSpec.swift */; };
@@ -124,8 +123,6 @@
 		F0BE610721108E070082ABD8 /* CustomerParametersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE610621108E070082ABD8 /* CustomerParametersSpec.swift */; };
 		F0BE610E2110A2910082ABD8 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE610D2110A2910082ABD8 /* ExponeaErrorSpec.swift */; };
 		F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* DeviceProperties.swift */; };
-		F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F8207F787100C89A7F /* TrackerSpec.swift */; };
-		F0E5C9022080EA21002CECA5 /* TrackMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E5C9012080EA21002CECA5 /* TrackMockData.swift */; };
 		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		F0E757E5207CFA5300FE8C21 /* RequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */; };
 		F0E757E9207CFA7A00FE8C21 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */; };
@@ -261,7 +258,6 @@
 		F029BF2A208A2BC300342498 /* RecommendationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationResponse.swift; sourceTree = "<group>"; };
 		F029BF2C208A2C5200342498 /* StringResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringResponse.swift; sourceTree = "<group>"; };
 		F029BF2E208A386E00342498 /* FetchRecommendationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchRecommendationSpec.swift; sourceTree = "<group>"; };
-		F029BF32208A41FC00342498 /* MockFetchRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFetchRepository.swift; sourceTree = "<group>"; };
 		F029BF34208DBE1100342498 /* get-recommendation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "get-recommendation.json"; sourceTree = "<group>"; };
 		F03943A32080946E00FE7759 /* TrackEventSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackEventSpec.swift; sourceTree = "<group>"; };
 		F03E4B8620848E970051ED80 /* TrackSessionSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackSessionSpec.swift; sourceTree = "<group>"; };
@@ -275,6 +271,7 @@
 		F04BEA962111A1E900591950 /* PersonalizationRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationRequestSpec.swift; sourceTree = "<group>"; };
 		F04BEA9A2111AF7E00591950 /* RequestParametersTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestParametersTypeSpec.swift; sourceTree = "<group>"; };
 		F04BEA9C2111B5DF00591950 /* MockRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepository.swift; sourceTree = "<group>"; };
+		F04BEAA02111EA8700591950 /* get-events.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-events.json"; sourceTree = "<group>"; };
 		F063BEA9207E36E600030811 /* MockDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDatabase.swift; sourceTree = "<group>"; };
 		F06744062085E983003C0293 /* StubEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubEntities.swift; sourceTree = "<group>"; };
 		F067440C208642AC003C0293 /* TrackCustomerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCustomerSpec.swift; sourceTree = "<group>"; };
@@ -282,7 +279,6 @@
 		F0674411208732AF003C0293 /* PaymentManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManagerType.swift; sourceTree = "<group>"; };
 		F067441320873813003C0293 /* PurchasedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasedItem.swift; sourceTree = "<group>"; };
 		F067441620878FA1003C0293 /* FetchEventsSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchEventsSpec.swift; sourceTree = "<group>"; };
-		F06744182087939B003C0293 /* FetchMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchMockData.swift; sourceTree = "<group>"; };
 		F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTypeSpec.swift; sourceTree = "<group>"; };
 		F0BE60F4211064450082ABD8 /* EventsRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsRequestSpec.swift; sourceTree = "<group>"; };
 		F0BE60F8211067B20082ABD8 /* RecommendationRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationRequestSpec.swift; sourceTree = "<group>"; };
@@ -293,8 +289,6 @@
 		F0BE610621108E070082ABD8 /* CustomerParametersSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerParametersSpec.swift; sourceTree = "<group>"; };
 		F0BE610D2110A2910082ABD8 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
 		F0CA58F5207F612200C89A7F /* DeviceProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProperties.swift; sourceTree = "<group>"; };
-		F0CA58F8207F787100C89A7F /* TrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerSpec.swift; sourceTree = "<group>"; };
-		F0E5C9012080EA21002CECA5 /* TrackMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackMockData.swift; sourceTree = "<group>"; };
 		F0E757DF207CF99E00FE8C21 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestFactory.swift; sourceTree = "<group>"; };
 		F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
@@ -376,11 +370,11 @@
 				F063BEA9207E36E600030811 /* MockDatabase.swift */,
 				F06744062085E983003C0293 /* StubEntities.swift */,
 				F0CA58F7207F783E00C89A7F /* Tracking */,
+				F067441520878F8C003C0293 /* Fetching */,
 				01EC2D9F207E3CDB0031BFEB /* Logging */,
 				F01ADE602084D56300E20662 /* Models */,
 				F0BE610C2110A2700082ABD8 /* Classes */,
 				F04BEA892111215A00591950 /* Repository */,
-				F067441520878F8C003C0293 /* Fetching */,
 			);
 			path = Specs;
 			sourceTree = "<group>";
@@ -651,16 +645,6 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		F029BF30208A41B900342498 /* MockData */ = {
-			isa = PBXGroup;
-			children = (
-				F06744182087939B003C0293 /* FetchMockData.swift */,
-				F029BF32208A41FC00342498 /* MockFetchRepository.swift */,
-				F029BF34208DBE1100342498 /* get-recommendation.json */,
-			);
-			path = MockData;
-			sourceTree = "<group>";
-		};
 		F04BEA892111215A00591950 /* Repository */ = {
 			isa = PBXGroup;
 			children = (
@@ -687,6 +671,15 @@
 			path = Database;
 			sourceTree = "<group>";
 		};
+		F04BEA9F2111EA0200591950 /* json */ = {
+			isa = PBXGroup;
+			children = (
+				F029BF34208DBE1100342498 /* get-recommendation.json */,
+				F04BEAA02111EA8700591950 /* get-events.json */,
+			);
+			path = json;
+			sourceTree = "<group>";
+		};
 		F067440E208731CF003C0293 /* Payment */ = {
 			isa = PBXGroup;
 			children = (
@@ -700,7 +693,6 @@
 		F067441520878F8C003C0293 /* Fetching */ = {
 			isa = PBXGroup;
 			children = (
-				F029BF30208A41B900342498 /* MockData */,
 				F067441620878FA1003C0293 /* FetchEventsSpec.swift */,
 				F029BF2E208A386E00342498 /* FetchRecommendationSpec.swift */,
 			);
@@ -732,6 +724,7 @@
 		F0BE610121107E7D0082ABD8 /* MockData */ = {
 			isa = PBXGroup;
 			children = (
+				F04BEA9F2111EA0200591950 /* json */,
 				F0BE6104211080F30082ABD8 /* MockData.swift */,
 				F04BEA9C2111B5DF00591950 /* MockRepository.swift */,
 			);
@@ -771,11 +764,9 @@
 		F0CA58F7207F783E00C89A7F /* Tracking */ = {
 			isa = PBXGroup;
 			children = (
-				F0CA58F8207F787100C89A7F /* TrackerSpec.swift */,
 				F03943A32080946E00FE7759 /* TrackEventSpec.swift */,
 				F067440C208642AC003C0293 /* TrackCustomerSpec.swift */,
 				F03E4B8620848E970051ED80 /* TrackSessionSpec.swift */,
-				F0E5C9012080EA21002CECA5 /* TrackMockData.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -975,6 +966,7 @@
 				F0E757F5207D032500FE8C21 /* ExponeaConfig.plist in Resources */,
 				F029BF35208DBE1200342498 /* get-recommendation.json in Resources */,
 				01764BC62087775800D0D673 /* config_valid.plist in Resources */,
+				F04BEAA12111EA8700591950 /* get-events.json in Resources */,
 				01764BC82087794000D0D673 /* config_valid2.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1150,14 +1142,10 @@
 				F04BEA9D2111B5DF00591950 /* MockRepository.swift in Sources */,
 				F04BEA9021119C1500591950 /* AuthorizationSpec.swift in Sources */,
 				F067440D208642AC003C0293 /* TrackCustomerSpec.swift in Sources */,
-				F029BF33208A41FC00342498 /* MockFetchRepository.swift in Sources */,
 				F063BEAA207E36E600030811 /* MockDatabase.swift in Sources */,
 				F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */,
-				F0CA58F9207F787100C89A7F /* TrackerSpec.swift in Sources */,
-				F06744192087939B003C0293 /* FetchMockData.swift in Sources */,
 				F04BEA8E21118F4700591950 /* ResultSpec.swift in Sources */,
 				F0BE60F221105FF70082ABD8 /* EventTypeSpec.swift in Sources */,
-				F0E5C9022080EA21002CECA5 /* TrackMockData.swift in Sources */,
 				F04BEA9521119F9400591950 /* DatabaseManagerErrorSpec.swift in Sources */,
 				F0BE60F5211064450082ABD8 /* EventsRequestSpec.swift in Sources */,
 			);

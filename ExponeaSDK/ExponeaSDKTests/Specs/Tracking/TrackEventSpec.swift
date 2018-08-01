@@ -16,22 +16,22 @@ class TrackEventSpec: QuickSpec {
 
     override func spec() {
         describe("Track a customer event") {
-            let data = TrackMockData()
-            let database = MockDatabase()
-            let configuration = try! Configuration(plistName: "ExponeaConfig")
-            let repository = ServerRepository(configuration: configuration)
-            // FIXME: Fix injection
-            let tracker = TrackingManager(repository: repository, userDefaults: UserDefaults.standard)
-            context("ExponeaSDK not configured") {
-                it("Event call should return false") {
-                    let exponea = Exponea()
-                    
-                    exponea.configuration = configuration
-                    exponea.trackingManager = tracker
-                    
-                    Exponea.shared = exponea
-                    Exponea.shared.trackPayment(properties: data.properties, timestamp: data.timestamp)
-                    
+            context("Track customer with mock repository") {
+
+                let configuration = try! Configuration(plistName: "ExponeaConfig")
+                let mockRepo = MockRepository(configuration: configuration)
+                let mockData = MockData()
+                
+                let data: [DataType] = [.projectToken(mockData.projectToken),
+                                        .properties(mockData.properties)]
+                
+                waitUntil(timeout: 3) { done in
+                    mockRepo.trackEvent(with: data, for: mockData.customerIds) { (result) in
+                        it("Result error should be nil") {
+                            expect(result.error).to(beNil())
+                        }
+                        done()
+                    }
                 }
             }
         }

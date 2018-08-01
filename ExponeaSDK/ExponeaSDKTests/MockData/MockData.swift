@@ -12,6 +12,7 @@ import Foundation
 
 struct MockData {
     
+    let projectToken = "TokenForUnitTest"
     
     let customerIds: [String: JSONValue] = {
         return ["registered": .string("marian.galik@exponea.com")]

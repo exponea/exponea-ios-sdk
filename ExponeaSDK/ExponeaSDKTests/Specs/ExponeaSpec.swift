@@ -16,10 +16,6 @@ class ExponeaSpec: QuickSpec {
 
     override func spec() {
 
-        let database = MockDatabase()
-        let configuration = try! Configuration(plistName: "ExponeaConfig")
-        let repository = ServerRepository(configuration: configuration)
-
         describe("A SDK") {
             context("After beign initialized") {
                 let exponea = Exponea()
