@@ -1,37 +1,44 @@
 ## 🔍 Flush events
 
-All tracked events and track customer properties are stored in the internal database in the Exponea SDK. By default, Exponea SDK automatically takes care of flushing events to the Exponea API. This feature can be turned off setting the property FlushMode to MANUAL. Please be careful with turning automatic flushing off because if you turn it off, you need to manually call Exponea.shared.flushData() to flush the tracked events manually every time there is something to flush.
+> By default, Exponea SDK automatically takes care of flushing events to the Exponea API (using the `.automatic` mode). 
+> 
+> This feature can be turned off setting the property FlushMode to `.manual`. Be careful when turning automatic flushing off, because if you do then you need to manually flush the data every time there is something to flush.
 
+All tracked events and track customer properties are stored in the internal database in the Exponea SDK. When a event was successfully sent to Exponea API, the object will be deleted from the local database.
 
-```
-public func flushData()
-```
-
-#### 💻 Usage
-```
-Exponea.shared.flushData()
-```
-
-When a event was successfully sent to Exponea API, the register will be excluded from the database.
-
+You can configure the flushing mode to work differently to suit your needs.
 
 #### 🔧 Flush Configuration
 
-It's possible to change the period to flush the events recorded into the database by setting the property FlushingMode.periodic(Int). The standard value is 60 seconds.
-
 Flushing mode that is used to specify how often or if data is automatically flushed.
 
-```
+```swift
 public enum FlushingMode {
     /// Manual flushing mode disables any automatic upload and it's your responsibility to flush data.
     case manual
+    
     /// Automatic data flushing will flush data when the application will resign active state.
     case automatic
-    /// Periodic data flushing will be flushing data in your specified interval (in seconds).
+    
+    /// Periodic data flushing will be flushing data in your specified interval (in seconds)
+    /// and when you background or quit the application.
     case periodic(Int)
+    
+    /// Flushes all data immediately as it is received.
+    case immediate
 }
 ```
 
+To set the flushing mode, initialise Exponea first and then set it directly on the Exponea singleton:
 
+```swift
+Exponea.shared.flushingMode = .periodic(10)
+```
 
+#### 💻 Manual Flushing
 
+To manually trigger a data flush to the API, use the following method.
+
+```swift
+Exponea.shared.flushData()
+```

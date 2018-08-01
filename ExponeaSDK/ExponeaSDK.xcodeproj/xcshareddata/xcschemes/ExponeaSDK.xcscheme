@@ -53,9 +53,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F021E858206CF10200788ABC"
-            BuildableName = "ExponeaSDK.framework"
-            BlueprintName = "ExponeaSDK"
+            BlueprintIdentifier = "C0F6C4DF2098A1AB00834E21"
+            BuildableName = "Example.app"
+            BlueprintName = "Example"
             ReferencedContainer = "container:ExponeaSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -72,15 +72,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F021E858206CF10200788ABC"
-            BuildableName = "ExponeaSDK.framework"
-            BlueprintName = "ExponeaSDK"
-            ReferencedContainer = "container:ExponeaSDK.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

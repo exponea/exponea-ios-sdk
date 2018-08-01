@@ -40,6 +40,25 @@ extension Double: JSONConvertible {
     }
 }
 
+/// --------
+
+/// When Swift 4.2 is released, use the following and remove workarounds.
+
+//extension Dictionary: JSONConvertible where Key == String, Value == JSONConvertible {
+//    public var jsonValue: JSONValue {
+//        return .dictionary(self.mapValues({ $0.jsonValue }))
+//    }
+//}
+
+
+//extension Array: JSONConvertible where Element == JSONConvertible {
+//    public var jsonValue: JSONValue {
+//        return .array(self.map({ $0.jsonValue }))
+//    }
+//}
+
+/// --------
+
 extension Dictionary: JSONConvertible where Key == String, Value == JSONValue {
     public var jsonValue: JSONValue {
         return .dictionary(self)
@@ -87,19 +106,24 @@ extension JSONValue {
 
 extension JSONValue: Codable, Equatable {
     public init(from decoder: Decoder) throws {
-        // Can be made prettier, but as a simple example:
         let container = try decoder.singleValueContainer()
         
-        do { self = .string(try container.decode(String.self))
+        do {
+            self = .dictionary(try container.decode([String: JSONValue].self))
         } catch DecodingError.typeMismatch {
-            do { self = .int(try container.decode(Int.self))
+            do {
+                self = .array(try container.decode([JSONValue].self))
             } catch DecodingError.typeMismatch {
-                do { self = .dictionary(try container.decode([String: JSONValue].self))
+                do {
+                    self = .string(try container.decode(String.self))
                 } catch DecodingError.typeMismatch {
-                    do { self = .array(try container.decode([JSONValue].self))
+                    do {
+                        self = .int(try container.decode(Int.self))
                     } catch {
-                        do { self = .bool(try container.decode(Bool.self))
-                        } catch { self = .double(try container.decode(Double.self))
+                        do {
+                            self = .double(try container.decode(Double.self))
+                        } catch {
+                            self = .bool(try container.decode(Bool.self))
                         }
                     }
                 }
@@ -140,10 +164,7 @@ extension JSONValue {
         case .string(let string): return NSString(string: string)
         case .array(let array): return array.map({ $0.objectValue }) as NSArray
         case .double(let double): return NSNumber(value: double)
-        case .dictionary(_):
-            // Dictionaries are not yet supported
-            Exponea.logger.log(.error, message: "Nested dictionaries are not supported.")
-            return NSNull()
+        case .dictionary(let dictionary): return dictionary.mapValues({ $0.objectValue }) as NSDictionary
         }
     }
 }

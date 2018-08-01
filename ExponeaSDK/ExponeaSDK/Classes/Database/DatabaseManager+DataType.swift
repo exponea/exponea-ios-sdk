@@ -9,20 +9,72 @@
 import Foundation
 
 extension DatabaseManager {
-    static func processProperty(key aKey: String?, value: NSObject?, into dictionary: inout [String: JSONValue]) {
-        guard let key = aKey, let value = value else {
-            Exponea.logger.log(.verbose, message: "Skipping empty value for property: \(aKey ?? "NO KEY")")
-            return
+    static func processObject(_ object: NSObject) -> JSONValue? {
+        if let dictionary = object as? NSDictionary {
+            return processDictionary(dictionary)
+        } else if let array = object as? NSArray {
+            return processArray(array)
+        } else if let primitiveType = transformPrimitiveType(object) {
+            return primitiveType
+        }
+
+        Exponea.logger.log(.warning, message: "Skipping object of unsupported type: \(object.self)")
+        return nil
+    }
+    
+    static func processArray(_ array: NSArray) -> JSONValue {
+        var valueArray: [JSONValue] = []
+        
+        for element in array {
+            guard let object = element as? NSObject else {
+                Exponea.logger.log(.warning, message: "Skipping array element of unsupported type: \(element.self)")
+                continue
+            }
+            
+            if let nested = object as? NSArray {
+                valueArray.append(processArray(nested))
+            } else if let primitiveType = transformPrimitiveType(object) {
+                valueArray.append(primitiveType)
+            } else {
+                Exponea.logger.log(.warning, message: "Skipping array element of unsupported type: \(object.self)")
+                continue
+            }
         }
         
-        // Check for arrays, we only allow 1 sub-level
-        if let array = value as? [NSObject] {
-            let converted = array.map({ transformPrimitiveType($0) })
-            dictionary[key] = .array(converted.compactMap({ $0 }))
-        } else {
-            // Otherwise assume a primitive type
-            dictionary[key] = transformPrimitiveType(value)
+        return .array(valueArray)
+    }
+    
+    static func processDictionary(_ dictionary: NSDictionary) -> JSONValue {
+        var valueDictionary: [String : JSONValue] = [:]
+        
+        for (k, v) in dictionary {
+            guard let key = k as? String else {
+                Exponea.logger.log(.warning,
+                                   message: "Skipping dictionary pair because key is not a string: \(k.self).")
+                continue
+            }
+            
+            guard let value = v as? NSObject else {
+                Exponea.logger.log(.warning,
+                                   message: "Skipping dictionary pair because value is not an object: \(v.self).")
+                continue
+            }
+            
+            if let nested = value as? NSDictionary {
+                valueDictionary[key] = processDictionary(nested)
+            } else if let nested = value as? NSArray {
+                valueDictionary[key] = processArray(nested)
+            } else if let primitiveType = transformPrimitiveType(value) {
+                valueDictionary[key] = primitiveType
+            } else {
+                Exponea.logger.log(.warning, message: """
+                    Skipping dictionary value (with key \(key)) of unsupported type: \(value.self).
+                    """)
+                continue
+            }
         }
+        
+        return .dictionary(valueDictionary)
     }
     
     static func transformPrimitiveType(_ object: NSObject) -> JSONValue? {
