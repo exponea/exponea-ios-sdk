@@ -27,9 +27,15 @@ public class Customer: NSManagedObject {
         // Convert all properties to key value items.
         if let properties = customIds as? Set<KeyValueItem> {
             properties.forEach({
-                DatabaseManager.processProperty(key: $0.key,
-                                                value: $0.value,
-                                                into: &data)
+                guard let key = $0.key, let object = $0.value else {
+                    Exponea.logger.log(.warning, message: """
+                        Skipping KeyValueItem with empty key (\($0.key ?? "N/A"))) \
+                        or value (\(String(describing: $0.value))).
+                        """)
+                    return
+                }
+                
+                data[key] = DatabaseManager.processObject(object)
             })
         }
         

@@ -47,7 +47,7 @@ class TrackEventViewController: UIViewController {
             return "custom_event"
         }()
         
-        var properties: [String: String] = [:]
+        var properties: [String: JSONConvertible] = [:]
         
         if let key1 = keyField1.text, !key1.isEmpty {
             properties[key1] = valueField1.text ?? ""
@@ -60,6 +60,8 @@ class TrackEventViewController: UIViewController {
         if let key3 = keyField3.text, !key3.isEmpty {
             properties[key3] = valueField3.text ?? ""
         }
+        
+        properties["testdictionary"] = ["my value" : JSONValue.dictionary(["array" : .array([.int(123)])])]
         
         Exponea.shared.trackEvent(properties: properties, timestamp: nil, eventType: eventType)
         dismiss(animated: true, completion: nil)
