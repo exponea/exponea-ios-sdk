@@ -216,7 +216,28 @@ extension MockRepository: FetchRepository {
     }
     
     func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
+        let router = RequestFactory(baseUrl: configuration.baseUrl,
+                                    projectToken: configuration.fetchingToken,
+                                    route: .banners)
+        let request = router.prepareRequest(authorization: configuration.authorization)
         
+        let data = retrieveDataFromFile(with: "get-banners", fileType: "json")
+        
+        /// Prepare the stub response.
+        guard let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil) else {
+            fatalError("It was not possible to mock the HTTP response.")
+        }
+        
+        /// Add the stub response to the mock server.
+        MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
+            return true
+        }) { (request) -> (Response) in
+            return Response.success(stubResponse, .content(data))
+        }
+        
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
     }
     
     func fetchPersonalization(with request: PersonalizationRequest, for customerIds: [String : JSONValue], completion: @escaping (Result<PersonalizationResponse>) -> Void) {

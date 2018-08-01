@@ -108,6 +108,7 @@
 		F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA9A2111AF7E00591950 /* RequestParametersTypeSpec.swift */; };
 		F04BEA9D2111B5DF00591950 /* MockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA9C2111B5DF00591950 /* MockRepository.swift */; };
 		F04BEAA12111EA8700591950 /* get-events.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA02111EA8700591950 /* get-events.json */; };
+		F04BEAA32111F85900591950 /* get-banner.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA22111F85900591950 /* get-banner.json */; };
 		F063BEAA207E36E600030811 /* MockDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockDatabase.swift */; };
 		F06744072085E983003C0293 /* StubEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06744062085E983003C0293 /* StubEntities.swift */; };
 		F067440D208642AC003C0293 /* TrackCustomerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067440C208642AC003C0293 /* TrackCustomerSpec.swift */; };
@@ -276,6 +277,7 @@
 		F04BEA9A2111AF7E00591950 /* RequestParametersTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestParametersTypeSpec.swift; sourceTree = "<group>"; };
 		F04BEA9C2111B5DF00591950 /* MockRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepository.swift; sourceTree = "<group>"; };
 		F04BEAA02111EA8700591950 /* get-events.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-events.json"; sourceTree = "<group>"; };
+		F04BEAA22111F85900591950 /* get-banner.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-banner.json"; sourceTree = "<group>"; };
 		F063BEA9207E36E600030811 /* MockDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDatabase.swift; sourceTree = "<group>"; };
 		F06744062085E983003C0293 /* StubEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubEntities.swift; sourceTree = "<group>"; };
 		F067440C208642AC003C0293 /* TrackCustomerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCustomerSpec.swift; sourceTree = "<group>"; };
@@ -690,6 +692,7 @@
 			children = (
 				F029BF34208DBE1100342498 /* get-recommendation.json */,
 				F04BEAA02111EA8700591950 /* get-events.json */,
+				F04BEAA22111F85900591950 /* get-banner.json */,
 			);
 			path = json;
 			sourceTree = "<group>";
@@ -981,6 +984,7 @@
 				F029BF35208DBE1200342498 /* get-recommendation.json in Resources */,
 				01764BC62087775800D0D673 /* config_valid.plist in Resources */,
 				F04BEAA12111EA8700591950 /* get-events.json in Resources */,
+				F04BEAA32111F85900591950 /* get-banner.json in Resources */,
 				01764BC82087794000D0D673 /* config_valid2.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

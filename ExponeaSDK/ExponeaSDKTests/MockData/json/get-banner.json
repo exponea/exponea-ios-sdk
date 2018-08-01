@@ -1,0 +1,23 @@
+{
+    "data": [
+             {
+                 "date_filter": {
+                     "enabled": false,
+                     "from_date": null,
+                     "to_date": null
+                 },
+                 "device_target": {
+                    "type": "any"
+                 },
+                 "frequency": "until_visitor_interacts",
+                 "id": "5af313effb60092ebbfb2207",
+                 "trigger": {
+                     "exclude_pages": [],
+                     "include_pages": [{
+                        "type": "any"
+                    }]
+                 }
+             }],
+    "errors": [],
+    "success": true
+}
