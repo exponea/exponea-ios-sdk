@@ -2,14 +2,12 @@
 //  DeviceTarget.swift
 //  ExponeaSDK
 //
-//  Created by Dominik Hadl on 08/06/2018.
+//  Created by Ricardo Tokashiki on 02/08/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
 //
 
 import Foundation
 
-public enum DeviceTarget: String, Codable {
-    case any = "any"
-    case desktop = "desktop"
-    case mobile = "mobile"
+public struct DeviceTarget: Codable {
+    let type: DeviceTargetType
 }
