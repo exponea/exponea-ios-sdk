@@ -10,6 +10,8 @@ import Foundation
 
 /// Basic information about the device
 struct DeviceProperties {
+    internal let bundle: Bundle
+    
     /// Operational system name
     public var osName: String = Constants.DeviceInfo.osName
     
@@ -32,11 +34,11 @@ struct DeviceProperties {
     
     /// App version number, eg. "1.0".
     public var appVersion: String {
-        return Bundle.main.infoDictionary?[Constants.Keys.appVersion] as? String ?? "N/A"
+        return bundle.infoDictionary?[Constants.Keys.appVersion] as? String ?? "N/A"
     }
     
     /// Returns an array with all device properties.
-    var properties: [String: JSONValue] {
+    internal var properties: [String: JSONValue] {
         var data = [String: JSONValue]()
 
         data["os_name"] = .string(osName)
@@ -48,5 +50,9 @@ struct DeviceProperties {
         data["app_version"] = .string(appVersion)
 
         return data
+    }
+    
+    internal init(bundle: Bundle = Bundle.main) {
+        self.bundle = bundle
     }
 }
