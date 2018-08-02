@@ -211,7 +211,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `properties`
     ///     - `timestamp`
     /// - Throws: <#throws value description#>
-    public func trackCustomer(with data: [DataType]) throws {
+    public func identifyCustomer(with data: [DataType]) throws {
         let trackCustomer = TrackCustomer(context: context)
         trackCustomer.customer = customer
         

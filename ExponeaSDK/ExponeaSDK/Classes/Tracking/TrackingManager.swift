@@ -92,7 +92,11 @@ open class TrackingManager {
         
         /// Add the observers when the automatic session tracking is true.
         if repository.configuration.automaticSessionTracking {
-            try? track(.sessionStart, with: nil)
+            do {
+                try triggerInitialSession()
+            } catch {
+                Exponea.logger.log(.error, message: "Session start tracking error: \(error.localizedDescription)")
+            }
         }
         
         /// Add the observers when the automatic push notification tracking is true.
@@ -110,11 +114,6 @@ open class TrackingManager {
                                                selector: #selector(applicationDidEnterBackground),
                                                name: .UIApplicationDidEnterBackground,
                                                object: nil)
-        
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationWillTerminate),
-                                               name: .UIApplicationWillTerminate,
-                                               object: nil)
     }
     
     /// Installation event is fired only once for the whole lifetime of the app on one
@@ -122,7 +121,8 @@ open class TrackingManager {
     internal func trackInstallEvent() {
         /// Checking if the APP was launched before.
         /// If the key value is false, means that the event was not fired before.
-        guard userDefaults.bool(forKey: Constants.Keys.launchedBefore) == false else {
+        let key = Constants.Keys.installTracked + (database.customer.uuid?.uuidString ?? "")
+        guard userDefaults.bool(forKey: key) == false else {
             Exponea.logger.log(.verbose, message: "Install event was already tracked, skipping.")
             return
         }
@@ -131,15 +131,19 @@ open class TrackingManager {
         /// passing the install event type.
         do {
             // Get depdencies and track install event
-            try track(.install, with: nil)
+            try track(.install, with: [.properties(device.properties),
+                                       .timestamp(Date().timeIntervalSince1970)])
             
             /// Set the value to true if event was executed successfully
-            userDefaults.set(true, forKey: Constants.Keys.launchedBefore)
+            let key = Constants.Keys.installTracked + (database.customer.uuid?.uuidString ?? "")
+            userDefaults.set(true, forKey: key)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
     }
 }
+
+// MARK: -
 
 extension TrackingManager: TrackingManagerType {
     open func track(_ type: EventType, with data: [DataType]?) throws {
@@ -156,9 +160,9 @@ extension TrackingManager: TrackingManagerType {
             let payload: [DataType] = [.projectToken(projectToken)] + (data ?? [])
             
             switch type {
-            case .install: try trackInstall(projectToken: projectToken)
-            case .sessionStart: try trackStartSession(projectToken: projectToken)
-            case .sessionEnd: try trackEndSession(projectToken: projectToken)
+            case .install: try trackInstall(with: payload)
+            case .sessionStart: try trackStartSession(with: payload)
+            case .sessionEnd: try trackEndSession(with: payload)
             case .customEvent: try trackEvent(with: payload)
             case .identifyCustomer: try identifyCustomer(with: payload)
             case .payment: try trackPayment(with: payload)
@@ -173,21 +177,17 @@ extension TrackingManager: TrackingManagerType {
             flushData()
         }
     }
-}
 
-extension TrackingManager {
-    open func trackInstall(projectToken: String) throws {
-        try database.trackEvent(with: [.projectToken(projectToken),
-                                       .properties(device.properties),
-                                       .eventType(Constants.EventTypes.installation)])
+    open func identifyCustomer(with data: [DataType]) throws {
+        try database.identifyCustomer(with: data)
+    }
+    
+    open func trackInstall(with data: [DataType]) throws {
+        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.installation)])
     }
     
     open func trackEvent(with data: [DataType]) throws {
         try database.trackEvent(with: data)
-    }
-    
-    open func identifyCustomer(with data: [DataType]) throws {
-        try database.trackCustomer(with: data)
     }
     
     open func trackPayment(with data: [DataType]) throws {
@@ -195,7 +195,7 @@ extension TrackingManager {
     }
     
     open func trackPushToken(with data: [DataType]) throws {
-        try database.trackCustomer(with: data)
+        try database.identifyCustomer(with: data)
     }
     
     open func trackPushOpened(with data: [DataType]) throws {
@@ -204,6 +204,14 @@ extension TrackingManager {
     
     open func trackPushDelivered(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushDelivered)])
+    }
+    
+    open func trackStartSession(with data: [DataType]) throws {
+        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.sessionStart)])
+    }
+    
+    open func trackEndSession(with data: [DataType]) throws {
+        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.sessionEnd)])
     }
 }
 
@@ -228,12 +236,86 @@ extension TrackingManager {
         }
     }
     
+    internal var sessionBackgroundTime: Double {
+        get {
+            return userDefaults.double(forKey: Constants.Keys.sessionBackgrounded)
+        }
+        set {
+            userDefaults.set(newValue, forKey: Constants.Keys.sessionBackgrounded)
+        }
+    }
+    
+    internal func triggerInitialSession() throws {
+        // If we have a previously started session and a last session background time,
+        // but no end time then we can assume that the app was terminated and we can use
+        // the last background time as a session end.
+        if sessionStartTime != 0 && sessionEndTime == 0 && sessionBackgroundTime != 0 {
+            sessionEndTime = sessionBackgroundTime
+            sessionBackgroundTime = 0
+        }
+        
+        try triggerSessionStart()
+    }
+    
+    open func triggerSessionStart() throws {
+        // If session end time is set, app was terminated
+        if sessionStartTime != 0 && sessionEndTime != 0 {
+            Exponea.logger.log(.verbose, message: "App was terminated previously, first tracking previous session end.")
+            try triggerSessionEnd()
+        }
+        
+        // Track previous session if we are past session timeout
+        if shouldTrackCurrentSession {
+            Exponea.logger.log(.verbose, message: "We're past session timeout, first tracking previous session end.")
+            try triggerSessionEnd()
+        } else if sessionStartTime != 0 {
+            Exponea.logger.log(.verbose, message: "Continuing current session as we're within session timeout.")
+            return
+        }
+        
+        // Start the session with current date
+        sessionStartTime = Date().timeIntervalSince1970
+        
+        // Track session start
+        try track(.sessionStart, with: [.properties(device.properties),
+                                        .timestamp(sessionStartTime)])
+        
+        Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStart)
+    }
+    
+    open func triggerSessionEnd() throws {
+        guard sessionStartTime != 0 else {
+            Exponea.logger.log(.error, message: "Can't end session as no session was started.")
+            return
+        }
+        
+        // Set the session end to the time when session end is triggered or if it was set previously
+        // (for example after app has been terminated)
+        sessionEndTime = sessionEndTime == 0 ? Date().timeIntervalSince1970 : sessionEndTime
+        
+        // Prepare data to persist into coredata.
+        var properties = device.properties
+        
+        // Calculate the duration of the session and add to properties.
+        let duration = sessionEndTime - sessionStartTime
+        properties["duration"] = .double(duration)
+        
+        // Track session end
+        try track(.sessionEnd, with: [.properties(properties),
+                                      .timestamp(sessionEndTime)])
+            
+        // Reset session times
+        sessionStartTime = 0
+        sessionEndTime = 0
+            
+        Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionEnd)
+    }
+    
     @objc internal func applicationDidBecomeActive() {
         // Cancel background task if we have any
         if let item = backgroundWorkItem {
             item.cancel()
             backgroundWorkItem = nil
-            return
         }
         
         // Reschedule flushing timer if using periodic flushing mode
@@ -244,44 +326,26 @@ extension TrackingManager {
             }
         }
         
-        // Make sure we are allowed to automatically track sessions
-        if !repository.configuration.automaticSessionTracking {
-            return
-        }
-        
-        // If this is first session start, then
-        guard sessionStartTime != 0 else {
-            Exponea.logger.log(.verbose, message: "Starting first session.")
-            sessionStartTime = Date().timeIntervalSince1970
-
-            // Track session end, if we are allowed to
-            if repository.configuration.automaticSessionTracking {
-                try? track(.sessionStart, with: nil)
-            }
-            
-            return
-        }
-        
-        // Check first if we're past session timeout. If yes, track end of a session.
-        if shouldTrackCurrentSession {
+        // Track session start, if we are allowed to
+        if repository.configuration.automaticSessionTracking {
             do {
-                // Track session end
-                try track(.sessionEnd, with: nil)
-                
-                // Reset session
-                sessionStartTime = Date().timeIntervalSince1970
-                sessionEndTime = 0
-                
-                Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionEnd)
+                try triggerSessionStart()
             } catch {
-                Exponea.logger.log(.error, message: error.localizedDescription)
+                Exponea.logger.log(.error, message: "Session start tracking error: \(error.localizedDescription)")
             }
-        } else {
-            Exponea.logger.log(.verbose, message: "Skipping tracking session end as within timeout or not started.")
         }
     }
     
     @objc internal func applicationDidEnterBackground() {
+        // Save last session background time, in case we get terminated
+        sessionBackgroundTime = Date().timeIntervalSince1970
+        
+        // Make sure to not create a new background task, if we already have one.
+        guard backgroundTask == UIBackgroundTaskInvalid else {
+            return
+        }
+        
+        // Start the background task
         backgroundTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
             UIApplication.shared.endBackgroundTask(self.backgroundTask)
             self.backgroundTask = UIBackgroundTaskInvalid
@@ -289,9 +353,36 @@ extension TrackingManager {
         
         // Dispatch after default session timeout
         let queue = DispatchQueue.global(qos: .background)
-        let item = DispatchWorkItem {
+        let item = createBackgroundWorkItem()
+        backgroundWorkItem = item
+        
+        // Schedule the task to run using delay if applicable
+        let shouldDelay = repository.configuration.automaticSessionTracking
+        let delay = shouldDelay ? Constants.Session.defaultTimeout : 0
+        queue.asyncAfter(deadline: .now() + delay, execute: item)
+        
+        Exponea.logger.log(.verbose, message: "Started background task with delay \(delay)s.")
+    }
+    
+    internal func createBackgroundWorkItem() -> DispatchWorkItem {
+        return DispatchWorkItem { [weak self] in
+            guard let `self` = self else { return }
+            
+            // If we're cancelled, stop background task
+            if self.backgroundWorkItem?.isCancelled ?? false {
+                UIApplication.shared.endBackgroundTask(self.backgroundTask)
+                self.backgroundTask = UIBackgroundTaskInvalid
+                return
+            }
+            
+            // If we track sessions automatically
             if self.repository.configuration.automaticSessionTracking {
-                self.triggerEndSession()
+                do {
+                    try self.triggerSessionEnd()
+                    self.sessionBackgroundTime = 0
+                } catch {
+                    Exponea.logger.log(.error, message: "Session end tracking error: \(error.localizedDescription)")
+                }
             }
             
             switch self.flushingMode {
@@ -305,9 +396,10 @@ extension TrackingManager {
                 
             case .automatic, .immediate:
                 // Only stop background task after we upload
-                self.flushData(completion: {
-                    UIApplication.shared.endBackgroundTask(self.backgroundTask)
-                    self.backgroundTask = UIBackgroundTaskInvalid
+                self.flushData(completion: { [weak self] in
+                    guard let weakSelf = self else { return }
+                    UIApplication.shared.endBackgroundTask(weakSelf.backgroundTask)
+                    weakSelf.backgroundTask = UIBackgroundTaskInvalid
                 })
                 
             default:
@@ -316,55 +408,19 @@ extension TrackingManager {
                 self.backgroundTask = UIBackgroundTaskInvalid
             }
         }
-        
-        backgroundWorkItem = item
-        queue.asyncAfter(deadline: .now() + Constants.Session.defaultTimeout, execute: item)
     }
     
-    @objc internal func applicationWillTerminate() {
-        backgroundTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
-            UIApplication.shared.endBackgroundTask(self.backgroundTask)
-            self.backgroundTask = UIBackgroundTaskInvalid
-        })
-        
-        // If we track sessions automaticall
-        if repository.configuration.automaticSessionTracking {
-            triggerEndSession()
-        }
-        
-        switch flushingMode {
-        case .periodic(_):
-            // Invalidate the timer
-            flushingTimer?.invalidate()
-            flushingTimer = nil
-            
-            // Continue to flush data on line below
-            fallthrough
-            
-        case .automatic, .immediate:
-            flushData()
-            
-        default:
-            break
-        }
-    }
-    
-    fileprivate var shouldTrackCurrentSession: Bool {
-        /// Make sure a session was started
-        guard sessionStartTime > 0 else {
-            Exponea.logger.log(.warning, message: """
-            Session not started - you need to first start a session before ending it.
-            """)
+    internal var shouldTrackCurrentSession: Bool {
+        /// Avoid tracking if session not started
+        guard sessionStartTime != 0 else {
             return false
         }
         
-        // If current session didn't end yet, then we shouldn't track it
-        guard sessionEndTime > 0 else {
-            return false
-        }
+        // Get current time to calculate duration
+        let currentTime = Date().timeIntervalSince1970
         
         /// Calculate the session duration
-        let sessionDuration = sessionEndTime - sessionStartTime
+        let sessionDuration = sessionEndTime - currentTime
         
         /// Session should be ended
         if sessionDuration > repository.configuration.sessionTimeout {
@@ -372,47 +428,6 @@ extension TrackingManager {
         } else {
             return false
         }
-    }
-    
-    internal func trackStartSession(projectToken: String) throws {
-        try database.trackEvent(with: [.projectToken(projectToken),
-                                       .properties(device.properties),
-                                       .eventType(Constants.EventTypes.sessionStart),
-                                       .timestamp(sessionStartTime)])
-    }
-    
-    fileprivate func triggerEndSession() {
-        // Set the session end to the time when the app terminates
-        sessionEndTime = Date().timeIntervalSince1970
-        
-        // Track session end (when terminating)
-        do {
-            try track(.sessionEnd, with: nil)
-            
-            // Reset session times
-            sessionStartTime = 0
-            sessionEndTime = 0
-            
-            Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionEnd)
-        } catch {
-            Exponea.logger.log(.error, message: error.localizedDescription)
-        }
-    }
-    
-    internal func trackEndSession(projectToken: String) throws {
-        /// Prepare data to persist into coredata.
-        var properties = device.properties
-        
-        /// Calculate the duration of the last session.
-        let duration = sessionEndTime - sessionStartTime
-        
-        /// Adding session end properties.
-        properties["duration"] = .double(duration)
-        
-        try database.trackEvent(with: [.projectToken(projectToken),
-                                       .properties(properties),
-                                       .eventType(Constants.EventTypes.sessionEnd),
-                                       .timestamp(sessionEndTime)])
     }
 }
 
