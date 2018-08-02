@@ -170,6 +170,9 @@ extension DatabaseManager: DatabaseManagerType {
     public func trackEvent(with data: [DataType]) throws {
         let trackEvent = TrackEvent(context: context)
         trackEvent.customer = customer
+        
+        // Always specify a timestamp
+        trackEvent.timestamp = Date().timeIntervalSince1970
 
         for type in data {
             switch type {
@@ -180,7 +183,7 @@ extension DatabaseManager: DatabaseManagerType {
                 trackEvent.eventType = event
 
             case .timestamp(let time):
-                trackEvent.timestamp = time ?? Date().timeIntervalSince1970
+                trackEvent.timestamp = time ?? trackEvent.timestamp
 
             case .properties(let properties):
                 // Add the event properties to the events entity
@@ -208,9 +211,12 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `properties`
     ///     - `timestamp`
     /// - Throws: <#throws value description#>
-    public func trackCustomer(with data: [DataType]) throws {
+    public func identifyCustomer(with data: [DataType]) throws {
         let trackCustomer = TrackCustomer(context: context)
         trackCustomer.customer = customer
+        
+        // Always specify a timestamp
+        trackCustomer.timestamp = Date().timeIntervalSince1970
 
         for type in data {
             switch type {
@@ -221,7 +227,7 @@ extension DatabaseManager: DatabaseManagerType {
                 trackCustomer.customer = fetchCustomerAndUpdate(with: ids)
 
             case .timestamp(let time):
-                trackCustomer.timestamp = time ?? Date().timeIntervalSince1970
+                trackCustomer.timestamp = time ?? trackCustomer.timestamp
 
             case .properties(let properties):
                 // Add the customer properties to the customer entity

@@ -130,23 +130,20 @@ extension Exponea {
     
     // MARK: Sessions
     
-    /// Restart any tasks that were paused (or not yet started) while the application was inactive.
-    /// If the application was previously in the background, optionally refresh the user interface.
     public func trackSessionStart() {
         do {
             let dependencies = try getDependenciesIfConfigured()
-            try dependencies.trackingManager.track(.sessionStart, with: nil)
+            try dependencies.trackingManager.triggerSessionStart()
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
     }
     
-    /// Restart any tasks that were paused (or not yet started) while the application was inactive.
-    /// If the application was previously in the background, optionally refresh the user interface.
+    /// Tracks a
     public func trackSessionEnd() {
         do {
             let dependencies = try getDependenciesIfConfigured()
-            try dependencies.trackingManager.track(.sessionEnd, with: nil)
+            try dependencies.trackingManager.triggerSessionEnd()
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }

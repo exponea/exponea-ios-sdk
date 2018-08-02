@@ -13,14 +13,18 @@ import Foundation
 /// - missingData: Holds any missing data while trying to call the Expone API.
 /// - invalidResponse: Holds any invalid response when calling the Exponea API.
 public enum RepositoryError: LocalizedError {
+    case notAuthorized(ErrorResponse?)
     case missingData(String)
-    case serverError(ErrorResponse?)
-    case urlNotFound(ErrorResponse?)
+    case serverError(MultipleErrorResponse?)
+    case urlNotFound(MultipleErrorResponse?)
     case invalidResponse(URLResponse?)
     
     /// Return a formatted error message while doing API calls to Exponea.
     public var errorDescription: String? {
         switch self {
+        case .notAuthorized(let response):
+            let message = response?.error ?? "No details provided."
+            return "Missing or invalid authorization: \(message)"
         case .missingData(let details):
             return "Request is missing required data: \(details)"
         case .invalidResponse(let response):

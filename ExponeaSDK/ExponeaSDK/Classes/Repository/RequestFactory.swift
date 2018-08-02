@@ -153,12 +153,16 @@ extension RequestFactory {
                 let text = String(data: data, encoding: .utf8)
                 resultAction(.failure(RepositoryError.missingData(text ?? response?.description ?? "N/A")))
                 
+            case 401:
+                let response = try? decoder.decode(ErrorResponse.self, from: data)
+                resultAction(.failure(RepositoryError.notAuthorized(response)))
+                
             case 404:
-                let errorResponse = try? decoder.decode(ErrorResponse.self, from: data)
+                let errorResponse = try? decoder.decode(MultipleErrorResponse.self, from: data)
                 resultAction(.failure(RepositoryError.urlNotFound(errorResponse)))
                 
             case 500...Int.max:
-                let errorResponse = try? decoder.decode(ErrorResponse.self, from: data)
+                let errorResponse = try? decoder.decode(MultipleErrorResponse.self, from: data)
                 resultAction(.failure(RepositoryError.serverError(errorResponse)))
                 
             default:

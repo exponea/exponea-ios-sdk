@@ -13,7 +13,7 @@ public protocol DatabaseManagerType: class {
     var customer: Customer { get }
     
     func trackEvent(with data: [DataType]) throws
-    func trackCustomer(with data: [DataType]) throws
+    func identifyCustomer(with data: [DataType]) throws
     
     func fetchTrackCustomer() throws -> [TrackCustomer]
     func fetchTrackEvent() throws -> [TrackEvent]

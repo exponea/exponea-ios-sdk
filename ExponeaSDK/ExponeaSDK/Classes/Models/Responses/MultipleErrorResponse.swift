@@ -8,25 +8,30 @@
 
 import Foundation
 
-/// <#Description#>
 public struct ErrorResponse: Codable {
+    let error: String
+    let success: Bool
+}
+
+/// A structure contain
+public struct MultipleErrorResponse: Codable {
     
     /// <#Description#>
-    var errors: ErrorContent
+    let errors: [ErrorContent]
     
     /// <#Description#>
-    var success: Bool
+    let success: Bool
 }
 
 /// <#Description#>
 public struct ErrorContent: Codable {
     
     /// <#Description#>
-    var code: Int
+    let code: Int
     
     /// <#Description#>
-    var description: String
+    let description: String
     
     /// <#Description#>
-    var message: String
+    let message: String
 }

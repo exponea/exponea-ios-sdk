@@ -27,14 +27,14 @@ class MemoryLogger: Logger {
             return false
         }
         
-        // Print our log
-        logMessage("\(level.name): \(message)")
-        return true
+        // For example app purposes, create log with less clutter
+        logs.append("\(level.name): \(message)")
+        
+        // Get the SDK logging
+        return super.log(level, message: message, fileName: fileName, line: line, funcName: funcName)
     }
     
     override func logMessage(_ message: String) {
-        logs.append(message)
-        
         print(message)
         
         DispatchQueue.main.async {

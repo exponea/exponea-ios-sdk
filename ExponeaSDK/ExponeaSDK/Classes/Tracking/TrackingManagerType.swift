@@ -22,6 +22,14 @@ protocol TrackingManagerType: class {
     /// - Throws: An error of type `TrackingManagerError`.
     func track(_ type: EventType, with data: [DataType]?) throws
 
+    // MARK: - Session -
+    
+    /// Starts a session and tracks the event.
+    func triggerSessionStart() throws
+    
+    /// Ends a session and tracks the event.
+    func triggerSessionEnd() throws
+    
     // MARK: - Flushing -
 
     /// Flushing mode specifies how often and if should data be automatically flushed to Exponea.
@@ -30,4 +38,7 @@ protocol TrackingManagerType: class {
     
     /// This method can be used to manually flush all available data to Exponea.
     func flushData()
+    
+    /// This method can be used to manually flush all avialable data to Exponea with completion closure.
+    func flushData(completion: (() -> Void)?)
 }
