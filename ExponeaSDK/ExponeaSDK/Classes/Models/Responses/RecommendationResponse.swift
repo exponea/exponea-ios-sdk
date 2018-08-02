@@ -16,8 +16,8 @@ import Foundation
 public struct RecommendationResponse: Codable {
     
     /// Status of the http response.
-    public let success: Bool?
+    public let success: Bool
     
     /// Holds the returned string data from the Exponea API.
-    public let results: [StringResponse]?
+    public let results: [StringResponse]
 }

@@ -24,8 +24,8 @@ class FetchViewController: UIViewController {
             case .success(let recom):
                 AppDelegate.memoryLogger.logMessage("\(recom)")
                 self.showAlert(title: "Fetch Recommendation", message: """
-                    Success: \(recom.success ?? false)
-                    Content: \(recom.results ?? [])
+                    Success: \(recom.success)
+                    Content: \(recom.results)
                     """)
             case .failure(let error):
                 AppDelegate.memoryLogger.logMessage(error.localizedDescription)
@@ -100,8 +100,8 @@ class FetchViewController: UIViewController {
                     case .success(let recom):
                         AppDelegate.memoryLogger.logMessage("\(recom)")
                         self.showAlert(title: "Fetch Attributes", message: """
-                            Type: \(recom.type)
-                            List: \(recom.list)
+                            Success: \(recom.success)
+                            Content: \(recom.results)
                             """)
                     case .failure(let error):
                         AppDelegate.memoryLogger.logMessage(error.localizedDescription)

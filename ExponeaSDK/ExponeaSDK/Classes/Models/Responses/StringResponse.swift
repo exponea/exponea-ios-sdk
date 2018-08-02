@@ -16,8 +16,8 @@ import Foundation
 public struct StringResponse: Codable {
     
     /// Status of the http response.
-    public let success: Bool?
+    public let success: Bool
     
     /// Holds the string data from the Exponea API.
-    public let value: String?
+    public let value: String
 }
