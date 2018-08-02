@@ -25,14 +25,18 @@ class ExponeaErrorSpec: QuickSpec {
                 }
                 
                 it("Configured error") {
-                    let exponeaError = ExponeaError.configurationError("Spec")
-                    let errorDesc = "The provided configuration contains error(s). Please, fix them before initialising Exponea SDK.Spec"
+                    let exponeaError = ExponeaError.configurationError("Error Description")
+                    let errorDesc = """
+                    The provided configuration contains error(s). \
+                    Please, fix them before initialising Exponea SDK.
+                    Error Description
+                    """
                     expect(exponeaError.localizedDescription).to(equal(errorDesc))
                 }
                 
                 it("Unknow error") {
-                    let exponeaError = ExponeaError.unknownError("Unknow")
-                    let errorDesc = "Unknown error. Unknow"
+                    let exponeaError = ExponeaError.unknownError("Unknown")
+                    let errorDesc = "Unknown error. Unknown"
                     expect(exponeaError.localizedDescription).to(equal(errorDesc))
                 }
             }
