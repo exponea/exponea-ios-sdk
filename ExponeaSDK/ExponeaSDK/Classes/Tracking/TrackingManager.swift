@@ -240,8 +240,9 @@ extension TrackingManager {
         
         // Reschedule flushing timer if using periodic flushing mode
         if case let .periodic(interval) = flushingMode {
-            flushingTimer = Timer(timeInterval: TimeInterval(interval), target: self,
-                                  selector: #selector(flushData), userInfo: nil, repeats: true)
+            flushingTimer = Timer.scheduledTimer(timeInterval: TimeInterval(interval),
+                                                 target: self, selector: #selector(flushData),
+                                                 userInfo: nil, repeats: true)
         }
         
         // Make sure we are allowed to automatically track sessions
@@ -503,8 +504,9 @@ extension TrackingManager {
             
         case .periodic(let interval):
             // Schedule a timer for the specified interval
-            flushingTimer = Timer(timeInterval: TimeInterval(interval), target: self,
-                                  selector: #selector(flushData), userInfo: nil, repeats: true)
+            flushingTimer = Timer.scheduledTimer(timeInterval: TimeInterval(interval),
+                                                 target: self, selector: #selector(flushData),
+                                                 userInfo: nil, repeats: true)
         default:
             // No need to do anything for manual or automatic (tracked on app events) or immediate
             break
