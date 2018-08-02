@@ -137,7 +137,7 @@ extension ServerRepository: RepositoryType {
     ///   - customerIds: Identification of a customer.
     func fetchAttributes(attributes: [AttributesDescription],
                          for customerIds: [String: JSONValue],
-                         completion: @escaping (Result<AttributesListDescription>) -> Void) {
+                         completion: @escaping (Result<AttributesResponse>) -> Void) {
         let router = RequestFactory(baseUrl: configuration.baseUrl,
                                     projectToken: configuration.fetchingToken,
                                     route: .customerAttributes)

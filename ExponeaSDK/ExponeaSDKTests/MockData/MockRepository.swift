@@ -39,6 +39,18 @@ class MockRepository {
         bundle = Bundle(for: type(of: self))
     }
     
+    func retrieveDataFromFile(with fileName: String, fileType: String) -> Data {
+        
+        /// Get the json content of file
+        guard
+            let file = bundle.url(forResource: fileName, withExtension: fileType),
+            let data = try? Data(contentsOf: file)
+            else {
+                fatalError("Something is horribly wrong with the data.")
+        }
+        return data
+    }
+    
 }
 
 extension MockRepository: TrackingRepository {
@@ -143,18 +155,6 @@ extension MockRepository: TrackingRepository {
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
-    
-    func retrieveDataFromFile(with fileName: String, fileType: String) -> Data {
-        
-        /// Get the json content of file
-        guard
-            let file = bundle.url(forResource: fileName, withExtension: fileType),
-            let data = try? Data(contentsOf: file)
-            else {
-                fatalError("Something is horribly wrong with the data.")
-        }
-        return data
-    }
 }
 
 extension MockRepository: FetchRepository {
@@ -184,8 +184,31 @@ extension MockRepository: FetchRepository {
             .resume()
     }
     
-    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String : JSONValue], completion: @escaping (Result<AttributesListDescription>) -> Void) {
+    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String : JSONValue], completion: @escaping (Result<AttributesResponse>) -> Void) {
+        let router = RequestFactory(baseUrl: configuration.baseUrl,
+                                    projectToken: configuration.fetchingToken,
+                                    route: .customerAttributes)
+        let parameters = CustomerParameters(customer: customerIds, attributes: attributes)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            parameters: parameters)
         
+        let data = retrieveDataFromFile(with: "get-attributes", fileType: "json")
+        
+        /// Prepare the stub response.
+        guard let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil) else {
+            fatalError("It was not possible to mock the HTTP response.")
+        }
+        
+        /// Add the stub response to the mock server.
+        MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
+            return true
+        }) { (request) -> (Response) in
+            return Response.success(stubResponse, .content(data))
+        }
+        
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
     }
     
     func fetchEvents(events: EventsRequest, for customerIds: [String : JSONValue], completion: @escaping (Result<EventsResponse>) -> Void) {
@@ -216,11 +239,55 @@ extension MockRepository: FetchRepository {
     }
     
     func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
+        let router = RequestFactory(baseUrl: configuration.baseUrl,
+                                    projectToken: configuration.fetchingToken,
+                                    route: .banners)
+        let request = router.prepareRequest(authorization: configuration.authorization)
         
+        let data = retrieveDataFromFile(with: "get-banner", fileType: "json")
+        
+        /// Prepare the stub response.
+        guard let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil) else {
+            fatalError("It was not possible to mock the HTTP response.")
+        }
+        
+        /// Add the stub response to the mock server.
+        MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
+            return true
+        }) { (request) -> (Response) in
+            return Response.success(stubResponse, .content(data))
+        }
+        
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
     }
     
     func fetchPersonalization(with request: PersonalizationRequest, for customerIds: [String : JSONValue], completion: @escaping (Result<PersonalizationResponse>) -> Void) {
+        let router = RequestFactory(baseUrl: configuration.baseUrl,
+                                    projectToken: configuration.fetchingToken,
+                                    route: .personalization)
+        let request = router.prepareRequest(authorization: configuration.authorization,
+                                            parameters: request,
+                                            customerIds: customerIds)
         
+        let data = retrieveDataFromFile(with: "get-personalization", fileType: "json")
+        
+        /// Prepare the stub response.
+        guard let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil) else {
+            fatalError("It was not possible to mock the HTTP response.")
+        }
+        
+        /// Add the stub response to the mock server.
+        MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
+            return true
+        }) { (request) -> (Response) in
+            return Response.success(stubResponse, .content(data))
+        }
+        
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
     }
     
     

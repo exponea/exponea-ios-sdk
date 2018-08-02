@@ -16,6 +16,6 @@ public struct Banner: Codable {
     public let trigger: BannerTrigger
     
     enum CodingKeys: String, CodingKey {
-        case id = "_id", dateFilter = "date_filter", deviceTarget = "device_target", frequency, trigger
+        case id = "id", dateFilter = "date_filter", deviceTarget = "device_target", frequency, trigger
     }
 }

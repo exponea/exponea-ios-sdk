@@ -45,7 +45,7 @@
 		C07E420B20CA8A3300920809 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E420A20CA8A3300920809 /* Banner.swift */; };
 		C07E420D20CA8A3C00920809 /* Personalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E420C20CA8A3C00920809 /* Personalization.swift */; };
 		C07E420F20CA8AF700920809 /* DateFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E420E20CA8AF700920809 /* DateFilter.swift */; };
-		C07E421220CA8B9900920809 /* DeviceTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E421120CA8B9900920809 /* DeviceTarget.swift */; };
+		C07E421220CA8B9900920809 /* DeviceTargetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E421120CA8B9900920809 /* DeviceTargetType.swift */; };
 		C07E421420CA8C1B00920809 /* BannerFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E421320CA8C1B00920809 /* BannerFrequency.swift */; };
 		C07E421620CA8D1800920809 /* BannerTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07E421520CA8D1800920809 /* BannerTrigger.swift */; };
 		C07F1BC7209A474A004FE933 /* EntityValueResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */; };
@@ -108,6 +108,14 @@
 		F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA9A2111AF7E00591950 /* RequestParametersTypeSpec.swift */; };
 		F04BEA9D2111B5DF00591950 /* MockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA9C2111B5DF00591950 /* MockRepository.swift */; };
 		F04BEAA12111EA8700591950 /* get-events.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA02111EA8700591950 /* get-events.json */; };
+		F04BEAA32111F85900591950 /* get-banner.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA22111F85900591950 /* get-banner.json */; };
+		F04BEAA52112412000591950 /* get-personalization.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA42112412000591950 /* get-personalization.json */; };
+		F04BEAA72112413C00591950 /* get-attributes.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA62112413C00591950 /* get-attributes.json */; };
+		F04BEAA9211266DD00591950 /* FetchBannerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEAA8211266DD00591950 /* FetchBannerSpec.swift */; };
+		F04BEAAB21126D2000591950 /* DeviceTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEAAA21126D2000591950 /* DeviceTarget.swift */; };
+		F04BEAAD211270CC00591950 /* FetchPersonalizationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEAAC211270CC00591950 /* FetchPersonalizationSpec.swift */; };
+		F04BEAAF211273A200591950 /* FetchAttributesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEAAE211273A200591950 /* FetchAttributesSpec.swift */; };
+		F04BEAB12112E3B100591950 /* AttributesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEAB02112E3B100591950 /* AttributesResponse.swift */; };
 		F063BEAA207E36E600030811 /* MockDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockDatabase.swift */; };
 		F06744072085E983003C0293 /* StubEntities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06744062085E983003C0293 /* StubEntities.swift */; };
 		F067440D208642AC003C0293 /* TrackCustomerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067440C208642AC003C0293 /* TrackCustomerSpec.swift */; };
@@ -209,7 +217,7 @@
 		C07E420A20CA8A3300920809 /* Banner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banner.swift; sourceTree = "<group>"; };
 		C07E420C20CA8A3C00920809 /* Personalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Personalization.swift; sourceTree = "<group>"; };
 		C07E420E20CA8AF700920809 /* DateFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFilter.swift; sourceTree = "<group>"; };
-		C07E421120CA8B9900920809 /* DeviceTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTarget.swift; sourceTree = "<group>"; };
+		C07E421120CA8B9900920809 /* DeviceTargetType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTargetType.swift; sourceTree = "<group>"; };
 		C07E421320CA8C1B00920809 /* BannerFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerFrequency.swift; sourceTree = "<group>"; };
 		C07E421520CA8D1800920809 /* BannerTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTrigger.swift; sourceTree = "<group>"; };
 		C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityValueResponse.swift; sourceTree = "<group>"; };
@@ -276,6 +284,14 @@
 		F04BEA9A2111AF7E00591950 /* RequestParametersTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestParametersTypeSpec.swift; sourceTree = "<group>"; };
 		F04BEA9C2111B5DF00591950 /* MockRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepository.swift; sourceTree = "<group>"; };
 		F04BEAA02111EA8700591950 /* get-events.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-events.json"; sourceTree = "<group>"; };
+		F04BEAA22111F85900591950 /* get-banner.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-banner.json"; sourceTree = "<group>"; };
+		F04BEAA42112412000591950 /* get-personalization.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-personalization.json"; sourceTree = "<group>"; };
+		F04BEAA62112413C00591950 /* get-attributes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-attributes.json"; sourceTree = "<group>"; };
+		F04BEAA8211266DD00591950 /* FetchBannerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBannerSpec.swift; sourceTree = "<group>"; };
+		F04BEAAA21126D2000591950 /* DeviceTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTarget.swift; sourceTree = "<group>"; };
+		F04BEAAC211270CC00591950 /* FetchPersonalizationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPersonalizationSpec.swift; sourceTree = "<group>"; };
+		F04BEAAE211273A200591950 /* FetchAttributesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchAttributesSpec.swift; sourceTree = "<group>"; };
+		F04BEAB02112E3B100591950 /* AttributesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesResponse.swift; sourceTree = "<group>"; };
 		F063BEA9207E36E600030811 /* MockDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDatabase.swift; sourceTree = "<group>"; };
 		F06744062085E983003C0293 /* StubEntities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubEntities.swift; sourceTree = "<group>"; };
 		F067440C208642AC003C0293 /* TrackCustomerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCustomerSpec.swift; sourceTree = "<group>"; };
@@ -440,7 +456,8 @@
 				C07E420C20CA8A3C00920809 /* Personalization.swift */,
 				C07E420A20CA8A3300920809 /* Banner.swift */,
 				C07E420E20CA8AF700920809 /* DateFilter.swift */,
-				C07E421120CA8B9900920809 /* DeviceTarget.swift */,
+				F04BEAAA21126D2000591950 /* DeviceTarget.swift */,
+				C07E421120CA8B9900920809 /* DeviceTargetType.swift */,
 				C07E421320CA8C1B00920809 /* BannerFrequency.swift */,
 				C07E421520CA8D1800920809 /* BannerTrigger.swift */,
 			);
@@ -556,6 +573,7 @@
 				C01E19E920C02A4D00DF64F9 /* ErrorResponse.swift */,
 				C07E420020CA896B00920809 /* PersonalizationResponse.swift */,
 				C07E420420CA898700920809 /* BannerResponse.swift */,
+				F04BEAB02112E3B100591950 /* AttributesResponse.swift */,
 			);
 			path = Responses;
 			sourceTree = "<group>";
@@ -690,6 +708,9 @@
 			children = (
 				F029BF34208DBE1100342498 /* get-recommendation.json */,
 				F04BEAA02111EA8700591950 /* get-events.json */,
+				F04BEAA22111F85900591950 /* get-banner.json */,
+				F04BEAA42112412000591950 /* get-personalization.json */,
+				F04BEAA62112413C00591950 /* get-attributes.json */,
 			);
 			path = json;
 			sourceTree = "<group>";
@@ -709,6 +730,9 @@
 			children = (
 				F067441620878FA1003C0293 /* FetchEventsSpec.swift */,
 				F029BF2E208A386E00342498 /* FetchRecommendationSpec.swift */,
+				F04BEAA8211266DD00591950 /* FetchBannerSpec.swift */,
+				F04BEAAC211270CC00591950 /* FetchPersonalizationSpec.swift */,
+				F04BEAAE211273A200591950 /* FetchAttributesSpec.swift */,
 			);
 			path = Fetching;
 			sourceTree = "<group>";
@@ -981,7 +1005,10 @@
 				F029BF35208DBE1200342498 /* get-recommendation.json in Resources */,
 				01764BC62087775800D0D673 /* config_valid.plist in Resources */,
 				F04BEAA12111EA8700591950 /* get-events.json in Resources */,
+				F04BEAA32111F85900591950 /* get-banner.json in Resources */,
 				01764BC82087794000D0D673 /* config_valid2.plist in Resources */,
+				F04BEAA52112412000591950 /* get-personalization.json in Resources */,
+				F04BEAA72112413C00591950 /* get-attributes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1053,6 +1080,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F04BEAB12112E3B100591950 /* AttributesResponse.swift in Sources */,
 				C0EB5D9320B811F900F1031F /* PushNotificationManager.swift in Sources */,
 				C07F1BC7209A474A004FE933 /* EntityValueResponse.swift in Sources */,
 				F029BF21208A089C00342498 /* EventsResponse.swift in Sources */,
@@ -1105,6 +1133,7 @@
 				F029BF29208A099500342498 /* Routes.swift in Sources */,
 				C0D9B08120A3C0D50066FB1E /* Authorization.swift in Sources */,
 				01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */,
+				F04BEAAB21126D2000591950 /* DeviceTarget.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
 				C01E19EA20C02A4D00DF64F9 /* ErrorResponse.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
@@ -1122,7 +1151,7 @@
 				C0EB5DA620BB59BD00F1031F /* RequestParametersType.swift in Sources */,
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
 				F029BF2D208A2C5200342498 /* StringResponse.swift in Sources */,
-				C07E421220CA8B9900920809 /* DeviceTarget.swift in Sources */,
+				C07E421220CA8B9900920809 /* DeviceTargetType.swift in Sources */,
 				C0EB5D9020B7F8A900F1031F /* DispatchQueue+OnceTracker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1151,6 +1180,7 @@
 				C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */,
 				F029BF2F208A386E00342498 /* FetchRecommendationSpec.swift in Sources */,
 				F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */,
+				F04BEAAD211270CC00591950 /* FetchPersonalizationSpec.swift in Sources */,
 				F04BEA8621111A6100591950 /* EventSpec.swift in Sources */,
 				F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */,
 				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,
@@ -1158,8 +1188,10 @@
 				F04BEA9021119C1500591950 /* AuthorizationSpec.swift in Sources */,
 				C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */,
 				F067440D208642AC003C0293 /* TrackCustomerSpec.swift in Sources */,
+				F04BEAAF211273A200591950 /* FetchAttributesSpec.swift in Sources */,
 				F063BEAA207E36E600030811 /* MockDatabase.swift in Sources */,
 				F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */,
+				F04BEAA9211266DD00591950 /* FetchBannerSpec.swift in Sources */,
 				F04BEA8E21118F4700591950 /* ResultSpec.swift in Sources */,
 				F0BE60F221105FF70082ABD8 /* EventTypeSpec.swift in Sources */,
 				F04BEA9521119F9400591950 /* DatabaseManagerErrorSpec.swift in Sources */,

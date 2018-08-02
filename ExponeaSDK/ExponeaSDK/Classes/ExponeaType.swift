@@ -127,7 +127,7 @@ public protocol ExponeaType: class {
     ///     - request: Customer attribues from a specific customer to be retrieve.
     ///     - completion: Object containing the data requested.
     func fetchAttributes(with request: AttributesDescription,
-                         completion: @escaping (Result<AttributesListDescription>) -> Void)
+                         completion: @escaping (Result<AttributesResponse>) -> Void)
     
     /// Fetch all available banners.
     ///

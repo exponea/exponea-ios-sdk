@@ -47,7 +47,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - attributes: List of attributes you want to retrieve.
     func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String: JSONValue],
-                         completion: @escaping (Result<AttributesListDescription>) -> Void)
+                         completion: @escaping (Result<AttributesResponse>) -> Void)
 
     /// Fetch customer events by its type.
     ///
