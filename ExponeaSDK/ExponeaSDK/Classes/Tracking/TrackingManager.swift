@@ -41,7 +41,7 @@ open class TrackingManager {
     internal var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid {
         didSet {
             if backgroundTask == UIBackgroundTaskInvalid && backgroundWorkItem != nil {
-                Exponea.logger.log(.verbose, message: "Background task ended, stopping backgroun work item.")
+                Exponea.logger.log(.verbose, message: "Background task ended, stopping background work item.")
                 backgroundWorkItem?.cancel()
                 backgroundWorkItem = nil
             }
@@ -122,7 +122,7 @@ open class TrackingManager {
     internal func trackInstallEvent() {
         /// Checking if the APP was launched before.
         /// If the key value is false, means that the event was not fired before.
-        guard !userDefaults.bool(forKey: Constants.Keys.launchedBefore) else {
+        guard userDefaults.bool(forKey: Constants.Keys.launchedBefore) == false else {
             Exponea.logger.log(.verbose, message: "Install event was already tracked, skipping.")
             return
         }
@@ -135,8 +135,6 @@ open class TrackingManager {
             
             /// Set the value to true if event was executed successfully
             userDefaults.set(true, forKey: Constants.Keys.launchedBefore)
-            /// Set default timeout session time with default value
-            userDefaults.set(Constants.Session.defaultTimeout, forKey: Constants.Keys.timeout)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
@@ -240,9 +238,10 @@ extension TrackingManager {
         
         // Reschedule flushing timer if using periodic flushing mode
         if case let .periodic(interval) = flushingMode {
-            flushingTimer = Timer.scheduledTimer(timeInterval: TimeInterval(interval),
-                                                 target: self, selector: #selector(flushData),
-                                                 userInfo: nil, repeats: true)
+            flushingTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(interval),
+                                                 repeats: true) { _ in
+                self.flushData()
+            }
         }
         
         // Make sure we are allowed to automatically track sessions
@@ -252,7 +251,7 @@ extension TrackingManager {
         
         // If this is first session start, then
         guard sessionStartTime != 0 else {
-            Exponea.logger.log(.verbose, message: "Starting a new session.")
+            Exponea.logger.log(.verbose, message: "Starting first session.")
             sessionStartTime = Date().timeIntervalSince1970
 
             // Track session end, if we are allowed to
@@ -305,13 +304,17 @@ extension TrackingManager {
                 fallthrough
                 
             case .automatic, .immediate:
-                self.flushData()
+                // Only stop background task after we upload
+                self.flushData(completion: {
+                    UIApplication.shared.endBackgroundTask(self.backgroundTask)
+                    self.backgroundTask = UIBackgroundTaskInvalid
+                })
                 
-            default: break
+            default:
+                // We're done
+                UIApplication.shared.endBackgroundTask(self.backgroundTask)
+                self.backgroundTask = UIBackgroundTaskInvalid
             }
-            
-            UIApplication.shared.endBackgroundTask(self.backgroundTask)
-            self.backgroundTask = UIBackgroundTaskInvalid
         }
         
         backgroundWorkItem = item
@@ -372,16 +375,10 @@ extension TrackingManager {
     }
     
     internal func trackStartSession(projectToken: String) throws {
-        /// Prepare data to persist into coredata.
-        var properties = device.properties
-        
-        /// Adding session start properties.
-        properties["event_type"] = .string(Constants.EventTypes.sessionStart)
-        properties["timestamp"] = .double(sessionStartTime)
-        
         try database.trackEvent(with: [.projectToken(projectToken),
-                                       .properties(properties),
-                                       .eventType(Constants.EventTypes.sessionStart)])
+                                       .properties(device.properties),
+                                       .eventType(Constants.EventTypes.sessionStart),
+                                       .timestamp(sessionStartTime)])
     }
     
     fileprivate func triggerEndSession() {
@@ -410,20 +407,27 @@ extension TrackingManager {
         let duration = sessionEndTime - sessionStartTime
         
         /// Adding session end properties.
-        properties["event_type"] = .string(Constants.EventTypes.sessionEnd)
-        properties["timestamp"] = .double(sessionStartTime)
         properties["duration"] = .double(duration)
         
         try database.trackEvent(with: [.projectToken(projectToken),
                                        .properties(properties),
-                                       .eventType(Constants.EventTypes.sessionEnd)])
+                                       .eventType(Constants.EventTypes.sessionEnd),
+                                       .timestamp(sessionEndTime)])
     }
 }
 
 // MARK: - Flushing -
 
 extension TrackingManager {
+    
     @objc func flushData() {
+        flushData(completion: nil)
+    }
+    
+    /// Method that flushes all data to the API.
+    ///
+    /// - Parameter completion: A completion that is called after all calls succeed or fail.
+    func flushData(completion: (() -> Void)?) {
         do {
             // Pull from db
             let events = try database.fetchTrackEvent().reversed()
@@ -439,14 +443,28 @@ extension TrackingManager {
                 return
             }
             
-            flushCustomerTracking(Array(customers))
-            flushEventTracking(Array(events))
+            var customersDone = false
+            var eventsDone = false
+            
+            flushCustomerTracking(Array(customers), completion: {
+                customersDone = true
+                if eventsDone && customersDone {
+                    completion?()
+                }
+            })
+            flushEventTracking(Array(events), completion: {
+                eventsDone = true
+                if eventsDone && customersDone {
+                    completion?()
+                }
+            })
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
     }
     
-    func flushCustomerTracking(_ customers: [TrackCustomer]) {
+    func flushCustomerTracking(_ customers: [TrackCustomer], completion: (() -> Void)? = nil) {
+        var counter = customers.count
         for customer in customers {
             repository.trackCustomer(with: customer.dataTypes, for: customerIds) { [weak self] (result) in
                 switch result {
@@ -467,11 +485,22 @@ extension TrackingManager {
                         Failed to upload customer update. \(error.localizedDescription)
                         """)
                 }
+                
+                counter -= 1
+                if counter == 0 {
+                    completion?()
+                }
             }
+        }
+        
+        // If we have no customer updates, call completion
+        if customers.isEmpty {
+            completion?()
         }
     }
     
-    func flushEventTracking(_ events: [TrackEvent]) {
+    func flushEventTracking(_ events: [TrackEvent], completion: (() -> Void)? = nil) {
+        var counter = events.count
         for event in events {
             repository.trackEvent(with: event.dataTypes, for: customerIds) { [weak self] (result) in
                 switch result {
@@ -487,7 +516,17 @@ extension TrackingManager {
                 case .failure(let error):
                     Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
                 }
+                
+                counter -= 1
+                if counter == 0 {
+                    completion?()
+                }
             }
+        }
+        
+        // If we have no events, call completion
+        if events.isEmpty {
+            completion?()
         }
     }
     
@@ -504,9 +543,10 @@ extension TrackingManager {
             
         case .periodic(let interval):
             // Schedule a timer for the specified interval
-            flushingTimer = Timer.scheduledTimer(timeInterval: TimeInterval(interval),
-                                                 target: self, selector: #selector(flushData),
-                                                 userInfo: nil, repeats: true)
+            flushingTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(interval),
+                                                 repeats: true) { _ in
+                self.flushData()
+            }
         default:
             // No need to do anything for manual or automatic (tracked on app events) or immediate
             break

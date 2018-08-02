@@ -29,7 +29,7 @@
 		01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */; };
 		01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */; };
 		01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DC0207F63970031BFEB /* FlushingMode.swift */; };
-		C01E19EA20C02A4D00DF64F9 /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01E19E920C02A4D00DF64F9 /* ErrorResponse.swift */; };
+		C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */; };
 		C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */; };
 		C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C028C3A12110980600B03ED4 /* JSONValueSpec.swift */; };
 		C0329E5F20F76EB00051F5DF /* URLRequest+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */; };
@@ -201,7 +201,7 @@
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
-		C01E19E920C02A4D00DF64F9 /* ErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
+		C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleErrorResponse.swift; sourceTree = "<group>"; };
 		C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
 		C028C3A12110980600B03ED4 /* JSONValueSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueSpec.swift; sourceTree = "<group>"; };
 		C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Debug.swift"; sourceTree = "<group>"; };
@@ -570,7 +570,7 @@
 				F029BF2A208A2BC300342498 /* RecommendationResponse.swift */,
 				F029BF2C208A2C5200342498 /* StringResponse.swift */,
 				C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */,
-				C01E19E920C02A4D00DF64F9 /* ErrorResponse.swift */,
+				C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */,
 				C07E420020CA896B00920809 /* PersonalizationResponse.swift */,
 				C07E420420CA898700920809 /* BannerResponse.swift */,
 				F04BEAB02112E3B100591950 /* AttributesResponse.swift */,
@@ -1135,7 +1135,7 @@
 				01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */,
 				F04BEAAB21126D2000591950 /* DeviceTarget.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
-				C01E19EA20C02A4D00DF64F9 /* ErrorResponse.swift in Sources */,
+				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,

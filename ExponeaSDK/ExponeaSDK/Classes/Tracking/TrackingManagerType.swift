@@ -30,4 +30,7 @@ protocol TrackingManagerType: class {
     
     /// This method can be used to manually flush all available data to Exponea.
     func flushData()
+    
+    /// This method can be used to manually flush all avialable data to Exponea with completion closure.
+    func flushData(completion: (() -> Void)?)
 }
