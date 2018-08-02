@@ -26,9 +26,6 @@ class TrackSessionSpec: QuickSpec {
                 it("session end shouldn't have any value") {
                     expect(Exponea.shared.userDefaults.integer(forKey: Constants.Keys.sessionEnded)).to(equal(0))
                 }
-                it("session should have default timeout value") {
-                    expect(UserDefaults.standard.double(forKey: Constants.Keys.timeout)).to(equal(Constants.Session.defaultTimeout))
-                }
             }
         }
     }
