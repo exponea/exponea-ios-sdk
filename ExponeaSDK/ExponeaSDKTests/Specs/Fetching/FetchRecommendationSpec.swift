@@ -34,7 +34,7 @@ class FetchRecommendationSpec: QuickSpec {
                             expect(result.value?.success).to(beTrue())
                         }
                         it("Result values should have 3 items") {
-                            expect(result.value?.results?.count).to(equal(3))
+                            expect(result.value?.results.count).to(equal(3))
                         }
                         
                         context("Check the values returned from json file") {
