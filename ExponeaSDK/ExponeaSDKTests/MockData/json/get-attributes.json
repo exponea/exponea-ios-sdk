@@ -1,27 +1,17 @@
 {
-    "attributes": {
-        "type": "some",
-        "list": [
-             {
-             "type": "id",
-             "id": "registered"
-             },
-             {
-             "type": "property",
-             "property": "first_name"
-             },
-             {
-             "type": "property",
-             "property": "last_name"
-             }
-        ]
-    },
-    "filter": {
-        "type": "segment",
-        "segmentation_id": "592ff585fb60094e02bfaf6a",
-        "segment_index": 1
-    },
-    "execution_time": 123456,
-    "timezone": "Europe/Bratislava",
-    "format": "table_json"
+    "success": true,
+    "results": [
+        {
+            "success": true,
+            "value": "Marian"
+        },
+        {
+            "success": true,
+            "value": "Galik"
+        },
+        {
+            "success": true,
+            "value": "Payers"
+        }
+    ]
 }

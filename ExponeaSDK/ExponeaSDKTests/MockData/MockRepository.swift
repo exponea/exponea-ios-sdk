@@ -184,7 +184,7 @@ extension MockRepository: FetchRepository {
             .resume()
     }
     
-    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String : JSONValue], completion: @escaping (Result<AttributesListDescription>) -> Void) {
+    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String : JSONValue], completion: @escaping (Result<AttributesResponse>) -> Void) {
         let router = RequestFactory(baseUrl: configuration.baseUrl,
                                     projectToken: configuration.fetchingToken,
                                     route: .customerAttributes)

@@ -33,7 +33,7 @@ extension Exponea {
     }
     
     public func fetchAttributes(with request: AttributesDescription,
-                                completion: @escaping (Result<AttributesListDescription>) -> Void) {
+                                completion: @escaping (Result<AttributesResponse>) -> Void) {
         executeWithDependencies({
             $0.repository.fetchAttributes(attributes: [request],
                                           for: $0.trackingManager.customerIds,
