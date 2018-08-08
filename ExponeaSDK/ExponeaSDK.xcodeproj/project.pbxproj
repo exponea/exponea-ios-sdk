@@ -1247,10 +1247,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDK.ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Exponea.ExponeaSDK-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "c6f88813-1cca-48a8-a51c-ad303b9664d8";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.exponea.ExponeaSDK.ExampleApp";
+				PROVISIONING_PROFILE = "33b2ad97-a1a9-43ef-abd3-70866af1a68a";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.Exponea.ExponeaSDK-Example";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1269,10 +1269,10 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDK.ExampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Exponea.ExponeaSDK-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e1cf2cb7-c5bb-4eb8-87e8-559e07f48644";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.exponea.ExponeaSDK.ExampleApp";
+				PROVISIONING_PROFILE = "4e4a6e8f-3a5e-445c-8b09-db97796f810c";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc com.Exponea.ExponeaSDK-Example";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
