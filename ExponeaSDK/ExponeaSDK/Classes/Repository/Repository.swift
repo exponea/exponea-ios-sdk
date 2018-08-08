@@ -70,8 +70,7 @@ protocol FetchRepository {
     ///   - request: Personalization request containing all the information about the request banners.
     ///   - customerIds: Identification of a customer.
     ///   - completion: Object containing the request result.
-    func fetchPersonalization(with request: PersonalizationRequest,
-                              for customerIds: [String: JSONValue],
+    func fetchPersonalization(with request: PersonalizationRequest, for customerIds: [String: JSONValue],
                               completion: @escaping (Result<PersonalizationResponse>) -> Void)
 }
 
