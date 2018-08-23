@@ -104,14 +104,25 @@ public class Exponea: ExponeaType {
     
     internal func sharedInitializer(configuration: Configuration) {
         Exponea.logger.log(.verbose, message: "Configuring Exponea with provided configuration:\n\(configuration)")
+
+        do {
+            // Create database
+            let database = try DatabaseManager()
         
-        // Recreate repository
-        let repository = ServerRepository(configuration: configuration)
-        self.repository = repository
-        
-        // Setup tracking manager
-        self.trackingManager = TrackingManager(repository: repository,
-                                               userDefaults: userDefaults)
+            // Recreate repository
+            let repository = ServerRepository(configuration: configuration)
+            self.repository = repository
+
+            // Finally, configuring tracking manager
+            self.trackingManager = TrackingManager(repository: repository,
+                                                   database: database,
+                                                   userDefaults: userDefaults)
+        } catch {
+            // Failing gracefully, if setup failed
+            Exponea.logger.log(.error, message: """
+                Error while creating a database, Exponea cannot be configured.\n\(error.localizedDescription)
+                """)
+        }
     }
 }
 

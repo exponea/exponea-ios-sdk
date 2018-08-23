@@ -392,7 +392,9 @@ class JSONValueSpec: QuickSpec {
                                                                        "other" : .string("string")]))
                     let data = try! encoder.encode(value)
                     let encoded = String(data: data, encoding: .utf8)
-                    expect(encoded).to(equal("{\"value\":{\"key\":1234,\"other\":\"string\"}}"))
+                    expect(encoded).to(contain("\"key\":1234"))
+                    expect(encoded).to(contain("\"other\":\"string\""))
+                    expect(encoded).to(contain("{\"value\":{"))
                 })
             })
         }

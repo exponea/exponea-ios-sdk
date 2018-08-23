@@ -10,11 +10,13 @@ import Foundation
 
 /// Data types that thrown the possible errors while trying to save data into coredata.
 ///
+/// - unableToLoadPeristentStore: When CoreData fails loading a persistent store.
 /// - objectDoesNotExist: Object requested does not exist.
 /// - wrongObjectType: Error while trying to cast the coredata objects.
 /// - saveCustomerFailed: Error while trying to save a customer data into coredata.
 /// - unknownError: Invalid error while trying to manipulate the data.
 public enum DatabaseManagerError: LocalizedError {
+    case unableToLoadPeristentStore(String)
     case objectDoesNotExist
     case wrongObjectType
     case saveCustomerFailed(String)
@@ -22,6 +24,9 @@ public enum DatabaseManagerError: LocalizedError {
     
     public var errorDescription: String? {
         switch self {
+        case .unableToLoadPeristentStore(let details):
+            return "Unable to load persistent store for database: \(details)"
+            
         case .objectDoesNotExist:
             return "Object does not exist."
             
@@ -32,7 +37,7 @@ public enum DatabaseManagerError: LocalizedError {
             return "Saving a new customer failed: \(details)."
             
         case .unknownError(let details):
-            return "Unknown error. \(details != nil ? details! : "")"
+            return "Unknown database error: \(details != nil ? details! : "N/A")"
         }
     }
 }

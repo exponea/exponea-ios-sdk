@@ -51,6 +51,8 @@
 		C07F1BC7209A474A004FE933 /* EntityValueResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */; };
 		C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */; };
+		C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */; };
 		C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */; };
 		C0A6DEA520EAC16900C5F744 /* TrackCustomer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */; };
 		C0A6DEA820EAC16900C5F744 /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9C20EAC16900C5F744 /* Customer.swift */; };
@@ -222,6 +224,8 @@
 		C07E421520CA8D1800920809 /* BannerTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTrigger.swift; sourceTree = "<group>"; };
 		C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityValueResponse.swift; sourceTree = "<group>"; };
 		C0843CF020B6DC6000FAF0CB /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
+		C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerSpec.swift; sourceTree = "<group>"; };
+		C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Perform.swift"; sourceTree = "<group>"; };
 		C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueItem.swift; sourceTree = "<group>"; };
 		C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackCustomer.swift; sourceTree = "<group>"; };
 		C0A6DE9C20EAC16900C5F744 /* Customer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
@@ -386,6 +390,7 @@
 		01EC2DA2207E3D060031BFEB /* Specs */ = {
 			isa = PBXGroup;
 			children = (
+				C09A6495212D83D700DCAC06 /* Database */,
 				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
 				F063BEA9207E36E600030811 /* MockDatabase.swift */,
 				F06744062085E983003C0293 /* StubEntities.swift */,
@@ -462,6 +467,14 @@
 				C07E421520CA8D1800920809 /* BannerTrigger.swift */,
 			);
 			path = Personalization;
+			sourceTree = "<group>";
+		};
+		C09A6495212D83D700DCAC06 /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */,
+			);
+			path = Database;
 			sourceTree = "<group>";
 		};
 		C0A6DE9420EAC14200C5F744 /* Core Data */ = {
@@ -821,6 +834,7 @@
 				C0EB5D8F20B7F8A900F1031F /* DispatchQueue+OnceTracker.swift */,
 				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
+				C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -1143,6 +1157,7 @@
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,
 				C07E420520CA898700920809 /* BannerResponse.swift in Sources */,
 				C07E420D20CA8A3C00920809 /* Personalization.swift in Sources */,
+				C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */,
 				C0EB5D8E20B710A900F1031F /* Data+TokenString.swift in Sources */,
 				F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */,
 				C0F2407420BDA42600CAF7CE /* ExportFormat.swift in Sources */,
@@ -1170,6 +1185,7 @@
 				F0BE60FB21106A7A0082ABD8 /* AttributesListDescriptionSpec.swift in Sources */,
 				F0BE60FD21106FB40082ABD8 /* CustomerExportRequestSpec.swift in Sources */,
 				F06744072085E983003C0293 /* StubEntities.swift in Sources */,
+				C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */,
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
 				F04BEA9221119DD200591950 /* HTTPMethodSpec.swift in Sources */,
 				01764BC42087742100D0D673 /* ConfigurationSpec.swift in Sources */,

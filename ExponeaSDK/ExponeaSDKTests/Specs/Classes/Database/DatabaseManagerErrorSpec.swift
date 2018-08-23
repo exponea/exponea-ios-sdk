@@ -12,7 +12,7 @@ import Nimble
 
 @testable import ExponeaSDK
 
-class DatabaseManagerSpec: QuickSpec {
+class DatabaseManagerErrorSpec: QuickSpec {
     override func spec() {
         describe("A database manager") {
             context("Database error handling") {
@@ -34,12 +34,12 @@ class DatabaseManagerSpec: QuickSpec {
                 
                 it("Should return a [String: Unknown error. Database not available]") {
                     let error = DatabaseManagerError.unknownError("Database not available")
-                    expect(error.errorDescription).to(equal("Unknown error. Database not available"))
+                    expect(error.errorDescription).to(equal("Unknown database error: Database not available"))
                 }
                 
                 it("Should return a [String: Unknown error.") {
                     let error = DatabaseManagerError.unknownError(nil)
-                    expect(error.errorDescription).to(equal("Unknown error. "))
+                    expect(error.errorDescription).to(equal("Unknown database error: N/A"))
                 }
             }
         }

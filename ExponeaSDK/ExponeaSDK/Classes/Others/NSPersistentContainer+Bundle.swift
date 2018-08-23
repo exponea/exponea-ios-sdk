@@ -11,6 +11,11 @@ import CoreData
 
 extension NSPersistentContainer {
     
+    /// <#Description#>
+    ///
+    /// - Parameters:
+    ///   - name: <#name description#>
+    ///   - bundle: <#bundle description#>
     public convenience init?(name: String, bundle: Bundle) {
         guard let modelURL = bundle.url(forResource: name, withExtension: "momd"),
             let objectModel = NSManagedObjectModel(contentsOf: modelURL) else {
@@ -19,5 +24,4 @@ extension NSPersistentContainer {
         
         self.init(name: name, managedObjectModel: objectModel)
     }
-    
 }

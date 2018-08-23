@@ -69,7 +69,7 @@ open class TrackingManager {
     }
     
     init(repository: RepositoryType,
-         database: DatabaseManagerType = DatabaseManager(),
+         database: DatabaseManagerType,
          device: DeviceProperties = DeviceProperties(),
          paymentManager: PaymentManagerType = PaymentManager(),
          userDefaults: UserDefaults) {

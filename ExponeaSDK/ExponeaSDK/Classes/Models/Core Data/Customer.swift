@@ -22,26 +22,27 @@ public class Customer: NSManagedObject {
     @NSManaged public var trackEvent: NSSet?
     
     var ids: [String: JSONValue] {
-        var data: [String: JSONValue] = ["cookie": .string(uuid!.uuidString)]
-        
-        // Convert all properties to key value items.
-        if let properties = customIds as? Set<KeyValueItem> {
-            properties.forEach({
-                guard let key = $0.key, let object = $0.value else {
-                    Exponea.logger.log(.warning, message: """
-                        Skipping KeyValueItem with empty key (\($0.key ?? "N/A"))) \
-                        or value (\(String(describing: $0.value))).
-                        """)
-                    return
-                }
-                
-                data[key] = DatabaseManager.processObject(object)
-            })
+        let ids: [String: JSONValue]? = managedObjectContext?.performAndWait {
+            var data: [String: JSONValue] = ["cookie": .string(uuid!.uuidString)]
+            
+            // Convert all properties to key value items.
+            if let properties = customIds as? Set<KeyValueItem> {
+                properties.forEach({
+                    guard let key = $0.key, let object = $0.value else {
+                        Exponea.logger.log(.warning, message: """
+                            Skipping KeyValueItem with empty key (\($0.key ?? "N/A"))) \
+                            or value (\(String(describing: $0.value))).
+                            """)
+                        return
+                    }
+                    
+                    data[key] = DatabaseManager.processObject(object)
+                })
+            }
+            return data
         }
-        
-        return data
+        return ids ?? [:]
     }
-
 }
 
 // MARK: - CustomStringConvertible -
