@@ -204,3 +204,15 @@ extension ServerRepository: RepositoryType {
             .resume()
     }
 }
+
+extension ServerRepository {
+    
+    // Gets and cancels all tasks
+    func cancelRequests() {
+        session.getAllTasks { (tasks) in
+            for task in tasks {
+                task.cancel()
+            }
+        }
+    }
+}
