@@ -58,10 +58,10 @@ public class Exponea: ExponeaType {
     
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
-        if UserDefaults(suiteName: "ExponeaSDK") == nil {
-            UserDefaults.standard.addSuite(named: "ExponeaSDK")
+        if UserDefaults(suiteName: Constants.General.userDefaultsSuite) == nil {
+            UserDefaults.standard.addSuite(named: Constants.General.userDefaultsSuite)
         }
-        return UserDefaults(suiteName: "ExponeaSDK")!
+        return UserDefaults(suiteName: Constants.General.userDefaultsSuite)!
     }()
     
     /// Sets the flushing mode for usage

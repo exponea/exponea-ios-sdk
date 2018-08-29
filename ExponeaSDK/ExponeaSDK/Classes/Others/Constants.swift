@@ -77,5 +77,6 @@ enum Constants {
     /// General constants
     enum General {
         static let iTunesStore = "iTunes Store"
+        static let userDefaultsSuite = "ExponeaSDK"
     }
 }

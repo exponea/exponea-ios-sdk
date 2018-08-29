@@ -41,4 +41,7 @@ protocol TrackingManagerType: class {
     
     /// This method can be used to manually flush all avialable data to Exponea with completion closure.
     func flushData(completion: (() -> Void)?)
+    
+    /// Anonymizes the user by deleting all identifiers (including cookie) and deletes all database data.
+    func anonymize() throws
 }

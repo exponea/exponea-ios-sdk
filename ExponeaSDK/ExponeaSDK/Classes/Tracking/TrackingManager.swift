@@ -104,6 +104,9 @@ open class TrackingManager {
             pushManager = PushNotificationManager(trackingManager: self)
         }
         
+        // First remove all observing
+        NotificationCenter.default.removeObserver(self)
+        
         // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidBecomeActive),
@@ -135,7 +138,6 @@ open class TrackingManager {
                                        .timestamp(Date().timeIntervalSince1970)])
             
             /// Set the value to true if event was executed successfully
-            let key = Constants.Keys.installTracked + (database.customer.uuid?.uuidString ?? "")
             userDefaults.set(true, forKey: key)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
@@ -579,5 +581,25 @@ extension TrackingManager: PaymentManagerDelegate {
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
+    }
+}
+
+// MARK: - Anonymize -
+
+extension TrackingManager {
+    public func anonymize() throws {
+        // Cancel all request (in case flushing was ongoing)
+        repository.cancelRequests()
+        
+        // Clear all database contents
+        try database.clear()
+        
+        // Clear the session data
+        sessionStartTime = 0
+        sessionBackgroundTime = 0
+        sessionEndTime = 0
+
+        // Re-do initial setup
+        initialSetup()
     }
 }

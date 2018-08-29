@@ -18,4 +18,8 @@ class FlushingViewController: UIViewController {
     @IBAction func logoutPressed(_ sender: Any) {
         self.tabBarController?.dismiss(animated: true, completion: nil)
     }
+    
+    @IBAction func anonymizePressed(_ sender: Any) {
+        Exponea.shared.anonymize()
+    }
 }

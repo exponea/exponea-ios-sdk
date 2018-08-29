@@ -160,4 +160,17 @@ extension Exponea {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }
     }
+    
+    // MARK: Anonymize
+    
+    /// Anonymizes the user and re-creates the database.
+    /// All customer identification (inclduing cookie) will be permanently deleted.
+    public func anonymize() {
+        do {
+            let dependencies = try getDependenciesIfConfigured()
+            try dependencies.trackingManager.anonymize()
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+    }
 }

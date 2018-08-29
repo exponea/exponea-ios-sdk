@@ -76,4 +76,7 @@ protocol FetchRepository {
 
 protocol RepositoryType: class, TrackingRepository, FetchRepository {
     var configuration: Configuration { get set }
+    
+    /// Cancels all requests that are currently underway.
+    func cancelRequests()
 }
