@@ -138,7 +138,6 @@ open class TrackingManager {
                                        .timestamp(Date().timeIntervalSince1970)])
             
             /// Set the value to true if event was executed successfully
-            let key = Constants.Keys.installTracked + (database.customer.uuid?.uuidString ?? "")
             userDefaults.set(true, forKey: key)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
@@ -589,16 +588,17 @@ extension TrackingManager: PaymentManagerDelegate {
 
 extension TrackingManager {
     public func anonymize() throws {
-        
         // Cancel all request (in case flushing was ongoing)
         repository.cancelRequests()
         
         // Clear all database contents
         try database.clear()
         
-        // Clear the custome user defaults suite
-        UserDefaults.standard.removePersistentDomain(forName: Constants.General.userDefaultsSuite)
-        
+        // Clear the session data
+        sessionStartTime = 0
+        sessionBackgroundTime = 0
+        sessionEndTime = 0
+
         // Re-do initial setup
         initialSetup()
     }
