@@ -3,7 +3,7 @@
 </p>
 
 ![Platform](https://img.shields.io/badge/Platform-iOS-lightgrey.svg?style=flat)
-![Platform](https://img.shields.io/badge/Swift-4.2-green.svg?style=flat)
+![Platform](https://img.shields.io/badge/Swift-4.1-green.svg?style=flat)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://opensource.org/licenses/Apache-2.0) 
 
 ## Exponea iOS SDK
@@ -46,11 +46,16 @@ Then you can start using all the other features:
 * [Push Notification Events](./Documentation/PUSH.md)
 * [Fetch Data](./Documentation/FETCH.md)
 * [Payments](./Documentation/PAYMENT.md)
+* [Anonymize](./Documentation/ANONYMIZE.md)
 
 ## 🔗 Useful links
 
 * [Exponea Developer Hub](https://developers.exponea.com)
 * [Exponea App](https://app.exponea.com/login)
+
+## 📝 Release Notes
+
+Release notes can be found [here](./Documentation/RELEASE_NOTES.md).
 
 
 ## 📄 License
