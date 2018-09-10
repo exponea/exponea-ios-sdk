@@ -277,6 +277,17 @@ extension DatabaseManager: DatabaseManagerType {
         }
     }
     
+    /// Saves the database changes, useful when making changes to objects.
+    ///
+    /// - Throws: An error if there was an error while saving the database.
+    public func save() throws {
+        try context.performAndWait {
+            if context.hasChanges {
+                try context.save()
+            }
+        }
+    }
+    
     public func clear() throws {
         // Delete all persistent stores
         let coordinator = persistentContainer.persistentStoreCoordinator
