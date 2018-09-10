@@ -29,7 +29,7 @@ public class DatabaseManager {
         if let descriptions = persistentStoreDescriptions {
             container.persistentStoreDescriptions = descriptions
         }
-        
+
         container.loadPersistentStores(completionHandler: { loadError = $1 })
         
         // Throw an error if we failed at loading a persistent store
