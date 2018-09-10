@@ -19,6 +19,9 @@ public struct Configuration: Decodable {
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
     public var automaticPushNotificationTracking: Bool = true
+    
+    /// The maximum amount of retries before a flush event is considered as invalid and deleted from the database.
+    public var flushEventMaxRetries: Int = Constants.Session.maxRetries
 
     enum CodingKeys: String, CodingKey {
         case projectMapping
@@ -28,17 +31,18 @@ public struct Configuration: Decodable {
         case automaticPushNotificationTracking
         case authorization
         case baseUrl
+        case flushEventMaxRetries
     }
 
     private init() {}
 
-    /// <#Description#>
+    /// Creates the configuration object with the provided properties.
     ///
     /// - Parameters:
-    ///   - projectToken: <#projectToken description#>
-    ///   - projectMapping: <#projectMapping description#>
-    ///   - authorization: <#authorization description#>
-    ///   - baseUrl: <#baseUrl description#>
+    ///   - projectToken: The project token used for connecting with Exponea.
+    ///   - projectMapping: Optional project token mapping if you wish to send events to different projects.
+    ///   - authorization: The authorization you want to use when tracking events.
+    ///   - baseUrl: Your API base URL that the SDK will connect to.
     public init(projectToken: String?,
                 projectMapping: [EventType: [String]]? = nil,
                 authorization: Authorization,
@@ -55,9 +59,9 @@ public struct Configuration: Decodable {
         }
     }
 
-    /// <#Description#>
+    /// Creates the Configuration object from a plist file.
     ///
-    /// - Parameter plistName: <#plistName description#>
+    /// - Parameter plistName: The name of the plist file you want to load configuration from.
     public init(plistName: String) throws {
         for bundle in Bundle.allBundles {
             let fileName = plistName.replacingOccurrences(of: ".plist", with: "")
@@ -82,10 +86,6 @@ public struct Configuration: Decodable {
 
     // MARK: - Decodable -
 
-    /// <#Description#>
-    ///
-    /// - Parameter decoder: <#decoder description#>
-    /// - Throws: <#throws value description#>
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -120,6 +120,10 @@ public struct Configuration: Decodable {
 
         if let automaticSessionTracking = try container.decodeIfPresent(Bool.self, forKey: .automaticSessionTracking) {
             self.automaticSessionTracking = automaticSessionTracking
+        }
+        
+        if let flushEventMaxRetries = try container.decodeIfPresent(Int.self, forKey: .flushEventMaxRetries) {
+            self.flushEventMaxRetries = flushEventMaxRetries
         }
     }
 }
@@ -197,6 +201,7 @@ extension Configuration: CustomStringConvertible {
         Session Timeout: \(sessionTimeout)
         Automatic Session Tracking: \(automaticSessionTracking)
         Automatic Push Notification Tracking: \(automaticPushNotificationTracking)
+        Flush Event Max Retries: \(flushEventMaxRetries)
         
         """
         

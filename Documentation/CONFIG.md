@@ -14,6 +14,7 @@ public struct Configuration: Decodable {
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
     public var automaticPushNotificationTracking: Bool = true
+    public var flushEventMaxRetries: Int = Constants.Session.maxRetries
 }
 ```
 
@@ -58,26 +59,30 @@ public struct Configuration: Decodable {
 * Controls if the SDK will handle push notifications automatically.
 * Default value `true`
 
+#### flushEventMaxRetries
 
-### In order to configure your project, you can use one of the following methods:
+* Controls how many times an event should be flushed before aborting. Useful for example if the API is down or some other temporary error happens.
+* Default value is `5`.
 
-#### Setting the configuration with project token, authorization and your base URL:
+
+## Configuring the SDK
+
+### 1. With project token and authorization
 
 ```
 public func configure(projectToken: String, 
                       authorization: Authorization, 
-                      baseURL: String? = nil)
+                      baseURL: String? = nil) // optional custom base url
 ```
 
 #### 💻 Usage
 
 ```
 Exponea.shared.configure(projectToken: "ProjectTokenA",
-                         authorization: Authorization.basic("YOUR AUTHORIZATION HASH"),
-                         baseURL: "YOUR BASE URL")
+                         authorization: Authorization.basic("YOUR AUTHORIZATION HASH"))
 ```
 
-#### Setting the configuration using configuration file:
+### 2. Using a configuration file
 
 ```
 public func configure(plistName: String)
@@ -85,11 +90,48 @@ public func configure(plistName: String)
 
 #### 💻 Usage
 
+*ExponeaConfig.plist*
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>sessionTimeout</key>
+	<integer>20</integer>
+	<key>projectToken</key>
+	<string>testToken</string>
+	<key>projectMapping</key>
+	<dict>
+		<key>INSTALL</key>
+		<array>
+			<string>testToken1</string>
+		</array>
+		<key>TRACK_EVENT</key>
+		<array>
+			<string>testToken2</string>
+			<string>testToken3</string>
+		</array>
+		<key>PAYMENT</key>
+		<array>
+			<string>paymentToken</string>
+		</array>
+	</dict>
+	<key>lastSessionStarted</key>
+	<integer>0</integer>
+	<key>lastSessionEnded</key>
+	<integer>0</integer>
+	<key>autoSessionTracking</key>
+	<false/>
+</dict>
+</plist>
+```
+
 ```
 Exponea.shared.configure(plistName: "ExponeaConfig.plist")
 ```
 
-#### Setting the configuration using a projectMapping (token mapping) for each type of event. This allows you to track events to multiple projects, even the same event to more project at once.
+### 3. Using project token mapping
 
 ```
 public func configure(projectToken: String,

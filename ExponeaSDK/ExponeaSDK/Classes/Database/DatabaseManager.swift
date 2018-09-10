@@ -29,7 +29,7 @@ public class DatabaseManager {
         if let descriptions = persistentStoreDescriptions {
             container.persistentStoreDescriptions = descriptions
         }
-        
+
         container.loadPersistentStores(completionHandler: { loadError = $1 })
         
         // Throw an error if we failed at loading a persistent store
@@ -274,6 +274,17 @@ extension DatabaseManager: DatabaseManagerType {
         try context.performAndWait {
             context.delete(object)
             try context.save()
+        }
+    }
+    
+    /// Saves the database changes, useful when making changes to objects.
+    ///
+    /// - Throws: An error if there was an error while saving the database.
+    public func save() throws {
+        try context.performAndWait {
+            if context.hasChanges {
+                try context.save()
+            }
         }
     }
     

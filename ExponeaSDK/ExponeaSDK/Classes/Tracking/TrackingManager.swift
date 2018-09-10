@@ -501,6 +501,31 @@ extension TrackingManager {
                     Exponea.logger.log(.error, message: """
                         Failed to upload customer update. \(error.localizedDescription)
                         """)
+                    
+                    // Increase the retry count
+                    customer.retries += 1
+                    
+                    // If we have reached the max count of retries, delete the object.
+                    // Otherwise save changes and try again next time.
+                    do {
+                        let max = self?.repository.configuration.flushEventMaxRetries ?? Constants.Session.maxRetries
+                        if customer.retries >= max {
+                            Exponea.logger.log(.error, message: """
+                                Maximum retry count reached, deleting customer event: \(customer.objectID)
+                                """)
+                            try self?.database.delete(customer)
+                        } else {
+                            Exponea.logger.log(.error, message: """
+                                Increasing retry count (\(customer.retries)) for customer event: \(customer.objectID)
+                                """)
+                            try self?.database.save()
+                        }
+                    } catch {
+                        Exponea.logger.log(.error, message: """
+                            Failed to update retry count or remove object from database: \(customer.objectID).
+                            \(error.localizedDescription)
+                            """)
+                    }
                 }
                 
                 counter -= 1
@@ -532,6 +557,31 @@ extension TrackingManager {
                     }
                 case .failure(let error):
                     Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
+                    
+                    // Increase the retry count
+                    event.retries += 1
+                    
+                    // If we have reached the max count of retries, delete the object.
+                    // Otherwise save changes and try again next time.
+                    do {
+                        let max = self?.repository.configuration.flushEventMaxRetries ?? Constants.Session.maxRetries
+                        if event.retries >= max {
+                            Exponea.logger.log(.error, message: """
+                                Maximum retry count reached, deleting event: \(event.objectID)
+                                """)
+                            try self?.database.delete(event)
+                        } else {
+                            Exponea.logger.log(.error, message: """
+                                Increasing retry count (\(event.retries)) for event: \(event.objectID)
+                                """)
+                            try self?.database.save()
+                        }
+                    } catch {
+                        Exponea.logger.log(.error, message: """
+                            Failed to update retry count or remove object from database: \(event.objectID).
+                            \(error.localizedDescription)
+                            """)
+                    }
                 }
                 
                 counter -= 1

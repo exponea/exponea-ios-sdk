@@ -72,6 +72,7 @@ enum Constants {
     /// Default session values
     enum Session {
         static let defaultTimeout = 6.0
+        static let maxRetries = 5
     }
 
     /// General constants

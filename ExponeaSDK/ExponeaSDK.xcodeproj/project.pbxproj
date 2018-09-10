@@ -231,6 +231,7 @@
 		C0A6DE9C20EAC16900C5F744 /* Customer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackEvent.swift; sourceTree = "<group>"; };
 		C0A6DEAD20EAC32700C5F744 /* DatabaseManager+DataType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseManager+DataType.swift"; sourceTree = "<group>"; };
+		C0BF069121466B3D007C4E4C /* DatabaseModel v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v2.xcdatamodel"; sourceTree = "<group>"; };
 		C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManagerDelegate.swift; sourceTree = "<group>"; };
 		C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManagerError.swift; sourceTree = "<group>"; };
 		C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaError.swift; sourceTree = "<group>"; };
@@ -1538,9 +1539,10 @@
 		01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				C0BF069121466B3D007C4E4C /* DatabaseModel v2.xcdatamodel */,
 				01EC2DBC207E68BF0031BFEB /* DatabaseModel.xcdatamodel */,
 			);
-			currentVersion = 01EC2DBC207E68BF0031BFEB /* DatabaseModel.xcdatamodel */;
+			currentVersion = C0BF069121466B3D007C4E4C /* DatabaseModel v2.xcdatamodel */;
 			path = DatabaseModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
