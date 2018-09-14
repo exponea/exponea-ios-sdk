@@ -446,6 +446,13 @@ extension TrackingManager {
     /// - Parameter completion: A completion that is called after all calls succeed or fail.
     func flushData(completion: (() -> Void)?) {
         do {
+            //Check if we have an internet connection otherwise bail
+            guard Reachability.isConnectedToNetwork else {
+                Exponea.logger.log(.warning, message: "Flushing data: Connection issues when flushing data.")
+                completion?()
+                return
+            }
+            
             // Pull from db
             let events = try database.fetchTrackEvent().reversed()
             let customers = try database.fetchTrackCustomer().reversed()
@@ -455,7 +462,7 @@ extension TrackingManager {
                 \(events.count) events and \(customers.count) customer updates.
                 """)
             
-            // Check if we have any data, otherwise bail
+            // Check if we have any data otherwise bail
             guard !events.isEmpty || !customers.isEmpty else {
                 return
             }
@@ -498,6 +505,13 @@ extension TrackingManager {
                             """)
                     }
                 case .failure(let error):
+                    
+                    //if server error, bail here
+                    if let repError = error as? RepositoryError, case .serverError(_) = repError {
+                        Exponea.logger.log(.warning, message: "Failed to upload event due to server error. \(error.localizedDescription)")
+                        break
+                    }
+                    
                     Exponea.logger.log(.error, message: """
                         Failed to upload customer update. \(error.localizedDescription)
                         """)
@@ -556,6 +570,13 @@ extension TrackingManager {
                             """)
                     }
                 case .failure(let error):
+
+                    //if server error, bail here
+                    if let repError = error as? RepositoryError, case .serverError(_) = repError {
+                        Exponea.logger.log(.warning, message: "Failed to upload event due to server error. \(error.localizedDescription)")
+                        break
+                    }
+                    
                     Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
                     
                     // Increase the retry count

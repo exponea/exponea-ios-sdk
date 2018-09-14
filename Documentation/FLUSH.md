@@ -6,6 +6,8 @@
 
 All tracked events and track customer properties are stored in the internal database in the Exponea SDK. When a event was successfully sent to Exponea API, the object will be deleted from the local database.
 
+Exponea SDK will only flush data when the device has a stable internet connection. If when flushing the data, a connection/server error occurs,  it will keep the data stored until it can be flushed at a later time.
+
 You can configure the flushing mode to work differently to suit your needs.
 
 #### 🔧 Flush Configuration

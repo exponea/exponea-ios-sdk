@@ -143,7 +143,13 @@ extension RequestFactory {
         }
         
         if let error = error {
-            resultAction(.failure(error))
+            //handle server errors
+            switch httpResponse.statusCode {
+            case 500..<600:
+                resultAction(.failure(RepositoryError.serverError(nil)))
+            default:
+                resultAction(.failure(error))
+            }
         } else if let data = data {
             let decoder = JSONDecoder()
             
