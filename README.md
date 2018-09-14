@@ -18,13 +18,13 @@ It has been written 100% in Swift with ❤️
 ### CocoaPods
 
 ```ruby
-pod "ExponeaSDK" "~> 1.1.1"
+pod "ExponeaSDK" "~> 1.1.2"
 ```
 
 ### Carthage
 
 ```
-github "exponea/exponea-sdk-ios" ~> 1.1.1
+github "exponea/exponea-sdk-ios" ~> 1.1.2
 ```
 
 ## 📱 Demo Application
