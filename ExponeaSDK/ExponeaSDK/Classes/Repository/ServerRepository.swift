@@ -29,7 +29,7 @@ extension ServerRepository: TrackingRepository {
     ///     - customer: Customer identification.
     ///     - completion: Object containing the request result.
     func trackCustomer(with data: [DataType], for customerIds: [String: JSONValue],
-                       completion: @escaping ((EmptyResult) -> Void)) {
+                       completion: @escaping ((EmptyResult<RepositoryError>) -> Void)) {
         var token: String?
         var properties: [String: JSONValue] = [:]
         
@@ -71,7 +71,7 @@ extension ServerRepository: TrackingRepository {
     ///     - timestamp: Timestamp should always be UNIX timestamp format
     ///     - eventType: Type of event to be tracked
     func trackEvent(with data: [DataType], for customerIds: [String: JSONValue],
-                    completion: @escaping ((EmptyResult) -> Void)) {
+                    completion: @escaping ((EmptyResult<RepositoryError>) -> Void)) {
         var token: String?
         var properties: [String: JSONValue] = [:]
         var timestamp: Double?

@@ -40,11 +40,11 @@ public enum Result<T> {
 ///
 /// - success
 /// - failure(Error)
-public enum EmptyResult {
+public enum EmptyResult<T: Error> {
     case success
-    case failure(Error)
+    case failure(T)
 
-    var error: Error? {
+    var error: T? {
         if case .failure(let error) = self {
             return error
         } else {

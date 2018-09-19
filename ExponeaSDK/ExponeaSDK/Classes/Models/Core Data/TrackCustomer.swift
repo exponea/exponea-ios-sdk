@@ -20,7 +20,7 @@ public class TrackCustomer: NSManagedObject {
     @NSManaged public var timestamp: Double
     @NSManaged public var customer: Customer?
     @NSManaged public var properties: NSSet?
-    @NSManaged public var retries: Int
+    @NSManaged public var retries: NSNumber
     
     var dataTypes: [DataType] {
         let data: [DataType]? = managedObjectContext?.performAndWait {

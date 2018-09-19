@@ -85,7 +85,7 @@ extension RequestFactory {
     
     typealias CompletionHandler = ((Data?, URLResponse?, Error?) -> Void)
     
-    func handler(with completion: @escaping ((EmptyResult) -> Void)) -> CompletionHandler {
+    func handler<T: ErrorInitialisable>(with completion: @escaping ((EmptyResult<T>) -> Void)) -> CompletionHandler {
         return { (data, response, error) in
             self.process(response, data: data, error: error, resultAction: { (result) in
                 switch result {
@@ -95,6 +95,7 @@ extension RequestFactory {
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {
+                        let error = T.create(from: error)
                         completion(.failure(error))
                     }
                 }
@@ -128,13 +129,23 @@ extension RequestFactory {
     
     func process(_ response: URLResponse?, data: Data?, error: Error?,
                  resultAction: @escaping ((Result<Data>) -> Void)) {
-        if let response = response, Exponea.logger.logLevel == .verbose {
+        // Check if we have any response at all
+        guard let response = response else {
+            DispatchQueue.main.async {
+                resultAction(.failure(RepositoryError.connectionError))
+            }
+            return
+        }
+        
+        // Log response if needed
+        if Exponea.logger.logLevel == .verbose {
             Exponea.logger.log(.verbose, message: """
                 Response received:
                 \(response.description(with: data, error: error))
                 """)
         }
         
+        // Make sure we got the correct response type
         guard let httpResponse = response as? HTTPURLResponse else {
             DispatchQueue.main.async {
                 resultAction(.failure(RepositoryError.invalidResponse(response)))
@@ -157,7 +168,7 @@ extension RequestFactory {
             switch httpResponse.statusCode {
             case 400, 405..<500:
                 let text = String(data: data, encoding: .utf8)
-                resultAction(.failure(RepositoryError.missingData(text ?? response?.description ?? "N/A")))
+                resultAction(.failure(RepositoryError.missingData(text ?? httpResponse.description)))
                 
             case 401:
                 let response = try? decoder.decode(ErrorResponse.self, from: data)

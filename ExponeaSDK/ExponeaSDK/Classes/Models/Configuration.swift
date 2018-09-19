@@ -207,4 +207,15 @@ extension Configuration: CustomStringConvertible {
         
         return text
     }
+    
+    /// Returns the hostname based on the baseUrl value.
+    public var hostname: String {
+        guard let components = URLComponents(string: baseUrl),
+            let host = components.host else {
+            Exponea.logger.log(.warning, message: "Can't get URL components from baseUrl, check your baseUrl.")
+            return baseUrl
+        }
+        
+        return host
+    }
 }

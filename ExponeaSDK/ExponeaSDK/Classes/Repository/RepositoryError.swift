@@ -8,16 +8,22 @@
 
 import Foundation
 
+protocol ErrorInitialisable: Error {
+    static func create(from error: Error) -> Self
+}
+
 /// Data types that thrown the possible errors from the repository manager.
 ///
 /// - missingData: Holds any missing data while trying to call the Expone API.
 /// - invalidResponse: Holds any invalid response when calling the Exponea API.
-public enum RepositoryError: LocalizedError {
+public enum RepositoryError: LocalizedError, ErrorInitialisable {
     case notAuthorized(ErrorResponse?)
     case missingData(String)
     case serverError(MultipleErrorResponse?)
     case urlNotFound(MultipleErrorResponse?)
     case invalidResponse(URLResponse?)
+    case connectionError
+    case unknown(Error)
     
     /// Return a formatted error message while doing API calls to Exponea.
     public var errorDescription: String? {
@@ -33,6 +39,18 @@ public enum RepositoryError: LocalizedError {
             return response?.errors.description ?? "There was a server error, please try again later."
         case .urlNotFound(let response):
             return response?.errors.description ?? "Requested URL was not found."
+        case .connectionError:
+            return "No response received from the server, please check your internet connection."
+        case .unknown(let error):
+            return "\(error.localizedDescription)"
+        }
+    }
+    
+    static func create(from error: Error) -> RepositoryError {
+        if let error = error as? RepositoryError {
+            return error
+        } else {
+            return .unknown(error)
         }
     }
 }
