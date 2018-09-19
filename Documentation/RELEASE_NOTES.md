@@ -1,5 +1,14 @@
 ## Release Notes
 
+### 1.1.3
+
+* Improved connection checking
+* Fix iOS 12 CoreData scalar type bug with retries
+
+### 1.1.2
+
+* Added better connection handling and flush retrying
+
 ### 1.1.1
 
 * Failed requests will now be retried
