@@ -65,7 +65,7 @@ open class TrackingManager {
     
     /// Flushing mode specifies how often and if should data be automatically flushed to Exponea.
     /// See `FlushingMode` for available values.
-    public var flushingMode: FlushingMode = .automatic {
+    public var flushingMode: FlushingMode = .immediate {
         didSet {
             Exponea.logger.log(.verbose, message: "Flushing mode updated to: \(flushingMode).")
             updateFlushingMode()

@@ -54,7 +54,7 @@ class MockRepository {
 }
 
 extension MockRepository: TrackingRepository {
-    func trackCustomer(with data: [DataType], for customerIds: [String : JSONValue], completion: @escaping ((EmptyResult) -> Void)) {
+    func trackCustomer(with data: [DataType], for customerIds: [String : JSONValue], completion: @escaping ((EmptyResult<RepositoryError>) -> Void)) {
         
         var token: String?
         var properties: [String: JSONValue] = [:]
@@ -103,7 +103,7 @@ extension MockRepository: TrackingRepository {
             .resume()
     }
     
-    func trackEvent(with data: [DataType], for customerIds: [String : JSONValue], completion: @escaping ((EmptyResult) -> Void)) {
+    func trackEvent(with data: [DataType], for customerIds: [String : JSONValue], completion: @escaping ((EmptyResult<RepositoryError>) -> Void)) {
         
         var token: String?
         var properties: [String: JSONValue] = [:]

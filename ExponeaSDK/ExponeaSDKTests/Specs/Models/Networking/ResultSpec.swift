@@ -54,7 +54,7 @@ class ResultSpec: QuickSpec {
         describe("A empty result") {
             context("Success result value for network requests") {
                 
-                let success = EmptyResult.success
+                let success = EmptyResult<RepositoryError>.success
                 
                 it("Should not have a [error] value") {
                     expect(success.error).to(beNil())
@@ -67,7 +67,7 @@ class ResultSpec: QuickSpec {
                 let failure = EmptyResult.failure(error)
                 
                 it("Should return a [Result<ExponeaError>] type") {
-                    expect(failure).to(beAKindOf(EmptyResult.self))
+                    expect(failure).to(beAKindOf(EmptyResult<ExponeaError>.self))
                 }
                 
                 it("Should not return nil") {

@@ -1,6 +1,6 @@
 ## 🔍 Flush events
 
-> By default, Exponea SDK automatically takes care of flushing events to the Exponea API (using the `.automatic` mode). 
+> By default, Exponea SDK automatically takes care of flushing events to the Exponea API (using the `.immediate` mode), flushing the data as soon as it is tracked and/or when the application is backgrounded. 
 > 
 > This feature can be turned off setting the property FlushMode to `.manual`. Be careful when turning automatic flushing off, because if you do then you need to manually flush the data every time there is something to flush.
 
