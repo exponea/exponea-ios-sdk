@@ -10,8 +10,8 @@ import ObjectiveC
 
 internal class Swizzler {
     internal typealias SwizzleBlock = (
-        _ view: AnyObject?,
-        _ command: Selector,
+//        _ view: AnyObject?,
+//        _ command: Selector,
         _ parameter1: AnyObject?,
         _ parameter2: AnyObject?) -> Void
     

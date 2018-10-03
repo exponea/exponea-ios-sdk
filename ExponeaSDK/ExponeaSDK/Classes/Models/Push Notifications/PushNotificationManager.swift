@@ -72,7 +72,7 @@ extension PushNotificationManager {
                                  with: PushSelectorMapping.registration.swizzled,
                                  for: appDelegateClass,
                                  name: "PushTokenRegistration",
-                                 block: { [weak self] (_, _, _, dataObject) in
+                                 block: { [weak self] (_, dataObject) in
                                     self?.handlePushTokenRegistered(dataObject: dataObject) },
                                  addingMethodIfNecessary: true)
         
@@ -106,7 +106,7 @@ extension PushNotificationManager {
                                  with: mapping.swizzled,
                                  for: newClass ?? appDelegateClass,
                                  name: "NotificationOpened",
-                                 block: { [weak self] (_, _, _, userInfoObject) in
+                                 block: { [weak self] (_, userInfoObject) in
                                     self?.handlePushOpened(userInfoObject: userInfoObject)
         })
     }
@@ -136,7 +136,7 @@ extension PushNotificationManager {
                                  with: PushSelectorMapping.newReceive.swizzled,
                                  for: delegateClass,
                                  name: "NotificationOpened",
-                                 block: { [weak self] (_, _, _, userInfoObject) in
+                                 block: { [weak self] (_, userInfoObject) in
                                     self?.handlePushOpened(userInfoObject: userInfoObject)
         })
     }
@@ -160,7 +160,7 @@ extension UIResponder {
         
         // Now call our own implementations
         for (_, block) in swizzle.blocks {
-            block(self, swizzle.selector, application as AnyObject?, userInfo as AnyObject?)
+            block(application as AnyObject?, userInfo as AnyObject?)
         }
     }
     
@@ -179,7 +179,7 @@ extension UIResponder {
         
         // Now call our own implementations
         for (_, block) in swizzle.blocks {
-            block(self, swizzle.selector, application as AnyObject?, userInfo as AnyObject?)
+            block(application as AnyObject?, userInfo as AnyObject?)
         }
     }
     
@@ -198,7 +198,7 @@ extension UIResponder {
         
         // Now call our own implementations
         for (_, block) in swizzle.blocks {
-            block(self, swizzle.selector, application as AnyObject?, deviceToken as AnyObject?)
+            block(application as AnyObject?, deviceToken as AnyObject?)
         }
     }
 }
@@ -219,9 +219,7 @@ extension NSObject {
         curriedImplementation(self, selector, center, response, completionHandler)
         
         for (_, block) in swizzle.blocks {
-            block(self,
-                  swizzle.selector,
-                  center as AnyObject?,
+            block(center as AnyObject?,
                   response.notification.request.content.userInfo as AnyObject?)
         }
     }
