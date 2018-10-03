@@ -1,5 +1,13 @@
 ## Release Notes
 
+### 1.1.5
+
+* Improved push handling, prevent crashes caused by swizzling
+
+### 1.1.4
+
+* Minor bugfixes
+
 ### 1.1.3
 
 * Improved connection checking
