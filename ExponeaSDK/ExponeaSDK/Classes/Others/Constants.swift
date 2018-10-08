@@ -69,7 +69,7 @@ enum Constants {
         static let paymentDone = "Payment was succesfully tracked!"
     }
 
-    /// Default session values
+    /// Default session values represented in seconds
     enum Session {
         static let defaultTimeout = 6.0
         static let maxRetries = 5

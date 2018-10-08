@@ -140,7 +140,7 @@ extension CustomerParameters: RequestParametersType {
             preparedParam["filter"] = .dictionary(filterList)
             
             if let time = data.executionTime {
-                preparedParam["execution_time"] = .int(time)
+                preparedParam["execution_time"] = .double(Double(time))
             }
             
             if let timezone = data.timezone {

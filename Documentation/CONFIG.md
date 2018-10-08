@@ -44,9 +44,12 @@ public struct Configuration: Decodable {
 
 #### sessionTimeout
 
-* Session is a real time spent in the App, it starts when the App is launched and ends when the App goes to background. 
+* Session is the real time spent in the App, it starts when the App is launched and ends when the App goes to background. 
 * This value will be used to calculate the session timing.
-* Default value `6.0`
+* Default value `6.0` seconds
+* The mininum value is `5.0` seconds
+* The **recommended** maximum value is `120.0` seconds, but the **absolute** max is `180.0` seconds. More than this, iOS will kill it
+* Read more in `Track Events` -> `Track Sessions`
 
 #### automaticSessionTracking
  
