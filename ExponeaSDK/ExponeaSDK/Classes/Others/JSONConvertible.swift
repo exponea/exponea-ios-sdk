@@ -78,6 +78,42 @@ public indirect enum JSONValue {
     case double(Double)
     case dictionary([String: JSONValue])
     case array([JSONValue])
+    
+    static func convert(_ dictionary: [String: Any]) -> [String: JSONValue] {
+        var result: [String: JSONValue] = [:]
+        for (key, value) in dictionary {
+            switch value {
+            case is Bool: result[key] = .bool(value as! Bool)
+            case is Int: result[key] = .int(value as! Int)
+            case is Double: result[key] = .double(value as! Double)
+            case is String: result[key] = .string(value as! String)
+            case is Array<Any>: result[key] = .array(convert(value as! [Any]))
+            case is Dictionary<String, Any>: result[key] = .dictionary(convert(value as! [String: Any]))
+            default:
+                Exponea.logger.log(.warning, message: "Can't convert value to JSONValue: \(value).")
+                continue
+            }
+        }
+        return result
+    }
+    
+    static func convert(_ array: [Any]) -> [JSONValue] {
+        var result: [JSONValue] = []
+        for value in array {
+            switch value {
+            case is Bool: result.append(.bool(value as! Bool))
+            case is Int: result.append(.int(value as! Int))
+            case is Double: result.append(.double(value as! Double))
+            case is String: result.append(.string(value as! String))
+            case is Array<Any>: result.append(.array(convert(value as! [Any])))
+            case is Dictionary<String, Any>: result.append(.dictionary(convert(value as! [String: Any])))
+            default:
+                Exponea.logger.log(.warning, message: "Can't convert value to JSONValue: \(value).")
+                continue
+            }
+        }
+        return result
+    }
 }
 
 extension JSONValue {

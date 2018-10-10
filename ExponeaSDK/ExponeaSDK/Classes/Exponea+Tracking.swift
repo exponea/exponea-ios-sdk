@@ -116,7 +116,17 @@ extension Exponea {
     
     /// Tracks the push notification clicked event to Exponea API.
     public func trackPushOpened(with userInfo: [AnyHashable: Any]) {
-        let data: [DataType] = [.timestamp(nil), .pushNotificationPayload(userInfo)]
+        guard let payload = userInfo as? [String: Any] else {
+            Exponea.logger.log(.error, message: "Push notification payload contained non-string keys.")
+            return
+        }
+        
+        var properties = JSONValue.convert(payload)
+        properties["action_type"] = .string("notification")
+        properties["status"] = .string("clicked")
+        
+        let data: [DataType] = [.timestamp(nil),
+                                .properties(properties)]
         
         do {
             // Get dependencies and do the actual tracking

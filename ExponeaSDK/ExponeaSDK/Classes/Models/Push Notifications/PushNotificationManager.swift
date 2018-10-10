@@ -16,15 +16,23 @@ class PushNotificationManager: NSObject {
     /// Used for knowing if we have added push notifications observer
     internal weak var pushObserver: NSKeyValueObservation?
     
-    // TODO: refactor & test
     func handlePushOpened(userInfoObject: AnyObject?) {
-        guard let userInfo = userInfoObject as? [String: JSONValue] else {
+        guard let userInfo = userInfoObject as? [String: Any] else {
             Exponea.logger.log(.error, message: "Failed to convert push payload.")
             return
         }
         
+        guard let data = userInfo["data"] as? [String: Any] else {
+            Exponea.logger.log(.error, message: "Failed to convert push payload data.")
+            return
+        }
+        
+        var properties = JSONValue.convert(data)
+        properties["action_type"] = .string("notification")
+        properties["status"] = .string("clicked")
+        
         do {
-            try trackingManager?.track(.pushOpened, with: [.properties(userInfo)])
+            try trackingManager?.track(.pushOpened, with: [.properties(properties)])
         } catch {
             Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
         }
