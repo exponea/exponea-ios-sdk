@@ -122,6 +122,12 @@ public struct Configuration: Decodable {
             self.automaticSessionTracking = automaticSessionTracking
         }
         
+        if let automaticPushNotificationTracking = try container.decodeIfPresent(
+            Bool.self, forKey: .automaticPushNotificationTracking
+            ) {
+            self.automaticPushNotificationTracking = automaticPushNotificationTracking
+        }
+        
         if let flushEventMaxRetries = try container.decodeIfPresent(Int.self, forKey: .flushEventMaxRetries) {
             self.flushEventMaxRetries = flushEventMaxRetries
         }
