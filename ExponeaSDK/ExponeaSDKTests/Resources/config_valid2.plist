@@ -20,10 +20,6 @@
 			<string>paymentToken</string>
 		</array>
 	</dict>
-	<key>lastSessionStarted</key>
-	<integer>0</integer>
-	<key>lastSessionEnded</key>
-	<integer>0</integer>
 	<key>autoSessionTracking</key>
 	<false/>
 </dict>

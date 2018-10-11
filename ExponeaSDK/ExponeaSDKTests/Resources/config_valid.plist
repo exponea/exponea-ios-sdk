@@ -6,11 +6,9 @@
 	<integer>20</integer>
 	<key>projectToken</key>
 	<string>testToken</string>
-	<key>lastSessionStarted</key>
-	<integer>0</integer>
-	<key>lastSessionEnded</key>
-	<integer>0</integer>
-	<key>autoSessionTracking</key>
+	<key>automaticSessionTracking</key>
+	<false/>
+	<key>automaticPushNotificationTracking</key>
 	<false/>
 </dict>
 </plist>
