@@ -33,6 +33,10 @@
 		C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */; };
 		C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */; };
 		C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C028C3A12110980600B03ED4 /* JSONValueSpec.swift */; };
+		C030AF48216F4335004413F0 /* PushNotificationReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */; };
+		C030AF4A216F4910004413F0 /* PushNotificationManager+UIResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C030AF49216F4910004413F0 /* PushNotificationManager+UIResponder.swift */; };
+		C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = C030AF4B216F96F3004413F0 /* PushNotificationManager+NSObject.swift */; };
+		C030AF4E216FA154004413F0 /* PushNotificationDelegateObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C030AF4D216FA154004413F0 /* PushNotificationDelegateObserver.swift */; };
 		C0329E5F20F76EB00051F5DF /* URLRequest+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */; };
 		C0329E6120F76EBF0051F5DF /* URLResponse+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */; };
 		C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */; };
@@ -208,6 +212,10 @@
 		C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleErrorResponse.swift; sourceTree = "<group>"; };
 		C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
 		C028C3A12110980600B03ED4 /* JSONValueSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueSpec.swift; sourceTree = "<group>"; };
+		C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationReceiver.swift; sourceTree = "<group>"; };
+		C030AF49216F4910004413F0 /* PushNotificationManager+UIResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PushNotificationManager+UIResponder.swift"; sourceTree = "<group>"; };
+		C030AF4B216F96F3004413F0 /* PushNotificationManager+NSObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PushNotificationManager+NSObject.swift"; sourceTree = "<group>"; };
+		C030AF4D216FA154004413F0 /* PushNotificationDelegateObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationDelegateObserver.swift; sourceTree = "<group>"; };
 		C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Debug.swift"; sourceTree = "<group>"; };
 		C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLResponse+Debug.swift"; sourceTree = "<group>"; };
 		C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerProcessingSpec.swift; sourceTree = "<group>"; };
@@ -559,7 +567,11 @@
 		C0EB5D9120B811DE00F1031F /* Push Notifications */ = {
 			isa = PBXGroup;
 			children = (
+				C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */,
+				C030AF4D216FA154004413F0 /* PushNotificationDelegateObserver.swift */,
 				C0EB5D9220B811F900F1031F /* PushNotificationManager.swift */,
+				C030AF49216F4910004413F0 /* PushNotificationManager+UIResponder.swift */,
+				C030AF4B216F96F3004413F0 /* PushNotificationManager+NSObject.swift */,
 				C0EB5D9420B8123200F1031F /* PushNotificationSelectors.swift */,
 			);
 			name = "Push Notifications";
@@ -1134,6 +1146,7 @@
 				F0674412208732AF003C0293 /* PaymentManagerType.swift in Sources */,
 				C0EB5D9F20BB530000F1031F /* ExponeaType.swift in Sources */,
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
+				C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ServerRepository.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				C0753E9020A43D3900A779FF /* RepositoryError.swift in Sources */,
@@ -1163,10 +1176,13 @@
 				C07E420520CA898700920809 /* BannerResponse.swift in Sources */,
 				C07E420D20CA8A3C00920809 /* Personalization.swift in Sources */,
 				C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */,
+				C030AF4E216FA154004413F0 /* PushNotificationDelegateObserver.swift in Sources */,
 				C0EB5D8E20B710A900F1031F /* Data+TokenString.swift in Sources */,
+				C030AF4A216F4910004413F0 /* PushNotificationManager+UIResponder.swift in Sources */,
 				F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */,
 				C0F2407420BDA42600CAF7CE /* ExportFormat.swift in Sources */,
 				C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */,
+				C030AF48216F4335004413F0 /* PushNotificationReceiver.swift in Sources */,
 				C07E421620CA8D1800920809 /* BannerTrigger.swift in Sources */,
 				C0EB5DA620BB59BD00F1031F /* RequestParametersType.swift in Sources */,
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,

@@ -12,6 +12,7 @@ internal class Swizzle: CustomStringConvertible {
     internal let aClass: AnyClass
     internal let selector: Selector
     internal let originalMethod: IMP
+    internal let name: String
     internal var blocks = [String: Swizzler.SwizzleBlock]()
     
     internal init(block: @escaping Swizzler.SwizzleBlock,
@@ -22,6 +23,7 @@ internal class Swizzle: CustomStringConvertible {
         self.aClass = aClass
         self.selector = selector
         self.originalMethod = originalMethod
+        self.name = name
         self.blocks[name] = block
     }
     

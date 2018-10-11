@@ -34,6 +34,4 @@ public enum DataType {
     case eventType(String)
 
     case pushNotificationToken(String)
-    
-    case pushNotificationPayload([AnyHashable: Any])
 }

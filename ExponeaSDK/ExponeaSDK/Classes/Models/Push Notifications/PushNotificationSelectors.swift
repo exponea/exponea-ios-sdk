@@ -52,9 +52,9 @@ internal enum PushSelectorMapping {
         static let registration = (@convention(c) (
             AnyObject, Selector, UIApplication, Data) -> Void).self
         static let newReceive = (@convention(c) (
-            AnyObject, Selector, UNUserNotificationCenter, UNNotificationResponse, () -> Void) -> Void).self
+            AnyObject, Selector, UNUserNotificationCenter, UNNotificationResponse, @escaping () -> Void) -> Void).self
         static let handlerReceive = (@convention(c)
-            (AnyObject, Selector, UIApplication, NSDictionary, (UIBackgroundFetchResult) -> Void) -> Void).self
+            (AnyObject, Selector, UIApplication, NSDictionary, @escaping (UIBackgroundFetchResult) -> Void) -> Void).self
         static let deprecatedReceive = (@convention(c)
             (AnyObject, Selector, UIApplication, NSDictionary) -> Void).self
     }
