@@ -50,12 +50,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
+    func showPushAlert(_ message: String?) {
+        let alert = UIAlertController(title: "Push Notification Received", message: message ?? "no body", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        (window?.rootViewController as? UINavigationController)?.topViewController?.present(alert, animated: true, completion: nil)
+        
+        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
+        alertWindow.rootViewController = UIViewController()
+        alertWindow.windowLevel = .alert + 1
+        alertWindow.makeKeyAndVisible()
+        alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
+    }
+    
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-        let message = response.notification.request.content.body
-        let alert = UIAlertController(title: "Push Notification Received", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-        window?.rootViewController?.present(alert, animated: true, completion: nil)
+        showPushAlert(response.notification.request.content.body)
+        completionHandler()
     }
 }
