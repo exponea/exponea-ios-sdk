@@ -1,5 +1,15 @@
 ## Release Notes
 
+### 1.1.7
+
+* Refactored automatic push notification tracking to support all edge case configurations
+* Fix issues when parsing push payload and make sure all parameters related to push are always respected
+* Fix crashes related to improper escaping of closures in swizzled push receive methods
+
+### 1.1.6
+
+* Fix issue where timestamp milliseconds were not always respected due to type casting
+
 ### 1.1.5
 
 * Improved push handling, prevent crashes caused by swizzling

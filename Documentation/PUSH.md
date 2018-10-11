@@ -69,8 +69,12 @@ public func trackPushOpened(with userInfo: [AnyHashable: Any])
 
 ```
 // Prepare Data
-let userInfo = ["action_type": "notification",
-                "status": "clicked"]
+func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo
+        Exponea.shared.trackPushOpened(with: userInfo)
+        completionHandler()
+}
 
-Exponea.shared.trackPushOpened(with: userInfo)
 ```
