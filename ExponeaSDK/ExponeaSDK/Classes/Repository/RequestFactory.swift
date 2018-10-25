@@ -52,6 +52,10 @@ extension RequestFactory {
         // Add authorization if it was provided
         switch authorization {
         case .none: break
+        case .token(let token):
+            request.addValue("Token \(token)",
+                forHTTPHeaderField: Constants.Repository.headerAuthorization)
+            
         case .basic(let secret):
             request.addValue("Basic \(secret)",
                 forHTTPHeaderField: Constants.Repository.headerAuthorization)
