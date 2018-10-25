@@ -12,10 +12,12 @@ import Foundation
 ///
 /// - notConfigured
 /// - configurationError(String)
+/// - authorizationInsufficient(String)
 /// - unknownError(String?)
 public enum ExponeaError: Error {
     case notConfigured
     case configurationError(String)
+    case authorizationInsufficient(String)
     case unknownError(String?)
     
     public var localizedDescription: String {
@@ -29,6 +31,12 @@ public enum ExponeaError: Error {
             return """
             The provided configuration contains error(s). Please, fix them before initialising Exponea SDK.
             \(details)
+            """
+            
+        case .authorizationInsufficient(let required):
+            return """
+            You don't have sufficient authorizaiton to perform this action. Please, double check your
+            authorization status. This function requires authorization \(required.capitalized).
             """
             
         case .unknownError(let details):

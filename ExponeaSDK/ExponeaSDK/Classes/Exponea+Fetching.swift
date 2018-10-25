@@ -12,11 +12,11 @@ import Foundation
 
 extension Exponea {
     
-    internal func executeWithDependencies<T>(_ closure: (Exponea.Dependencies) -> Void,
+    internal func executeWithDependencies<T>(_ closure: (Exponea.Dependencies) throws -> Void,
                                              completion: @escaping (Result<T>) -> Void) {
         do {
             let dependencies = try getDependenciesIfConfigured()
-            closure(dependencies)
+            try closure(dependencies)
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
             completion(.failure(error))
@@ -26,6 +26,10 @@ extension Exponea {
     public func fetchRecommendation(with request: RecommendationRequest,
                                     completion: @escaping (Result<RecommendationResponse>) -> Void) {
         executeWithDependencies({
+            guard case .basic(_) = $0.configuration.authorization else {
+                throw ExponeaError.authorizationInsufficient("basic")
+            }
+            
             $0.repository.fetchRecommendation(recommendation: request,
                                               for: $0.trackingManager.customerIds,
                                               completion: completion)
@@ -35,6 +39,10 @@ extension Exponea {
     public func fetchAttributes(with request: AttributesDescription,
                                 completion: @escaping (Result<AttributesResponse>) -> Void) {
         executeWithDependencies({
+            guard case .basic(_) = $0.configuration.authorization else {
+                throw ExponeaError.authorizationInsufficient("basic")
+            }
+            
             $0.repository.fetchAttributes(attributes: [request],
                                           for: $0.trackingManager.customerIds,
                                           completion: completion)
@@ -43,6 +51,10 @@ extension Exponea {
     
     public func fetchEvents(with request: EventsRequest, completion: @escaping (Result<EventsResponse>) -> Void) {
         executeWithDependencies({
+            guard case .basic(_) = $0.configuration.authorization else {
+                throw ExponeaError.authorizationInsufficient("basic")
+            }
+            
             $0.repository.fetchEvents(events: request,
                                       for: $0.trackingManager.customerIds,
                                       completion: completion)
