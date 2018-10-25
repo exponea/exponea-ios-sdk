@@ -16,7 +16,8 @@ class ExponeaSpec: QuickSpec {
 
     override func spec() {
         
-        let mockNotificationCenter = MockUserNotificationCenter.shared
+        // Load the mock center, to prevent crashes
+        _ = MockUserNotificationCenter.shared
 
         describe("Exponea SDK") {
             context("After being initialized") {
