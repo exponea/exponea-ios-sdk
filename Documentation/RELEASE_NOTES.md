@@ -1,5 +1,12 @@
 ## Release Notes
 
+### 1.1.8
+
+* Basic authorization and features relying on it (Fetch Events, Fetch Attributes) have been deprecated
+* Token authorization has been added and can be now used as for tracking
+* Stress unit tests were added
+* Issue with creating big amounts of database objects has been fixed
+
 ### 1.1.7
 
 * Refactored automatic push notification tracking to support all edge case configurations

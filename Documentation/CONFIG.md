@@ -29,7 +29,7 @@ public struct Configuration: Decodable {
 
 #### authorization
 
-> **NOTE:** Basic authentication is deprecated in version 1.1.7 and will be removed in the next major release.
+> **NOTE:** Basic authentication is deprecated in version 1.1.8 and will be removed in the next major release.
 
 * Three options: `none`, `.basic(token)` and `.token(token)`.
 * Some features require specific authorization to be set, if it is not, they will fail gracefully and print an error.
