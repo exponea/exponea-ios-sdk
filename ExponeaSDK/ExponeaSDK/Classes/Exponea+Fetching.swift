@@ -36,6 +36,8 @@ extension Exponea {
         }, completion: completion)
     }
     
+    @available(*, deprecated: 1.1.7,
+    message: "Basic authorization was deprecated and fetching data will not be available in the future.")
     public func fetchAttributes(with request: AttributesDescription,
                                 completion: @escaping (Result<AttributesResponse>) -> Void) {
         executeWithDependencies({
@@ -49,6 +51,8 @@ extension Exponea {
         }, completion: completion)
     }
     
+    @available(*, deprecated: 1.1.7,
+    message: "Basic authorization was deprecated and fetching data will not be available in the future.")
     public func fetchEvents(with request: EventsRequest, completion: @escaping (Result<EventsResponse>) -> Void) {
         executeWithDependencies({
             guard case .basic(_) = $0.configuration.authorization else {
