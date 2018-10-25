@@ -51,7 +51,7 @@ class AuthenticationViewController: UIViewController {
         var auth: ExponeaSDK.Authorization = .none
         
         if let text = authField.text, !text.isEmpty {
-            auth = .basic(text)
+            auth = .token(text)
         }
         
         Exponea.shared.configure(projectToken: token,
