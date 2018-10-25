@@ -57,6 +57,7 @@
 		C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C084D0EB2181C5EA005C0CA8 /* MockUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */; };
+		C084D0ED2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */; };
 		C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */; };
 		C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */; };
 		C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */; };
@@ -236,6 +237,7 @@
 		C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityValueResponse.swift; sourceTree = "<group>"; };
 		C0843CF020B6DC6000FAF0CB /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
 		C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserNotificationCenter.swift; sourceTree = "<group>"; };
+		C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Convenience.swift"; sourceTree = "<group>"; };
 		C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerSpec.swift; sourceTree = "<group>"; };
 		C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Perform.swift"; sourceTree = "<group>"; };
 		C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueItem.swift; sourceTree = "<group>"; };
@@ -854,6 +856,7 @@
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
 				C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */,
 				23E725E3214AA7A900B552B8 /* Reachability.swift */,
+				C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -1124,6 +1127,7 @@
 				C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* RecommendationRequest.swift in Sources */,
 				C07E421420CA8C1B00920809 /* BannerFrequency.swift in Sources */,
+				C084D0ED2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
