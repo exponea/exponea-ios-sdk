@@ -5,6 +5,8 @@ All the responses will be available in a completion handler closure.
 
 #### Get customer recommendation
 
+> **NOTE:** Requires Token or Basic authorization.
+
 Get items recommended for a customer.
 
 ```
@@ -36,7 +38,9 @@ Exponea.shared.fetchRecommendation(with: recommendation) { (result) in
 }
 ```
 
-#### Get customer attributes
+#### Get customer attributes (⚠️ DEPRECATED)
+
+> **NOTE:** Requires Basic authorization. Deprecated method as basic authorization will be removed in the next major release, alongside this method.
 
 It's possible to get all the customer attributes you have sent to the Exponea APP through the following method.
 
@@ -63,7 +67,9 @@ Exponea.shared.fetchAttributes(with: attributes) { (result) in
 }
 ```
 
-#### Get customer events
+#### Get customer events (⚠️ DEPRECATED)
+
+> **NOTE:** Requires Basic authorization. Deprecated method as basic authorization will be removed in the next major release, alongside this method.
 
 Export all the events for a specific customer.
 
