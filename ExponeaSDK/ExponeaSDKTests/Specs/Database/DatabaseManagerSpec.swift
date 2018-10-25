@@ -138,7 +138,7 @@ class DatabaseManagerSpec: QuickSpec {
                     let pushProp = props?.first(where: { $0.key == "apple_push_notification_id" })
                     expect(pushProp?.value as? String).to(equal("pushtoken"))
                     
-                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.01))
+                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
                     
                     DispatchQueue.global(qos: .background).sync {
                         expect { try db.delete(object) }.toNot(raiseException())
@@ -175,7 +175,7 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(prop?.value as? String).to(equal("customval"))
                     expect(object.eventType).to(equal("myevent"))
                     
-                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.01))
+                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
 
                     DispatchQueue.global(qos: .background).sync {
                         expect { try db.delete(object) }.toNot(raiseException())
@@ -183,6 +183,50 @@ class DatabaseManagerSpec: QuickSpec {
                     
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects).to(beEmpty())
+                })
+            })
+            
+            describe("when stressed", {
+                let customerData: [DataType] = [
+                    .customerIds(["registered" : .string("myemail")]),
+                    .projectToken("mytoken"),
+                    .properties(["customprop": .string("customval")]),
+                    .pushNotificationToken("pushtoken")
+                ]
+                
+                let eventData: [DataType] = [
+                    .projectToken("mytoken"),
+                    .properties(["customprop": .string("customval")]),
+                    .eventType("myevent"),
+                    .pushNotificationToken("tokenthatisgoingtobeignored")
+                ]
+                
+                it("should not crash when tracking event", closure: {
+                    expect {
+                        for _ in 0..<1000 {
+                            try db.trackEvent(with: eventData)
+                        }
+                        
+                        return nil
+                    }.toNot(raiseException())
+                    
+                    var objects: [TrackEvent] = []
+                    expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
+                    expect(objects.count).to(equal(1000))
+                })
+                
+                it("should not crash when tracking customer", closure: {
+                    expect {
+                        for _ in 0..<1000 {
+                            try db.identifyCustomer(with: customerData)
+                        }
+                        
+                        return nil
+                        }.toNot(raiseException())
+                    
+                    var objects: [TrackCustomer] = []
+                    expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
+                    expect(objects.count).to(equal(1000))
                 })
             })
         }

@@ -405,7 +405,6 @@
 			children = (
 				C09A6495212D83D700DCAC06 /* Database */,
 				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
-				F063BEA9207E36E600030811 /* MockDatabase.swift */,
 				F06744062085E983003C0293 /* StubEntities.swift */,
 				C028C3A0211097D500B03ED4 /* Other */,
 				F0CA58F7207F783E00C89A7F /* Tracking */,
@@ -796,6 +795,7 @@
 				F0BE6104211080F30082ABD8 /* MockData.swift */,
 				F04BEA9C2111B5DF00591950 /* MockRepository.swift */,
 				C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */,
+				F063BEA9207E36E600030811 /* MockDatabase.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
