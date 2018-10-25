@@ -28,14 +28,14 @@ class AuthorizationSpec: QuickSpec {
             }
             
             context("Header authorization type basic") {
-                let authorization = Authorization.basic("Basic 123")
+                let authorization = Authorization.token("123")
                 
                 it("Should return a [String: Basic Authorization (token redacted)]") {
-                    expect(authorization.description).to(equal("Basic Authorization (token redacted)"))
+                    expect(authorization.description).to(equal("Token Authorization (token redacted)"))
                 }
                 
                 it("Should return a [String: Basic Authorization (Basic 123)]") {
-                    expect(authorization.debugDescription).to(equal("Basic Authorization (Basic 123)"))
+                    expect(authorization.debugDescription).to(equal("Token Authorization (123)"))
                 }
             }
         }

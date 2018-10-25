@@ -10,7 +10,7 @@ import Foundation
 
 /// Data type to identify which kind of authorization the sdk should use
 /// when making http calls for the Exponea API.
-public enum Authorization {
+public enum Authorization: Equatable {
     case none
     case token(String)
     

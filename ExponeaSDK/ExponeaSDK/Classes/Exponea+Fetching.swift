@@ -63,6 +63,10 @@ extension Exponea {
     
     public func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
         executeWithDependencies({
+            guard $0.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient("token, basic")
+            }
+            
             $0.repository.fetchBanners(completion: completion)
         }, completion: completion)
     }
@@ -70,6 +74,10 @@ extension Exponea {
     public func fetchPersonalization(with request: PersonalizationRequest,
                                      completion: @escaping (Result<PersonalizationResponse>) -> Void) {
         executeWithDependencies({
+            guard $0.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient("token, basic")
+            }
+            
             $0.repository.fetchPersonalization(with: request,
                                                for: $0.trackingManager.customerIds,
                                                completion: completion)
