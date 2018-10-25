@@ -138,7 +138,7 @@ class DatabaseManagerSpec: QuickSpec {
                     let pushProp = props?.first(where: { $0.key == "apple_push_notification_id" })
                     expect(pushProp?.value as? String).to(equal("pushtoken"))
                     
-                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.01))
+                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
                     
                     DispatchQueue.global(qos: .background).sync {
                         expect { try db.delete(object) }.toNot(raiseException())
@@ -175,7 +175,7 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(prop?.value as? String).to(equal("customval"))
                     expect(object.eventType).to(equal("myevent"))
                     
-                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.01))
+                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
 
                     DispatchQueue.global(qos: .background).sync {
                         expect { try db.delete(object) }.toNot(raiseException())
@@ -184,6 +184,92 @@ class DatabaseManagerSpec: QuickSpec {
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects).to(beEmpty())
                 })
+            })
+            
+            describe("when stressed", {
+                let customerData: [DataType] = [
+                    .customerIds(["registered" : .string("myemail")]),
+                    .projectToken("mytoken"),
+                    .properties(["customprop": .string("customval")]),
+                    .pushNotificationToken("pushtoken")
+                ]
+                
+                let eventData: [DataType] = [
+                    .projectToken("mytoken"),
+                    .properties(["customprop": .string("customval")]),
+                    .eventType("myevent"),
+                    .pushNotificationToken("tokenthatisgoingtobeignored")
+                ]
+                
+                let eventData2: [DataType] = [
+                    .projectToken("differenttoken"),
+                    .properties(["customprop": .string("customval"), "array": .array([.string("test"), .string("ab")])]),
+                    .eventType("myevent")
+                ]
+                
+                it("should not crash when tracking event", closure: {
+                    db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
+                    expect {
+                        for _ in 0..<1000 {
+                            try db.trackEvent(with: eventData)
+                        }
+                        
+                        return nil
+                    }.toNot(raiseException())
+                    
+                    var objects: [TrackEvent] = []
+                    expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
+                    expect(objects.count).to(equal(1000))
+                })
+                
+                it("should not crash when tracking customer", closure: {
+                    db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
+                    expect {
+                        for _ in 0..<1000 {
+                            try db.identifyCustomer(with: customerData)
+                        }
+                        
+                        return nil
+                        }.toNot(raiseException())
+                    
+                    var objects: [TrackCustomer] = []
+                    expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
+                    expect(objects.count).to(equal(1000))
+                })
+                
+                it("should not crash when tracking event from multiple threads") {
+                    db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
+                    var objects: [TrackEvent] = []
+                    
+                    waitUntil(timeout: 5.0, action: { (done) in
+                        var isOneDone = false
+                        
+                        DispatchQueue.global(qos: .background).async {
+                            for _ in 0..<500 {
+                                expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
+                            }
+                            if isOneDone {
+                                done()
+                                return
+                            }
+                            isOneDone = true
+                        }
+                        
+                        DispatchQueue.global(qos: .default).async {
+                            for _ in 0..<500 {
+                                expect { try db.trackEvent(with: eventData2) }.toNot(raiseException())
+                            }
+                            if isOneDone {
+                                done()
+                                return
+                            }
+                            isOneDone = true
+                        }
+                    })
+                    
+                    expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
+                    expect(objects.count).to(equal(1000))
+                }
             })
         }
     }

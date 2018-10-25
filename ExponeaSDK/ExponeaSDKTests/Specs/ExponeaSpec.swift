@@ -15,6 +15,8 @@ import Nimble
 class ExponeaSpec: QuickSpec {
 
     override func spec() {
+        
+        let mockNotificationCenter = MockUserNotificationCenter.shared
 
         describe("Exponea SDK") {
             context("After being initialized") {

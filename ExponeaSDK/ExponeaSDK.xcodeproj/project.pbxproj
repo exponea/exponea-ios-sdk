@@ -56,6 +56,8 @@
 		C07F1BC7209A474A004FE933 /* EntityValueResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */; };
 		C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C084D0EB2181C5EA005C0CA8 /* MockUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */; };
+		C084D0ED2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */; };
 		C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */; };
 		C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */; };
 		C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */; };
@@ -234,6 +236,8 @@
 		C07E421520CA8D1800920809 /* BannerTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTrigger.swift; sourceTree = "<group>"; };
 		C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityValueResponse.swift; sourceTree = "<group>"; };
 		C0843CF020B6DC6000FAF0CB /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
+		C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserNotificationCenter.swift; sourceTree = "<group>"; };
+		C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Convenience.swift"; sourceTree = "<group>"; };
 		C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerSpec.swift; sourceTree = "<group>"; };
 		C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Perform.swift"; sourceTree = "<group>"; };
 		C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueItem.swift; sourceTree = "<group>"; };
@@ -403,7 +407,6 @@
 			children = (
 				C09A6495212D83D700DCAC06 /* Database */,
 				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
-				F063BEA9207E36E600030811 /* MockDatabase.swift */,
 				F06744062085E983003C0293 /* StubEntities.swift */,
 				C028C3A0211097D500B03ED4 /* Other */,
 				F0CA58F7207F783E00C89A7F /* Tracking */,
@@ -688,7 +691,7 @@
 		F021E866206CF10200788ABC /* ExponeaSDKTests */ = {
 			isa = PBXGroup;
 			children = (
-				F0BE610121107E7D0082ABD8 /* MockData */,
+				F0BE610121107E7D0082ABD8 /* Mocking */,
 				01EC2DA2207E3D060031BFEB /* Specs */,
 				01EC2DA0207E3CF30031BFEB /* Supporting Files */,
 				01EC2DA1207E3D000031BFEB /* Resources */,
@@ -787,14 +790,16 @@
 			path = Parameters;
 			sourceTree = "<group>";
 		};
-		F0BE610121107E7D0082ABD8 /* MockData */ = {
+		F0BE610121107E7D0082ABD8 /* Mocking */ = {
 			isa = PBXGroup;
 			children = (
 				F04BEA9F2111EA0200591950 /* json */,
 				F0BE6104211080F30082ABD8 /* MockData.swift */,
 				F04BEA9C2111B5DF00591950 /* MockRepository.swift */,
+				C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */,
+				F063BEA9207E36E600030811 /* MockDatabase.swift */,
 			);
-			path = MockData;
+			path = Mocking;
 			sourceTree = "<group>";
 		};
 		F0BE610C2110A2700082ABD8 /* Classes */ = {
@@ -851,6 +856,7 @@
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
 				C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */,
 				23E725E3214AA7A900B552B8 /* Reachability.swift */,
+				C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -1121,6 +1127,7 @@
 				C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* RecommendationRequest.swift in Sources */,
 				C07E421420CA8C1B00920809 /* BannerFrequency.swift in Sources */,
+				C084D0ED2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
@@ -1222,6 +1229,7 @@
 				F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */,
 				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,
 				F04BEA9D2111B5DF00591950 /* MockRepository.swift in Sources */,
+				C084D0EB2181C5EA005C0CA8 /* MockUserNotificationCenter.swift in Sources */,
 				F04BEA9021119C1500591950 /* AuthorizationSpec.swift in Sources */,
 				C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */,
 				F067440D208642AC003C0293 /* TrackCustomerSpec.swift in Sources */,
