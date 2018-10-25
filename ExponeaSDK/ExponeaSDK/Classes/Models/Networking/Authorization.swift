@@ -10,8 +10,12 @@ import Foundation
 
 /// Data type to identify which kind of authorization the sdk should use
 /// when making http calls for the Exponea API.
-public enum Authorization {
+public enum Authorization: Equatable {
     case none
+    case token(String)
+    
+    @available(*, deprecated: 1.1.7,
+    message: "Basic authorziation is no longer supported, please use Token authorization instead.")
     case basic(String)
 }
 
@@ -20,6 +24,8 @@ extension Authorization: CustomStringConvertible {
         switch self {
         case .none:
             return "No Authorization"
+        case .token(_):
+            return "Token Authorization (token redacted)"
         case .basic(_):
             return "Basic Authorization (token redacted)"
         }
@@ -31,6 +37,8 @@ extension Authorization: CustomDebugStringConvertible {
         switch self {
         case .none:
             return "No Authorization"
+        case .token(let token):
+            return "Token Authorization (\(token))"
         case .basic(let token):
             return "Basic Authorization (\(token))"
         }

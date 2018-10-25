@@ -819,6 +819,7 @@
 				C0EB5DA420BB59A500F1031F /* Parameters */,
 				C0EB5DA120BB57FB00F1031F /* Responses */,
 				C0EB5DA020BB57ED00F1031F /* Requests */,
+				C07E421020CA8B0900920809 /* Personalization */,
 				01EC2DB3207E58080031BFEB /* EventType.swift */,
 				019F1AC42087666800368FB1 /* DataType.swift */,
 				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
@@ -826,7 +827,6 @@
 				F0CA58F5207F612200C89A7F /* DeviceProperties.swift */,
 				F029BF22208A08CE00342498 /* Event.swift */,
 				F067441320873813003C0293 /* PurchasedItem.swift */,
-				C07E421020CA8B0900920809 /* Personalization */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
 			);
 			path = Models;
@@ -1075,7 +1075,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Mockingjay/Mockingjay.framework",
 				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
 				"${BUILT_PRODUCTS_DIR}/Quick/Quick.framework",
@@ -1090,7 +1090,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

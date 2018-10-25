@@ -119,6 +119,8 @@ public protocol ExponeaType: class {
     /// - Parameters:
     ///     - request: Event from a specific customer to be retrieve.
     ///     - completion: Object containing the data requested.
+    @available(*, deprecated: 1.1.7,
+    message: "Basic authorization was deprecated and fetching data will not be available in the future.")
     func fetchEvents(with request: EventsRequest, completion: @escaping (Result<EventsResponse>) -> Void)
     
     /// Fetches the customer attributes.
@@ -126,6 +128,8 @@ public protocol ExponeaType: class {
     /// - Parameters:
     ///     - request: Customer attribues from a specific customer to be retrieve.
     ///     - completion: Object containing the data requested.
+    @available(*, deprecated: 1.1.7,
+    message: "Basic authorization was deprecated and fetching data will not be available in the future.")
     func fetchAttributes(with request: AttributesDescription,
                          completion: @escaping (Result<AttributesResponse>) -> Void)
     

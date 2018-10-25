@@ -16,7 +16,8 @@ class ExponeaSpec: QuickSpec {
 
     override func spec() {
         
-        let mockNotificationCenter = MockUserNotificationCenter.shared
+        // Load the mock center, to prevent crashes
+        _ = MockUserNotificationCenter.shared
 
         describe("Exponea SDK") {
             context("After being initialized") {
@@ -28,7 +29,7 @@ class ExponeaSpec: QuickSpec {
             context("After being configured from string") {
                 let exponea = Exponea()
                 Exponea.shared = exponea
-                Exponea.shared.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97", authorization: .basic(""))
+                Exponea.shared.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97", authorization: .token(""))
                 
                 it("Should return the correct project token") {
                     expect(exponea.configuration?.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))

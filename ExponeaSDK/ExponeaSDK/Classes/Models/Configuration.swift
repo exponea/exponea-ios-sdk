@@ -100,8 +100,12 @@ public struct Configuration: Decodable {
         if let authorization = try container.decodeIfPresent(String.self, forKey: .authorization) {
             let components = authorization.split(separator: " ")
             
-            if components.count == 2, components.first == "Basic" {
-                self.authorization = .basic(String(components[1]))
+            if components.count == 2 {
+                switch components.first {
+                case "Basic": self.authorization = .basic(String(components[1]))
+                case "Token": self.authorization = .token(String(components[1]))
+                default: break
+                }
             }
         }
 
