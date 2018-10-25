@@ -13,6 +13,9 @@ import Foundation
 public enum Authorization {
     case none
     case token(String)
+    
+    @available(*, deprecated: 1.1.7,
+    message: "Basic authorziation is no longer supported, please use Token authorization instead.")
     case basic(String)
 }
 
