@@ -201,7 +201,14 @@ class DatabaseManagerSpec: QuickSpec {
                     .pushNotificationToken("tokenthatisgoingtobeignored")
                 ]
                 
+                let eventData2: [DataType] = [
+                    .projectToken("differenttoken"),
+                    .properties(["customprop": .string("customval"), "array": .array([.string("test"), .string("ab")])]),
+                    .eventType("myevent")
+                ]
+                
                 it("should not crash when tracking event", closure: {
+                    db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
                     expect {
                         for _ in 0..<1000 {
                             try db.trackEvent(with: eventData)
@@ -216,6 +223,7 @@ class DatabaseManagerSpec: QuickSpec {
                 })
                 
                 it("should not crash when tracking customer", closure: {
+                    db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
                     expect {
                         for _ in 0..<1000 {
                             try db.identifyCustomer(with: customerData)
@@ -228,6 +236,40 @@ class DatabaseManagerSpec: QuickSpec {
                     expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
                     expect(objects.count).to(equal(1000))
                 })
+                
+                it("should not crash when tracking event from multiple threads") {
+                    db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
+                    var objects: [TrackEvent] = []
+                    
+                    waitUntil(timeout: 5.0, action: { (done) in
+                        var isOneDone = false
+                        
+                        DispatchQueue.global(qos: .background).async {
+                            for _ in 0..<500 {
+                                expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
+                            }
+                            if isOneDone {
+                                done()
+                                return
+                            }
+                            isOneDone = true
+                        }
+                        
+                        DispatchQueue.global(qos: .default).async {
+                            for _ in 0..<500 {
+                                expect { try db.trackEvent(with: eventData2) }.toNot(raiseException())
+                            }
+                            if isOneDone {
+                                done()
+                                return
+                            }
+                            isOneDone = true
+                        }
+                    })
+                    
+                    expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
+                    expect(objects.count).to(equal(1000))
+                }
             })
         }
     }
