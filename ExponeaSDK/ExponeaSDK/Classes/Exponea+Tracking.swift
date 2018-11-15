@@ -113,7 +113,7 @@ extension Exponea {
     /// Tracks the push notification token to Exponea API with string.
     ///
     /// - Parameter token: String containing the push notification token.
-    public func trackPushToken(_ token: String) {
+    public func trackPushToken(_ token: String?) {
         executeWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")

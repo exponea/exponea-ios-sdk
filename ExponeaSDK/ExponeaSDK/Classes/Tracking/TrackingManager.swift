@@ -20,6 +20,11 @@ open class TrackingManager {
         return database.customer.ids
     }
     
+    /// Returns the push token of the current customer if there is any.
+    var customerPushToken: String? {
+        return database.customer.pushToken
+    }
+    
     /// Payment manager responsible to track all in app payments.
     internal var paymentManager: PaymentManagerType {
         didSet {
@@ -691,18 +696,36 @@ extension TrackingManager: PaymentManagerDelegate {
 
 extension TrackingManager {
     public func anonymize() throws {
-        // Cancel all request (in case flushing was ongoing)
-        repository.cancelRequests()
+        func perform() throws {
+            // Cancel all request (in case flushing was ongoing)
+            repository.cancelRequests()
+            
+            // Clear all database contents
+            try database.clear()
+            
+            // Clear the session data
+            sessionStartTime = 0
+            sessionBackgroundTime = 0
+            sessionEndTime = 0
+            
+            // Re-do initial setup
+            initialSetup()
+        }
         
-        // Clear all database contents
-        try database.clear()
-        
-        // Clear the session data
-        sessionStartTime = 0
-        sessionBackgroundTime = 0
-        sessionEndTime = 0
-
-        // Re-do initial setup
-        initialSetup()
+        let currentToken = customerPushToken
+        if let token = currentToken, let projectToken = repository.configuration.tokens(for: .registerPushToken).first {
+            try trackPushToken(with: [.projectToken(projectToken), .pushNotificationToken(nil)])
+            flushData {
+                do {
+                    try perform()
+                    try self.trackPushToken(with: [.projectToken(projectToken), .pushNotificationToken(token)])
+                } catch {
+                    Exponea.logger.log(.error, message: error.localizedDescription)
+                }
+                self.flushData()
+            }
+        } else {
+            try perform()
+        }
     }
 }

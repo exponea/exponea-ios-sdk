@@ -125,6 +125,27 @@ extension DatabaseManager {
             return customer
         }
     }
+    
+    func fetchCustomerAndUpdate(pushToken: String?) -> Customer {
+        return context.performAndWait {
+            let customer = self.customer
+            
+            // Update push token
+            customer.pushToken = pushToken
+            
+            do {
+                // We don't know if anything changed
+                if context.hasChanges {
+                    try context.save()
+                }
+            } catch {
+                let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription)
+                Exponea.logger.log(.error, message: error.localizedDescription)
+            }
+            
+            return customer
+        }
+    }
 }
 
 extension DatabaseManager: DatabaseManagerType {
@@ -209,8 +230,11 @@ extension DatabaseManager: DatabaseManagerType {
                 case .pushNotificationToken(let token):
                     let item = KeyValueItem(context: context)
                     item.key = "apple_push_notification_id"
-                    item.value = token as NSString
+                    item.value = (token ?? "") as NSString
                     trackCustomer.addToProperties(item)
+
+                    // Update push token on customer
+                    trackCustomer.customer = fetchCustomerAndUpdate(pushToken: token)
                     
                 default:
                     break

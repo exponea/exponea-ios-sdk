@@ -91,7 +91,8 @@ public protocol ExponeaType: class {
     /// Tracks the push notification token to Exponea API with string.
     ///
     /// - Parameter token: String containing the push notification token.
-    func trackPushToken(_ token: String)
+    ///                    If nil, it will delete existing push token.
+    func trackPushToken(_ token: String?)
 
     /// Tracks the push notification clicked event to Exponea API.
     func trackPushOpened(with userInfo: [AnyHashable: Any])
