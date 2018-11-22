@@ -241,7 +241,7 @@ class DatabaseManagerSpec: QuickSpec {
                     db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
                     var objects: [TrackEvent] = []
                     
-                    waitUntil(timeout: 5.0, action: { (done) in
+                    waitUntil(timeout: 6.0, action: { (done) in
                         var isOneDone = false
                         
                         DispatchQueue.global(qos: .background).async {
