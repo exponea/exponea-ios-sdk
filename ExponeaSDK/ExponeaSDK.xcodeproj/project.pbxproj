@@ -80,6 +80,8 @@
 		C0EB5D9D20B8193A00F1031F /* TrackingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */; };
 		C0EB5D9F20BB530000F1031F /* ExponeaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9E20BB530000F1031F /* ExponeaType.swift */; };
 		C0EB5DA620BB59BD00F1031F /* RequestParametersType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5DA520BB59BD00F1031F /* RequestParametersType.swift */; };
+		C0ED33A621A6FA31003649C3 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0ED33A521A6FA31003649C3 /* NotificationService.swift */; };
+		C0ED33AA21A6FA31003649C3 /* ExampleNotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C0ED33A321A6FA31003649C3 /* ExampleNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406920BC38EC00CAF7CE /* Swizzle.swift */; };
 		C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */; };
 		C0F2406E20BC511500CAF7CE /* Exponea+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */; };
@@ -167,6 +169,13 @@
 			remoteGlobalIDString = F021E858206CF10200788ABC;
 			remoteInfo = ExponeaSDK;
 		};
+		C0ED33A821A6FA31003649C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F021E850206CF10200788ABC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0ED33A221A6FA31003649C3;
+			remoteInfo = ExampleNotificationService;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -179,6 +188,17 @@
 				C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0ED33AE21A6FA31003649C3 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C0ED33AA21A6FA31003649C3 /* ExampleNotificationService.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -262,6 +282,9 @@
 		C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingViewController.swift; sourceTree = "<group>"; };
 		C0EB5D9E20BB530000F1031F /* ExponeaType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaType.swift; sourceTree = "<group>"; };
 		C0EB5DA520BB59BD00F1031F /* RequestParametersType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestParametersType.swift; sourceTree = "<group>"; };
+		C0ED33A321A6FA31003649C3 /* ExampleNotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ExampleNotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0ED33A521A6FA31003649C3 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		C0ED33A721A6FA31003649C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C0F2406920BC38EC00CAF7CE /* Swizzle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swizzle.swift; sourceTree = "<group>"; };
 		C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+Fetching.swift"; sourceTree = "<group>"; };
 		C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+Tracking.swift"; sourceTree = "<group>"; };
@@ -340,6 +363,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C0ED33A021A6FA31003649C3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0F6C4DD2098A1AB00834E21 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -631,6 +661,15 @@
 			path = Parameters;
 			sourceTree = "<group>";
 		};
+		C0ED33A421A6FA31003649C3 /* ExampleNotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				C0ED33A521A6FA31003649C3 /* NotificationService.swift */,
+				C0ED33A721A6FA31003649C3 /* Info.plist */,
+			);
+			path = ExampleNotificationService;
+			sourceTree = "<group>";
+		};
 		C0F6C4E12098A1AB00834E21 /* Example */ = {
 			isa = PBXGroup;
 			children = (
@@ -664,6 +703,7 @@
 				F021E85B206CF10200788ABC /* ExponeaSDK */,
 				F021E866206CF10200788ABC /* ExponeaSDKTests */,
 				C0F6C4E12098A1AB00834E21 /* Example */,
+				C0ED33A421A6FA31003649C3 /* ExampleNotificationService */,
 				F021E85A206CF10200788ABC /* Products */,
 				BA562F8AA107D3AB3132C40D /* Pods */,
 				A3613BD1E2C1D4616B6A9767 /* Frameworks */,
@@ -676,6 +716,7 @@
 				F021E859206CF10200788ABC /* ExponeaSDK.framework */,
 				F021E862206CF10200788ABC /* ExponeaSDKTests.xctest */,
 				C0F6C4E02098A1AB00834E21 /* Example.app */,
+				C0ED33A321A6FA31003649C3 /* ExampleNotificationService.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -907,6 +948,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		C0ED33A221A6FA31003649C3 /* ExampleNotificationService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0ED33AD21A6FA31003649C3 /* Build configuration list for PBXNativeTarget "ExampleNotificationService" */;
+			buildPhases = (
+				C0ED339F21A6FA31003649C3 /* Sources */,
+				C0ED33A021A6FA31003649C3 /* Frameworks */,
+				C0ED33A121A6FA31003649C3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ExampleNotificationService;
+			productName = ExampleNotificationService;
+			productReference = C0ED33A321A6FA31003649C3 /* ExampleNotificationService.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		C0F6C4DF2098A1AB00834E21 /* Example */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C0F6C4F12098A1AC00834E21 /* Build configuration list for PBXNativeTarget "Example" */;
@@ -915,11 +973,13 @@
 				C0F6C4DD2098A1AB00834E21 /* Frameworks */,
 				C0F6C4DE2098A1AB00834E21 /* Resources */,
 				C0843CF320B6E7CA00FAF0CB /* Embed Frameworks */,
+				C0ED33AE21A6FA31003649C3 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				C0753E9420A5793200A779FF /* PBXTargetDependency */,
+				C0ED33A921A6FA31003649C3 /* PBXTargetDependency */,
 			);
 			name = Example;
 			productName = Example;
@@ -970,10 +1030,14 @@
 		F021E850206CF10200788ABC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0930;
+				LastSwiftUpdateCheck = 1000;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = Exponea;
 				TargetAttributes = {
+					C0ED33A221A6FA31003649C3 = {
+						CreatedOnToolsVersion = 10.0;
+						ProvisioningStyle = Automatic;
+					};
 					C0F6C4DF2098A1AB00834E21 = {
 						CreatedOnToolsVersion = 9.3;
 						LastSwiftMigration = 1000;
@@ -1012,11 +1076,19 @@
 				F021E858206CF10200788ABC /* ExponeaSDK */,
 				F021E861206CF10200788ABC /* ExponeaSDKTests */,
 				C0F6C4DF2098A1AB00834E21 /* Example */,
+				C0ED33A221A6FA31003649C3 /* ExampleNotificationService */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C0ED33A121A6FA31003649C3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0F6C4DE2098A1AB00834E21 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1097,6 +1169,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C0ED339F21A6FA31003649C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0ED33A621A6FA31003649C3 /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0F6C4DC2098A1AB00834E21 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1258,6 +1338,11 @@
 			target = F021E858206CF10200788ABC /* ExponeaSDK */;
 			targetProxy = C0861C0120F919CF00C57997 /* PBXContainerItemProxy */;
 		};
+		C0ED33A921A6FA31003649C3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0ED33A221A6FA31003649C3 /* ExampleNotificationService */;
+			targetProxy = C0ED33A821A6FA31003649C3 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1280,6 +1365,45 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		C0ED33AB21A6FA31003649C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7C8ZHMS76Y;
+				INFOPLIST_FILE = ExampleNotificationService/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Exponea.ExponeaSDK-Example.ExampleNotificationService";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C0ED33AC21A6FA31003649C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7C8ZHMS76Y;
+				INFOPLIST_FILE = ExampleNotificationService/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Exponea.ExponeaSDK-Example.ExampleNotificationService";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		C0F6C4EF2098A1AC00834E21 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1524,6 +1648,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C0ED33AD21A6FA31003649C3 /* Build configuration list for PBXNativeTarget "ExampleNotificationService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0ED33AB21A6FA31003649C3 /* Debug */,
+				C0ED33AC21A6FA31003649C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C0F6C4F12098A1AC00834E21 /* Build configuration list for PBXNativeTarget "Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
