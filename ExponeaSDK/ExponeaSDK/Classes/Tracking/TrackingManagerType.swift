@@ -14,6 +14,9 @@ protocol TrackingManagerType: class {
     /// The identifiers of the the current customer.
     var customerIds: [String: JSONValue] { get }
     
+    /// Returns the push token of the current customer if there is any.
+    var customerPushToken: String? { get }
+    
     /// Main function used to track events to Exponea.
     ///
     /// - Parameters:

@@ -221,6 +221,7 @@
 		C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Debug.swift"; sourceTree = "<group>"; };
 		C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLResponse+Debug.swift"; sourceTree = "<group>"; };
 		C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerProcessingSpec.swift; sourceTree = "<group>"; };
+		C06FCE86219D840400ABB0BE /* DatabaseModel v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v3.xcdatamodel"; sourceTree = "<group>"; };
 		C0753E8F20A43D3900A779FF /* RepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryError.swift; sourceTree = "<group>"; };
 		C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPersistentContainer+Bundle.swift"; sourceTree = "<group>"; };
 		C07E41FC20C930C400920809 /* TrackEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackEventViewController.swift; sourceTree = "<group>"; };
@@ -1565,10 +1566,11 @@
 		01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				C06FCE86219D840400ABB0BE /* DatabaseModel v3.xcdatamodel */,
 				C0BF069121466B3D007C4E4C /* DatabaseModel v2.xcdatamodel */,
 				01EC2DBC207E68BF0031BFEB /* DatabaseModel.xcdatamodel */,
 			);
-			currentVersion = C0BF069121466B3D007C4E4C /* DatabaseModel v2.xcdatamodel */;
+			currentVersion = C06FCE86219D840400ABB0BE /* DatabaseModel v3.xcdatamodel */;
 			path = DatabaseModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

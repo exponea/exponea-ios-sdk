@@ -137,10 +137,10 @@ internal extension Exponea {
         trackingManager: TrackingManagerType
     )
     
-    /// <#Description#>
+    /// Gets the Exponea dependencies. If Exponea wasn't configured it will throw an error instead.
     ///
-    /// - Returns: <#return value description#>
-    /// - Throws: <#throws value description#>
+    /// - Returns: The dependencies required to perform any actions.
+    /// - Throws: A not configured error in case Exponea wasn't configured beforehand.
     internal func getDependenciesIfConfigured() throws -> Dependencies {
         guard let configuration = configuration,
             let repository = repository,

@@ -17,6 +17,7 @@ public class Customer: NSManagedObject {
     }
     
     @NSManaged public var uuid: UUID?
+    @NSManaged public var pushToken: String?
     @NSManaged public var customIds: NSSet?
     @NSManaged public var trackCustomer: NSSet?
     @NSManaged public var trackEvent: NSSet?

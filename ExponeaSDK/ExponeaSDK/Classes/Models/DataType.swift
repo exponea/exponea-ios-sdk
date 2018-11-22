@@ -33,5 +33,6 @@ public enum DataType {
     /// For some tracked events you can also provide an event type
     case eventType(String)
 
-    case pushNotificationToken(String)
+    /// If nil, it will delete the existing push notification token if any.
+    case pushNotificationToken(String?)
 }
