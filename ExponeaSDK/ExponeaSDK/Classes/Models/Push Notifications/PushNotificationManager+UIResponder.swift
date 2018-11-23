@@ -26,7 +26,7 @@ extension UIResponder {
         
         // Now call our own implementations
         for (_, block) in swizzle.blocks {
-            block(application as AnyObject?, userInfo as AnyObject?)
+            block(application as AnyObject?, userInfo as AnyObject?, nil)
         }
     }
     
@@ -45,7 +45,7 @@ extension UIResponder {
         
         // Now call our own implementations
         for (_, block) in swizzle.blocks {
-            block(application as AnyObject?, userInfo as AnyObject?)
+            block(application as AnyObject?, userInfo as AnyObject?, nil)
         }
     }
     
@@ -64,7 +64,7 @@ extension UIResponder {
         
         // Now call our own implementations
         for (_, block) in swizzle.blocks {
-            block(application as AnyObject?, deviceToken as AnyObject?)
+            block(application as AnyObject?, deviceToken as AnyObject?, nil)
         }
     }
 }

@@ -9,19 +9,26 @@
 import Foundation
 import UserNotifications
 
+public enum ExponeaNotificationAction: String {
+    case openApp = "EXPONEA_APP_OPEN_ACTION"
+    case browser = "EXPONEA_BROWSER_ACTION"
+    case deeplink = "EXPONEA_DEEPLINK_ACTION"
+    case none
+}
+
 extension Exponea {
     private func createAppOpenAction(with title: String) -> UNNotificationAction {
-        return UNNotificationAction(identifier: "EXPONEA_APP_OPEN_ACTION", title: title,
+        return UNNotificationAction(identifier: ExponeaNotificationAction.openApp.rawValue, title: title,
                                     options: UNNotificationActionOptions(rawValue: 0))
     }
     
     private func createBrowserAction(with title: String) -> UNNotificationAction {
-        return UNNotificationAction(identifier: "EXPONEA_BROWSER_ACTION", title: title,
+        return UNNotificationAction(identifier: ExponeaNotificationAction.browser.rawValue, title: title,
                                     options: UNNotificationActionOptions(rawValue: 0))
     }
     
     private func createDeeplinkAction(with title: String) -> UNNotificationAction {
-        return UNNotificationAction(identifier: "EXPONEA_DEEPLINK_ACTION", title: title,
+        return UNNotificationAction(identifier: ExponeaNotificationAction.deeplink.rawValue, title: title,
                                     options: UNNotificationActionOptions(rawValue: 0))
     }
     
