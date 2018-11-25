@@ -61,8 +61,8 @@ public class ExponeaNotificationService {
             }
             
             // Assign sound if any
-            if let sound = content.userInfo["badge"] as? String {
-                bestAttemptContent?.sound = UNNotificationSound(named: UNNotificationSoundName(sound))
+            if let sound = content.userInfo["sound"] as? String {
+                bestAttemptContent?.sound = UNNotificationSound.init(named: UNNotificationSoundName(rawValue: sound))
             }
             
             // Download and add image
