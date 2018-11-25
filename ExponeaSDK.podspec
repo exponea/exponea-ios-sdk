@@ -58,8 +58,8 @@ Pod::Spec.new do |s|
   #  the deployment target. You can optionally include the target after the platform.
   #
 
-  s.platform     = :ios, "10.0"
-  s.swift_version = '4.1.2'
+  s.platform     = :ios, "10.3"
+  s.swift_version = '4.2.0'
 
   # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
