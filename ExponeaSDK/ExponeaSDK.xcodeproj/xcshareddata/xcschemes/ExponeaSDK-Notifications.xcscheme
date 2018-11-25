@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C0ED33B321A6FB0F003649C3"
-               BuildableName = "ExponeaSDK_Notifications.framework"
-               BlueprintName = "ExponeaSDK-Notifications"
+               BuildableName = "ExponeaSDKNotifications.framework"
+               BlueprintName = "ExponeaSDKNotifications"
                ReferencedContainer = "container:ExponeaSDK.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,8 +46,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C0ED33B321A6FB0F003649C3"
-            BuildableName = "ExponeaSDK_Notifications.framework"
-            BlueprintName = "ExponeaSDK-Notifications"
+            BuildableName = "ExponeaSDKNotifications.framework"
+            BlueprintName = "ExponeaSDKNotifications"
             ReferencedContainer = "container:ExponeaSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -64,8 +64,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C0ED33B321A6FB0F003649C3"
-            BuildableName = "ExponeaSDK_Notifications.framework"
-            BlueprintName = "ExponeaSDK-Notifications"
+            BuildableName = "ExponeaSDKNotifications.framework"
+            BlueprintName = "ExponeaSDKNotifications"
             ReferencedContainer = "container:ExponeaSDK.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

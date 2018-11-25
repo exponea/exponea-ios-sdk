@@ -31,13 +31,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                                      openDeeplinkButtonTitle: "Show item")
         UNUserNotificationCenter.current().setNotificationCategories(categories)
         
-        UNUserNotificationCenter.current().delegate = self
-        
         return true
     }
 }
 
-extension AppDelegate: UNUserNotificationCenterDelegate {
+extension AppDelegate {
     func showPushAlert(_ message: String?) {
         let alert = UIAlertController(title: "Push Notification Received", message: message ?? "no body", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
@@ -49,17 +47,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         alertWindow.makeKeyAndVisible()
         alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
     }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
-        showPushAlert(response.notification.request.content.body)
-        completionHandler()
-    }
 }
 
 extension AppDelegate: PushNotificationManagerDelegate {
-    func pushNotificationOpened(with action: ExponeaNotificationAction, extraData: [AnyHashable : Any]?) {
-        print("Action \(action), extraData \(extraData)")
+    func pushNotificationOpened(with action: ExponeaNotificationAction, value: String?, extraData: [AnyHashable : Any]?) {
+        showPushAlert("Action \(action), value: \(value), extraData \(extraData)")
     }
 }

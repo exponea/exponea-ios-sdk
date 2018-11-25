@@ -7,7 +7,7 @@
 //
 
 import UserNotifications
-import ExponeaSDK_Notifications
+import ExponeaSDKNotifications
 
 class NotificationService: UNNotificationServiceExtension {
 

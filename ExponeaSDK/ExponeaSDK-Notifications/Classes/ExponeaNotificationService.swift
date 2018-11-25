@@ -1,6 +1,6 @@
 //
 //  ExponeaNotificationService.swift
-//  ExponeaSDK-Notifications
+//  ExponeaSDKNotifications
 //
 //  Created by Dominik Hadl on 22/11/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
