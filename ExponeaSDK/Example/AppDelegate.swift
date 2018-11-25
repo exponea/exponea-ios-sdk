@@ -59,7 +59,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 }
 
 extension AppDelegate: PushNotificationManagerDelegate {
-    func notificationOpened(with action: ExponeaNotificationAction, extraData: [AnyHashable : Any]?) {
+    func pushNotificationOpened(with action: ExponeaNotificationAction, extraData: [AnyHashable : Any]?) {
         print("Action \(action), extraData \(extraData)")
     }
 }

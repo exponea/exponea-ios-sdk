@@ -14,7 +14,7 @@ public protocol PushNotificationManagerType: class {
 }
 
 public protocol PushNotificationManagerDelegate: class {
-    func notificationOpened(with action: ExponeaNotificationAction, extraData: [AnyHashable: Any]?)
+    func pushNotificationOpened(with action: ExponeaNotificationAction, extraData: [AnyHashable: Any]?)
 }
 
 class PushNotificationManager: NSObject, PushNotificationManagerType {
@@ -61,7 +61,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         }
         
         let extra = data["attributes"] as? [AnyHashable: Any]
-        delegate?.notificationOpened(with: action, extraData: extra)
+        delegate?.pushNotificationOpened(with: action, extraData: extra)
     }
     
     func handlePushTokenRegistered(dataObject: AnyObject?) {

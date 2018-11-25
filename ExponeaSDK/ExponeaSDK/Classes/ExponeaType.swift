@@ -21,7 +21,7 @@ public protocol ExponeaType: class {
     var flushingMode: FlushingMode { get set }
     /// The delegate that gets callbacks about notification opens and/or actions. Only has effect if automatic
     /// push tracking is enabled, otherwise will never get called.
-    var notificationsDelegate: PushNotificationManagerDelegate? { get set }
+    var pushNotificationsDelegate: PushNotificationManagerDelegate? { get set }
     
     // MARK: - Configure -
     

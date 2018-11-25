@@ -86,7 +86,7 @@ public class Exponea: ExponeaType {
     
     /// The delegate that gets callbacks about notification opens and/or actions. Only has effect if automatic
     /// push tracking is enabled, otherwise will never get called.
-    public var notificationsDelegate: PushNotificationManagerDelegate? {
+    public var pushNotificationsDelegate: PushNotificationManagerDelegate? {
         get {
             return trackingManager?.notificationsManager?.delegate
         }
