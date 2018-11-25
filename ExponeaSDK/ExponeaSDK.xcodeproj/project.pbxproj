@@ -39,6 +39,10 @@
 		C030AF4E216FA154004413F0 /* PushNotificationDelegateObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C030AF4D216FA154004413F0 /* PushNotificationDelegateObserver.swift */; };
 		C0329E5F20F76EB00051F5DF /* URLRequest+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */; };
 		C0329E6120F76EBF0051F5DF /* URLResponse+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */; };
+		C03B23D421AAF34000360EE6 /* beep.wav in Resources */ = {isa = PBXBuildFile; fileRef = C03B23D321AAF34000360EE6 /* beep.wav */; };
+		C03B23D621AAFDA600360EE6 /* PushNotificationManager+Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03B23D521AAFDA600360EE6 /* PushNotificationManager+Categories.swift */; };
+		C03B23D821AAFDBB00360EE6 /* ExponeaNotificationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03B23D721AAFDBB00360EE6 /* ExponeaNotificationAction.swift */; };
+		C03B23DA21AAFE1F00360EE6 /* Exponea+PushNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03B23D921AAFE1F00360EE6 /* Exponea+PushNotifications.swift */; };
 		C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */; };
 		C0753E9020A43D3900A779FF /* RepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E8F20A43D3900A779FF /* RepositoryError.swift */; };
 		C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */; };
@@ -87,7 +91,6 @@
 		C0ED33BC21A6FB10003649C3 /* ExponeaSDK_Notifications.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C0ED33B421A6FB0F003649C3 /* ExponeaSDK_Notifications.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C0ED33C121A6FB6B003649C3 /* ExponeaNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0ED33C021A6FB6B003649C3 /* ExponeaNotificationService.swift */; };
 		C0ED33C221A72E40003649C3 /* ExponeaSDK_Notifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ED33B421A6FB0F003649C3 /* ExponeaSDK_Notifications.framework */; };
-		C0ED33CA21A7436A003649C3 /* PushNotificationCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0ED33C921A7436A003649C3 /* PushNotificationCategories.swift */; };
 		C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406920BC38EC00CAF7CE /* Swizzle.swift */; };
 		C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */; };
 		C0F2406E20BC511500CAF7CE /* Exponea+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */; };
@@ -261,6 +264,10 @@
 		C030AF4D216FA154004413F0 /* PushNotificationDelegateObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationDelegateObserver.swift; sourceTree = "<group>"; };
 		C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Debug.swift"; sourceTree = "<group>"; };
 		C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLResponse+Debug.swift"; sourceTree = "<group>"; };
+		C03B23D321AAF34000360EE6 /* beep.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = beep.wav; sourceTree = "<group>"; };
+		C03B23D521AAFDA600360EE6 /* PushNotificationManager+Categories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PushNotificationManager+Categories.swift"; sourceTree = "<group>"; };
+		C03B23D721AAFDBB00360EE6 /* ExponeaNotificationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationAction.swift; sourceTree = "<group>"; };
+		C03B23D921AAFE1F00360EE6 /* Exponea+PushNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+PushNotifications.swift"; sourceTree = "<group>"; };
 		C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerProcessingSpec.swift; sourceTree = "<group>"; };
 		C06FCE86219D840400ABB0BE /* DatabaseModel v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v3.xcdatamodel"; sourceTree = "<group>"; };
 		C0753E8F20A43D3900A779FF /* RepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryError.swift; sourceTree = "<group>"; };
@@ -311,7 +318,6 @@
 		C0ED33B721A6FB10003649C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C0ED33C021A6FB6B003649C3 /* ExponeaNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationService.swift; sourceTree = "<group>"; };
 		C0ED33C621A72EE6003649C3 /* ExponeaSDK.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = ExponeaSDK.podspec; path = ../ExponeaSDK.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		C0ED33C921A7436A003649C3 /* PushNotificationCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationCategories.swift; sourceTree = "<group>"; };
 		C0F2406920BC38EC00CAF7CE /* Swizzle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swizzle.swift; sourceTree = "<group>"; };
 		C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+Fetching.swift"; sourceTree = "<group>"; };
 		C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+Tracking.swift"; sourceTree = "<group>"; };
@@ -572,6 +578,7 @@
 		C0EA5FCD20CE95EE00660802 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C03B23D321AAF34000360EE6 /* beep.wav */,
 				C0F6C4E92098A1AC00834E21 /* Assets.xcassets */,
 				C0F6C4E62098A1AB00834E21 /* Main.storyboard */,
 				C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */,
@@ -640,10 +647,10 @@
 				C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */,
 				C030AF4D216FA154004413F0 /* PushNotificationDelegateObserver.swift */,
 				C0EB5D9220B811F900F1031F /* PushNotificationManager.swift */,
+				C03B23D521AAFDA600360EE6 /* PushNotificationManager+Categories.swift */,
 				C030AF49216F4910004413F0 /* PushNotificationManager+UIResponder.swift */,
 				C030AF4B216F96F3004413F0 /* PushNotificationManager+NSObject.swift */,
 				C0EB5D9420B8123200F1031F /* PushNotificationSelectors.swift */,
-				C0ED33C921A7436A003649C3 /* PushNotificationCategories.swift */,
 			);
 			name = "Push Notifications";
 			path = "Models/Push Notifications";
@@ -936,6 +943,7 @@
 				F029BF22208A08CE00342498 /* Event.swift */,
 				F067441320873813003C0293 /* PurchasedItem.swift */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
+				C03B23D721AAFDBB00360EE6 /* ExponeaNotificationAction.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -986,6 +994,7 @@
 				F0E757ED207D025300FE8C21 /* Exponea.swift */,
 				C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */,
 				C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */,
+				C03B23D921AAFE1F00360EE6 /* Exponea+PushNotifications.swift */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 				C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */,
 				01EC2DB0207E55C10031BFEB /* Tracking */,
@@ -1201,6 +1210,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0F6C4ED2098A1AC00834E21 /* LaunchScreen.storyboard in Resources */,
+				C03B23D421AAF34000360EE6 /* beep.wav in Resources */,
 				C0F6C4EA2098A1AC00834E21 /* Assets.xcassets in Resources */,
 				C0F6C4E82098A1AB00834E21 /* Main.storyboard in Resources */,
 			);
@@ -1322,6 +1332,7 @@
 				C07E420920CA89DE00920809 /* PersonalizationRequest.swift in Sources */,
 				C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* RecommendationRequest.swift in Sources */,
+				C03B23D621AAFDA600360EE6 /* PushNotificationManager+Categories.swift in Sources */,
 				C07E421420CA8C1B00920809 /* BannerFrequency.swift in Sources */,
 				C084D0ED2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
@@ -1346,7 +1357,6 @@
 				C0A6DEA820EAC16900C5F744 /* Customer.swift in Sources */,
 				01C2AD4E208F61000012F663 /* CustomerParameters.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
-				C0ED33CA21A7436A003649C3 /* PushNotificationCategories.swift in Sources */,
 				F0674412208732AF003C0293 /* PaymentManagerType.swift in Sources */,
 				C0EB5D9F20BB530000F1031F /* ExponeaType.swift in Sources */,
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
@@ -1370,9 +1380,11 @@
 				C0D9B08120A3C0D50066FB1E /* Authorization.swift in Sources */,
 				01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */,
 				F04BEAAB21126D2000591950 /* DeviceTarget.swift in Sources */,
+				C03B23D821AAFDBB00360EE6 /* ExponeaNotificationAction.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
 				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
+				C03B23DA21AAFE1F00360EE6 /* Exponea+PushNotifications.swift in Sources */,
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
