@@ -26,7 +26,8 @@ extension NSObject {
         
         for (_, block) in swizzle.blocks {
             block(center as AnyObject?,
-                  response.notification.request.content.userInfo as AnyObject?)
+                  response.notification.request.content.userInfo as AnyObject?,
+                  response.actionIdentifier as AnyObject?)
         }
     }
 }

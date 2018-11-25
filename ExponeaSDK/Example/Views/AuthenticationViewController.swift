@@ -54,9 +54,14 @@ class AuthenticationViewController: UIViewController {
             auth = .token(text)
         }
         
+        // Auth Exponea
         Exponea.shared.configure(projectToken: token,
                                  authorization: auth,
                                  baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text)
+        
+        // Set notification delegate (needs to be done after configuring)
+        Exponea.shared.pushNotificationsDelegate = UIApplication.shared.delegate as? AppDelegate
+        
         performSegue(withIdentifier: "showMain", sender: nil)
     }
     

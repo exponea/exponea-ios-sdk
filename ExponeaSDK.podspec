@@ -69,7 +69,6 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/exponea/exponea-ios-sdk.git", :tag => "#{s.version}" }
 
-
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
   #  CocoaPods is smart about how it includes source code. For source files
@@ -77,17 +76,20 @@ Pod::Spec.new do |s|
   #  For header files it will include any header in the folder.
   #  Not including the public_header_files will make all headers public.
   #
-
-  s.source_files  = "ExponeaSDK/ExponeaSDK/Classes/**/*.swift"  
-
-  # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  #
-  #  A list of resources included with the Pod. These are copied into the
-  #  target bundle with a build phase script. Anything else will be cleaned.
-  #  You can preserve files from being cleaned, please don't preserve
-  #  non-essential files like tests, examples and documentation.
-  #
   
-  s.resources = ['ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld']
+  s.default_subspecs = 'Core'
+  
+  s.subspec 'Core' do |core|
+      core.source_files  = "ExponeaSDK/ExponeaSDK/**/*.swift"
+      core.exclude_files = "ExponeaSDK/ExponeaSDK-Notifications/**/*"
+      core.resources = ["ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld"]
+  end
+
+  s.subspec 'Notifications' do |notifications|
+      notifications.dependency 'ExponeaSDK/Core'
+      notifications.source_files    = "ExponeaSDK/ExponeaSDK-Notifications/**/*.swift"
+      notifications.exclude_files   = "ExponeaSDK/ExponeaSDK/**/*"
+      notifications.weak_frameworks = "UserNotifications"
+  end
 
 end

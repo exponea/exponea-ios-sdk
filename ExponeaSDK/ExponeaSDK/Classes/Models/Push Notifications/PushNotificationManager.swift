@@ -9,13 +9,22 @@
 import Foundation
 import UserNotifications
 
-class PushNotificationManager: NSObject {
+public protocol PushNotificationManagerType: class {
+    var delegate: PushNotificationManagerDelegate? { get set }
+}
+
+public protocol PushNotificationManagerDelegate: class {
+    func pushNotificationOpened(with action: ExponeaNotificationAction, value: String?, extraData: [AnyHashable: Any]?)
+}
+
+class PushNotificationManager: NSObject, PushNotificationManagerType {
     /// The tracking manager used to track push events
     internal weak var trackingManager: TrackingManagerType?
     
     private let center = UNUserNotificationCenter.current()
     private var receiver: PushNotificationReceiver?
     private var observer: PushNotificationDelegateObserver?
+    internal weak var delegate: PushNotificationManagerDelegate?
     
     init(trackingManager: TrackingManagerType) {
         self.trackingManager = trackingManager
@@ -30,7 +39,7 @@ class PushNotificationManager: NSObject {
     
     // MARK: - Actions -
     
-    func handlePushOpened(userInfoObject: AnyObject?) {
+    func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String) {
         guard let userInfo = userInfoObject as? [String: Any] else {
             Exponea.logger.log(.error, message: "Failed to convert push payload.")
             return
@@ -50,6 +59,23 @@ class PushNotificationManager: NSObject {
         } catch {
             Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
         }
+        
+        // Fetch action and any extra attributes
+        let extra = data["attributes"] as? [AnyHashable: Any]
+        let action = ExponeaNotificationAction(rawValue: actionIdentifier) ?? .none
+        var value: String? = nil
+        
+        // Format of action id should look like - EXPONEA_APP_OPEN_ACTION_0
+        // We need to get the right index and fetch the correct action url from payload, if any
+        let components = actionIdentifier.components(separatedBy: "_")
+        if components.count > 1, let index = Int(components.last!),
+            let actions = data["actions"] as? [[String: String]], actions.count > index {
+            let actionDict = actions[index]
+            value = actionDict["url"]
+        }
+        
+        // Notify the delegate
+        delegate?.pushNotificationOpened(with: action, value: value, extraData: extra)
     }
     
     func handlePushTokenRegistered(dataObject: AnyObject?) {
@@ -94,7 +120,7 @@ extension PushNotificationManager {
                                  with: PushSelectorMapping.registration.swizzled,
                                  for: type(of: appDelegate),
                                  name: "PushTokenRegistration",
-                                 block: { [weak self] (_, dataObject) in
+                                 block: { [weak self] (_, dataObject, _) in
                                     self?.handlePushTokenRegistered(dataObject: dataObject) },
                                  addingMethodIfNecessary: true)
     }
@@ -149,8 +175,8 @@ extension PushNotificationManager {
                                      with: mapping.swizzled,
                                      for: appDelegateClass,
                                      name: "NotificationOpened",
-                                     block: { [weak self] (_, userInfoObject) in
-                                        self?.handlePushOpened(userInfoObject: userInfoObject) },
+                                     block: { [weak self] (_, userInfoObject, _) in
+                                        self?.handlePushOpened(userInfoObject: userInfoObject, actionIdentifier: "") },
                                      addingMethodIfNecessary: true)
         } else {
             // The user is not overriding any UIAppDelegate receive functions nor is using UNUserNotificationCenter.
@@ -209,8 +235,10 @@ extension PushNotificationManager {
                                  with: PushSelectorMapping.newReceive.swizzled,
                                  for: delegateClass,
                                  name: "NotificationOpened",
-                                 block: { [weak self] (_, userInfoObject) in
-                                    self?.handlePushOpened(userInfoObject: userInfoObject) },
+                                 block: { [weak self] (_, userInfoObject, actionIdentifier) in
+                                    self?.handlePushOpened(userInfoObject: userInfoObject,
+                                                           actionIdentifier: actionIdentifier as? String ?? "")
+                                 },
                                  addingMethodIfNecessary: true)
     }
 }

@@ -19,6 +19,9 @@ public protocol ExponeaType: class {
     var configuration: Configuration? { get }
     /// Identification of the flushing mode used in to send the data to the Exponea API.
     var flushingMode: FlushingMode { get set }
+    /// The delegate that gets callbacks about notification opens and/or actions. Only has effect if automatic
+    /// push tracking is enabled, otherwise will never get called.
+    var pushNotificationsDelegate: PushNotificationManagerDelegate? { get set }
     
     // MARK: - Configure -
     

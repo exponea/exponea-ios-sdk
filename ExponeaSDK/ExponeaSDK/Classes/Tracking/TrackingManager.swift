@@ -36,7 +36,7 @@ open class TrackingManager {
     internal let reachability: Reachability
     
     /// The manager for automatic push registration and delivery tracking
-    internal var pushManager: PushNotificationManager?
+    internal var notificationsManager: PushNotificationManagerType?
     
     /// Used for periodic data flushing.
     internal var flushingTimer: Timer?
@@ -114,7 +114,7 @@ open class TrackingManager {
         
         /// Add the observers when the automatic push notification tracking is true.
         if repository.configuration.automaticPushNotificationTracking {
-            pushManager = PushNotificationManager(trackingManager: self)
+            notificationsManager = PushNotificationManager(trackingManager: self)
         }
         
         // First remove all observing
@@ -161,6 +161,7 @@ open class TrackingManager {
 // MARK: -
 
 extension TrackingManager: TrackingManagerType {
+    
     open func track(_ type: EventType, with data: [DataType]?) throws {
         /// Get token mapping or fail if no token provided.
         let tokens = repository.configuration.tokens(for: type)
