@@ -1,5 +1,9 @@
 ## Release Notes
 
+### 1.2.0-beta1
+
+* Adds support for the new rich push notification feature
+
 ### 1.1.8
 
 * Basic authorization and features relying on it (Fetch Events, Fetch Attributes) have been deprecated
