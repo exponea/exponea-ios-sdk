@@ -47,9 +47,9 @@ open class TrackingManager {
     internal var isFlushingData: Bool = false
     
     // Background task, if there is any - used to track sessions and flush data.
-    internal var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid {
+    internal var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid {
         didSet {
-            if backgroundTask == UIBackgroundTaskInvalid && backgroundWorkItem != nil {
+            if backgroundTask == UIBackgroundTaskIdentifier.invalid && backgroundWorkItem != nil {
                 Exponea.logger.log(.verbose, message: "Background task ended, stopping background work item.")
                 backgroundWorkItem?.cancel()
                 backgroundWorkItem = nil
@@ -60,10 +60,10 @@ open class TrackingManager {
     internal var backgroundWorkItem: DispatchWorkItem? {
         didSet {
             // Stop background taks if work item is done
-            if backgroundWorkItem == nil && backgroundTask != UIBackgroundTaskInvalid {
+            if backgroundWorkItem == nil && backgroundTask != UIBackgroundTaskIdentifier.invalid {
                 Exponea.logger.log(.verbose, message: "Stopping background task after work item done/cancelled.")
                 UIApplication.shared.endBackgroundTask(backgroundTask)
-                backgroundTask = UIBackgroundTaskInvalid
+                backgroundTask = UIBackgroundTaskIdentifier.invalid
             }
         }
     }
@@ -123,12 +123,12 @@ open class TrackingManager {
         // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidBecomeActive),
-                                               name: .UIApplicationDidBecomeActive,
+                                               name: UIApplication.didBecomeActiveNotification,
                                                object: nil)
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidEnterBackground),
-                                               name: .UIApplicationDidEnterBackground,
+                                               name: UIApplication.didEnterBackgroundNotification,
                                                object: nil)
     }
     
@@ -357,14 +357,14 @@ extension TrackingManager {
         sessionBackgroundTime = Date().timeIntervalSince1970
         
         // Make sure to not create a new background task, if we already have one.
-        guard backgroundTask == UIBackgroundTaskInvalid else {
+        guard backgroundTask == UIBackgroundTaskIdentifier.invalid else {
             return
         }
         
         // Start the background task
         backgroundTask = UIApplication.shared.beginBackgroundTask(expirationHandler: {
             UIApplication.shared.endBackgroundTask(self.backgroundTask)
-            self.backgroundTask = UIBackgroundTaskInvalid
+            self.backgroundTask = UIBackgroundTaskIdentifier.invalid
         })
         
         // Dispatch after default session timeout
@@ -387,7 +387,7 @@ extension TrackingManager {
             // If we're cancelled, stop background task
             if self.backgroundWorkItem?.isCancelled ?? false {
                 UIApplication.shared.endBackgroundTask(self.backgroundTask)
-                self.backgroundTask = UIBackgroundTaskInvalid
+                self.backgroundTask = UIBackgroundTaskIdentifier.invalid
                 return
             }
             
@@ -415,13 +415,13 @@ extension TrackingManager {
                 self.flushData(completion: { [weak self] in
                     guard let weakSelf = self else { return }
                     UIApplication.shared.endBackgroundTask(weakSelf.backgroundTask)
-                    weakSelf.backgroundTask = UIBackgroundTaskInvalid
+                    weakSelf.backgroundTask = UIBackgroundTaskIdentifier.invalid
                 })
                 
             default:
                 // We're done
                 UIApplication.shared.endBackgroundTask(self.backgroundTask)
-                self.backgroundTask = UIBackgroundTaskInvalid
+                self.backgroundTask = UIBackgroundTaskIdentifier.invalid
             }
         }
     }

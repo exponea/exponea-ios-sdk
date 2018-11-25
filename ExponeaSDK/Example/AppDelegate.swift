@@ -51,6 +51,6 @@ extension AppDelegate {
 
 extension AppDelegate: PushNotificationManagerDelegate {
     func pushNotificationOpened(with action: ExponeaNotificationAction, value: String?, extraData: [AnyHashable : Any]?) {
-        showPushAlert("Action \(action), value: \(value), extraData \(extraData)")
+        showPushAlert("Action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))")
     }
 }
