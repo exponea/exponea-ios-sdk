@@ -1,6 +1,6 @@
 git_branch "exponeasdk"
 git_url "git@github.com:nodes-projects/internal-certificates-ios.git"
 type "appstore"
-app_identifier 'com.Exponea.ExponeaSDK-Example'
+app_identifier 'com.Exponea.ExponeaSDK-Example,com.Exponea.ExponeaSDK-Example.ExampleNotificationService'
 shallow_clone true
 force_for_new_devices true
