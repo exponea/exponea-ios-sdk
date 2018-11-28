@@ -1,5 +1,10 @@
 ## Release Notes
 
+### 1.2.0-beta3
+
+* Fix parsing of button actions
+* Make sure notification actions open in foreground
+
 ### 1.2.0-beta2
 
 * Fixes for sound not working properly in rich push
