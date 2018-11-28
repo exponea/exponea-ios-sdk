@@ -48,7 +48,7 @@ public class ExponeaNotificationService {
                 var categoryIdentifier = "EXPONEA_ACTIONABLE_\(actions.count)"
                 for action in actions {
                     let type = action["action"] ?? ""
-                    categoryIdentifier += "_" + type.uppercased()
+                    categoryIdentifier += "_" + type
                 }
                 bestAttemptContent?.categoryIdentifier = categoryIdentifier
             }

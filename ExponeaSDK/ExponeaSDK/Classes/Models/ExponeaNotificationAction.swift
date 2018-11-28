@@ -8,17 +8,17 @@
 
 import Foundation
 
-public enum ExponeaNotificationAction: String, CaseIterable {
-    case openApp = "EXPONEA_APP_OPEN_ACTION"
-    case browser = "EXPONEA_BROWSER_ACTION"
-    case deeplink = "EXPONEA_DEEPLINK_ACTION"
-    case none
+public enum ExponeaNotificationAction: String, Codable {
+    case openApp = "app"
+    case browser = "browser"
+    case deeplink = "deeplink"
+    case none = ""
     
     var identifier: String {
         switch self {
-        case .openApp: return "APP"
-        case .browser: return "BROWSER"
-        case .deeplink: return "DEEPLINK"
+        case .openApp: return "EXPONEA_ACTION_APP"
+        case .browser: return "EXPONEA_ACTION_BROWSER"
+        case .deeplink: return "EXPONEA_ACTION_DEEPLINK"
         default: return ""
         }
     }

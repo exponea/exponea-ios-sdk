@@ -11,17 +11,17 @@ import UserNotifications
 
 extension PushNotificationManager {
     private static func createAppOpenAction(with title: String, index: Int) -> UNNotificationAction {
-        return UNNotificationAction(identifier: ExponeaNotificationAction.openApp.rawValue + "_\(index)", title: title,
+        return UNNotificationAction(identifier: ExponeaNotificationAction.openApp.identifier + "_\(index)", title: title,
                                     options: [.foreground])
     }
     
     private static func createBrowserAction(with title: String, index: Int) -> UNNotificationAction {
-        return UNNotificationAction(identifier: ExponeaNotificationAction.browser.rawValue + "_\(index)", title: title,
+        return UNNotificationAction(identifier: ExponeaNotificationAction.browser.identifier + "_\(index)", title: title,
                                     options: [.foreground])
     }
     
     private static func createDeeplinkAction(with title: String, index: Int) -> UNNotificationAction {
-        return UNNotificationAction(identifier: ExponeaNotificationAction.deeplink.rawValue + "_\(index)", title: title,
+        return UNNotificationAction(identifier: ExponeaNotificationAction.deeplink.identifier + "_\(index)", title: title,
                                     options: [.foreground])
     }
     
@@ -80,7 +80,7 @@ extension PushNotificationManager {
             let actions = variation.enumerated().compactMap { (offset, element) -> UNNotificationAction? in
                 return action(for: element, index: offset)
             }
-            let actionsIds = variation.map({ $0.identifier }).joined(separator: "_")
+            let actionsIds = variation.map({ $0.rawValue }).joined(separator: "_")
             let identifier = "EXPONEA_ACTIONABLE_\(variation.count)_\(actionsIds)"
             let category = UNNotificationCategory(identifier: identifier, actions: actions,
                                                   intentIdentifiers: [], options: .customDismissAction)
