@@ -12,17 +12,17 @@ import UserNotifications
 extension PushNotificationManager {
     private static func createAppOpenAction(with title: String, index: Int) -> UNNotificationAction {
         return UNNotificationAction(identifier: ExponeaNotificationAction.openApp.rawValue + "_\(index)", title: title,
-                                    options: UNNotificationActionOptions(rawValue: 0))
+                                    options: [.foreground])
     }
     
     private static func createBrowserAction(with title: String, index: Int) -> UNNotificationAction {
         return UNNotificationAction(identifier: ExponeaNotificationAction.browser.rawValue + "_\(index)", title: title,
-                                    options: UNNotificationActionOptions(rawValue: 0))
+                                    options: [.foreground])
     }
     
     private static func createDeeplinkAction(with title: String, index: Int) -> UNNotificationAction {
         return UNNotificationAction(identifier: ExponeaNotificationAction.deeplink.rawValue + "_\(index)", title: title,
-                                    options: UNNotificationActionOptions(rawValue: 0))
+                                    options: [.foreground])
     }
     
     private static let maximumNumberOfNotificationActions = 3

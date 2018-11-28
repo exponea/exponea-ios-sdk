@@ -85,12 +85,22 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             _ = components.popLast()
         }
         
-        let action = ExponeaNotificationAction(rawValue: components.joined(separator: "_")) ?? .none
-        
         do {
             try trackingManager?.track(.pushOpened, with: [.properties(properties)])
         } catch {
             Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
+        }
+
+        let action = ExponeaNotificationAction(rawValue: components.joined(separator: "_")) ?? .none
+        
+        switch action {
+        case .openApp, .none:
+            // do nothing as the action will open the app by default
+            break
+        case .browser, .deeplink:
+            if let value = actionValue, let url = URL(string: value) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
         }
         
         // Notify the delegate

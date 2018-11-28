@@ -33,11 +33,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        if let components = URLComponents(url: url, resolvingAgainstBaseURL: false), components.scheme == "exponea" {
+            showAlert("Deeplink received", url.absoluteString)
+            return true
+        }
+        return false
+    }
 }
 
 extension AppDelegate {
-    func showPushAlert(_ message: String?) {
-        let alert = UIAlertController(title: "Push Notification Received", message: message ?? "no body", preferredStyle: .alert)
+    func showAlert(_ title: String, _ message: String?) {
+        let alert = UIAlertController(title: title, message: message ?? "no body", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         (window?.rootViewController as? UINavigationController)?.topViewController?.present(alert, animated: true, completion: nil)
         
@@ -51,6 +59,6 @@ extension AppDelegate {
 
 extension AppDelegate: PushNotificationManagerDelegate {
     func pushNotificationOpened(with action: ExponeaNotificationAction, value: String?, extraData: [AnyHashable : Any]?) {
-        showPushAlert("Action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))")
+        Exponea.logger.log(.verbose, message: "Action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))")
     }
 }
