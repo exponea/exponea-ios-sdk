@@ -1,5 +1,10 @@
 ## Release Notes
 
+### 1.2.0-beta4
+
+* Add support for rich notification default action on notification tap
+* Improve how notification actions (both default and buttons) are parsed and handled
+
 ### 1.2.0-beta3
 
 * Fix parsing of button actions
