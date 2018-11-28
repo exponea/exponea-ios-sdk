@@ -193,6 +193,26 @@ public extension Exponea {
         }
     }
     
+    public func getCookie() -> String? {
+        do {
+            let dependencies = try getDependenciesIfConfigured()
+            let ids = dependencies.trackingManager.customerIds
+            
+            if let jsonValue = ids["cookie"] {
+                switch jsonValue {
+                case .string(let cookie):
+                    return cookie
+                default:
+                    return nil
+                }
+            }
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+        
+        return nil
+    }
+    
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
     /// you to track events to multiple projects, even the same event to more project at once.
     ///
