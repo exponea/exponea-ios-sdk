@@ -1,5 +1,11 @@
 ## Release Notes
 
+### 1.2.0-beta2
+
+* Fixes for sound not working properly in rich push
+* Better campaing data and action info parsing in rich push tracking
+* Fix open app action button key for notification service
+
 ### 1.2.0-beta1
 
 * Adds support for the new rich push notification feature
