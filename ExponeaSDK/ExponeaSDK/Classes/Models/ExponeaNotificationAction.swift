@@ -16,7 +16,7 @@ public enum ExponeaNotificationAction: String, CaseIterable {
     
     var identifier: String {
         switch self {
-        case .openApp: return "OPENAPP"
+        case .openApp: return "APP"
         case .browser: return "BROWSER"
         case .deeplink: return "DEEPLINK"
         default: return ""

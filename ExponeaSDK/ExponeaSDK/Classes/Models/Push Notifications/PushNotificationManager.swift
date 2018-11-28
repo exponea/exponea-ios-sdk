@@ -26,6 +26,12 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     private var observer: PushNotificationDelegateObserver?
     internal weak var delegate: PushNotificationManagerDelegate?
     
+    let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }()
+    
     init(trackingManager: TrackingManagerType) {
         self.trackingManager = trackingManager
         super.init()
@@ -50,9 +56,36 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             return
         }
         
-        var properties = JSONValue.convert(data)
+        var properties: [String: JSONValue] = [:]
+        let attributes = userInfo["attributes"] as? [String: Any]
+
+        // If attributes is present, then campaign tracking info is nested in there, decode and process it
+        if let attributes = attributes,
+            let data = try? JSONSerialization.data(withJSONObject: attributes, options: []),
+            let model = try? decoder.decode(ExponeaNotificationData.self, from: data) {
+            properties = model.properties
+        } else if let data = try? JSONSerialization.data(withJSONObject: data, options: []),
+            let model = try? decoder.decode(ExponeaNotificationData.self, from: data) {
+            properties = model.properties
+        }
+        
         properties["action_type"] = .string("notification")
         properties["status"] = .string("clicked")
+        
+        // Fetch action and any extra attributes
+        var actionValue: String? = nil
+        
+        // Format of action id should look like - EXPONEA_APP_OPEN_ACTION_0
+        // We need to get the right index and fetch the correct action url from payload, if any
+        var components = actionIdentifier.components(separatedBy: "_")
+        if components.count > 1, let index = Int(components.last!),
+            let actions = userInfo["actions"] as? [[String: String]], actions.count > index {
+            let actionDict = actions[index]
+            actionValue = actionDict["url"]
+            _ = components.popLast()
+        }
+        
+        let action = ExponeaNotificationAction(rawValue: components.joined(separator: "_")) ?? .none
         
         do {
             try trackingManager?.track(.pushOpened, with: [.properties(properties)])
@@ -60,22 +93,8 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
         }
         
-        // Fetch action and any extra attributes
-        let extra = data["attributes"] as? [AnyHashable: Any]
-        let action = ExponeaNotificationAction(rawValue: actionIdentifier) ?? .none
-        var value: String? = nil
-        
-        // Format of action id should look like - EXPONEA_APP_OPEN_ACTION_0
-        // We need to get the right index and fetch the correct action url from payload, if any
-        let components = actionIdentifier.components(separatedBy: "_")
-        if components.count > 1, let index = Int(components.last!),
-            let actions = data["actions"] as? [[String: String]], actions.count > index {
-            let actionDict = actions[index]
-            value = actionDict["url"]
-        }
-        
         // Notify the delegate
-        delegate?.pushNotificationOpened(with: action, value: value, extraData: extra)
+        delegate?.pushNotificationOpened(with: action, value: actionValue, extraData: attributes)
     }
     
     func handlePushTokenRegistered(dataObject: AnyObject?) {
