@@ -52,11 +52,6 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             return
         }
         
-        guard let data = userInfo["data"] as? [String: Any] else {
-            Exponea.logger.log(.error, message: "Failed to convert push payload data.")
-            return
-        }
-        
         var properties: [String: JSONValue] = [:]
         let attributes = userInfo["attributes"] as? [String: Any]
 
@@ -65,7 +60,8 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             let data = try? JSONSerialization.data(withJSONObject: attributes, options: []),
             let model = try? decoder.decode(ExponeaNotificationData.self, from: data) {
             properties = model.properties
-        } else if let data = try? JSONSerialization.data(withJSONObject: data, options: []),
+        } else if let notificationData = userInfo["data"] as? [String: Any],
+            let data = try? JSONSerialization.data(withJSONObject: notificationData, options: []),
             let model = try? decoder.decode(ExponeaNotificationData.self, from: data) {
             properties = model.properties
         }
