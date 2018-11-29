@@ -1,5 +1,9 @@
 ## Release Notes
 
+### 1.2.0-beta5
+
+* Make sure to handle cases where push notification payload does not contain `data` structure
+
 ### 1.2.0-beta4
 
 * Add support for rich notification default action on notification tap
