@@ -2,24 +2,31 @@
 //  ExponeaNotificationAction.swift
 //  ExponeaSDK
 //
-//  Created by Dominik Hadl on 25/11/2018.
+//  Created by Dominik Hadl on 19/12/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
 //
 
 import Foundation
+import UserNotifications
 
-public enum ExponeaNotificationAction: String, Codable {
-    case openApp = "app"
-    case browser = "browser"
-    case deeplink = "deeplink"
-    case none = ""
+public struct ExponeaNotificationAction: Codable {
+    public let title: String
+    public let action: ExponeaNotificationActionType
+    public let url: String?
     
-    var identifier: String {
-        switch self {
-        case .openApp: return "EXPONEA_ACTION_APP"
-        case .browser: return "EXPONEA_ACTION_BROWSER"
-        case .deeplink: return "EXPONEA_ACTION_DEEPLINK"
-        default: return ""
-        }
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        title = try container.decode(String.self, forKey: .title)
+        action = try container.decode(ExponeaNotificationActionType.self, forKey: .action)
+        url = try container.decodeIfPresent(String.self, forKey: .url)
+    }
+    
+    public static func createNotificationAction(type: ExponeaNotificationActionType,
+                                                title: String) -> UNNotificationAction {
+        return UNNotificationAction(
+            identifier: type.identifier,
+            title: title,
+            options: [.foreground]
+        )
     }
 }
