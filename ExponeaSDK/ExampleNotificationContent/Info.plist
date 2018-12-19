@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>19</string>
+	<string>24</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>
@@ -31,10 +31,10 @@
 			<key>UNNotificationExtensionUserInteractionEnabled</key>
 			<true/>
 		</dict>
-		<key>NSExtensionPrincipalClass</key>
-		<string>ExampleNotificationContent.NotificationViewController</string>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.usernotifications.content-extension</string>
+		<key>NSExtensionPrincipalClass</key>
+		<string>ExampleNotificationContent.NotificationViewController</string>
 	</dict>
 </dict>
 </plist>
