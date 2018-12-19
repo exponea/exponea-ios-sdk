@@ -22,4 +22,13 @@ public enum ExponeaNotificationActionType: String, Codable {
         default: return ""
         }
     }
+    
+    init?(identifier: String) {
+        switch identifier {
+        case "EXPONEA_ACTION_APP": self = .openApp
+        case "EXPONEA_ACTION_BROWSER": self = .browser
+        case "EXPONEA_ACTION_DEEPLINK": self = .deeplink
+        default: return nil
+        }
+    }
 }

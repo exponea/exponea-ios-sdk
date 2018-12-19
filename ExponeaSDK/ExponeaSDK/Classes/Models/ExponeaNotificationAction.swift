@@ -22,9 +22,9 @@ public struct ExponeaNotificationAction: Codable {
     }
     
     public static func createNotificationAction(type: ExponeaNotificationActionType,
-                                                title: String) -> UNNotificationAction {
+                                                title: String, index: Int) -> UNNotificationAction {
         return UNNotificationAction(
-            identifier: type.identifier,
+            identifier: type.identifier + "_" + String(index),
             title: title,
             options: [.foreground]
         )

@@ -28,13 +28,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set legacy exponea categories
         let category1 = UNNotificationCategory(identifier: "EXAMPLE_LEGACY_CATEGORY_1",
                                               actions: [
-            ExponeaNotificationAction.createNotificationAction(type: .openApp, title: "Hardcoded open app"),
-            ExponeaNotificationAction.createNotificationAction(type: .deeplink, title: "Hardcoded deeplink")
+            ExponeaNotificationAction.createNotificationAction(type: .openApp, title: "Hardcoded open app", index: 0),
+            ExponeaNotificationAction.createNotificationAction(type: .deeplink, title: "Hardcoded deeplink", index: 1)
             ], intentIdentifiers: [], options: [])
         
         let category2 = UNNotificationCategory(identifier: "EXAMPLE_LEGACY_CATEGORY_2",
                                                actions: [
-            ExponeaNotificationAction.createNotificationAction(type: .browser, title: "Hardcoded browser")
+            ExponeaNotificationAction.createNotificationAction(type: .browser, title: "Hardcoded browser", index: 0)
             ], intentIdentifiers: [], options: [])
         
         UNUserNotificationCenter.current().setNotificationCategories([category1, category2])

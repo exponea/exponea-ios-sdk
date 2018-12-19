@@ -12,7 +12,12 @@ import UserNotificationsUI
 
 public class ExponeaNotificationContentService {
     
-    private let decoder = JSONDecoder()
+    private let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }()
+    
     private var attachmentUrl: URL?
     
     public init() { }
@@ -37,9 +42,10 @@ public class ExponeaNotificationContentService {
         
         // Create actions
         context.notificationActions = []
-        for action in actions {
+        for (index, action) in actions.enumerated() {
             let unAction = ExponeaNotificationAction.createNotificationAction(type: action.action,
-                                                                              title: action.title)
+                                                                              title: action.title,
+                                                                              index: index)
             context.notificationActions.append(unAction)
         }
         
