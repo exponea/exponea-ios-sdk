@@ -25,13 +25,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         application.applicationIconBadgeNumber = 0
         
-        // Set exponea categories
-        let set = Set<UNNotificationCategory>(arrayLiteral: UNNotificationCategory(identifier: "EXPONEA_ACTIONABLE", actions: [], intentIdentifiers: [], options: []))
-        UNUserNotificationCenter.current().setNotificationCategories(set)
-//        let categories = Exponea.shared.createNotificationCategories(openAppButtonTitle: "Open app",
-//                                                                     openBrowserButtonTitle: "Open browser",
-//                                                                     openDeeplinkButtonTitle: "Show item")
-//        UNUserNotificationCenter.current().setNotificationCategories(categories)
+        // Set legacy exponea categories
+        let category1 = UNNotificationCategory(identifier: "EXAMPLE_LEGACY_CATEGORY_1",
+                                              actions: [
+            ExponeaNotificationAction.createNotificationAction(type: .openApp, title: "Hardcoded open app"),
+            ExponeaNotificationAction.createNotificationAction(type: .deeplink, title: "Hardcoded deeplink")
+            ], intentIdentifiers: [], options: [])
+        
+        let category2 = UNNotificationCategory(identifier: "EXAMPLE_LEGACY_CATEGORY_2",
+                                               actions: [
+            ExponeaNotificationAction.createNotificationAction(type: .browser, title: "Hardcoded browser")
+            ], intentIdentifiers: [], options: [])
+        
+        UNUserNotificationCenter.current().setNotificationCategories([category1, category2])
         
         return true
     }
