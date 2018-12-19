@@ -43,14 +43,8 @@ public class ExponeaNotificationService {
             bestAttemptContent?.title = content.userInfo["title"] as? String ?? "NO TITLE"
             bestAttemptContent?.body = content.userInfo["message"] as? String ?? ""
             
-            // Check for actions, construct a category identifier if we have any
-            if let actions = content.userInfo["actions"] as? [[String: String]] {
-                var categoryIdentifier = "EXPONEA_ACTIONABLE_\(actions.count)"
-                for action in actions {
-                    let type = action["action"] ?? ""
-                    categoryIdentifier += "_" + type
-                }
-                bestAttemptContent?.categoryIdentifier = categoryIdentifier
+            if #available(iOSApplicationExtension 12.0, *) {
+                bestAttemptContent?.categoryIdentifier = "EXPONEA_ACTIONABLE"
             }
             
             // Assign badge if any
@@ -68,7 +62,7 @@ public class ExponeaNotificationService {
             // Download and add image
             if let imagePath = content.userInfo["image"] as? String,
                 let url = URL(string: imagePath),
-                let data = try? Data(contentsOf: url),
+                let data = try? Data(contentsOf: url, options: []),
                 let attachment = save("image.png", data: data, options: nil) {
                 bestAttemptContent?.attachments = [attachment]
             }

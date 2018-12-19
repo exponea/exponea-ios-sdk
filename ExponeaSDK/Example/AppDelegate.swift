@@ -25,11 +25,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         application.applicationIconBadgeNumber = 0
         
-        // Set exponea categories
-        let categories = Exponea.shared.createNotificationCategories(openAppButtonTitle: "Open app",
-                                                                     openBrowserButtonTitle: "Open browser",
-                                                                     openDeeplinkButtonTitle: "Show item")
-        UNUserNotificationCenter.current().setNotificationCategories(categories)
+        // Set legacy exponea categories
+        let category1 = UNNotificationCategory(identifier: "EXAMPLE_LEGACY_CATEGORY_1",
+                                              actions: [
+            ExponeaNotificationAction.createNotificationAction(type: .openApp, title: "Hardcoded open app"),
+            ExponeaNotificationAction.createNotificationAction(type: .deeplink, title: "Hardcoded deeplink")
+            ], intentIdentifiers: [], options: [])
+        
+        let category2 = UNNotificationCategory(identifier: "EXAMPLE_LEGACY_CATEGORY_2",
+                                               actions: [
+            ExponeaNotificationAction.createNotificationAction(type: .browser, title: "Hardcoded browser")
+            ], intentIdentifiers: [], options: [])
+        
+        UNUserNotificationCenter.current().setNotificationCategories([category1, category2])
         
         return true
     }
@@ -58,7 +66,7 @@ extension AppDelegate {
 }
 
 extension AppDelegate: PushNotificationManagerDelegate {
-    func pushNotificationOpened(with action: ExponeaNotificationAction, value: String?, extraData: [AnyHashable : Any]?) {
+    func pushNotificationOpened(with action: ExponeaNotificationActionType, value: String?, extraData: [AnyHashable : Any]?) {
         Exponea.logger.log(.verbose, message: "Action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))")
     }
 }

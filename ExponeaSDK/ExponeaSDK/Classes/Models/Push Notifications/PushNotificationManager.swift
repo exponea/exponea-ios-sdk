@@ -14,7 +14,7 @@ public protocol PushNotificationManagerType: class {
 }
 
 public protocol PushNotificationManagerDelegate: class {
-    func pushNotificationOpened(with action: ExponeaNotificationAction,
+    func pushNotificationOpened(with action: ExponeaNotificationActionType,
                                 value: String?, extraData: [AnyHashable: Any]?)
 }
 
@@ -78,7 +78,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         
         // Handle actions
         
-        let action: ExponeaNotificationAction
+        let action: ExponeaNotificationActionType
         let actionValue: String?
         
         // If we have action identifier then a button was pressed
@@ -90,7 +90,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             if let indexString = indexString, let index = Int(indexString),
                 let actions = userInfo["actions"] as? [[String: String]], actions.count > index {
                 let actionDict = actions[index]
-                action = ExponeaNotificationAction(rawValue: actionDict["action"] ?? "") ?? .none
+                action = ExponeaNotificationActionType(rawValue: actionDict["action"] ?? "") ?? .none
                 actionValue = actionDict["url"]
             } else {
                 action = .none
@@ -99,7 +99,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         } else {
             // Fetch notification action (on tap of notification)
             let notificationActionString = (userInfo["action"] as? String ?? "")
-            action = ExponeaNotificationAction(rawValue: notificationActionString) ?? .none
+            action = ExponeaNotificationActionType(rawValue: notificationActionString) ?? .none
             actionValue = userInfo["url"] as? String
         }
         
