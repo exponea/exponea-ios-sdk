@@ -13,7 +13,7 @@ So the possible events for tracking will be: ‘search’, ‘product view’, �
 
 ## 🔍 Track Event
 
-> **NOTE:** Requires Token or Basic authorization.
+> **NOTE:** Requires Token authorization.
 
 In the SDK you can track an event using the following accessor:
 
@@ -40,7 +40,7 @@ Exponea.shared.trackEvent(properties: properties,
         
 ## 🔍 Identify Customer
 
-> **NOTE:** Requires Token or Basic authorization.
+> **NOTE:** Requires Token authorization.
 
 Save or update your customer data in the Exponea App through this method.
 
@@ -61,7 +61,7 @@ Exponea.shared.identifyCustomer(customerIds: ["registered" : "test@test.com"],
 
 ## 🔍 Track Sessions
 
-> **NOTE:** Requires Token or Basic authorization.
+> **NOTE:** Requires Token authorization.
 
 Session is a real time spent in the game or int the app, it starts when the application is launched and ends when the game goes to background. If the user returns to game/app in 60 seconds (To change TIMEOUT value, you can set the `sessionTimeout` in the Exponea Configuration), application will continue in current session. Tracking of sessions produces two events,  `session_start` and  `session_end `.
 
