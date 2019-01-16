@@ -29,9 +29,7 @@ public struct Configuration: Decodable {
 
 #### authorization
 
-> **NOTE:** Basic authentication is deprecated in version 1.1.8 and will be removed in the next major release.
-
-* Three options: `none`, `.basic(token)` and `.token(token)`.
+* Two options: `none` and `.token(token)`.
 * Some features require specific authorization to be set, if it is not, they will fail gracefully and print an error.
 * For more information on how to get authorization tokens, please click [here](https://developers.exponea.com/reference#access-keys).
 
@@ -152,6 +150,6 @@ public func configure(projectToken: String,
 Exponea.shared.configure(projectToken: "ProjectTokenA",
                          projectMapping: [EventType.identifyCustomer: ["ProjectTokenA", "ProjectTokenB"],
                                           EventType.customEvent: ["ProjectTokenD"]],
-                         authorization: Authorization.basic("12345abcdef"),
+                         authorization: Authorization.token("12345abcdef"),
                          baseURL: "YOUR BASE URL")
 ```

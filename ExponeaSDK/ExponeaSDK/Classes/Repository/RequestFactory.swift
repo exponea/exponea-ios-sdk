@@ -55,10 +55,6 @@ extension RequestFactory {
         case .token(let token):
             request.addValue("Token \(token)",
                 forHTTPHeaderField: Constants.Repository.headerAuthorization)
-            
-        case .basic(let secret):
-            request.addValue("Basic \(secret)",
-                forHTTPHeaderField: Constants.Repository.headerAuthorization)
         }
         
         // Add parameters as request body in JSON format, if we have any

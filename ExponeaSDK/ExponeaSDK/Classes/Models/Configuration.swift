@@ -102,7 +102,6 @@ public struct Configuration: Decodable {
             
             if components.count == 2 {
                 switch components.first {
-                case "Basic": self.authorization = .basic(String(components[1]))
                 case "Token": self.authorization = .token(String(components[1]))
                 default: break
                 }
