@@ -89,7 +89,7 @@ Exponea SDK offers complex support for rich notifications that can be created in
 
 There are three ways of how you can integrate rich push notifications with your application:
 
-1. Using `ExponeaSDKNotifications` framework in notification service extension and automatic push tracking enabled when configuring `ExponeaSDK` in your application. *(easiest option)*
+1. Using `ExponeaSDKNotifications` framework in notification service and content extension and automatic push tracking enabled when configuring `ExponeaSDK` in your application. *(easiest option)*
 2. Using `ExponeaSDKNotifications` framework in notification service extension and handling push tracking manually in your app *(quick rich push implementation with custom handling)*
 3. Handling everything manually *(total freedom, but lots of extra work)*
 
@@ -125,37 +125,48 @@ class NotificationService: UNNotificationServiceExtension {
 }
 ```
 
-#### 2. Action Buttons Support
+#### 2. Notification Content Extension
 
-To support the action buttons that can be configured in the Exponea backend you will need to implement custom notification categories that are used to properly hook up the button actions. ExponeaSDK provides a convenient way of adding support for this with just two lines of code:
+The notification content extension is necessary to properly handle custom button actions and titles in the notification in iOS 12+. 
+
+1. Create a new notification service extension target in your application, please refer to [official Apple documentation and guide](https://developer.apple.com/documentation/usernotificationsui/customizing_the_appearance_of_notifications) or a tutorial like [this one](https://www.shinobicontrols.com/blog/ios-10-day-by-day-day-6-notification-content-extensions/) for example.
+2. If you're using **Cocoapods**, make sure you add the `pod 'ExponeaSDK/Notifications` line to your Podfile under the content extension target. If you're using **Carthage** then add the `ExponeaSDKNotifications` framework as a linked framework to the new service extension target along with the carthage script to strip unnecessary architectures.
+3. Open the newly created `NotificationViewController.swift` file and replace the contents with the code below:
 
 ```swift
-// Set exponea categories
-let categories = Exponea.shared.createNotificationCategories(openAppButtonTitle: "Open app",
-                                                             openBrowserButtonTitle: "Open browser",
-                                                             openDeeplinkButtonTitle: "Show item")
-UNUserNotificationCenter.current().setNotificationCategories(categories)
+import UIKit
+import UserNotifications
+import UserNotificationsUI
+import ExponeaSDKNotifications
+
+class NotificationViewController: UIViewController, UNNotificationContentExtension {
+
+    let exponeaService = ExponeaNotificationContentService()
+    
+    func didReceive(_ notification: UNNotification) {
+        exponeaService.didReceive(notification, context: extensionContext, viewController: self)
+    }
+}
 ```
 
-Implement the above lines wherever you configure the `UNUserNotificationCenter` and generally your push notifications, but preferably close to the startup time of your application. These categories can of course be also combined with custom ones that you might already be using and their identifiers will not collide with any of those you have created.
+> If you don't need support for iOS 11 and lower please skip the next step.
 
-**Currently a maximum of 3 action buttons as well as only 3 types of action buttons are supported** and their identifiers are constructed in the following way. First, a prefix is added, based on the type of action:
+#### 3. Custom Notification Actions in iOS 11 and lower (optional)
 
-* open app action: `EXPONEA_APP_OPEN_ACTION`
-* browser action: `EXPONEA_BROWSER_ACTION`
-* deeplink action: `EXPONEA_DEEPLINK_ACTION`
+To support the action buttons that can be configured in the Exponea backend on iOS 11 and lower you will need to implement custom notification categories that are used to properly hook up the button actions and titles. ExponeaSDK provides a convenient factory method to simplify creation of such category. 
 
-Then an index is appended to the end, helping distinguish between the buttons in case there are for example two deeplink actions in the payload. So a final action identifier might look like this:
+> **⚠️ Bear in mind that the category identifier you specify here must be identical to the one you specify in Exponea backend.**
 
-`EXPONEA_DEEPLINK_ACTION_1`
-
-The categories are then generated based on all the possible variations of the 3 button types with 3 actions maximum limit. Resulting in 39 total categories, their identifiers are constructed based on the number of buttons and the types of them. A category identifier might look like this:
-
-`EXPONEA_ACTIONABLE_3_OPENAPP_DEEPLINK_BROWSER`
-
-or 
-
-`EXPONEA_ACTIONABLE_1_DEEPLINK`
+```swift
+// Set legacy exponea categories
+let category1 = UNNotificationCategory(identifier: "EXAMPLE_LEGACY_CATEGORY_1",
+                                      actions: [
+    ExponeaNotificationAction.createNotificationAction(type: .openApp, title: "Hardcoded open app", index: 0),
+    ExponeaNotificationAction.createNotificationAction(type: .deeplink, title: "Hardcoded deeplink", index: 1)
+    ], intentIdentifiers: [], options: [])
+    
+UNUserNotificationCenter.current().setNotificationCategories([category1])
+```
 
 #### 3. Rich Notifications Callbacks
 
@@ -202,7 +213,7 @@ extension AppDelegate: PushNotificationManagerDelegate {
 }
 ```
 
-### Rich Push Notification Payload
+## Rich Push Notification Payload
 
 If you wish to implement the above steps manually, here is an example payload that will be sent from Exponea web application when using the mobile push notification feature with all options enabled/specified:
 
