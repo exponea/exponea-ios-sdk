@@ -1,5 +1,12 @@
 ## Release Notes
 
+### 2.0.0
+
+* Removal of deprecated and unsupported functions
+* Documentation improvements
+* Support for legacy categories for notification actions
+* Better support of dynamic buttons in notification actions in iOS 12+
+
 ### 1.2.0-beta5
 
 * Make sure to handle cases where push notification payload does not contain `data` structure
