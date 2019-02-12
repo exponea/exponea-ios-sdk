@@ -576,6 +576,15 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		C0249EBD2212D15500D4F5D8 /* ExponeaSDK-Shared */ = {
+			isa = PBXGroup;
+			children = (
+				C02C562821C9B71D0087A990 /* ExponeaNotificationAction.swift */,
+				C03B23D721AAFDBB00360EE6 /* ExponeaNotificationActionType.swift */,
+			);
+			path = "ExponeaSDK-Shared";
+			sourceTree = "<group>";
+		};
 		C028C3A0211097D500B03ED4 /* Other */ = {
 			isa = PBXGroup;
 			children = (
@@ -825,6 +834,7 @@
 				C0ED33C621A72EE6003649C3 /* ExponeaSDK.podspec */,
 				F021E85B206CF10200788ABC /* ExponeaSDK */,
 				C0ED33B521A6FB10003649C3 /* ExponeaSDK-Notifications */,
+				C0249EBD2212D15500D4F5D8 /* ExponeaSDK-Shared */,
 				F021E866206CF10200788ABC /* ExponeaSDKTests */,
 				C0F6C4E12098A1AB00834E21 /* Example */,
 				C0ED33A421A6FA31003649C3 /* ExampleNotificationService */,
@@ -997,8 +1007,6 @@
 				F029BF22208A08CE00342498 /* Event.swift */,
 				F067441320873813003C0293 /* PurchasedItem.swift */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
-				C02C562821C9B71D0087A990 /* ExponeaNotificationAction.swift */,
-				C03B23D721AAFDBB00360EE6 /* ExponeaNotificationActionType.swift */,
 				C0F7A59C21AE921300BA392F /* ExponeaNotificationData.swift */,
 			);
 			path = Models;

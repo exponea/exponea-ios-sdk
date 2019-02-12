@@ -15,9 +15,9 @@ Pod::Spec.new do |s|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  s.name         = "ExponeaSDK"
-  s.version      = "2.0.0"
-  s.summary      = "Exponea SDK used to track and fetch data from Exponea Experience Cloud."
+  s.name         = "ExponeaSDK-Notifications"
+  s.version      = "2.0.1"
+  s.summary      = "A completementary extension-safe framework for supporting rich push notifications in Exponea SDK."
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?
@@ -25,8 +25,8 @@ Pod::Spec.new do |s|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = <<-DESC
-  This library allows you to interact from your application or game with the Exponea App. 
-  Exponea empowers B2C marketers to raise conversion rates, improve acquisition ROI, and maximize customer lifetime value.
+  This library acts as an extension-safe complement to the Exponea SDK. It allows for support of rich push notifications and dynamic actions. 
+  It should not be used standalone, please see the ExponeaSDK pod.
                    DESC
 
   s.homepage     = "https://github.com/exponea/exponea-ios-sdk"
@@ -77,8 +77,8 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
   
-  s.source_files  = ["ExponeaSDK/ExponeaSDK/**/*.swift", "ExponeaSDK/ExponeaSDK-Shared/**/*.swift"]
-  s.exclude_files = "ExponeaSDK/ExponeaSDK-Notifications/**/*"
-  s.resources = ["ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld"]
-  
+  s.source_files    = ["ExponeaSDK/ExponeaSDK-Notifications/**/*.swift", "ExponeaSDK/ExponeaSDK-Shared/**/*.swift"]
+  s.exclude_files   = "ExponeaSDK/ExponeaSDK/**/*"
+  s.weak_frameworks = "UserNotifications"
+
 end
