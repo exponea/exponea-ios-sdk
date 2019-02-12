@@ -46,6 +46,8 @@ Check out our [sample project](https://github.com/exponea/exponea-ios-sdk/tree/m
 
 Check the detailed [step by step guide here](./Documentation/Guide/GUIDE.md) to get started.
 
+### Documentation
+
 To implement the Exponea SDK you must configure the SDK first:
 
 * [Configuration](./Documentation/CONFIG.md)
