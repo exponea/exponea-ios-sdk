@@ -1,5 +1,10 @@
 ## Release Notes
 
+### 2.0.1
+
+* Fix issues with notification extension when integrating through CocoaPods
+	- **Note:** It is now required to add `pod 'ExponeaSDK-Notifications'` to your Podfile instead of the previous `pod 'ExponeaSDK/Notifications'`
+
 ### 2.0.0
 
 * Removal of deprecated and unsupported functions
