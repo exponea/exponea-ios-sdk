@@ -77,6 +77,9 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         
         // If we have action identifier then a button was pressed
         if let identifier = actionIdentifier, identifier != UNNotificationDefaultActionIdentifier {
+            // Track this notification action type as button press
+            properties["notification_action_type"] = .string("button")
+
             // Fetch action (only a value if a custom button was pressed)
             // Format of action id should look like - EXPONEA_APP_OPEN_ACTION_0
             // We need to get the right index and fetch the correct action url from payload, if any
@@ -87,9 +90,11 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
                 action = ExponeaNotificationActionType(rawValue: actionDict["action"] ?? "") ?? .none
                 actionValue = actionDict["url"]
 
-                if let name = actionDict["name"] {
+                // Track the notification action title
+                if let name = actionDict["title"] {
                     properties["notification_action_name"] = .string(name)
                 }
+
             } else {
                 action = .none
                 actionValue = nil
@@ -99,21 +104,17 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             let notificationActionString = (userInfo["action"] as? String ?? "")
             action = ExponeaNotificationActionType(rawValue: notificationActionString) ?? .none
             actionValue = userInfo["url"] as? String
+
+            // This was a press directly on notification insted of a button so track it as action type
+            properties["notification_action_type"] = .string("notification")
         }
         
         switch action {
-        case .none:
-            // Set the action type to notification as user pressed the notification itself
-            properties["notification_action_type"] = .string("notification")
-
-        case .openApp:
-            // So nothing as the action will open the app by default, but track button as action type
-            properties["notification_action_type"] = .string("button")
+        case .none, .openApp:
+            // No need to do anything, app was opened automatically
+            break
 
         case .browser, .deeplink:
-            // Track notification action type as button
-            properties["notification_action_type"] = .string("button")
-
             // Open the deeplink, iOS will handle if deeplink to safari/other apps
             if let value = actionValue, let url = URL(string: value) {
                 // Track the action URL
@@ -130,7 +131,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         do {
             try trackingManager?.track(.pushOpened, with: [.properties(properties)])
         } catch {
-            Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
+            Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
         }
 
         // Notify the delegate
