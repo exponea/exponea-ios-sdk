@@ -105,10 +105,19 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         }
         
         switch action {
-        case .openApp, .none:
-            // do nothing as the action will open the app by default
-            break
+        case .none:
+            // Set the action type to notification as user pressed the notification itself
+            properties["notification_action_type"] = .string("notification")
+
+        case .openApp:
+            // So nothing as the action will open the app by default, but track button as action type
+            properties["notification_action_type"] = .string("button")
+
         case .browser, .deeplink:
+            // Track notification action type as button
+            properties["notification_action_type"] = .string("button")
+
+            // Open the deeplink, iOS will handle if deeplink to safari/other apps
             if let value = actionValue, let url = URL(string: value) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
