@@ -68,6 +68,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         
         properties["action_type"] = .string("notification")
         properties["status"] = .string("clicked")
+        properties["os_name"] = .string("iOS")
         
         // Track the event
         do {
