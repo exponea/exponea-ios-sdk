@@ -70,13 +70,6 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         properties["status"] = .string("clicked")
         properties["os_name"] = .string("iOS")
         
-        // Track the event
-        do {
-            try trackingManager?.track(.pushOpened, with: [.properties(properties)])
-        } catch {
-            Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
-        }
-        
         // Handle actions
         
         let action: ExponeaNotificationActionType
@@ -119,10 +112,23 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
             // Open the deeplink, iOS will handle if deeplink to safari/other apps
             if let value = actionValue, let url = URL(string: value) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                // Track the action URL
+                properties["notification_action_url"] = .string(value)
+
+                // Let application handle the URL open (no matter if deeplink or browser) after we're done here
+                defer {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
             }
         }
-        
+
+        // Track the event
+        do {
+            try trackingManager?.track(.pushOpened, with: [.properties(properties)])
+        } catch {
+            Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
+        }
+
         // Notify the delegate
         delegate?.pushNotificationOpened(with: action, value: actionValue, extraData: attributes)
     }
