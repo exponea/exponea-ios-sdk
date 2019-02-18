@@ -86,6 +86,10 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
                 let actionDict = actions[index]
                 action = ExponeaNotificationActionType(rawValue: actionDict["action"] ?? "") ?? .none
                 actionValue = actionDict["url"]
+
+                if let name = actionDict["name"] {
+                    properties["notification_action_name"] = .string(name)
+                }
             } else {
                 action = .none
                 actionValue = nil
