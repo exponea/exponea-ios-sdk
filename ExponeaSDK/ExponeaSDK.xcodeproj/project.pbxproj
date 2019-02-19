@@ -72,6 +72,9 @@
 		C08D53DB21B9474E00EA2C13 /* ExampleNotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C08D53CD21B9474E00EA2C13 /* ExampleNotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */; };
 		C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */; };
+		C09C33C7221C08C300715603 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
+		C09C33CB221C097100715603 /* NotificationData+Properties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09C33CA221C097100715603 /* NotificationData+Properties.swift */; };
+		C09C33CD221C19B300715603 /* NotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F7A59C21AE921300BA392F /* NotificationData.swift */; };
 		C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */; };
 		C0A6DEA520EAC16900C5F744 /* TrackCustomer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */; };
 		C0A6DEA820EAC16900C5F744 /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9C20EAC16900C5F744 /* Customer.swift */; };
@@ -110,7 +113,7 @@
 		C0F6C4E82098A1AB00834E21 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4E62098A1AB00834E21 /* Main.storyboard */; };
 		C0F6C4EA2098A1AC00834E21 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4E92098A1AC00834E21 /* Assets.xcassets */; };
 		C0F6C4ED2098A1AC00834E21 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */; };
-		C0F7A59D21AE921300BA392F /* ExponeaNotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F7A59C21AE921300BA392F /* ExponeaNotificationData.swift */; };
+		C0F7A59D21AE921300BA392F /* NotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F7A59C21AE921300BA392F /* NotificationData.swift */; };
 		D20134EC7D150032774DF78D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */; };
 		F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */; };
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
@@ -318,6 +321,8 @@
 		C08D53D821B9474E00EA2C13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerSpec.swift; sourceTree = "<group>"; };
 		C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Perform.swift"; sourceTree = "<group>"; };
+		C09C33CA221C097100715603 /* NotificationData+Properties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationData+Properties.swift"; sourceTree = "<group>"; };
+		C09C33CC221C0D8200715603 /* ExampleNotificationService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ExampleNotificationService.entitlements; sourceTree = "<group>"; };
 		C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyValueItem.swift; sourceTree = "<group>"; };
 		C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackCustomer.swift; sourceTree = "<group>"; };
 		C0A6DE9C20EAC16900C5F744 /* Customer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
@@ -360,7 +365,7 @@
 		C0F6C4E92098A1AC00834E21 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C0F6C4EC2098A1AC00834E21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C0F6C4EE2098A1AC00834E21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C0F7A59C21AE921300BA392F /* ExponeaNotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationData.swift; sourceTree = "<group>"; };
+		C0F7A59C21AE921300BA392F /* NotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationData.swift; sourceTree = "<group>"; };
 		E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePropertiesSpec.swift; sourceTree = "<group>"; };
 		F021E859206CF10200788ABC /* ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -768,6 +773,7 @@
 		C0ED33A421A6FA31003649C3 /* ExampleNotificationService */ = {
 			isa = PBXGroup;
 			children = (
+				C09C33CC221C0D8200715603 /* ExampleNotificationService.entitlements */,
 				C0ED33A521A6FA31003649C3 /* NotificationService.swift */,
 				C0ED33A721A6FA31003649C3 /* Info.plist */,
 			);
@@ -1007,7 +1013,8 @@
 				F029BF22208A08CE00342498 /* Event.swift */,
 				F067441320873813003C0293 /* PurchasedItem.swift */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
-				C0F7A59C21AE921300BA392F /* ExponeaNotificationData.swift */,
+				C0F7A59C21AE921300BA392F /* NotificationData.swift */,
+				C09C33CA221C097100715603 /* NotificationData+Properties.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1226,6 +1233,11 @@
 					C0ED33A221A6FA31003649C3 = {
 						CreatedOnToolsVersion = 10.0;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 					C0ED33B321A6FB0F003649C3 = {
 						CreatedOnToolsVersion = 10.0;
@@ -1237,6 +1249,9 @@
 						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
 							com.apple.Push = {
 								enabled = 1;
 							};
@@ -1400,9 +1415,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C09C33C7221C08C300715603 /* Constants.swift in Sources */,
 				C0ED33C121A6FB6B003649C3 /* ExponeaNotificationService.swift in Sources */,
 				C02C562221C9B01D0087A990 /* ExponeaNotificationActionType.swift in Sources */,
 				C02C562321C9B4640087A990 /* ExponeaNotificationContentService.swift in Sources */,
+				C09C33CD221C19B300715603 /* NotificationData.swift in Sources */,
 				C02C562A21C9B71D0087A990 /* ExponeaNotificationAction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1476,7 +1493,7 @@
 				C0A6DEA520EAC16900C5F744 /* TrackCustomer.swift in Sources */,
 				01EC2DA7207E4FBA0031BFEB /* EventsRequest.swift in Sources */,
 				01EC2DAB207E53D90031BFEB /* AttributesListDescription.swift in Sources */,
-				C0F7A59D21AE921300BA392F /* ExponeaNotificationData.swift in Sources */,
+				C0F7A59D21AE921300BA392F /* NotificationData.swift in Sources */,
 				C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */,
 				C0329E5F20F76EB00051F5DF /* URLRequest+Debug.swift in Sources */,
 				C0EB5D8C20B70D5000F1031F /* Swizzler.swift in Sources */,
@@ -1506,6 +1523,7 @@
 				C030AF48216F4335004413F0 /* PushNotificationReceiver.swift in Sources */,
 				C07E421620CA8D1800920809 /* BannerTrigger.swift in Sources */,
 				C0EB5DA620BB59BD00F1031F /* RequestParametersType.swift in Sources */,
+				C09C33CB221C097100715603 /* NotificationData+Properties.swift in Sources */,
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
 				F029BF2D208A2C5200342498 /* StringResponse.swift in Sources */,
 				C07E421220CA8B9900920809 /* DeviceTargetType.swift in Sources */,
@@ -1661,6 +1679,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = ExampleNotificationService/ExampleNotificationService.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7C8ZHMS76Y;
@@ -1680,6 +1699,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = ExampleNotificationService/ExampleNotificationService.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7C8ZHMS76Y;

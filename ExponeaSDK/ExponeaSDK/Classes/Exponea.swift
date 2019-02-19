@@ -174,11 +174,15 @@ public extension Exponea {
     ///   - projectToken: Project token to be used through the SDK.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
-    public func configure(projectToken: String, authorization: Authorization, baseUrl: String? = nil) {
+    public func configure(projectToken: String,
+                          authorization: Authorization,
+                          baseUrl: String? = nil,
+                          appGroup: String? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   authorization: authorization,
-                                                  baseUrl: baseUrl)
+                                                  baseUrl: baseUrl,
+                                                  appGroup: appGroup)
             self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
@@ -215,12 +219,14 @@ public extension Exponea {
     public func configure(projectToken: String,
                           projectMapping: [EventType: [String]],
                           authorization: Authorization,
-                          baseUrl: String? = nil) {
+                          baseUrl: String? = nil,
+                          appGroup: String? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   projectMapping: projectMapping,
                                                   authorization: authorization,
-                                                  baseUrl: baseUrl)
+                                                  baseUrl: baseUrl,
+                                                  appGroup: appGroup)
             self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")

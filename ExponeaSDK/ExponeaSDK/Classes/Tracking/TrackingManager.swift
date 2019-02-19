@@ -114,7 +114,8 @@ open class TrackingManager {
         
         /// Add the observers when the automatic push notification tracking is true.
         if repository.configuration.automaticPushNotificationTracking {
-            notificationsManager = PushNotificationManager(trackingManager: self)
+            notificationsManager = PushNotificationManager(trackingManager: self,
+                                                           appGroup: repository.configuration.appGroup)
         }
         
         // First remove all observing
@@ -333,7 +334,10 @@ extension TrackingManager {
             item.cancel()
             backgroundWorkItem = nil
         }
-        
+
+        // Check if new push messages were delivered
+        notificationsManager?.checkForDeliveredPushMessages()
+
         // Reschedule flushing timer if using periodic flushing mode
         if case let .periodic(interval) = flushingMode {
             flushingTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(interval),
