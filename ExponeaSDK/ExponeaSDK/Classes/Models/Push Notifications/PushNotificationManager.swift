@@ -11,6 +11,7 @@ import UserNotifications
 
 public protocol PushNotificationManagerType: class {
     var delegate: PushNotificationManagerDelegate? { get set }
+    func checkForDeliveredPushMessages()
 }
 
 public protocol PushNotificationManagerDelegate: class {
@@ -21,7 +22,8 @@ public protocol PushNotificationManagerDelegate: class {
 class PushNotificationManager: NSObject, PushNotificationManagerType {
     /// The tracking manager used to track push events
     internal weak var trackingManager: TrackingManagerType?
-    
+
+    private let appGroup: String? // used for sharing data across extensions, fx. for push delivered tracking
     private let center = UNUserNotificationCenter.current()
     private var receiver: PushNotificationReceiver?
     private var observer: PushNotificationDelegateObserver?
@@ -33,11 +35,13 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         return decoder
     }()
     
-    init(trackingManager: TrackingManagerType) {
+    init(trackingManager: TrackingManagerType, appGroup: String?) {
+        self.appGroup = appGroup
         self.trackingManager = trackingManager
         super.init()
         
         addAutomaticPushTracking()
+        checkForDeliveredPushMessages()
     }
     
     deinit {
@@ -58,23 +62,16 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         // If attributes is present, then campaign tracking info is nested in there, decode and process it
         if let attributes = attributes,
             let data = try? JSONSerialization.data(withJSONObject: attributes, options: []),
-            let model = try? decoder.decode(ExponeaNotificationData.self, from: data) {
+            let model = try? decoder.decode(NotificationData.self, from: data) {
             properties = model.properties
         } else if let notificationData = userInfo["data"] as? [String: Any],
             let data = try? JSONSerialization.data(withJSONObject: notificationData, options: []),
-            let model = try? decoder.decode(ExponeaNotificationData.self, from: data) {
+            let model = try? decoder.decode(NotificationData.self, from: data) {
             properties = model.properties
         }
         
-        properties["action_type"] = .string("notification")
         properties["status"] = .string("clicked")
-        
-        // Track the event
-        do {
-            try trackingManager?.track(.pushOpened, with: [.properties(properties)])
-        } catch {
-            Exponea.logger.log(.error, message: "Error tracking push opened. \(error.localizedDescription)")
-        }
+        properties["os_name"] = .string("iOS")
         
         // Handle actions
         
@@ -83,6 +80,9 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         
         // If we have action identifier then a button was pressed
         if let identifier = actionIdentifier, identifier != UNNotificationDefaultActionIdentifier {
+            // Track this notification action type as button press
+            properties["notification_action_type"] = .string("button")
+
             // Fetch action (only a value if a custom button was pressed)
             // Format of action id should look like - EXPONEA_APP_OPEN_ACTION_0
             // We need to get the right index and fetch the correct action url from payload, if any
@@ -92,6 +92,12 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
                 let actionDict = actions[index]
                 action = ExponeaNotificationActionType(rawValue: actionDict["action"] ?? "") ?? .none
                 actionValue = actionDict["url"]
+
+                // Track the notification action title
+                if let name = actionDict["title"] {
+                    properties["notification_action_name"] = .string(name)
+                }
+
             } else {
                 action = .none
                 actionValue = nil
@@ -101,18 +107,36 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             let notificationActionString = (userInfo["action"] as? String ?? "")
             action = ExponeaNotificationActionType(rawValue: notificationActionString) ?? .none
             actionValue = userInfo["url"] as? String
+
+            // This was a press directly on notification insted of a button so track it as action type
+            properties["notification_action_type"] = .string("notification")
         }
         
         switch action {
-        case .openApp, .none:
-            // do nothing as the action will open the app by default
+        case .none, .openApp:
+            // No need to do anything, app was opened automatically
             break
+
         case .browser, .deeplink:
+            // Open the deeplink, iOS will handle if deeplink to safari/other apps
             if let value = actionValue, let url = URL(string: value) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                // Track the action URL
+                properties["notification_action_url"] = .string(value)
+
+                // Let application handle the URL open (no matter if deeplink or browser) after we're done here
+                defer {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
             }
         }
-        
+
+        // Track the event
+        do {
+            try trackingManager?.track(.pushOpened, with: [.properties(properties)])
+        } catch {
+            Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
+        }
+
         // Notify the delegate
         delegate?.pushNotificationOpened(with: action, value: actionValue, extraData: attributes)
     }
@@ -128,6 +152,49 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         } catch {
             Exponea.logger.log(.error, message: "Error logging push token. \(error.localizedDescription)")
         }
+    }
+
+    internal func checkForDeliveredPushMessages() {
+        guard let appGroup = appGroup else {
+            Exponea.logger.log(.verbose, message: "No app group was setup, push delivered tracking is disabled.")
+            return
+        }
+
+        let userDefaults = UserDefaults(suiteName: appGroup)
+        guard let array = userDefaults?.array(forKey: Constants.General.deliveredPushUserDefaultsKey) else {
+            Exponea.logger.log(.verbose, message: "No delivered push to track present in shared app group.")
+            return
+        }
+
+        guard let dataArray = array as? [Data] else {
+            Exponea.logger.log(.warning, message: "Delivered push data present in shared group but incorrect type.")
+            return
+        }
+
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+
+        // Process notifications
+        for data in dataArray {
+            guard let notification = try? decoder.decode(NotificationData.self, from: data) else { continue }
+
+            // Create payload
+            var properties: [String: JSONValue] = [:]
+            properties["status"] = .string("delivered")
+            properties["os_name"] = .string("iOS")
+            properties.merge(notification.properties, uniquingKeysWith: { $1 })
+
+            // Track the event
+            do {
+                try trackingManager?.track(.pushDelivered, with: [.properties(properties),
+                                                                  .timestamp(notification.timestamp.timeIntervalSince1970)])
+            } catch {
+                Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
+            }
+        }
+
+        // Clear after all is processed
+        userDefaults?.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
     }
 }
 

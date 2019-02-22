@@ -19,6 +19,7 @@ public struct Configuration: Decodable {
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
     public var automaticPushNotificationTracking: Bool = true
+    public var appGroup: String? = nil
     
     /// The maximum amount of retries before a flush event is considered as invalid and deleted from the database.
     public var flushEventMaxRetries: Int = Constants.Session.maxRetries
@@ -32,6 +33,7 @@ public struct Configuration: Decodable {
         case authorization
         case baseUrl
         case flushEventMaxRetries
+        case appGroup
     }
 
     private init() {}
@@ -46,7 +48,8 @@ public struct Configuration: Decodable {
     public init(projectToken: String?,
                 projectMapping: [EventType: [String]]? = nil,
                 authorization: Authorization,
-                baseUrl: String?) throws {
+                baseUrl: String?,
+                appGroup: String? = nil) throws {
         guard let projectToken = projectToken else {
             throw ExponeaError.configurationError("No project token provided.")
         }
@@ -54,6 +57,8 @@ public struct Configuration: Decodable {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
         self.authorization = authorization
+        self.appGroup = appGroup
+
         if let url = baseUrl {
             self.baseUrl = url
         }
@@ -134,6 +139,10 @@ public struct Configuration: Decodable {
         if let flushEventMaxRetries = try container.decodeIfPresent(Int.self, forKey: .flushEventMaxRetries) {
             self.flushEventMaxRetries = flushEventMaxRetries
         }
+
+        if let appGroup = try container.decodeIfPresent(String.self, forKey: .appGroup) {
+            self.appGroup = appGroup
+        }
     }
 }
 
@@ -211,7 +220,7 @@ extension Configuration: CustomStringConvertible {
         Automatic Session Tracking: \(automaticSessionTracking)
         Automatic Push Notification Tracking: \(automaticPushNotificationTracking)
         Flush Event Max Retries: \(flushEventMaxRetries)
-        
+        App Group: \(appGroup ?? "not configured")
         """
         
         return text

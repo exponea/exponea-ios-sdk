@@ -40,11 +40,6 @@ enum Constants {
         static let osVersion = UIDevice.current.systemVersion
         static let sdk = "Exponea iOS SDK"
         static let deviceModel = UIDevice.current.model
-        static let sdkVersion: String = {
-            let bundle = Bundle(for: ExponeaSDK.Exponea.self)
-            let version = bundle.infoDictionary?["CFBundleShortVersionString"] as? String
-            return version ?? "Unknown version"
-        }()
     }
 
     /// Type of customer events
@@ -79,5 +74,6 @@ enum Constants {
     enum General {
         static let iTunesStore = "iTunes Store"
         static let userDefaultsSuite = "ExponeaSDK"
+        static let deliveredPushUserDefaultsKey = "EXPONEA_DELIVERED_PUSH_TRACKING"
     }
 }

@@ -33,11 +33,57 @@ Refer to Apple documentation on how to implement push notification setup in your
 
 If you had done everything right, you should now be able to send notifications from Exponea to your application. 
 
+Next steps is to configure [automatic push notification tracking](#Automatic-Push-Tracking) or [manual push notification tracking](#Manual-Push-Tracking) if you wish to get information about push notifications being delivered or clicked.
+
 ## 🔍 Automatic Push Tracking
 
 In the Exponea SDK configuration, you can enable or disable the automatic push notification tracking setting the Boolean value to the `automaticPushNotificationTracking` property.
 
 If the `automaticPushNotificationTracking` is enabled, then the SDK will add track the "campaign" event with the correct properties.
+
+### Tracking delivered notifications
+
+If you wish to automatically track delivered notifications, additional setup is needed. These are the minimuim required steps:
+
+1. Implement a notification service extension
+2. Setup app groups to be able to share information between app and extension
+3. Finish SDK integration and keep automatic push tracking enabled
+
+#### 1. Implement a notification service extension
+
+Please, see setup for [rich push notifications](#Rich-Push-Notifications), it is the same setup you need to do for the service extension. If you wish to also support custom rich push features like dynamic buttons, images and more then follow the rich push notifications guide further and then come back to delviered push tracking setup.
+
+#### 2. Setting up App Groups
+
+You read more about how to setup App Groups in the official Apple documentation [here](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/ExtensionScenarios.html) under the heading **Sharing Data with Your Containing App**.
+
+In practice this means enabling App Groups in your Xcode project settings Capabilites tab and then inputing the app group identifier as per the screenshot below. 
+
+> ⚠️ Keep in mind that **you need to do this for both the containing app and the extension**.
+
+![](./Guide/pics/appgroup.png)
+
+After you have setup the app groups, the last step is to finish SDK integration.
+
+#### 3. Finishing up SDK integration
+
+Finally, you need to make two modifications to make automatic delivered push notification tracking work, one in the app and one in the extension code.
+
+1. Inside your app, where you configure Exponea, add the `appGroup` as a paramater to the `Configuration` intiializer with your own app group identifier:  
+
+   ```swift
+   Exponea.shared.configure(projectToken: "myToken",
+                            authorization: .token("myAuth"),
+                            baseUrl: "https://api.exponea.com",
+                            appGroup: "group.com.Exponea.ExponeaSDK-Example")
+   ```
+2. In the extension, modify the code where you create the `ExponeaNotificationService` to look like the following:
+
+   ```
+   let exponeaService = ExponeaNotificationService(appGroup: "group.com.Exponea.ExponeaSDK-Example")
+   ```
+
+> Make sure the app group identifier match with what you set up in your project settings.
 
 ## Manual Push Tracking
 
@@ -59,6 +105,18 @@ public func trackPushToken(_ token: String)
 
 ```
 Exponea.shared.trackPushToken("my_push_token")
+```
+
+#### Track Push Notification Delivered
+
+Used to track if a push notificaton was delivered to the device and tracks it to Exponea. It is up to you to handle when and what should be tracked to Exponea to mark the notification as delivered.
+
+A typicial implementation would require a custom `NotificationServiceExtension` and an Application Group (to enable data sharing between app and extension). The extension code would then check the notification payload when it is received and validate it is a notification sent from Exponea or simply a notification that should be tracked. A timestamp and additional data would then be saved in the app group (for example using `UserDefaults` with the shared suite name) and when the app launches it would look for such entries and track them to Exponea with the correct timestamp using the method below.
+
+The Exponea SDK is currently not extension-safe and as such tracking the delivered state at the moment it occurs is not possible.
+
+```
+public func trackPushDelivered(with userInfo: [AnyHashable: Any])
 ```
 
 #### Track Push Notification Opened
