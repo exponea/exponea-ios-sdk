@@ -1,5 +1,10 @@
 ## Release Notes
 
+### 2.1.0
+
+* Track additional parameters on automatic push notification clicked tracking
+* Add support for tracking push delivered notifications when they are delivered even withou the user opening them, please [see this guide](./PUSH.md) on how to set this up
+
 ### 2.0.1
 
 * Fix issues with notification extension when integrating through CocoaPods

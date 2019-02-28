@@ -584,6 +584,8 @@
 		C0249EBD2212D15500D4F5D8 /* ExponeaSDK-Shared */ = {
 			isa = PBXGroup;
 			children = (
+				F0E757DF207CF99E00FE8C21 /* Constants.swift */,
+				C0F7A59C21AE921300BA392F /* NotificationData.swift */,
 				C02C562821C9B71D0087A990 /* ExponeaNotificationAction.swift */,
 				C03B23D721AAFDBB00360EE6 /* ExponeaNotificationActionType.swift */,
 			);
@@ -1013,7 +1015,6 @@
 				F029BF22208A08CE00342498 /* Event.swift */,
 				F067441320873813003C0293 /* PurchasedItem.swift */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
-				C0F7A59C21AE921300BA392F /* NotificationData.swift */,
 				C09C33CA221C097100715603 /* NotificationData+Properties.swift */,
 			);
 			path = Models;
@@ -1032,7 +1033,6 @@
 		F0E757DE207CF98600FE8C21 /* Others */ = {
 			isa = PBXGroup;
 			children = (
-				F0E757DF207CF99E00FE8C21 /* Constants.swift */,
 				C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */,
 				C0EB5D8D20B710A900F1031F /* Data+TokenString.swift */,
 				C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */,
