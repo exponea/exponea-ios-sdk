@@ -188,8 +188,10 @@ class NotificationService: UNNotificationServiceExtension {
 The notification content extension is necessary to properly handle custom button actions and titles in the notification in iOS 12+. 
 
 1. Create a new notification service extension target in your application, please refer to [official Apple documentation and guide](https://developer.apple.com/documentation/usernotificationsui/customizing_the_appearance_of_notifications) or a tutorial like [this one](https://www.shinobicontrols.com/blog/ios-10-day-by-day-day-6-notification-content-extensions/) for example.
-2. If you're using **Cocoapods**, make sure you add the `pod 'ExponeaSDK/Notifications` line to your Podfile under the content extension target. If you're using **Carthage** then add the `ExponeaSDKNotifications` framework as a linked framework to the new service extension target along with the carthage script to strip unnecessary architectures.
-3. Open the newly created `NotificationViewController.swift` file and replace the contents with the code below:
+2. Modify your content extension plist to have `EXPONEA_ACTIONABLE` as the value for the `UNNotificationExtensionCategory` key and optionally initial content size ratio to be 0 (test this with your notifications for best look)
+![](./Guide/pics/push_content_extension_category.png)
+3. If you're using **Cocoapods**, make sure you add the `pod 'ExponeaSDK/Notifications` line to your Podfile under the content extension target. If you're using **Carthage** then add the `ExponeaSDKNotifications` framework as a linked framework to the new service extension target along with the carthage script to strip unnecessary architectures.
+4. Open the newly created `NotificationViewController.swift` file and replace the contents with the code below:
 
 ```swift
 import UIKit

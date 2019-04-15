@@ -56,7 +56,7 @@ Then you can start using all the other features:
 
 * [Track Events & Customer Properties](./Documentation/TRACK.md)
 * [Data Flushing](./Documentation/FLUSH.md)
-* [Push Notification Events](./Documentation/PUSH.md)
+* [Push Notifications](./Documentation/PUSH.md)
 * [Fetch Data](./Documentation/FETCH.md)
 * [Payments](./Documentation/PAYMENT.md)
 * [Anonymize](./Documentation/ANONYMIZE.md)
