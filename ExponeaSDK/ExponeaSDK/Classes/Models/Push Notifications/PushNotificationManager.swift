@@ -109,7 +109,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             actionValue = userInfo["url"] as? String
 
             // This was a press directly on notification insted of a button so track it as action type
-            properties["notification_action_type"] = .string("notification")
+            properties["notification_action_type"] = .string("mobile notification")
         }
         
         switch action {
