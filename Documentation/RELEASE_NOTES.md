@@ -1,5 +1,9 @@
 ## Release Notes
 
+### 2.2.2
+* Improve push notification tracking parameters
+* Handle universal links better when opening them as push actions
+
 ### 2.1.1
 
 * Change notification action_type to "mobile notification" for better tracking purposes

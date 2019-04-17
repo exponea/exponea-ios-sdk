@@ -281,6 +281,7 @@
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
+		B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = "ExponeaSDK-Notifications.podspec"; path = "../ExponeaSDK-Notifications.podspec"; sourceTree = "<group>"; };
 		B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleErrorResponse.swift; sourceTree = "<group>"; };
 		C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
@@ -840,6 +841,7 @@
 			isa = PBXGroup;
 			children = (
 				C0ED33C621A72EE6003649C3 /* ExponeaSDK.podspec */,
+				B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */,
 				F021E85B206CF10200788ABC /* ExponeaSDK */,
 				C0ED33B521A6FB10003649C3 /* ExponeaSDK-Notifications */,
 				C0249EBD2212D15500D4F5D8 /* ExponeaSDK-Shared */,
