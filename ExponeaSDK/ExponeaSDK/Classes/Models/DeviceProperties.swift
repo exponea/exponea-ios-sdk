@@ -46,6 +46,7 @@ struct DeviceProperties {
         var data = [String: JSONValue]()
 
         data["os_name"] = .string(osName)
+        data["platform"] = .string(osName)
         data["os_version"] = .string(osVersion)
         data["sdk"] = .string(sdk)
         data["sdk_version"] = .string(sdkVersion)
