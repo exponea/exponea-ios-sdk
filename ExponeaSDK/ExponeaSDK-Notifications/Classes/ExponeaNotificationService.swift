@@ -78,7 +78,7 @@ public class ExponeaNotificationService {
                 var delivered = userDefaults?.array(forKey: Constants.General.deliveredPushUserDefaultsKey) ?? []
 
                 // Create data
-                let attributes = content.userInfo["attributes"] as? [AnyHashable: Any]
+                let attributes = content.userInfo["attributes"] as? [AnyHashable: Any] ?? content.userInfo["data"] as? [AnyHashable: Any]
                 let campaignId = attributes?["campaign_id"] as? String ?? "N/A"
                 let campaignName = attributes?["campaign_name"] as? String ?? "N/A"
                 let actionId = attributes?["action_id"] as? Int ?? 0
