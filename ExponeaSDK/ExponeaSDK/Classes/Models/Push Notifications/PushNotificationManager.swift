@@ -111,7 +111,9 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             // This was a press directly on notification insted of a button so track it as action type
             properties["notification_action_type"] = .string("mobile notification")
         }
-        
+
+        var postAction: (() -> Void)? = nil
+
         switch action {
         case .none, .openApp:
             // No need to do anything, app was opened automatically
@@ -123,9 +125,23 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
                 // Track the action URL
                 properties["notification_action_url"] = .string(value)
 
-                // Let application handle the URL open (no matter if deeplink or browser) after we're done here
-                defer {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                // Create an action to be executed after tracking
+                postAction = {
+                    let application = UIApplication.shared
+
+                    // Simulate universal link user activity
+                    let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+                    userActivity.webpageURL = url
+
+                    // Try and open the link as universal link first
+                    let success = application.delegate?.application?(application,
+                                                                     continue: userActivity,
+                                                                     restorationHandler: { _ in }) ?? false
+
+                    // If universal links failed to open, let application handle the URL open
+                    if !success {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    }
                 }
             }
         }
@@ -139,6 +155,9 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
         // Notify the delegate
         delegate?.pushNotificationOpened(with: action, value: actionValue, extraData: attributes)
+
+        // If we have post process action, execute it
+        postAction?()
     }
     
     func handlePushTokenRegistered(dataObject: AnyObject?) {
