@@ -19,11 +19,11 @@ It has been written 100% in Swift with ❤️
 
 ```ruby
 # Add this under your main application target
-pod "ExponeaSDK" "~> 2.1.2"
+pod "ExponeaSDK" "~> 2.2.3"
 
 # If you also use rich push notifications, 
 # add this line to your notification service extension target.
-pod "ExponeaSDK-Notifications" "~> 2.1.2"
+pod "ExponeaSDK-Notifications" "~> 2.2.3"
 ```
 
 > Read more about rich push notifications support [here](./Documentation/PUSH.md).
