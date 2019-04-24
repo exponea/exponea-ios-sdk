@@ -201,6 +201,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             // Create payload
             var properties: [String: JSONValue] = [:]
             properties["status"] = .string("delivered")
+            properties["action_type"] = .string("mobile notification")
             properties["os_name"] = .string("iOS")
             properties["platform"] = .string("iOS")
             properties.merge(notification.properties, uniquingKeysWith: { $1 })
