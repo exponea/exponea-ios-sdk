@@ -10,12 +10,16 @@ import Foundation
 import UserNotifications
 
 public class ExponeaNotificationService {
-    
+
+    private let appGroup: String?
+
     var request: UNNotificationRequest?
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
     
-    public init() { }
+    public init(appGroup: String? = nil) {
+        self.appGroup = appGroup
+    }
     
     public func process(request: UNNotificationRequest, contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.request = request
@@ -65,6 +69,32 @@ public class ExponeaNotificationService {
                 let data = try? Data(contentsOf: url, options: []),
                 let attachment = save("image.png", data: data, options: nil) {
                 bestAttemptContent?.attachments = [attachment]
+            }
+
+            // Track push delivered if app group configured
+            if let appGroup = appGroup {
+                // Prepare storage
+                let userDefaults = UserDefaults(suiteName: appGroup)
+                var delivered = userDefaults?.array(forKey: Constants.General.deliveredPushUserDefaultsKey) ?? []
+
+                // Create data
+                let attributes = content.userInfo["attributes"] as? [AnyHashable: Any] ?? content.userInfo["data"] as? [AnyHashable: Any]
+                let campaignId = attributes?["campaign_id"] as? String ?? "N/A"
+                let campaignName = attributes?["campaign_name"] as? String ?? "N/A"
+                let actionId = attributes?["action_id"] as? Int ?? 0
+                let data = NotificationData(campaignId: campaignId,
+                                            campaignName: campaignName,
+                                            actionId: actionId)
+
+                // Encode and save
+                let encoder = JSONEncoder()
+                encoder.keyEncodingStrategy = .convertToSnakeCase
+                if let encoded = try? encoder.encode(data) {
+                    delivered.append(encoded)
+                }
+
+                // Update in User Defaults
+                userDefaults?.set(delivered, forKey: Constants.General.deliveredPushUserDefaultsKey)
             }
         }
         

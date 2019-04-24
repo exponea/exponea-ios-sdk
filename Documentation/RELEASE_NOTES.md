@@ -1,5 +1,19 @@
 ## Release Notes
 
+### 2.2.2
+* Improve push notification tracking parameters
+* Handle universal links better when opening them as push actions
+
+### 2.1.1
+
+* Change notification action_type to "mobile notification" for better tracking purposes
+* Improve rich push notifications documentation to be explicit about category identifier in content extension
+
+### 2.1.0
+
+* Track additional parameters on automatic push notification clicked tracking
+* Add support for tracking push delivered notifications when they are delivered even withou the user opening them, please [see this guide](./PUSH.md) on how to set this up
+
 ### 2.0.1
 
 * Fix issues with notification extension when integrating through CocoaPods

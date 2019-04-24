@@ -19,11 +19,11 @@ It has been written 100% in Swift with ❤️
 
 ```ruby
 # Add this under your main application target
-pod "ExponeaSDK" "~> 2.0.1"
+pod "ExponeaSDK" "~> 2.1.2"
 
 # If you also use rich push notifications, 
 # add this line to your notification service extension target.
-pod "ExponeaSDK-Notifications" "~> 2.0.1"
+pod "ExponeaSDK-Notifications" "~> 2.1.2"
 ```
 
 > Read more about rich push notifications support [here](./Documentation/PUSH.md).
@@ -33,7 +33,7 @@ pod "ExponeaSDK-Notifications" "~> 2.0.1"
 > Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks. The latter one is only supposed to be used in a notification service extension if you wish support rich push notifications. Read more about rich push notifications [here](./Documentation/PUSH.md).
 
 ```
-github "exponea/exponea-sdk-ios" ~> 2.0.1
+github "exponea/exponea-sdk-ios" ~> 2.1.0
 ```
 
 ## 📱 Demo Application
@@ -56,7 +56,7 @@ Then you can start using all the other features:
 
 * [Track Events & Customer Properties](./Documentation/TRACK.md)
 * [Data Flushing](./Documentation/FLUSH.md)
-* [Push Notification Events](./Documentation/PUSH.md)
+* [Push Notifications](./Documentation/PUSH.md)
 * [Fetch Data](./Documentation/FETCH.md)
 * [Payments](./Documentation/PAYMENT.md)
 * [Anonymize](./Documentation/ANONYMIZE.md)
@@ -76,7 +76,7 @@ Release notes can be found [here](./Documentation/RELEASE_NOTES.md).
 **ExponeaSDK** is available under the Apache 2.0 license. See the [LICENSE](https://opensource.org/licenses/Apache-2.0) file for more info.
 
 ```
-   Copyright 2018 Exponea
+   Copyright 2019 Exponea
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
