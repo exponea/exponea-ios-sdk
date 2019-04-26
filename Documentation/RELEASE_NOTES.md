@@ -1,6 +1,9 @@
 ## Release Notes
 
-### 2.2.2
+### 2.1.3
+* Improve push notification tracking parameters
+
+### 2.1.2
 * Improve push notification tracking parameters
 * Handle universal links better when opening them as push actions
 
