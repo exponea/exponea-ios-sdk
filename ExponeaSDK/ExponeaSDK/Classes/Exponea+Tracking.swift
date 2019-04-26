@@ -138,7 +138,9 @@ extension Exponea {
             }
             
             var properties = JSONValue.convert(payload)
-            properties["action_type"] = .string("mobile notification")
+            if properties.index(forKey: "action_type") == nil {
+                properties["action_type"] = .string("mobile notification")
+            }
             properties["status"] = .string("clicked")
             
             let data: [DataType] = [.timestamp(nil),

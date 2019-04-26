@@ -73,6 +73,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         properties["status"] = .string("clicked")
         properties["os_name"] = .string("iOS")
         properties["platform"] = .string("iOS")
+        properties["action_type"] = .string("mobile notification")
         
         // Handle actions
         
@@ -82,7 +83,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         // If we have action identifier then a button was pressed
         if let identifier = actionIdentifier, identifier != UNNotificationDefaultActionIdentifier {
             // Track this notification action type as button press
-            properties["action_type"] = .string("button")
+            properties["notification_action_type"] = .string("button")
 
             // Fetch action (only a value if a custom button was pressed)
             // Format of action id should look like - EXPONEA_APP_OPEN_ACTION_0
@@ -110,7 +111,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             actionValue = userInfo["url"] as? String
 
             // This was a press directly on notification insted of a button so track it as action type
-            properties["action_type"] = .string("mobile notification")
+            properties["notification_action_type"] = .string("notification")
         }
 
         var postAction: (() -> Void)? = nil
@@ -203,6 +204,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             properties["status"] = .string("delivered")
             properties["os_name"] = .string("iOS")
             properties["platform"] = .string("iOS")
+            properties["action_type"] = .string("mobile notification")
             properties.merge(notification.properties, uniquingKeysWith: { $1 })
 
             // Track the event
