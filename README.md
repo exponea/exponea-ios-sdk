@@ -33,7 +33,7 @@ pod "ExponeaSDK-Notifications" "~> 2.1.3"
 > Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks. The latter one is only supposed to be used in a notification service extension if you wish support rich push notifications. Read more about rich push notifications [here](./Documentation/PUSH.md).
 
 ```
-github "exponea/exponea-sdk-ios" ~> 2.1.0
+github "exponea/exponea-ios-sdk" ~> 2.1.0
 ```
 
 ## 📱 Demo Application
