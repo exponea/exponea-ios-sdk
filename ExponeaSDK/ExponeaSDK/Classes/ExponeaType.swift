@@ -133,4 +133,10 @@ public protocol ExponeaType: class {
     ///   - completion: Object containing the request result.
     func fetchPersonalization(with request: PersonalizationRequest,
                               completion: @escaping (Result<PersonalizationResponse>) -> Void)
+
+    /// Fetch the list of your existing consent categories.
+    ///
+    /// - Parameter completion: A closure executed upon request completion containing the result
+    ///                         which has either the returned data or error.
+    func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void)
 }

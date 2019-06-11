@@ -35,7 +35,7 @@ extension Exponea {
     public func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
         executeWithDependencies({
             guard $0.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient("token")
             }
             
             $0.repository.fetchBanners(completion: completion)
@@ -46,12 +46,26 @@ extension Exponea {
                                      completion: @escaping (Result<PersonalizationResponse>) -> Void) {
         executeWithDependencies({
             guard $0.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient("token")
             }
             
             $0.repository.fetchPersonalization(with: request,
                                                for: $0.trackingManager.customerIds,
                                                completion: completion)
+        }, completion: completion)
+    }
+
+    /// Fetch the list of your existing consent categories.
+    ///
+    /// - Parameter completion: A closure executed upon request completion containing the result
+    ///                         which has either the returned data or error.
+    public func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void) {
+        executeWithDependencies({
+            guard $0.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient("token")
+            }
+
+            $0.repository.fetchConsents(completion: completion)
         }, completion: completion)
     }
 }
