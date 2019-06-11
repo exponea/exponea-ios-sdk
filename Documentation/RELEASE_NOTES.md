@@ -1,5 +1,10 @@
 ## Release Notes
 
+### 2.2.0
+* Added option to fetch consent cateogires (see [FETCH.md](./FETCH.md))
+* Raised Swift version to 5.0
+* Various small improvements
+
 ### 2.1.3
 * Improve push notification tracking parameters
 
