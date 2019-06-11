@@ -119,7 +119,7 @@ public class Exponea: ExponeaType {
         do {
             // Create database
             let database = try DatabaseManager()
-        
+
             // Recreate repository
             let repository = ServerRepository(configuration: configuration)
             self.repository = repository
@@ -142,7 +142,7 @@ public class Exponea: ExponeaType {
 internal extension Exponea {
     
     /// Alias for dependencies required across various internal and public functions of Exponea.
-    internal typealias Dependencies = (
+    typealias Dependencies = (
         configuration: Configuration,
         repository: RepositoryType,
         trackingManager: TrackingManagerType
@@ -152,7 +152,7 @@ internal extension Exponea {
     ///
     /// - Returns: The dependencies required to perform any actions.
     /// - Throws: A not configured error in case Exponea wasn't configured beforehand.
-    internal func getDependenciesIfConfigured() throws -> Dependencies {
+    func getDependenciesIfConfigured() throws -> Dependencies {
         guard let configuration = configuration,
             let repository = repository,
             let trackingManager = trackingManager else {
@@ -174,10 +174,10 @@ public extension Exponea {
     ///   - projectToken: Project token to be used through the SDK.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
-    public func configure(projectToken: String,
-                          authorization: Authorization,
-                          baseUrl: String? = nil,
-                          appGroup: String? = nil) {
+    func configure(projectToken: String,
+                   authorization: Authorization,
+                   baseUrl: String? = nil,
+                   appGroup: String? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   authorization: authorization,
@@ -197,7 +197,7 @@ public extension Exponea {
     /// Mandatory keys:
     ///  - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
     ///  - authorization: The authorization type used to authenticate with some Exponea endpoints.
-    public func configure(plistName: String) {
+    func configure(plistName: String) {
         do {
             let configuration = try Configuration(plistName: plistName)
             self.configuration = configuration
@@ -216,11 +216,11 @@ public extension Exponea {
     ///   - projectMapping: The project token mapping dictionary providing all the tokens.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
-    public func configure(projectToken: String,
-                          projectMapping: [EventType: [String]],
-                          authorization: Authorization,
-                          baseUrl: String? = nil,
-                          appGroup: String? = nil) {
+    func configure(projectToken: String,
+                   projectMapping: [EventType: [String]],
+                   authorization: Authorization,
+                   baseUrl: String? = nil,
+                   appGroup: String? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   projectMapping: projectMapping,
