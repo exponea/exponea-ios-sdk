@@ -33,6 +33,8 @@
 		B42DA68922B03F7700BBA225 /* Consent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68822B03F7700BBA225 /* Consent.swift */; };
 		B42DA68C22B03FBF00BBA225 /* ConsentSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68B22B03FBF00BBA225 /* ConsentSources.swift */; };
 		B42DA68E22B0556100BBA225 /* ConsentsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */; };
+		B42DA69022B0594D00BBA225 /* FetchConsentsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68F22B0594D00BBA225 /* FetchConsentsSpec.swift */; };
+		B42DA69222B05A0100BBA225 /* get-consents.json in Resources */ = {isa = PBXBuildFile; fileRef = B42DA69122B05A0100BBA225 /* get-consents.json */; };
 		C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */; };
 		C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */; };
 		C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C028C3A12110980600B03ED4 /* JSONValueSpec.swift */; };
@@ -287,6 +289,8 @@
 		B42DA68822B03F7700BBA225 /* Consent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consent.swift; sourceTree = "<group>"; };
 		B42DA68B22B03FBF00BBA225 /* ConsentSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentSources.swift; sourceTree = "<group>"; };
 		B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentsResponse.swift; sourceTree = "<group>"; };
+		B42DA68F22B0594D00BBA225 /* FetchConsentsSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchConsentsSpec.swift; sourceTree = "<group>"; };
+		B42DA69122B05A0100BBA225 /* get-consents.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-consents.json"; sourceTree = "<group>"; };
 		B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = "ExponeaSDK-Notifications.podspec"; path = "../ExponeaSDK-Notifications.podspec"; sourceTree = "<group>"; };
 		B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleErrorResponse.swift; sourceTree = "<group>"; };
@@ -947,6 +951,7 @@
 				F04BEAA22111F85900591950 /* get-banner.json */,
 				F04BEAA42112412000591950 /* get-personalization.json */,
 				F04BEAA62112413C00591950 /* get-attributes.json */,
+				B42DA69122B05A0100BBA225 /* get-consents.json */,
 			);
 			path = json;
 			sourceTree = "<group>";
@@ -969,6 +974,7 @@
 				F04BEAA8211266DD00591950 /* FetchBannerSpec.swift */,
 				F04BEAAC211270CC00591950 /* FetchPersonalizationSpec.swift */,
 				F04BEAAE211273A200591950 /* FetchAttributesSpec.swift */,
+				B42DA68F22B0594D00BBA225 /* FetchConsentsSpec.swift */,
 			);
 			path = Fetching;
 			sourceTree = "<group>";
@@ -1363,6 +1369,7 @@
 				F04BEAA12111EA8700591950 /* get-events.json in Resources */,
 				F04BEAA32111F85900591950 /* get-banner.json in Resources */,
 				01764BC82087794000D0D673 /* config_valid2.plist in Resources */,
+				B42DA69222B05A0100BBA225 /* get-consents.json in Resources */,
 				F04BEAA52112412000591950 /* get-personalization.json in Resources */,
 				F04BEAA72112413C00591950 /* get-attributes.json in Resources */,
 			);
@@ -1572,6 +1579,7 @@
 				C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */,
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
 				F04BEA9221119DD200591950 /* HTTPMethodSpec.swift in Sources */,
+				B42DA69022B0594D00BBA225 /* FetchConsentsSpec.swift in Sources */,
 				01764BC42087742100D0D673 /* ConfigurationSpec.swift in Sources */,
 				F04BEA8821111D4F00591950 /* PurchasedItemSpec.swift in Sources */,
 				F04BEA8B2111217700591950 /* RepositoryErrorSpec.swift in Sources */,

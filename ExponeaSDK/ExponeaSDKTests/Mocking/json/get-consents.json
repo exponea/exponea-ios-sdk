@@ -1,0 +1,21 @@
+{
+    "results": [{
+        "id": "TestCategory",
+        "legitimate_interest": false,
+        "sources": {
+            "crm": true,
+            "import": true,
+            "page": true,
+            "private_api": true,
+            "public_api": false,
+            "scenario": true
+        },
+        "translations": {
+            "en": {
+                "description": "test",
+                "name": "My Test Consents"
+            }
+        }
+    }],
+    "success": true
+}
