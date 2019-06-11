@@ -28,12 +28,11 @@ public struct RequestFactory {
         case .customerAttributes: return baseUrl + "/data/v2/\(projectToken)/customers/attributes"
         case .customerEvents: return baseUrl + "/data/v2/projects/\(projectToken)/customers/events"
         case .banners: return baseUrl + "/data/v2/projects/\(projectToken)/configuration/banners"
+        case .consents: return baseUrl + "/data/v2/projects/\(projectToken)/consent/categories"
         case .personalization:
             return baseUrl + "/data/v2/projects/\(projectToken)/customers/personalisation/show-banners"
         }
     }
-    
-    public var method: HTTPMethod { return .post }
 }
 
 extension RequestFactory {
@@ -43,7 +42,7 @@ extension RequestFactory {
         var request = URLRequest(url: URL(string: path)!)
         
         // Create the basic request
-        request.httpMethod = method.rawValue
+        request.httpMethod = route.method.rawValue
         request.addValue(Constants.Repository.contentType,
                          forHTTPHeaderField: Constants.Repository.headerContentType)
         request.addValue(Constants.Repository.contentType,

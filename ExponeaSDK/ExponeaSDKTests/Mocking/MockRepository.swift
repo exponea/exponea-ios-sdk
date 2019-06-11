@@ -288,5 +288,28 @@ extension MockRepository: FetchRepository {
             .resume()
     }
     
-    
+    func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void) {
+        let router = RequestFactory(baseUrl: configuration.baseUrl,
+                                    projectToken: configuration.fetchingToken,
+                                    route: .consents)
+        let request = router.prepareRequest(authorization: configuration.authorization)
+        let data = retrieveDataFromFile(with: "get-consents", fileType: "json")
+
+        /// Prepare the stub response.
+        guard let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200,
+                                                 httpVersion: nil, headerFields: nil) else {
+            fatalError("It was not possible to mock the HTTP response.")
+        }
+
+        /// Add the stub response to the mock server.
+        MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
+            return true
+        }) { (request) -> (Response) in
+            return Response.success(stubResponse, .content(data))
+        }
+
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
 }

@@ -81,4 +81,19 @@ class FetchViewController: UIViewController {
         
         present(alertController, animated: true, completion: nil)
     }
+
+    @IBAction func fetchConsents(_ sender: Any) {
+        Exponea.shared.fetchConsents { (result) in
+            switch result {
+            case .success(let response):
+                AppDelegate.memoryLogger.logMessage("\(response.consents)")
+                self.showAlert(title: "Fetch Consents", message: """
+                    \(response.consents)
+                    """)
+            case .failure(let error):
+                AppDelegate.memoryLogger.logMessage(error.localizedDescription)
+                self.showAlert(title: "Error", message: "\(error)")
+            }
+        }
+    }
 }

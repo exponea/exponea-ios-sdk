@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -603,7 +603,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="EGp-60-pFN">
-                                <rect key="frame" x="15" y="75.5" width="345" height="165"/>
+                                <rect key="frame" x="15" y="75.5" width="345" height="225"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XE9-RJ-fEr">
                                         <rect key="frame" x="0.0" y="0.0" width="345" height="45"/>
@@ -663,6 +663,26 @@
                                         </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="fetchPersonalization:" destination="TFH-0C-ErW" eventType="touchUpInside" id="2A0-Pj-sGN"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mdp-KV-Q0C">
+                                        <rect key="frame" x="0.0" y="180" width="345" height="45"/>
+                                        <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="KjB-7f-7gg"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                        <state key="normal" title="Consents">
+                                            <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="4"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="fetchConsents:" destination="TFH-0C-ErW" eventType="touchUpInside" id="ctJ-Uf-gFo"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -929,10 +949,10 @@
         </scene>
     </scenes>
     <resources>
-        <image name="fetch" width="19.200000762939453" height="19.200000762939453"/>
-        <image name="flush" width="19.200000762939453" height="19.200000762939453"/>
-        <image name="log" width="14.399999618530273" height="14.399999618530273"/>
-        <image name="logo" width="144" height="51.599998474121094"/>
-        <image name="track" width="14.399999618530273" height="14.399999618530273"/>
+        <image name="fetch" width="26.666666030883789" height="26.666666030883789"/>
+        <image name="flush" width="26.666666030883789" height="26.666666030883789"/>
+        <image name="log" width="20" height="20"/>
+        <image name="logo" width="600" height="215"/>
+        <image name="track" width="20" height="20"/>
     </resources>
 </document>

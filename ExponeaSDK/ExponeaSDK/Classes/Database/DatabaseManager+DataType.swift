@@ -101,6 +101,8 @@ extension DatabaseManager {
                 return .int(number.intValue)
             case .float32Type, .float64Type, .floatType, .doubleType, .cgFloatType:
                 return .double(number.doubleValue)
+            @unknown default:
+                return .bool(number.boolValue)
             }
             
         default:
