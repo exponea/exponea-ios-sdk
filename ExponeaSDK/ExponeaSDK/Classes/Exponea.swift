@@ -177,12 +177,14 @@ public extension Exponea {
     func configure(projectToken: String,
                    authorization: Authorization,
                    baseUrl: String? = nil,
-                   appGroup: String? = nil) {
+                   appGroup: String? = nil,
+                   defaultProperties: [String: JSONConvertible]? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   authorization: authorization,
                                                   baseUrl: baseUrl,
-                                                  appGroup: appGroup)
+                                                  appGroup: appGroup,
+                                                  defaultProperties: defaultProperties)
             self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
@@ -220,13 +222,15 @@ public extension Exponea {
                    projectMapping: [EventType: [String]],
                    authorization: Authorization,
                    baseUrl: String? = nil,
-                   appGroup: String? = nil) {
+                   appGroup: String? = nil,
+                   defaultProperties: [String: JSONConvertible]? = nil) {
         do {
             let configuration = try Configuration(projectToken: projectToken,
                                                   projectMapping: projectMapping,
                                                   authorization: authorization,
                                                   baseUrl: baseUrl,
-                                                  appGroup: appGroup)
+                                                  appGroup: appGroup,
+                                                  defaultProperties: defaultProperties)
             self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
