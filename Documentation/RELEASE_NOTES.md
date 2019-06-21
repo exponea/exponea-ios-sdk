@@ -1,5 +1,9 @@
 ## Release Notes
 
+### 2.2.1
+* Added option to define default properties (see [FETCH.md](./CONFIG.md))
+* Example app updated to use default properties
+
 ### 2.2.0
 * Added option to fetch consent cateogires (see [FETCH.md](./FETCH.md))
 * Raised Swift version to 5.0

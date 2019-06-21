@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "ExponeaSDK-Notifications"
-  s.version      = "2.2.0"
+  s.version      = "2.2.1"
   s.summary      = "A completementary extension-safe framework for supporting rich push notifications in Exponea SDK."
 
   # This description is used to generate tags and improve search results.
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = <<-DESC
-  This library acts as an extension-safe complement to the Exponea SDK. It allows for support of rich push notifications and dynamic actions. 
+  This library acts as an extension-safe complement to the Exponea SDK. It allows for support of rich push notifications and dynamic actions.
   It should not be used standalone, please see the ExponeaSDK pod.
                    DESC
 
@@ -76,7 +76,7 @@ Pod::Spec.new do |s|
   #  For header files it will include any header in the folder.
   #  Not including the public_header_files will make all headers public.
   #
-  
+
   s.source_files    = ["ExponeaSDK/ExponeaSDK-Notifications/**/*.swift", "ExponeaSDK/ExponeaSDK-Shared/**/*.swift"]
   s.exclude_files   = "ExponeaSDK/ExponeaSDK/**/*"
   s.weak_frameworks = "UserNotifications"
