@@ -148,6 +148,15 @@ public struct Configuration: Decodable {
         if let appGroup = try container.decodeIfPresent(String.self, forKey: .appGroup) {
             self.appGroup = appGroup
         }
+
+        if let defaultDictionary = try container.decodeIfPresent([String: JSONValue].self, forKey: .defaultProperties) {
+            var properties: [String: JSONConvertible] = [:]
+            defaultDictionary.forEach({ property in
+                properties[property.key] = property.value.jsonConvertible
+            })
+            guard !properties.isEmpty else { return }
+            self.defaultProperties = properties
+        }
     }
 }
 
