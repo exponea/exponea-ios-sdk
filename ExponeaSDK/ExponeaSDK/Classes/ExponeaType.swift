@@ -32,6 +32,7 @@ public protocol ExponeaType: class {
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     ///   - appGroup: The app group used to share data among extensions, fx. for push delivered tracking.
+    ///   - defaultProperties: A list of properties to be added to all tracking events.
     func configure(projectToken: String, authorization: Authorization, baseUrl: String?,
                    appGroup: String?, defaultProperties: [String: JSONConvertible]?)
     
@@ -44,6 +45,7 @@ public protocol ExponeaType: class {
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     ///   - appGroup: The app group used to share data among extensions, fx. for push delivered tracking.
+    ///   - defaultProperties: A list of properties to be added to all tracking events.
     func configure(projectToken: String, projectMapping: [EventType: [String]],
                    authorization: Authorization, baseUrl: String?, appGroup: String?, defaultProperties: [String: JSONConvertible]?)
 

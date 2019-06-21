@@ -53,12 +53,18 @@ class AuthenticationViewController: UIViewController {
         if let text = authField.text, !text.isEmpty {
             auth = .token(text)
         }
+
+        let properties: [String: JSONConvertible] = [
+            "Property01": "String value",
+            "Property02": 123
+        ]
         
         // Auth Exponea
         Exponea.shared.configure(projectToken: token,
                                  authorization: auth,
                                  baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text,
-                                 appGroup: "group.com.Exponea.ExponeaSDK-Example")
+                                 appGroup: "group.com.Exponea.ExponeaSDK-Example",
+                                 defaultProperties: properties)
 
         // Set notification delegate (needs to be done after configuring)
         Exponea.shared.pushNotificationsDelegate = UIApplication.shared.delegate as? AppDelegate
