@@ -11,6 +11,7 @@ public struct Configuration: Decodable {
     public internal(set) var authorization: Authorization = .none
     public internal(set) var baseURL: String = Constants.Repository.baseUrl
     public internal(set) var contentType: String = Constants.Repository.contentType
+    public internal(set) var defaultProperties: [String: JSONConvertible]?
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
     public var automaticPushNotificationTracking: Bool = true
@@ -40,12 +41,17 @@ public struct Configuration: Decodable {
 
 #### contentType
 
-* Content type value to make http requests. 
+* Content type value to make http requests.
 * Default value `application/json`
+
+#### defaultProperties
+
+* A list of properties to be added to all tracking events
+* Default value `nil`
 
 #### sessionTimeout
 
-* Session is the real time spent in the App, it starts when the App is launched and ends when the App goes to background. 
+* Session is the real time spent in the App, it starts when the App is launched and ends when the App goes to background.
 * This value will be used to calculate the session timing.
 * Default value `6.0` seconds
 * The mininum value is `5.0` seconds
@@ -53,8 +59,8 @@ public struct Configuration: Decodable {
 * Read more in `Track Events` -> `Track Sessions`
 
 #### automaticSessionTracking
- 
-* Flag to control the automatic tracking for In-App purchases done at the Google Play Store. 
+
+* Flag to control the automatic tracking for In-App purchases done at the Google Play Store.
 * When active, the SDK will add the Billing service listeners in order to get payments done in the App.
 * Default value `true`
 
@@ -74,8 +80,8 @@ public struct Configuration: Decodable {
 ### 1. With project token and authorization
 
 ```
-public func configure(projectToken: String, 
-                      authorization: Authorization, 
+public func configure(projectToken: String,
+                      authorization: Authorization,
                       baseURL: String? = nil) // optional custom base url
 ```
 

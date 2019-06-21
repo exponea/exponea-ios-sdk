@@ -16,6 +16,7 @@ public struct Configuration: Decodable {
     public internal(set) var authorization: Authorization = .none
     public internal(set) var baseUrl: String = Constants.Repository.baseUrl
     public internal(set) var contentType: String = Constants.Repository.contentType
+    public internal(set) var defaultProperties: [String: JSONConvertible]?
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
     public var automaticPushNotificationTracking: Bool = true
@@ -34,6 +35,7 @@ public struct Configuration: Decodable {
         case baseUrl
         case flushEventMaxRetries
         case appGroup
+        case defaultProperties
     }
 
     private init() {}
@@ -45,11 +47,13 @@ public struct Configuration: Decodable {
     ///   - projectMapping: Optional project token mapping if you wish to send events to different projects.
     ///   - authorization: The authorization you want to use when tracking events.
     ///   - baseUrl: Your API base URL that the SDK will connect to.
+    ///   - defaultProperties: Custom properties to be tracked in every event.
     public init(projectToken: String?,
                 projectMapping: [EventType: [String]]? = nil,
                 authorization: Authorization,
                 baseUrl: String?,
-                appGroup: String? = nil) throws {
+                appGroup: String? = nil,
+                defaultProperties: [String: JSONConvertible]? = nil) throws {
         guard let projectToken = projectToken else {
             throw ExponeaError.configurationError("No project token provided.")
         }
@@ -58,6 +62,7 @@ public struct Configuration: Decodable {
         self.projectMapping = projectMapping
         self.authorization = authorization
         self.appGroup = appGroup
+        self.defaultProperties = defaultProperties
 
         if let url = baseUrl {
             self.baseUrl = url
@@ -143,6 +148,15 @@ public struct Configuration: Decodable {
         if let appGroup = try container.decodeIfPresent(String.self, forKey: .appGroup) {
             self.appGroup = appGroup
         }
+
+        if let defaultDictionary = try container.decodeIfPresent([String: JSONValue].self, forKey: .defaultProperties) {
+            var properties: [String: JSONConvertible] = [:]
+            defaultDictionary.forEach({ property in
+                properties[property.key] = property.value.jsonConvertible
+            })
+            guard !properties.isEmpty else { return }
+            self.defaultProperties = properties
+        }
     }
 }
 
@@ -210,6 +224,10 @@ extension Configuration: CustomStringConvertible {
         
         if let token = projectToken {
             text += "Project Token: \(token)\n"
+        }
+
+        if let defaultProperties = defaultProperties {
+            text += "Default Attributes: \(defaultProperties)\n"
         }
         
         text += """

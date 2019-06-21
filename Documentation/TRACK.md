@@ -69,6 +69,20 @@ The sessions are by default tracked automatically. If you want to disable you ca
 
 There are also two methods available for you to track the sessions manually.
 
+## 🔍 Default Properties
+
+  It's possible to set values in the [`ExponeaConfiguration`](../Documentation/CONFIG.md) to be sent in every tracking event. Notice that those values will be overwritten if the tracking event has properties with the same key name.
+  
+💻 Usage
+
+```
+Exponea.shared.configure(projectToken: "ProjectTokenA",
+                         authorization: Authorization.token("12345abcdef"),
+                         baseURL: "YOUR BASE URL",
+                         defaultProperties: ["MyKey": "Value"])
+
+```
+
 
 ### Track Session Start
 

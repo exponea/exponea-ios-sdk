@@ -31,9 +31,13 @@ extension Exponea {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
-            
+
+            // Retrieve the default properties to add on track events and combine with the received ones.
+            let defaultProperties = dependencies.configuration.defaultProperties ?? [:]
+            let allProperties = defaultProperties.merging(properties, uniquingKeysWith: { (_, new) in new })
+
             // Create initial data
-            var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })),
+            var data: [DataType] = [.properties(allProperties.mapValues({ $0.jsonValue })),
                                     .timestamp(timestamp)]
             
             // If event type was provided, use it
@@ -56,9 +60,13 @@ extension Exponea {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
+
+            // Retrieve the default properties to add on track events and combine with the received ones.
+            let defaultProperties = dependencies.configuration.defaultProperties ?? [:]
+            let allProperties = defaultProperties.merging(properties, uniquingKeysWith: { (_, new) in new })
             
             // Create initial data
-            let data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })),
+            let data: [DataType] = [.properties(allProperties.mapValues({ $0.jsonValue })),
                                     .timestamp(timestamp)]
             
             // Do the actual tracking
@@ -80,9 +88,13 @@ extension Exponea {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
+
+            // Retrieve the default properties to add on track events and combine with the received ones.
+            let defaultProperties = dependencies.configuration.defaultProperties ?? [:]
+            let allProperties = defaultProperties.merging(properties, uniquingKeysWith: { (_, new) in new })
             
             // Prepare data
-            var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })),
+            var data: [DataType] = [.properties(allProperties.mapValues({ $0.jsonValue })),
                                     .timestamp(timestamp)]
             if var ids = customerIds {
                 // Check for overriding cookie
@@ -136,15 +148,20 @@ extension Exponea {
                 Exponea.logger.log(.error, message: "Push notification payload contained non-string keys.")
                 return
             }
-            
+
+            // Retrieve the default properties to add on track events and combine with the received ones.
+            let defaultProperties = dependencies.configuration.defaultProperties?.mapValues { $0.jsonValue } ?? [:]
+
             var properties = JSONValue.convert(payload)
             if properties.index(forKey: "action_type") == nil {
                 properties["action_type"] = .string("mobile notification")
             }
             properties["status"] = .string("clicked")
+
+            let allProperties = defaultProperties.merging(properties, uniquingKeysWith: { (_, new) in new })
             
             let data: [DataType] = [.timestamp(nil),
-                                    .properties(properties)]
+                                    .properties(allProperties)]
             // Do the actual tracking
             try dependencies.trackingManager.track(.pushOpened, with: data)
         }
