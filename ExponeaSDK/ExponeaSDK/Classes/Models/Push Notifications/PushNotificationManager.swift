@@ -131,6 +131,26 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
                 postAction = {
                     let application = UIApplication.shared
 
+                    let fallbackAction = {
+                        application.open(url, options: [:], completionHandler: { success in
+                            // If no success opening url using shared app,
+                            // try opening using current app
+                            if !success {
+                                _ = application.delegate?.application?(
+                                    application,
+                                    open: url,
+                                    options: [:])
+                            }
+                        })
+                    }
+
+                    // Validate this is a valid URL, prevents NSUserActivity crash with invalid URL
+                    // eg. MYDEEPLINK::HOME:SCREEN:1
+                    guard url.absoluteString.isValidURL else {
+                        fallbackAction()
+                        return
+                    }
+
                     // Simulate universal link user activity
                     let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
                     userActivity.webpageURL = url
@@ -142,7 +162,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
                     // If universal links failed to open, let application handle the URL open
                     if !success {
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                        fallbackAction()
                     }
                 }
             }

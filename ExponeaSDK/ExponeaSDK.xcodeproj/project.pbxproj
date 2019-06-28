@@ -35,6 +35,7 @@
 		B42DA68E22B0556100BBA225 /* ConsentsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */; };
 		B42DA69022B0594D00BBA225 /* FetchConsentsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68F22B0594D00BBA225 /* FetchConsentsSpec.swift */; };
 		B42DA69222B05A0100BBA225 /* get-consents.json in Resources */ = {isa = PBXBuildFile; fileRef = B42DA69122B05A0100BBA225 /* get-consents.json */; };
+		B4AF83BB22C6108200061350 /* String+URLValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AF83BA22C6108200061350 /* String+URLValidation.swift */; };
 		C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */; };
 		C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */; };
 		C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C028C3A12110980600B03ED4 /* JSONValueSpec.swift */; };
@@ -291,6 +292,7 @@
 		B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentsResponse.swift; sourceTree = "<group>"; };
 		B42DA68F22B0594D00BBA225 /* FetchConsentsSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchConsentsSpec.swift; sourceTree = "<group>"; };
 		B42DA69122B05A0100BBA225 /* get-consents.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-consents.json"; sourceTree = "<group>"; };
+		B4AF83BA22C6108200061350 /* String+URLValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+URLValidation.swift"; sourceTree = "<group>"; };
 		B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = "ExponeaSDK-Notifications.podspec"; path = "../ExponeaSDK-Notifications.podspec"; sourceTree = "<group>"; };
 		B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleErrorResponse.swift; sourceTree = "<group>"; };
@@ -1060,6 +1062,7 @@
 			children = (
 				C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */,
 				C0EB5D8D20B710A900F1031F /* Data+TokenString.swift */,
+				B4AF83BA22C6108200061350 /* String+URLValidation.swift */,
 				C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */,
 				C0EB5D8B20B70D5000F1031F /* Swizzler.swift */,
 				C0F2406920BC38EC00CAF7CE /* Swizzle.swift */,
@@ -1541,6 +1544,7 @@
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
+				B4AF83BB22C6108200061350 /* String+URLValidation.swift in Sources */,
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,
 				C07E420520CA898700920809 /* BannerResponse.swift in Sources */,
 				C07E420D20CA8A3C00920809 /* Personalization.swift in Sources */,
