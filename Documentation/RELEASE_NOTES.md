@@ -1,5 +1,9 @@
 ## Release Notes
 
+### 2.2.2
+* Rich push notifications deep link handling mechanism improvements
+	- deeplinks which are not a valid URL will not produce a crash on NSUserActivity continuation (eg. MYLINK::HOME:SCREEN:1)
+
 ### 2.2.1
 * Added option to define default properties (see [FETCH.md](./CONFIG.md))
 * Example app updated to use default properties
