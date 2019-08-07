@@ -1,5 +1,8 @@
 ## Release Notes
 
+### 2.2.3
+* Configuration now has a token update frequency, which specifies how often should the push token be sent to Exponea (on change, on every start, daily)
+
 ### 2.2.2
 * Rich push notifications deep link handling mechanism improvements
 	- deeplinks which are not a valid URL will not produce a crash on NSUserActivity continuation (eg. MYLINK::HOME:SCREEN:1)
