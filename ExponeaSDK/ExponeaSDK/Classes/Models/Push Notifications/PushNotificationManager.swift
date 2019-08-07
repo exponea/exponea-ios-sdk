@@ -11,7 +11,7 @@ import UserNotifications
 
 public protocol PushNotificationManagerType: class {
     var delegate: PushNotificationManagerDelegate? { get set }
-    func checkForDeliveredPushMessages()
+    func applicationDidBecomeActive()
 }
 
 public protocol PushNotificationManagerDelegate: class {
@@ -27,6 +27,10 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     private let center = UNUserNotificationCenter.current()
     private var receiver: PushNotificationReceiver?
     private var observer: PushNotificationDelegateObserver?
+    private let tokenTrackFrequency: TokenTrackFrequency
+    private var currentPushToken: String?
+    private var lastTokenTrackDate: Date
+
     internal weak var delegate: PushNotificationManagerDelegate?
     
     let decoder: JSONDecoder = {
@@ -35,13 +39,21 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         return decoder
     }()
     
-    init(trackingManager: TrackingManagerType, appGroup: String?) {
+    init(trackingManager: TrackingManagerType,
+         appGroup: String?,
+         tokenTrackFrequency: TokenTrackFrequency,
+         currentPushToken: String?,
+         lastTokenTrackDate: Date?) {
         self.appGroup = appGroup
         self.trackingManager = trackingManager
+        self.tokenTrackFrequency = tokenTrackFrequency
+        self.currentPushToken = currentPushToken
+        self.lastTokenTrackDate = lastTokenTrackDate ?? .distantPast
         super.init()
         
         addAutomaticPushTracking()
         checkForDeliveredPushMessages()
+        checkForPushTokenFrequency()
     }
     
     deinit {
@@ -186,9 +198,12 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         guard let tokenData = dataObject as? Data else {
             return
         }
+
+        // Update current push token
+        currentPushToken = tokenData.tokenString
         
         do {
-            let data = [DataType.pushNotificationToken(tokenData.tokenString)]
+            let data = [DataType.pushNotificationToken(currentPushToken)]
             try trackingManager?.track(.registerPushToken, with: data)
         } catch {
             Exponea.logger.log(.error, message: "Error logging push token. \(error.localizedDescription)")
@@ -238,6 +253,44 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
         // Clear after all is processed
         userDefaults?.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+    }
+
+    func checkForPushTokenFrequency() {
+        func trackPushToken() {
+            do {
+                let data = [DataType.pushNotificationToken(currentPushToken)]
+                try trackingManager?.track(.registerPushToken, with: data)
+            } catch {
+                Exponea.logger.log(.error, message: "Error logging push token. \(error.localizedDescription)")
+            }
+        }
+
+        switch tokenTrackFrequency {
+        case .everyLaunch:
+            // Track push token
+            lastTokenTrackDate = .init()
+            trackPushToken()
+
+
+        case .daily:
+            // Compare last track dates, if equal or more than a day, track
+            let now = Date()
+            if lastTokenTrackDate.timeIntervalSince(now) >= 86400 {
+                lastTokenTrackDate = now
+                trackPushToken()
+            }
+
+        case .onTokenChange:
+            // nothing to do
+            break
+        }
+    }
+}
+
+extension PushNotificationManager {
+    func applicationDidBecomeActive() {
+        checkForDeliveredPushMessages()
+        checkForPushTokenFrequency()
     }
 }
 
