@@ -30,6 +30,7 @@
 		01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */; };
 		01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DC0207F63970031BFEB /* FlushingMode.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
+		B40E9F5D22FAD25A0085B8A1 /* TokenTrackFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */; };
 		B42DA68922B03F7700BBA225 /* Consent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68822B03F7700BBA225 /* Consent.swift */; };
 		B42DA68C22B03FBF00BBA225 /* ConsentSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68B22B03FBF00BBA225 /* ConsentSources.swift */; };
 		B42DA68E22B0556100BBA225 /* ConsentsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */; };
@@ -287,6 +288,8 @@
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
+		B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTrackFrequency.swift; sourceTree = "<group>"; };
+		B40E9F5E22FAD58E0085B8A1 /* DatabaseModel v4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v4.xcdatamodel"; sourceTree = "<group>"; };
 		B42DA68822B03F7700BBA225 /* Consent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consent.swift; sourceTree = "<group>"; };
 		B42DA68B22B03FBF00BBA225 /* ConsentSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentSources.swift; sourceTree = "<group>"; };
 		B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentsResponse.swift; sourceTree = "<group>"; };
@@ -1043,6 +1046,7 @@
 				F067441320873813003C0293 /* PurchasedItem.swift */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
 				C09C33CA221C097100715603 /* NotificationData+Properties.swift */,
+				B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1502,6 +1506,7 @@
 				F029BF23208A08CE00342498 /* Event.swift in Sources */,
 				23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */,
 				F029BF27208A096900342498 /* HTTPMethod.swift in Sources */,
+				B40E9F5D22FAD25A0085B8A1 /* TokenTrackFrequency.swift in Sources */,
 				B42DA68E22B0556100BBA225 /* ConsentsResponse.swift in Sources */,
 				01EC2DA9207E4FC10031BFEB /* CustomerExportRequest.swift in Sources */,
 				C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */,
@@ -2137,11 +2142,12 @@
 		01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				B40E9F5E22FAD58E0085B8A1 /* DatabaseModel v4.xcdatamodel */,
 				C06FCE86219D840400ABB0BE /* DatabaseModel v3.xcdatamodel */,
 				C0BF069121466B3D007C4E4C /* DatabaseModel v2.xcdatamodel */,
 				01EC2DBC207E68BF0031BFEB /* DatabaseModel.xcdatamodel */,
 			);
-			currentVersion = C06FCE86219D840400ABB0BE /* DatabaseModel v3.xcdatamodel */;
+			currentVersion = B40E9F5E22FAD58E0085B8A1 /* DatabaseModel v4.xcdatamodel */;
 			path = DatabaseModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

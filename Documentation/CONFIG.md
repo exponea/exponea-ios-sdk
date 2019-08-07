@@ -15,6 +15,7 @@ public struct Configuration: Decodable {
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
     public var automaticPushNotificationTracking: Bool = true
+    public var tokenTrackFrequency: TokenTrackFrequency = .onTokenChange
     public var flushEventMaxRetries: Int = Constants.Session.maxRetries
 }
 ```
@@ -68,6 +69,15 @@ public struct Configuration: Decodable {
 
 * Controls if the SDK will handle push notifications automatically.
 * Default value `true`
+
+#### tokenTrackFrequency
+	
+* Indicates the frequency which the APNS token should be tracked to Exponea
+* Default value is `onTokenChange`
+* Possible values:
+	* `onTokenChange`
+	* `everyLaunch`
+	* `daily`
 
 #### flushEventMaxRetries
 

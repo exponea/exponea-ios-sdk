@@ -130,8 +130,9 @@ extension DatabaseManager {
         return context.performAndWait {
             let customer = self.customer
             
-            // Update push token
+            // Update push token and last token track date
             customer.pushToken = pushToken
+            customer.lastTokenTrackDate = .init()
             
             do {
                 // We don't know if anything changed

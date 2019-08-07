@@ -37,7 +37,7 @@ Next steps is to configure [automatic push notification tracking](#Automatic-Pus
 
 ## 🔍 Automatic Push Tracking
 
-In the Exponea SDK configuration, you can enable or disable the automatic push notification tracking setting the Boolean value to the `automaticPushNotificationTracking` property.
+In the Exponea SDK configuration, you can enable or disable the automatic push notification tracking setting the Boolean value to the `automaticPushNotificationTracking` property and setting up the desired frequency to the `tokenTrackFrequency`.
 
 If the `automaticPushNotificationTracking` is enabled, then the SDK will add track the "campaign" event with the correct properties.
 

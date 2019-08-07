@@ -114,8 +114,13 @@ open class TrackingManager {
         
         /// Add the observers when the automatic push notification tracking is true.
         if repository.configuration.automaticPushNotificationTracking {
-            notificationsManager = PushNotificationManager(trackingManager: self,
-                                                           appGroup: repository.configuration.appGroup)
+            notificationsManager = PushNotificationManager(
+                trackingManager: self,
+                appGroup: repository.configuration.appGroup,
+                tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
+                currentPushToken: database.customer.pushToken,
+                lastTokenTrackDate: database.customer.lastTokenTrackDate
+            )
         }
         
         // First remove all observing
@@ -335,8 +340,8 @@ extension TrackingManager {
             backgroundWorkItem = nil
         }
 
-        // Check if new push messages were delivered
-        notificationsManager?.checkForDeliveredPushMessages()
+        // Let the notification manager know the app has becom active
+        notificationsManager?.applicationDidBecomeActive()
 
         // Reschedule flushing timer if using periodic flushing mode
         if case let .periodic(interval) = flushingMode {
