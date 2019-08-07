@@ -18,6 +18,7 @@ public class Customer: NSManagedObject {
     
     @NSManaged public var uuid: UUID?
     @NSManaged public var pushToken: String?
+    @NSManaged public var lastTokenTrackDate: Date?
     @NSManaged public var customIds: NSSet?
     @NSManaged public var trackCustomer: NSSet?
     @NSManaged public var trackEvent: NSSet?
@@ -52,8 +53,10 @@ extension Customer {
     public override var description: String {
         var text = "[Customer]\n"
         
-        // Add cookie
+        // Add cookie, push token and last track date
         text += "UUID (cookie): \(uuid != nil ? uuid!.uuidString : "N/A")\n"
+        text += "Push Token: \(pushToken ?? "N/A")"
+        text += "Last Push Token Track Date: \(lastTokenTrackDate ?? Date.distantPast)"
         
         if let ids = customIds as? Set<KeyValueItem>, ids.count > 0 {
             text += "Custom IDs: "
