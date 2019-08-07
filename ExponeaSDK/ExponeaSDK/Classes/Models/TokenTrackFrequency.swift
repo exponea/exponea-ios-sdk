@@ -14,7 +14,7 @@ import Foundation
 /// - onTokenChange: Tracked whenever the push token changes.
 /// - everyLaunch: Tracked on every launch of the app. Consider data usage/battery life.
 /// - daily: Once a day on app launch.
-public enum TokenTrackFrequency {
+public enum TokenTrackFrequency: String, Codable {
     case onTokenChange
     case everyLaunch
     case daily

@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-/// <#Description#>
+/// A configuration object used to configure Exponea when initialising.
 public struct Configuration: Decodable {
     public internal(set) var projectMapping: [EventType: [String]]?
     public internal(set) var projectToken: String?
@@ -19,7 +19,17 @@ public struct Configuration: Decodable {
     public internal(set) var defaultProperties: [String: JSONConvertible]?
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
+
+    /// If enabled, will swizzle default push notifications methods and functions and automatically
+    /// listen to updates for tokens or push settings.
     public var automaticPushNotificationTracking: Bool = true
+
+    /// If automatic push notification tracking is enabled, this can be used to determine how often
+    /// should the push notification token be sent to Exponea.
+    public var tokenTrackFrequency: TokenTrackFrequency = .onTokenChange
+
+    /// App group is used when push notification data is shared among service or content extensions.
+    /// This is required for tracking delivered push notifications properly.
     public var appGroup: String? = nil
     
     /// The maximum amount of retries before a flush event is considered as invalid and deleted from the database.
@@ -31,6 +41,7 @@ public struct Configuration: Decodable {
         case sessionTimeout
         case automaticSessionTracking
         case automaticPushNotificationTracking
+        case tokenTrackFrequency
         case authorization
         case baseUrl
         case flushEventMaxRetries
@@ -99,14 +110,17 @@ public struct Configuration: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
+        // Project token
         if let projectToken = try container.decodeIfPresent(String.self, forKey: .projectToken) {
             self.projectToken = projectToken
         }
 
+        // Base URL
         if let baseUrl = try container.decodeIfPresent(String.self, forKey: .baseUrl) {
             self.baseUrl = baseUrl
         }
 
+        // Authorization
         if let authorization = try container.decodeIfPresent(String.self, forKey: .authorization) {
             let components = authorization.split(separator: " ")
             
@@ -118,7 +132,9 @@ public struct Configuration: Decodable {
             }
         }
 
-        if let dictionary = try container.decodeIfPresent(Dictionary<String, [String]>.self, forKey: .projectMapping) {
+        // Project token mapping
+        if let dictionary = try container.decodeIfPresent(
+            Dictionary<String, [String]>.self, forKey: .projectMapping) {
             var mapping: [EventType: [String]] = [:]
             for (_, element: (key: event, value: tokenArray)) in dictionary.enumerated() {
                 guard let eventType = EventType(rawValue: event) else { continue }
@@ -127,29 +143,43 @@ public struct Configuration: Decodable {
             self.projectMapping = mapping
         }
 
+        // Session timeout
         if let sessionTimeout = try container.decodeIfPresent(Double.self, forKey: .sessionTimeout) {
             self.sessionTimeout = sessionTimeout
         }
 
-        if let automaticSessionTracking = try container.decodeIfPresent(Bool.self, forKey: .automaticSessionTracking) {
+        // Automatic sessiont racking
+        if let automaticSessionTracking = try container.decodeIfPresent(
+            Bool.self, forKey: .automaticSessionTracking) {
             self.automaticSessionTracking = automaticSessionTracking
         }
-        
+
+        // Automatic push notifications
         if let automaticPushNotificationTracking = try container.decodeIfPresent(
-            Bool.self, forKey: .automaticPushNotificationTracking
-            ) {
+            Bool.self, forKey: .automaticPushNotificationTracking) {
             self.automaticPushNotificationTracking = automaticPushNotificationTracking
         }
-        
-        if let flushEventMaxRetries = try container.decodeIfPresent(Int.self, forKey: .flushEventMaxRetries) {
+
+        // Token track frequency
+        if let tokenTrackFrequency = try container.decodeIfPresent(
+            TokenTrackFrequency.self, forKey: .tokenTrackFrequency) {
+            self.tokenTrackFrequency = tokenTrackFrequency
+        }
+
+        // Flush event max retries
+        if let flushEventMaxRetries = try container.decodeIfPresent(
+            Int.self, forKey: .flushEventMaxRetries) {
             self.flushEventMaxRetries = flushEventMaxRetries
         }
 
+        // App group
         if let appGroup = try container.decodeIfPresent(String.self, forKey: .appGroup) {
             self.appGroup = appGroup
         }
 
-        if let defaultDictionary = try container.decodeIfPresent([String: JSONValue].self, forKey: .defaultProperties) {
+        // Default properties
+        if let defaultDictionary = try container.decodeIfPresent(
+            [String: JSONValue].self, forKey: .defaultProperties) {
             var properties: [String: JSONConvertible] = [:]
             defaultDictionary.forEach({ property in
                 properties[property.key] = property.value.jsonConvertible
@@ -237,6 +267,7 @@ extension Configuration: CustomStringConvertible {
         Session Timeout: \(sessionTimeout)
         Automatic Session Tracking: \(automaticSessionTracking)
         Automatic Push Notification Tracking: \(automaticPushNotificationTracking)
+        Token Track Frequency: \(tokenTrackFrequency)
         Flush Event Max Retries: \(flushEventMaxRetries)
         App Group: \(appGroup ?? "not configured")
         """
