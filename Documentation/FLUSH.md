@@ -4,7 +4,7 @@
 > 
 > This feature can be turned off setting the property FlushMode to `.manual`. Be careful when turning automatic flushing off, because if you do then you need to manually flush the data every time there is something to flush.
 
-All tracked events and track customer properties are stored in the internal database in the Exponea SDK. When a event was successfully sent to Exponea API, the object will be deleted from the local database.
+All tracked events and track customer properties are stored in the internal database in the Exponea SDK. When an event was successfully sent to Exponea API, the object will be deleted from the local database.
 
 Exponea SDK will only flush data when the device has a stable internet connection. If when flushing the data, a connection/server error occurs,  it will keep the data stored until it can be flushed at a later time.
 

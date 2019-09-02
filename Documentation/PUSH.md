@@ -20,7 +20,7 @@ For push notifications to work, you need a push notifications token with a corre
 6. While you're in the member center, grab your **Team ID** as well in the membership area
 7. The last step is to set up APNs in the Exponea web application, so login to your app and navigate to *Project management -> Project Settings -> Push Notifications*
 8. Input the following information:
-	-  Open the downloaded .p8 file in TextEdit and copy it's contents the into *ES256 Private Key*
+	-  Open the downloaded .p8 file in TextEdit and copy it's contents into the *ES256 Private Key*
 	-  Fill in the *Team ID* as copied from the Member Center
 	-  Fill in the *Key ID* provided during key creation (or in .p8 filename)
 	-  Fill in the *Application Bundle ID* of your application
@@ -33,7 +33,7 @@ Refer to Apple documentation on how to implement push notification setup in your
 
 If you had done everything right, you should now be able to send notifications from Exponea to your application. 
 
-Next steps is to configure [automatic push notification tracking](#Automatic-Push-Tracking) or [manual push notification tracking](#Manual-Push-Tracking) if you wish to get information about push notifications being delivered or clicked.
+Next step is to configure [automatic push notification tracking](#Automatic-Push-Tracking) or [manual push notification tracking](#Manual-Push-Tracking) if you wish to get information about push notifications being delivered or clicked.
 
 ## 🔍 Automatic Push Tracking
 
@@ -51,11 +51,11 @@ If you wish to automatically track delivered notifications, additional setup is 
 
 #### 1. Implement a notification service extension
 
-Please, see setup for [rich push notifications](#Rich-Push-Notifications), it is the same setup you need to do for the service extension. If you wish to also support custom rich push features like dynamic buttons, images and more then follow the rich push notifications guide further and then come back to delviered push tracking setup.
+Please, see setup for [rich push notifications](#Rich-Push-Notifications), it is the same setup you need to do for the service extension. If you wish to also support custom rich push features like dynamic buttons, images and more then follow the rich push notifications guide further and then come back to delivered push tracking setup.
 
 #### 2. Setting up App Groups
 
-You read more about how to setup App Groups in the official Apple documentation [here](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/ExtensionScenarios.html) under the heading **Sharing Data with Your Containing App**.
+You can read more about how to setup App Groups in the official Apple documentation [here](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/ExtensionScenarios.html) under the heading **Sharing Data with Your Containing App**.
 
 In practice this means enabling App Groups in your Xcode project settings Capabilites tab and then inputing the app group identifier as per the screenshot below. 
 
@@ -69,7 +69,7 @@ After you have setup the app groups, the last step is to finish SDK integration.
 
 Finally, you need to make two modifications to make automatic delivered push notification tracking work, one in the app and one in the extension code.
 
-1. Inside your app, where you configure Exponea, add the `appGroup` as a paramater to the `Configuration` intiializer with your own app group identifier:  
+1. Inside your app, where you configure Exponea, add the `appGroup` as a parameter to the `Configuration` initializer with your own app group identifier:  
 
    ```swift
    Exponea.shared.configure(projectToken: "myToken",

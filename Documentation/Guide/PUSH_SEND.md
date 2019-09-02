@@ -21,13 +21,13 @@ use **Actions->Others** and choose **Mobile Push Notifications** in pop-up menu
   ![](pics/send4.png)
 
 
-4. This will open notification builder. There you can specify **Title** (1) and **Message** (2) for your notification. There is a **Preview** (4) on the right side that will show the notification is gonna look like. There is also an option to specify an **Image (6)** you want to display and **Sound (9)** that will be played when notification is received.
+4. This will open notification builder. There you can specify **Title** (1) and **Message** (2) for your notification. There is a **Preview** (4) on the right side that will show what the notification is going to look like. There is also an option to specify an **Image (6)** you want to display and **Sound (9)** that will be played when notification is received.
 
 > When specifying the sound, provide sound name without extension.
 
 ![](pics/send5.png)
 
-5. You can also specify what kind of **Interaction** you want handle when user is clicking on that notification (3). There are 3 options available:
+5. You can also select **Interaction** performed when user opens the notification (3). There are 3 options available:
   * Open Application
   * Open Browser
   * Open Deeplink

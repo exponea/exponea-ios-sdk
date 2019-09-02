@@ -1,4 +1,3 @@
-
 ## Installation
 
 There are two ways of installing Exponea SDK for iOS.
@@ -24,7 +23,7 @@ There are two ways of installing Exponea SDK for iOS.
 In order to use ExponeaSDK you have to initalize and configure it first.
 
 You can configure you Exponea instance either in code or using
-`.plist` configuration file. Minimal configuarion requires you to provide `Authorization Token`, `Project Token` and `Base URL`. 
+`.plist` configuration file. Minimal configuration requires you to provide `Authorization Token`, `Project Token` and `Base URL`. 
 
 You can find these parameteres in **Exponea Web App**.
 > [How do I get these parameters?](./CONFIGURATION.md)

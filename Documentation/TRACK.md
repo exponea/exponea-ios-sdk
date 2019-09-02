@@ -63,11 +63,11 @@ Exponea.shared.identifyCustomer(customerIds: ["registered" : "test@test.com"],
 
 > **NOTE:** Requires Token authorization.
 
-Session is a real time spent in the game or int the app, it starts when the application is launched and ends when the game goes to background. If the user returns to game/app in 60 seconds (To change TIMEOUT value, you can set the `sessionTimeout` in the Exponea Configuration), application will continue in current session. Tracking of sessions produces two events,  `session_start` and  `session_end `.
+Session is a real time spent in the app, it starts when the application is launched and ends when the app goes to background. If the user returns to the app within 60 seconds (you can set the `sessionTimeout` in the Exponea Configuration), application will continue in current session. Tracking of sessions produces two events, `session_start` and `session_end`.
 
-The sessions are by default tracked automatically. If you want to disable you can change it changing the `automaticSessionTracking` in the Exponea Configuration.
+Sessions are tracked automatically by default. To disable it, you can change the `automaticSessionTracking` in the Exponea Configuration.
 
-There are also two methods available for you to track the sessions manually.
+There are two methods available to track sessions manually.
 
 ## 🔍 Default Properties
 
