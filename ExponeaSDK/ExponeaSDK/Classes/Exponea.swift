@@ -91,7 +91,11 @@ public class Exponea: ExponeaType {
             return trackingManager?.notificationsManager?.delegate
         }
         set {
-            trackingManager?.notificationsManager?.delegate = newValue
+            guard let notificationsManager = trackingManager?.notificationsManager else {
+                Exponea.logger.log(.warning, message: "Cannot set push notifications delegate. " + Constants.ErrorMessages.sdkNotConfigured)
+                return
+            }
+            notificationsManager.delegate = newValue
         }
     }
     
