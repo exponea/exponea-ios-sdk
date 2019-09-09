@@ -279,6 +279,24 @@ extension DatabaseManager: DatabaseManagerType {
             return try context.fetch(TrackEvent.fetchRequest())
         }
     }
+
+    /// Increase number of retries on TrackCustomer object
+    public func addRetry(_ object: TrackCustomer) throws {
+        try context.performAndWait {
+            let retries = NSNumber(integerLiteral: object.retries.intValue + 1)
+            object.retries = retries
+            try context.save()
+        }
+    }
+
+    /// Increase number of retries on TrackEvent object
+    public func addRetry(_ object: TrackEvent) throws {
+        try context.performAndWait {
+            let retries = NSNumber(integerLiteral: object.retries.intValue + 1)
+            object.retries = retries
+            try context.save()
+        }
+    }
     
     /// Detele a Tracking Event Object from CoreData
     ///
@@ -301,17 +319,7 @@ extension DatabaseManager: DatabaseManagerType {
             try context.save()
         }
     }
-    
-    /// Saves the database changes, useful when making changes to objects.
-    ///
-    /// - Throws: An error if there was an error while saving the database.
-    public func save() throws {
-        try context.performAndWait {
-            if context.hasChanges {
-                try context.save()
-            }
-        }
-    }
+
     
     public func clear() throws {
         // Delete all persistent stores
