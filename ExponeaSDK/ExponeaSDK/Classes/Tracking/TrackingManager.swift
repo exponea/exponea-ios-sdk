@@ -521,20 +521,20 @@ extension TrackingManager {
         }
     }
     
-    func flushCustomerTracking(_ customers: [TrackCustomer], completion: (() -> Void)? = nil) {
+    func flushCustomerTracking(_ customers: [TrackCustomerThreadSafe], completion: (() -> Void)? = nil) {
         var counter = customers.count
         for customer in customers {
             repository.trackCustomer(with: customer.dataTypes, for: customerIds) { [weak self] (result) in
                 switch result {
                 case .success:
                     Exponea.logger.log(.verbose, message: """
-                        Successfully uploaded customer update: \(customer.objectID).
+                        Successfully uploaded customer update: \(customer.managedObjectID).
                         """)
                     do {
                         try self?.database.delete(customer)
                     } catch {
                         Exponea.logger.log(.error, message: """
-                            Failed to remove object from database: \(customer.objectID).
+                            Failed to remove object from database: \(customer.managedObjectID).
                             \(error.localizedDescription)
                             """)
                     }
@@ -558,20 +558,20 @@ extension TrackingManager {
                         // Otherwise save changes and try again next time.
                         do {
                             let max = self?.repository.configuration.flushEventMaxRetries ?? Constants.Session.maxRetries
-                            if customer.retries.intValue + 1 >= max {
+                            if customer.retries + 1 >= max {
                                 Exponea.logger.log(.error, message: """
-                                    Maximum retry count reached, deleting customer event: \(customer.objectID)
+                                    Maximum retry count reached, deleting customer event: \(customer.managedObjectID)
                                     """)
                                 try self?.database.delete(customer)
                             } else {
                                 Exponea.logger.log(.error, message: """
-                                    Increasing retry count (\(customer.retries)) for customer event: \(customer.objectID)
+                                    Increasing retry count (\(customer.retries)) for customer event: \(customer.managedObjectID)
                                     """)
                                 try self?.database.addRetry(customer)
                             }
                         } catch {
                             Exponea.logger.log(.error, message: """
-                                Failed to update retry count or remove object from database: \(customer.objectID).
+                                Failed to update retry count or remove object from database: \(customer.managedObjectID).
                                 \(error.localizedDescription)
                                 """)
                         }
@@ -592,18 +592,18 @@ extension TrackingManager {
         }
     }
     
-    func flushEventTracking(_ events: [TrackEvent], completion: (() -> Void)? = nil) {
+    func flushEventTracking(_ events: [TrackEventThreadSafe], completion: (() -> Void)? = nil) {
         var counter = events.count
         for event in events {
             repository.trackEvent(with: event.dataTypes, for: customerIds) { [weak self] (result) in
                 switch result {
                 case .success:
-                    Exponea.logger.log(.verbose, message: "Successfully uploaded event: \(event.objectID).")
+                    Exponea.logger.log(.verbose, message: "Successfully uploaded event: \(event.managedObjectID).")
                     do {
                         try self?.database.delete(event)
                     } catch {
                         Exponea.logger.log(.error, message: """
-                            Failed to remove object from database: \(event.objectID). \(error.localizedDescription)
+                            Failed to remove object from database: \(event.managedObjectID). \(error.localizedDescription)
                             """)
                     }
                 case .failure(let error):
@@ -619,25 +619,24 @@ extension TrackingManager {
                     default:
                         Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
                         
-
                         // If we have reached the max count of retries, delete the object.
                         // Otherwise save changes and try again next time.
                         do {
                             let max = self?.repository.configuration.flushEventMaxRetries ?? Constants.Session.maxRetries
-                            if event.retries.intValue + 1 >= max {
+                            if event.retries + 1 >= max {
                                 Exponea.logger.log(.error, message: """
-                                    Maximum retry count reached, deleting event: \(event.objectID)
+                                    Maximum retry count reached, deleting event: \(event.managedObjectID)
                                     """)
                                 try self?.database.delete(event)
                             } else {
                                 Exponea.logger.log(.error, message: """
-                                    Increasing retry count (\(event.retries)) for event: \(event.objectID)
+                                    Increasing retry count (\(event.retries)) for event: \(event.managedObjectID)
                                     """)
                                 try self?.database.addRetry(event)
                             }
                         } catch {
                             Exponea.logger.log(.error, message: """
-                                Failed to update retry count or remove object from database: \(event.objectID).
+                                Failed to update retry count or remove object from database: \(event.managedObjectID).
                                 \(error.localizedDescription)
                                 """)
                         }

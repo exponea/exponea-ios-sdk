@@ -50,7 +50,13 @@ public class DatabaseManager {
 }
 
 extension DatabaseManager {
-    public var customer: Customer {
+    public var customer: CustomerThreadSafe {
+        return context.performAndWait {
+            return CustomerThreadSafe(customerManagedObject)
+        }
+    }
+
+    private var customerManagedObject: Customer {
         return context.performAndWait {
             do {
                 let customers: [Customer] = try context.fetch(Customer.fetchRequest())
@@ -82,9 +88,9 @@ extension DatabaseManager {
         }
     }
     
-    func fetchCustomerAndUpdate(with ids: [String: JSONValue]) -> Customer {
+    private func fetchCustomerAndUpdate(with ids: [String: JSONValue]) -> Customer {
         return context.performAndWait {
-            let customer = self.customer
+            let customer = self.customerManagedObject
             
             // Add the ids to the customer entity
             for id in ids {
@@ -126,9 +132,9 @@ extension DatabaseManager {
         }
     }
     
-    func fetchCustomerAndUpdate(pushToken: String?) -> Customer {
+    private func fetchCustomerAndUpdate(pushToken: String?) -> Customer {
         return context.performAndWait {
-            let customer = self.customer
+            let customer = self.customerManagedObject
             
             // Update push token and last token track date
             customer.pushToken = pushToken
@@ -162,7 +168,7 @@ extension DatabaseManager: DatabaseManagerType {
     public func trackEvent(with data: [DataType]) throws {
         try context.performAndWait {
             let trackEvent = TrackEvent(context: context)
-            trackEvent.customer = customer
+            trackEvent.customer = customerManagedObject
             
             // Always specify a timestamp
             trackEvent.timestamp = Date().timeIntervalSince1970
@@ -208,7 +214,7 @@ extension DatabaseManager: DatabaseManagerType {
     public func identifyCustomer(with data: [DataType]) throws {
         try context.performAndWait {
             let trackCustomer = TrackCustomer(context: context)
-            trackCustomer.customer = customer
+            trackCustomer.customer = customerManagedObject
             
             // Always specify a timestamp
             trackCustomer.timestamp = Date().timeIntervalSince1970
@@ -265,34 +271,42 @@ extension DatabaseManager: DatabaseManagerType {
     /// Fetch all Tracking Customers from CoreData
     ///
     /// - Returns: An array of tracking customer updates, if any are stored in the database.
-    public func fetchTrackCustomer() throws -> [TrackCustomer] {
+    public func fetchTrackCustomer() throws -> [TrackCustomerThreadSafe] {
         return try context.performAndWait {
-            return try context.fetch(TrackCustomer.fetchRequest())
+            let trackCustomerEvents: [TrackCustomer] = try context.fetch(TrackCustomer.fetchRequest())
+            return trackCustomerEvents.map {TrackCustomerThreadSafe($0)}
         }
     }
     
     /// Fetch all Tracking Events from CoreData
     ///
     /// - Returns: An array of tracking events, if any are stored in the database.
-    public func fetchTrackEvent() throws -> [TrackEvent] {
+    public func fetchTrackEvent() throws -> [TrackEventThreadSafe] {
         return try context.performAndWait {
-            return try context.fetch(TrackEvent.fetchRequest())
+            let trackEvents: [TrackEvent] = try context.fetch(TrackEvent.fetchRequest())
+            return trackEvents.map {TrackEventThreadSafe($0)}
         }
     }
 
     /// Increase number of retries on TrackCustomer object
-    public func addRetry(_ object: TrackCustomer) throws {
+    public func addRetry(_ customerEvent: TrackCustomerThreadSafe) throws {
         try context.performAndWait {
-            let retries = NSNumber(integerLiteral: object.retries.intValue + 1)
+            guard let object: TrackCustomer = try? context.existingObject(with: customerEvent.managedObjectID) as? TrackCustomer else {
+                throw DatabaseManagerError.objectDoesNotExist
+            }
+            let retries = NSNumber(integerLiteral: customerEvent.retries + 1)
             object.retries = retries
             try context.save()
         }
     }
 
-    /// Increase number of retries on TrackEvent object
-    public func addRetry(_ object: TrackEvent) throws {
+    /// Increase number of retries on TrackEventThreadSafe object
+    public func addRetry(_ event: TrackEventThreadSafe) throws {
         try context.performAndWait {
-            let retries = NSNumber(integerLiteral: object.retries.intValue + 1)
+            guard let object: TrackEvent = try? context.existingObject(with: event.managedObjectID) as? TrackEvent else {
+                throw DatabaseManagerError.objectDoesNotExist
+            }
+            let retries = NSNumber(integerLiteral: event.retries + 1)
             object.retries = retries
             try context.save()
         }
@@ -302,8 +316,11 @@ extension DatabaseManager: DatabaseManagerType {
     ///
     /// - Parameters:
     ///     - object: Tracking Event Object to be deleted from CoreData
-    public func delete(_ object: TrackEvent) throws {
+    public func delete(_ trackEvent: TrackEventThreadSafe) throws {
         try context.performAndWait {
+            guard let object = try? context.existingObject(with: trackEvent.managedObjectID) else {
+                return
+            }
             context.delete(object)
             try context.save()
         }
@@ -313,8 +330,11 @@ extension DatabaseManager: DatabaseManagerType {
     ///
     /// - Parameters:
     ///     - object: Tracking Customer Object to be deleted from CoreData
-    public func delete(_ object: TrackCustomer) throws {
+    public func delete(_ trackCustomer: TrackCustomerThreadSafe) throws {
         try context.performAndWait {
+            guard let object = try? context.existingObject(with: trackCustomer.managedObjectID) else {
+                return
+            }
             context.delete(object)
             try context.save()
         }

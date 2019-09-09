@@ -83,7 +83,7 @@ class TrackEventSpec: QuickSpec {
                         trackingManager.flushData(completion: {done()})
                     }
                     expect { try database.fetchTrackEvent().count }.to(equal(1))
-                    expect { try database.fetchTrackEvent().first?.retries.intValue }.to(equal(i))
+                    expect { try database.fetchTrackEvent().first?.retries }.to(equal(i))
                 }
                 waitUntil() { done in
                     trackingManager.flushData(completion: {done()})

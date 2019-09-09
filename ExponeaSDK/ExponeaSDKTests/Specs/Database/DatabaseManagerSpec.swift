@@ -46,22 +46,19 @@ class DatabaseManagerSpec: QuickSpec {
                 })
                 
                 it("should identify, fetch and delete a customer", closure: {
-                    var objects: [TrackCustomer] = []
+                    var objects: [TrackCustomerThreadSafe] = []
                     expect { try db.identifyCustomer(with: customerData) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
                     expect(objects.count).to(equal(1))
                     
                     let object = objects[0]
-                    expect(object.customer?.ids["registered"]).to(equal("myemail".jsonValue))
+                    expect(db.customer.ids["registered"]).to(equal("myemail".jsonValue))
                     expect(object.projectToken).to(equal("mytoken"))
-                    let props = object.properties as? Set<KeyValueItem>
-                    expect(props?.count).to(equal(2))
-                    
-                    let customProp = props?.first(where: { $0.key == "customprop" })
-                    expect(customProp?.value as? String).to(equal("customval"))
-                    
-                    let pushProp = props?.first(where: { $0.key == "apple_push_notification_id" })
-                    expect(pushProp?.value as? String).to(equal("pushtoken"))
+                    let props = object.properties!
+                    expect(props.count).to(equal(2))
+
+                    expect(props["customprop"]?.rawValue as? String).to(equal("customval"))
+                    expect(props["apple_push_notification_id"]?.rawValue as? String).to(equal("pushtoken"))
                     
                     expect(object.timestamp).to(equal(100))
                     
@@ -71,16 +68,14 @@ class DatabaseManagerSpec: QuickSpec {
                 })
                 
                 it("should track, fetch and delete an event", closure: {
-                    var objects: [TrackEvent] = []
+                    var objects: [TrackEventThreadSafe] = []
                     expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects.count).to(equal(1))
                     
                     let object = objects[0]
                     expect(object.projectToken).to(equal("mytoken"))
-                    let prop = object.properties?.anyObject() as? KeyValueItem
-                    expect(prop?.key).to(equal("customprop"))
-                    expect(prop?.value as? String).to(equal("customval"))
+                    expect(object.properties!["customprop"]?.rawValue as? String).to(equal("customval"))
                     expect(object.timestamp).to(equal(100))
                     expect(object.eventType).to(equal("myevent"))
                     
@@ -119,7 +114,7 @@ class DatabaseManagerSpec: QuickSpec {
                 })
                 
                 it("should identify, fetch and delete a track customer event", closure: {
-                    var objects: [TrackCustomer] = []
+                    var objects: [TrackCustomerThreadSafe] = []
                     var expectedTimestamp: Double = 1
 
                     waitUntil { done in
@@ -141,17 +136,14 @@ class DatabaseManagerSpec: QuickSpec {
                     }
 
                     let object = objects[0]
-                    expect(object.customer?.ids["registered"]).to(equal("myemail".jsonValue))
+                    expect(db.customer.ids["registered"]).to(equal("myemail".jsonValue))
                     expect(object.projectToken).to(equal("mytoken"))
-                    let props = object.properties as? Set<KeyValueItem>
-                    expect(props?.count).to(equal(2))
-                    
-                    let customProp = props?.first(where: { $0.key == "customprop" })
-                    expect(customProp?.value as? String).to(equal("customval"))
-                    
-                    let pushProp = props?.first(where: { $0.key == "apple_push_notification_id" })
-                    expect(pushProp?.value as? String).to(equal("pushtoken"))
-                    
+                    let props = object.properties!
+                    expect(props.count).to(equal(2))
+
+                    expect(props["customprop"]?.rawValue as? String).to(equal("customval"))
+                    expect(props["apple_push_notification_id"]?.rawValue as? String).to(equal("pushtoken"))
+
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
 
                     waitUntil { done in
@@ -166,7 +158,7 @@ class DatabaseManagerSpec: QuickSpec {
                 })
                 
                 it("should track, fetch and delete an event", closure: {
-                    var objects: [TrackEvent] = []
+                    var objects: [TrackEventThreadSafe] = []
                     var expectedTimestamp: Double = 1
 
                     waitUntil { done in
@@ -196,9 +188,8 @@ class DatabaseManagerSpec: QuickSpec {
                         }
                     })
                     
-                    let prop = object.properties?.anyObject() as? KeyValueItem
-                    expect(prop?.key).to(equal("customprop"))
-                    expect(prop?.value as? String).to(equal("customval"))
+                    expect(object.properties!["customprop"]?.rawValue as? String).to(equal("customval"))
+
                     expect(object.eventType).to(equal("myevent"))
                     
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
@@ -247,7 +238,7 @@ class DatabaseManagerSpec: QuickSpec {
                         return nil
                     }.toNot(raiseException())
                     
-                    var objects: [TrackEvent] = []
+                    var objects: [TrackEventThreadSafe] = []
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects.count).to(equal(1000))
                 })
@@ -262,14 +253,14 @@ class DatabaseManagerSpec: QuickSpec {
                         return nil
                         }.toNot(raiseException())
                     
-                    var objects: [TrackCustomer] = []
+                    var objects: [TrackCustomerThreadSafe] = []
                     expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
                     expect(objects.count).to(equal(1000))
                 })
                 
                 it("should not crash when tracking event from multiple threads") {
                     db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
-                    var objects: [TrackEvent] = []
+                    var objects: [TrackEventThreadSafe] = []
                     
                     waitUntil(timeout: 6.0, action: { (allDone) in
                         var doneCount = 0

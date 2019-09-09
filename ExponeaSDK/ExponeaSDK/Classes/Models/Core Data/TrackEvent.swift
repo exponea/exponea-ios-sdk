@@ -82,3 +82,37 @@ extension TrackEvent: HasKeyValueProperties {
     @objc(removeProperties:)
     @NSManaged public func removeFromProperties(_ values: NSSet)
 }
+
+public class TrackEventThreadSafe {
+    public let managedObjectID: NSManagedObjectID
+    public let eventType: String?
+    public let projectToken: String?
+    public let timestamp: Double
+    public let dataTypes: [DataType]
+    public let retries: Int
+
+    public var properties: [String: JSONValue]? {
+        let propertyDataType = dataTypes.first { datatype in
+            if case .properties = datatype {
+                return true
+            }
+            return false
+        }
+        guard propertyDataType != nil else {
+            return nil
+        }
+        if case .properties(let data) = propertyDataType! {
+            return data
+        }
+        return nil
+    }
+
+    init(_ trackEvent: TrackEvent) {
+        managedObjectID = trackEvent.objectID
+        eventType = trackEvent.eventType
+        projectToken = trackEvent.projectToken
+        timestamp = trackEvent.timestamp
+        dataTypes = trackEvent.dataTypes
+        retries = trackEvent.retries.intValue
+    }
+}

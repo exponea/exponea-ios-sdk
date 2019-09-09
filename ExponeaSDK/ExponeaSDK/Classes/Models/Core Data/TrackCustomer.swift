@@ -70,3 +70,35 @@ extension TrackCustomer: HasKeyValueProperties {
     @objc(removeProperties:)
     @NSManaged public func removeFromProperties(_ values: NSSet)
 }
+
+public class TrackCustomerThreadSafe {
+    public let managedObjectID: NSManagedObjectID
+    public let projectToken: String?
+    public let timestamp: Double
+    public let dataTypes: [DataType]
+    public let retries: Int
+
+    public var properties: [String: JSONValue]? {
+        let propertyDataType = dataTypes.first { datatype in
+            if case .properties = datatype {
+                return true
+            }
+            return false
+        }
+        guard propertyDataType != nil else {
+            return nil
+        }
+        if case .properties(let data) = propertyDataType! {
+            return data
+        }
+        return nil
+    }
+
+    init(_ trackCustomer: TrackCustomer) {
+        managedObjectID = trackCustomer.objectID
+        projectToken = trackCustomer.projectToken
+        timestamp = trackCustomer.timestamp
+        dataTypes = trackCustomer.dataTypes
+        retries = trackCustomer.retries.intValue
+    }
+}

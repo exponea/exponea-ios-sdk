@@ -10,20 +10,19 @@ import Foundation
 
 /// Protocol to manage Tracking events
 public protocol DatabaseManagerType: class {
-    var customer: Customer { get }
+    var customer: CustomerThreadSafe { get }
     
     func trackEvent(with data: [DataType]) throws
     func identifyCustomer(with data: [DataType]) throws
     
-    func fetchTrackCustomer() throws -> [TrackCustomer]
-    func fetchTrackEvent() throws -> [TrackEvent]
+    func fetchTrackCustomer() throws -> [TrackCustomerThreadSafe]
+    func fetchTrackEvent() throws -> [TrackEventThreadSafe]
 
-    func addRetry(_ object: TrackCustomer) throws
-    func addRetry(_ object: TrackEvent) throws
+    func addRetry(_ object: TrackCustomerThreadSafe) throws
+    func addRetry(_ object: TrackEventThreadSafe) throws
 
-    func delete(_ object: TrackCustomer) throws
-    func delete(_ object: TrackEvent) throws
-    
+    func delete(_ object: TrackCustomerThreadSafe) throws
+    func delete(_ object: TrackEventThreadSafe) throws
 
     /// Completely clears the database, including the Customer object.
     /// Useful for completely anonymizing the user.

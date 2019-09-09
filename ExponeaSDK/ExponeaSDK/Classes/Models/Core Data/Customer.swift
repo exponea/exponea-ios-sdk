@@ -120,3 +120,19 @@ extension Customer {
     @NSManaged public func removeFromTrackEvent(_ values: NSSet)
     
 }
+
+public class CustomerThreadSafe {
+    public let managedObjectID: NSManagedObjectID
+    public let uuid: UUID?
+    public let pushToken: String?
+    public let lastTokenTrackDate: Date?
+    public let ids: [String: JSONValue]
+
+    init(_ customer: Customer) {
+        managedObjectID = customer.objectID
+        uuid = customer.uuid
+        pushToken = customer.pushToken
+        lastTokenTrackDate = customer.lastTokenTrackDate
+        ids = customer.ids
+    }
+}
