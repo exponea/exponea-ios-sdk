@@ -107,25 +107,39 @@ class DatabaseManagerSpec: QuickSpec {
                 
                 // Create on main queue
                 db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
-                
+
                 it("should fetch customer", closure: {
-                    expect(db.customer).toNot(beNil())
+                    waitUntil { done in
+                        DispatchQueue.global(qos: .background).async {
+                            expect(Thread.isMainThread).to(beFalse())
+                            expect(db.customer).toNot(beNil())
+                            done()
+                        }
+                    }
                 })
                 
                 it("should identify, fetch and delete a track customer event", closure: {
                     var objects: [TrackCustomer] = []
                     var expectedTimestamp: Double = 1
 
-                    DispatchQueue.global(qos: .background).sync {
-                        expectedTimestamp = Date().timeIntervalSince1970
-                        expect { try db.identifyCustomer(with: customerData) }.toNot(raiseException())
+                    waitUntil { done in
+                        DispatchQueue.global(qos: .background).async {
+                            expect(Thread.isMainThread).to(beFalse())
+                            expectedTimestamp = Date().timeIntervalSince1970
+                            expect { try db.identifyCustomer(with: customerData) }.toNot(raiseException())
+                            done()
+                        }
                     }
-                    
-                    DispatchQueue.global(qos: .default).sync {
-                        expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
-                        expect(objects.count).to(equal(1))
+
+                    waitUntil { done in
+                        DispatchQueue.global(qos: .default).async {
+                            expect(Thread.isMainThread).to(beFalse())
+                            expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
+                            expect(objects.count).to(equal(1))
+                            done()
+                        }
                     }
-                    
+
                     let object = objects[0]
                     expect(object.customer?.ids["registered"]).to(equal("myemail".jsonValue))
                     expect(object.projectToken).to(equal("mytoken"))
@@ -139,11 +153,14 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(pushProp?.value as? String).to(equal("pushtoken"))
                     
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
-                    
-                    DispatchQueue.global(qos: .background).sync {
-                        expect { try db.delete(object) }.toNot(raiseException())
+
+                    waitUntil { done in
+                        DispatchQueue.global(qos: .background).async {
+                            expect(Thread.isMainThread).to(beFalse())
+                            expect { try db.delete(object) }.toNot(raiseException())
+                            done()
+                        }
                     }
-                    
                     expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
                     expect(objects).to(beEmpty())
                 })
@@ -151,20 +168,29 @@ class DatabaseManagerSpec: QuickSpec {
                 it("should track, fetch and delete an event", closure: {
                     var objects: [TrackEvent] = []
                     var expectedTimestamp: Double = 1
-                    
-                    DispatchQueue.global(qos: .background).sync {
-                        expectedTimestamp =  Date().timeIntervalSince1970
-                        expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
+
+                    waitUntil { done in
+                        DispatchQueue.global(qos: .background).async {
+                            expect(Thread.isMainThread).to(beFalse())
+                            expectedTimestamp =  Date().timeIntervalSince1970
+                            expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
+                            done()
+                        }
                     }
-                    DispatchQueue.global(qos: .default).sync {
-                        expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
-                        expect(objects.count).to(equal(1))
+                    waitUntil { done in
+                        DispatchQueue.global(qos: .background).async {
+                            expect(Thread.isMainThread).to(beFalse())
+                            expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
+                            expect(objects.count).to(equal(1))
+                            done()
+                        }
                     }
 
                     let object = objects[0]
                     
                     waitUntil(action: { (done) in
-                        DispatchQueue.main.async {
+                        DispatchQueue.global(qos: .background).async {
+                            expect(Thread.isMainThread).to(beFalse())
                             expect(object.projectToken).to(equal("mytoken"))
                             done()
                         }
@@ -177,10 +203,14 @@ class DatabaseManagerSpec: QuickSpec {
                     
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
 
-                    DispatchQueue.global(qos: .background).sync {
-                        expect { try db.delete(object) }.toNot(raiseException())
-                    }
-                    
+                    waitUntil(action: { (done) in
+                        DispatchQueue.global(qos: .background).async {
+                            expect(Thread.isMainThread).to(beFalse())
+                            expect { try db.delete(object) }.toNot(raiseException())
+                            done()
+                        }
+                    })
+
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects).to(beEmpty())
                 })
@@ -241,34 +271,25 @@ class DatabaseManagerSpec: QuickSpec {
                     db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
                     var objects: [TrackEvent] = []
                     
-                    waitUntil(timeout: 6.0, action: { (done) in
-                        var isOneDone = false
-                        
-                        DispatchQueue.global(qos: .background).async {
-                            for _ in 0..<500 {
-                                expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
+                    waitUntil(timeout: 6.0, action: { (allDone) in
+                        var doneCount = 0
+                        func done() {
+                            doneCount += 1
+                            if (doneCount == 500) {
+                                allDone()
                             }
-                            if isOneDone {
-                                done()
-                                return
-                            }
-                            isOneDone = true
                         }
-                        
-                        DispatchQueue.global(qos: .default).async {
-                            for _ in 0..<500 {
-                                expect { try db.trackEvent(with: eventData2) }.toNot(raiseException())
-                            }
-                            if isOneDone {
+
+                        for _ in 0..<500 {
+                            DispatchQueue.global(qos: .background).async {
+                                expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
                                 done()
-                                return
                             }
-                            isOneDone = true
                         }
                     })
                     
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
-                    expect(objects.count).to(equal(1000))
+                    expect(objects.count).to(equal(500))
                 }
             })
         }
