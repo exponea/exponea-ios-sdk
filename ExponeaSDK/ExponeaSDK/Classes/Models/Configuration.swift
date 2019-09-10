@@ -213,7 +213,6 @@ extension Configuration {
         } else {
             /// First check if we have default token
             if let token = projectToken {
-                Exponea.logger.log(.error, message: "No project token found.")
                 return [token]
             }
 

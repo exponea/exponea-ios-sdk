@@ -52,13 +52,49 @@ class ConfigurationSpec: QuickSpec {
                     }
                 })
             })
+            context("getting project tokens", {
+                beforeEach {
+                    Exponea.logger = MockLogger()
+                }
+                it("should return default project token") {
+                    let configuration = try! Configuration(
+                        projectToken: "token",
+                        authorization: Authorization.none,
+                        baseUrl: "baseUrl"
+                    )
+                    let tokens = configuration.tokens(for: .sessionStart)
+                    expect { tokens.count }.to(equal(1))
+                    expect { tokens.first }.to(equal("token"))
+                    expect { MockLogger.messages }.to(beEmpty())
+                }
 
-            context("that is parsed from an invalid plist", {
-                it("should fail to get created", closure: {
+                it("should return project mapping tokens") {
+                    let configuration = try! Configuration(
+                        projectToken: "token",
+                        projectMapping: [.sessionStart: ["token2", "token3"]],
+                        authorization: Authorization.none,
+                        baseUrl: "baseUrl"
+                    )
+                    let tokens = configuration.tokens(for: .sessionStart)
+                    expect { tokens.count }.to(equal(2))
+                    expect { tokens[0] }.to(equal("token2"))
+                    expect { tokens[1] }.to(equal("token3"))
+                    expect { MockLogger.messages }.to(beEmpty())
+                }
 
-                })
+                it("should return default token for event not in project mapping") {
+                    let configuration = try! Configuration(
+                        projectToken: "token",
+                        projectMapping: [.sessionStart: ["token2", "token3"]],
+                        authorization: Authorization.none,
+                        baseUrl: "baseUrl"
+                    )
+                    let tokens = configuration.tokens(for: .sessionEnd)
+                    expect { tokens.count }.to(equal(1))
+                    expect { tokens.first }.to(equal("token"))
+                    expect { MockLogger.messages }.to(beEmpty())
+                }
             })
-
         }
     }
 }
