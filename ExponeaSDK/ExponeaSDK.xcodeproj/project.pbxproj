@@ -31,6 +31,7 @@
 		01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DC0207F63970031BFEB /* FlushingMode.swift */; };
 		050805732326510100BDA235 /* MockUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050805722326510100BDA235 /* MockUserDefaults.swift */; };
 		050961062322552300D59C01 /* MockLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050961052322552300D59C01 /* MockLogger.swift */; };
+		052F68592327BF9B002DDCD4 /* TrackingManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F68582327BF9B002DDCD4 /* TrackingManagerSpec.swift */; };
 		052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */; };
 		052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
@@ -138,7 +139,6 @@
 		F029BF2D208A2C5200342498 /* StringResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF2C208A2C5200342498 /* StringResponse.swift */; };
 		F029BF2F208A386E00342498 /* FetchRecommendationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF2E208A386E00342498 /* FetchRecommendationSpec.swift */; };
 		F029BF35208DBE1200342498 /* get-recommendation.json in Resources */ = {isa = PBXBuildFile; fileRef = F029BF34208DBE1100342498 /* get-recommendation.json */; };
-		F03943A42080946E00FE7759 /* TrackEventSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03943A32080946E00FE7759 /* TrackEventSpec.swift */; };
 		F04BEA8621111A6100591950 /* EventSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA8521111A6100591950 /* EventSpec.swift */; };
 		F04BEA8821111D4F00591950 /* PurchasedItemSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA8721111D4F00591950 /* PurchasedItemSpec.swift */; };
 		F04BEA8B2111217700591950 /* RepositoryErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA8A2111217700591950 /* RepositoryErrorSpec.swift */; };
@@ -285,6 +285,7 @@
 		0288F5494383F31AB19EF5E0 /* Pods_ExponeaSDK_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		050805722326510100BDA235 /* MockUserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUserDefaults.swift; sourceTree = "<group>"; };
 		050961052322552300D59C01 /* MockLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLogger.swift; sourceTree = "<group>"; };
+		052F68582327BF9B002DDCD4 /* TrackingManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackingManagerSpec.swift; sourceTree = "<group>"; };
 		052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerErrorSpec.swift; sourceTree = "<group>"; };
 		052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -400,7 +401,6 @@
 		F029BF2C208A2C5200342498 /* StringResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringResponse.swift; sourceTree = "<group>"; };
 		F029BF2E208A386E00342498 /* FetchRecommendationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchRecommendationSpec.swift; sourceTree = "<group>"; };
 		F029BF34208DBE1100342498 /* get-recommendation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "get-recommendation.json"; sourceTree = "<group>"; };
-		F03943A32080946E00FE7759 /* TrackEventSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackEventSpec.swift; sourceTree = "<group>"; };
 		F04BEA8521111A6100591950 /* EventSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSpec.swift; sourceTree = "<group>"; };
 		F04BEA8721111D4F00591950 /* PurchasedItemSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasedItemSpec.swift; sourceTree = "<group>"; };
 		F04BEA8A2111217700591950 /* RepositoryErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryErrorSpec.swift; sourceTree = "<group>"; };
@@ -1034,7 +1034,7 @@
 		F0CA58F7207F783E00C89A7F /* Tracking */ = {
 			isa = PBXGroup;
 			children = (
-				F03943A32080946E00FE7759 /* TrackEventSpec.swift */,
+				052F68582327BF9B002DDCD4 /* TrackingManagerSpec.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -1557,7 +1557,6 @@
 				F0BE60F9211067B20082ABD8 /* RecommendationRequestSpec.swift in Sources */,
 				F0BE6105211080F30082ABD8 /* MockData.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
-				F03943A42080946E00FE7759 /* TrackEventSpec.swift in Sources */,
 				F0BE60FB21106A7A0082ABD8 /* AttributesListDescriptionSpec.swift in Sources */,
 				F0BE60FD21106FB40082ABD8 /* CustomerExportRequestSpec.swift in Sources */,
 				C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */,
@@ -1589,6 +1588,7 @@
 				F04BEAA9211266DD00591950 /* FetchBannerSpec.swift in Sources */,
 				F04BEA8E21118F4700591950 /* ResultSpec.swift in Sources */,
 				F0BE60F221105FF70082ABD8 /* EventTypeSpec.swift in Sources */,
+				052F68592327BF9B002DDCD4 /* TrackingManagerSpec.swift in Sources */,
 				F0BE60F5211064450082ABD8 /* EventsRequestSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

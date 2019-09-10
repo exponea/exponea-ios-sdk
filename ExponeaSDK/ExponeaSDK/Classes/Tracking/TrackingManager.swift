@@ -43,7 +43,8 @@ open class TrackingManager {
     
     /// User defaults used to store basic data and flags.
     internal let userDefaults: UserDefaults
-    
+
+    internal let flushingSemaphore = DispatchSemaphore(value: 1)
     internal var isFlushingData: Bool = false
     
     // Background task, if there is any - used to track sessions and flush data.
@@ -470,15 +471,20 @@ extension TrackingManager {
     func flushData(completion: (() -> Void)?) {
         do {
             // Check if flush is in progress
+            flushingSemaphore.wait()
             guard !isFlushingData else {
                 Exponea.logger.log(.warning, message: "Data flushing in progress, ignoring another flush call.")
+                flushingSemaphore.signal()
                 completion?()
                 return
             }
+            isFlushingData = true
+            flushingSemaphore.signal()
             
             // Check if we have an internet connection otherwise bail
             guard reachability.connection != .none else {
                 Exponea.logger.log(.warning, message: "Connection issues when flushing data, not flushing.")
+                isFlushingData = false
                 completion?()
                 return
             }
@@ -494,14 +500,14 @@ extension TrackingManager {
             
             // Check if we have any data otherwise bail
             guard !events.isEmpty || !customers.isEmpty else {
+                isFlushingData = false
+                completion?()
                 return
             }
             
             var customersDone = false
             var eventsDone = false
-            
-            isFlushingData = true
-            
+
             flushCustomerTracking(Array(customers), completion: {
                 customersDone = true
                 if eventsDone && customersDone {
@@ -518,6 +524,8 @@ extension TrackingManager {
             })
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
+            self.isFlushingData = false
+            completion?()
         }
     }
     

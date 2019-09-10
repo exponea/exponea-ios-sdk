@@ -17,7 +17,7 @@ class TrackEventSpec: QuickSpec {
 
     override func spec() {
         _ = MockUserNotificationCenter.shared
-        describe("Tracking events") {
+        describe("TrackingManager") {
             var trackingManager: TrackingManager!
             var repository: RepositoryType!
             var database: DatabaseManagerType!
@@ -58,6 +58,28 @@ class TrackEventSpec: QuickSpec {
                                         .properties(MockData().properties)]
                 expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
+            }
+
+            it("should only allow one thread to flush") {
+                let data: [DataType] = [.projectToken(MockData().projectToken),
+                                        .properties(MockData().properties)]
+                expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
+
+                var networkRequests: Int = 0
+                self.stubNetwork(withStatusCode: 200, withRequestHook: { _ in networkRequests += 1})
+
+                waitUntil() { done in
+                    let group = DispatchGroup()
+                    for _ in 0..<10 {
+                        group.enter()
+                        DispatchQueue.global(qos: .background).async {
+                            trackingManager.flushData(completion: {group.leave()})
+                        }
+                    }
+                    group.notify(queue: .main, execute: done)
+                }
+
+                expect(networkRequests).to(equal(1))
             }
 
             it("should flush event") {
@@ -107,10 +129,11 @@ class TrackEventSpec: QuickSpec {
         }
     }
 
-    func stubNetwork(withStatusCode statusCode: Int) {
+    func stubNetwork(withStatusCode statusCode: Int, withRequestHook requestHook: ((URLRequest) -> Void)? = nil) {
         let stubResponse = HTTPURLResponse(url: URL(string: "mock-url")!, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
         let stubData = "mock-response".data(using: String.Encoding.utf8, allowLossyConversion: true)!
         MockingjayProtocol.addStub(matcher: { request in return true }) { (request) -> (Response) in
+            requestHook?(request)
             return Response.success(stubResponse, .content(stubData))
         }
     }
