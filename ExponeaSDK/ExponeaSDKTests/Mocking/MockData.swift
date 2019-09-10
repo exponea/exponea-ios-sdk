@@ -11,7 +11,10 @@ import Foundation
 @testable import ExponeaSDK
 
 struct MockData {
-    
+    // We need bundle to load files
+    private final class BundleClass {}
+    private static var bundle: Bundle { return Bundle(for: MockData.BundleClass.self) }
+
     let projectToken = "TokenForUnitTest"
     
     let customerIds: [String: JSONValue] = {
@@ -99,5 +102,23 @@ struct MockData {
                                       productId: "123",
                                       productTitle: "iPad",
                                       receipt: nil)
-    
+
+    let recommendationResponse = retrieveDataFromFile(with: "get-recommendation", fileType: "json")
+    let eventsResponse = retrieveDataFromFile(with: "get-events", fileType: "json")
+    let bannerResponse = retrieveDataFromFile(with: "get-banner", fileType: "json")
+    let personalizationResponse = retrieveDataFromFile(with: "get-personalization", fileType: "json")
+    let attributesResponse = retrieveDataFromFile(with: "get-attributes", fileType: "json")
+    let consentsResponse = retrieveDataFromFile(with: "get-consents", fileType: "json")
+
+    static func retrieveDataFromFile(with fileName: String, fileType: String) -> Data {
+
+        /// Get the json content of file
+        guard
+            let file = bundle.url(forResource: fileName, withExtension: fileType),
+            let data = try? Data(contentsOf: file)
+            else {
+                fatalError("Something is horribly wrong with the data.")
+        }
+        return data
+    }
 }

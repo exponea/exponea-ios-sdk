@@ -147,7 +147,6 @@
 		F04BEA9221119DD200591950 /* HTTPMethodSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA9121119DD200591950 /* HTTPMethodSpec.swift */; };
 		F04BEA972111A1E900591950 /* PersonalizationRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA962111A1E900591950 /* PersonalizationRequestSpec.swift */; };
 		F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA9A2111AF7E00591950 /* RequestParametersTypeSpec.swift */; };
-		F04BEA9D2111B5DF00591950 /* MockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA9C2111B5DF00591950 /* MockRepository.swift */; };
 		F04BEAA12111EA8700591950 /* get-events.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA02111EA8700591950 /* get-events.json */; };
 		F04BEAA32111F85900591950 /* get-banner.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA22111F85900591950 /* get-banner.json */; };
 		F04BEAA52112412000591950 /* get-personalization.json in Resources */ = {isa = PBXBuildFile; fileRef = F04BEAA42112412000591950 /* get-personalization.json */; };
@@ -410,7 +409,6 @@
 		F04BEA9121119DD200591950 /* HTTPMethodSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethodSpec.swift; sourceTree = "<group>"; };
 		F04BEA962111A1E900591950 /* PersonalizationRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationRequestSpec.swift; sourceTree = "<group>"; };
 		F04BEA9A2111AF7E00591950 /* RequestParametersTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestParametersTypeSpec.swift; sourceTree = "<group>"; };
-		F04BEA9C2111B5DF00591950 /* MockRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepository.swift; sourceTree = "<group>"; };
 		F04BEAA02111EA8700591950 /* get-events.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-events.json"; sourceTree = "<group>"; };
 		F04BEAA22111F85900591950 /* get-banner.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-banner.json"; sourceTree = "<group>"; };
 		F04BEAA42112412000591950 /* get-personalization.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-personalization.json"; sourceTree = "<group>"; };
@@ -1003,7 +1001,6 @@
 				050805722326510100BDA235 /* MockUserDefaults.swift */,
 				F0BE6104211080F30082ABD8 /* MockData.swift */,
 				050961052322552300D59C01 /* MockLogger.swift */,
-				F04BEA9C2111B5DF00591950 /* MockRepository.swift */,
 				C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */,
 				F063BEA9207E36E600030811 /* MockDatabase.swift */,
 			);
@@ -1580,7 +1577,6 @@
 				F04BEA8621111A6100591950 /* EventSpec.swift in Sources */,
 				F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */,
 				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,
-				F04BEA9D2111B5DF00591950 /* MockRepository.swift in Sources */,
 				C084D0EB2181C5EA005C0CA8 /* MockUserNotificationCenter.swift in Sources */,
 				F04BEA9021119C1500591950 /* AuthorizationSpec.swift in Sources */,
 				050961062322552300D59C01 /* MockLogger.swift in Sources */,

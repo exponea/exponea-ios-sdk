@@ -9,6 +9,7 @@
 import Foundation
 import Quick
 import Nimble
+import Mockingjay
 
 @testable import ExponeaSDK
 
@@ -19,10 +20,18 @@ class FetchConsentsSpec: QuickSpec {
             context("when fetching consent categories") {
 
                 let configuration = try! Configuration(plistName: "ExponeaConfig")
-                let mockRepo = MockRepository(configuration: configuration)
+                let repo = ServerRepository(configuration: configuration)
+
+                MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
+                    return true
+                }) { (request) -> (Response) in
+                    let data = MockData().consentsResponse
+                    let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                    return Response.success(stubResponse, .content(data))
+                }
 
                 waitUntil(timeout: 3) { done in
-                    mockRepo.fetchConsents() { (result) in
+                    repo.fetchConsents() { (result) in
                         it("should not fail") {
                             expect(result.error).to(beNil())
                         }

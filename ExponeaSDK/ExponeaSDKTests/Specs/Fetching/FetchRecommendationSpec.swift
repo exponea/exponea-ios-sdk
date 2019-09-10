@@ -9,6 +9,7 @@
 import Foundation
 import Quick
 import Nimble
+import Mockingjay
 
 @testable import ExponeaSDK
 
@@ -19,13 +20,21 @@ class FetchRecommendationSpec: QuickSpec {
             context("Fetch recommendation from mock repository") {
                 
                 let configuration = try! Configuration(plistName: "ExponeaConfig")
-                let mockRepo = MockRepository(configuration: configuration)
+                let repo = ServerRepository(configuration: configuration)
+
+                MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
+                    return true
+                }) { (request) -> (Response) in
+                    let data = MockData().recommendationResponse
+                    let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                    return Response.success(stubResponse, .content(data))
+                }
                 let mockData = MockData()
                 
                 let data = mockData.recommendRequest
                 
                 waitUntil(timeout: 3) { done in
-                    mockRepo.fetchRecommendation(recommendation: data, for: mockData.customerIds) { (result) in
+                    repo.fetchRecommendation(recommendation: data, for: mockData.customerIds) { (result) in
                         it("Result error should be nil") {
                             expect(result.error).to(beNil())
                         }
