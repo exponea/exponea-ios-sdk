@@ -168,7 +168,28 @@ open class TrackingManager {
 // MARK: -
 
 extension TrackingManager: TrackingManagerType {
-    
+    public func hasPendingEvent(ofType type: String, withMaxAge maxAge: Double) throws -> Bool {
+        let events = try database.fetchTrackEvent()
+            .filter({ $0.eventType == type && $0.timestamp + maxAge >= Date().timeIntervalSince1970})
+        return !events.isEmpty
+    }
+
+    // Updates last logged event of given type with data
+    // Event may be logged multiple times - for every project token
+    public func updateLastPendingEvent(ofType type: String, with data: DataType) throws {
+        var events = try database.fetchTrackEvent()
+            .filter({ $0.eventType == type })
+            .sorted(by: {$0.timestamp < $1.timestamp})
+        var projectTokens: Set<String> = []
+        while (!events.isEmpty
+            && events.last!.projectToken != nil
+            && !projectTokens.contains(events.last!.projectToken!)) {
+            let event = events.removeLast()
+            projectTokens.insert(event.projectToken!)
+            try database.updateEvent(withId: event.managedObjectID, withData: data)
+        }
+    }
+
     open func track(_ type: EventType, with data: [DataType]?) throws {
         /// Get token mapping or fail if no token provided.
         let tokens = repository.configuration.tokens(for: type)
@@ -176,12 +197,12 @@ extension TrackingManager: TrackingManagerType {
             throw TrackingManagerError.unknownError("No project tokens provided.")
         }
         
-        Exponea.logger.log(.verbose, message: "Tracking event of type: \(type).")
+        Exponea.logger.log(.verbose, message: "Tracking event of type: \(type) with params \(data)")
         
         /// For each project token we have, track the data.
         for projectToken in tokens {
             let payload: [DataType] = [.projectToken(projectToken)] + (data ?? [])
-            
+
             switch type {
             case .install: try trackInstall(with: payload)
             case .sessionStart: try trackStartSession(with: payload)
@@ -192,12 +213,13 @@ extension TrackingManager: TrackingManagerType {
             case .registerPushToken: try trackPushToken(with: payload)
             case .pushOpened: try trackPushOpened(with: payload)
             case .pushDelivered: try trackPushDelivered(with: payload)
+            case .campaignClick: try trackCampaignClick(with: payload)
             }
         }
         
         // If we have immediate flushing mode, flush after tracking
         if case .immediate = flushingMode {
-            flushData()
+            flushDataWith(delay: Constants.Tracking.immediateFlushDelay)
         }
     }
 
@@ -213,6 +235,10 @@ extension TrackingManager: TrackingManagerType {
         try database.trackEvent(with: data)
     }
     
+    open func trackCampaignClick(with data: [DataType]) throws {
+        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.campaignClick)])
+    }
+
     open func trackPayment(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.payment)])
     }
@@ -267,7 +293,13 @@ extension TrackingManager {
             userDefaults.set(newValue, forKey: Constants.Keys.sessionBackgrounded)
         }
     }
-    
+
+    var hasActiveSession: Bool {
+        get {
+            return sessionStartTime != 0
+        }
+    }
+
     internal func triggerInitialSession() throws {
         // If we have a previously started session and a last session background time,
         // but no end time then we can assume that the app was terminated and we can use
@@ -299,9 +331,13 @@ extension TrackingManager {
         // Start the session with current date
         sessionStartTime = Date().timeIntervalSince1970
         
+        let data: [DataType] = [
+            .properties(device.properties),
+            .timestamp(sessionStartTime)
+        ]
+
         // Track session start
-        try track(.sessionStart, with: [.properties(device.properties),
-                                        .timestamp(sessionStartTime)])
+        try track(.sessionStart, with: data)
         
         Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStart)
     }
@@ -322,7 +358,7 @@ extension TrackingManager {
         // Calculate the duration of the session and add to properties.
         let duration = sessionEndTime - sessionStartTime
         properties["duration"] = .double(duration)
-        
+
         // Track session end
         try track(.sessionEnd, with: [.properties(properties),
                                       .timestamp(sessionEndTime)])
@@ -330,10 +366,10 @@ extension TrackingManager {
         // Reset session times
         sessionStartTime = 0
         sessionEndTime = 0
-            
+
         Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionEnd)
     }
-    
+
     @objc internal func applicationDidBecomeActive() {
         // Cancel background task if we have any
         if let item = backgroundWorkItem {
@@ -461,6 +497,13 @@ extension TrackingManager {
 
 extension TrackingManager {
     
+    private func flushDataWith(delay: Double) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let `self` = self else { return }
+            self.flushData()
+        }
+    }
+    
     @objc func flushData() {
         flushData(completion: nil)
     }
@@ -515,6 +558,7 @@ extension TrackingManager {
                     completion?()
                 }
             })
+
             flushEventTracking(Array(events), completion: {
                 eventsDone = true
                 if eventsDone && customersDone {
@@ -674,7 +718,7 @@ extension TrackingManager {
         switch flushingMode {
         case .immediate:
             // Immediately flush any data we might have
-            flushData()
+            flushDataWith(delay: Constants.Tracking.immediateFlushDelay)
             
         case .periodic(let interval):
             // Schedule a timer for the specified interval

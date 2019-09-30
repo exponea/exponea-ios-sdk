@@ -31,6 +31,8 @@ public struct RequestFactory {
         case .consents: return baseUrl + "/data/v2/projects/\(projectToken)/consent/categories"
         case .personalization:
             return baseUrl + "/data/v2/projects/\(projectToken)/customers/personalisation/show-banners"
+        case .campaignClick:
+            return baseUrl + "/track/v2/projects/\(projectToken)/campaigns/clicks"
         }
     }
 }
@@ -40,7 +42,7 @@ extension RequestFactory {
                         parameters: RequestParametersType? = nil,
                         customerIds: [String: JSONValue]? = nil) -> URLRequest {
         var request = URLRequest(url: URL(string: path)!)
-        
+
         // Create the basic request
         request.httpMethod = route.method.rawValue
         request.addValue(Constants.Repository.contentType,

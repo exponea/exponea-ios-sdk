@@ -2,19 +2,19 @@
 //  TrackEventSpec.swift
 //  ExponeaSDKTests
 //
-//  Created by Ricardo Tokashiki on 13/04/2018.
+//  Created by Panaxeo on 13/04/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
 //
 
 import Foundation
-import Quick
 import Nimble
+import Mockingjay
+import Quick
 import Mockingjay
 
 @testable import ExponeaSDK
 
-class TrackEventSpec: QuickSpec {
-
+class TrackingManagerSpec: QuickSpec {
     override func spec() {
         _ = MockUserNotificationCenter.shared
         describe("TrackingManager") {
@@ -32,7 +32,7 @@ class TrackEventSpec: QuickSpec {
                 configuration.automaticSessionTracking = false
                 configuration.flushEventMaxRetries = 5
                 repository = ServerRepository(configuration: configuration)
-                database = try! MockDatabase()
+                database = try! MockDatabaseManager()
                 userDefaults = MockUserDefaults()
 
                 // Mark install event as already tracked
@@ -124,6 +124,112 @@ class TrackEventSpec: QuickSpec {
                         trackingManager.flushData(completion: {done()})
                     }
                     expect { try database.fetchTrackEvent().count }.to(equal(1))
+                }
+            }
+
+            context("updateLastEvent") {
+                var trackingManager: TrackingManager!
+
+                beforeEach {
+                    let configuration = try! Configuration(plistName: "TrackingManagerUpdate")
+                    let repo = ServerRepository(configuration: configuration)
+                    let database = try! MockDatabaseManager()
+
+                    trackingManager = TrackingManager(repository: repo,
+                                                      database: database,
+                                                      userDefaults: UserDefaults())
+                    self.stubNetwork(withStatusCode: 200)
+                }
+
+                afterEach {
+                    self.unstubNetwork()
+                }
+
+                it("should do nothing without events") {
+                    let updateData = DataType.properties(["testkey": .string("testvalue")])
+                    expect {
+                        try trackingManager.updateLastPendingEvent(ofType: Constants.EventTypes.sessionStart,
+                                                            with: updateData)
+                    }.notTo(raiseException())
+                }
+
+                it("should update event") {
+                    let updateData = DataType.properties(["testkey": .string("testvalue")])
+                    expect {
+                        try trackingManager.track(EventType.sessionEnd, with: [])
+                    }.notTo(raiseException())
+                    expect {
+                        try trackingManager.updateLastPendingEvent(ofType: Constants.EventTypes.sessionEnd,
+                                                            with: updateData)
+                    }.notTo(raiseException())
+                    let event = try! trackingManager.database.fetchTrackEvent().first!
+                    expect { event.properties?["testkey"]?.rawValue as? String }.to(equal("testvalue"))
+                }
+
+                it("should only update last event") {
+                    let updateData = DataType.properties(["testkey": .string("testvalue")])
+                    expect {
+                        try trackingManager.track(EventType.sessionEnd,
+                                                  with: [DataType.properties(["order": .string("1")])])
+                    }.notTo(raiseException())
+                    expect {
+                        try trackingManager.track(EventType.sessionEnd,
+                                                  with: [DataType.properties(["order": .string("2")])])
+                    }.notTo(raiseException())
+                    expect {
+                        try trackingManager.track(EventType.sessionEnd,
+                                                  with: [DataType.properties(["order": .string("3")])])
+                    }.notTo(raiseException())
+                    expect {
+                        try trackingManager.updateLastPendingEvent(ofType: Constants.EventTypes.sessionEnd,
+                                                            with: updateData)
+                    }.notTo(raiseException())
+                    let events = try! trackingManager.database.fetchTrackEvent()
+                    events.forEach { event in
+                        if event.eventType == Constants.EventTypes.sessionEnd {
+                            let order = event.properties?["order"]?.rawValue as? String
+                            let insertedData = event.properties?["testkey"]?.rawValue as? String
+                            if order == "3" {
+                                expect { insertedData }.to(equal("testvalue"))
+                            } else {
+                                expect { insertedData }.to(beNil())
+                            }
+                        }
+                    }
+                }
+
+                it("should update multiple events if there are multiple project tokens") {
+                    let updateData = DataType.properties(["testkey": .string("testvalue")])
+                    expect {
+                        try trackingManager.track(EventType.sessionStart,
+                                                  with: [DataType.properties(["order": .string("1")])])
+                    }.notTo(raiseException())
+                    expect {
+                        try trackingManager.track(EventType.sessionStart,
+                                                  with: [DataType.properties(["order": .string("2")])])
+                    }.notTo(raiseException())
+                    expect {
+                        try trackingManager.track(EventType.sessionStart,
+                                                  with: [DataType.properties(["order": .string("3")])])
+                    }.notTo(raiseException())
+                    expect {
+                        try trackingManager.updateLastPendingEvent(ofType: Constants.EventTypes.sessionStart,
+                                                            with: updateData)
+                    }.notTo(raiseException())
+                    let events = try! trackingManager.database.fetchTrackEvent()
+                    events.forEach { event in
+                        if event.eventType == Constants.EventTypes.sessionStart {
+                            if event.eventType == Constants.EventTypes.sessionEnd {
+                                let order = event.properties?["order"]?.rawValue as? String
+                                let insertedData = event.properties?["testkey"]?.rawValue as? String
+                                if order == "3" {
+                                    expect { insertedData }.to(equal("testvalue"))
+                                } else {
+                                    expect { insertedData }.to(beNil())
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

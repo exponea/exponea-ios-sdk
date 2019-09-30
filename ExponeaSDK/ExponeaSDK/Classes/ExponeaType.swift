@@ -70,6 +70,11 @@ public protocol ExponeaType: class {
     ///     - eventType: Name of event
     func trackEvent(properties: [String: JSONConvertible], timestamp: Double?, eventType: String?)
     
+    /// Adds new campaing click event.
+    /// This occures when user has opened the application via universal link
+    ///     - url: campaign url
+    ///     - timestamp: Unix timestamp when the event was created.
+    func trackCampaignClick(url: URL, timestamp: Double?)
     /// Adds new payment event to a customer.
     ///
     /// - Parameters:

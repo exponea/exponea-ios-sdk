@@ -45,4 +45,6 @@ public enum EventType: String, Decodable {
     
     /// For tracking that a push notification has been opened.
     case pushOpened = "PUSH_OPENED"
+    
+    case campaignClick = "CAMPAIGN_CLICK"
 }

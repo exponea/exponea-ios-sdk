@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Exponea.logger = AppDelegate.memoryLogger
         Exponea.logger.logLevel = .verbose
-        
+
         UITabBar.appearance().tintColor = UIColor(red: 28/255, green: 23/255, blue: 50/255, alpha: 1.0)
         
         application.applicationIconBadgeNumber = 0
@@ -39,6 +39,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UNUserNotificationCenter.current().setNotificationCategories([category1, category2])
         
+        return true
+    }
+
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+            let incomingURL = userActivity.webpageURL
+            else { return false }
+        Exponea.shared.trackCampaignClick(url: incomingURL, timestamp: nil)
         return true
     }
     

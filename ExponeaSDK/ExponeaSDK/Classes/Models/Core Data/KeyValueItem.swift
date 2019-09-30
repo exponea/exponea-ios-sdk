@@ -10,6 +10,8 @@ import Foundation
 import CoreData
 
 public protocol HasKeyValueProperties: class {
+    var properties: NSSet? { get }
+
     func addToProperties(_ value: KeyValueItem)
     func removeFromProperties(_ value: KeyValueItem)
     func addToProperties(_ values: NSSet)

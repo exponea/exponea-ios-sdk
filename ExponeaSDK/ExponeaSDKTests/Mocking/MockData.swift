@@ -121,4 +121,18 @@ struct MockData {
         }
         return data
     }
+
+    let sessionStart = Event(type: "session_start",
+                      timestamp: nil,
+                      properties: ["name": .string("iPad"),
+                                   "description": .string("Tablet")],
+                      errors: nil)
+    
+    let campaignData: [String: JSONValue] = [
+        "url":.string("https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&xnpe_cmp=cmp&itt=usertoken"),
+        "platform": .string("iOS")
+    ]
+    
+    let campaignUrl = URL(string: "https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&xnpe_cmp=cmp&itt=usertoken")
+    let universalLinkEvent = Event(type: "campaign_click", timestamp: nil, properties: [:], errors: nil)
 }

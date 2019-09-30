@@ -20,7 +20,6 @@ public class TrackEvent: NSManagedObject {
     @NSManaged public var projectToken: String?
     @NSManaged public var timestamp: Double
     @NSManaged public var customer: Customer?
-    @NSManaged public var properties: NSSet?
     @NSManaged public var retries: NSNumber
 }
 
@@ -70,6 +69,8 @@ extension TrackEvent {
 // MARK: - Core Data -
 
 extension TrackEvent: HasKeyValueProperties {
+    @NSManaged public var properties: NSSet?
+
     @objc(addPropertiesObject:)
     @NSManaged public func addToProperties(_ value: KeyValueItem)
     

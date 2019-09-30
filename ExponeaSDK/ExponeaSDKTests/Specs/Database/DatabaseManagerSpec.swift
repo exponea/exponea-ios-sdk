@@ -22,7 +22,9 @@ class DatabaseManagerSpec: QuickSpec {
         var db: DatabaseManager!
         
         context("A database manager") {
-            db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
+            beforeEach {
+                db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
+            }
             
             describe("when properly instantiated", {
                 let customerData: [DataType] = [
@@ -82,6 +84,58 @@ class DatabaseManagerSpec: QuickSpec {
                     expect { try db.delete(object) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects).to(beEmpty())
+                })
+
+                describe("update", {
+                    func createSampleEvent() -> TrackEventThreadSafe {
+                        var objects: [TrackEventThreadSafe] = []
+                        expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
+                        expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
+                        expect(objects.count).to(equal(1))
+                        
+                        return objects[0]
+                    }
+
+                    func fetchSampleEvent() -> TrackEventThreadSafe {
+                        var objects: [TrackEventThreadSafe] = []
+                        expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
+                        expect(objects.count).to(equal(1))
+                        return objects[0]
+                    }
+
+                    it("should add new property", closure: {
+                        let sampleEvent = createSampleEvent()
+                        let updateData = DataType.properties(["newcustomprop": .string("newcustomval")])
+                        expect { try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData) }.toNot(raiseException())
+                        let updatedEvent = fetchSampleEvent()
+                        expect { updatedEvent.properties?.count}.to(equal(2))
+                        expect { updatedEvent.properties?["customprop"]?.rawValue as? String }.to(equal("customval"))
+                        expect { updatedEvent.properties?["newcustomprop"]?.rawValue as? String }.to(equal("newcustomval"))
+                    })
+
+                    it("should update existing property", closure: {
+                        let sampleEvent = createSampleEvent()
+                        let updateData = DataType.properties(["customprop": .string("newcustomval")])
+                        expect { try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData) }.toNot(raiseException())
+                        let updatedEvent = fetchSampleEvent()
+                        expect { updatedEvent.properties?.count}.to(equal(1))
+                        expect { updatedEvent.properties?["customprop"]?.rawValue as? String }.to(equal("newcustomval"))
+                    })
+
+                    it("should throw updating an object if it was deleted", closure: {
+                        let sampleEvent = createSampleEvent()
+                        expect { try db.delete(sampleEvent) }.toNot(raiseException())
+                        let updateData = DataType.properties(["newcustomprop": .string("newcustomval")])
+                        expect { try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData) }
+                            .to(throwError(DatabaseManagerError.objectDoesNotExist))
+                    })
+
+                    it("should throw updating wrong object", closure: {
+                        let customer = db.customer
+                        let updateData = DataType.properties(["newcustomprop": .string("newcustomval")])
+                        expect { try db.updateEvent(withId: customer.managedObjectID, withData: updateData) }
+                            .to(throwError(DatabaseManagerError.wrongObjectType))
+                    })
                 })
             })
             
@@ -266,12 +320,12 @@ class DatabaseManagerSpec: QuickSpec {
                         var doneCount = 0
                         func done() {
                             doneCount += 1
-                            if (doneCount == 500) {
+                            if (doneCount == 100) {
                                 allDone()
                             }
                         }
 
-                        for _ in 0..<500 {
+                        for _ in 0..<100 {
                             DispatchQueue.global(qos: .background).async {
                                 expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
                                 done()
@@ -280,7 +334,7 @@ class DatabaseManagerSpec: QuickSpec {
                     })
                     
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
-                    expect(objects.count).to(equal(500))
+                    expect(objects.count).to(equal(100))
                 }
             })
         }

@@ -1,0 +1,15 @@
+{
+    "success":true,
+    "data":[
+        {
+            "type":"session_start",
+            "timestamp": 1234567.89,
+            "properties":{
+                "browser":"Chrome",
+                "device":"Other",
+                "location":"https://app.exponea.com/",
+                "os":"Linux"
+            }
+        }
+        ]
+}

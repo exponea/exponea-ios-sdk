@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>projectToken</key>
+	<string>testToken</string>
+	<key>projectMapping</key>
+	<dict>
+		<key>SESSION_START</key>
+		<array>
+			<string>testToken2</string>
+			<string>testToken3</string>
+		</array>
+	</dict>
+	<key>automaticPushNotificationTracking</key>
+	<false/>
+</dict>
+</plist>

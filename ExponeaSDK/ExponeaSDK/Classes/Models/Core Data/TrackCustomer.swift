@@ -19,7 +19,6 @@ public class TrackCustomer: NSManagedObject {
     @NSManaged public var projectToken: String?
     @NSManaged public var timestamp: Double
     @NSManaged public var customer: Customer?
-    @NSManaged public var properties: NSSet?
     @NSManaged public var retries: NSNumber
     
     var dataTypes: [DataType] {
@@ -58,6 +57,8 @@ public class TrackCustomer: NSManagedObject {
 // MARK: - Core Data -
 
 extension TrackCustomer: HasKeyValueProperties {
+    @NSManaged public var properties: NSSet?
+
     @objc(addPropertiesObject:)
     @NSManaged public func addToProperties(_ value: KeyValueItem)
     

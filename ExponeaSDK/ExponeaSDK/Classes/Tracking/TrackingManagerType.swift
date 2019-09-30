@@ -29,8 +29,19 @@ protocol TrackingManagerType: class {
     /// - Throws: An error of type `TrackingManagerError`.
     func track(_ type: EventType, with data: [DataType]?) throws
 
+    /// Updates last pending(not yet sent to server) event for all project tokens
+    /// - type: Type of event you want to update.
+    /// - data: update data
+    func updateLastPendingEvent(ofType type: String, with data: DataType) throws
+
+    /// Returns true if there is a pending(not yet sent to server) event that is newer than `age`
+    func hasPendingEvent(ofType type: String, withMaxAge age: Double) throws -> Bool
+
     // MARK: - Session -
-    
+
+    // Checks if there is a currently active session
+    var hasActiveSession: Bool { get }
+
     /// Starts a session and tracks the event.
     func triggerSessionStart() throws
     

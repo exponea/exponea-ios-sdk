@@ -17,6 +17,7 @@ public enum Routes {
     case customerEvents
     case banners
     case personalization
+    case campaignClick
     case consents
 
     var method: HTTPMethod {

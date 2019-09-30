@@ -50,6 +50,7 @@ enum Constants {
         static let payment = "payment"
         static let pushOpen = "campaign"
         static let pushDelivered = "campaign"
+        static let campaignClick = "campaign_click"
     }
 
     /// Error messages
@@ -71,6 +72,12 @@ enum Constants {
     enum Session {
         static let defaultTimeout = 6.0
         static let maxRetries = 5
+        static let sessionUpdateThreshold = 3.0
+    }
+
+    enum Tracking {
+        // To be able to amend session tracking with campaign data, we have to delay immediate event flushing a bit
+        static let immediateFlushDelay = 3.0
     }
 
     /// General constants
@@ -78,5 +85,6 @@ enum Constants {
         static let iTunesStore = "iTunes Store"
         static let userDefaultsSuite = "ExponeaSDK"
         static let deliveredPushUserDefaultsKey = "EXPONEA_DELIVERED_PUSH_TRACKING"
+        static let savedCampaignClickEvent = "EXPONEA_SAVED_CAMPAIGN_CLICK"
     }
 }

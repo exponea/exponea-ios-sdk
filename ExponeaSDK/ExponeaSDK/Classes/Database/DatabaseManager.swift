@@ -156,7 +156,32 @@ extension DatabaseManager {
 }
 
 extension DatabaseManager: DatabaseManagerType {
-    
+    public func updateEvent(withId id: NSManagedObjectID, withData data: DataType) throws {
+        try context.performAndWait {
+            guard let object = try? context.existingObject(with: id) else {
+                throw DatabaseManagerError.objectDoesNotExist
+            }
+            guard object is TrackEvent else {
+                throw DatabaseManagerError.wrongObjectType
+            }
+            let event = object as! TrackEvent
+            switch data {
+            case .projectToken(let token):
+                event.projectToken = token
+            case .eventType(let eventType):
+                event.eventType = eventType
+            case .timestamp(let time):
+                event.timestamp = time ?? event.timestamp
+            case .properties(let properties):
+                processProperties(properties, into: event)
+            default:
+                return
+            }
+            Exponea.logger.log(.verbose, message: "going to modify event with id \(event.objectID)")
+            try context.save()
+        }
+    }
+
     /// Add any type of event into coredata.
     ///
     /// - Parameter data: See `DataType` for more information. Types specified below are required at minimum.
@@ -183,7 +208,7 @@ extension DatabaseManager: DatabaseManagerType {
                     
                 case .timestamp(let time):
                     trackEvent.timestamp = time ?? trackEvent.timestamp
-                    
+
                 case .properties(let properties):
                     // Add the event properties to the events entity
                     processProperties(properties, into: trackEvent)
@@ -192,8 +217,8 @@ extension DatabaseManager: DatabaseManagerType {
                     break
                 }
             }
-            
-            Exponea.logger.log(.verbose, message: "Adding track event to database: \(trackEvent.objectID)")
+
+            Exponea.logger.log(.verbose, message: "Adding track event \(trackEvent.eventType) to database: \(trackEvent.objectID)")
             
             // Insert the object into the database
             context.insert(trackEvent)
@@ -261,10 +286,16 @@ extension DatabaseManager: DatabaseManagerType {
     internal func processProperties(_ properties: [String: JSONValue],
                                     into object: HasKeyValueProperties) {
         for property in properties {
-            let item = KeyValueItem(context: context)
-            item.key = property.key
-            item.value = property.value.objectValue
-            object.addToProperties(item)
+            let existingProperties = object.properties as? Set<KeyValueItem>
+            let existingProperty: KeyValueItem? = existingProperties?.first(where: { $0.key == property.key })
+            if existingProperty != nil {
+                existingProperty!.value = property.value.objectValue
+            } else {
+                let item = KeyValueItem(context: context)
+                item.key = property.key
+                item.value = property.value.objectValue
+                object.addToProperties(item)
+            }
         }
     }
     
