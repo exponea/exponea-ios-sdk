@@ -1,5 +1,14 @@
 ## Release Notes
 
+### 2.3.0
+#### September 30, 2019
+* Features
+	* [Universal link tracking](./UNIVERSAL_LINK.md): SDK can now track app opens from Universal link. Sessions that are started from Universal link contain campaign data.
+* Bug Fixes
+  * The SDK is now better at handling parallel tasks which lead to nasty crashes in the past.  
+  * Fixed: Internal event database thread-safety issues that caused random crashes in previous versions. Database layer only exposes immutable projections of database objects to the outside world. All operations on those objects have to be performed using Database layer itself.
+  * Fixed: Event flushing can now only be performed once at a time. Simultaneous calls to `Exponea.shared.flushData()` will only flush data to Exponea once. Flush uses semaphore to ensure that only one thread can perform flushing process.
+
 ### 2.2.3
 * Configuration now has a token update frequency, which specifies how often should the push token be sent to Exponea (on change, on every start, daily)
 
