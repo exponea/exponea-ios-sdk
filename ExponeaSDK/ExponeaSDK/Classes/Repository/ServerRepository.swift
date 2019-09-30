@@ -12,7 +12,7 @@ import Foundation
 final class ServerRepository {
     
     public internal(set) var configuration: Configuration
-    private let session = URLSession.shared
+    private let session = URLSession(configuration: .default)
     
     // Initialize the configuration for all HTTP requests
     init(configuration: Configuration) {
