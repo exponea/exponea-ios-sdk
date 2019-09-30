@@ -55,6 +55,7 @@ To implement the Exponea SDK you must configure the SDK first:
 Then you can start using all the other features:
 
 * [Track Events & Customer Properties](./Documentation/TRACK.md)
+* [Track Campaigns(Universal links)](./Documentation/UNIVERSAL_LINK.md)
 * [Data Flushing](./Documentation/FLUSH.md)
 * [Push Notifications](./Documentation/PUSH.md)
 * [Fetch Data](./Documentation/FETCH.md)
