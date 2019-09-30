@@ -9,7 +9,6 @@
 import Foundation
 import Quick
 import Nimble
-import Mockingjay
 
 @testable import ExponeaSDK
 
@@ -22,13 +21,7 @@ class FetchConsentsSpec: QuickSpec {
                 let configuration = try! Configuration(plistName: "ExponeaConfig")
                 let repo = ServerRepository(configuration: configuration)
 
-                MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
-                    return true
-                }) { (request) -> (Response) in
-                    let data = MockData().consentsResponse
-                    let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-                    return Response.success(stubResponse, .content(data))
-                }
+                NetworkStubbing.stubNetwork(withStatusCode: 200, withResponseData: MockData().consentsResponse)
 
                 waitUntil(timeout: 3) { done in
                     repo.fetchConsents() { (result) in

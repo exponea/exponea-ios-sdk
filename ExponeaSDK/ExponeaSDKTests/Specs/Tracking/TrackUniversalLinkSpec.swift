@@ -27,14 +27,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                                         .properties(mockData.campaignData),
                                         .timestamp(nil)]
                 var lastRequest: URLRequest? = nil
-                MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
-                    lastRequest = request
-                    return true
-                }) { (request) -> (Response) in
-                    let data = "sample response".data(using: .utf8)!
-                    let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-                    return Response.success(stubResponse, .content(data))
-                }
+                NetworkStubbing.stubNetwork(withStatusCode: 200, withRequestHook: { request in lastRequest = request })
                 waitUntil(timeout: 3) { done in
                     repository.trackEvent(with: data + [.eventType(Constants.EventTypes.campaignClick)], for: mockData.customerIds) { result in
                         it("should have nil result error") {
