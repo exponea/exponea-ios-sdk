@@ -197,7 +197,7 @@ extension TrackingManager: TrackingManagerType {
             throw TrackingManagerError.unknownError("No project tokens provided.")
         }
         
-        Exponea.logger.log(.verbose, message: "Tracking event of type: \(type) with params \(data)")
+        Exponea.logger.log(.verbose, message: "Tracking event of type: \(type) with params \(data ?? [])")
         
         /// For each project token we have, track the data.
         for projectToken in tokens {

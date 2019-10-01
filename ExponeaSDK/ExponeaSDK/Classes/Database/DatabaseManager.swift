@@ -218,7 +218,7 @@ extension DatabaseManager: DatabaseManagerType {
                 }
             }
 
-            Exponea.logger.log(.verbose, message: "Adding track event \(trackEvent.eventType) to database: \(trackEvent.objectID)")
+            Exponea.logger.log(.verbose, message: "Adding track event \(trackEvent.eventType ?? "nil") to database: \(trackEvent.objectID)")
             
             // Insert the object into the database
             context.insert(trackEvent)
@@ -322,11 +322,14 @@ extension DatabaseManager: DatabaseManagerType {
     /// Increase number of retries on TrackCustomer object
     public func addRetry(_ customerEvent: TrackCustomerThreadSafe) throws {
         try context.performAndWait {
-            guard let object: TrackCustomer = try? context.existingObject(with: customerEvent.managedObjectID) as? TrackCustomer else {
+            guard let object = try? context.existingObject(with: customerEvent.managedObjectID) else {
+                throw DatabaseManagerError.objectDoesNotExist
+            }
+            guard let trackCustomer: TrackCustomer = object as? TrackCustomer else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
             let retries = NSNumber(integerLiteral: customerEvent.retries + 1)
-            object.retries = retries
+            trackCustomer.retries = retries
             try context.save()
         }
     }
@@ -334,11 +337,14 @@ extension DatabaseManager: DatabaseManagerType {
     /// Increase number of retries on TrackEventThreadSafe object
     public func addRetry(_ event: TrackEventThreadSafe) throws {
         try context.performAndWait {
-            guard let object: TrackEvent = try? context.existingObject(with: event.managedObjectID) as? TrackEvent else {
+            guard let object = try? context.existingObject(with: event.managedObjectID) else {
+                throw DatabaseManagerError.objectDoesNotExist
+            }
+            guard let trackEvent: TrackEvent = object as? TrackEvent else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
             let retries = NSNumber(integerLiteral: event.retries + 1)
-            object.retries = retries
+            trackEvent.retries = retries
             try context.save()
         }
     }
