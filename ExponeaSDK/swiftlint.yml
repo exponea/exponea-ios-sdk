@@ -1,0 +1,43 @@
+# https://github.com/realm/SwiftLint#configuration
+
+disabled_rules:
+    - colon
+    - comma
+    - compiler_protocol_init
+    - control_statement
+    - cyclomatic_complexity
+    - duplicate_imports
+    - empty_enum_arguments
+    - empty_parentheses_with_trailing_closure
+    - file_length
+    - for_where
+    - force_cast
+    - force_try
+    - function_body_length
+    - function_parameter_count
+    - identifier_name
+    - implicit_getter
+    - line_length
+    - multiple_closures_with_trailing_closure
+    - notification_center_detachment
+    - redundant_optional_initialization
+    - redundant_string_enum_value
+    - syntactic_sugar
+    - trailing_comma
+    - trailing_newline
+    - trailing_semicolon
+    - trailing_whitespace
+    - type_body_length
+    - unneeded_break_in_switch
+    - unused_closure_parameter
+    - vertical_whitespace
+    - force_unwrapping
+
+opt_in_rules:
+    - force_unwrapping
+
+excluded:
+    # Code from web
+    - ExponeaSDK/Classes/Others/Reachability.swift
+    # Code from web
+    - ExponeaSDK/Classes/Others/NSManagedObjectContext+Perform.swift
