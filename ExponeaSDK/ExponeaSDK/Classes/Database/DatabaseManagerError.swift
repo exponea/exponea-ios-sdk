@@ -16,6 +16,7 @@ import Foundation
 /// - saveCustomerFailed: Error while trying to save a customer data into coredata.
 /// - unknownError: Invalid error while trying to manipulate the data.
 public enum DatabaseManagerError: LocalizedError {
+    case unableToCreatePersistentContainer
     case unableToLoadPeristentStore(String)
     case objectDoesNotExist
     case wrongObjectType
@@ -24,6 +25,9 @@ public enum DatabaseManagerError: LocalizedError {
     
     public var errorDescription: String? {
         switch self {
+        case .unableToCreatePersistentContainer:
+            return "Unable to create persistant container for database."
+
         case .unableToLoadPeristentStore(let details):
             return "Unable to load persistent store for database: \(details)"
             

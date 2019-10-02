@@ -22,7 +22,9 @@ public class DatabaseManager {
     
     internal init(persistentStoreDescriptions: [NSPersistentStoreDescription]? = nil) throws {
         let bundle = Bundle(for: DatabaseManager.self)
-        let container = NSPersistentContainer(name: "DatabaseModel", bundle: bundle)!
+        guard let container = NSPersistentContainer(name: "DatabaseModel", bundle: bundle) else {
+            throw DatabaseManagerError.unableToCreatePersistentContainer
+        }
         var loadError: Error?
         
         // Set descriptions if needed
