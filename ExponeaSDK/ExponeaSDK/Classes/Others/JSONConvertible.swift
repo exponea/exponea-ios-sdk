@@ -82,6 +82,7 @@ public indirect enum JSONValue {
     static func convert(_ dictionary: [String: Any]) -> [String: JSONValue] {
         var result: [String: JSONValue] = [:]
         for (key, value) in dictionary {
+            // swiftlint:disable force_cast
             switch value {
             case is Bool: result[key] = .bool(value as! Bool)
             case is Int: result[key] = .int(value as! Int)
@@ -93,6 +94,7 @@ public indirect enum JSONValue {
                 Exponea.logger.log(.warning, message: "Can't convert value to JSONValue: \(value).")
                 continue
             }
+            // swiftlint:enable force_cast
         }
         return result
     }
@@ -101,12 +103,14 @@ public indirect enum JSONValue {
         var result: [JSONValue] = []
         for value in array {
             switch value {
+            // swiftlint:disable force_cast
             case is Bool: result.append(.bool(value as! Bool))
             case is Int: result.append(.int(value as! Int))
             case is Double: result.append(.double(value as! Double))
             case is String: result.append(.string(value as! String))
             case is Array<Any>: result.append(.array(convert(value as! [Any])))
             case is Dictionary<String, Any>: result.append(.dictionary(convert(value as! [String: Any])))
+            // swiftlint:enable force_cast
             default:
                 Exponea.logger.log(.warning, message: "Can't convert value to JSONValue: \(value).")
                 continue

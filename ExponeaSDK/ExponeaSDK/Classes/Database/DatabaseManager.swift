@@ -163,10 +163,9 @@ extension DatabaseManager: DatabaseManagerType {
             guard let object = try? context.existingObject(with: id) else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
-            guard object is TrackEvent else {
+            guard let event = object as? TrackEvent else {
                 throw DatabaseManagerError.wrongObjectType
             }
-            let event = object as! TrackEvent
             switch data {
             case .projectToken(let token):
                 event.projectToken = token
