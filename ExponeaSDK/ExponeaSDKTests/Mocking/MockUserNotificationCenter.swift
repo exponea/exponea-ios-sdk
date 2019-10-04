@@ -20,9 +20,9 @@ class MockUserNotificationCenter: NSObject {
     
     // Swizzle
     private struct Swizzling {
-        static let originalSelector = NSSelectorFromString("initWithBundleProxy:")
-        static let newSelector = #selector(MockUserNotificationCenter.overrideInit(bundleProxy:))
-        let origMethod: Method = class_getInstanceMethod(UNUserNotificationCenter.self, originalSelector)!
+        static let originalSelector = NSSelectorFromString("currentNotificationCenter")
+        static let newSelector = #selector(MockUserNotificationCenter.overrideCurrentCenter)
+        let origMethod: Method = class_getClassMethod(UNUserNotificationCenter.self, originalSelector)!
         let newMethod: Method = class_getInstanceMethod(MockUserNotificationCenter.self, newSelector)!
     }
     
@@ -39,7 +39,7 @@ class MockUserNotificationCenter: NSObject {
     
     // MARK: - Swizzles -
     
-    @objc func overrideInit(bundleProxy: Bundle) -> Self {
+    @objc func overrideCurrentCenter() -> Self {
         return self
     }
 }

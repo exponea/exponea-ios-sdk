@@ -128,23 +128,6 @@ class TrackingManagerSpec: QuickSpec {
             }
 
             context("updateLastEvent") {
-                var trackingManager: TrackingManager!
-
-                beforeEach {
-                    let configuration = try! Configuration(plistName: "TrackingManagerUpdate")
-                    let repo = ServerRepository(configuration: configuration)
-                    let database = try! MockDatabaseManager()
-
-                    trackingManager = TrackingManager(repository: repo,
-                                                      database: database,
-                                                      userDefaults: UserDefaults())
-                    self.stubNetwork(withStatusCode: 200)
-                }
-
-                afterEach {
-                    self.unstubNetwork()
-                }
-
                 it("should do nothing without events") {
                     let updateData = DataType.properties(["testkey": .string("testvalue")])
                     expect {
