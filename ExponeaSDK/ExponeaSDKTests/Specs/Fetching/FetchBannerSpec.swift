@@ -22,7 +22,7 @@ class FetchBannerSpec: QuickSpec {
                 let repo = ServerRepository(configuration: configuration)
 
                 NetworkStubbing.stubNetwork(withStatusCode: 200, withResponseData: MockData().bannerResponse)
-                
+
                 waitUntil(timeout: 3) { done in
                     repo.fetchBanners() { (result) in
                         it("Result error should be nil") {

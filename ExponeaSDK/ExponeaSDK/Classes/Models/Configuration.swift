@@ -78,6 +78,8 @@ public struct Configuration: Decodable {
         if let url = baseUrl {
             self.baseUrl = url
         }
+
+        try self.validate()
     }
 
     /// Creates the Configuration object from a plist file.
@@ -99,6 +101,8 @@ public struct Configuration: Decodable {
 
             // Decode from plist
             self = try PropertyListDecoder().decode(Configuration.self, from: data)
+
+            try self.validate()
 
             // Stop if we found the file and decoded successfully
             return

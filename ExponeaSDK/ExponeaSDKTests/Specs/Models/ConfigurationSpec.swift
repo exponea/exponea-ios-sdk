@@ -15,6 +15,62 @@ import Nimble
 class ConfigurationSpec: QuickSpec {
     override func spec() {
         describe("A Configuration") {
+            context("validation") {
+                it("should pass valid configuration") {
+                    expect {
+                        try Configuration(
+                            projectToken: "token",
+                            authorization: Authorization.none,
+                            baseUrl: "baseUrl"
+                        )
+                    }.notTo(beNil())
+                }
+                it("should throw on invalid baseUrl") {
+                    do {
+                        _ = try Configuration(
+                            projectToken: "token",
+                            authorization: Authorization.none,
+                            baseUrl: "string with spaces"
+                        )
+                        XCTFail("Error not thrown")
+                    } catch {
+                        expect(error.localizedDescription).to(equal("Base url provided is not a valid url."))
+                    }
+                }
+                it("should throw on invalid project token") {
+                    do {
+                        _ = try Configuration(
+                            projectToken: "something else than project token",
+                            authorization: Authorization.none,
+                            baseUrl: "baseUrl"
+                        )
+                        XCTFail("Error not thrown")
+                    } catch {
+                        let expectedErrorMessage = "Project token provided is not valid. "
+                            + "Only alphanumeric symbols and dashes are allowed in project token."
+                        expect(error.localizedDescription).to(equal(expectedErrorMessage))
+                    }
+                }
+                it("should throw on invalid project token in project mapping") {
+                    do {
+                        _ = try Configuration(
+                            projectToken: "token",
+                            projectMapping: [
+                                .sessionStart: ["token2", "token3"],
+                                .sessionEnd: ["invalid token"]
+                            ],
+                            authorization: Authorization.none,
+                            baseUrl: "baseUrl"
+                        )
+                        XCTFail("Error not thrown")
+                    } catch {
+                        let expectedErrorMessage = "Project mapping for event type sessionEnd is not valid. "
+                            + "Project token provided is not valid. "
+                            + "Only alphanumeric symbols and dashes are allowed in project token."
+                        expect(error.localizedDescription).to(equal(expectedErrorMessage))
+                    }
+                }
+            }
             context("that is parsed from valid plist", {
                 it("should get created correctly with project token", closure: {
                     do {
