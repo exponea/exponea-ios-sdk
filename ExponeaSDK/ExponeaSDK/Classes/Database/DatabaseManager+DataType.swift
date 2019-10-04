@@ -21,16 +21,16 @@ extension DatabaseManager {
         Exponea.logger.log(.warning, message: "Skipping object of unsupported type: \(object.self)")
         return nil
     }
-    
+
     static func processArray(_ array: NSArray) -> JSONValue {
         var valueArray: [JSONValue] = []
-        
+
         for element in array {
             guard let object = element as? NSObject else {
                 Exponea.logger.log(.warning, message: "Skipping array element of unsupported type: \(element.self)")
                 continue
             }
-            
+
             if let nested = object as? NSArray {
                 valueArray.append(processArray(nested))
             } else if let primitiveType = transformPrimitiveType(object) {
@@ -40,26 +40,26 @@ extension DatabaseManager {
                 continue
             }
         }
-        
+
         return .array(valueArray)
     }
-    
+
     static func processDictionary(_ dictionary: NSDictionary) -> JSONValue {
         var valueDictionary: [String : JSONValue] = [:]
-        
+
         for (k, v) in dictionary {
             guard let key = k as? String else {
                 Exponea.logger.log(.warning,
                                    message: "Skipping dictionary pair because key is not a string: \(k.self).")
                 continue
             }
-            
+
             guard let value = v as? NSObject else {
                 Exponea.logger.log(.warning,
                                    message: "Skipping dictionary pair because value is not an object: \(v.self).")
                 continue
             }
-            
+
             if let nested = value as? NSDictionary {
                 valueDictionary[key] = processDictionary(nested)
             } else if let nested = value as? NSArray {
@@ -73,10 +73,10 @@ extension DatabaseManager {
                 continue
             }
         }
-        
+
         return .dictionary(valueDictionary)
     }
-    
+
     static func transformPrimitiveType(_ object: NSObject) -> JSONValue? {
         switch object.self {
         case is NSString:
@@ -85,13 +85,13 @@ extension DatabaseManager {
                 return nil
             }
             return .string(string as String)
-            
+
         case is NSNumber:
             guard let number = object as? NSNumber else {
                 Exponea.logger.log(.error, message: "Failed to convert NSObject to NSNumber for: \(object).")
                 return nil
             }
-            
+
             // Switch based on number type
             switch CFNumberGetType(number) {
             case .charType:
@@ -104,7 +104,7 @@ extension DatabaseManager {
             @unknown default:
                 return .bool(number.boolValue)
             }
-            
+
         default:
             Exponea.logger.log(.warning, message: "Skipping unsupported property value: \(object).")
             return nil

@@ -13,11 +13,11 @@ import UserNotifications
 
 @objc(MockUserNotificationCenter)
 class MockUserNotificationCenter: NSObject {
-    
+
     static let shared = MockUserNotificationCenter()
 
     private let swizzling = Swizzling()
-    
+
     // Swizzle
     private struct Swizzling {
         static let originalSelector = NSSelectorFromString("currentNotificationCenter")
@@ -25,20 +25,20 @@ class MockUserNotificationCenter: NSObject {
         let origMethod: Method = class_getClassMethod(UNUserNotificationCenter.self, originalSelector)!
         let newMethod: Method = class_getInstanceMethod(MockUserNotificationCenter.self, newSelector)!
     }
-    
+
     override init() {
         super.init()
         // swizzle
         method_exchangeImplementations(swizzling.origMethod, swizzling.newMethod)
     }
-    
+
     deinit {
         // Change back
         method_exchangeImplementations(swizzling.origMethod, swizzling.newMethod)
     }
-    
+
     // MARK: - Swizzles -
-    
+
     @objc func overrideCurrentCenter() -> Self {
         return self
     }

@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 extension NSPersistentContainer {
-    
+
     /// <#Description#>
     ///
     /// - Parameters:
@@ -21,7 +21,7 @@ extension NSPersistentContainer {
             let objectModel = NSManagedObjectModel(contentsOf: modelURL) else {
                 return nil
         }
-        
+
         self.init(name: name, managedObjectModel: objectModel)
     }
 }

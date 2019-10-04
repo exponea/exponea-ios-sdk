@@ -78,7 +78,7 @@ public indirect enum JSONValue {
     case double(Double)
     case dictionary([String: JSONValue])
     case array([JSONValue])
-    
+
     static func convert(_ dictionary: [String: Any]) -> [String: JSONValue] {
         var result: [String: JSONValue] = [:]
         for (key, value) in dictionary {
@@ -98,7 +98,7 @@ public indirect enum JSONValue {
         }
         return result
     }
-    
+
     static func convert(_ array: [Any]) -> [JSONValue] {
         var result: [JSONValue] = []
         for value in array {
@@ -131,7 +131,7 @@ extension JSONValue {
         case .array(let array): return array.map { $0.rawValue }
         }
     }
-    
+
     var jsonConvertible: JSONConvertible {
         switch self {
         case .string(let string): return string
@@ -147,7 +147,7 @@ extension JSONValue {
 extension JSONValue: Codable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        
+
         do {
             self = .dictionary(try container.decode([String: JSONValue].self))
         } catch DecodingError.typeMismatch {
@@ -170,7 +170,7 @@ extension JSONValue: Codable, Equatable {
             }
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
@@ -182,7 +182,7 @@ extension JSONValue: Codable, Equatable {
         case .dictionary(let dictionary): try container.encode(dictionary)
         }
     }
-    
+
     public static func == (_ left: JSONValue, _ right: JSONValue) -> Bool {
         switch (left, right) {
         case (.int(let int1), .int(let int2)): return int1 == int2

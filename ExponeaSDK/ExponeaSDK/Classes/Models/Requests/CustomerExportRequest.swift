@@ -10,22 +10,22 @@ import Foundation
 
 /// <#Description#>
 public struct CustomerExportRequest {
-    
+
     /// <#Description#>
     public var attributes: AttributesListDescription?
-    
+
     /// <#Description#>
     public var filter: [String: JSONValue]?
-    
+
     /// <#Description#>
     public var executionTime: Int?
-    
+
     /// <#Description#>
     public var timezone: String?
-    
+
     /// <#Description#>
     public var responseFormat: ExportFormat
-    
+
     /// <#Description#>
     ///
     /// - Parameters:

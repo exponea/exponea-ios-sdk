@@ -12,7 +12,7 @@ public struct DateFilter: Codable {
     public let enabled: Bool
     public let startDate: Date?
     public let endDate: Date?
-    
+
     enum CodingKeys: String, CodingKey {
         case enabled, startDate = "from_date", endDate = "to_date"
     }

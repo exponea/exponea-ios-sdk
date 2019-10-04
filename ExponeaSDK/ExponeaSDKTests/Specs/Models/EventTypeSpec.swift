@@ -16,9 +16,9 @@ class EventTypeSpec: QuickSpec {
     override func spec() {
         describe("A device") {
             context("Setting the event types") {
-                
+
                 var eventType: EventType!
-                
+
                 it("Should have type install") {
                     eventType = .install
                     expect(eventType.rawValue).to(equal("INSTALL"))

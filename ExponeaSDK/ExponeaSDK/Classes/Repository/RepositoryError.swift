@@ -24,7 +24,7 @@ public enum RepositoryError: LocalizedError, ErrorInitialisable {
     case invalidResponse(URLResponse?)
     case connectionError
     case unknown(Error)
-    
+
     /// Return a formatted error message while doing API calls to Exponea.
     public var errorDescription: String? {
         switch self {
@@ -45,7 +45,7 @@ public enum RepositoryError: LocalizedError, ErrorInitialisable {
             return "\(error.localizedDescription)"
         }
     }
-    
+
     static func create(from error: Error) -> RepositoryError {
         if let error = error as? RepositoryError {
             return error

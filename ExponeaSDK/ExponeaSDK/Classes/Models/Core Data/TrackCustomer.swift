@@ -1,6 +1,6 @@
 //
 //  TrackCustomer+CoreDataClass.swift
-//  
+//
 //
 //  Created by Dominik Hadl on 02/07/2018.
 //
@@ -15,21 +15,21 @@ public class TrackCustomer: NSManagedObject {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackCustomer> {
         return NSFetchRequest<TrackCustomer>(entityName: "TrackCustomer")
     }
-    
+
     @NSManaged public var projectToken: String?
     @NSManaged public var timestamp: Double
     @NSManaged public var customer: Customer?
     @NSManaged public var retries: NSNumber
-    
+
     var dataTypes: [DataType] {
         let data: [DataType]? = managedObjectContext?.performAndWait {
             var data: [DataType] = []
-            
+
             // Add project token.
             if let token = projectToken {
                 data.append(.projectToken(token))
             }
-            
+
             // Convert all properties to key value items.
             if let properties = properties as? Set<KeyValueItem> {
                 var props: [String: JSONValue] = [:]
@@ -41,15 +41,15 @@ public class TrackCustomer: NSManagedObject {
                             """)
                         return
                     }
-                    
+
                     props[key] = DatabaseManager.processObject(object)
                 })
                 data.append(.properties(props))
             }
-            
+
             return data
         }
-        
+
         return data ?? []
     }
 }
@@ -61,13 +61,13 @@ extension TrackCustomer: HasKeyValueProperties {
 
     @objc(addPropertiesObject:)
     @NSManaged public func addToProperties(_ value: KeyValueItem)
-    
+
     @objc(removePropertiesObject:)
     @NSManaged public func removeFromProperties(_ value: KeyValueItem)
-    
+
     @objc(addProperties:)
     @NSManaged public func addToProperties(_ values: NSSet)
-    
+
     @objc(removeProperties:)
     @NSManaged public func removeFromProperties(_ values: NSSet)
 }

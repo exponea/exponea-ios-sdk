@@ -22,7 +22,7 @@ extension CampaignData {
             return .properties(data)
         }
     }
-    
+
     var campaignData: [String: JSONValue] {
         get {
             var data: [String: JSONValue] = [:]
@@ -31,7 +31,7 @@ extension CampaignData {
             return data
         }
     }
-    
+
     var campaignDataProperties: DataType {
         get {
             return .properties(campaignData)

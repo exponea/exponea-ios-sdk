@@ -17,32 +17,32 @@ class FetchEventsSpec: QuickSpec {
     override func spec() {
         describe("Fetch Events") {
             context("Fetch events from mock repository") {
-                
+
                 let configuration = try! Configuration(plistName: "ExponeaConfig")
                 let repo = ServerRepository(configuration: configuration)
 
                 NetworkStubbing.stubNetwork(withStatusCode: 200, withResponseData: MockData().eventsResponse)
                 let mockData = MockData()
-                
+
                 waitUntil(timeout: 3) { done in
                     repo.fetchEvents(events: mockData.eventRequest, for: mockData.customerIds) { (result) in
                         it("Result error should be nil") {
                             expect(result.error).to(beNil())
                         }
-                        
+
                         it("Result should be true ") {
                             expect(result.value?.success).to(beTrue())
                         }
                         it("Result values should have 3 items") {
                             expect(result.value?.data.count).to(equal(3))
                         }
-                        
+
                         context("Check the values returned from json file") {
-                            
+
                             guard let values =  result.value?.data else {
                                 fatalError("Get events should not be empty")
                             }
-                            
+
                             context("Validating the first item") {
                                 let firstItem = values[0]
                                 it("First item should have type [session_start]") {
@@ -61,7 +61,7 @@ class FetchEventsSpec: QuickSpec {
                                     expect(firstItem.properties?["os"]).to(equal(.string("Linux")))
                                 }
                             }
-                            
+
                             context("Validating the second item") {
                                 let firstItem = values[1]
                                 it("First item should have type [purchase]") {
@@ -74,7 +74,7 @@ class FetchEventsSpec: QuickSpec {
                                     expect(firstItem.properties?["product_name"]).to(equal(.string("iPad")))
                                 }
                             }
-                            
+
                             context("Validating the thrid item") {
                                 let firstItem = values[2]
                                 it("First item should have type [session_end]") {
@@ -94,7 +94,7 @@ class FetchEventsSpec: QuickSpec {
                                 }
                             }
                         }
-                        
+
                         done()
                     }
                 }

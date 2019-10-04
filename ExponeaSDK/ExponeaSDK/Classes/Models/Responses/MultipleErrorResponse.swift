@@ -15,23 +15,23 @@ public struct ErrorResponse: Codable {
 
 /// A structure contain
 public struct MultipleErrorResponse: Codable {
-    
+
     /// <#Description#>
     let errors: [ErrorContent]
-    
+
     /// <#Description#>
     let success: Bool
 }
 
 /// <#Description#>
 public struct ErrorContent: Codable {
-    
+
     /// <#Description#>
     let code: Int
-    
+
     /// <#Description#>
     let description: String
-    
+
     /// <#Description#>
     let message: String
 }

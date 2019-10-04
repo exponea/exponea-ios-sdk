@@ -10,10 +10,10 @@ import Foundation
 
 /// The Server Repository class is responsible to manage all the requests for the Exponea API.
 final class ServerRepository {
-    
+
     public internal(set) var configuration: Configuration
     private let session = URLSession(configuration: .default)
-    
+
     // Initialize the configuration for all HTTP requests
     init(configuration: Configuration) {
         self.configuration = configuration
@@ -21,7 +21,7 @@ final class ServerRepository {
 }
 
 extension ServerRepository: TrackingRepository {
-    
+
     /// Tracks the data of the data type property for a customer.
     ///
     /// - Parameters:
@@ -32,7 +32,7 @@ extension ServerRepository: TrackingRepository {
                        completion: @escaping ((EmptyResult<RepositoryError>) -> Void)) {
         var token: String?
         var properties: [String: JSONValue] = [:]
-        
+
         for item in data {
             switch item {
             case .projectToken(let string): token = string
@@ -40,28 +40,28 @@ extension ServerRepository: TrackingRepository {
             default: continue
             }
         }
-        
+
         guard let projectToken = token else {
             completion(.failure(RepositoryError.missingData("Project token not provided.")))
             return
         }
-        
+
         // Setup router
         let router = RequestFactory(baseUrl: configuration.baseUrl,
                                     projectToken: projectToken,
                                     route: .identifyCustomer)
-        
+
         // Prepare parameters and request
         let params = TrackingParameters(customerIds: customerIds, properties: properties)
         let request = router.prepareRequest(authorization: configuration.authorization,
                                             parameters: params)
-        
+
         // Run the data task
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
-    
+
     /// Add new events into a customer
     ///
     /// - Parameters:
@@ -76,7 +76,7 @@ extension ServerRepository: TrackingRepository {
         var properties: [String: JSONValue] = [:]
         var timestamp: Double?
         var eventType: String?
-        
+
         for item in data {
             switch item {
             case .projectToken(let string): token = string
@@ -86,12 +86,12 @@ extension ServerRepository: TrackingRepository {
             default: continue
             }
         }
-        
+
         guard let projectToken = token else {
             completion(.failure(RepositoryError.missingData("Project token not provided.")))
             return
         }
-        
+
         // Setup router
         let router = RequestFactory(baseUrl: configuration.baseUrl,
                                     projectToken: projectToken,
@@ -101,7 +101,7 @@ extension ServerRepository: TrackingRepository {
                                         timestamp: timestamp, eventType: eventType)
         let request = router.prepareRequest(authorization: configuration.authorization,
                                             parameters: params)
-        
+
         // Run the data task
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
@@ -123,12 +123,12 @@ extension ServerRepository: RepositoryType {
                                     route: .customerRecommendation)
         let parameters = CustomerParameters(customer: customerIds, recommendation: recommendation)
         let request = router.prepareRequest(authorization: configuration.authorization, parameters: parameters)
-        
+
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
-    
+
     /// Fetch multiple customer attributes at once
     ///
     /// - Parameters:
@@ -148,7 +148,7 @@ extension ServerRepository: RepositoryType {
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
-    
+
     /// Fetch customer events by it's type
     ///
     /// - Parameters:
@@ -168,7 +168,7 @@ extension ServerRepository: RepositoryType {
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
-    
+
     /// Fetch all available banners.
     ///
     /// - Parameters:
@@ -182,7 +182,7 @@ extension ServerRepository: RepositoryType {
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
-    
+
     /// Fetch personalization (all banners) for current customer.
     ///
     /// - Parameters:
@@ -219,7 +219,7 @@ extension ServerRepository: RepositoryType {
 }
 
 extension ServerRepository {
-    
+
     // Gets and cancels all tasks
     func cancelRequests() {
         session.getAllTasks { (tasks) in

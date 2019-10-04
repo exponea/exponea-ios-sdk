@@ -11,19 +11,19 @@ import Foundation
 /// Data type used to receive the customer events parameters
 /// to fetch the event types of a selected customer.
 public struct EventsRequest {
-    
+
     /// List of event that you want to fetch.
     public var eventTypes: [String]
-    
+
     /// Order of exported events by timestamp (asc/desc).
     public var sortOrder: String?
-    
+
     /// Number of items to return.
     public var limit: Int?
-    
+
     /// Number of items to be skipped from the beginning
     public var skip: Int?
-    
+
     /// Events request initializer
     ///
     /// - Parameters:

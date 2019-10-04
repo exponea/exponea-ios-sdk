@@ -12,11 +12,11 @@ import CoreData
 /// Protocol to manage Tracking events
 public protocol DatabaseManagerType: class {
     var customer: CustomerThreadSafe { get }
-    
+
     func trackEvent(with data: [DataType]) throws
     func identifyCustomer(with data: [DataType]) throws
     func updateEvent(withId id: NSManagedObjectID, withData data: DataType) throws
-    
+
     func fetchTrackCustomer() throws -> [TrackCustomerThreadSafe]
     func fetchTrackEvent() throws -> [TrackEventThreadSafe]
 

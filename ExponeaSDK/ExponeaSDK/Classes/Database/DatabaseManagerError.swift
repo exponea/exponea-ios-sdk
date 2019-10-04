@@ -22,7 +22,7 @@ public enum DatabaseManagerError: LocalizedError {
     case wrongObjectType
     case saveCustomerFailed(String)
     case unknownError(String?)
-    
+
     public var errorDescription: String? {
         switch self {
         case .unableToCreatePersistentContainer:
@@ -30,16 +30,16 @@ public enum DatabaseManagerError: LocalizedError {
 
         case .unableToLoadPeristentStore(let details):
             return "Unable to load persistent store for database: \(details)"
-            
+
         case .objectDoesNotExist:
             return "Object does not exist."
-            
+
         case .wrongObjectType:
             return "The object you want to modify is of different type than expected."
-        
+
         case .saveCustomerFailed(let details):
             return "Saving a new customer failed: \(details)."
-            
+
         case .unknownError(let details):
             return "Unknown database error: \(details != nil ? details! : "N/A")"
         }

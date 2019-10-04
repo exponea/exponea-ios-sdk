@@ -16,13 +16,13 @@ class RequestParametersTypeSpec: QuickSpec {
     override func spec() {
         describe("A request parameter protocol") {
             context("Defining a class to be conform to protocol") {
-                
+
                 let testClass = RequestParametersTypeTest()
-                
+
                 it("Should be a kind of [RequestParametersType]") {
                     expect(testClass).to(beAKindOf(RequestParametersType.self))
                 }
-                
+
                 it("Parameters should have one parameter [first_name]") {
                     let param = testClass.requestParameters["first_name"] as? String
                     expect(param).to(equal("John"))

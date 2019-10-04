@@ -15,7 +15,7 @@ import Nimble
 class ExponeaSpec: QuickSpec {
 
     override func spec() {
-        
+
         // Load the mock center, to prevent crashes
         _ = MockUserNotificationCenter.shared
 
@@ -120,7 +120,7 @@ class ExponeaSpec: QuickSpec {
                 let exponea = Exponea()
                 Exponea.shared = exponea
                 Exponea.shared.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97", authorization: .token(""))
-                
+
                 it("Should return the correct project token") {
                     expect(exponea.configuration?.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
                 }
@@ -129,7 +129,7 @@ class ExponeaSpec: QuickSpec {
                 let exponea = Exponea()
                 Exponea.shared = exponea
                 Exponea.shared.configure(plistName: "ExponeaConfig")
-                
+
                 it("Should have a project token") {
                     expect(exponea.configuration?.projectToken).toNot(beNil())
                 }
@@ -143,30 +143,30 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.configuration?.sessionTimeout).to(equal(Constants.Session.defaultTimeout))
                 }
             }
-            
+
             context("After being configured from advanced plist file") {
                 let exponea = Exponea()
                 Exponea.shared = exponea
                 Exponea.shared.configure(plistName: "config_valid")
-                
+
                 it("Should return a custom session timeout") {
                     expect(exponea.configuration?.sessionTimeout).to(equal(20.0))
                 }
-                
+
                 it("Should return automatic session tracking disabled") {
                     expect(exponea.configuration?.automaticSessionTracking).to(beFalse())
                 }
-                
+
                 it("Should return automatic push tracking disabled") {
                     expect(exponea.configuration?.automaticPushNotificationTracking).to(beFalse())
                 }
             }
-            
+
             context("Setting exponea properties after configuration") {
                 let exponea = Exponea()
                 Exponea.shared = exponea
                 Exponea.shared.configure(plistName: "ExponeaConfig")
-                
+
                 exponea.configuration?.projectToken = "NewProjectToken"
                 exponea.configuration?.baseUrl = "NewBaseURL"
                 exponea.configuration?.sessionTimeout = 25.0

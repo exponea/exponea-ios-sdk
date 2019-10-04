@@ -57,13 +57,13 @@ protocol FetchRepository {
     ///   - completion: Object containing the request result.
     func fetchEvents(events: EventsRequest, for customerIds: [String: JSONValue],
                      completion: @escaping (Result<EventsResponse>) -> Void)
-    
+
     /// Fetch all available banners.
     ///
     /// - Parameters:
     ///   - completion: Object containing the request result.
     func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void)
-    
+
     /// Fetch personalization (all banners) for current customer.
     ///
     /// - Parameters:
@@ -82,7 +82,7 @@ protocol FetchRepository {
 
 protocol RepositoryType: class, TrackingRepository, FetchRepository {
     var configuration: Configuration { get set }
-    
+
     /// Cancels all requests that are currently underway.
     func cancelRequests()
 }

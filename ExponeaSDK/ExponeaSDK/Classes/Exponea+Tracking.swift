@@ -9,7 +9,7 @@
 import Foundation
 
 extension Exponea {
-    
+
     internal func executeWithDependencies(_ closure: (Exponea.Dependencies) throws -> Void) {
         do {
             let dependencies = try getDependenciesIfConfigured()
@@ -39,17 +39,17 @@ extension Exponea {
             // Create initial data
             var data: [DataType] = [.properties(allProperties.mapValues({ $0.jsonValue })),
                                     .timestamp(timestamp)]
-            
+
             // If event type was provided, use it
             if let eventType = eventType {
                 data.append(.eventType(eventType))
             }
-            
+
             // Do the actual tracking
             try dependencies.trackingManager.track(.customEvent, with: data)
         }
     }
-    
+
     /// Adds new payment event to a customer.
     ///
     /// - Parameters:
@@ -64,16 +64,16 @@ extension Exponea {
             // Retrieve the default properties to add on track events and combine with the received ones.
             let defaultProperties = dependencies.configuration.defaultProperties ?? [:]
             let allProperties = defaultProperties.merging(properties, uniquingKeysWith: { (_, new) in new })
-            
+
             // Create initial data
             let data: [DataType] = [.properties(allProperties.mapValues({ $0.jsonValue })),
                                     .timestamp(timestamp)]
-            
+
             // Do the actual tracking
             try dependencies.trackingManager.track(.payment, with: data)
         }
     }
-    
+
     /// Update the informed properties to a specific customer.
     /// All properties will be stored into coredata until it will be flushed (send to api).
     ///
@@ -92,7 +92,7 @@ extension Exponea {
             // Retrieve the default properties to add on track events and combine with the received ones.
             let defaultProperties = dependencies.configuration.defaultProperties ?? [:]
             let allProperties = defaultProperties.merging(properties, uniquingKeysWith: { (_, new) in new })
-            
+
             // Prepare data
             var data: [DataType] = [.properties(allProperties.mapValues({ $0.jsonValue })),
                                     .timestamp(timestamp)]
@@ -104,16 +104,16 @@ extension Exponea {
                     You should never set cookie ID directly on a customer. Ignoring.
                     """)
                 }
-                
+
                 data.append(.customerIds(ids.mapValues({ $0.jsonValue })))
             }
-            
+
             try dependencies.trackingManager.track(.identifyCustomer, with: data)
         }
     }
-    
+
     // MARK: Push Notifications
-    
+
     /// Tracks the push notification token to Exponea API with struct.
     ///
     /// - Parameter token: Token data.
@@ -121,7 +121,7 @@ extension Exponea {
         // Convert token data to String
         trackPushToken(token.tokenString)
     }
-    
+
     /// Tracks the push notification token to Exponea API with string.
     ///
     /// - Parameter token: String containing the push notification token.
@@ -131,19 +131,19 @@ extension Exponea {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
             let data: [DataType] = [.pushNotificationToken(token)]
-            
+
             // Do the actual tracking
             try dependencies.trackingManager.track(.identifyCustomer, with: data)
         }
     }
-    
+
     /// Tracks the push notification clicked event to Exponea API.
     public func trackPushOpened(with userInfo: [AnyHashable: Any]) {
         executeWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
-            
+
             guard let payload = userInfo as? [String: Any] else {
                 Exponea.logger.log(.error, message: "Push notification payload contained non-string keys.")
                 return
@@ -159,16 +159,16 @@ extension Exponea {
             properties["status"] = .string("clicked")
 
             let allProperties = defaultProperties.merging(properties, uniquingKeysWith: { (_, new) in new })
-            
+
             let data: [DataType] = [.timestamp(nil),
                                     .properties(allProperties)]
             // Do the actual tracking
             try dependencies.trackingManager.track(.pushOpened, with: data)
         }
     }
-    
+
     // MARK: Sessions
-    
+
     public func trackSessionStart() {
         executeWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
@@ -177,7 +177,7 @@ extension Exponea {
             try dependencies.trackingManager.triggerSessionStart()
         }
     }
-    
+
     /// Tracks a
     public func trackSessionEnd() {
         executeWithDependencies { dependencies in
@@ -253,9 +253,9 @@ extension Exponea {
             }
         }
     }
-    
+
     // MARK: Flushing
-    
+
     /// This method can be used to manually flush all available data to Exponea.
     public func flushData() {
         executeWithDependencies { dependencies in
@@ -265,9 +265,9 @@ extension Exponea {
             dependencies.trackingManager.flushData()
         }
     }
-    
+
     // MARK: Anonymize
-    
+
     /// Anonymizes the user and re-creates the database.
     /// All customer identification (inclduing cookie) will be permanently deleted.
     public func anonymize() {
@@ -275,7 +275,7 @@ extension Exponea {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
-            
+
             try dependencies.trackingManager.anonymize()
         }
     }

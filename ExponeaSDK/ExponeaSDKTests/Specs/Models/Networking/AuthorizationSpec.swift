@@ -17,23 +17,23 @@ class AuthorizationSpec: QuickSpec {
         describe("A authorization") {
             context("Header authorization type none") {
                 let authorization = Authorization.none
-                
+
                 it("Should return a [String: No Authorization]") {
                     expect(authorization.description).to(equal("No Authorization"))
                 }
-                
+
                 it("Should return a [String: No Authorization]") {
                     expect(authorization.debugDescription).to(equal("No Authorization"))
                 }
             }
-            
+
             context("Header authorization type basic") {
                 let authorization = Authorization.token("123")
-                
+
                 it("Should return a [String: Basic Authorization (token redacted)]") {
                     expect(authorization.description).to(equal("Token Authorization (token redacted)"))
                 }
-                
+
                 it("Should return a [String: Basic Authorization (Basic 123)]") {
                     expect(authorization.debugDescription).to(equal("Token Authorization (123)"))
                 }

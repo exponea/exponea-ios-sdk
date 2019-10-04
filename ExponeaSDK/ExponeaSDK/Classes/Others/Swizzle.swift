@@ -14,7 +14,7 @@ internal class Swizzle: CustomStringConvertible {
     internal let originalMethod: IMP
     internal let name: String
     internal var blocks = [String: Swizzler.SwizzleBlock]()
-    
+
     internal init(block: @escaping Swizzler.SwizzleBlock,
                   name: String,
                   aClass: AnyClass,
@@ -26,7 +26,7 @@ internal class Swizzle: CustomStringConvertible {
         self.name = name
         self.blocks[name] = block
     }
-    
+
     internal var description: String {
         var retValue = "Swizzle on \(NSStringFromClass(type(of: self)))::\(NSStringFromSelector(selector)) ["
         for (key, _) in blocks {

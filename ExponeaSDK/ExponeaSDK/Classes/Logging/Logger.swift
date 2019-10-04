@@ -23,9 +23,9 @@ open class Logger {
 
     /// Default level of logging is set to `.warning`.
     open var logLevel: LogLevel = .warning
-    
+
     required public init() { }
-    
+
     /// Main log function used to log messages with appropriate level along with additional debug information.
     /// By default this function prints everything to the console, if the log level is set high enough.
     ///
@@ -57,7 +57,7 @@ open class Logger {
         logMessage("\(date) ExponeaSDK \(level.name) [\(file)]:\(line) \(funcName): \(message)")
         return true
     }
-    
+
     /// Used to log the actual log message to console.
     ///
     /// - Parameter message: The message you want to log.

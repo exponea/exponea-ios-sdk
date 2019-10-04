@@ -10,10 +10,10 @@ import Foundation
 
 /// <#Description#>
 public struct AttributesListDescription: Codable {
-    
+
     /// <#Description#>
     public var type: String
-    
+
     /// <#Description#>
     public var list: [AttributesDescription]
 }

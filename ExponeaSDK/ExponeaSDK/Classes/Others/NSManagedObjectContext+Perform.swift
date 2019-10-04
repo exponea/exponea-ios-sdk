@@ -15,7 +15,7 @@ extension NSManagedObjectContext {
             fn: performAndWait, execute: block, rescue: { throw $0 }
         )
     }
-    
+
     /// Helper function for convincing the type checker that
     /// the rethrows invariant holds for performAndWait.
     ///

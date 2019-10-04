@@ -11,7 +11,7 @@ import Foundation
 extension URLRequest {
     var description: String {
         var requestLog = "[Request]\n"
-        
+
         guard let urlString = url?.absoluteString else {
             requestLog += """
             ERROR - Can't get detailed information about response.
@@ -21,17 +21,17 @@ extension URLRequest {
         }
 
         requestLog += "\(httpMethod ?? "NO METHOD") \(urlString)\n"
-        
+
         for (key,value) in allHTTPHeaderFields ?? [:] {
             // Make sure we don't print out tokens
             if key == "Authorization" {
                 requestLog += "Authorization: REDACTED\n"
                 continue
             }
-            
+
             requestLog += "\(key): \(value)\n"
         }
-        
+
         // Add request body
         if let body = httpBody {
             requestLog += "HTTP Body:\n"

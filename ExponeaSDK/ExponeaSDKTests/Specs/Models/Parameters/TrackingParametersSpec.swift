@@ -16,19 +16,19 @@ class TrackingParametersSpec: QuickSpec {
     override func spec() {
         describe("A tracking parameter") {
             context("Setting group of parameters to track") {
-                
+
                 let mockData = MockData()
-                
+
                 let param = TrackingParameters(
                     customerIds: mockData.customerIds,
                     properties: mockData.properties,
                     timestamp: nil,
                     eventType: nil)
-                
+
                 it("Should return a [String: JSONValue] type") {
                     expect(param.parameters).to(beAKindOf([String:JSONValue].self))
                 }
-                
+
                 it("Should not return nil") {
                     expect(param.parameters).toNot(beNil())
                 }

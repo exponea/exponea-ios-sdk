@@ -11,10 +11,10 @@ import Foundation
 public class Exponea: ExponeaType {
     /// Shared instance of ExponeaSDK.
     public internal(set) static var shared = Exponea()
-    
+
     /// A logger used to log all messages from the SDK.
     public static var logger: Logger = Logger()
-    
+
     /// The configuration object containing all the configuration data necessary for Exponea SDK to work.
     ///
     /// The setter of this variable will setup all required tools and managers if the value is not nil,
@@ -25,10 +25,10 @@ public class Exponea: ExponeaType {
             guard let repository = repository else {
                 return nil
             }
-            
+
             return repository.configuration
         }
-        
+
         set {
             // If we want to reset Exponea, warn about it and reset everything
             guard let newValue = newValue else {
@@ -37,25 +37,25 @@ public class Exponea: ExponeaType {
                 repository = nil
                 return
             }
-            
+
             // If we want to re-configure Exponea, warn about it, reset everything and continue setting up with new
             if configuration != nil {
                 Exponea.logger.log(.warning, message: "Resetting previous Exponea configuration.")
                 trackingManager = nil
                 repository = nil
             }
-            
+
             // Initialise everything
             sharedInitializer(configuration: newValue)
         }
     }
-    
+
     /// The manager responsible for all tracking, observing and processing data.
     internal var trackingManager: TrackingManagerType?
-    
+
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
-    
+
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
         if UserDefaults(suiteName: Constants.General.userDefaultsSuite) == nil {
@@ -63,7 +63,7 @@ public class Exponea: ExponeaType {
         }
         return UserDefaults(suiteName: Constants.General.userDefaultsSuite)!
     }()
-    
+
     /// Sets the flushing mode for usage
     public var flushingMode: FlushingMode {
         get {
@@ -71,7 +71,7 @@ public class Exponea: ExponeaType {
                 Exponea.logger.log(.warning, message: "Exponea not configured, falling back to manual flushing mode.")
                 return .manual
             }
-            
+
             return trackingManager.flushingMode
         }
         set {
@@ -79,11 +79,11 @@ public class Exponea: ExponeaType {
                 Exponea.logger.log(.warning, message: "Exponea not configured, can't set flushing mode.")
                 return
             }
-            
+
             trackingManager.flushingMode = newValue
         }
     }
-    
+
     /// The delegate that gets callbacks about notification opens and/or actions. Only has effect if automatic
     /// push tracking is enabled, otherwise will never get called.
     public var pushNotificationsDelegate: PushNotificationManagerDelegate? {
@@ -98,25 +98,25 @@ public class Exponea: ExponeaType {
             notificationsManager.delegate = newValue
         }
     }
-    
+
     internal static let isBeingTested: Bool = {
         return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     }()
-    
+
     // MARK: - Init -
-    
+
     /// The initialiser is internal, so that only the singleton can exist when used in production.
     internal init() {
         let version = Bundle(for: Exponea.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
         Exponea.logger.logMessage("⚙️ Starting ExponeaSDK, version \(version).")
     }
-    
+
     deinit {
         if !Exponea.isBeingTested {
             Exponea.logger.log(.error, message: "Exponea has deallocated. This should never happen.")
         }
     }
-    
+
     internal func sharedInitializer(configuration: Configuration) {
         Exponea.logger.log(.verbose, message: "Configuring Exponea with provided configuration:\n\(configuration)")
 
@@ -145,14 +145,14 @@ public class Exponea: ExponeaType {
 // MARK: - Tracking -
 
 internal extension Exponea {
-    
+
     /// Alias for dependencies required across various internal and public functions of Exponea.
     typealias Dependencies = (
         configuration: Configuration,
         repository: RepositoryType,
         trackingManager: TrackingManagerType
     )
-    
+
     /// Gets the Exponea dependencies. If Exponea wasn't configured it will throw an error instead.
     ///
     /// - Returns: The dependencies required to perform any actions.
@@ -170,7 +170,7 @@ internal extension Exponea {
 // MARK: - Public -
 
 public extension Exponea {
-    
+
     // MARK: - Configure -
 
     var isConfigured: Bool {
@@ -202,7 +202,7 @@ public extension Exponea {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
     }
-    
+
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
     ///
     /// - Parameters:
@@ -221,7 +221,7 @@ public extension Exponea {
                 """)
         }
     }
-    
+
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
     /// you to track events to multiple projects, even the same event to more project at once.
     ///

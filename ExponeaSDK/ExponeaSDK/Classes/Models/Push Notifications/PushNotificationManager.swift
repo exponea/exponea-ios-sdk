@@ -32,13 +32,13 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     private var lastTokenTrackDate: Date
 
     internal weak var delegate: PushNotificationManagerDelegate?
-    
+
     let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }()
-    
+
     init(trackingManager: TrackingManagerType,
          appGroup: String?,
          tokenTrackFrequency: TokenTrackFrequency,
@@ -50,24 +50,24 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         self.currentPushToken = currentPushToken
         self.lastTokenTrackDate = lastTokenTrackDate ?? .distantPast
         super.init()
-        
+
         addAutomaticPushTracking()
         checkForDeliveredPushMessages()
         checkForPushTokenFrequency()
     }
-    
+
     deinit {
         removeAutomaticPushTracking()
     }
-    
+
     // MARK: - Actions -
-    
+
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) {
         guard let userInfo = userInfoObject as? [String: Any] else {
             Exponea.logger.log(.error, message: "Failed to convert push payload.")
             return
         }
-        
+
         var properties: [String: JSONValue] = [:]
         let attributes = userInfo["attributes"] as? [String: Any]
 
@@ -81,17 +81,17 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             let model = try? decoder.decode(NotificationData.self, from: data) {
             properties = model.properties
         }
-        
+
         properties["status"] = .string("clicked")
         properties["os_name"] = .string("iOS")
         properties["platform"] = .string("iOS")
         properties["action_type"] = .string("mobile notification")
-        
+
         // Handle actions
-        
+
         let action: ExponeaNotificationActionType
         let actionValue: String?
-        
+
         // If we have action identifier then a button was pressed
         if let identifier = actionIdentifier, identifier != UNNotificationDefaultActionIdentifier {
             // Track this notification action type as button press
@@ -193,7 +193,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         // If we have post process action, execute it
         postAction?()
     }
-    
+
     func handlePushTokenRegistered(dataObject: AnyObject?) {
         guard let tokenData = dataObject as? Data else {
             return
@@ -201,7 +201,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
         // Update current push token
         currentPushToken = tokenData.tokenString
-        
+
         do {
             let data = [DataType.pushNotificationToken(currentPushToken)]
             try trackingManager?.track(.registerPushToken, with: data)
@@ -297,26 +297,26 @@ extension PushNotificationManager {
 // MARK: - Swizzling -
 
 extension PushNotificationManager {
-    
+
     private func addAutomaticPushTracking() {
         swizzleTokenRegistrationTracking()
         swizzleNotificationReceived()
     }
-    
+
     internal func removeAutomaticPushTracking() {
         observer = nil
-        
+
         for swizzle in Swizzler.swizzles {
             Swizzler.unswizzle(swizzle.value)
         }
     }
-    
+
     /// This functions swizzles the token registration method to intercept the token and submit it to Exponea.
     private func swizzleTokenRegistrationTracking() {
         guard let appDelegate = UIApplication.shared.delegate else {
             return
         }
-        
+
         // Monitor push registration
         Swizzler.swizzleSelector(PushSelectorMapping.registration.original,
                                  with: PushSelectorMapping.registration.swizzled,
@@ -326,7 +326,7 @@ extension PushNotificationManager {
                                     self?.handlePushTokenRegistered(dataObject: dataObject) },
                                  addingMethodIfNecessary: true)
     }
-    
+
     /// Swizzles the appropriate 'notification received' method to interecept received notifications and then calls
     /// the `handlePushOpened` function with the payload so that the event can be tracked to Exponea.
     ///
@@ -347,13 +347,13 @@ extension PushNotificationManager {
             Exponea.logger.log(.error, message: "Critical error, no app delegate class available.")
             return
         }
-        
+
         let appDelegateClass: AnyClass = type(of: appDelegate)
         var swizzleMapping: PushSelectorMapping.Mapping?
-        
+
         // Add observer
         observer = PushNotificationDelegateObserver(center: center, callback: notificationsDelegateChanged)
-        
+
         // Check for UNUserNotification's delegate did receive remote notification, if it is setup
         // prefer using that over the UIAppDelegate functions.
         if let delegate = center.delegate {
@@ -369,7 +369,7 @@ extension PushNotificationManager {
             // Check for UIAppDelegate's deprecated receive remote notification
             swizzleMapping = PushSelectorMapping.deprecatedReceive
         }
-        
+
         // If user is overriding either of UIAppDelegete receive functions, swizzle it
         if let mapping = swizzleMapping {
             // Do the swizzling
@@ -388,7 +388,7 @@ extension PushNotificationManager {
             center.delegate = receiver
         }
     }
-    
+
     /// Removes all swizzles related to notification opened,
     /// useful when `UNUserNotificationCenter` delegate has changed.
     private func unswizzleAllNotificationReceived() {
@@ -399,30 +399,30 @@ extension PushNotificationManager {
             }
         }
     }
-    
+
     /// Monitor changes in the `UNUserNotificationCenter` delegate.
     ///
     /// - Parameter change: The KVO change object containing the old and new values.
     private func notificationsDelegateChanged(_ change: NSKeyValueObservedChange<UNUserNotificationCenterDelegate?>) {
         // Make sure we unswizzle all notficiation receive methods, before making changes
         unswizzleAllNotificationReceived()
-        
+
         switch (change.oldValue, change.newValue) {
         case (let old??, let new??) where old is PushNotificationReceiver && !(new is PushNotificationReceiver):
             // User reassigned the dummy receiver to a new delegate, so swizzle it
             self.receiver = nil
             swizzleUserNotificationsDidReceive(on: type(of: new))
-            
+
         case (let old??, let new) where !(old is PushNotificationReceiver) && new == nil:
             // Reassigning from custom delegate to nil, so create our dummy receiver instead
             self.receiver = PushNotificationReceiver()
             center.delegate = self.receiver
-            
+
         case (let old, let new??) where old == nil:
             // We were subscribed to app delegate functions before, but now we have a delegate, so swizzle it.
             // Also handles our custom PushNotificationReceiver and swizzles that.
             swizzleUserNotificationsDidReceive(on: type(of: new))
-            
+
         default:
             Exponea.logger.log(.error, message: """
             Unhandled UNUserNotificationCenterDelegate change, automatic push notification tracking disabled.
@@ -430,7 +430,7 @@ extension PushNotificationManager {
             break
         }
     }
-    
+
     private func swizzleUserNotificationsDidReceive(on delegateClass: AnyClass) {
         // Swizzle the notification delegate notification received function
         Swizzler.swizzleSelector(PushSelectorMapping.newReceive.original,

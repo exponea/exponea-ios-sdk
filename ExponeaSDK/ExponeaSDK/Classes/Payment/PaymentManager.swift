@@ -12,12 +12,12 @@ import StoreKit
 public class PaymentManager: NSObject, PaymentManagerType {
     internal var deviceProperties = DeviceProperties()
     internal var receipt: String?
-    
+
     /// The delegat that is responsible for tracking payment events.
     public weak var delegate: PaymentManagerDelegate?
-    
+
     public override init() { }
-    
+
     init(delegate: PaymentManagerDelegate) {
         self.delegate = delegate
     }
@@ -47,7 +47,7 @@ public class PaymentManager: NSObject, PaymentManagerType {
                 """)
             return
         }
-        
+
         delegate.trackPaymentEvent(with: [.timestamp(nil), .properties(properties)])
     }
 }
@@ -80,14 +80,14 @@ extension PaymentManager: SKProductsRequestDelegate {
         for product in response.products {
             let currencyCode = Locale.current.currencyCode ?? "N/A"
             let currency = Locale.current.localizedString(forCurrencyCode: currencyCode) ?? "N/A"
-            
+
             let item = PurchasedItem(grossAmount: Double(truncating: product.price),
                                      currency: currency,
                                      paymentSystem: Constants.General.iTunesStore,
                                      productId: product.productIdentifier,
                                      productTitle: product.localizedTitle,
                                      receipt: receipt)
-            
+
             let properties = item.properties.merging(deviceProperties.properties,
                                                      uniquingKeysWith: { first, _ in return first })
             trackPayment(properties: properties)

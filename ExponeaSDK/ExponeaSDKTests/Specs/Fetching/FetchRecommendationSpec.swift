@@ -18,35 +18,35 @@ class FetchRecommendationSpec: QuickSpec {
     override func spec() {
         describe("Fetch recommendation") {
             context("Fetch recommendation from mock repository") {
-                
+
                 let configuration = try! Configuration(plistName: "ExponeaConfig")
                 let repo = ServerRepository(configuration: configuration)
 
                 NetworkStubbing.stubNetwork(withStatusCode: 200, withResponseData: MockData().recommendationResponse)
 
                 let mockData = MockData()
-                
+
                 let data = mockData.recommendRequest
-                
+
                 waitUntil(timeout: 3) { done in
                     repo.fetchRecommendation(recommendation: data, for: mockData.customerIds) { (result) in
                         it("Result error should be nil") {
                             expect(result.error).to(beNil())
                         }
-                        
+
                         it("Result should be true ") {
                             expect(result.value?.success).to(beTrue())
                         }
                         it("Result values should have 3 items") {
                             expect(result.value?.results.count).to(equal(3))
                         }
-                        
+
                         context("Check the values returned from json file") {
-                            
+
                             guard let values =  result.value?.results else {
                                 fatalError("Get recommendation should not be empty")
                             }
-                            
+
                             it("First item should have value [Marian]") {
                                 let firstItem = values[0]
                                 expect(firstItem.success).to(beTrue())

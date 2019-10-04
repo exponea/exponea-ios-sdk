@@ -14,10 +14,10 @@ import Foundation
 /// This struct is conform to the Codable protocol who are responsible
 /// to serialize and deserialize the data.
 public struct StringResponse: Codable {
-    
+
     /// Status of the http response.
     public let success: Bool
-    
+
     /// Holds the string data from the Exponea API.
     public let value: String
 }

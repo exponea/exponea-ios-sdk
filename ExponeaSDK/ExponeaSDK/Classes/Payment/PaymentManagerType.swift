@@ -10,7 +10,7 @@ import Foundation
 
 protocol PaymentManagerType: class {
     var delegate: PaymentManagerDelegate? { get set }
-    
+
     func startObservingPayments()
     func stopObservingPayments()
     func trackPayment(properties: [String: JSONValue])

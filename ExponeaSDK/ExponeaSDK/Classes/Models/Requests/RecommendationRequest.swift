@@ -11,29 +11,29 @@ import Foundation
 /// Data type used to receive the customer recommendation parameters
 /// to fetch the recommended items for a customer.
 public struct RecommendationRequest {
-    
+
     /// Type of recommendation to be retrieve.
     public var type: String
-    
+
     /// Recommendation identification.
     public var id: String
-    
+
     /// Number of items to fetch
     public var size: Int?
-    
+
     /// Recommendation strategy. Eg.: `winner`, `mix`, `priority`.
     public var strategy: String?
-    
+
     /// Indicates if should include items that customer has interacted with in the past.
     public var knowItems: Bool?
-    
+
     /// Indicates if the we should return items most surprising to the customer
     public var anti: Bool?
-    
+
     /// If present the recommendations are related not only to a customer,
     /// but to products with IDs specified in this hash.
     public var items: [String: JSONValue]?
-    
+
     /// Recommendation initializer.
     ///
     /// - Parameters:

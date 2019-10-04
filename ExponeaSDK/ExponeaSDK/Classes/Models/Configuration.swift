@@ -31,7 +31,7 @@ public struct Configuration: Decodable {
     /// App group is used when push notification data is shared among service or content extensions.
     /// This is required for tracking delivered push notifications properly.
     public var appGroup: String? = nil
-    
+
     /// The maximum amount of retries before a flush event is considered as invalid and deleted from the database.
     public var flushEventMaxRetries: Int = Constants.Session.maxRetries
 
@@ -68,7 +68,7 @@ public struct Configuration: Decodable {
         guard let projectToken = projectToken else {
             throw ExponeaError.configurationError("No project token provided.")
         }
-        
+
         self.projectToken = projectToken
         self.projectMapping = projectMapping
         self.authorization = authorization
@@ -89,17 +89,17 @@ public struct Configuration: Decodable {
             guard let fileURL = bundle.url(forResource: fileName, withExtension: "plist") else {
                 continue
             }
-            
+
             Exponea.logger.log(.verbose, message: """
                 Found configuration file with name \(fileName) in bundle: \(bundle.bundlePath)
                 """)
-            
+
             // Load the data
             let data = try Data(contentsOf: fileURL)
-            
+
             // Decode from plist
             self = try PropertyListDecoder().decode(Configuration.self, from: data)
-            
+
             // Stop if we found the file and decoded successfully
             return
         }
@@ -123,7 +123,7 @@ public struct Configuration: Decodable {
         // Authorization
         if let authorization = try container.decodeIfPresent(String.self, forKey: .authorization) {
             let components = authorization.split(separator: " ")
-            
+
             if components.count == 2 {
                 switch components.first {
                 case "Token": self.authorization = .token(String(components[1]))
@@ -191,7 +191,7 @@ public struct Configuration: Decodable {
 }
 
 extension Configuration {
-    
+
     /// <#Description#>
     ///
     /// - Parameter eventType: <#eventType description#>
@@ -227,7 +227,7 @@ extension Configuration {
             return first.value
         }
     }
-    
+
     /// Returns a single token suitable for fetching customer data.
     /// By default uses same token as for the `ActionType` value `.identifyCustomer`.
     var fetchingToken: String {
@@ -238,7 +238,7 @@ extension Configuration {
             let token = tokens(for: .identifyCustomer)
             return token.first ?? ""
         }
-        
+
         return projectToken
     }
 }
@@ -246,11 +246,11 @@ extension Configuration {
 extension Configuration: CustomStringConvertible {
     public var description: String {
         var text = "[Configuration]\n"
-        
+
         if let mapping = projectMapping {
             text += "Project Token Mapping: \(mapping)\n"
         }
-        
+
         if let token = projectToken {
             text += "Project Token: \(token)\n"
         }
@@ -258,7 +258,7 @@ extension Configuration: CustomStringConvertible {
         if let defaultProperties = defaultProperties {
             text += "Default Attributes: \(defaultProperties)\n"
         }
-        
+
         text += """
         Authorization: \(authorization)
         Base URL: \(baseUrl)
@@ -270,10 +270,10 @@ extension Configuration: CustomStringConvertible {
         Flush Event Max Retries: \(flushEventMaxRetries)
         App Group: \(appGroup ?? "not configured")
         """
-        
+
         return text
     }
-    
+
     /// Returns the hostname based on the baseUrl value.
     public var hostname: String {
         guard let components = URLComponents(string: baseUrl),
@@ -281,7 +281,7 @@ extension Configuration: CustomStringConvertible {
             Exponea.logger.log(.warning, message: "Can't get URL components from baseUrl, check your baseUrl.")
             return baseUrl
         }
-        
+
         return host
     }
 }

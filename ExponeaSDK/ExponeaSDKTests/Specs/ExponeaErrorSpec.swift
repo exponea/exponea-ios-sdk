@@ -15,7 +15,7 @@ import Nimble
 class ExponeaErrorSpec: QuickSpec {
     override func spec() {
         describe("A Exponea error") {
-            
+
             context("Check for every error level") {
 
                 it("Error not configured") {
@@ -23,7 +23,7 @@ class ExponeaErrorSpec: QuickSpec {
                     let errorDesc = "Exponea SDK is not configured properly. Please, double check your Exponea setup."
                     expect(exponeaError.localizedDescription).to(equal(errorDesc))
                 }
-                
+
                 it("Configured error") {
                     let exponeaError = ExponeaError.configurationError("Error Description")
                     let errorDesc = """
@@ -33,14 +33,14 @@ class ExponeaErrorSpec: QuickSpec {
                     """
                     expect(exponeaError.localizedDescription).to(equal(errorDesc))
                 }
-                
+
                 it("Unknow error") {
                     let exponeaError = ExponeaError.unknownError("Unknown")
                     let errorDesc = "Unknown error. Unknown"
                     expect(exponeaError.localizedDescription).to(equal(errorDesc))
                 }
             }
-            
+
         }
     }
 }

@@ -16,7 +16,7 @@ public enum TrackingManagerError: LocalizedError {
     case cannotStartReachability
     case missingData(EventType, [DataType])
     case unknownError(String?)
-    
+
     /// Return a formatted error message when sending the events to the Exponea API.
     public var errorDescription: String? {
         switch self {
@@ -25,10 +25,10 @@ public enum TrackingManagerError: LocalizedError {
 
         case .missingData(let type, let data):
             return "Event of type \(type) is missing required data: \(data)."
-            
+
         case .unknownError(let details):
             return "Unknown error. \(details != nil ? details! : "")"
         }
     }
-    
+
 }

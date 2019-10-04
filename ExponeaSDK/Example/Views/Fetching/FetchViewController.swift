@@ -33,7 +33,7 @@ class FetchViewController: UIViewController {
             }
         }
     }
-    
+
     @IBAction func fetchBanners(_ sender: Any) {
         Exponea.shared.fetchBanners { (result) in
             switch result {
@@ -48,7 +48,7 @@ class FetchViewController: UIViewController {
             }
         }
     }
-    
+
     @IBAction func fetchPersonalization(_ sender: Any) {
         let alertController = UIAlertController(title: "Input Banner ID", message: "", preferredStyle: .alert)
         alertController.addTextField { (textField : UITextField!) -> Void in
@@ -57,7 +57,7 @@ class FetchViewController: UIViewController {
         let saveAction = UIAlertAction(title: "Fetch", style: .default, handler: { alert -> Void in
             let idField = alertController.textFields![0] as UITextField
             let request = PersonalizationRequest(ids: [idField.text ?? ""])
-            
+
             DispatchQueue.main.async {
                 Exponea.shared.fetchPersonalization(with: request, completion: { (result) in
                     switch result {
@@ -75,10 +75,10 @@ class FetchViewController: UIViewController {
             }
         })
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
+
         alertController.addAction(cancelAction)
         alertController.addAction(saveAction)
-        
+
         present(alertController, animated: true, completion: nil)
     }
 

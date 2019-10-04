@@ -14,13 +14,13 @@ import Foundation
 /// This struct is conform to the Codable protocol who are responsible
 /// to serialize and deserialize the data.
 public struct EntityValueResponse: Codable {
-    
+
     /// Status of the http response.
     public let success: Bool
-    
+
     /// Value of the entity requested.
     public let value: Double
-    
+
     /// Name of the entity requested.
     public let entityName: String
 }

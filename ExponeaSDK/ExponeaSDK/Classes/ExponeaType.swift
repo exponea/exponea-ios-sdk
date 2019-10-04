@@ -14,7 +14,7 @@ public protocol ExponeaType: class {
     static var shared: Exponea { get }
     /// Logger shared instance.
     static var logger: Logger { get set }
-    
+
     /// Configurarion object.
     var configuration: Configuration? { get }
     /// Identification of the flushing mode used in to send the data to the Exponea API.
@@ -22,9 +22,9 @@ public protocol ExponeaType: class {
     /// The delegate that gets callbacks about notification opens and/or actions. Only has effect if automatic
     /// push tracking is enabled, otherwise will never get called.
     var pushNotificationsDelegate: PushNotificationManagerDelegate? { get set }
-    
+
     // MARK: - Configure -
-    
+
     /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
     ///
     /// - Parameters:
@@ -35,7 +35,7 @@ public protocol ExponeaType: class {
     ///   - defaultProperties: A list of properties to be added to all tracking events.
     func configure(projectToken: String, authorization: Authorization, baseUrl: String?,
                    appGroup: String?, defaultProperties: [String: JSONConvertible]?)
-    
+
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
     /// you to track events to multiple projects, even the same event to more project at once.
     ///
@@ -58,9 +58,9 @@ public protocol ExponeaType: class {
     ///  - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
     ///  - authorization: The authorization type used to authenticate with some Exponea endpoints.
     func configure(plistName: String)
-    
+
     // MARK: - Tracking -
-    
+
     /// Adds new events to a customer. All events will be stored into coredata
     /// until it will be flushed (send to api).
     ///
@@ -69,7 +69,7 @@ public protocol ExponeaType: class {
     ///     - timestamp: Unix timestamp when the event was created.
     ///     - eventType: Name of event
     func trackEvent(properties: [String: JSONConvertible], timestamp: Double?, eventType: String?)
-    
+
     /// Adds new campaing click event.
     /// This occures when user has opened the application via universal link
     ///     - url: campaign url
@@ -81,7 +81,7 @@ public protocol ExponeaType: class {
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
     func trackPayment(properties: [String: JSONConvertible], timestamp: Double?)
-    
+
     /// Update the informed properties to a specific customer.
     /// All properties will be stored into coredata until it will be flushed (send to api).
     ///
@@ -90,17 +90,17 @@ public protocol ExponeaType: class {
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
     func identifyCustomer(customerIds: [String : JSONConvertible]?, properties: [String: JSONConvertible], timestamp: Double?)
-    
+
     /// This method can be used to manually flush all available data to Exponea.
     func flushData()
-    
+
     // MARK: - Push -
-    
+
     /// Tracks the push notification token to Exponea API with struct.
     ///
     /// - Parameter token: Token data.
     func trackPushToken(_ token: Data)
-    
+
     /// Tracks the push notification token to Exponea API with string.
     ///
     /// - Parameter token: String containing the push notification token.
@@ -109,17 +109,17 @@ public protocol ExponeaType: class {
 
     /// Tracks the push notification clicked event to Exponea API.
     func trackPushOpened(with userInfo: [AnyHashable: Any])
-    
+
     // MARK: - Sessions -
-    
+
     /// Tracks the start of the user session.
     func trackSessionStart()
 
     /// Tracks the end of the user session.
     func trackSessionEnd()
-    
+
     // MARK: - Data Fetching -
-    
+
     /// Fetches the recommendation for a customer.
     ///
     /// - Parameters:
@@ -127,13 +127,13 @@ public protocol ExponeaType: class {
     ///     - completion: Object containing the data requested.
     func fetchRecommendation(with request: RecommendationRequest,
                              completion: @escaping (Result<RecommendationResponse>) -> Void)
-    
+
     /// Fetch all available banners.
     ///
     /// - Parameters:
     ///   - completion: Object containing the request result.
     func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void)
-    
+
     /// Fetch personalization (all banners) for current customer.
     ///
     /// - Parameters:
