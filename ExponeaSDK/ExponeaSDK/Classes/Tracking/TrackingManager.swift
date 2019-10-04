@@ -82,7 +82,7 @@ open class TrackingManager {
          database: DatabaseManagerType,
          device: DeviceProperties = DeviceProperties(),
          paymentManager: PaymentManagerType = PaymentManager(),
-         userDefaults: UserDefaults) {
+         userDefaults: UserDefaults) throws {
         self.repository = repository
         self.database = database
         self.device = device
@@ -90,7 +90,10 @@ open class TrackingManager {
         self.userDefaults = userDefaults
         
         // Start reachability
-        self.reachability = Reachability(hostname: repository.configuration.hostname)!
+        guard let reachability = Reachability(hostname: repository.configuration.hostname) else {
+            throw TrackingManagerError.cannotStartReachability
+        }
+        self.reachability = reachability
         try? self.reachability.startNotifier()
         
         initialSetup()

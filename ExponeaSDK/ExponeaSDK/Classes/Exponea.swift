@@ -129,14 +129,14 @@ public class Exponea: ExponeaType {
             self.repository = repository
 
             // Finally, configuring tracking manager
-            self.trackingManager = TrackingManager(repository: repository,
+            self.trackingManager = try TrackingManager(repository: repository,
                                                    database: database,
                                                    userDefaults: userDefaults)
             processSavedCampaignData()
         } catch {
             // Failing gracefully, if setup failed
             Exponea.logger.log(.error, message: """
-                Error while creating a database, Exponea cannot be configured.\n\(error.localizedDescription)
+                Error while creating dependencies, Exponea cannot be configured.\n\(error.localizedDescription)
                 """)
         }
     }

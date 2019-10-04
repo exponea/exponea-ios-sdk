@@ -40,7 +40,7 @@ class TrackingManagerSpec: QuickSpec {
                 let key = Constants.Keys.installTracked + (database.customer.uuid?.uuidString ?? "")
                 userDefaults.set(true, forKey: key)
 
-                trackingManager = TrackingManager(
+                trackingManager = try! TrackingManager(
                     repository: repository,
                     database: database,
                     userDefaults: userDefaults

@@ -31,7 +31,7 @@ final class MockExponea: Exponea {
             self.repository = repository
 
             // Finally, configuring tracking manager
-            self.trackingManager = TrackingManager(repository: repository,
+            self.trackingManager = try! TrackingManager(repository: repository,
                                                    database: database,
                                                    userDefaults: userDefaults)
             processSavedCampaignData()
