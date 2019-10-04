@@ -20,10 +20,100 @@ class ExponeaSpec: QuickSpec {
         _ = MockUserNotificationCenter.shared
 
         describe("Exponea SDK") {
-            context("After being initialized") {
-                let exponea = Exponea()
+            context("Before being configured") {
+                var exponea = Exponea()
+                beforeEach {
+                    exponea = Exponea()
+                }
+
                 it("Should return a nil configuration") {
                     expect(exponea.configuration?.projectToken).to(beNil())
+                }
+                it("Should get flushing mode") {
+                    guard case .manual = exponea.flushingMode else {
+                        XCTFail("Expected .manual got \(exponea.flushingMode)")
+                        return
+                    }
+                }
+                it("Should not crash setting flushing mode") {
+                    expect(exponea.flushingMode = .immediate).notTo(raiseException())
+                }
+                it("Should return empty pushNotificationsDelegate") {
+                    expect(exponea.pushNotificationsDelegate).to(beNil())
+                }
+                it("Should not crash tracking event") {
+                    expect(exponea.trackEvent(properties: [:], timestamp: nil, eventType: nil)).notTo(raiseException())
+                }
+                it("Should not crash tracking campaign click") {
+                    expect(exponea.trackCampaignClick(url: URL(string: "mockUrl")!, timestamp: nil)).notTo(raiseException())
+                }
+                it("Should not crash tracking payment") {
+                    expect(exponea.trackPayment(properties: [:], timestamp: nil)).notTo(raiseException())
+                }
+                it("Should not crash identifing customer") {
+                    expect(exponea.identifyCustomer(customerIds: [:], properties: [:], timestamp: nil)).notTo(raiseException())
+                }
+                it("Should not crash tracking push token") {
+                    expect(exponea.trackPushToken("token".data(using: .utf8)!)).notTo(raiseException())
+                    expect(exponea.trackPushToken("token")).notTo(raiseException())
+                }
+                it("Should not crash tracking push opened") {
+                    expect(exponea.trackPushOpened(with: [:])).notTo(raiseException())
+                }
+                it("Should not crash tracking session") {
+                    expect(exponea.trackSessionStart()).notTo(raiseException())
+                    expect(exponea.trackSessionEnd()).notTo(raiseException())
+                }
+                it("Should fail fetching recommendation") {
+                    waitUntil { done in
+                        exponea.fetchRecommendation(with: RecommendationRequest(type: "mock_type", id: "mock_id")) { response in
+                            guard case .failure = response else {
+                                XCTFail("Expected .failure got \(response)")
+                                done()
+                                return
+                            }
+                            done()
+                        }
+                    }
+                }
+                it("Should fail fetching data") {
+                    waitUntil { done in
+                        exponea.fetchBanners { response in
+                            guard case .failure = response else {
+                                XCTFail("Expected .failure got \(response)")
+                                done()
+                                return
+                            }
+                            done()
+                        }
+                    }
+                }
+                it("Should fail fetching personalization") {
+                    waitUntil { done in
+                        exponea.fetchPersonalization(with: PersonalizationRequest(ids: [])) { response in
+                            guard case .failure = response else {
+                                XCTFail("Expected .failure got \(response)")
+                                done()
+                                return
+                            }
+                            done()
+                        }
+                    }
+                }
+                it("Should fail fetching consents") {
+                    waitUntil { done in
+                        exponea.fetchConsents { response in
+                            guard case .failure = response else {
+                                XCTFail("Expected .failure got \(response)")
+                                done()
+                                return
+                            }
+                            done()
+                        }
+                    }
+                }
+                it("Should not crash anonymizing") {
+                    expect(exponea.anonymize()).notTo(raiseException())
                 }
             }
             context("After being configured from string") {
