@@ -39,7 +39,7 @@ public extension Notification.Name {
     static let reachabilityChanged = Notification.Name("reachabilityChanged")
 }
 
-public class Reachability {
+internal class Reachability {
     
     public typealias NetworkReachable = (Reachability) -> ()
     public typealias NetworkUnreachable = (Reachability) -> ()
@@ -145,7 +145,7 @@ public class Reachability {
     }
 }
 
-public extension Reachability {
+internal extension Reachability {
     
     // MARK: - *** Notifier methods ***
     func startNotifier() throws {
