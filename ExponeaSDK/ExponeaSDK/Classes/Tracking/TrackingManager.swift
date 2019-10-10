@@ -184,12 +184,12 @@ extension TrackingManager: TrackingManagerType {
             .filter({ $0.eventType == type })
             .sorted(by: {$0.timestamp < $1.timestamp})
         var projectTokens: Set<String> = []
-        while (!events.isEmpty
-            && events.last!.projectToken != nil
-            && !projectTokens.contains(events.last!.projectToken!)) {
+        while (!events.isEmpty) {
             let event = events.removeLast()
-            projectTokens.insert(event.projectToken!)
-            try database.updateEvent(withId: event.managedObjectID, withData: data)
+            if let projectToken = event.projectToken, !projectTokens.contains(projectToken) {
+                projectTokens.insert(projectToken)
+                try database.updateEvent(withId: event.managedObjectID, withData: data)
+            }
         }
     }
 

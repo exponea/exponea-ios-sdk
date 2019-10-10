@@ -61,7 +61,7 @@ extension Customer {
         if let ids = customIds as? Set<KeyValueItem>, ids.count > 0 {
             text += "Custom IDs: "
             for id in ids {
-                text += "\"\(id.key!)\" = \(id.value!), "
+                text += "\"\(String(describing: id.key))\" = \(String(describing: id.key)), "
             }
         }
 

@@ -27,7 +27,7 @@ enum TrackingManagerError: LocalizedError {
             return "Event of type \(type) is missing required data: \(data)."
 
         case .unknownError(let details):
-            return "Unknown error. \(details != nil ? details! : "")"
+            return "Unknown error. \(details ?? "")"
         }
     }
 

@@ -288,9 +288,8 @@ extension DatabaseManager: DatabaseManagerType {
                                     into object: HasKeyValueProperties) {
         for property in properties {
             let existingProperties = object.properties as? Set<KeyValueItem>
-            let existingProperty: KeyValueItem? = existingProperties?.first(where: { $0.key == property.key })
-            if existingProperty != nil {
-                existingProperty!.value = property.value.objectValue
+            if let existingProperty: KeyValueItem = existingProperties?.first(where: { $0.key == property.key }) {
+                existingProperty.value = property.value.objectValue
             } else {
                 let item = KeyValueItem(context: context)
                 item.key = property.key

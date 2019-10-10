@@ -34,7 +34,8 @@ enum RepositoryError: LocalizedError, ErrorInitialisable {
         case .missingData(let details):
             return "Request is missing required data: \(details)"
         case .invalidResponse(let response):
-            return "An invalid response was received from the API: \(response != nil ? "\(response!)" : "No response")"
+            return "An invalid response was received from the API: " +
+                "\(response != nil ? "\(String(describing: response))" : "No response")"
         case .serverError(let response):
             return response?.errors.description ?? "There was a server error, please try again later."
         case .urlNotFound(let response):

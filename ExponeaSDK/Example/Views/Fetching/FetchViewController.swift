@@ -55,8 +55,8 @@ class FetchViewController: UIViewController {
             textField.placeholder = "ID"
         }
         let saveAction = UIAlertAction(title: "Fetch", style: .default, handler: { alert -> Void in
-            let idField = alertController.textFields![0] as UITextField
-            let request = PersonalizationRequest(ids: [idField.text ?? ""])
+            let idField = alertController.textFields?[0] as UITextField?
+            let request = PersonalizationRequest(ids: [idField?.text ?? ""])
 
             DispatchQueue.main.async {
                 Exponea.shared.fetchPersonalization(with: request, completion: { (result) in
@@ -64,7 +64,7 @@ class FetchViewController: UIViewController {
                     case .success(let personalization):
                         AppDelegate.memoryLogger.logMessage("\(personalization)")
                         self.showAlert(title: "Fetch Personalisation", message: """
-                            ID: \(idField.text ?? "")
+                            ID: \(idField?.text ?? "")
                             \(personalization)
                             """)
                     case .failure(let error):

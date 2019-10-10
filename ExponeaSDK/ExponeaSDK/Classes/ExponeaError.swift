@@ -40,7 +40,7 @@ public enum ExponeaError: Error {
             """
 
         case .unknownError(let details):
-            return "Unknown error. \(details != nil ? details! : "")"
+            return "Unknown error. \(details ?? "")"
         }
     }
 }

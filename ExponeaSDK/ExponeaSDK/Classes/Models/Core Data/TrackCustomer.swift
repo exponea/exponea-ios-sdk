@@ -86,10 +86,7 @@ class TrackCustomerThreadSafe {
             }
             return false
         }
-        guard propertyDataType != nil else {
-            return nil
-        }
-        if case .properties(let data) = propertyDataType! {
+        if case .properties(let data) = propertyDataType {
             return data
         }
         return nil

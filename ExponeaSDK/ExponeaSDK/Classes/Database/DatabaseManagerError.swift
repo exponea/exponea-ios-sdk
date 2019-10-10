@@ -41,7 +41,7 @@ public enum DatabaseManagerError: LocalizedError {
             return "Saving a new customer failed: \(details)."
 
         case .unknownError(let details):
-            return "Unknown database error: \(details != nil ? details! : "N/A")"
+            return "Unknown database error: \(details ?? "N/A")"
         }
     }
 }
