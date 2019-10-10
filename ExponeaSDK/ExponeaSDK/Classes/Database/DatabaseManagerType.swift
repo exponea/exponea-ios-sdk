@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 /// Protocol to manage Tracking events
-public protocol DatabaseManagerType: class {
+protocol DatabaseManagerType: class {
     var customer: CustomerThreadSafe { get }
 
     func trackEvent(with data: [DataType]) throws

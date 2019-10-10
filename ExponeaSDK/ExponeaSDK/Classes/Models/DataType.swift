@@ -15,7 +15,7 @@ import Foundation
 /// - properties
 /// - timestamp
 /// - eventType
-public enum DataType {
+enum DataType {
 
     /// The token of the project that the tracking should be uploaded to.
     case projectToken(String)

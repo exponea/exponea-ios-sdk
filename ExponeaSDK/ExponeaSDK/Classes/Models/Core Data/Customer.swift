@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 @objc(Customer)
-public class Customer: NSManagedObject {
+class Customer: NSManagedObject {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Customer> {
         return NSFetchRequest<Customer>(entityName: "Customer")
@@ -121,7 +121,7 @@ extension Customer {
 
 }
 
-public class CustomerThreadSafe {
+class CustomerThreadSafe {
     public let managedObjectID: NSManagedObjectID
     public let uuid: UUID?
     public let pushToken: String?

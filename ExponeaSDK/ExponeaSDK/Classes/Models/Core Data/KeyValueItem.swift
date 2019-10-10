@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-public protocol HasKeyValueProperties: class {
+protocol HasKeyValueProperties: class {
     var properties: NSSet? { get }
 
     func addToProperties(_ value: KeyValueItem)
@@ -19,7 +19,7 @@ public protocol HasKeyValueProperties: class {
 }
 
 @objc(KeyValueItem)
-public class KeyValueItem: NSManagedObject {
+class KeyValueItem: NSManagedObject {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<KeyValueItem> {
         return NSFetchRequest<KeyValueItem>(entityName: "KeyValueItem")

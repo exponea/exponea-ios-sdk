@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 @objc(TrackCustomer)
-public class TrackCustomer: NSManagedObject {
+class TrackCustomer: NSManagedObject {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackCustomer> {
         return NSFetchRequest<TrackCustomer>(entityName: "TrackCustomer")
@@ -72,7 +72,7 @@ extension TrackCustomer: HasKeyValueProperties {
     @NSManaged public func removeFromProperties(_ values: NSSet)
 }
 
-public class TrackCustomerThreadSafe {
+class TrackCustomerThreadSafe {
     public let managedObjectID: NSManagedObjectID
     public let projectToken: String?
     public let timestamp: Double

@@ -9,7 +9,7 @@
 import Foundation
 
 /// <#Description#>
-public struct CustomerExportRequest {
+struct CustomerExportRequest {
 
     /// <#Description#>
     public var attributes: AttributesListDescription?

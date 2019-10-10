@@ -8,13 +8,13 @@
 
 import Foundation
 
-public struct ErrorResponse: Codable {
+struct ErrorResponse: Codable {
     let error: String
     let success: Bool
 }
 
 /// A structure contain
-public struct MultipleErrorResponse: Codable {
+struct MultipleErrorResponse: Codable {
 
     /// <#Description#>
     let errors: [ErrorContent]
@@ -24,7 +24,7 @@ public struct MultipleErrorResponse: Codable {
 }
 
 /// <#Description#>
-public struct ErrorContent: Codable {
+struct ErrorContent: Codable {
 
     /// <#Description#>
     let code: Int

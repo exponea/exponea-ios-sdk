@@ -12,7 +12,7 @@ import Foundation
 ///
 /// - missingData: Holds the missing data while trying to track the events.
 /// - unknownError: Holds the generic error while trying to track the events.
-public enum TrackingManagerError: LocalizedError {
+enum TrackingManagerError: LocalizedError {
     case cannotStartReachability
     case missingData(EventType, [DataType])
     case unknownError(String?)

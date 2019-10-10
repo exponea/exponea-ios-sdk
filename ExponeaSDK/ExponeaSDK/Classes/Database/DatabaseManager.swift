@@ -11,7 +11,7 @@ import CoreData
 
 /// The Database Manager class is responsible for persist the data using CoreData Framework.
 /// Persisted data will be used to interact with the Exponea API.
-public class DatabaseManager {
+class DatabaseManager {
 
     internal let persistentContainer: NSPersistentContainer
 

@@ -9,7 +9,7 @@
 import Foundation
 
 /// Path route with projectId
-public struct RequestFactory {
+struct RequestFactory {
     public var baseUrl: String
     public var projectToken: String
     public var route: Routes

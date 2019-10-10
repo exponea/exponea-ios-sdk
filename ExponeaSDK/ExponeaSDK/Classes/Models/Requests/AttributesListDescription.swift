@@ -9,7 +9,7 @@
 import Foundation
 
 /// <#Description#>
-public struct AttributesListDescription: Codable {
+struct AttributesListDescription: Codable {
 
     /// <#Description#>
     public var type: String

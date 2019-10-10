@@ -16,7 +16,7 @@ protocol ErrorInitialisable: Error {
 ///
 /// - missingData: Holds any missing data while trying to call the Expone API.
 /// - invalidResponse: Holds any invalid response when calling the Exponea API.
-public enum RepositoryError: LocalizedError, ErrorInitialisable {
+enum RepositoryError: LocalizedError, ErrorInitialisable {
     case notAuthorized(ErrorResponse?)
     case missingData(String)
     case serverError(MultipleErrorResponse?)

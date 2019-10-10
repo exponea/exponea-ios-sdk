@@ -13,7 +13,7 @@ import Foundation
 /// return the error from the Exponea API.
 /// This struct is conform to the Codable protocol who are responsible
 /// to serialize and deserialize the data.
-public struct EntityValueResponse: Codable {
+struct EntityValueResponse: Codable {
 
     /// Status of the http response.
     public let success: Bool

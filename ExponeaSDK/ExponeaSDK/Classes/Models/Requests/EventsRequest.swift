@@ -10,7 +10,7 @@ import Foundation
 
 /// Data type used to receive the customer events parameters
 /// to fetch the event types of a selected customer.
-public struct EventsRequest {
+struct EventsRequest {
 
     /// List of event that you want to fetch.
     public var eventTypes: [String]

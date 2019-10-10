@@ -9,7 +9,7 @@
 import Foundation
 
 /// <#Description#>
-public struct Event: Codable {
+struct Event: Codable {
 
     /// Type of your event.
     public let type: String?

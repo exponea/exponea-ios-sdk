@@ -9,7 +9,7 @@
 import Foundation
 import StoreKit
 
-public class PaymentManager: NSObject, PaymentManagerType {
+class PaymentManager: NSObject, PaymentManagerType {
     internal var deviceProperties = DeviceProperties()
     internal var receipt: String?
 

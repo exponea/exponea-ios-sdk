@@ -9,7 +9,7 @@
 import Foundation
 import UserNotifications
 
-public protocol PushNotificationManagerType: class {
+protocol PushNotificationManagerType: class {
     var delegate: PushNotificationManagerDelegate? { get set }
     func applicationDidBecomeActive()
 }
