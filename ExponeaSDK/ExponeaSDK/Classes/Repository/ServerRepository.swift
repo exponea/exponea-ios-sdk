@@ -190,7 +190,7 @@ extension ServerRepository: RepositoryType {
     ///   - customerIds: Identification of a customer.
     ///   - completion: Object containing the request result.
     func fetchPersonalization(with request: PersonalizationRequest,
-                              for customerIds: [String : JSONValue],
+                              for customerIds: [String: JSONValue],
                               completion: @escaping (Result<PersonalizationResponse>) -> Void) {
         let router = RequestFactory(baseUrl: configuration.baseUrl,
                                     projectToken: configuration.fetchingToken,

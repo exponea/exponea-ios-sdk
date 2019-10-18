@@ -61,7 +61,7 @@ class TrackEventViewController: UIViewController {
             properties[key3] = valueField3.text ?? ""
         }
 
-        let dict: [String: JSONValue] = ["my value" : JSONValue.dictionary(["array" : .array([.int(123)])])]
+        let dict: [String: JSONValue] = ["my value": JSONValue.dictionary(["array": .array([.int(123)])])]
         properties["testdictionary"] = dict as JSONConvertible
 
         Exponea.shared.trackEvent(properties: properties, timestamp: nil, eventType: eventType)

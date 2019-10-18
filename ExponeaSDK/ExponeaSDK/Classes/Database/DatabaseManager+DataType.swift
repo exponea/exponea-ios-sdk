@@ -45,7 +45,7 @@ extension DatabaseManager {
     }
 
     static func processDictionary(_ dictionary: NSDictionary) -> JSONValue {
-        var valueDictionary: [String : JSONValue] = [:]
+        var valueDictionary: [String: JSONValue] = [:]
 
         for (k, v) in dictionary {
             guard let key = k as? String else {

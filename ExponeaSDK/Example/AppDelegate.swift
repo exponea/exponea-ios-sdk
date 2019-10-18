@@ -50,7 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         if let components = URLComponents(url: url, resolvingAgainstBaseURL: false), components.scheme == "exponea" {
             showAlert("Deeplink received", url.absoluteString)
             return true
@@ -74,7 +74,7 @@ extension AppDelegate {
 }
 
 extension AppDelegate: PushNotificationManagerDelegate {
-    func pushNotificationOpened(with action: ExponeaNotificationActionType, value: String?, extraData: [AnyHashable : Any]?) {
+    func pushNotificationOpened(with action: ExponeaNotificationActionType, value: String?, extraData: [AnyHashable: Any]?) {
         Exponea.logger.log(.verbose, message: "Action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))")
     }
 }

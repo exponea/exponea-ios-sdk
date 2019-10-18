@@ -46,7 +46,7 @@ class IdentifyCustomerViewController: UIViewController {
         let ids: [String: String]?
         if let idKey = idKeyField.text, !idKey.isEmpty,
             let idValue = idValueField.text, !idValue.isEmpty {
-            ids = [idKey : idValue]
+            ids = [idKey: idValue]
         } else {
             ids = nil
         }

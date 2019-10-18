@@ -129,7 +129,7 @@ struct MockData {
                       errors: nil)
 
     let campaignData: [String: JSONValue] = [
-        "url":.string("https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&xnpe_cmp=cmp&itt=usertoken"),
+        "url": .string("https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&xnpe_cmp=cmp&itt=usertoken"),
         "platform": .string("iOS")
     ]
 

@@ -30,11 +30,11 @@ public struct PersonalizationRequest: Codable {
 }
 
 extension PersonalizationRequest: RequestParametersType {
-    var parameters: [String : JSONValue] {
-        var params: [String : JSONValue] = [
-            CodingKeys.ids.rawValue : .array(ids.map({ $0.jsonValue })),
-            CodingKeys.timeout.rawValue : timeout.jsonValue,
-            CodingKeys.timezone.rawValue : timezone.jsonValue,
+    var parameters: [String: JSONValue] {
+        var params: [String: JSONValue] = [
+            CodingKeys.ids.rawValue: .array(ids.map({ $0.jsonValue })),
+            CodingKeys.timeout.rawValue: timeout.jsonValue,
+            CodingKeys.timezone.rawValue: timezone.jsonValue,
             ]
 
         if let customParameters = customParameters {

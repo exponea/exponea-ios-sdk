@@ -51,7 +51,7 @@ class FetchViewController: UIViewController {
 
     @IBAction func fetchPersonalization(_ sender: Any) {
         let alertController = UIAlertController(title: "Input Banner ID", message: "", preferredStyle: .alert)
-        alertController.addTextField { (textField : UITextField!) -> Void in
+        alertController.addTextField { (textField: UITextField!) -> Void in
             textField.placeholder = "ID"
         }
         let saveAction = UIAlertAction(title: "Fetch", style: .default, handler: { alert -> Void in

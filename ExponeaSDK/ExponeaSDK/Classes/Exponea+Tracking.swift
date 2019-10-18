@@ -55,7 +55,7 @@ extension Exponea {
     /// - Parameters:
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
-    public func trackPayment(properties: [String : JSONConvertible], timestamp: Double?) {
+    public func trackPayment(properties: [String: JSONConvertible], timestamp: Double?) {
         executeWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")

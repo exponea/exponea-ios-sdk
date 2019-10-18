@@ -13,12 +13,12 @@ import UserNotifications
 class TrackingViewController: UIViewController {
 
     @IBAction func paymentPressed(_ sender: Any) {
-        Exponea.shared.trackPayment(properties: ["value" : "99", "custom_info" : "sample payment"], timestamp: nil)
+        Exponea.shared.trackPayment(properties: ["value": "99", "custom_info": "sample payment"], timestamp: nil)
     }
 
     @IBAction func registerForPush() {
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
+        center.requestAuthorization(options: [.badge, .alert, .sound]) { (granted, error) in
             // Enable or disable features based on authorization.
             if granted {
                 DispatchQueue.main.async {

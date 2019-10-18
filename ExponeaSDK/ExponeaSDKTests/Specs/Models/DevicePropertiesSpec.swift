@@ -15,8 +15,8 @@ import Nimble
 class DevicePropertiesSpec: QuickSpec {
 
     class MockBundle: Bundle {
-        override var infoDictionary: [String : Any]? {
-            return [Constants.Keys.appVersion : "1.2"]
+        override var infoDictionary: [String: Any]? {
+            return [Constants.Keys.appVersion: "1.2"]
         }
     }
 

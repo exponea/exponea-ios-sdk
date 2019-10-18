@@ -11,9 +11,9 @@ import Foundation
 extension NotificationData {
     var properties: [String: JSONValue] {
         return [
-            "campaign_id" : .string(campaignId),
-            "campaign_name" : .string(campaignName),
-            "action_id" : .int(actionId)
+            "campaign_id": .string(campaignId),
+            "campaign_name": .string(campaignName),
+            "action_id": .int(actionId)
         ]
     }
 }

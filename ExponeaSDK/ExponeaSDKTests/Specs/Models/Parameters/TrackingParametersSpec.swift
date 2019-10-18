@@ -26,7 +26,7 @@ class TrackingParametersSpec: QuickSpec {
                     eventType: nil)
 
                 it("Should return a [String: JSONValue] type") {
-                    expect(param.parameters).to(beAKindOf([String:JSONValue].self))
+                    expect(param.parameters).to(beAKindOf([String: JSONValue].self))
                 }
 
                 it("Should not return nil") {

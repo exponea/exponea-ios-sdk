@@ -55,14 +55,14 @@ class JSONValueSpec: QuickSpec {
             context("with dictionary") {
                 it("should be equal", closure: {
                     let dictionary: [String: JSONValue] = [
-                        "intvalue" : .int(123),
-                        "stringvalue" : .string("myvalue"),
-                        "boolvalue" : .bool(true)
+                        "intvalue": .int(123),
+                        "stringvalue": .string("myvalue"),
+                        "boolvalue": .bool(true)
                     ]
                     let expected = JSONValue.dictionary([
-                        "intvalue" : .int(123),
-                        "stringvalue" : .string("myvalue"),
-                        "boolvalue" : .bool(true)
+                        "intvalue": .int(123),
+                        "stringvalue": .string("myvalue"),
+                        "boolvalue": .bool(true)
                         ])
                     expect(dictionary.jsonValue).to(equal(expected))
                 })
@@ -117,7 +117,7 @@ class JSONValueSpec: QuickSpec {
             }
             context("with dictionary") {
                 it("should be equal", closure: {
-                    let val = JSONValue.dictionary(["test" : .string("value")])
+                    let val = JSONValue.dictionary(["test": .string("value")])
                     expect(val.jsonConvertible).to(beAKindOf(Dictionary<String, JSONValue>.self))
 
                     let dict = val.jsonConvertible as? Dictionary<String, JSONValue>
@@ -210,7 +210,7 @@ class JSONValueSpec: QuickSpec {
 
             context("with dictionary", {
                 it("should return NSDictionary", closure: {
-                    let val = JSONValue.dictionary(["mykey" : .string("myvalue")])
+                    let val = JSONValue.dictionary(["mykey": .string("myvalue")])
                     let object = val.objectValue
                     expect(object).to(beAKindOf(NSDictionary.self))
 
@@ -284,7 +284,7 @@ class JSONValueSpec: QuickSpec {
 
             context("with dictionary", {
                 it("should return Dictionary", closure: {
-                    let val = JSONValue.dictionary(["mykey" : .string("myvalue")])
+                    let val = JSONValue.dictionary(["mykey": .string("myvalue")])
                     let object = val.rawValue
                     expect(object).to(beAKindOf(Dictionary<AnyHashable, Any>.self))
 
@@ -335,7 +335,7 @@ class JSONValueSpec: QuickSpec {
                     expect(decoded.arrayValue).to(equal(JSONValue.array([.int(123), .string("string"), .bool(true)])))
                 })
                 it("should parse Dictionary", closure: {
-                    expect(decoded.dictionaryValue).to(equal(JSONValue.dictionary(["dictkey" : .string("dictval")])))
+                    expect(decoded.dictionaryValue).to(equal(JSONValue.dictionary(["dictkey": .string("dictval")])))
                 })
             })
         }
@@ -388,8 +388,8 @@ class JSONValueSpec: QuickSpec {
                 })
 
                 it("should encode Dictionary", closure: {
-                    let value = TestClass(value: JSONValue.dictionary(["key" : .int(1234),
-                                                                       "other" : .string("string")]))
+                    let value = TestClass(value: JSONValue.dictionary(["key": .int(1234),
+                                                                       "other": .string("string")]))
                     let data = try! encoder.encode(value)
                     let encoded = String(data: data, encoding: .utf8)
                     expect(encoded).to(contain("\"key\":1234"))

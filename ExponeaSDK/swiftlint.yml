@@ -1,7 +1,6 @@
 # https://github.com/realm/SwiftLint#configuration
 
 disabled_rules:
-    - colon
     - comma
     - compiler_protocol_init
     - control_statement

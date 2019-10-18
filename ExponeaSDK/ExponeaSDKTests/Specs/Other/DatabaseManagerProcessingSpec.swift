@@ -90,41 +90,41 @@ class DatabaseManagerProcessingSpec: QuickSpec {
             context("from NSDictionary to JSONValue", {
                 it("should work with simple dictionary", closure: {
                     let dictionary = NSDictionary(dictionary: [
-                        "intvalue" : 123,
-                        "stringvalue" : "mystring",
-                        "boolvalue" : true
+                        "intvalue": 123,
+                        "stringvalue": "mystring",
+                        "boolvalue": true
                         ])
 
                     let output = DatabaseManager.processDictionary(dictionary)
                     let expected: JSONValue = .dictionary([
-                        "intvalue" : .int(123),
-                        "stringvalue" : .string("mystring"),
-                        "boolvalue" : .bool(true)
+                        "intvalue": .int(123),
+                        "stringvalue": .string("mystring"),
+                        "boolvalue": .bool(true)
                         ])
                     expect(output).to(equal(expected))
                 })
 
                 it("should work with nested arrays and dictionaries", closure: {
                     let dictionary = NSDictionary(dictionary: [
-                        "intvalue" : 123,
-                        "stringvalue" : "mystring",
-                        "arrayvalue" : [234.56, "arraystring"],
-                        "dictionaryvalue" : ["nestedkey" : "nestedvalue"],
-                        "boolvalue" : true
+                        "intvalue": 123,
+                        "stringvalue": "mystring",
+                        "arrayvalue": [234.56, "arraystring"],
+                        "dictionaryvalue": ["nestedkey": "nestedvalue"],
+                        "boolvalue": true
                         ])
 
                     let output = DatabaseManager.processDictionary(dictionary)
                     let expected: JSONValue = .dictionary([
-                        "intvalue" : .int(123),
-                        "stringvalue" : .string("mystring"),
-                        "arrayvalue" : .array([
+                        "intvalue": .int(123),
+                        "stringvalue": .string("mystring"),
+                        "arrayvalue": .array([
                             .double(234.56),
                             .string("arraystring")
                             ]),
-                        "dictionaryvalue" : .dictionary([
-                            "nestedkey" : .string("nestedvalue")
+                        "dictionaryvalue": .dictionary([
+                            "nestedkey": .string("nestedvalue")
                             ]),
-                        "boolvalue" : .bool(true)
+                        "boolvalue": .bool(true)
                         ])
                     expect(output).to(equal(expected))
                 })
@@ -153,7 +153,7 @@ class DatabaseManagerProcessingSpec: QuickSpec {
                 it("should handle dictionaries", closure: {
                     let dictionary = NSDictionary(dictionary: ["key": "value"])
                     let output = DatabaseManager.processObject(dictionary)
-                    expect(output).to(equal(.dictionary(["key" : .string("value")])))
+                    expect(output).to(equal(.dictionary(["key": .string("value")])))
                 })
 
                 it("should handle arrays", closure: {

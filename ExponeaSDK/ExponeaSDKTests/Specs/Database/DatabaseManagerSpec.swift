@@ -29,7 +29,7 @@ class DatabaseManagerSpec: QuickSpec {
             describe("when properly instantiated", {
                 let customerData: [DataType] = [
                     .timestamp(100),
-                    .customerIds(["registered" : .string("myemail")]),
+                    .customerIds(["registered": .string("myemail")]),
                     .projectToken("mytoken"),
                     .properties(["customprop": .string("customval")]),
                     .pushNotificationToken("pushtoken")
@@ -141,7 +141,7 @@ class DatabaseManagerSpec: QuickSpec {
 
             describe("when accessed from a background thread", {
                 let customerData: [DataType] = [
-                    .customerIds(["registered" : .string("myemail")]),
+                    .customerIds(["registered": .string("myemail")]),
                     .projectToken("mytoken"),
                     .properties(["customprop": .string("customval")]),
                     .pushNotificationToken("pushtoken")
@@ -263,7 +263,7 @@ class DatabaseManagerSpec: QuickSpec {
 
             describe("when stressed", {
                 let customerData: [DataType] = [
-                    .customerIds(["registered" : .string("myemail")]),
+                    .customerIds(["registered": .string("myemail")]),
                     .projectToken("mytoken"),
                     .properties(["customprop": .string("customval")]),
                     .pushNotificationToken("pushtoken")

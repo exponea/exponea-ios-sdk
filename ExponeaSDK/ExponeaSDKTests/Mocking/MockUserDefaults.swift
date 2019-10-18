@@ -9,7 +9,7 @@
 
 import Foundation
 
-class MockUserDefaults : UserDefaults {
+class MockUserDefaults: UserDefaults {
 
     convenience init() {
         self.init(suiteName: "Mock User Defaults")!

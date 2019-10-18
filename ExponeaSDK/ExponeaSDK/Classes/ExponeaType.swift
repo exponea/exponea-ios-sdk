@@ -91,7 +91,7 @@ public protocol ExponeaType: class {
     ///     - customerId: Specify your customer with external id, for example an email address.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
-    func identifyCustomer(customerIds: [String : JSONConvertible]?, properties: [String: JSONConvertible], timestamp: Double?)
+    func identifyCustomer(customerIds: [String: JSONConvertible]?, properties: [String: JSONConvertible], timestamp: Double?)
 
     /// This method can be used to manually flush all available data to Exponea.
     func flushData()
