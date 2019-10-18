@@ -35,10 +35,10 @@
 		050961062322552300D59C01 /* MockLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050961052322552300D59C01 /* MockLogger.swift */; };
 		052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */; };
 		052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */; };
-		052F68662327F3E8002DDCD4 /* swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 052F68652327F3E8002DDCD4 /* swiftlint.yml */; };
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
 		05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BD2342413E00D78452 /* NetworkStubbing.swift */; };
 		05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05AA63CA2343805C00D78452 /* .swiftlint.yml */; };
+		05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05E1A3802359B3A500E5EDDE /* .swiftlint.yml */; };
 		05EB8B6C2344F4D700AAC98B /* Configuration+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */; };
@@ -301,10 +301,10 @@
 		050961052322552300D59C01 /* MockLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLogger.swift; sourceTree = "<group>"; };
 		052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerErrorSpec.swift; sourceTree = "<group>"; };
 		052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
-		052F68652327F3E8002DDCD4 /* swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = swiftlint.yml; sourceTree = "<group>"; };
 		05AA63BB2342362B00D78452 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
 		05AA63BD2342413E00D78452 /* NetworkStubbing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStubbing.swift; sourceTree = "<group>"; };
 		05AA63CA2343805C00D78452 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
+		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Configuration+Validation.swift"; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
@@ -767,7 +767,6 @@
 				C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */,
 				C0EB5D9420B8123200F1031F /* PushNotificationSelectors.swift */,
 			);
-			name = "Push Notifications";
 			path = "Push Notifications";
 			sourceTree = "<group>";
 		};
@@ -898,9 +897,9 @@
 				A3613BD1E2C1D4616B6A9767 /* Frameworks */,
 				BA562F8AA107D3AB3132C40D /* Pods */,
 				F021E85A206CF10200788ABC /* Products */,
+				05E1A3802359B3A500E5EDDE /* .swiftlint.yml */,
 				B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */,
 				C0ED33C621A72EE6003649C3 /* ExponeaSDK.podspec */,
-				052F68652327F3E8002DDCD4 /* swiftlint.yml */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1381,7 +1380,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				052F68662327F3E8002DDCD4 /* swiftlint.yml in Resources */,
+				05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1422,7 +1421,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which ../Pods/SwiftLint/swiftlint >/dev/null; then\n../Pods/SwiftLint/swiftlint --config ./swiftlint.yml\nelse\necho \"warning: SwiftLint not installed run `pod install`\"\nfi\n";
+			shellScript = "if which ../Pods/SwiftLint/swiftlint >/dev/null; then\ncd ..\n./Pods/SwiftLint/swiftlint lint --reporter xcode --config ExponeaSDK/.swiftlint.yml\nelse\necho \"warning: SwiftLint not installed run `pod install`\"\nfi\n";
 		};
 		66B6C7F3C0CC28444D9F6CED /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

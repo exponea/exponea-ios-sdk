@@ -1,49 +1,34 @@
-opt_in_rules: # some rules are only opt-in
-  - control_statement
-  - empty_count
-  - trailing_newline
-  - colon
-  - comma
-  - todo
+# https://github.com/realm/SwiftLint#configuration
 
 disabled_rules:
-  - trailing_whitespace
+    - compiler_protocol_init
+    - control_statement
+    - cyclomatic_complexity
+    - duplicate_imports
+    - empty_enum_arguments
+    - file_length
+    - for_where
+    - function_body_length
+    - function_parameter_count
+    - identifier_name
+    - implicit_getter
+    - line_length
+    - notification_center_detachment
+    - redundant_optional_initialization
+    - redundant_string_enum_value
+    - syntactic_sugar
+    - type_body_length
+    - unneeded_break_in_switch
+    - unused_closure_parameter
+    - vertical_whitespace
+    - force_unwrapping
 
-excluded: # paths to ignore during linting. Takes precedence over `included`.
-  - Pods
-  - ExponeaSDKTests
-  - Example
+opt_in_rules:
+    - force_unwrapping
 
-file_length:
-  warning: 400
-  error: 600
-
-type_body_length:
-  - 300 # warning
-  - 400 # error
-
-large_tuple: # warn user when using 3 values in tuple, give error if there are 4
-   - 3
-   - 4
-
-type_name:
-  min_length: 4 # only warning
-  max_length: # warning and error
-    warning: 30
-    error: 35
-
-identifier_name:
-  min_length: # only min_length
-    error: 4 # only error
-  excluded: # excluded via string array
-    - id
-    - key
-    - URL
-    - url
-    - ids
-    - put
-    - get
-    - sdk
-    - now
-    - csv
-    - int
+excluded:
+    - Pods
+    # Code from web
+    - ExponeaSDK/ExponeaSDK/Classes/Others/Reachability.swift
+    # Code from web
+    - ExponeaSDK/ExponeaSDK/Classes/Others/NSManagedObjectContext+Perform.swift
