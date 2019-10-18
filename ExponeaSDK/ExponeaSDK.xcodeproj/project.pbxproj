@@ -36,9 +36,9 @@
 		052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */; };
 		052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */; };
 		052F68662327F3E8002DDCD4 /* swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 052F68652327F3E8002DDCD4 /* swiftlint.yml */; };
-		05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05AA63CA2343805C00D78452 /* .swiftlint.yml */; };
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
 		05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BD2342413E00D78452 /* NetworkStubbing.swift */; };
+		05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05AA63CA2343805C00D78452 /* .swiftlint.yml */; };
 		05EB8B6C2344F4D700AAC98B /* Configuration+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */; };
@@ -302,10 +302,9 @@
 		052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerErrorSpec.swift; sourceTree = "<group>"; };
 		052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
 		052F68652327F3E8002DDCD4 /* swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = swiftlint.yml; sourceTree = "<group>"; };
-		05AA63CA2343805C00D78452 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
-		057D8A992322895800C07D6A /* MockUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserDefaults.swift; sourceTree = "<group>"; };
 		05AA63BB2342362B00D78452 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
 		05AA63BD2342413E00D78452 /* NetworkStubbing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStubbing.swift; sourceTree = "<group>"; };
+		05AA63CA2343805C00D78452 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
 		05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Configuration+Validation.swift"; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
@@ -525,8 +524,8 @@
 		0191639D207E14C9005FD174 /* Logging */ = {
 			isa = PBXGroup;
 			children = (
-				0191639B207E11BF005FD174 /* Logger.swift */,
 				0191639E207E14D9005FD174 /* LogLevel.swift */,
+				0191639B207E11BF005FD174 /* Logger.swift */,
 			);
 			path = Logging;
 			sourceTree = "<group>";
@@ -534,8 +533,8 @@
 		01EC2D9F207E3CDB0031BFEB /* Logging */ = {
 			isa = PBXGroup;
 			children = (
-				019163A2207E15FB005FD174 /* LoggerSpec.swift */,
 				019163A4207E1904005FD174 /* LogLevelSpec.swift */,
+				019163A2207E15FB005FD174 /* LoggerSpec.swift */,
 			);
 			path = Logging;
 			sourceTree = "<group>";
@@ -552,9 +551,9 @@
 			isa = PBXGroup;
 			children = (
 				F0E757F4207D032500FE8C21 /* ExponeaConfig.plist */,
+				0509610123216C7D00D59C01 /* TrackingManagerUpdate.plist */,
 				01764BC52087775800D0D673 /* config_valid.plist */,
 				01764BC72087793F00D0D673 /* config_valid2.plist */,
-				0509610123216C7D00D59C01 /* TrackingManagerUpdate.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -563,14 +562,14 @@
 			isa = PBXGroup;
 			children = (
 				C09A6495212D83D700DCAC06 /* Database */,
-				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
-				052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */,
-				C028C3A0211097D500B03ED4 /* Other */,
-				F0CA58F7207F783E00C89A7F /* Tracking */,
 				F067441520878F8C003C0293 /* Fetching */,
 				01EC2D9F207E3CDB0031BFEB /* Logging */,
 				F01ADE602084D56300E20662 /* Models */,
+				C028C3A0211097D500B03ED4 /* Other */,
 				F04BEA892111215A00591950 /* Repository */,
+				F0CA58F7207F783E00C89A7F /* Tracking */,
+				052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */,
+				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
 			);
 			path = Specs;
 			sourceTree = "<group>";
@@ -578,9 +577,9 @@
 		01EC2DB0207E55C10031BFEB /* Tracking */ = {
 			isa = PBXGroup;
 			children = (
-				01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */,
-				C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */,
 				01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */,
+				C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */,
+				01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -588,10 +587,10 @@
 		01EC2DB8207E68BF0031BFEB /* Database */ = {
 			isa = PBXGroup;
 			children = (
-				01EC2DB9207E68BF0031BFEB /* DatabaseManager.swift */,
 				C0A6DEAD20EAC32700C5F744 /* DatabaseManager+DataType.swift */,
-				01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */,
+				01EC2DB9207E68BF0031BFEB /* DatabaseManager.swift */,
 				C0D9B07E20A3B8070066FB1E /* DatabaseManagerError.swift */,
+				01EC2DBA207E68BF0031BFEB /* DatabaseManagerType.swift */,
 				01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */,
 			);
 			path = Database;
@@ -630,11 +629,11 @@
 		C0249EBD2212D15500D4F5D8 /* ExponeaSDK-Shared */ = {
 			isa = PBXGroup;
 			children = (
+				4C6BD13522ABA743004487A8 /* CampaignData.swift */,
 				F0E757DF207CF99E00FE8C21 /* Constants.swift */,
-				C0F7A59C21AE921300BA392F /* NotificationData.swift */,
 				C02C562821C9B71D0087A990 /* ExponeaNotificationAction.swift */,
 				C03B23D721AAFDBB00360EE6 /* ExponeaNotificationActionType.swift */,
-				4C6BD13522ABA743004487A8 /* CampaignData.swift */,
+				C0F7A59C21AE921300BA392F /* NotificationData.swift */,
 			);
 			path = "ExponeaSDK-Shared";
 			sourceTree = "<group>";
@@ -642,8 +641,8 @@
 		C028C3A0211097D500B03ED4 /* Other */ = {
 			isa = PBXGroup;
 			children = (
-				C028C3A12110980600B03ED4 /* JSONValueSpec.swift */,
 				C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */,
+				C028C3A12110980600B03ED4 /* JSONValueSpec.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -651,13 +650,13 @@
 		C07E421020CA8B0900920809 /* Personalization */ = {
 			isa = PBXGroup;
 			children = (
-				C07E420C20CA8A3C00920809 /* Personalization.swift */,
 				C07E420A20CA8A3300920809 /* Banner.swift */,
+				C07E421320CA8C1B00920809 /* BannerFrequency.swift */,
+				C07E421520CA8D1800920809 /* BannerTrigger.swift */,
 				C07E420E20CA8AF700920809 /* DateFilter.swift */,
 				F04BEAAA21126D2000591950 /* DeviceTarget.swift */,
 				C07E421120CA8B9900920809 /* DeviceTargetType.swift */,
-				C07E421320CA8C1B00920809 /* BannerFrequency.swift */,
-				C07E421520CA8D1800920809 /* BannerTrigger.swift */,
+				C07E420C20CA8A3C00920809 /* Personalization.swift */,
 			);
 			path = Personalization;
 			sourceTree = "<group>";
@@ -665,8 +664,8 @@
 		C08D53D221B9474E00EA2C13 /* ExampleNotificationContent */ = {
 			isa = PBXGroup;
 			children = (
-				C08D53D321B9474E00EA2C13 /* NotificationViewController.swift */,
 				C08D53D821B9474E00EA2C13 /* Info.plist */,
+				C08D53D321B9474E00EA2C13 /* NotificationViewController.swift */,
 			);
 			path = ExampleNotificationContent;
 			sourceTree = "<group>";
@@ -674,8 +673,8 @@
 		C09A6495212D83D700DCAC06 /* Database */ = {
 			isa = PBXGroup;
 			children = (
-				C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */,
 				052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */,
+				C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -684,10 +683,10 @@
 			isa = PBXGroup;
 			children = (
 				C0A6DE9C20EAC16900C5F744 /* Customer.swift */,
-				C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */,
-				C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */,
 				C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */,
 				4CA1874622C931B80098A1EA /* NSManagedObject+Name.swift */,
+				C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */,
+				C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -695,11 +694,11 @@
 		C0EA5FCD20CE95EE00660802 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C03B23D321AAF34000360EE6 /* beep.wav */,
 				C0F6C4E92098A1AC00834E21 /* Assets.xcassets */,
-				C0F6C4E62098A1AB00834E21 /* Main.storyboard */,
-				C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */,
 				C0F6C4EE2098A1AC00834E21 /* Info.plist */,
+				C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */,
+				C0F6C4E62098A1AB00834E21 /* Main.storyboard */,
+				C03B23D321AAF34000360EE6 /* beep.wav */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -707,11 +706,11 @@
 		C0EA5FCE20CE960700660802 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */,
 				C0EA5FD120CE962500660802 /* Fetching */,
-				C0EA5FD020CE961F00660802 /* Tracking */,
 				C0EA5FD220CE962B00660802 /* Flushing */,
 				C0EA5FD320CE963100660802 /* Logging */,
+				C0EA5FD020CE961F00660802 /* Tracking */,
+				C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -727,9 +726,9 @@
 		C0EA5FD020CE961F00660802 /* Tracking */ = {
 			isa = PBXGroup;
 			children = (
-				C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */,
-				C07E41FC20C930C400920809 /* TrackEventViewController.swift */,
 				C07E41FE20C930E400920809 /* IdentifyCustomerViewController.swift */,
+				C07E41FC20C930C400920809 /* TrackEventViewController.swift */,
+				C0EB5D9C20B8193A00F1031F /* TrackingViewController.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -761,26 +760,26 @@
 		C0EB5D9120B811DE00F1031F /* Push Notifications */ = {
 			isa = PBXGroup;
 			children = (
-				C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */,
 				C030AF4D216FA154004413F0 /* PushNotificationDelegateObserver.swift */,
-				C0EB5D9220B811F900F1031F /* PushNotificationManager.swift */,
-				C030AF49216F4910004413F0 /* PushNotificationManager+UIResponder.swift */,
 				C030AF4B216F96F3004413F0 /* PushNotificationManager+NSObject.swift */,
+				C030AF49216F4910004413F0 /* PushNotificationManager+UIResponder.swift */,
+				C0EB5D9220B811F900F1031F /* PushNotificationManager.swift */,
+				C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */,
 				C0EB5D9420B8123200F1031F /* PushNotificationSelectors.swift */,
 			);
 			name = "Push Notifications";
-			path = "Models/Push Notifications";
+			path = "Push Notifications";
 			sourceTree = "<group>";
 		};
 		C0EB5DA020BB57ED00F1031F /* Requests */ = {
 			isa = PBXGroup;
 			children = (
-				01EC2DA6207E4FBA0031BFEB /* EventsRequest.swift */,
-				01EC2DA4207E4F8F0031BFEB /* RecommendationRequest.swift */,
-				01EC2DAA207E53D90031BFEB /* AttributesListDescription.swift */,
 				01EC2DAC207E53E40031BFEB /* AttributesDescription.swift */,
+				01EC2DAA207E53D90031BFEB /* AttributesListDescription.swift */,
 				01EC2DA8207E4FC10031BFEB /* CustomerExportRequest.swift */,
+				01EC2DA6207E4FBA0031BFEB /* EventsRequest.swift */,
 				C07E420820CA89DE00920809 /* PersonalizationRequest.swift */,
+				01EC2DA4207E4F8F0031BFEB /* RecommendationRequest.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -788,15 +787,15 @@
 		C0EB5DA120BB57FB00F1031F /* Responses */ = {
 			isa = PBXGroup;
 			children = (
-				F029BF20208A089C00342498 /* EventsResponse.swift */,
-				F029BF2A208A2BC300342498 /* RecommendationResponse.swift */,
-				F029BF2C208A2C5200342498 /* StringResponse.swift */,
+				F04BEAB02112E3B100591950 /* AttributesResponse.swift */,
+				C07E420420CA898700920809 /* BannerResponse.swift */,
+				B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */,
 				C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */,
+				F029BF20208A089C00342498 /* EventsResponse.swift */,
 				C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */,
 				C07E420020CA896B00920809 /* PersonalizationResponse.swift */,
-				C07E420420CA898700920809 /* BannerResponse.swift */,
-				F04BEAB02112E3B100591950 /* AttributesResponse.swift */,
-				B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */,
+				F029BF2A208A2BC300342498 /* RecommendationResponse.swift */,
+				F029BF2C208A2C5200342498 /* StringResponse.swift */,
 			);
 			path = Responses;
 			sourceTree = "<group>";
@@ -804,10 +803,10 @@
 		C0EB5DA220BB594300F1031F /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				F029BF28208A099500342498 /* Routes.swift */,
+				C0D9B08020A3C0D50066FB1E /* Authorization.swift */,
 				F029BF26208A096900342498 /* HTTPMethod.swift */,
 				F029BF24208A08F800342498 /* Result.swift */,
-				C0D9B08020A3C0D50066FB1E /* Authorization.swift */,
+				F029BF28208A099500342498 /* Routes.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -815,9 +814,9 @@
 		C0EB5DA420BB59A500F1031F /* Parameters */ = {
 			isa = PBXGroup;
 			children = (
-				01C2AD4B208F60ED0012F663 /* TrackingParameters.swift */,
 				01C2AD4D208F61000012F663 /* CustomerParameters.swift */,
 				C0EB5DA520BB59BD00F1031F /* RequestParametersType.swift */,
+				01C2AD4B208F60ED0012F663 /* TrackingParameters.swift */,
 			);
 			path = Parameters;
 			sourceTree = "<group>";
@@ -826,8 +825,8 @@
 			isa = PBXGroup;
 			children = (
 				C09C33CC221C0D8200715603 /* ExampleNotificationService.entitlements */,
-				C0ED33A521A6FA31003649C3 /* NotificationService.swift */,
 				C0ED33A721A6FA31003649C3 /* Info.plist */,
+				C0ED33A521A6FA31003649C3 /* NotificationService.swift */,
 			);
 			path = ExampleNotificationService;
 			sourceTree = "<group>";
@@ -844,8 +843,8 @@
 		C0ED33C721A72FF7003649C3 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				C0ED33C021A6FB6B003649C3 /* ExponeaNotificationService.swift */,
 				C08D53C721B946E700EA2C13 /* ExponeaNotificationContentService.swift */,
+				C0ED33C021A6FB6B003649C3 /* ExponeaNotificationService.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -862,11 +861,11 @@
 		C0F6C4E12098A1AB00834E21 /* Example */ = {
 			isa = PBXGroup;
 			children = (
-				C0843CF020B6DC6000FAF0CB /* Example.entitlements */,
-				C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */,
-				C0EA5FCE20CE960700660802 /* Views */,
 				C0EA5FCF20CE961000660802 /* Other */,
 				C0EA5FCD20CE95EE00660802 /* Resources */,
+				C0EA5FCE20CE960700660802 /* Views */,
+				C0F6C4E22098A1AB00834E21 /* AppDelegate.swift */,
+				C0843CF020B6DC6000FAF0CB /* Example.entitlements */,
 			);
 			path = Example;
 			sourceTree = "<group>";
@@ -877,10 +876,10 @@
 				F04BEA8C21118EF900591950 /* Networking */,
 				F0BE60FE21107D290082ABD8 /* Parameters */,
 				F0BE60F3211064370082ABD8 /* Request */,
-				F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */,
 				01764BC32087742100D0D673 /* ConfigurationSpec.swift */,
-				F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */,
+				F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */,
 				F04BEA8521111A6100591950 /* EventSpec.swift */,
+				F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */,
 				F04BEA8721111D4F00591950 /* PurchasedItemSpec.swift */,
 			);
 			path = Models;
@@ -889,19 +888,19 @@
 		F021E84F206CF10200788ABC = {
 			isa = PBXGroup;
 			children = (
-				052F68652327F3E8002DDCD4 /* swiftlint.yml */,
-				C0ED33C621A72EE6003649C3 /* ExponeaSDK.podspec */,
-				B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */,
+				C0F6C4E12098A1AB00834E21 /* Example */,
+				C08D53D221B9474E00EA2C13 /* ExampleNotificationContent */,
+				C0ED33A421A6FA31003649C3 /* ExampleNotificationService */,
 				F021E85B206CF10200788ABC /* ExponeaSDK */,
 				C0ED33B521A6FB10003649C3 /* ExponeaSDK-Notifications */,
 				C0249EBD2212D15500D4F5D8 /* ExponeaSDK-Shared */,
 				F021E866206CF10200788ABC /* ExponeaSDKTests */,
-				C0F6C4E12098A1AB00834E21 /* Example */,
-				C0ED33A421A6FA31003649C3 /* ExampleNotificationService */,
-				C08D53D221B9474E00EA2C13 /* ExampleNotificationContent */,
-				F021E85A206CF10200788ABC /* Products */,
-				BA562F8AA107D3AB3132C40D /* Pods */,
 				A3613BD1E2C1D4616B6A9767 /* Frameworks */,
+				BA562F8AA107D3AB3132C40D /* Pods */,
+				F021E85A206CF10200788ABC /* Products */,
+				B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */,
+				C0ED33C621A72EE6003649C3 /* ExponeaSDK.podspec */,
+				052F68652327F3E8002DDCD4 /* swiftlint.yml */,
 			);
 			sourceTree = "<group>";
 		};
@@ -931,9 +930,9 @@
 			isa = PBXGroup;
 			children = (
 				F0BE610121107E7D0082ABD8 /* Mocking */,
+				01EC2DA1207E3D000031BFEB /* Resources */,
 				01EC2DA2207E3D060031BFEB /* Specs */,
 				01EC2DA0207E3CF30031BFEB /* Supporting Files */,
-				01EC2DA1207E3D000031BFEB /* Resources */,
 				05AA63CA2343805C00D78452 /* .swiftlint.yml */,
 			);
 			path = ExponeaSDKTests;
@@ -960,9 +959,9 @@
 		F04BEA8C21118EF900591950 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				F04BEA8D21118F4700591950 /* ResultSpec.swift */,
 				F04BEA8F21119C1500591950 /* AuthorizationSpec.swift */,
 				F04BEA9121119DD200591950 /* HTTPMethodSpec.swift */,
+				F04BEA8D21118F4700591950 /* ResultSpec.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -970,12 +969,12 @@
 		F04BEA9F2111EA0200591950 /* json */ = {
 			isa = PBXGroup;
 			children = (
-				F029BF34208DBE1100342498 /* get-recommendation.json */,
-				F04BEAA02111EA8700591950 /* get-events.json */,
-				F04BEAA22111F85900591950 /* get-banner.json */,
-				F04BEAA42112412000591950 /* get-personalization.json */,
 				F04BEAA62112413C00591950 /* get-attributes.json */,
+				F04BEAA22111F85900591950 /* get-banner.json */,
 				B42DA69122B05A0100BBA225 /* get-consents.json */,
+				F04BEAA02111EA8700591950 /* get-events.json */,
+				F04BEAA42112412000591950 /* get-personalization.json */,
+				F029BF34208DBE1100342498 /* get-recommendation.json */,
 				4CA851E922C14ACF0066AFD8 /* get-universallink.json */,
 			);
 			path = json;
@@ -985,8 +984,8 @@
 			isa = PBXGroup;
 			children = (
 				F067440F208731F9003C0293 /* PaymentManager.swift */,
-				F0674411208732AF003C0293 /* PaymentManagerType.swift */,
 				C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */,
+				F0674411208732AF003C0293 /* PaymentManagerType.swift */,
 			);
 			path = Payment;
 			sourceTree = "<group>";
@@ -994,12 +993,12 @@
 		F067441520878F8C003C0293 /* Fetching */ = {
 			isa = PBXGroup;
 			children = (
-				F067441620878FA1003C0293 /* FetchEventsSpec.swift */,
-				F029BF2E208A386E00342498 /* FetchRecommendationSpec.swift */,
-				F04BEAA8211266DD00591950 /* FetchBannerSpec.swift */,
-				F04BEAAC211270CC00591950 /* FetchPersonalizationSpec.swift */,
 				F04BEAAE211273A200591950 /* FetchAttributesSpec.swift */,
+				F04BEAA8211266DD00591950 /* FetchBannerSpec.swift */,
 				B42DA68F22B0594D00BBA225 /* FetchConsentsSpec.swift */,
+				F067441620878FA1003C0293 /* FetchEventsSpec.swift */,
+				F04BEAAC211270CC00591950 /* FetchPersonalizationSpec.swift */,
+				F029BF2E208A386E00342498 /* FetchRecommendationSpec.swift */,
 			);
 			path = Fetching;
 			sourceTree = "<group>";
@@ -1007,11 +1006,11 @@
 		F0BE60F3211064370082ABD8 /* Request */ = {
 			isa = PBXGroup;
 			children = (
-				F0BE60F4211064450082ABD8 /* EventsRequestSpec.swift */,
-				F0BE60F8211067B20082ABD8 /* RecommendationRequestSpec.swift */,
 				F0BE60FA21106A7A0082ABD8 /* AttributesListDescriptionSpec.swift */,
 				F0BE60FC21106FB40082ABD8 /* CustomerExportRequestSpec.swift */,
+				F0BE60F4211064450082ABD8 /* EventsRequestSpec.swift */,
 				F04BEA962111A1E900591950 /* PersonalizationRequestSpec.swift */,
+				F0BE60F8211067B20082ABD8 /* RecommendationRequestSpec.swift */,
 			);
 			path = Request;
 			sourceTree = "<group>";
@@ -1019,9 +1018,9 @@
 		F0BE60FE21107D290082ABD8 /* Parameters */ = {
 			isa = PBXGroup;
 			children = (
-				F0BE60FF21107D3A0082ABD8 /* TrackingParametersSpec.swift */,
 				F0BE610621108E070082ABD8 /* CustomerParametersSpec.swift */,
 				F04BEA9A2111AF7E00591950 /* RequestParametersTypeSpec.swift */,
+				F0BE60FF21107D3A0082ABD8 /* TrackingParametersSpec.swift */,
 			);
 			path = Parameters;
 			sourceTree = "<group>";
@@ -1030,12 +1029,12 @@
 			isa = PBXGroup;
 			children = (
 				F04BEA9F2111EA0200591950 /* json */,
-				050805722326510100BDA235 /* MockUserDefaults.swift */,
 				F0BE6104211080F30082ABD8 /* MockData.swift */,
-				050961052322552300D59C01 /* MockLogger.swift */,
-				C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */,
 				F063BEA9207E36E600030811 /* MockDatabaseManager.swift */,
 				4C3F5F2C22DF98C00069E71D /* MockExponea.swift */,
+				050961052322552300D59C01 /* MockLogger.swift */,
+				050805722326510100BDA235 /* MockUserDefaults.swift */,
+				C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */,
 				05AA63BD2342413E00D78452 /* NetworkStubbing.swift */,
 			);
 			path = Mocking;
@@ -1044,25 +1043,25 @@
 		F0C1C1CE207384ED005EB697 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B42DA68A22B03FAC00BBA225 /* Consents */,
 				C0A6DE9420EAC14200C5F744 /* Core Data */,
 				C0EB5DA220BB594300F1031F /* Networking */,
 				C0EB5DA420BB59A500F1031F /* Parameters */,
-				C0EB5DA120BB57FB00F1031F /* Responses */,
-				C0EB5DA020BB57ED00F1031F /* Requests */,
 				C07E421020CA8B0900920809 /* Personalization */,
-				B42DA68A22B03FAC00BBA225 /* Consents */,
-				01EC2DB3207E58080031BFEB /* EventType.swift */,
-				019F1AC42087666800368FB1 /* DataType.swift */,
-				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
-				F0E757EF207D027300FE8C21 /* Configuration.swift */,
+				C0EB5DA020BB57ED00F1031F /* Requests */,
+				C0EB5DA120BB57FB00F1031F /* Responses */,
+				4C588F8622AAAB3300916EE4 /* CampaignData+Properties.swift */,
 				05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */,
+				F0E757EF207D027300FE8C21 /* Configuration.swift */,
+				019F1AC42087666800368FB1 /* DataType.swift */,
 				F0CA58F5207F612200C89A7F /* DeviceProperties.swift */,
 				F029BF22208A08CE00342498 /* Event.swift */,
-				F067441320873813003C0293 /* PurchasedItem.swift */,
+				01EC2DB3207E58080031BFEB /* EventType.swift */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
+				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
 				C09C33CA221C097100715603 /* NotificationData+Properties.swift */,
+				F067441320873813003C0293 /* PurchasedItem.swift */,
 				B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */,
-				4C588F8622AAAB3300916EE4 /* CampaignData+Properties.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1079,18 +1078,18 @@
 		F0E757DE207CF98600FE8C21 /* Others */ = {
 			isa = PBXGroup;
 			children = (
-				C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */,
 				C0EB5D8D20B710A900F1031F /* Data+TokenString.swift */,
-				B4AF83BA22C6108200061350 /* String+URLValidation.swift */,
-				C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */,
-				C0EB5D8B20B70D5000F1031F /* Swizzler.swift */,
-				C0F2406920BC38EC00CAF7CE /* Swizzle.swift */,
 				C0EB5D8F20B7F8A900F1031F /* DispatchQueue+OnceTracker.swift */,
+				C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */,
+				C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */,
+				C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */,
+				C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */,
+				23E725E3214AA7A900B552B8 /* Reachability.swift */,
+				B4AF83BA22C6108200061350 /* String+URLValidation.swift */,
+				C0F2406920BC38EC00CAF7CE /* Swizzle.swift */,
+				C0EB5D8B20B70D5000F1031F /* Swizzler.swift */,
 				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
-				C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */,
-				23E725E3214AA7A900B552B8 /* Reachability.swift */,
-				C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -1109,19 +1108,19 @@
 		F0E757EC207D023A00FE8C21 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				F0E757ED207D025300FE8C21 /* Exponea.swift */,
-				C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */,
-				C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */,
-				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
-				C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */,
-				01EC2DB0207E55C10031BFEB /* Tracking */,
-				F0E757E1207CF9BE00FE8C21 /* Repository */,
 				01EC2DB8207E68BF0031BFEB /* Database */,
+				0191639D207E14C9005FD174 /* Logging */,
 				F0C1C1CE207384ED005EB697 /* Models */,
+				F0E757DE207CF98600FE8C21 /* Others */,
 				F067440E208731CF003C0293 /* Payment */,
 				C0EB5D9120B811DE00F1031F /* Push Notifications */,
-				0191639D207E14C9005FD174 /* Logging */,
-				F0E757DE207CF98600FE8C21 /* Others */,
+				F0E757E1207CF9BE00FE8C21 /* Repository */,
+				01EC2DB0207E55C10031BFEB /* Tracking */,
+				C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */,
+				C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */,
+				F0E757ED207D025300FE8C21 /* Exponea.swift */,
+				C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */,
+				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -1710,6 +1709,7 @@
 				C0F6C4E72098A1AB00834E21 /* Base */,
 			);
 			name = Main.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 		C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */ = {
@@ -1718,6 +1718,7 @@
 				C0F6C4EC2098A1AC00834E21 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -2198,9 +2199,9 @@
 		01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				B40E9F5E22FAD58E0085B8A1 /* DatabaseModel v4.xcdatamodel */,
-				C06FCE86219D840400ABB0BE /* DatabaseModel v3.xcdatamodel */,
 				C0BF069121466B3D007C4E4C /* DatabaseModel v2.xcdatamodel */,
+				C06FCE86219D840400ABB0BE /* DatabaseModel v3.xcdatamodel */,
+				B40E9F5E22FAD58E0085B8A1 /* DatabaseModel v4.xcdatamodel */,
 				01EC2DBC207E68BF0031BFEB /* DatabaseModel.xcdatamodel */,
 			);
 			currentVersion = B40E9F5E22FAD58E0085B8A1 /* DatabaseModel v4.xcdatamodel */;
