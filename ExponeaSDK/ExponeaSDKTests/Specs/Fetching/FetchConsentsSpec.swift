@@ -24,7 +24,7 @@ class FetchConsentsSpec: QuickSpec {
                 NetworkStubbing.stubNetwork(withStatusCode: 200, withResponseData: MockData().consentsResponse)
 
                 waitUntil(timeout: 3) { done in
-                    repo.fetchConsents() { (result) in
+                    repo.fetchConsents { (result) in
                         it("should not fail") {
                             expect(result.error).to(beNil())
                         }

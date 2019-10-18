@@ -68,7 +68,7 @@ class TrackingManagerSpec: QuickSpec {
                 var networkRequests: Int = 0
                 NetworkStubbing.stubNetwork(withStatusCode: 200, withRequestHook: { _ in networkRequests += 1 })
 
-                waitUntil() { done in
+                waitUntil { done in
                     let group = DispatchGroup()
                     for _ in 0..<10 {
                         group.enter()
@@ -88,7 +88,7 @@ class TrackingManagerSpec: QuickSpec {
                 expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
                 NetworkStubbing.stubNetwork(withStatusCode: 200)
-                waitUntil() { done in
+                waitUntil { done in
                     trackingManager.flushData(completion: {done()})
                 }
                 expect { try database.fetchTrackEvent().count }.to(equal(0))
@@ -101,13 +101,13 @@ class TrackingManagerSpec: QuickSpec {
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
                 NetworkStubbing.stubNetwork(withStatusCode: 418)
                 for i in 1...4 {
-                    waitUntil() { done in
+                    waitUntil { done in
                         trackingManager.flushData(completion: {done()})
                     }
                     expect { try database.fetchTrackEvent().count }.to(equal(1))
                     expect { try database.fetchTrackEvent().first?.retries }.to(equal(i))
                 }
-                waitUntil() { done in
+                waitUntil { done in
                     trackingManager.flushData(completion: {done()})
                 }
                 expect { try database.fetchTrackEvent().count }.to(equal(0))
@@ -120,7 +120,7 @@ class TrackingManagerSpec: QuickSpec {
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
                 NetworkStubbing.stubNetwork(withStatusCode: 500)
                 for _ in 1...10 {
-                    waitUntil() { done in
+                    waitUntil { done in
                         trackingManager.flushData(completion: {done()})
                     }
                     expect { try database.fetchTrackEvent().count }.to(equal(1))

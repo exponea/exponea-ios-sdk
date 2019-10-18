@@ -38,7 +38,7 @@ extension URLResponse {
             responseLog += "\nError: \(error.localizedDescription)\n"
         }
 
-        responseLog += "\n";
+        responseLog += "\n"
         return responseLog
     }
 }

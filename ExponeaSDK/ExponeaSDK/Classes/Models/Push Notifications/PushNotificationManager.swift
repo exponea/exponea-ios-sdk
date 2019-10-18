@@ -444,5 +444,3 @@ extension PushNotificationManager {
                                  addingMethodIfNecessary: true)
     }
 }
-
-

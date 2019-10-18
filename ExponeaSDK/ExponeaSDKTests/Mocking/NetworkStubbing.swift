@@ -24,10 +24,14 @@ struct NetworkStubbing {
             headerFields: nil
         )!
         let stubData = responseData ?? "mock-response".data(using: String.Encoding.utf8, allowLossyConversion: true)!
-        MockingjayProtocol.addStub(matcher: { _ in return true }, delay: delay) {request in
-            requestHook?(request)
-            return Response.success(stubResponse, .content(stubData))
-        }
+        MockingjayProtocol.addStub(
+            matcher: { _ in return true },
+            delay: delay,
+            builder: { request in
+                requestHook?(request)
+                return Response.success(stubResponse, .content(stubData))
+            }
+        )
     }
 
     static func unstubNetwork() {

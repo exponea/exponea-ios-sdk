@@ -34,8 +34,8 @@ extension PersonalizationRequest: RequestParametersType {
         var params: [String: JSONValue] = [
             CodingKeys.ids.rawValue: .array(ids.map({ $0.jsonValue })),
             CodingKeys.timeout.rawValue: timeout.jsonValue,
-            CodingKeys.timezone.rawValue: timezone.jsonValue,
-            ]
+            CodingKeys.timezone.rawValue: timezone.jsonValue
+        ]
 
         if let customParameters = customParameters {
             params[CodingKeys.customParameters.rawValue] = .dictionary(customParameters)

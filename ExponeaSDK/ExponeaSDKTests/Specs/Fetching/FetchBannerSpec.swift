@@ -24,7 +24,7 @@ class FetchBannerSpec: QuickSpec {
                 NetworkStubbing.stubNetwork(withStatusCode: 200, withResponseData: MockData().bannerResponse)
 
                 waitUntil(timeout: 3) { done in
-                    repo.fetchBanners() { (result) in
+                    repo.fetchBanners { (result) in
                         it("Result error should be nil") {
                             expect(result.error).to(beNil())
                         }

@@ -40,7 +40,7 @@ final class ServerRepositorySpec: QuickSpec {
                     let repo = ServerRepository(configuration: configuration)
                     let networkTask = URLSession.shared.dataTask(with: URL(string: "mock-url")!)
                     networkTask.resume()
-                    waitUntil() { done in
+                    waitUntil { done in
                         repo.fetchBanners { _ in done()}
                         repo.cancelRequests()
                     }
