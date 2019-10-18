@@ -22,7 +22,7 @@ extension URLRequest {
 
         requestLog += "\(httpMethod ?? "NO METHOD") \(urlString)\n"
 
-        for (key,value) in allHTTPHeaderFields ?? [:] {
+        for (key, value) in allHTTPHeaderFields ?? [:] {
             // Make sure we don't print out tokens
             if key == "Authorization" {
                 requestLog += "Authorization: REDACTED\n"

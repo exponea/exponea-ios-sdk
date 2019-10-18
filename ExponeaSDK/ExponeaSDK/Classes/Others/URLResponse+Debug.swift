@@ -25,7 +25,7 @@ extension URLResponse {
         if let httpResponse = self as? HTTPURLResponse {
             responseLog += "HTTP \(httpResponse.statusCode) \(urlString)\n"
 
-            for (key,value) in httpResponse.allHeaderFields {
+            for (key, value) in httpResponse.allHeaderFields {
                 responseLog += "\(key): \(value)\n"
             }
         }

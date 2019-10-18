@@ -77,7 +77,7 @@ struct MockData {
                                                       timezone: nil,
                                                       responseFormat: ExportFormat.csv)
 
-    let personalizationRequest = PersonalizationRequest(ids: ["1","2","3"],
+    let personalizationRequest = PersonalizationRequest(ids: ["1", "2", "3"],
                                                         timeout: 5,
                                                         timezone: "GMT+2",
                                                         customParameters: nil)
