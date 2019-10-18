@@ -22,10 +22,11 @@ class TrackingManagerSpec: QuickSpec {
             var repository: RepositoryType!
             var database: DatabaseManagerType!
             var userDefaults: UserDefaults!
+            var configuration: ExponeaSDK.Configuration!
 
             beforeEach {
-                var configuration = try! Configuration(
-                    projectToken: "mock-project-token",
+                configuration = try! Configuration(
+                    projectToken: UUID().uuidString,
                     authorization: .token("mock-token"),
                     baseUrl: "https://google.com" // has to be real url because of reachability
                 )
@@ -54,19 +55,23 @@ class TrackingManagerSpec: QuickSpec {
             }
 
             it("should track event into database") {
-                let data: [DataType] = [.projectToken(MockData().projectToken),
+                let data: [DataType] = [.projectToken(configuration.projectToken!),
                                         .properties(MockData().properties)]
                 expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
             }
 
             it("should only allow one thread to flush") {
-                let data: [DataType] = [.projectToken(MockData().projectToken),
+                let data: [DataType] = [.projectToken(configuration.projectToken!),
                                         .properties(MockData().properties)]
                 expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
 
                 var networkRequests: Int = 0
-                NetworkStubbing.stubNetwork(withStatusCode: 200, withRequestHook: { _ in networkRequests += 1 })
+                NetworkStubbing.stubNetwork(
+                    forProjectToken: configuration.projectToken!,
+                    withStatusCode: 200,
+                    withRequestHook: { _ in networkRequests += 1 }
+                )
 
                 waitUntil { done in
                     let group = DispatchGroup()
@@ -83,11 +88,11 @@ class TrackingManagerSpec: QuickSpec {
             }
 
             it("should flush event") {
-                let data: [DataType] = [.projectToken(MockData().projectToken),
+                let data: [DataType] = [.projectToken(configuration.projectToken!),
                                         .properties(MockData().properties)]
                 expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
-                NetworkStubbing.stubNetwork(withStatusCode: 200)
+                NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken!, withStatusCode: 200)
                 waitUntil { done in
                     trackingManager.flushData(completion: {done()})
                 }
@@ -95,11 +100,11 @@ class TrackingManagerSpec: QuickSpec {
             }
 
             it("should retry flushing event `configuration.flushEventMaxRetries` times on weird errors") {
-                let data: [DataType] = [.projectToken(MockData().projectToken),
+                let data: [DataType] = [.projectToken(configuration.projectToken!),
                                         .properties(MockData().properties)]
                 expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
-                NetworkStubbing.stubNetwork(withStatusCode: 418)
+                NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken!, withStatusCode: 418)
                 for i in 1...4 {
                     waitUntil { done in
                         trackingManager.flushData(completion: {done()})
@@ -114,11 +119,11 @@ class TrackingManagerSpec: QuickSpec {
             }
 
             it("should retry flushing event forever on 500 errors") {
-                let data: [DataType] = [.projectToken(MockData().projectToken),
+                let data: [DataType] = [.projectToken(configuration.projectToken!),
                                         .properties(MockData().properties)]
                 expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
-                NetworkStubbing.stubNetwork(withStatusCode: 500)
+                NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken!, withStatusCode: 500)
                 for _ in 1...10 {
                     waitUntil { done in
                         trackingManager.flushData(completion: {done()})

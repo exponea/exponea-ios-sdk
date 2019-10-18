@@ -18,11 +18,18 @@ class FetchRecommendationSpec: QuickSpec {
     override func spec() {
         describe("Fetch recommendation") {
             context("Fetch recommendation from mock repository") {
-
-                let configuration = try! Configuration(plistName: "ExponeaConfig")
+                let configuration = try! Configuration(
+                    projectToken: UUID().uuidString,
+                    authorization: .token("mock-token"),
+                    baseUrl: "https://mock-base-url.com"
+                )
                 let repo = ServerRepository(configuration: configuration)
 
-                NetworkStubbing.stubNetwork(withStatusCode: 200, withResponseData: MockData().recommendationResponse)
+                NetworkStubbing.stubNetwork(
+                    forProjectToken: configuration.projectToken!,
+                    withStatusCode: 200,
+                    withResponseData: MockData().recommendationResponse
+                )
 
                 let mockData = MockData()
 

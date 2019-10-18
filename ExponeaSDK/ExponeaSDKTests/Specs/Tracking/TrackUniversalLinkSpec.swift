@@ -23,18 +23,24 @@ class TrackUniversalLinkSpec: QuickSpec {
         describe("Track universal link") {
             context("repository") {
                 let repository = ServerRepository(configuration: try! Configuration(plistName: "ExponeaConfig"))
-                let data: [DataType] = [.projectToken(mockData.projectToken),
+                let projectToken = UUID().uuidString
+                let data: [DataType] = [.projectToken(projectToken),
                                         .properties(mockData.campaignData),
                                         .timestamp(nil)]
                 var lastRequest: URLRequest? = nil
-                NetworkStubbing.stubNetwork(withStatusCode: 200, withRequestHook: { request in lastRequest = request })
+                NetworkStubbing.stubNetwork(
+                    forProjectToken: projectToken,
+                    withStatusCode: 200,
+                    withRequestHook: { request in lastRequest = request }
+                )
                 waitUntil(timeout: 3) { done in
                     repository.trackEvent(with: data + [.eventType(Constants.EventTypes.campaignClick)], for: mockData.customerIds) { result in
                         it("should have nil result error") {
                             expect(result.error).to(beNil())
                         }
                         it("should call correct url") {
-                            expect(lastRequest?.url?.absoluteString).to(equal("https://api.exponea.com/track/v2/projects/TokenForUnitTest/campaigns/clicks"))
+                            expect(lastRequest?.url?.absoluteString)
+                                .to(equal("https://api.exponea.com/track/v2/projects/\(projectToken)/campaigns/clicks"))
                         }
                         done()
                     }

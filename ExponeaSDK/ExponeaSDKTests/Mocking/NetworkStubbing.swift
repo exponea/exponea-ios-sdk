@@ -12,6 +12,7 @@ import Mockingjay
 
 struct NetworkStubbing {
     static func stubNetwork(
+        forProjectToken projectToken: String,
         withStatusCode statusCode: Int,
         withDelay delay: TimeInterval = TimeInterval(0),
         withResponseData responseData: Data? = nil,
@@ -25,7 +26,15 @@ struct NetworkStubbing {
         )!
         let stubData = responseData ?? "mock-response".data(using: String.Encoding.utf8, allowLossyConversion: true)!
         MockingjayProtocol.addStub(
-            matcher: { _ in return true },
+            matcher: { urlRequest in
+                guard
+                    let url = urlRequest.url,
+                    let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                else {
+                    return false
+                }
+                return components.path.contains("/projects/\(projectToken)/")
+            },
             delay: delay,
             builder: { request in
                 requestHook?(request)

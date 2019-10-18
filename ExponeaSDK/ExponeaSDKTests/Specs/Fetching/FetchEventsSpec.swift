@@ -21,7 +21,11 @@ class FetchEventsSpec: QuickSpec {
                 let configuration = try! Configuration(plistName: "ExponeaConfig")
                 let repo = ServerRepository(configuration: configuration)
 
-                NetworkStubbing.stubNetwork(withStatusCode: 200, withResponseData: MockData().eventsResponse)
+                NetworkStubbing.stubNetwork(
+                    forProjectToken: configuration.projectToken!,
+                    withStatusCode: 200,
+                    withResponseData: MockData().eventsResponse
+                )
                 let mockData = MockData()
 
                 waitUntil(timeout: 3) { done in

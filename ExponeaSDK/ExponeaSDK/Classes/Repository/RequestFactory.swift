@@ -25,7 +25,7 @@ struct RequestFactory {
         case .identifyCustomer: return baseUrl + "/track/v2/projects/\(projectToken)/customers"
         case .customEvent: return baseUrl + "/track/v2/projects/\(projectToken)/customers/events"
         case .customerRecommendation: return baseUrl + "/data/v2/projects/\(projectToken)/customers/attributes"
-        case .customerAttributes: return baseUrl + "/data/v2/\(projectToken)/customers/attributes"
+        case .customerAttributes: return baseUrl + "/data/v2/projects/\(projectToken)/customers/attributes"
         case .customerEvents: return baseUrl + "/data/v2/projects/\(projectToken)/customers/events"
         case .banners: return baseUrl + "/data/v2/projects/\(projectToken)/configuration/banners"
         case .consents: return baseUrl + "/data/v2/projects/\(projectToken)/consent/categories"

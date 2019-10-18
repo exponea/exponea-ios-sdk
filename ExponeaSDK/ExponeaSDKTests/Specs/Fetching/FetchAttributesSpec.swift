@@ -16,11 +16,18 @@ class FetchAttributesSpec: QuickSpec {
     override func spec() {
         describe("A attribute") {
             context("Fetch attributes from mock repository") {
-
-                let configuration = try! Configuration(plistName: "ExponeaConfig")
+                let configuration = try! Configuration(
+                    projectToken: UUID().uuidString,
+                    authorization: .token("mock-token"),
+                    baseUrl: "https://mock-url.com"
+                )
                 let repo = ServerRepository(configuration: configuration)
 
-                NetworkStubbing.stubNetwork(withStatusCode: 200, withResponseData: MockData().attributesResponse)
+                NetworkStubbing.stubNetwork(
+                    forProjectToken: configuration.projectToken!,
+                    withStatusCode: 200,
+                    withResponseData: MockData().attributesResponse
+                )
 
                 let mockData = MockData()
 
