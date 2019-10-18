@@ -80,16 +80,12 @@ class TrackCustomerThreadSafe {
     public let retries: Int
 
     public var properties: [String: JSONValue]? {
-        let propertyDataType = dataTypes.first { datatype in
-            if case .properties = datatype {
-                return true
+        return dataTypes.map { datatype -> [String: JSONValue]? in
+            if case .properties(let data) = datatype {
+                return data
             }
-            return false
-        }
-        if case .properties(let data) = propertyDataType {
-            return data
-        }
-        return nil
+            return nil
+        }.first { $0 != nil } ?? nil
     }
 
     init(_ trackCustomer: TrackCustomer) {
