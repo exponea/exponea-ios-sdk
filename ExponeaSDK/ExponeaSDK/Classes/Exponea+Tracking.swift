@@ -228,7 +228,7 @@ extension Exponea {
             }
             // Do the actual tracking
             try dependencies.trackingManager.track(.campaignClick, with: [data.campaignDataProperties])
-            if (dependencies.configuration.automaticSessionTracking) {
+            if dependencies.configuration.automaticSessionTracking {
                 // Campaign click should result in new session, unless there is an active session
                 if !dependencies.trackingManager.hasActiveSession {
                     Exponea.logger.log(.verbose, message: "Triggering session start for campaign click")

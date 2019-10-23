@@ -184,7 +184,7 @@ extension TrackingManager: TrackingManagerType {
             .filter({ $0.eventType == type })
             .sorted(by: {$0.timestamp < $1.timestamp})
         var projectTokens: Set<String> = []
-        while (!events.isEmpty) {
+        while !events.isEmpty {
             let event = events.removeLast()
             if let projectToken = event.projectToken, !projectTokens.contains(projectToken) {
                 projectTokens.insert(projectToken)

@@ -320,7 +320,7 @@ class DatabaseManagerSpec: QuickSpec {
                         var doneCount = 0
                         func done() {
                             doneCount += 1
-                            if (doneCount == 100) {
+                            if doneCount == 100 {
                                 allDone()
                             }
                         }
