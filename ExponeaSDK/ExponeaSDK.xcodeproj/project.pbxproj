@@ -37,11 +37,12 @@
 		05114E6B2347483F00201EE6 /* objc_tryCatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 05114E6A234747DE00201EE6 /* objc_tryCatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */; };
 		052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */; };
+		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
 		05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BD2342413E00D78452 /* NetworkStubbing.swift */; };
 		05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05AA63CA2343805C00D78452 /* .swiftlint.yml */; };
-		05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05E1A3802359B3A500E5EDDE /* .swiftlint.yml */; };
 		05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */; };
+		05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05E1A3802359B3A500E5EDDE /* .swiftlint.yml */; };
 		05EB8B6C2344F4D700AAC98B /* Configuration+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */; };
@@ -304,11 +305,12 @@
 		05114E6A234747DE00201EE6 /* objc_tryCatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objc_tryCatch.h; sourceTree = "<group>"; };
 		052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerErrorSpec.swift; sourceTree = "<group>"; };
 		052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
+		05583E9A23603BA900F7084E /* PushNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParser.swift; sourceTree = "<group>"; };
 		05AA63BB2342362B00D78452 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
 		05AA63BD2342413E00D78452 /* NetworkStubbing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStubbing.swift; sourceTree = "<group>"; };
 		05AA63CA2343805C00D78452 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
-		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSManagedObjectWithContext.swift; sourceTree = "<group>"; };
+		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Configuration+Validation.swift"; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
@@ -686,7 +688,6 @@
 			children = (
 				C0A6DE9C20EAC16900C5F744 /* Customer.swift */,
 				C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */,
-				4CA1874622C931B80098A1EA /* NSManagedObject+Name.swift */,
 				C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */,
 				C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */,
 				05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */,
@@ -769,6 +770,7 @@
 				C0EB5D9220B811F900F1031F /* PushNotificationManager.swift */,
 				C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */,
 				C0EB5D9420B8123200F1031F /* PushNotificationSelectors.swift */,
+				05583E9A23603BA900F7084E /* PushNotificationParser.swift */,
 			);
 			path = "Push Notifications";
 			sourceTree = "<group>";
@@ -1085,10 +1087,7 @@
 				C0EB5D8D20B710A900F1031F /* Data+TokenString.swift */,
 				C0EB5D8F20B7F8A900F1031F /* DispatchQueue+OnceTracker.swift */,
 				C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */,
-				C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */,
-				C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */,
 				C0753E9620A5808C00A779FF /* NSPersistentContainer+Bundle.swift */,
-				23E725E3214AA7A900B552B8 /* Reachability.swift */,
 				B4AF83BA22C6108200061350 /* String+URLValidation.swift */,
 				C0F2406920BC38EC00CAF7CE /* Swizzle.swift */,
 				C0EB5D8B20B70D5000F1031F /* Swizzler.swift */,
@@ -1581,6 +1580,7 @@
 				C0A6DEA520EAC16900C5F744 /* TrackCustomer.swift in Sources */,
 				01EC2DA7207E4FBA0031BFEB /* EventsRequest.swift in Sources */,
 				01EC2DAB207E53D90031BFEB /* AttributesListDescription.swift in Sources */,
+				05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */,
 				C0F7A59D21AE921300BA392F /* NotificationData.swift in Sources */,
 				C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */,
 				C0329E5F20F76EB00051F5DF /* URLRequest+Debug.swift in Sources */,

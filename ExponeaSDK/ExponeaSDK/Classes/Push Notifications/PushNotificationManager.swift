@@ -63,82 +63,23 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     // MARK: - Actions -
 
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) {
-        guard let userInfo = userInfoObject as? [String: Any] else {
-            Exponea.logger.log(.error, message: "Failed to convert push payload.")
+        guard let pushOpenedData = PushNotificationParser.parsePushOpened(
+            userInfoObject: userInfoObject,
+            actionIdentifier: actionIdentifier
+        ) else {
             return
-        }
-
-        var properties: [String: JSONValue] = [:]
-        let attributes = userInfo["attributes"] as? [String: Any]
-
-        // If attributes is present, then campaign tracking info is nested in there, decode and process it
-        if let attributes = attributes,
-            let data = try? JSONSerialization.data(withJSONObject: attributes, options: []),
-            let model = try? decoder.decode(NotificationData.self, from: data) {
-            properties = model.properties
-        } else if let notificationData = userInfo["data"] as? [String: Any],
-            let data = try? JSONSerialization.data(withJSONObject: notificationData, options: []),
-            let model = try? decoder.decode(NotificationData.self, from: data) {
-            properties = model.properties
-        }
-
-        properties["status"] = .string("clicked")
-        properties["os_name"] = .string("iOS")
-        properties["platform"] = .string("iOS")
-        properties["action_type"] = .string("mobile notification")
-
-        // Handle actions
-
-        let action: ExponeaNotificationActionType
-        let actionValue: String?
-
-        // If we have action identifier then a button was pressed
-        if let identifier = actionIdentifier, identifier != UNNotificationDefaultActionIdentifier {
-            // Track this notification action type as button press
-            properties["notification_action_type"] = .string("button")
-
-            // Fetch action (only a value if a custom button was pressed)
-            // Format of action id should look like - EXPONEA_APP_OPEN_ACTION_0
-            // We need to get the right index and fetch the correct action url from payload, if any
-            let indexString = identifier.components(separatedBy: "_").last
-            if let indexString = indexString, let index = Int(indexString),
-                let actions = userInfo["actions"] as? [[String: String]], actions.count > index {
-                let actionDict = actions[index]
-                action = ExponeaNotificationActionType(rawValue: actionDict["action"] ?? "") ?? .none
-                actionValue = actionDict["url"]
-
-                // Track the notification action title
-                if let name = actionDict["title"] {
-                    properties["notification_action_name"] = .string(name)
-                }
-
-            } else {
-                action = .none
-                actionValue = nil
-            }
-        } else {
-            // Fetch notification action (on tap of notification)
-            let notificationActionString = (userInfo["action"] as? String ?? "")
-            action = ExponeaNotificationActionType(rawValue: notificationActionString) ?? .none
-            actionValue = userInfo["url"] as? String
-
-            // This was a press directly on notification insted of a button so track it as action type
-            properties["notification_action_type"] = .string("notification")
         }
 
         var postAction: (() -> Void)?
 
-        switch action {
+        switch pushOpenedData.actionType {
         case .none, .openApp:
             // No need to do anything, app was opened automatically
             break
 
         case .browser, .deeplink:
             // Open the deeplink, iOS will handle if deeplink to safari/other apps
-            if let value = actionValue, let url = URL(string: value) {
-                // Track the action URL
-                properties["notification_action_url"] = .string(value)
-
+            if let value = pushOpenedData.actionValue, let url = URL(string: value) {
                 // Create an action to be executed after tracking
                 postAction = {
                     let application = UIApplication.shared
@@ -182,13 +123,17 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
         // Track the event
         do {
-            try trackingManager?.track(.pushOpened, with: [.properties(properties)])
+            try trackingManager?.track(.pushOpened, with: pushOpenedData.eventData)
         } catch {
             Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
         }
 
         // Notify the delegate
-        delegate?.pushNotificationOpened(with: action, value: actionValue, extraData: attributes)
+        delegate?.pushNotificationOpened(
+            with: pushOpenedData.actionType,
+            value: pushOpenedData.actionValue,
+            extraData: pushOpenedData.extraData
+        )
 
         // If we have post process action, execute it
         postAction?()
