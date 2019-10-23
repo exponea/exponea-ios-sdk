@@ -12,7 +12,6 @@ disabled_rules:
     - redundant_optional_initialization
     - syntactic_sugar
     - type_body_length
-    - unneeded_break_in_switch
     - force_unwrapping
 
 opt_in_rules:

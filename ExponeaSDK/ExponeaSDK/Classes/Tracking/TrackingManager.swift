@@ -601,7 +601,6 @@ extension TrackingManager {
                             Failed to upload customer event due to connection or server error. \
                             \(error.localizedDescription)
                             """)
-                        break
 
                     default:
                         // Handle all other errors regularly
@@ -669,7 +668,6 @@ extension TrackingManager {
                             Failed to upload event due to connection or server error. \
                             \(error.localizedDescription)
                             """)
-                        break
 
                     default:
                         Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")

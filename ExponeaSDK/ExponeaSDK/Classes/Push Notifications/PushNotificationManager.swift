@@ -424,7 +424,6 @@ extension PushNotificationManager {
             Exponea.logger.log(.error, message: """
             Unhandled UNUserNotificationCenterDelegate change, automatic push notification tracking disabled.
             """)
-            break
         }
     }
 
