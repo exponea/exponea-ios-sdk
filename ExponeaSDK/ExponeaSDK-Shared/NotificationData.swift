@@ -9,23 +9,79 @@
 import Foundation
 
 public struct NotificationData: Codable {
-    let campaignId: String
-    let campaignName: String
-    let actionId: Int
+    let eventType: String?
+    let campaignId: String?
+    let campaignName: String?
+    let actionId: Int?
+    let actionName: String?
+    let actionType: String?
+    let campaignPolicy: String?
+    let platform: String?
+    let language: String?
+    let recipient: String?
+    let subject: String?
     let timestamp: Date
 
-    init(campaignId: String, campaignName: String, actionId: Int, timestamp: Date = Date()) {
+    public init(
+        eventType: String? = nil,
+        campaignId: String? = nil,
+        campaignName: String? = nil,
+        actionId: Int? = nil,
+        actionName: String? = nil,
+        actionType: String? = nil,
+        campaignPolicy: String? = nil,
+        platform: String? = nil,
+        language: String? = nil,
+        recipient: String? = nil,
+        subject: String? = nil,
+        timestamp: Date = Date()
+    ) {
+        self.eventType = eventType
         self.campaignId = campaignId
         self.campaignName = campaignName
         self.actionId = actionId
+        self.actionName = actionName
+        self.actionType = actionType
+        self.campaignPolicy = campaignPolicy
+        self.platform = platform
+        self.language = language
+        self.recipient = recipient
+        self.subject = subject
         self.timestamp = timestamp
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        campaignId = try container.decode(String.self, forKey: .campaignId)
-        campaignName = try container.decode(String.self, forKey: .campaignName)
-        actionId = try container.decode(Int.self, forKey: .actionId)
-        timestamp = try container.decodeIfPresent(Date.self, forKey: .timestamp) ?? Date()
+        eventType = try? container.decodeIfPresent(String.self, forKey: .eventType)
+        campaignId = try? container.decodeIfPresent(String.self, forKey: .campaignId)
+        campaignName = try? container.decodeIfPresent(String.self, forKey: .campaignName)
+        actionId = try? container.decodeIfPresent(Int.self, forKey: .actionId)
+        actionName = try? container.decodeIfPresent(String.self, forKey: .actionName)
+        actionType = try? container.decodeIfPresent(String.self, forKey: .actionType)
+        campaignPolicy = try? container.decodeIfPresent(String.self, forKey: .campaignPolicy)
+        platform = try? container.decodeIfPresent(String.self, forKey: .platform)
+        language = try? container.decodeIfPresent(String.self, forKey: .language)
+        recipient = try? container.decodeIfPresent(String.self, forKey: .recipient)
+        subject = try? container.decodeIfPresent(String.self, forKey: .subject)
+        timestamp = (try? container.decodeIfPresent(Date.self, forKey: .timestamp)) ?? Date()
+    }
+
+    public static func deserialize(from dictionary: [String: Any]) -> NotificationData? {
+        guard let data = try? JSONSerialization.data(withJSONObject: dictionary, options: []) else {
+            return nil
+        }
+        return deserialize(from: data)
+    }
+
+    public static func deserialize(from data: Data) -> NotificationData? {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try? decoder.decode(NotificationData.self, from: data)
+    }
+
+    public func serialize() -> Data? {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        return try? encoder.encode(self)
     }
 }

@@ -129,7 +129,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
         // Track the event
         do {
-            try trackingManager?.track(.pushOpened, with: pushOpenedData.eventData)
+            try trackingManager?.track(pushOpenedData.eventType, with: pushOpenedData.eventData)
         } catch {
             Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
         }
@@ -184,25 +184,32 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             return
         }
 
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-
         // Process notifications
         for data in dataArray {
-            guard let notification = try? decoder.decode(NotificationData.self, from: data) else { continue }
+            guard let notification = NotificationData.deserialize(from: data) else {
+                Exponea.logger.log(.warning, message: "Cannot deserialize stored delivered push data.")
+                continue
+            }
 
             // Create payload
-            var properties: [String: JSONValue] = [:]
+            var properties: [String: JSONValue] = notification.properties
             properties["status"] = .string("delivered")
-            properties["os_name"] = .string("iOS")
-            properties["platform"] = .string("iOS")
-            properties["action_type"] = .string("mobile notification")
-            properties.merge(notification.properties, uniquingKeysWith: { $1 })
 
             // Track the event
             do {
-                try trackingManager?.track(.pushDelivered, with: [.properties(properties),
-                                                                  .timestamp(notification.timestamp.timeIntervalSince1970)])
+                if let customEventType = notification.eventType,
+                   !customEventType.isEmpty,
+                   customEventType != Constants.EventTypes.pushDelivered {
+                    try trackingManager?.track(
+                        .customEvent,
+                        with: [.eventType(customEventType), .properties(properties), .timestamp(notification.timestamp.timeIntervalSince1970)]
+                    )
+                } else {
+                    try trackingManager?.track(
+                        .pushDelivered,
+                        with: [.properties(properties), .timestamp(notification.timestamp.timeIntervalSince1970)]
+                    )
+                }
             } catch {
                 Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
             }

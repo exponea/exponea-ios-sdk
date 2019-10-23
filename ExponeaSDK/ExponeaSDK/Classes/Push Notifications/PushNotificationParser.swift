@@ -13,6 +13,7 @@ struct PushNotificationParser {
     struct PushOpenedData: Equatable {
         let actionType: ExponeaNotificationActionType
         let actionValue: String?
+        let eventType: EventType
         let eventData: [DataType]
         let extraData: [String: Any]?
 
@@ -43,24 +44,23 @@ struct PushNotificationParser {
             return nil
         }
 
-        var properties: [String: JSONValue] = [:]
-        let attributes = userInfo["attributes"] as? [String: Any]
+        var eventData: [DataType] = []
+        var eventType = EventType.pushOpened
+        var properties: [String: JSONValue] = [
+            "status": .string("clicked"),
+            "cta": .string("notification"),
+            "url": .string("app")
+        ]
+        let attributes = userInfo["attributes"] as? [String: Any] ?? [:]
+        let notificationData = NotificationData.deserialize(from: attributes) ?? NotificationData()
 
-        // If attributes is present, then campaign tracking info is nested in there, decode and process it
-        if let attributes = attributes,
-            let data = try? JSONSerialization.data(withJSONObject: attributes, options: []),
-            let model = try? decoder.decode(NotificationData.self, from: data) {
-            properties = model.properties
-        } else if let notificationData = userInfo["data"] as? [String: Any],
-            let data = try? JSONSerialization.data(withJSONObject: notificationData, options: []),
-            let model = try? decoder.decode(NotificationData.self, from: data) {
-            properties = model.properties
+        properties.merge(notificationData.properties) { (current, _) in current }
+        if let customEventType = notificationData.eventType,
+           !customEventType.isEmpty,
+           customEventType != Constants.EventTypes.pushOpen {
+            eventType = .customEvent
+            eventData.append(.eventType(customEventType))
         }
-
-        properties["status"] = .string("clicked")
-        properties["os_name"] = .string("iOS")
-        properties["platform"] = .string("iOS")
-        properties["action_type"] = .string("mobile notification")
 
         // Handle actions
 
@@ -69,9 +69,6 @@ struct PushNotificationParser {
 
         // If we have action identifier then a button was pressed
         if let identifier = actionIdentifier, identifier != UNNotificationDefaultActionIdentifier {
-            // Track this notification action type as button press
-            properties["notification_action_type"] = .string("button")
-
             // Fetch action (only a value if a custom button was pressed)
             // Format of action id should look like - EXPONEA_APP_OPEN_ACTION_0
             // We need to get the right index and fetch the correct action url from payload, if any
@@ -84,7 +81,7 @@ struct PushNotificationParser {
 
                 // Track the notification action title
                 if let name = actionDict["title"] {
-                    properties["notification_action_name"] = .string(name)
+                    properties["cta"] = .string(name)
                 }
 
             } else {
@@ -96,9 +93,6 @@ struct PushNotificationParser {
             let notificationActionString = (userInfo["action"] as? String ?? "")
             action = ExponeaNotificationActionType(rawValue: notificationActionString) ?? .none
             actionValue = userInfo["url"] as? String
-
-            // This was a press directly on notification insted of a button so track it as action type
-            properties["notification_action_type"] = .string("notification")
         }
 
         switch action {
@@ -107,15 +101,18 @@ struct PushNotificationParser {
 
         case .browser, .deeplink:
             if let value = actionValue, URL(string: value) != nil {
-                properties["notification_action_url"] = .string(value)
+                properties["url"] = .string(value)
             }
         }
+
+        eventData.append(.properties(properties))
 
         return PushOpenedData(
             actionType: action,
             actionValue: actionValue,
-            eventData: [.properties(properties)],
-            extraData: attributes
+            eventType: eventType,
+            eventData: eventData,
+            extraData: userInfo["attributes"] as? [String: Any]
         )
     }
 }

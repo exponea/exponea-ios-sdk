@@ -71,31 +71,7 @@ public class ExponeaNotificationService {
                 bestAttemptContent?.attachments = [attachment]
             }
 
-            // Track push delivered if app group configured
-            if let appGroup = appGroup {
-                // Prepare storage
-                let userDefaults = UserDefaults(suiteName: appGroup)
-                var delivered = userDefaults?.array(forKey: Constants.General.deliveredPushUserDefaultsKey) ?? []
-
-                // Create data
-                let attributes = content.userInfo["attributes"] as? [AnyHashable: Any] ?? content.userInfo["data"] as? [AnyHashable: Any]
-                let campaignId = attributes?["campaign_id"] as? String ?? "N/A"
-                let campaignName = attributes?["campaign_name"] as? String ?? "N/A"
-                let actionId = attributes?["action_id"] as? Int ?? 0
-                let data = NotificationData(campaignId: campaignId,
-                                            campaignName: campaignName,
-                                            actionId: actionId)
-
-                // Encode and save
-                let encoder = JSONEncoder()
-                encoder.keyEncodingStrategy = .convertToSnakeCase
-                if let encoded = try? encoder.encode(data) {
-                    delivered.append(encoded)
-                }
-
-                // Update in User Defaults
-                userDefaults?.set(delivered, forKey: Constants.General.deliveredPushUserDefaultsKey)
-            }
+            saveNotificationForLaterTracking(userInfo: content.userInfo)
         }
 
         // We're done modifying, notify
@@ -105,6 +81,24 @@ public class ExponeaNotificationService {
 
         // Finally clean
         clean()
+    }
+
+    func saveNotificationForLaterTracking(userInfo: [AnyHashable: Any]) {
+        guard let appGroup = appGroup else {
+            return
+        }
+        guard let userDefaults = UserDefaults(suiteName: appGroup) else {
+            return
+        }
+
+        let attributes = userInfo["attributes"] as? [String: Any] ?? [:]
+        let notification = NotificationData.deserialize(from: attributes) ?? NotificationData()
+
+        if let serialized = notification.serialize() {
+            var delivered = userDefaults.array(forKey: Constants.General.deliveredPushUserDefaultsKey) ?? []
+            delivered.append(serialized)
+            userDefaults.set(delivered, forKey: Constants.General.deliveredPushUserDefaultsKey)
+        }
     }
 
     func save(_ identifier: String, data: Data, options: [AnyHashable: Any]?) -> UNNotificationAttachment? {
