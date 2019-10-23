@@ -327,8 +327,7 @@ extension DatabaseManager: DatabaseManagerType {
             guard let trackCustomer: TrackCustomer = object as? TrackCustomer else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
-            let retries = NSNumber(integerLiteral: customerEvent.retries + 1)
-            trackCustomer.retries = retries
+            trackCustomer.retries = NSNumber(value: customerEvent.retries + 1)
             try context.save()
         }
     }
@@ -342,8 +341,7 @@ extension DatabaseManager: DatabaseManagerType {
             guard let trackEvent: TrackEvent = object as? TrackEvent else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
-            let retries = NSNumber(integerLiteral: event.retries + 1)
-            trackEvent.retries = retries
+            trackEvent.retries = NSNumber(value: event.retries + 1)
             try context.save()
         }
     }
