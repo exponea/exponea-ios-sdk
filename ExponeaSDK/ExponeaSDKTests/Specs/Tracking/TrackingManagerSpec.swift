@@ -10,7 +10,6 @@ import Foundation
 import Nimble
 import Mockingjay
 import Quick
-import Mockingjay
 
 @testable import ExponeaSDK
 

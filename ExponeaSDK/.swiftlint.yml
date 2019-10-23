@@ -3,7 +3,6 @@
 disabled_rules:
     - control_statement
     - cyclomatic_complexity
-    - duplicate_imports
     - empty_enum_arguments
     - file_length
     - for_where
