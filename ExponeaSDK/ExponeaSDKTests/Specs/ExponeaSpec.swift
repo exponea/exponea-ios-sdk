@@ -209,6 +209,133 @@ class ExponeaSpec: QuickSpec {
                     expect(MockLogger.messages).to(beEmpty())
                 }
             }
+
+            context("executing with dependencies") {
+                it("should complete with .failure when exponea is not configured") {
+                    let exponea = Exponea()
+                    let task: Exponea.DependencyTask<String> = {_, completion in
+                        completion(Result.success("success!"))
+                    }
+                    waitUntil { done in
+                        exponea.executeSafelyWithDependencies(task) { result in
+                            guard case .failure = result else {
+                                XCTFail("Result should be a failure")
+                                done()
+                                return
+                            }
+                            guard let error = result.error as? ExponeaError, case .notConfigured = error else {
+                                XCTFail("Result error should be .notConfigured")
+                                done()
+                                return
+                            }
+                            done()
+                        }
+                    }
+                }
+                it("should complete with .success when exponea is configured") {
+                    let exponea = Exponea()
+                    exponea.configure(plistName: "ExponeaConfig")
+                    let task: Exponea.DependencyTask<String> = {_, completion in
+                        completion(Result.success("success!"))
+                    }
+                    waitUntil { done in
+                        exponea.executeSafelyWithDependencies(task) { result in
+                            guard case .success(let data) = result else {
+                                XCTFail("Result error should be .success")
+                                done()
+                                return
+                            }
+                            expect(data).to(equal("success!"))
+                            done()
+                        }
+                    }
+                }
+
+                it("should complete with .failure when tasks throws an error") {
+                    let exponea = Exponea()
+                    exponea.configure(plistName: "ExponeaConfig")
+                    enum MyError: Error {
+                        case someError(message: String)
+                    }
+                    let task: Exponea.DependencyTask<String> = {_, completion in
+                        throw MyError.someError(message: "something went wrong")
+                    }
+                    waitUntil { done in
+                        exponea.executeSafelyWithDependencies(task) { result in
+                            guard case .failure = result else {
+                                XCTFail("Result error should be .failure")
+                                done()
+                                return
+                            }
+                            guard let error = result.error as? MyError, case .someError = error else {
+                                XCTFail("Result error should be .someError")
+                                done()
+                                return
+                            }
+                            done()
+                        }
+                    }
+                }
+
+                it("should complete with .failure when tasks raises NSException") {
+                    let exponea = Exponea()
+                    exponea.configure(plistName: "ExponeaConfig")
+                    let task: Exponea.DependencyTask<String> = {_, completion in
+                        NSException(
+                            name: NSExceptionName(rawValue: "mock exception name"),
+                            reason: "mock reason",
+                            userInfo: nil
+                        ).raise()
+                    }
+                    waitUntil { done in
+                        exponea.executeSafelyWithDependencies(task) { result in
+                            guard case .failure = result else {
+                                XCTFail("Result error should be .failure")
+                                done()
+                                return
+                            }
+                            guard let error = result.error as? ExponeaError, case .nsExceptionRaised = error else {
+                                XCTFail("Result error should be .nsExceptionRaised")
+                                done()
+                                return
+                            }
+                            done()
+                        }
+                    }
+                }
+                it("should complete any task with .failure after NSException was raised") {
+                    let exponea = Exponea()
+                    exponea.configure(plistName: "ExponeaConfig")
+                    let task: Exponea.DependencyTask<String> = {_, completion in
+                        NSException(
+                            name: NSExceptionName(rawValue: "mock exception name"),
+                            reason: "mock reason",
+                            userInfo: nil
+                        ).raise()
+                    }
+                    waitUntil { done in
+                        exponea.executeSafelyWithDependencies(task) { result in done() }
+                    }
+                    let nextTask: Exponea.DependencyTask<String> = {_, completion in
+                        completion(Result.success("success!"))
+                    }
+                    waitUntil { done in
+                        exponea.executeSafelyWithDependencies(nextTask) { result in
+                            guard case .failure = result else {
+                                XCTFail("Result should be a failure")
+                                done()
+                                return
+                            }
+                            guard let error = result.error as? ExponeaError, case .nsExceptionInconsistency = error else {
+                                XCTFail("Result error should be .nsExceptionInconsistency")
+                                done()
+                                return
+                            }
+                            done()
+                        }
+                    }
+                }
+            }
         }
     }
 }

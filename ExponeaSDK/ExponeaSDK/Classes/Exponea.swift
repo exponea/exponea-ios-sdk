@@ -103,6 +103,9 @@ public class Exponea: ExponeaType {
         return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     }()
 
+    // Once ExponeaSDK runs into a NSException, all further calls will be disabled
+    internal var nsExceptionRaised: Bool = false
+
     // MARK: - Init -
 
     /// The initialiser is internal, so that only the singleton can exist when used in production.
@@ -119,30 +122,38 @@ public class Exponea: ExponeaType {
 
     internal func sharedInitializer(configuration: Configuration) {
         Exponea.logger.log(.verbose, message: "Configuring Exponea with provided configuration:\n\(configuration)")
+        let exception = objc_tryCatch {
+            do {
+                // Create database
+                let database = try DatabaseManager()
 
-        do {
-            // Create database
-            let database = try DatabaseManager()
+                // Recreate repository
+                let repository = ServerRepository(configuration: configuration)
+                self.repository = repository
 
-            // Recreate repository
-            let repository = ServerRepository(configuration: configuration)
-            self.repository = repository
-
-            // Finally, configuring tracking manager
-            self.trackingManager = try TrackingManager(repository: repository,
-                                                   database: database,
-                                                   userDefaults: userDefaults)
-            processSavedCampaignData()
-        } catch {
-            // Failing gracefully, if setup failed
+                // Finally, configuring tracking manager
+                self.trackingManager = try TrackingManager(repository: repository,
+                                                       database: database,
+                                                       userDefaults: userDefaults)
+                processSavedCampaignData()
+            } catch {
+                // Failing gracefully, if setup failed
+                Exponea.logger.log(.error, message: """
+                    Error while creating dependencies, Exponea cannot be configured.\n\(error.localizedDescription)
+                    """)
+            }
+        }
+        if let exception = exception {
+            nsExceptionRaised = true
             Exponea.logger.log(.error, message: """
-                Error while creating dependencies, Exponea cannot be configured.\n\(error.localizedDescription)
-                """)
+            Error while creating dependencies, Exponea cannot be configured.\n
+            \(ExponeaError.nsExceptionRaised(exception).localizedDescription)
+            """)
         }
     }
 }
 
-// MARK: - Tracking -
+// MARK: - Dependencies + Safety wrapper -
 
 internal extension Exponea {
 
@@ -152,6 +163,9 @@ internal extension Exponea {
         repository: RepositoryType,
         trackingManager: TrackingManagerType
     )
+
+    typealias CompletionHandler<T> = ((Result<T>) -> Void)
+    typealias DependencyTask<T> = (Exponea.Dependencies, @escaping CompletionHandler<T>) throws -> Void
 
     /// Gets the Exponea dependencies. If Exponea wasn't configured it will throw an error instead.
     ///
@@ -164,6 +178,33 @@ internal extension Exponea {
                 throw ExponeaError.notConfigured
         }
         return (configuration, repository, trackingManager)
+    }
+
+    func executeSafelyWithDependencies<T>(
+        _ closure: DependencyTask<T>,
+        completion: @escaping CompletionHandler<T>
+    ) {
+        if nsExceptionRaised {
+            completion(.failure(ExponeaError.nsExceptionInconsistency))
+            return
+        }
+        let exception = objc_tryCatch {
+            do {
+                let dependencies = try getDependenciesIfConfigured()
+                try closure(dependencies, completion)
+            } catch {
+                Exponea.logger.log(.error, message: error.localizedDescription)
+                completion(.failure(error))
+            }
+        }
+        if let exception = exception {
+            nsExceptionRaised = true
+            completion(.failure(ExponeaError.nsExceptionRaised(exception)))
+        }
+    }
+
+    func executeSafelyWithDependencies(_ closure: (Exponea.Dependencies) throws -> Void) {
+        executeSafelyWithDependencies({ dep, _ in try closure(dep) }, completion: {_ in } as CompletionHandler<Any>)
     }
 }
 

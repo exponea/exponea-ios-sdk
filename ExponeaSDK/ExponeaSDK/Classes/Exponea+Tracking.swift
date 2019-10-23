@@ -9,16 +9,6 @@
 import Foundation
 
 extension Exponea {
-
-    internal func executeWithDependencies(_ closure: (Exponea.Dependencies) throws -> Void) {
-        do {
-            let dependencies = try getDependenciesIfConfigured()
-            try closure(dependencies)
-        } catch {
-            Exponea.logger.log(.error, message: error.localizedDescription)
-        }
-    }
-
     /// Adds new events to a customer. All events will be stored into coredata
     /// until it will be flushed (send to api).
     ///
@@ -27,7 +17,7 @@ extension Exponea {
     ///     - timestamp: Unix timestamp when the event was created.
     ///     - eventType: Name of event
     public func trackEvent(properties: [String: JSONConvertible], timestamp: Double?, eventType: String?) {
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
@@ -56,7 +46,7 @@ extension Exponea {
     ///     - properties: Object with event values.
     ///     - timestamp: Unix timestamp when the event was created.
     public func trackPayment(properties: [String: JSONConvertible], timestamp: Double?) {
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
@@ -84,7 +74,7 @@ extension Exponea {
     public func identifyCustomer(customerIds: [String: JSONConvertible]?,
                                  properties: [String: JSONConvertible],
                                  timestamp: Double?) {
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
@@ -126,7 +116,7 @@ extension Exponea {
     ///
     /// - Parameter token: String containing the push notification token.
     public func trackPushToken(_ token: String?) {
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
@@ -139,7 +129,7 @@ extension Exponea {
 
     /// Tracks the push notification clicked event to Exponea API.
     public func trackPushOpened(with userInfo: [AnyHashable: Any]) {
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
@@ -170,7 +160,7 @@ extension Exponea {
     // MARK: Sessions
 
     public func trackSessionStart() {
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
@@ -180,7 +170,7 @@ extension Exponea {
 
     /// Tracks a
     public func trackSessionEnd() {
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
@@ -231,7 +221,7 @@ extension Exponea {
             saveCampaignData(campaignData: data)
             return
         }
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             // Create initial data
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token")
@@ -258,7 +248,7 @@ extension Exponea {
 
     /// This method can be used to manually flush all available data to Exponea.
     public func flushData() {
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
@@ -271,7 +261,7 @@ extension Exponea {
     /// Anonymizes the user and re-creates the database.
     /// All customer identification (inclduing cookie) will be permanently deleted.
     public func anonymize() {
-        executeWithDependencies { dependencies in
+        executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }

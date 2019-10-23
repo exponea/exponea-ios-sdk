@@ -33,6 +33,8 @@
 		050961002321566000D59C01 /* TrackingManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050960FF2321566000D59C01 /* TrackingManagerSpec.swift */; };
 		0509610223216C7D00D59C01 /* TrackingManagerUpdate.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0509610123216C7D00D59C01 /* TrackingManagerUpdate.plist */; };
 		050961062322552300D59C01 /* MockLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050961052322552300D59C01 /* MockLogger.swift */; };
+		05114E69234747BC00201EE6 /* objc_tryCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 05114E68234747BC00201EE6 /* objc_tryCatch.m */; };
+		05114E6B2347483F00201EE6 /* objc_tryCatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 05114E6A234747DE00201EE6 /* objc_tryCatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */; };
 		052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */; };
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
@@ -299,6 +301,8 @@
 		050960FF2321566000D59C01 /* TrackingManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManagerSpec.swift; sourceTree = "<group>"; };
 		0509610123216C7D00D59C01 /* TrackingManagerUpdate.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TrackingManagerUpdate.plist; sourceTree = "<group>"; };
 		050961052322552300D59C01 /* MockLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockLogger.swift; sourceTree = "<group>"; };
+		05114E68234747BC00201EE6 /* objc_tryCatch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = objc_tryCatch.m; sourceTree = "<group>"; };
+		05114E6A234747DE00201EE6 /* objc_tryCatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objc_tryCatch.h; sourceTree = "<group>"; };
 		052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerErrorSpec.swift; sourceTree = "<group>"; };
 		052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
 		05AA63BB2342362B00D78452 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
@@ -940,6 +944,8 @@
 		F021E873206CFADF00788ABC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				05114E68234747BC00201EE6 /* objc_tryCatch.m */,
+				05114E6A234747DE00201EE6 /* objc_tryCatch.h */,
 				F021E85C206CF10200788ABC /* ExponeaSDK.h */,
 				F021E85D206CF10200788ABC /* Info.plist */,
 			);
@@ -1139,6 +1145,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05114E6B2347483F00201EE6 /* objc_tryCatch.h in Headers */,
 				F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1310,7 +1317,7 @@
 					};
 					F021E858206CF10200788ABC = {
 						CreatedOnToolsVersion = 9.2;
-						LastSwiftMigration = 1020;
+						LastSwiftMigration = 1100;
 						ProvisioningStyle = Manual;
 					};
 					F021E861206CF10200788ABC = {
@@ -1565,6 +1572,7 @@
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				C0753E9020A43D3900A779FF /* RepositoryError.swift in Sources */,
 				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
+				05114E69234747BC00201EE6 /* objc_tryCatch.m in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				C07E420120CA896B00920809 /* PersonalizationResponse.swift in Sources */,

@@ -11,47 +11,39 @@ import Foundation
 // MARK: - Fetching -
 
 extension Exponea {
-
-    internal func executeWithDependencies<T>(_ closure: (Exponea.Dependencies) throws -> Void,
-                                             completion: @escaping (Result<T>) -> Void) {
-        do {
-            let dependencies = try getDependenciesIfConfigured()
-            try closure(dependencies)
-        } catch {
-            Exponea.logger.log(.error, message: error.localizedDescription)
-            completion(.failure(error))
-        }
-    }
-
     public func fetchRecommendation(with request: RecommendationRequest,
                                     completion: @escaping (Result<RecommendationResponse>) -> Void) {
-        executeWithDependencies({
-            $0.repository.fetchRecommendation(recommendation: request,
-                                              for: $0.trackingManager.customerIds,
-                                              completion: completion)
+        executeSafelyWithDependencies({
+            $0.repository.fetchRecommendation(
+                recommendation: request,
+                for: $0.trackingManager.customerIds,
+                completion: $1
+            )
         }, completion: completion)
     }
 
     public func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
-        executeWithDependencies({
+        executeSafelyWithDependencies({
             guard $0.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token")
             }
 
-            $0.repository.fetchBanners(completion: completion)
+            $0.repository.fetchBanners(completion: $1)
         }, completion: completion)
     }
 
     public func fetchPersonalization(with request: PersonalizationRequest,
                                      completion: @escaping (Result<PersonalizationResponse>) -> Void) {
-        executeWithDependencies({
+        executeSafelyWithDependencies({
             guard $0.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token")
             }
 
-            $0.repository.fetchPersonalization(with: request,
-                                               for: $0.trackingManager.customerIds,
-                                               completion: completion)
+            $0.repository.fetchPersonalization(
+                with: request,
+                for: $0.trackingManager.customerIds,
+                completion: $1
+            )
         }, completion: completion)
     }
 
@@ -60,12 +52,12 @@ extension Exponea {
     /// - Parameter completion: A closure executed upon request completion containing the result
     ///                         which has either the returned data or error.
     public func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void) {
-        executeWithDependencies({
+        executeSafelyWithDependencies({
             guard $0.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token")
             }
 
-            $0.repository.fetchConsents(completion: completion)
+            $0.repository.fetchConsents(completion: $1)
         }, completion: completion)
     }
 }

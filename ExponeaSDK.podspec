@@ -77,7 +77,12 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files  = ["ExponeaSDK/ExponeaSDK/**/*.swift", "ExponeaSDK/ExponeaSDK-Shared/**/*.swift"]
+  s.source_files  = [
+    "ExponeaSDK/ExponeaSDK/**/*.swift",
+    "ExponeaSDK/ExponeaSDK-Shared/**/*.swift",
+    "ExponeaSDK/ExponeaSDK/Supporting Files/objc_tryCatch.h",
+    "ExponeaSDK/ExponeaSDK/Supporting Files/objc_tryCatch.m",
+  ]
   s.exclude_files = "ExponeaSDK/ExponeaSDK-Notifications/**/*"
   s.resources = ["ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld"]
 

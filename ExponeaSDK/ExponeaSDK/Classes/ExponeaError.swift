@@ -19,6 +19,8 @@ public enum ExponeaError: Error {
     case configurationError(String)
     case authorizationInsufficient(String)
     case unknownError(String?)
+    case nsExceptionRaised(NSException)
+    case nsExceptionInconsistency
 
     public var localizedDescription: String {
         switch self {
@@ -38,6 +40,12 @@ public enum ExponeaError: Error {
             You don't have sufficient authorizaiton to perform this action. Please, double check your
             authorization status. This function requires authorization \(required.capitalized).
             """
+
+        case .nsExceptionRaised(let exception):
+            return "NSException raised. \(String(describing: exception))"
+
+        case .nsExceptionInconsistency:
+            return "ExponeaSDK ran into NSException, SDK disabled until next run."
 
         case .unknownError(let details):
             return "Unknown error. \(details ?? "")"
