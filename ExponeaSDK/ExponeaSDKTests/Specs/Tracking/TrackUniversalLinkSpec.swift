@@ -27,7 +27,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                 let data: [DataType] = [.projectToken(projectToken),
                                         .properties(mockData.campaignData),
                                         .timestamp(nil)]
-                var lastRequest: URLRequest? = nil
+                var lastRequest: URLRequest?
                 NetworkStubbing.stubNetwork(
                     forProjectToken: projectToken,
                     withStatusCode: 200,

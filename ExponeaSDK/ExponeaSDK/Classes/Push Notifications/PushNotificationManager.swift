@@ -126,7 +126,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             properties["notification_action_type"] = .string("notification")
         }
 
-        var postAction: (() -> Void)? = nil
+        var postAction: (() -> Void)?
 
         switch action {
         case .none, .openApp:

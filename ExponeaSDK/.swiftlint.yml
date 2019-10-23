@@ -9,7 +9,6 @@ disabled_rules:
     - implicit_getter
     - line_length
     - notification_center_detachment
-    - redundant_optional_initialization
     - syntactic_sugar
     - type_body_length
     - force_unwrapping

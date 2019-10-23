@@ -30,7 +30,7 @@ public struct Configuration: Decodable {
 
     /// App group is used when push notification data is shared among service or content extensions.
     /// This is required for tracking delivered push notifications properly.
-    public var appGroup: String? = nil
+    public var appGroup: String?
 
     /// The maximum amount of retries before a flush event is considered as invalid and deleted from the database.
     public var flushEventMaxRetries: Int = Constants.Session.maxRetries
