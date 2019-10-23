@@ -451,7 +451,7 @@ extension TrackingManager {
             }
 
             switch self.flushingMode {
-            case .periodic(_):
+            case .periodic:
                 // Invalidate the timer
                 self.flushingTimer?.invalidate()
                 self.flushingTimer = nil
@@ -663,7 +663,7 @@ extension TrackingManager {
                     }
                 case .failure(let error):
                     switch error {
-                    case .connectionError, .serverError(_):
+                    case .connectionError, .serverError:
                         // If server or connection error, bail here and do not increase retry count
                         Exponea.logger.log(.warning, message: """
                             Failed to upload event due to connection or server error. \

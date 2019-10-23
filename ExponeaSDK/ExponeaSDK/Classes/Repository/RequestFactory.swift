@@ -90,7 +90,7 @@ extension RequestFactory {
         return { (data, response, error) in
             self.process(response, data: data, error: error, resultAction: { (result) in
                 switch result {
-                case .success(_):
+                case .success:
                     DispatchQueue.main.async {
                         completion(.success)
                     }
