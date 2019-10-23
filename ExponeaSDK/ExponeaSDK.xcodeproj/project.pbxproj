@@ -41,13 +41,13 @@
 		05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BD2342413E00D78452 /* NetworkStubbing.swift */; };
 		05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05AA63CA2343805C00D78452 /* .swiftlint.yml */; };
 		05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05E1A3802359B3A500E5EDDE /* .swiftlint.yml */; };
+		05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */; };
 		05EB8B6C2344F4D700AAC98B /* Configuration+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */; };
 		4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F5F2C22DF98C00069E71D /* MockExponea.swift */; };
 		4C588F8722AAAB3400916EE4 /* CampaignData+Properties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C588F8622AAAB3300916EE4 /* CampaignData+Properties.swift */; };
 		4C6BD13622ABA743004487A8 /* CampaignData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6BD13522ABA743004487A8 /* CampaignData.swift */; };
-		4CA1874722C931B80098A1EA /* NSManagedObject+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA1874622C931B80098A1EA /* NSManagedObject+Name.swift */; };
 		4CA851EA22C14ACF0066AFD8 /* get-universallink.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CA851E922C14ACF0066AFD8 /* get-universallink.json */; };
 		B40E9F5D22FAD25A0085B8A1 /* TokenTrackFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */; };
 		B42DA68922B03F7700BBA225 /* Consent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68822B03F7700BBA225 /* Consent.swift */; };
@@ -91,7 +91,6 @@
 		C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
 		C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C084D0EB2181C5EA005C0CA8 /* MockUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */; };
-		C084D0ED2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */; };
 		C08D53CF21B9474E00EA2C13 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C08D53CE21B9474E00EA2C13 /* UserNotifications.framework */; };
 		C08D53D121B9474E00EA2C13 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C08D53D021B9474E00EA2C13 /* UserNotificationsUI.framework */; };
 		C08D53D421B9474E00EA2C13 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08D53D321B9474E00EA2C13 /* NotificationViewController.swift */; };
@@ -309,6 +308,7 @@
 		05AA63BD2342413E00D78452 /* NetworkStubbing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStubbing.swift; sourceTree = "<group>"; };
 		05AA63CA2343805C00D78452 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
 		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSManagedObjectWithContext.swift; sourceTree = "<group>"; };
 		05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Configuration+Validation.swift"; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
@@ -316,7 +316,6 @@
 		4C3F5F2C22DF98C00069E71D /* MockExponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExponea.swift; sourceTree = "<group>"; };
 		4C588F8622AAAB3300916EE4 /* CampaignData+Properties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CampaignData+Properties.swift"; sourceTree = "<group>"; };
 		4C6BD13522ABA743004487A8 /* CampaignData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignData.swift; sourceTree = "<group>"; };
-		4CA1874622C931B80098A1EA /* NSManagedObject+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Name.swift"; sourceTree = "<group>"; };
 		4CA851E922C14ACF0066AFD8 /* get-universallink.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-universallink.json"; sourceTree = "<group>"; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTrackFrequency.swift; sourceTree = "<group>"; };
@@ -359,7 +358,6 @@
 		C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityValueResponse.swift; sourceTree = "<group>"; };
 		C0843CF020B6DC6000FAF0CB /* Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Example.entitlements; sourceTree = "<group>"; };
 		C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserNotificationCenter.swift; sourceTree = "<group>"; };
-		C084D0EC2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Convenience.swift"; sourceTree = "<group>"; };
 		C08D53C721B946E700EA2C13 /* ExponeaNotificationContentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationContentService.swift; sourceTree = "<group>"; };
 		C08D53CD21B9474E00EA2C13 /* ExampleNotificationContent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ExampleNotificationContent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C08D53CE21B9474E00EA2C13 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
@@ -691,6 +689,7 @@
 				4CA1874622C931B80098A1EA /* NSManagedObject+Name.swift */,
 				C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */,
 				C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */,
+				05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -1095,6 +1094,8 @@
 				C0EB5D8B20B70D5000F1031F /* Swizzler.swift */,
 				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
+				C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */,
+				23E725E3214AA7A900B552B8 /* Reachability.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -1537,7 +1538,6 @@
 				C0F2406C20BC50A000CAF7CE /* Exponea+Fetching.swift in Sources */,
 				01EC2DA5207E4F8F0031BFEB /* RecommendationRequest.swift in Sources */,
 				C07E421420CA8C1B00920809 /* BannerFrequency.swift in Sources */,
-				C084D0ED2181D7BE005C0CA8 /* NSManagedObject+Convenience.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
 				4C588F8722AAAB3400916EE4 /* CampaignData+Properties.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
@@ -1558,6 +1558,7 @@
 				01EC2DA9207E4FC10031BFEB /* CustomerExportRequest.swift in Sources */,
 				C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
+				05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */,
 				C0F2406E20BC511500CAF7CE /* Exponea+Tracking.swift in Sources */,
 				C0D9B07920A38A8C0066FB1E /* PaymentManagerDelegate.swift in Sources */,
 				C0A6DEA820EAC16900C5F744 /* Customer.swift in Sources */,
@@ -1597,7 +1598,6 @@
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
-				4CA1874722C931B80098A1EA /* NSManagedObject+Name.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				B4AF83BB22C6108200061350 /* String+URLValidation.swift in Sources */,
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,

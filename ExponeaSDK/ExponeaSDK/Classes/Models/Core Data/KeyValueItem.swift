@@ -19,7 +19,7 @@ protocol HasKeyValueProperties: class {
 }
 
 @objc(KeyValueItem)
-class KeyValueItem: NSManagedObject {
+class KeyValueItem: NSManagedObjectWithContext {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<KeyValueItem> {
         return NSFetchRequest<KeyValueItem>(entityName: "KeyValueItem")

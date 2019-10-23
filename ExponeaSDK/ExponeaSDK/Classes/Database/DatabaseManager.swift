@@ -72,13 +72,12 @@ extension DatabaseManager {
             }
 
             // Create and insert the object
-            let customer = Customer(context: context)
-            customer.uuid = UUID()
+            let customer = Customer(uuid: UUID(), context: context)
             context.insert(customer)
 
             do {
                 try context.save()
-                Exponea.logger.log(.verbose, message: "New customer created with UUID: \(customer.uuid!)")
+                Exponea.logger.log(.verbose, message: "New customer created with UUID: \(customer.uuid)")
             } catch let saveError as NSError {
                 let error = DatabaseManagerError.saveCustomerFailed(saveError.localizedDescription)
                 Exponea.logger.log(.error, message: error.localizedDescription)

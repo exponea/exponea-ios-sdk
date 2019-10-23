@@ -147,7 +147,7 @@ class TrackingManager {
     internal func trackInstallEvent() {
         /// Checking if the APP was launched before.
         /// If the key value is false, means that the event was not fired before.
-        let key = Constants.Keys.installTracked + (database.customer.uuid?.uuidString ?? "")
+        let key = Constants.Keys.installTracked + database.customer.uuid.uuidString
         guard userDefaults.bool(forKey: key) == false else {
             Exponea.logger.log(.verbose, message: "Install event was already tracked, skipping.")
             return

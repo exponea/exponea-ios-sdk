@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 @objc(TrackEvent)
-class TrackEvent: NSManagedObject {
+class TrackEvent: NSManagedObjectWithContext {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackEvent> {
         return NSFetchRequest<TrackEvent>(entityName: "TrackEvent")

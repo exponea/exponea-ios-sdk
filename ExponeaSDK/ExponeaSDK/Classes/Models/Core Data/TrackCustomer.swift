@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 @objc(TrackCustomer)
-class TrackCustomer: NSManagedObject {
+class TrackCustomer: NSManagedObjectWithContext {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackCustomer> {
         return NSFetchRequest<TrackCustomer>(entityName: "TrackCustomer")

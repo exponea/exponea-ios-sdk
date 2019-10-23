@@ -10,13 +10,13 @@ import Foundation
 import CoreData
 
 @objc(Customer)
-class Customer: NSManagedObject {
+class Customer: NSManagedObjectWithContext {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Customer> {
         return NSFetchRequest<Customer>(entityName: "Customer")
     }
 
-    @NSManaged public var uuid: UUID?
+    @NSManaged public var uuid: UUID
     @NSManaged public var pushToken: String?
     @NSManaged public var lastTokenTrackDate: Date?
     @NSManaged public var customIds: NSSet?
@@ -25,7 +25,7 @@ class Customer: NSManagedObject {
 
     var ids: [String: JSONValue] {
         let ids: [String: JSONValue]? = managedObjectContext?.performAndWait {
-            var data: [String: JSONValue] = ["cookie": .string(uuid!.uuidString)]
+            var data: [String: JSONValue] = ["cookie": .string(uuid.uuidString)]
 
             // Convert all properties to key value items.
             if let properties = customIds as? Set<KeyValueItem> {
@@ -45,6 +45,17 @@ class Customer: NSManagedObject {
         }
         return ids ?? [:]
     }
+
+    // https://stackoverflow.com/a/39239651/3179004 we need to expose superclass initializer for fetching
+    @objc
+    private override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?) {
+        super.init(entity: entity, insertInto: context)
+    }
+
+    init(uuid: UUID, context: NSManagedObjectContext) {
+        super.init(context: context)
+        self.uuid = uuid
+    }
 }
 
 // MARK: - CustomStringConvertible -
@@ -54,7 +65,7 @@ extension Customer {
         var text = "[Customer]\n"
 
         // Add cookie, push token and last track date
-        text += "UUID (cookie): \(uuid != nil ? uuid!.uuidString : "N/A")\n"
+        text += "UUID (cookie): \(uuid.uuidString)\n"
         text += "Push Token: \(pushToken ?? "N/A")"
         text += "Last Push Token Track Date: \(lastTokenTrackDate ?? Date.distantPast)"
 
@@ -123,7 +134,7 @@ extension Customer {
 
 class CustomerThreadSafe {
     public let managedObjectID: NSManagedObjectID
-    public let uuid: UUID?
+    public let uuid: UUID
     public let pushToken: String?
     public let lastTokenTrackDate: Date?
     public let ids: [String: JSONValue]
