@@ -298,9 +298,7 @@ extension TrackingManager {
     }
 
     var hasActiveSession: Bool {
-        get {
-            return sessionStartTime != 0
-        }
+        return sessionStartTime != 0
     }
 
     internal func triggerInitialSession() throws {

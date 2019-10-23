@@ -215,11 +215,9 @@ public extension Exponea {
     // MARK: - Configure -
 
     var isConfigured: Bool {
-        get {
-            return configuration != nil
-                && repository != nil
-                && trackingManager != nil
-        }
+        return configuration != nil
+            && repository != nil
+            && trackingManager != nil
     }
     /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
     ///
