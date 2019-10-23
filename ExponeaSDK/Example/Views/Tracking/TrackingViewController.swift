@@ -18,7 +18,7 @@ class TrackingViewController: UIViewController {
 
     @IBAction func registerForPush() {
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.badge, .alert, .sound]) { (granted, error) in
+        center.requestAuthorization(options: [.badge, .alert, .sound]) { (granted, _) in
             // Enable or disable features based on authorization.
             if granted {
                 DispatchQueue.main.async {

@@ -23,7 +23,7 @@ class PushNotificationDelegateObserver: NSObject {
         self.callback = callback
         super.init()
 
-        observation = observe(\.center.delegate, options: [.old, .new]) { object, change in
+        observation = observe(\.center.delegate, options: [.old, .new]) { _, change in
             callback(change)
         }
     }

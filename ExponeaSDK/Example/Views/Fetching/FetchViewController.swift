@@ -54,7 +54,7 @@ class FetchViewController: UIViewController {
         alertController.addTextField { (textField: UITextField!) -> Void in
             textField.placeholder = "ID"
         }
-        let saveAction = UIAlertAction(title: "Fetch", style: .default, handler: { alert -> Void in
+        let saveAction = UIAlertAction(title: "Fetch", style: .default, handler: { _ -> Void in
             let idField = alertController.textFields?[0] as UITextField?
             let request = PersonalizationRequest(ids: [idField?.text ?? ""])
 

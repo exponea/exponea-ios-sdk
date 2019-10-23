@@ -314,7 +314,7 @@ class ExponeaSpec: QuickSpec {
                         ).raise()
                     }
                     waitUntil { done in
-                        exponea.executeSafelyWithDependencies(task) { result in done() }
+                        exponea.executeSafelyWithDependencies(task) { _ in done() }
                     }
                     let nextTask: Exponea.DependencyTask<String> = {_, completion in
                         completion(Result.success("success!"))
