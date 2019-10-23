@@ -391,11 +391,9 @@ extension PushNotificationManager {
     /// Removes all swizzles related to notification opened,
     /// useful when `UNUserNotificationCenter` delegate has changed.
     private func unswizzleAllNotificationReceived() {
-        for swizzle in Swizzler.swizzles {
-            if swizzle.value.name == "NotificationOpened" {
-                Exponea.logger.log(.verbose, message: "Removing swizzle: \(swizzle.value)")
-                Swizzler.unswizzle(swizzle.value)
-            }
+        for swizzle in Swizzler.swizzles where swizzle.value.name == "NotificationOpened" {
+            Exponea.logger.log(.verbose, message: "Removing swizzle: \(swizzle.value)")
+            Swizzler.unswizzle(swizzle.value)
         }
     }
 
