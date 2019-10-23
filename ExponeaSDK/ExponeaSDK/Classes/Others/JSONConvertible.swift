@@ -50,7 +50,6 @@ extension Double: JSONConvertible {
 //    }
 //}
 
-
 //extension Array: JSONConvertible where Element == JSONConvertible {
 //    public var jsonValue: JSONValue {
 //        return .array(self.map({ $0.jsonValue }))

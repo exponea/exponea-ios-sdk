@@ -271,7 +271,6 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             lastTokenTrackDate = .init()
             trackPushToken()
 
-
         case .daily:
             // Compare last track dates, if equal or more than a day, track
             let now = Date()

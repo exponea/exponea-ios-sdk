@@ -25,7 +25,6 @@ class CustomerExportRequestSpec: QuickSpec {
                                                         timezone: nil,
                                                         responseFormat: exportFormat)
 
-
                 it("Should have export format csv") {
                     expect(custRequest.responseFormat) == ExportFormat.csv
                 }

@@ -374,7 +374,6 @@ extension DatabaseManager: DatabaseManagerType {
         }
     }
 
-
     public func clear() throws {
         // Delete all persistent stores
         let coordinator = persistentContainer.persistentStoreCoordinator
