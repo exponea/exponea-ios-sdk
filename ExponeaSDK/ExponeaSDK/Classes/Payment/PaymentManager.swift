@@ -53,8 +53,14 @@ class PaymentManager: NSObject, PaymentManagerType {
 }
 
 extension PaymentManager: SKPaymentTransactionObserver {
-    /// Track the information for the successfully payment and removing from the queue.
     public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        Exponea.shared.executeSafely {
+            paymentQueueUnsafe(queue, updatedTransactions: transactions)
+        }
+    }
+
+    /// Track the information for the successfully payment and removing from the queue.
+    public func paymentQueueUnsafe(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         for transaction in transactions {
             switch transaction.transactionState {
             case .purchased:
@@ -75,8 +81,14 @@ extension PaymentManager: SKPaymentTransactionObserver {
 }
 
 extension PaymentManager: SKProductsRequestDelegate {
-    /// Retrive information from the purchase item.
     public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        Exponea.shared.executeSafely {
+            productsRequestUnsafe(request, didReceive: response)
+        }
+    }
+
+    /// Retrive information from the purchase item.
+    public func productsRequestUnsafe(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         for product in response.products {
             let currencyCode = Locale.current.currencyCode ?? "N/A"
             let currency = Locale.current.localizedString(forCurrencyCode: currencyCode) ?? "N/A"

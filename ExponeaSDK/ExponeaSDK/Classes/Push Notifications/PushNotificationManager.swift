@@ -63,6 +63,12 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     // MARK: - Actions -
 
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) {
+        Exponea.shared.executeSafely {
+            handlePushOpenedUnsafe(userInfoObject: userInfoObject, actionIdentifier: actionIdentifier)
+        }
+    }
+
+    func handlePushOpenedUnsafe(userInfoObject: AnyObject?, actionIdentifier: String?) {
         guard let pushOpenedData = PushNotificationParser.parsePushOpened(
             userInfoObject: userInfoObject,
             actionIdentifier: actionIdentifier
@@ -140,6 +146,12 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     }
 
     func handlePushTokenRegistered(dataObject: AnyObject?) {
+        Exponea.shared.executeSafely {
+            handlePushTokenRegisteredUnsafe(dataObject: dataObject)
+        }
+    }
+
+    func handlePushTokenRegisteredUnsafe(dataObject: AnyObject?) {
         guard let tokenData = dataObject as? Data else {
             return
         }

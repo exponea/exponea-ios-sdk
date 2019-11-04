@@ -185,6 +185,7 @@ internal extension Exponea {
         completion: @escaping CompletionHandler<T>
     ) {
         if nsExceptionRaised {
+            Exponea.logger.log(.error, message: ExponeaError.nsExceptionInconsistency.localizedDescription)
             completion(.failure(ExponeaError.nsExceptionInconsistency))
             return
         }
@@ -199,12 +200,31 @@ internal extension Exponea {
         }
         if let exception = exception {
             nsExceptionRaised = true
+            Exponea.logger.log(.error, message: ExponeaError.nsExceptionRaised(exception).localizedDescription)
             completion(.failure(ExponeaError.nsExceptionRaised(exception)))
         }
     }
 
     func executeSafelyWithDependencies(_ closure: (Exponea.Dependencies) throws -> Void) {
         executeSafelyWithDependencies({ dep, _ in try closure(dep) }, completion: {_ in } as CompletionHandler<Any>)
+    }
+
+    func executeSafely(_ closure: () throws -> Void) {
+        if nsExceptionRaised {
+            Exponea.logger.log(.error, message: ExponeaError.nsExceptionInconsistency.localizedDescription)
+            return
+        }
+        let exception = objc_tryCatch {
+            do {
+                try closure()
+            } catch {
+                Exponea.logger.log(.error, message: error.localizedDescription)
+            }
+        }
+        if let exception = exception {
+            Exponea.logger.log(.error, message: ExponeaError.nsExceptionRaised(exception).localizedDescription)
+            nsExceptionRaised = true
+        }
     }
 }
 

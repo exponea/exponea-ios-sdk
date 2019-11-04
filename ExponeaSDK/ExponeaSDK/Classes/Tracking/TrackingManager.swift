@@ -372,6 +372,12 @@ extension TrackingManager {
     }
 
     @objc internal func applicationDidBecomeActive() {
+        Exponea.shared.executeSafely {
+            applicationDidBecomeActiveUnsafe()
+        }
+    }
+
+    internal func applicationDidBecomeActiveUnsafe() {
         // Cancel background task if we have any
         if let item = backgroundWorkItem {
             item.cancel()
@@ -400,6 +406,12 @@ extension TrackingManager {
     }
 
     @objc internal func applicationDidEnterBackground() {
+        Exponea.shared.executeSafely {
+            applicationDidEnterBackgroundUnsafe()
+        }
+    }
+
+    internal func applicationDidEnterBackgroundUnsafe() {
         // Save last session background time, in case we get terminated
         sessionBackgroundTime = Date().timeIntervalSince1970
 
@@ -428,7 +440,7 @@ extension TrackingManager {
     }
 
     internal func createBackgroundWorkItem() -> DispatchWorkItem {
-        return DispatchWorkItem { [weak self] in
+        let unsafeWork = { [weak self] in
             guard let `self` = self else { return }
 
             // If we're cancelled, stop background task
@@ -471,6 +483,8 @@ extension TrackingManager {
                 self.backgroundTask = UIBackgroundTaskIdentifier.invalid
             }
         }
+
+        return DispatchWorkItem { Exponea.shared.executeSafely { unsafeWork() } }
     }
 
     internal var shouldTrackCurrentSession: Bool {
