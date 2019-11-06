@@ -52,18 +52,18 @@ public struct NotificationData: Codable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        eventType = try? container.decodeIfPresent(String.self, forKey: .eventType)
-        campaignId = try? container.decodeIfPresent(String.self, forKey: .campaignId)
-        campaignName = try? container.decodeIfPresent(String.self, forKey: .campaignName)
-        actionId = try? container.decodeIfPresent(Int.self, forKey: .actionId)
-        actionName = try? container.decodeIfPresent(String.self, forKey: .actionName)
-        actionType = try? container.decodeIfPresent(String.self, forKey: .actionType)
-        campaignPolicy = try? container.decodeIfPresent(String.self, forKey: .campaignPolicy)
-        platform = try? container.decodeIfPresent(String.self, forKey: .platform)
-        language = try? container.decodeIfPresent(String.self, forKey: .language)
-        recipient = try? container.decodeIfPresent(String.self, forKey: .recipient)
-        subject = try? container.decodeIfPresent(String.self, forKey: .subject)
-        timestamp = (try? container.decodeIfPresent(Date.self, forKey: .timestamp)) ?? Date()
+        eventType = try? container.decode(String.self, forKey: .eventType)
+        campaignId = try? container.decode(String.self, forKey: .campaignId)
+        campaignName = try? container.decode(String.self, forKey: .campaignName)
+        actionId = try? container.decode(Int.self, forKey: .actionId)
+        actionName = try? container.decode(String.self, forKey: .actionName)
+        actionType = try? container.decode(String.self, forKey: .actionType)
+        campaignPolicy = try? container.decode(String.self, forKey: .campaignPolicy)
+        platform = try? container.decode(String.self, forKey: .platform)
+        language = try? container.decode(String.self, forKey: .language)
+        recipient = try? container.decode(String.self, forKey: .recipient)
+        subject = try? container.decode(String.self, forKey: .subject)
+        timestamp = (try? container.decode(Date.self, forKey: .timestamp)) ?? Date()
     }
 
     public static func deserialize(from dictionary: [String: Any]) -> NotificationData? {
