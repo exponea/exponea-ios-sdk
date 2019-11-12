@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     static let memoryLogger = MemoryLogger()
     var window: UIWindow?
+    var alertWindow: UIWindow?
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -63,13 +64,13 @@ extension AppDelegate {
     func showAlert(_ title: String, _ message: String?) {
         let alert = UIAlertController(title: title, message: message ?? "no body", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-        (window?.rootViewController as? UINavigationController)?.topViewController?.present(alert, animated: true, completion: nil)
-
-        let alertWindow = UIWindow(frame: UIScreen.main.bounds)
-        alertWindow.rootViewController = UIViewController()
-        alertWindow.windowLevel = .alert + 1
-        alertWindow.makeKeyAndVisible()
-        alertWindow.rootViewController?.present(alert, animated: true, completion: nil)
+        if alertWindow == nil {
+            alertWindow = UIWindow(frame: UIScreen.main.bounds)
+            alertWindow?.rootViewController = UIViewController()
+            alertWindow?.windowLevel = .alert + 1
+            alertWindow?.makeKeyAndVisible()
+        }
+        alertWindow?.rootViewController?.present(alert, animated: true, completion: nil)
     }
 }
 

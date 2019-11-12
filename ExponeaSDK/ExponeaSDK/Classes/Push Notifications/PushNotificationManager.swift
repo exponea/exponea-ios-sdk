@@ -90,7 +90,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
                 postAction = {
                     let application = UIApplication.shared
 
-                    let fallbackAction = {
+                    let openDeeplink = {
                         application.open(url, options: [:], completionHandler: { success in
                             // If no success opening url using shared app,
                             // try opening using current app
@@ -104,9 +104,10 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
                     }
 
                     // Validate this is a valid URL, prevents NSUserActivity crash with invalid URL
-                    // eg. MYDEEPLINK::HOME:SCREEN:1
-                    guard url.absoluteString.isValidURL else {
-                        fallbackAction()
+                    // only http/https is allowed https://developer.apple.com/documentation/foundation/nsuseractivity/1418086-webpageurl
+                    // eg. MYDEEPLINK::HOME:SCREEN:1, exponea://deeplink
+                    guard url.absoluteString.isValidURL, url.scheme == "http" || url.scheme == "https" else {
+                        openDeeplink()
                         return
                     }
 
@@ -115,13 +116,15 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
                     userActivity.webpageURL = url
 
                     // Try and open the link as universal link first
-                    let success = application.delegate?.application?(application,
-                                                                     continue: userActivity,
-                                                                     restorationHandler: { _ in }) ?? false
+                    let success = application.delegate?.application?(
+                        application,
+                        continue: userActivity,
+                        restorationHandler: { _ in }
+                    ) ?? false
 
                     // If universal links failed to open, let application handle the URL open
                     if !success {
-                        fallbackAction()
+                        openDeeplink()
                     }
                 }
             }
