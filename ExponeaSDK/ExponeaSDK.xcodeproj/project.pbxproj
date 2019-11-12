@@ -39,6 +39,9 @@
 		052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */; };
 		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */; };
+		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
+		0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */; };
+		0566424E2373198B00CCDB98 /* SwizzleTestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424D2373198B00CCDB98 /* SwizzleTestClass.swift */; };
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
 		05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BD2342413E00D78452 /* NetworkStubbing.swift */; };
 		05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05AA63CA2343805C00D78452 /* .swiftlint.yml */; };
@@ -313,6 +316,9 @@
 		052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
 		05583E9A23603BA900F7084E /* PushNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParser.swift; sourceTree = "<group>"; };
 		05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParserSpec.swift; sourceTree = "<group>"; };
+		05664249237309C300CCDB98 /* SwizzleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleSpec.swift; sourceTree = "<group>"; };
+		0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzlerSpec.swift; sourceTree = "<group>"; };
+		0566424D2373198B00CCDB98 /* SwizzleTestClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleTestClass.swift; sourceTree = "<group>"; };
 		05AA63BB2342362B00D78452 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
 		05AA63BD2342413E00D78452 /* NetworkStubbing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStubbing.swift; sourceTree = "<group>"; };
 		05AA63CA2343805C00D78452 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
@@ -687,6 +693,9 @@
 			children = (
 				C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */,
 				C028C3A12110980600B03ED4 /* JSONValueSpec.swift */,
+				05664249237309C300CCDB98 /* SwizzleSpec.swift */,
+				0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */,
+				0566424D2373198B00CCDB98 /* SwizzleTestClass.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -1690,7 +1699,9 @@
 				C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */,
 				F029BF2F208A386E00342498 /* FetchRecommendationSpec.swift in Sources */,
 				F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */,
+				0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */,
 				F04BEAAD211270CC00591950 /* FetchPersonalizationSpec.swift in Sources */,
+				0566424E2373198B00CCDB98 /* SwizzleTestClass.swift in Sources */,
 				F04BEA8621111A6100591950 /* EventSpec.swift in Sources */,
 				05BB22B2236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift in Sources */,
 				F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */,
@@ -1712,6 +1723,7 @@
 				F04BEA8E21118F4700591950 /* ResultSpec.swift in Sources */,
 				F0BE60F221105FF70082ABD8 /* EventTypeSpec.swift in Sources */,
 				F0BE60F5211064450082ABD8 /* EventsRequestSpec.swift in Sources */,
+				0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

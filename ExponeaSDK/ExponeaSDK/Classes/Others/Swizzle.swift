@@ -28,7 +28,7 @@ internal class Swizzle: CustomStringConvertible {
     }
 
     internal var description: String {
-        var retValue = "Swizzle on \(NSStringFromClass(type(of: self)))::\(NSStringFromSelector(selector)) ["
+        var retValue = "Swizzle on \(NSStringFromClass(aClass))::\(NSStringFromSelector(selector)) ["
         for (key, _) in blocks {
             retValue += "\(key),"
         }
