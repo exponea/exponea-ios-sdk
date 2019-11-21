@@ -9,11 +9,6 @@
 import Foundation
 import UserNotifications
 
-protocol PushNotificationManagerType: class {
-    var delegate: PushNotificationManagerDelegate? { get set }
-    func applicationDidBecomeActive()
-}
-
 public protocol PushNotificationManagerDelegate: class {
     func pushNotificationOpened(with action: ExponeaNotificationActionType,
                                 value: String?, extraData: [AnyHashable: Any]?)
@@ -24,12 +19,10 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     internal weak var trackingManager: TrackingManagerType?
 
     private let appGroup: String? // used for sharing data across extensions, fx. for push delivered tracking
-    private let center = UNUserNotificationCenter.current()
-    private var receiver: PushNotificationReceiver?
-    private var observer: PushNotificationDelegateObserver?
     private let tokenTrackFrequency: TokenTrackFrequency
     private var currentPushToken: String?
     private var lastTokenTrackDate: Date
+    lazy var pushNotificationSwizzler = PushNotificationSwizzler(self)
 
     internal weak var delegate: PushNotificationManagerDelegate?
 
@@ -51,13 +44,13 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         self.lastTokenTrackDate = lastTokenTrackDate ?? .distantPast
         super.init()
 
-        addAutomaticPushTracking()
+        pushNotificationSwizzler.addAutomaticPushTracking()
         checkForDeliveredPushMessages()
         checkForPushTokenFrequency()
     }
 
     deinit {
-        removeAutomaticPushTracking()
+        pushNotificationSwizzler.removeAutomaticPushTracking()
     }
 
     // MARK: - Actions -
@@ -257,153 +250,5 @@ extension PushNotificationManager {
     func applicationDidBecomeActive() {
         checkForDeliveredPushMessages()
         checkForPushTokenFrequency()
-    }
-}
-
-// MARK: - Swizzling -
-
-extension PushNotificationManager {
-
-    private func addAutomaticPushTracking() {
-        swizzleTokenRegistrationTracking()
-        swizzleNotificationReceived()
-    }
-
-    internal func removeAutomaticPushTracking() {
-        observer = nil
-
-        for swizzle in Swizzler.swizzles {
-            Swizzler.unswizzle(swizzle.value)
-        }
-    }
-
-    /// This functions swizzles the token registration method to intercept the token and submit it to Exponea.
-    private func swizzleTokenRegistrationTracking() {
-        guard let appDelegate = UIApplication.shared.delegate else {
-            return
-        }
-
-        // Monitor push registration
-        Swizzler.swizzleSelector(PushSelectorMapping.registration.original,
-                                 with: PushSelectorMapping.registration.swizzled,
-                                 for: type(of: appDelegate),
-                                 name: "PushTokenRegistration",
-                                 block: { [weak self] (_, dataObject, _) in
-                                    self?.handlePushTokenRegistered(dataObject: dataObject) },
-                                 addingMethodIfNecessary: true)
-    }
-
-    /// Swizzles the appropriate 'notification received' method to interecept received notifications and then calls
-    /// the `handlePushOpened` function with the payload so that the event can be tracked to Exponea.
-    ///
-    /// This method works in the following way:
-    ///
-    /// 1. It **always** observes changes to `UNUserNotificationCenter`'s `delegate` property and on changes
-    /// it calls `notificationsDelegateChanged(_:)`.
-    /// 2. Checks if we there is already an existing `UNUserNotificationCenter` delegate,
-    /// if so, calls `swizzleUserNotificationsDidReceive(on:)` and exits.
-    /// 3. If step 2. fails, it continues to check if the host AppDelegate implements either one of the supported
-    /// didReceiveNotification methods. If so, swizzles the one that's implemented while preferring the variant
-    /// with fetch handler as that is what Apple recommends.
-    /// 4. If step 3 fails, it creates a dummy object `PushNotificationReceiver` that implements the
-    /// `UNUserNotificationCenterDelegate` protocol, sets it as the delegate for `UNUserNotificationCenter` and lastly
-    /// swizzles the implementation with the custom one.
-    private func swizzleNotificationReceived() {
-        guard let appDelegate = UIApplication.shared.delegate else {
-            Exponea.logger.log(.error, message: "Critical error, no app delegate class available.")
-            return
-        }
-
-        let appDelegateClass: AnyClass = type(of: appDelegate)
-        var swizzleMapping: PushSelectorMapping.Mapping?
-
-        // Add observer
-        observer = PushNotificationDelegateObserver(center: center, callback: notificationsDelegateChanged)
-
-        // Check for UNUserNotification's delegate did receive remote notification, if it is setup
-        // prefer using that over the UIAppDelegate functions.
-        if let delegate = center.delegate {
-            swizzleUserNotificationsDidReceive(on: type(of: delegate))
-            return
-        }
-
-        // Check if UIAppDelegate notification receive functions are implemented
-        if class_getInstanceMethod(appDelegateClass, PushSelectorMapping.handlerReceive.original) != nil {
-            // Check for UIAppDelegate's did receive remote notification with fetch completion handler (preferred)
-            swizzleMapping = PushSelectorMapping.handlerReceive
-        } else if class_getInstanceMethod(appDelegateClass, PushSelectorMapping.deprecatedReceive.original) != nil {
-            // Check for UIAppDelegate's deprecated receive remote notification
-            swizzleMapping = PushSelectorMapping.deprecatedReceive
-        }
-
-        // If user is overriding either of UIAppDelegete receive functions, swizzle it
-        if let mapping = swizzleMapping {
-            // Do the swizzling
-            Swizzler.swizzleSelector(mapping.original,
-                                     with: mapping.swizzled,
-                                     for: appDelegateClass,
-                                     name: "NotificationOpened",
-                                     block: { [weak self] (_, userInfoObject, _) in
-                                        self?.handlePushOpened(userInfoObject: userInfoObject, actionIdentifier: nil) },
-                                     addingMethodIfNecessary: true)
-        } else {
-            // The user is not overriding any UIAppDelegate receive functions nor is using UNUserNotificationCenter.
-            // Because we don't have a delegate for UNUserNotifications, let's make a dummy one and set it
-            // as the delegate, until the user creates their own delegate (handled by observing .
-            receiver = PushNotificationReceiver()
-            center.delegate = receiver
-        }
-    }
-
-    /// Removes all swizzles related to notification opened,
-    /// useful when `UNUserNotificationCenter` delegate has changed.
-    private func unswizzleAllNotificationReceived() {
-        for swizzle in Swizzler.swizzles where swizzle.value.name == "NotificationOpened" {
-            Exponea.logger.log(.verbose, message: "Removing swizzle: \(swizzle.value)")
-            Swizzler.unswizzle(swizzle.value)
-        }
-    }
-
-    /// Monitor changes in the `UNUserNotificationCenter` delegate.
-    ///
-    /// - Parameter change: The KVO change object containing the old and new values.
-    private func notificationsDelegateChanged(_ change: NSKeyValueObservedChange<UNUserNotificationCenterDelegate?>) {
-        // Make sure we unswizzle all notficiation receive methods, before making changes
-        unswizzleAllNotificationReceived()
-
-        switch (change.oldValue, change.newValue) {
-        case (let old??, let new??) where old is PushNotificationReceiver && !(new is PushNotificationReceiver):
-            // User reassigned the dummy receiver to a new delegate, so swizzle it
-            self.receiver = nil
-            swizzleUserNotificationsDidReceive(on: type(of: new))
-
-        case (let old??, let new) where !(old is PushNotificationReceiver) && new == nil:
-            // Reassigning from custom delegate to nil, so create our dummy receiver instead
-            self.receiver = PushNotificationReceiver()
-            center.delegate = self.receiver
-
-        case (let old, let new??) where old == nil:
-            // We were subscribed to app delegate functions before, but now we have a delegate, so swizzle it.
-            // Also handles our custom PushNotificationReceiver and swizzles that.
-            swizzleUserNotificationsDidReceive(on: type(of: new))
-
-        default:
-            Exponea.logger.log(.error, message: """
-            Unhandled UNUserNotificationCenterDelegate change, automatic push notification tracking disabled.
-            """)
-        }
-    }
-
-    private func swizzleUserNotificationsDidReceive(on delegateClass: AnyClass) {
-        // Swizzle the notification delegate notification received function
-        Swizzler.swizzleSelector(PushSelectorMapping.newReceive.original,
-                                 with: PushSelectorMapping.newReceive.swizzled,
-                                 for: delegateClass,
-                                 name: "NotificationOpened",
-                                 block: { [weak self] (_, userInfoObject, actionIdentifier) in
-                                    self?.handlePushOpened(userInfoObject: userInfoObject,
-                                                           actionIdentifier: actionIdentifier as? String)
-                                 },
-                                 addingMethodIfNecessary: true)
     }
 }

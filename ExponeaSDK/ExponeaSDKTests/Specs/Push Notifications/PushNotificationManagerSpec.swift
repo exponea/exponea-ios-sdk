@@ -20,8 +20,6 @@ final class PushNotificationManagerSpec: QuickSpec {
     }
 
     override func spec() {
-        // Load the mock center, to prevent crashes
-        _ = MockUserNotificationCenter.shared
         var trackingManager: MockTrackingManager!
         var pushManager: PushNotificationManager!
 

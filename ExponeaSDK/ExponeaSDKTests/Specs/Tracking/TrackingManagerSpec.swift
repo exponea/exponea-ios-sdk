@@ -15,7 +15,6 @@ import Quick
 
 class TrackingManagerSpec: QuickSpec {
     override func spec() {
-        _ = MockUserNotificationCenter.shared
         describe("TrackingManager") {
             var trackingManager: TrackingManager!
             var repository: RepositoryType!

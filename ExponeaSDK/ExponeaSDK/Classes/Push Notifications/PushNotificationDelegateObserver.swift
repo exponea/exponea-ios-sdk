@@ -12,19 +12,24 @@ import UserNotifications
 class PushNotificationDelegateObserver: NSObject {
     typealias Callback = (NSKeyValueObservedChange<UNUserNotificationCenterDelegate?>) -> Void
 
-    @objc var center: UNUserNotificationCenter
+    @objc var observable: UNUserNotificationCenterDelegating
     var observation: NSKeyValueObservation?
 
-    let callback: Callback
-
-    init(center: UNUserNotificationCenter,
-         callback: @escaping Callback) {
-        self.center = center
-        self.callback = callback
+    init(observable: UNUserNotificationCenterDelegating, callback: @escaping Callback) {
+        self.observable = observable
         super.init()
 
-        observation = observe(\.center.delegate, options: [.old, .new]) { _, change in
-            callback(change)
+        observation = observe(\.observable.delegate, options: [.old, .new]) { _, change in
+            guard change.oldValue != nil || change.newValue != nil else {
+                return // if they are both nil, do nothing
+            }
+            guard let old = change.oldValue, let new = change.newValue else {
+                callback(change) //one of them is nil, it changed
+                return
+            }
+            if old !== new {
+                callback(change) // they are not the same instance, it changed
+            }
         }
     }
 

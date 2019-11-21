@@ -42,6 +42,16 @@
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
 		0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */; };
 		0566424E2373198B00CCDB98 /* SwizzleTestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424D2373198B00CCDB98 /* SwizzleTestClass.swift */; };
+		05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05677238237453250082167C /* PushNotificationSwizzler.swift */; };
+		0567723B237462FB0082167C /* UIApplication+UIApplicationDelegating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567723A237462FB0082167C /* UIApplication+UIApplicationDelegating.swift */; };
+		0567723D237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567723C237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift */; };
+		0567723F237464990082167C /* PushNotificationDelegateObserverSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567723E237464990082167C /* PushNotificationDelegateObserverSpec.swift */; };
+		0567724123746B9B0082167C /* PushNotificationSwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */; };
+		0567724323746DDC0082167C /* MockPushNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567724223746DDC0082167C /* MockPushNotificationManager.swift */; };
+		056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056772442374703B0082167C /* PushNotificationManagerType.swift */; };
+		05A931F02375A73500D45200 /* mock_notification_response.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A931EE2375A50100D45200 /* mock_notification_response.m */; };
+		05A931F12375A7BE00D45200 /* mock_notification_response.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931ED2375A4EE00D45200 /* mock_notification_response.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		05A931F32375AB5A00D45200 /* ExponeaSDKTests.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
 		05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BD2342413E00D78452 /* NetworkStubbing.swift */; };
 		05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05AA63CA2343805C00D78452 /* .swiftlint.yml */; };
@@ -319,6 +329,16 @@
 		05664249237309C300CCDB98 /* SwizzleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleSpec.swift; sourceTree = "<group>"; };
 		0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzlerSpec.swift; sourceTree = "<group>"; };
 		0566424D2373198B00CCDB98 /* SwizzleTestClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleTestClass.swift; sourceTree = "<group>"; };
+		05677238237453250082167C /* PushNotificationSwizzler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationSwizzler.swift; sourceTree = "<group>"; };
+		0567723A237462FB0082167C /* UIApplication+UIApplicationDelegating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+UIApplicationDelegating.swift"; sourceTree = "<group>"; };
+		0567723C237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift"; sourceTree = "<group>"; };
+		0567723E237464990082167C /* PushNotificationDelegateObserverSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationDelegateObserverSpec.swift; sourceTree = "<group>"; };
+		0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationSwizzlerSpec.swift; sourceTree = "<group>"; };
+		0567724223746DDC0082167C /* MockPushNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPushNotificationManager.swift; sourceTree = "<group>"; };
+		056772442374703B0082167C /* PushNotificationManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerType.swift; sourceTree = "<group>"; };
+		05A931ED2375A4EE00D45200 /* mock_notification_response.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mock_notification_response.h; sourceTree = "<group>"; };
+		05A931EE2375A50100D45200 /* mock_notification_response.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mock_notification_response.m; sourceTree = "<group>"; };
+		05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExponeaSDKTests.h; sourceTree = "<group>"; };
 		05AA63BB2342362B00D78452 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
 		05AA63BD2342413E00D78452 /* NetworkStubbing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStubbing.swift; sourceTree = "<group>"; };
 		05AA63CA2343805C00D78452 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
@@ -565,6 +585,9 @@
 			isa = PBXGroup;
 			children = (
 				F021E869206CF10200788ABC /* Info.plist */,
+				05A931ED2375A4EE00D45200 /* mock_notification_response.h */,
+				05A931EE2375A50100D45200 /* mock_notification_response.m */,
+				05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -626,6 +649,8 @@
 			children = (
 				05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */,
 				05BB22B4236B2F780098C406 /* PushNotificationManagerSpec.swift */,
+				0567723E237464990082167C /* PushNotificationDelegateObserverSpec.swift */,
+				0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */,
 			);
 			path = "Push Notifications";
 			sourceTree = "<group>";
@@ -817,9 +842,13 @@
 				C030AF4B216F96F3004413F0 /* PushNotificationManager+NSObject.swift */,
 				C030AF49216F4910004413F0 /* PushNotificationManager+UIResponder.swift */,
 				C0EB5D9220B811F900F1031F /* PushNotificationManager.swift */,
+				056772442374703B0082167C /* PushNotificationManagerType.swift */,
 				C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */,
 				C0EB5D9420B8123200F1031F /* PushNotificationSelectors.swift */,
 				05583E9A23603BA900F7084E /* PushNotificationParser.swift */,
+				05677238237453250082167C /* PushNotificationSwizzler.swift */,
+				0567723A237462FB0082167C /* UIApplication+UIApplicationDelegating.swift */,
+				0567723C237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift */,
 			);
 			path = "Push Notifications";
 			sourceTree = "<group>";
@@ -1092,6 +1121,7 @@
 				C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */,
 				05AA63BD2342413E00D78452 /* NetworkStubbing.swift */,
 				05BB22B6236B300F0098C406 /* MockTrackingManager.swift */,
+				0567724223746DDC0082167C /* MockPushNotificationManager.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
@@ -1195,6 +1225,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05A931F32375AB5A00D45200 /* ExponeaSDKTests.h in Headers */,
+				05A931F12375A7BE00D45200 /* mock_notification_response.h in Headers */,
 				05114E6B2347483F00201EE6 /* objc_tryCatch.h in Headers */,
 				F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */,
 			);
@@ -1589,6 +1621,7 @@
 				C07E421420CA8C1B00920809 /* BannerFrequency.swift in Sources */,
 				F0E757EE207D025300FE8C21 /* Exponea.swift in Sources */,
 				4C588F8722AAAB3400916EE4 /* CampaignData+Properties.swift in Sources */,
+				0567723B237462FB0082167C /* UIApplication+UIApplicationDelegating.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
 				019F1AC52087666900368FB1 /* DataType.swift in Sources */,
@@ -1615,9 +1648,11 @@
 				01C2AD4E208F61000012F663 /* CustomerParameters.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
 				F0674412208732AF003C0293 /* PaymentManagerType.swift in Sources */,
+				056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */,
 				C0EB5D9F20BB530000F1031F /* ExponeaType.swift in Sources */,
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
 				C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */,
+				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ServerRepository.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				C0753E9020A43D3900A779FF /* RepositoryError.swift in Sources */,
@@ -1649,6 +1684,7 @@
 				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
+				0567723D237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift in Sources */,
 				B4AF83BB22C6108200061350 /* String+URLValidation.swift in Sources */,
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,
 				C07E420520CA898700920809 /* BannerResponse.swift in Sources */,
@@ -1664,6 +1700,7 @@
 				C07E421620CA8D1800920809 /* BannerTrigger.swift in Sources */,
 				C0EB5DA620BB59BD00F1031F /* RequestParametersType.swift in Sources */,
 				C09C33CB221C097100715603 /* NotificationData+Properties.swift in Sources */,
+				05A931F02375A73500D45200 /* mock_notification_response.m in Sources */,
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
 				F029BF2D208A2C5200342498 /* StringResponse.swift in Sources */,
 				C07E421220CA8B9900920809 /* DeviceTargetType.swift in Sources */,
@@ -1704,6 +1741,7 @@
 				0566424E2373198B00CCDB98 /* SwizzleTestClass.swift in Sources */,
 				F04BEA8621111A6100591950 /* EventSpec.swift in Sources */,
 				05BB22B2236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift in Sources */,
+				0567723F237464990082167C /* PushNotificationDelegateObserverSpec.swift in Sources */,
 				F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */,
 				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,
 				C084D0EB2181C5EA005C0CA8 /* MockUserNotificationCenter.swift in Sources */,
@@ -1712,10 +1750,12 @@
 				C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */,
 				052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */,
 				05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */,
+				0567724323746DDC0082167C /* MockPushNotificationManager.swift in Sources */,
 				05BB22B5236B2F780098C406 /* PushNotificationManagerSpec.swift in Sources */,
 				052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */,
 				F04BEAAF211273A200591950 /* FetchAttributesSpec.swift in Sources */,
 				05BB22B7236B300F0098C406 /* MockTrackingManager.swift in Sources */,
+				0567724123746B9B0082167C /* PushNotificationSwizzlerSpec.swift in Sources */,
 				F063BEAA207E36E600030811 /* MockDatabaseManager.swift in Sources */,
 				F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */,
 				F04BEAA9211266DD00591950 /* FetchBannerSpec.swift in Sources */,

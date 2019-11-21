@@ -16,8 +16,6 @@ import Mockingjay
 
 class TrackUniversalLinkSpec: QuickSpec {
     override func spec() {
-        // Load the mock center, to prevent crashes
-        _ = MockUserNotificationCenter.shared
         let mockData = MockData()
 
         describe("Track universal link") {
