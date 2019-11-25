@@ -48,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let incomingURL = userActivity.webpageURL
             else { return false }
         Exponea.shared.trackCampaignClick(url: incomingURL, timestamp: nil)
-        return true
+        return incomingURL.host == "panaxeo.com"
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
