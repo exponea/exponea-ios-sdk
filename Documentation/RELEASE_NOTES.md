@@ -1,5 +1,13 @@
 ## Release Notes
 
+## Release Notes for 2.5.0
+#### November 26, 2019
+* Features
+  * The SDK can now be fully configured also in the code, not only with the configuration file and thus making it more flexible. This new feature is based on https://github.com/exponea/exponea-ios-sdk/issues/10.
+* Bug Fixes
+  * Fixed: https://github.com/exponea/exponea-ios-sdk/issues/8 - A push notification might have opened the application multiple times if there are multiple SDKs integrated in the application. This shouldn't happen anymore.
+  * Fixed: URL link checking is now more robust and handles also incorrectly formatted URL links.
+
 ## 2.4.0
 #### November 05, 2019
 * Features
