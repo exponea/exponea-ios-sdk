@@ -245,6 +245,7 @@ public extension Exponea {
     ///   - projectToken: Project token to be used through the SDK.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
+    @available(*, deprecated)
     func configure(projectToken: String,
                    authorization: Authorization,
                    baseUrl: String? = nil,
@@ -289,6 +290,7 @@ public extension Exponea {
     ///   - projectMapping: The project token mapping dictionary providing all the tokens.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
+    @available(*, deprecated)
     func configure(projectToken: String,
                    projectMapping: [EventType: [String]],
                    authorization: Authorization,

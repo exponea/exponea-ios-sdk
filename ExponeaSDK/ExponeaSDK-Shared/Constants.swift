@@ -9,10 +9,10 @@
 import Foundation
 
 /// enum with constants used through the SDK
-enum Constants {
+public enum Constants {
     /// Network
-    enum Repository {
-        static let baseUrl = "https://api.exponea.com"
+    public enum Repository {
+        public static let baseUrl = "https://api.exponea.com"
         static let contentType = "application/json"
         static let headerContentType = "content-type"
         static let headerAccept = "accept"
@@ -69,9 +69,9 @@ enum Constants {
     }
 
     /// Default session values represented in seconds
-    enum Session {
-        static let defaultTimeout = 6.0
-        static let maxRetries = 5
+    public enum Session {
+        public static let defaultTimeout = 6.0
+        public static let maxRetries = 5
         static let sessionUpdateThreshold = 3.0
     }
 

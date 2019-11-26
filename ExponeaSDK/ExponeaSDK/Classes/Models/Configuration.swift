@@ -15,25 +15,24 @@ public struct Configuration: Decodable {
     public internal(set) var projectToken: String?
     public internal(set) var authorization: Authorization = .none
     public internal(set) var baseUrl: String = Constants.Repository.baseUrl
-    public internal(set) var contentType: String = Constants.Repository.contentType
     public internal(set) var defaultProperties: [String: JSONConvertible]?
-    public var sessionTimeout: Double = Constants.Session.defaultTimeout
-    public var automaticSessionTracking: Bool = true
+    public internal(set) var sessionTimeout: Double = Constants.Session.defaultTimeout
+    public internal(set) var automaticSessionTracking: Bool = true
 
     /// If enabled, will swizzle default push notifications methods and functions and automatically
     /// listen to updates for tokens or push settings.
-    public var automaticPushNotificationTracking: Bool = true
+    public internal(set) var automaticPushNotificationTracking: Bool = true
 
     /// If automatic push notification tracking is enabled, this can be used to determine how often
     /// should the push notification token be sent to Exponea.
-    public var tokenTrackFrequency: TokenTrackFrequency = .onTokenChange
+    public internal(set) var tokenTrackFrequency: TokenTrackFrequency = .onTokenChange
 
     /// App group is used when push notification data is shared among service or content extensions.
     /// This is required for tracking delivered push notifications properly.
-    public var appGroup: String?
+    public internal(set) var appGroup: String?
 
     /// The maximum amount of retries before a flush event is considered as invalid and deleted from the database.
-    public var flushEventMaxRetries: Int = Constants.Session.maxRetries
+    public internal(set) var flushEventMaxRetries: Int = Constants.Session.maxRetries
 
     enum CodingKeys: String, CodingKey {
         case projectMapping
@@ -78,6 +77,34 @@ public struct Configuration: Decodable {
         if let url = baseUrl {
             self.baseUrl = url
         }
+
+        try self.validate()
+    }
+
+    init(
+        projectToken: String,
+        projectMapping: [EventType: [String]]?,
+        authorization: Authorization = .none,
+        baseUrl: String,
+        defaultProperties: [String: JSONConvertible]?,
+        sessionTimeout: Double,
+        automaticSessionTracking: Bool = true,
+        automaticPushNotificationTracking: Bool,
+        tokenTrackFrequency: TokenTrackFrequency,
+        appGroup: String?,
+        flushEventMaxRetries: Int
+    ) throws {
+        self.projectToken = projectToken
+        self.projectMapping = projectMapping
+        self.authorization = authorization
+        self.baseUrl = baseUrl
+        self.defaultProperties = defaultProperties
+        self.sessionTimeout = sessionTimeout
+        self.automaticSessionTracking = automaticSessionTracking
+        self.automaticPushNotificationTracking = automaticPushNotificationTracking
+        self.tokenTrackFrequency = tokenTrackFrequency
+        self.appGroup = appGroup
+        self.flushEventMaxRetries = flushEventMaxRetries
 
         try self.validate()
     }
@@ -266,7 +293,6 @@ extension Configuration: CustomStringConvertible {
         text += """
         Authorization: \(authorization)
         Base URL: \(baseUrl)
-        Content Type: \(contentType)
         Session Timeout: \(sessionTimeout)
         Automatic Session Tracking: \(automaticSessionTracking)
         Automatic Push Notification Tracking: \(automaticPushNotificationTracking)

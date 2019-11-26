@@ -1,33 +1,11 @@
 ## 🔍 Configuration
+You can configure the SDK providing a configuration file with configuration variables or using the configuration method available in the SDK.
 
-The configuration object must be configured before starting using the SDK.
-
-It's possible to initialize the configuration providing a configuration file with the same structure (keys) from the Configuration structure or just using the configuration methods available in the SDK.
-
-```
-public struct Configuration: Decodable {
-    public internal(set) var projectMapping: [EventType: [String]]?
-    public internal(set) var projectToken: String?
-    public internal(set) var authorization: Authorization = .none
-    public internal(set) var baseURL: String = Constants.Repository.baseUrl
-    public internal(set) var contentType: String = Constants.Repository.contentType
-    public internal(set) var defaultProperties: [String: JSONConvertible]?
-    public var sessionTimeout: Double = Constants.Session.defaultTimeout
-    public var automaticSessionTracking: Bool = true
-    public var automaticPushNotificationTracking: Bool = true
-    public var tokenTrackFrequency: TokenTrackFrequency = .onTokenChange
-    public var flushEventMaxRetries: Int = Constants.Session.maxRetries
-}
-```
-
-
-#### projectMapping
-
-* In case you have more than one project token to track for one event, you should provide which "event types" each project token should be track.
+### Configuration variables
 
 #### projectToken
 
-* Is your project token which can be found in the Exponea APP ```Project``` -> ```Overview```
+* Your project token which can be found in the Exponea APP `Project` -> `Overview`
 
 #### authorization
 
@@ -37,38 +15,40 @@ public struct Configuration: Decodable {
 
 #### baseUrl
 
-* If you have you custom base URL, you can set up this property.
+* If you have custom base URL, you can set up this property.
 * Default value `https://api.exponea.com`
 
-#### contentType
+#### projectMapping
 
-* Content type value to make http requests.
-* Default value `application/json`
+* In case you have more than one project token to track for one event, you should provide which "event types" each project token should be tracked.
 
 #### defaultProperties
 
 * A list of properties to be added to all tracking events
 * Default value `nil`
 
+#### automaticSessionTracking
+
+* Flag to control the automatic tracking of `session_start` and `session_end` events.
+* Default value `true`
+
 #### sessionTimeout
 
 * Session is the real time spent in the App, it starts when the App is launched and ends when the App goes to background.
 * This value will be used to calculate the session timing.
 * Default value `6.0` seconds
-* The mininum value is `5.0` seconds
+* The minimum value is `5.0` seconds
 * The **recommended** maximum value is `120.0` seconds, but the **absolute** max is `180.0` seconds. More than this, iOS will kill it
 * Read more in `Track Events` -> `Track Sessions`
-
-#### automaticSessionTracking
-
-* Flag to control the automatic tracking for In-App purchases done at the Google Play Store.
-* When active, the SDK will add the Billing service listeners in order to get payments done in the App.
-* Default value `true`
 
 #### automaticPushNotificationTracking
 
 * Controls if the SDK will handle push notifications automatically.
 * Default value `true`
+
+#### appGroup
+* **Required** for the SDK to automatically tracks delivered push notifications. You can find more information in [Push Notifications
+](./PUSH.md) documentation.
 
 #### tokenTrackFrequency
 	
@@ -87,24 +67,9 @@ public struct Configuration: Decodable {
 
 ## Configuring the SDK
 
-### 1. With project token and authorization
-
-```
-public func configure(projectToken: String,
-                      authorization: Authorization,
-                      baseURL: String? = nil) // optional custom base url
-```
-
-#### 💻 Usage
-
-```
-Exponea.shared.configure(projectToken: "ProjectTokenA",
-                         authorization: Authorization.token("12345abcdef"))
-```
-
-### 2. Using a configuration file
-
-```
+### 1. Using a configuration file
+Create a configuration `.plist` file containing configuration variables. You need to specify all the required ones. For the rest, default values will be used.
+``` swift
 public func configure(plistName: String)
 ```
 
@@ -151,21 +116,74 @@ public func configure(plistName: String)
 Exponea.shared.configure(plistName: "ExponeaConfig.plist")
 ```
 
-### 3. Using project token mapping
+### 2. Configure SDK programmatically
+In case you don't want to or cannot use `.plist` configuration, you can setup the sdk with code. Since there is a lot of things to configure, configuration is split into few object that you pass to `Exponea.shared.configure()` function.
+``` swift
+func configure(
+        _ projectSettings: ProjectSettings,
+        automaticPushNotificationTracking: AutomaticPushNotificationTracking,
+        automaticSessionTracking: AutomaticSessionTracking = .enabled(),
+        defaultProperties: [String: JSONConvertible]? = nil,
+        flushingSetup: FlushingSetup = FlushingSetup.default
+    )
+```
 
-```
-public func configure(projectToken: String,
-                      projectMapping: [EventType: [String]],
-                      authorization: Authorization,
-                      baseURL: String? = nil)
-```
+#### ProjectSettings *(required)*
+Contains your basic project settings: `projectToken`, `authorization`, `baseUrl` and `projectMapping`.
+In most use-cases only `projectToken` and `authorization` is required.
+
+#### automaticPushNotificationTracking *(required)*
+Either `.disabled` or `.enabled(appGroup, delegate, tokenTrackFrequency)`. Only `appGroup` is required for the SDK to function properly.
+Setting up `delegate` is the same as settings `Exponea.shared.pushNotificationsDelegate` and is here only for your convenience.
+
+#### automaticPushNotificationTracking
+Either `.disabled` or `.enabled(timeout)`. We suggest you use default sessionTimeout and use `.enabled()`, which is also the default value.
+
+#### defaultProperties
+As described in configuration variables.
+
+#### flushingSetup
+Allows you to setup `flushingMode` and `maxRetries`. By default event flush happens as soon as you track an event(`.immediate`). You can change this behaviour to one of `.manual`, `.automatic`, `periodic(period)`.
 
 #### 💻 Usage
-
+Most common use case:
+``` swift
+Exponea.shared.configure(
+	Exponea.ProjectSettings(
+		projectToken: "YOUR PROJECT TOKEN",
+		authorization: .token("YOUR ACCESS TOKEN")
+	),
+	automaticPushNotificationTracking: .enabled(appGroup: "YOUR APP GROUP")
+)
 ```
-Exponea.shared.configure(projectToken: "ProjectTokenA",
-                         projectMapping: [EventType.identifyCustomer: ["ProjectTokenA", "ProjectTokenB"],
-                                          EventType.customEvent: ["ProjectTokenD"]],
-                         authorization: Authorization.token("12345abcdef"),
-                         baseURL: "YOUR BASE URL")
+Disabling all the automatic features of the SDK:
+``` swift
+Exponea.shared.configure(
+	Exponea.ProjectSettings(
+		projectToken: "YOUR PROJECT TOKEN",
+		authorization: .token("YOUR ACCESS TOKEN")
+	),
+	automaticPushNotificationTracking: .disabled,
+	automaticSessionTracking: .disabled,
+	flushingSetup: Exponea.FlushingSetup(mode: .manual)
+)
+```
+Complex use-case:
+``` swift
+Exponea.shared.configure(
+	Exponea.ProjectSettings(
+		projectToken: "YOUR PROJECT TOKEN",
+		authorization: .token("YOUR ACCESS TOKEN")
+		baseUrl: "https://YOUR URL",
+		projectMapping: [.payment: ["OTHER PROJECT ID"]]
+	),
+	automaticPushNotificationTracking: .enabled(
+		appGroup: "YOUR APP GROUP",
+		delegate: self,
+		tokenTrackFrequency: .onTokenChange
+	),
+	automaticSessionTracking: .enabled(timeout: 123),
+	defaultProperties: ["prop-1": "value-1", "prop-2": 123],
+	flushingSetup: Exponea.FlushingSetup(mode: .periodic(100), maxRetries: 5)
+)
 ```

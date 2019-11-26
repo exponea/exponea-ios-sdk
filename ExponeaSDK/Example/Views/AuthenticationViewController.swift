@@ -54,20 +54,21 @@ class AuthenticationViewController: UIViewController {
             auth = .token(text)
         }
 
-        let properties: [String: JSONConvertible] = [
-            "Property01": "String value",
-            "Property02": 123
-        ]
-
-        // Auth Exponea
-        Exponea.shared.configure(projectToken: token,
-                                 authorization: auth,
-                                 baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text,
-                                 appGroup: "group.com.exponea.ExponeaSDK-Example2",
-                                 defaultProperties: properties)
-
-        // Set notification delegate (needs to be done after configuring)
-        Exponea.shared.pushNotificationsDelegate = UIApplication.shared.delegate as? AppDelegate
+        Exponea.shared.configure(
+            Exponea.ProjectSettings(
+                projectToken: token,
+                authorization: auth,
+                baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text
+            ),
+            automaticPushNotificationTracking: .enabled(
+                appGroup: "group.com.Exponea.ExponeaSDK-Example",
+                delegate: UIApplication.shared.delegate as? AppDelegate
+            ),
+            defaultProperties: [
+                "Property01": "String value",
+                "Property02": 123
+            ]
+        )
 
         performSegue(withIdentifier: "showMain", sender: nil)
     }
