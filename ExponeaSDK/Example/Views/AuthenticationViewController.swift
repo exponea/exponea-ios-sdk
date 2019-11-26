@@ -63,7 +63,7 @@ class AuthenticationViewController: UIViewController {
         Exponea.shared.configure(projectToken: token,
                                  authorization: auth,
                                  baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text,
-                                 appGroup: "group.com.Exponea.ExponeaSDK-Example",
+                                 appGroup: "group.com.exponea.ExponeaSDK-Example2",
                                  defaultProperties: properties)
 
         // Set notification delegate (needs to be done after configuring)
