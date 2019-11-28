@@ -78,6 +78,11 @@ protocol FetchRepository {
     /// - Parameter completion: A closure executed upon request completion containing the result
     ///                         which has either the returned data or error.
     func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void)
+
+    func fetchInAppMessages(
+        for customerIds: [String: JSONValue],
+        completion: @escaping (Result<InAppMessagesResponse>) -> Void
+    )
 }
 
 protocol RepositoryType: class, TrackingRepository, FetchRepository {

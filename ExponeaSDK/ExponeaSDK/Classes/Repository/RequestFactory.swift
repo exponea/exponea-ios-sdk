@@ -33,6 +33,8 @@ struct RequestFactory {
             return baseUrl + "/data/v2/projects/\(projectToken)/customers/personalisation/show-banners"
         case .campaignClick:
             return baseUrl + "/track/v2/projects/\(projectToken)/campaigns/clicks"
+        case .inAppMessages:
+            return baseUrl + "/personalization/in-app-messages/\(projectToken)"
         }
     }
 }
@@ -110,7 +112,9 @@ extension RequestFactory {
                 switch result {
                 case .success(let data):
                     do {
-                        let object = try JSONDecoder().decode(T.self, from: data)
+                        let jsonDecoder = JSONDecoder()
+                        jsonDecoder.dateDecodingStrategy = .secondsSince1970
+                        let object = try jsonDecoder.decode(T.self, from: data)
                         DispatchQueue.main.async {
                             completion(.success(object))
                         }

@@ -216,6 +216,25 @@ extension ServerRepository: RepositoryType {
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
+
+    func fetchInAppMessages(
+        for customerIds: [String: JSONValue],
+        completion: @escaping (Result<InAppMessagesResponse>) -> Void
+    ) {
+        let router = RequestFactory(
+            baseUrl: configuration.baseUrl,
+            projectToken: configuration.fetchingToken,
+            route: .inAppMessages
+        )
+        let request = router.prepareRequest(
+            authorization: configuration.authorization,
+            parameters: InAppMessagesRequest(),
+            customerIds: customerIds
+        )
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
 }
 
 extension ServerRepository {
