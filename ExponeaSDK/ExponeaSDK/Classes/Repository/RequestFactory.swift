@@ -34,7 +34,7 @@ struct RequestFactory {
         case .campaignClick:
             return baseUrl + "/track/v2/projects/\(projectToken)/campaigns/clicks"
         case .inAppMessages:
-            return baseUrl + "/personalization/in-app-messages/\(projectToken)"
+            return baseUrl + "/webxp/s/\(projectToken)/inappmessages"
         }
     }
 }
