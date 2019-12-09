@@ -103,12 +103,12 @@ class TrackingManagerSpec: QuickSpec {
                 expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
                 NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken!, withStatusCode: 418)
-                for i in 1...4 {
+                for attempt in 1...4 {
                     waitUntil { done in
                         trackingManager.flushData(completion: {done()})
                     }
                     expect { try database.fetchTrackEvent().count }.to(equal(1))
-                    expect { try database.fetchTrackEvent().first?.retries }.to(equal(i))
+                    expect { try database.fetchTrackEvent().first?.retries }.to(equal(attempt))
                 }
                 waitUntil { done in
                     trackingManager.flushData(completion: {done()})
