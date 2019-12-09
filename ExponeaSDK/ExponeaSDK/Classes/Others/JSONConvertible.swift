@@ -87,8 +87,8 @@ public indirect enum JSONValue {
             case is Int: result[key] = .int(value as! Int)
             case is Double: result[key] = .double(value as! Double)
             case is String: result[key] = .string(value as! String)
-            case is Array<Any>: result[key] = .array(convert(value as! [Any]))
-            case is Dictionary<String, Any>: result[key] = .dictionary(convert(value as! [String: Any]))
+            case is [Any]: result[key] = .array(convert(value as! [Any]))
+            case is [String: Any]: result[key] = .dictionary(convert(value as! [String: Any]))
             default:
                 Exponea.logger.log(.warning, message: "Can't convert value to JSONValue: \(value).")
                 continue
@@ -107,8 +107,8 @@ public indirect enum JSONValue {
             case is Int: result.append(.int(value as! Int))
             case is Double: result.append(.double(value as! Double))
             case is String: result.append(.string(value as! String))
-            case is Array<Any>: result.append(.array(convert(value as! [Any])))
-            case is Dictionary<String, Any>: result.append(.dictionary(convert(value as! [String: Any])))
+            case is [Any]: result.append(.array(convert(value as! [Any])))
+            case is [String: Any]: result.append(.dictionary(convert(value as! [String: Any])))
             // swiftlint:enable force_cast
             default:
                 Exponea.logger.log(.warning, message: "Can't convert value to JSONValue: \(value).")
