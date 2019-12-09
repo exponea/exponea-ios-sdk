@@ -12,7 +12,8 @@ import UserNotifications
 /**
  In order to unit test swizzling of methods related to receiving push notification,
  we have to solve issue of missing UNUserNotificationCenter and inability to set UIApplication.delegate.
- Instead of using UIApplication and UNUserNotificationCenter directly, we'll work with protocols that have delegates we need.
+ Instead of using UIApplication and UNUserNotificationCenter directly, we'll
+ work with protocols that have delegates we need.
  In unit tests we can pass different object that conform to those protocols.
  */
 final class PushNotificationSwizzler {
@@ -25,7 +26,8 @@ final class PushNotificationSwizzler {
 
     /*
      We should always swizzle notification delegate to make sure it gets called if developer/sdk changes it.
-     But if the developer/sdk swizzles/changes the delegate and calls the original method we would get called multiple times.
+     But if the developer/sdk swizzles/changes the delegate and calls
+     the original method we would get called multiple times.
      Let's keep a unique token that we change with every swizzle
      */
     private var pushOpenedSwizzleToken: String = UUID().uuidString
@@ -38,9 +40,11 @@ final class PushNotificationSwizzler {
         self.pushNotificationManager = manager
         self.uiApplicationDelegating = uiApplicationDelegating ?? UIApplication.shared
         if Exponea.isBeingTested {
-            self.unUserNotificationCenterDelegating = unUserNotificationCenterDelegating ?? BasicUNUserNotificationCenterDelegating()
+            self.unUserNotificationCenterDelegating
+                = unUserNotificationCenterDelegating ?? BasicUNUserNotificationCenterDelegating()
         } else {
-            self.unUserNotificationCenterDelegating = unUserNotificationCenterDelegating ?? UNUserNotificationCenter.current()
+            self.unUserNotificationCenterDelegating
+                = unUserNotificationCenterDelegating ?? UNUserNotificationCenter.current()
         }
     }
 
@@ -82,7 +86,8 @@ final class PushNotificationSwizzler {
     /// 2. UIApplication.application(_, didReceiveRemoteNotification , fetchCompletionHandler:)
     /// 3. UIApplication.application(_, didReceiveRemoteNotification: )
     ///
-    /// There work as fallbacks, system tries the first, only if there's no delegate second and if second is not implemented calls third.
+    /// They work as fallbacks, system tries the first, only if there's no delegate second
+    /// and if second is not implemented calls third.
     /// Keep this in mind.
     ///
     /// This method works in the following way:
@@ -141,7 +146,11 @@ final class PushNotificationSwizzler {
                                         guard self?.pushOpenedSwizzleToken == token else {
                                             return
                                         }
-                                        self?.pushNotificationManager?.handlePushOpened(userInfoObject: userInfoObject, actionIdentifier: nil) },
+                                        self?.pushNotificationManager?.handlePushOpened(
+                                            userInfoObject: userInfoObject,
+                                            actionIdentifier: nil
+                                        )
+                                     },
                                      addingMethodIfNecessary: true)
         } else {
             // The user is not overriding any UIAppDelegate receive functions nor is using UNUserNotificationCenter.

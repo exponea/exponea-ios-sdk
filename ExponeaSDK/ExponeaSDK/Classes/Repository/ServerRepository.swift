@@ -93,9 +93,11 @@ extension ServerRepository: TrackingRepository {
         }
 
         // Setup router
-        let router = RequestFactory(baseUrl: configuration.baseUrl,
-                                    projectToken: projectToken,
-                                    route: eventType == Constants.EventTypes.campaignClick ? .campaignClick : .customEvent)
+        let router = RequestFactory(
+            baseUrl: configuration.baseUrl,
+            projectToken: projectToken,
+            route: eventType == Constants.EventTypes.campaignClick ? .campaignClick : .customEvent
+        )
         // Prepare parameters and request
         let params = TrackingParameters(customerIds: customerIds, properties: properties,
                                         timestamp: timestamp, eventType: eventType)

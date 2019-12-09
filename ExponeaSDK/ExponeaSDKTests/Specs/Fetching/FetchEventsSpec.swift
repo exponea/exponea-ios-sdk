@@ -59,7 +59,9 @@ class FetchEventsSpec: QuickSpec {
                                     expect(firstItem.properties?["device"]).to(equal(.string("Other")))
                                 }
                                 it("First item should have propertie [location: https://app.exponea.com/]") {
-                                    expect(firstItem.properties?["location"]).to(equal(.string("https://app.exponea.com/")))
+                                    expect(firstItem.properties?["location"]).to(
+                                        equal(.string("https://app.exponea.com/"))
+                                    )
                                 }
                                 it("First item should have propertie [os: Linux]") {
                                     expect(firstItem.properties?["os"]).to(equal(.string("Linux")))
@@ -91,7 +93,9 @@ class FetchEventsSpec: QuickSpec {
                                     expect(firstItem.properties?["device"]).to(equal(.string("MacBook")))
                                 }
                                 it("First item should have propertie [location: https://app.exponea.com/]") {
-                                    expect(firstItem.properties?["location"]).to(equal(.string("https://app.exponea.com/")))
+                                    expect(firstItem.properties?["location"]).to(
+                                        equal(.string("https://app.exponea.com/"))
+                                    )
                                 }
                                 it("First item should have propertie [os: macOS High Sierra]") {
                                     expect(firstItem.properties?["os"]).to(equal(.string("macOS High Sierra")))

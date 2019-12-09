@@ -41,13 +41,15 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.trackEvent(properties: [:], timestamp: nil, eventType: nil)).notTo(raiseException())
                 }
                 it("Should not crash tracking campaign click") {
-                    expect(exponea.trackCampaignClick(url: URL(string: "mockUrl")!, timestamp: nil)).notTo(raiseException())
+                    expect(exponea.trackCampaignClick(url: URL(string: "mockUrl")!, timestamp: nil))
+                        .notTo(raiseException())
                 }
                 it("Should not crash tracking payment") {
                     expect(exponea.trackPayment(properties: [:], timestamp: nil)).notTo(raiseException())
                 }
                 it("Should not crash identifing customer") {
-                    expect(exponea.identifyCustomer(customerIds: [:], properties: [:], timestamp: nil)).notTo(raiseException())
+                    expect(exponea.identifyCustomer(customerIds: [:], properties: [:], timestamp: nil))
+                        .notTo(raiseException())
                 }
                 it("Should not crash tracking push token") {
                     expect(exponea.trackPushToken("token".data(using: .utf8)!)).notTo(raiseException())
@@ -62,7 +64,9 @@ class ExponeaSpec: QuickSpec {
                 }
                 it("Should fail fetching recommendation") {
                     waitUntil { done in
-                        exponea.fetchRecommendation(with: RecommendationRequest(type: "mock_type", id: "mock_id")) { response in
+                        exponea.fetchRecommendation(
+                            with: RecommendationRequest(type: "mock_type", id: "mock_id")
+                        ) { response in
                             guard case .failure = response else {
                                 XCTFail("Expected .failure got \(response)")
                                 done()
@@ -115,7 +119,10 @@ class ExponeaSpec: QuickSpec {
             context("After being configured from string") {
                 let exponea = Exponea()
                 Exponea.shared = exponea
-                Exponea.shared.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97", authorization: .token(""))
+                Exponea.shared.configure(
+                    projectToken: "0aef3a96-3804-11e8-b710-141877340e97",
+                    authorization: .token("")
+                )
 
                 it("Should return the correct project token") {
                     expect(exponea.configuration?.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
@@ -322,7 +329,8 @@ class ExponeaSpec: QuickSpec {
                                 done()
                                 return
                             }
-                            guard let error = result.error as? ExponeaError, case .nsExceptionInconsistency = error else {
+                            guard let error = result.error as? ExponeaError,
+                                  case .nsExceptionInconsistency = error else {
                                 XCTFail("Result error should be .nsExceptionInconsistency")
                                 done()
                                 return

@@ -29,6 +29,7 @@ class TrackingViewController: UIViewController {
     }
 
     @IBAction func campaignClickPressed(_ sender: Any) {
+        // swiftlint:disable:next line_length
         if let url = URL(string: "https://panaxeo.com/exponea/product.html?iitt=VuU9RM4lhMPshFWladJLVZ8ARMWsVuegnkU7VkichfYcbdiA&utm_campaign=Test%20direct%20links&utm_source=exponea&utm_medium=email&xnpe_cmp=EiAHASXwhARMc-4pi3HQKTynsFBXa54EjBjb-qh2HAv3kSEpscfCI2HXQQ.XlWYaES2X-r8Nlv4J22eO0M3Rgk") {
         Exponea.shared.trackCampaignClick(url: url, timestamp: nil)
         }

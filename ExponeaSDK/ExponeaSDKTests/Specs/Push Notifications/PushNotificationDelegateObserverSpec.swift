@@ -24,7 +24,10 @@ final class PushNotificationDelegateObserverSpec: QuickSpec {
         }
         it("should observe delegate change") {
             let observable = BasicUNUserNotificationCenterDelegating()
-            let observer = PushNotificationDelegateObserver(observable: observable, callback: self.notificationsDelegateChanged)
+            let observer = PushNotificationDelegateObserver(
+                observable: observable,
+                callback: self.notificationsDelegateChanged
+            )
             expect(observer.observation).notTo(beNil())
             expect(self.calls).to(beEmpty())
             observable.delegate = EmptyDelegate()
@@ -34,7 +37,10 @@ final class PushNotificationDelegateObserverSpec: QuickSpec {
         it("should observe delegate change to nil") {
             let observable = BasicUNUserNotificationCenterDelegating()
             observable.delegate = EmptyDelegate()
-            let observer = PushNotificationDelegateObserver(observable: observable, callback: self.notificationsDelegateChanged)
+            let observer = PushNotificationDelegateObserver(
+                observable: observable,
+                callback: self.notificationsDelegateChanged
+            )
             expect(observer.observation).notTo(beNil())
             expect(self.calls).to(beEmpty())
             observable.delegate = nil
@@ -44,7 +50,10 @@ final class PushNotificationDelegateObserverSpec: QuickSpec {
         it("should observe delegate change to other instance") {
             let observable = BasicUNUserNotificationCenterDelegating()
             observable.delegate = EmptyDelegate()
-            let observer = PushNotificationDelegateObserver(observable: observable, callback: self.notificationsDelegateChanged)
+            let observer = PushNotificationDelegateObserver(
+                observable: observable,
+                callback: self.notificationsDelegateChanged
+            )
             expect(observer.observation).notTo(beNil())
             expect(self.calls).to(beEmpty())
             observable.delegate = EmptyDelegate()
@@ -53,7 +62,10 @@ final class PushNotificationDelegateObserverSpec: QuickSpec {
         }
         it("should not observe nil-nil change") {
             let observable = BasicUNUserNotificationCenterDelegating()
-            let observer = PushNotificationDelegateObserver(observable: observable, callback: self.notificationsDelegateChanged)
+            let observer = PushNotificationDelegateObserver(
+                observable: observable,
+                callback: self.notificationsDelegateChanged
+            )
             expect(observer.observation).notTo(beNil())
             expect(self.calls).to(beEmpty())
             observable.delegate = nil
@@ -65,7 +77,10 @@ final class PushNotificationDelegateObserverSpec: QuickSpec {
             let observable = BasicUNUserNotificationCenterDelegating()
             let delegate = EmptyDelegate()
             observable.delegate = delegate
-            let observer = PushNotificationDelegateObserver(observable: observable, callback: self.notificationsDelegateChanged)
+            let observer = PushNotificationDelegateObserver(
+                observable: observable,
+                callback: self.notificationsDelegateChanged
+            )
             expect(observer.observation).notTo(beNil())
             observable.delegate = delegate
             expect(self.calls).to(beEmpty())

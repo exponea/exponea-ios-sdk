@@ -623,7 +623,8 @@ extension TrackingManager {
                         // If we have reached the max count of retries, delete the object.
                         // Otherwise save changes and try again next time.
                         do {
-                            let max = self?.repository.configuration.flushEventMaxRetries ?? Constants.Session.maxRetries
+                            let max = self?.repository.configuration.flushEventMaxRetries
+                                ?? Constants.Session.maxRetries
                             if customer.retries + 1 >= max {
                                 Exponea.logger.log(.error, message: """
                                     Maximum retry count reached, deleting customer event: \(customer.managedObjectID)
@@ -631,14 +632,15 @@ extension TrackingManager {
                                 try self?.database.delete(customer)
                             } else {
                                 Exponea.logger.log(.error, message: """
-                                    Increasing retry count (\(customer.retries)) for customer event: \(customer.managedObjectID)
+                                    Increasing retry count (\(customer.retries)) for customer event: \
+                                    \(customer.managedObjectID)
                                     """)
                                 try self?.database.addRetry(customer)
                             }
                         } catch {
                             Exponea.logger.log(.error, message: """
-                                Failed to update retry count or remove object from database: \(customer.managedObjectID).
-                                \(error.localizedDescription)
+                                Failed to update retry count or remove object from database: \
+                                \(customer.managedObjectID). \(error.localizedDescription)
                                 """)
                         }
                     }
@@ -669,7 +671,8 @@ extension TrackingManager {
                         try self?.database.delete(event)
                     } catch {
                         Exponea.logger.log(.error, message: """
-                            Failed to remove object from database: \(event.managedObjectID). \(error.localizedDescription)
+                            Failed to remove object from database: \(event.managedObjectID). \
+                            \(error.localizedDescription)
                             """)
                     }
                 case .failure(let error):
@@ -687,7 +690,8 @@ extension TrackingManager {
                         // If we have reached the max count of retries, delete the object.
                         // Otherwise save changes and try again next time.
                         do {
-                            let max = self?.repository.configuration.flushEventMaxRetries ?? Constants.Session.maxRetries
+                            let max = self?.repository.configuration.flushEventMaxRetries
+                                ?? Constants.Session.maxRetries
                             if event.retries + 1 >= max {
                                 Exponea.logger.log(.error, message: """
                                     Maximum retry count reached, deleting event: \(event.managedObjectID)

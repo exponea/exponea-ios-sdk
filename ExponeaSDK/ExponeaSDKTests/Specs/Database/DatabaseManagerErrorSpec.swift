@@ -24,7 +24,9 @@ class DatabaseManagerErrorSpec: QuickSpec {
 
                 it("Should return a [String: The object you want to modify is of different type than expected.]") {
                     let error = DatabaseManagerError.wrongObjectType
-                    expect(error.errorDescription).to(equal("The object you want to modify is of different type than expected."))
+                    expect(error.errorDescription).to(
+                        equal("The object you want to modify is of different type than expected.")
+                    )
                 }
 
                 it("Should return a [String: Saving a new customer failed: No ID Found.]") {

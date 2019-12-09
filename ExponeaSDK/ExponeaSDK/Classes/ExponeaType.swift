@@ -33,8 +33,13 @@ public protocol ExponeaType: class {
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     ///   - appGroup: The app group used to share data among extensions, fx. for push delivered tracking.
     ///   - defaultProperties: A list of properties to be added to all tracking events.
-    func configure(projectToken: String, authorization: Authorization, baseUrl: String?,
-                   appGroup: String?, defaultProperties: [String: JSONConvertible]?)
+    func configure(
+        projectToken: String,
+        authorization: Authorization,
+        baseUrl: String?,
+        appGroup: String?,
+        defaultProperties: [String: JSONConvertible]?
+    )
 
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
     /// you to track events to multiple projects, even the same event to more project at once.
@@ -46,8 +51,14 @@ public protocol ExponeaType: class {
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     ///   - appGroup: The app group used to share data among extensions, fx. for push delivered tracking.
     ///   - defaultProperties: A list of properties to be added to all tracking events.
-    func configure(projectToken: String, projectMapping: [EventType: [String]],
-                   authorization: Authorization, baseUrl: String?, appGroup: String?, defaultProperties: [String: JSONConvertible]?)
+    func configure(
+        projectToken: String,
+        projectMapping: [EventType: [String]],
+        authorization: Authorization,
+        baseUrl: String?,
+        appGroup: String?,
+        defaultProperties: [String: JSONConvertible]?
+    )
 
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
     ///
@@ -91,7 +102,11 @@ public protocol ExponeaType: class {
     ///     - customerId: Specify your customer with external id, for example an email address.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
-    func identifyCustomer(customerIds: [String: JSONConvertible]?, properties: [String: JSONConvertible], timestamp: Double?)
+    func identifyCustomer(
+        customerIds: [String: JSONConvertible]?,
+        properties: [String: JSONConvertible],
+        timestamp: Double?
+    )
 
     /// This method can be used to manually flush all available data to Exponea.
     func flushData()

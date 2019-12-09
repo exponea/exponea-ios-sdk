@@ -129,10 +129,12 @@ struct MockData {
                       errors: nil)
 
     let campaignData: [String: JSONValue] = [
+        // swiftlint:disable:next line_length
         "url": .string("https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&xnpe_cmp=cmp&itt=usertoken"),
         "platform": .string("iOS")
     ]
 
+    // swiftlint:disable:next line_length
     let campaignUrl = URL(string: "https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&xnpe_cmp=cmp&itt=usertoken")
     let universalLinkEvent = Event(type: "campaign_click", timestamp: nil, properties: [:], errors: nil)
 }
