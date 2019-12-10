@@ -16,6 +16,8 @@ class InAppMessageSpec: QuickSpec {
     {
         "id": "5dd86f44511946ea55132f29",
         "name": "Test serving in-app message",
+        "message_type": "modal",
+        "frequency": "only_once",
         "payload": {
             "image_url":"https://i.ytimg.com/vi/t4nM1FoUqYs/maxresdefault.jpg",
             "title":"filip.vozar@exponea.com",
@@ -35,10 +37,8 @@ class InAppMessageSpec: QuickSpec {
         "variant_id": 0,
         "variant_name": "Variant A",
         "trigger": {
-            "exclude_pages": [],
-            "include_pages": [
-                { "type": "any" }
-            ]
+            "type": "event",
+            "event_type": "session_start"
         },
         "date_filter": {
             "enabled": false,
@@ -51,6 +51,8 @@ class InAppMessageSpec: QuickSpec {
     let expectedInAppMessage = InAppMessage(
         id: "5dd86f44511946ea55132f29",
         name: "Test serving in-app message",
+        messageType: "modal",
+        frequency: "only_once",
         payload: InAppMessagePayload(
             imageUrl: "https://i.ytimg.com/vi/t4nM1FoUqYs/maxresdefault.jpg",
             title: "filip.vozar@exponea.com",
@@ -69,7 +71,7 @@ class InAppMessageSpec: QuickSpec {
         ),
         variantId: 0,
         variantName: "Variant A",
-        trigger: InAppMessageTrigger(includePages: [["type": "any"]]),
+        trigger: InAppMessageTrigger(type: "event", eventType: "session_start"),
         dateFilter: DateFilter(
             enabled: false,
             startDate: Date(timeIntervalSince1970: 1570744800),

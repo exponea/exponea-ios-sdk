@@ -11,6 +11,8 @@ import Foundation
 struct InAppMessage: Codable, Equatable {
     public let id: String
     public let name: String
+    public let messageType: String
+    public let frequency: String
     public let payload: InAppMessagePayload
     public let variantId: Int
     public let variantName: String
@@ -18,20 +20,24 @@ struct InAppMessage: Codable, Equatable {
     public let dateFilter: DateFilter
 
     enum CodingKeys: String, CodingKey {
-        case id = "id", name, payload, variantId = "variant_id", variantName = "variant_name", trigger, dateFilter = "date_filter"
+        case id = "id"
+        case name
+        case messageType = "message_type"
+        case frequency = "frequency"
+        case payload
+        case variantId = "variant_id"
+        case variantName = "variant_name"
+        case trigger
+        case dateFilter = "date_filter"
     }
 }
 
-/**
- This is temporary, will change in the future.
- We should filter based on events and properties.
- For now, we get objects e.g. {type:"not important" url: "URL"}.
- Check that URL = eventName
- */
 struct InAppMessageTrigger: Codable, Equatable {
-    public let includePages: [[String: String]]
+    public let type: String?
+    public let eventType: String?
 
     enum CodingKeys: String, CodingKey {
-        case includePages = "include_pages"
+        case type
+        case eventType = "event_type"
     }
 }

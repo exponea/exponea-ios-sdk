@@ -55,8 +55,10 @@ extension DatabaseManager {
             }
 
             guard let value = anyValue as? NSObject else {
-                Exponea.logger.log(.warning,
-                                   message: "Skipping dictionary pair because value is not an object: \(anyValue.self).")
+                Exponea.logger.log(
+                    .warning,
+                    message: "Skipping dictionary pair because value is not an object: \(anyValue.self)."
+                )
                 continue
             }
 
