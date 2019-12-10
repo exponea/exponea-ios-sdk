@@ -49,6 +49,11 @@
 		0567724123746B9B0082167C /* PushNotificationSwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */; };
 		0567724323746DDC0082167C /* MockPushNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567724223746DDC0082167C /* MockPushNotificationManager.swift */; };
 		056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056772442374703B0082167C /* PushNotificationManagerType.swift */; };
+		057F447B2398FE930070DF30 /* InAppMessagesCacheSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */; };
+		057F447D239904050070DF30 /* SampleInAppMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447C239904050070DF30 /* SampleInAppMessage.swift */; };
+		057F447F239908650070DF30 /* InAppMessagesManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */; };
+		057F4481239909DC0070DF30 /* MockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F4480239909DC0070DF30 /* MockRepository.swift */; };
+		057F448323990E320070DF30 /* MockInAppMessagesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F448223990E320070DF30 /* MockInAppMessagesCache.swift */; };
 		05A931F02375A73500D45200 /* mock_notification_response.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A931EE2375A50100D45200 /* mock_notification_response.m */; };
 		05A931F12375A7BE00D45200 /* mock_notification_response.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931ED2375A4EE00D45200 /* mock_notification_response.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05A931F32375AB5A00D45200 /* ExponeaSDKTests.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -65,6 +70,10 @@
 		05BB22B3236B1F740098C406 /* ExponeaSDKNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ED33B421A6FB0F003649C3 /* ExponeaSDKNotifications.framework */; };
 		05BB22B5236B2F780098C406 /* PushNotificationManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB22B4236B2F780098C406 /* PushNotificationManagerSpec.swift */; };
 		05BB22B7236B300F0098C406 /* MockTrackingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB22B6236B300F0098C406 /* MockTrackingManager.swift */; };
+		05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CDD834239114A900C7291A /* InAppMessagesManager.swift */; };
+		05CDD837239114F700C7291A /* InAppMessagesManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CDD836239114F700C7291A /* InAppMessagesManagerType.swift */; };
+		05CDD8392391193E00C7291A /* InAppMessagesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CDD8382391193E00C7291A /* InAppMessagesCache.swift */; };
+		05CDD83B23911A1400C7291A /* InAppMessagesCacheType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CDD83A23911A1400C7291A /* InAppMessagesCacheType.swift */; };
 		05D0E5562386C63800413AE2 /* Exponea+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D0E5552386C63800413AE2 /* Exponea+Configuration.swift */; };
 		05D9F62E2387EE6600C47509 /* Exponea+ConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */; };
 		05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05E1A3802359B3A500E5EDDE /* .swiftlint.yml */; };
@@ -343,6 +352,11 @@
 		0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationSwizzlerSpec.swift; sourceTree = "<group>"; };
 		0567724223746DDC0082167C /* MockPushNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPushNotificationManager.swift; sourceTree = "<group>"; };
 		056772442374703B0082167C /* PushNotificationManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerType.swift; sourceTree = "<group>"; };
+		057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesCacheSpec.swift; sourceTree = "<group>"; };
+		057F447C239904050070DF30 /* SampleInAppMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleInAppMessage.swift; sourceTree = "<group>"; };
+		057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesManagerSpec.swift; sourceTree = "<group>"; };
+		057F4480239909DC0070DF30 /* MockRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepository.swift; sourceTree = "<group>"; };
+		057F448223990E320070DF30 /* MockInAppMessagesCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessagesCache.swift; sourceTree = "<group>"; };
 		05A931ED2375A4EE00D45200 /* mock_notification_response.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mock_notification_response.h; sourceTree = "<group>"; };
 		05A931EE2375A50100D45200 /* mock_notification_response.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mock_notification_response.m; sourceTree = "<group>"; };
 		05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExponeaSDKTests.h; sourceTree = "<group>"; };
@@ -358,6 +372,10 @@
 		05BB22B1236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationServiceSpec.swift; sourceTree = "<group>"; };
 		05BB22B4236B2F780098C406 /* PushNotificationManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerSpec.swift; sourceTree = "<group>"; };
 		05BB22B6236B300F0098C406 /* MockTrackingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTrackingManager.swift; sourceTree = "<group>"; };
+		05CDD834239114A900C7291A /* InAppMessagesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesManager.swift; sourceTree = "<group>"; };
+		05CDD836239114F700C7291A /* InAppMessagesManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesManagerType.swift; sourceTree = "<group>"; };
+		05CDD8382391193E00C7291A /* InAppMessagesCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesCache.swift; sourceTree = "<group>"; };
+		05CDD83A23911A1400C7291A /* InAppMessagesCacheType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesCacheType.swift; sourceTree = "<group>"; };
 		05D0E5552386C63800413AE2 /* Exponea+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+Configuration.swift"; sourceTree = "<group>"; };
 		05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+ConfigurationSpec.swift"; sourceTree = "<group>"; };
 		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
@@ -620,6 +638,7 @@
 		01EC2DA2207E3D060031BFEB /* Specs */ = {
 			isa = PBXGroup;
 			children = (
+				057F44792398FE7D0070DF30 /* InAppMessages */,
 				05BB22B0236B1DFE0098C406 /* Notifications */,
 				05FB1BB5236AE9010089C529 /* Shared */,
 				05583E9C23608ABD00F7084E /* Push Notifications */,
@@ -670,6 +689,15 @@
 			path = "Push Notifications";
 			sourceTree = "<group>";
 		};
+		057F44792398FE7D0070DF30 /* InAppMessages */ = {
+			isa = PBXGroup;
+			children = (
+				057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */,
+				057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */,
+			);
+			path = InAppMessages;
+			sourceTree = "<group>";
+		};
 		05B4D64D238FEBCC00F5010F /* InAppMessage */ = {
 			isa = PBXGroup;
 			children = (
@@ -693,6 +721,17 @@
 				05BB22B1236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift */,
 			);
 			path = Notifications;
+			sourceTree = "<group>";
+		};
+		05CDD8332391147E00C7291A /* InAppMessages */ = {
+			isa = PBXGroup;
+			children = (
+				05CDD834239114A900C7291A /* InAppMessagesManager.swift */,
+				05CDD836239114F700C7291A /* InAppMessagesManagerType.swift */,
+				05CDD8382391193E00C7291A /* InAppMessagesCache.swift */,
+				05CDD83A23911A1400C7291A /* InAppMessagesCacheType.swift */,
+			);
+			path = InAppMessages;
 			sourceTree = "<group>";
 		};
 		05FB1BB5236AE9010089C529 /* Shared */ = {
@@ -1147,6 +1186,7 @@
 			isa = PBXGroup;
 			children = (
 				F04BEA9F2111EA0200591950 /* json */,
+				057F447C239904050070DF30 /* SampleInAppMessage.swift */,
 				F0BE6104211080F30082ABD8 /* MockData.swift */,
 				F063BEA9207E36E600030811 /* MockDatabaseManager.swift */,
 				4C3F5F2C22DF98C00069E71D /* MockExponea.swift */,
@@ -1156,6 +1196,8 @@
 				05AA63BD2342413E00D78452 /* NetworkStubbing.swift */,
 				05BB22B6236B300F0098C406 /* MockTrackingManager.swift */,
 				0567724223746DDC0082167C /* MockPushNotificationManager.swift */,
+				057F4480239909DC0070DF30 /* MockRepository.swift */,
+				057F448223990E320070DF30 /* MockInAppMessagesCache.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
@@ -1232,6 +1274,7 @@
 				01EC2DB8207E68BF0031BFEB /* Database */,
 				0191639D207E14C9005FD174 /* Logging */,
 				F0C1C1CE207384ED005EB697 /* Models */,
+				05CDD8332391147E00C7291A /* InAppMessages */,
 				F0E757DE207CF98600FE8C21 /* Others */,
 				F067440E208731CF003C0293 /* Payment */,
 				C0EB5D9120B811DE00F1031F /* Push Notifications */,
@@ -1662,6 +1705,7 @@
 				0567723B237462FB0082167C /* UIApplication+UIApplicationDelegating.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
+				05CDD8392391193E00C7291A /* InAppMessagesCache.swift in Sources */,
 				019F1AC52087666900368FB1 /* DataType.swift in Sources */,
 				C07E420B20CA8A3300920809 /* Banner.swift in Sources */,
 				C07E420F20CA8AF700920809 /* DateFilter.swift in Sources */,
@@ -1690,6 +1734,7 @@
 				056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */,
 				C0EB5D9F20BB530000F1031F /* ExponeaType.swift in Sources */,
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
+				05CDD83B23911A1400C7291A /* InAppMessagesCacheType.swift in Sources */,
 				C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ServerRepository.swift in Sources */,
@@ -1713,8 +1758,10 @@
 				05B4D64A238FE9DC00F5010F /* InAppMessagesRequest.swift in Sources */,
 				C0D9B07B20A3B2410066FB1E /* TrackingManagerError.swift in Sources */,
 				4C6BD13622ABA743004487A8 /* CampaignData.swift in Sources */,
+				05CDD837239114F700C7291A /* InAppMessagesManagerType.swift in Sources */,
 				C0329E6120F76EBF0051F5DF /* URLResponse+Debug.swift in Sources */,
 				F029BF29208A099500342498 /* Routes.swift in Sources */,
+				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				C0D9B08120A3C0D50066FB1E /* Authorization.swift in Sources */,
 				01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */,
 				F04BEAAB21126D2000591950 /* DeviceTarget.swift in Sources */,
@@ -1754,11 +1801,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				057F447F239908650070DF30 /* InAppMessagesManagerSpec.swift in Sources */,
 				05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */,
 				F0BE610721108E070082ABD8 /* CustomerParametersSpec.swift in Sources */,
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
 				05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */,
 				F0BE60F9211067B20082ABD8 /* RecommendationRequestSpec.swift in Sources */,
+				057F448323990E320070DF30 /* MockInAppMessagesCache.swift in Sources */,
 				F0BE6105211080F30082ABD8 /* MockData.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
 				050961002321566000D59C01 /* TrackingManagerSpec.swift in Sources */,
@@ -1767,6 +1816,7 @@
 				4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */,
 				C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */,
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
+				057F447D239904050070DF30 /* SampleInAppMessage.swift in Sources */,
 				F04BEA9221119DD200591950 /* HTTPMethodSpec.swift in Sources */,
 				B42DA69022B0594D00BBA225 /* FetchConsentsSpec.swift in Sources */,
 				01764BC42087742100D0D673 /* ConfigurationSpec.swift in Sources */,
@@ -1799,7 +1849,9 @@
 				052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */,
 				F04BEAAF211273A200591950 /* FetchAttributesSpec.swift in Sources */,
 				05BB22B7236B300F0098C406 /* MockTrackingManager.swift in Sources */,
+				057F4481239909DC0070DF30 /* MockRepository.swift in Sources */,
 				0567724123746B9B0082167C /* PushNotificationSwizzlerSpec.swift in Sources */,
+				057F447B2398FE930070DF30 /* InAppMessagesCacheSpec.swift in Sources */,
 				F063BEAA207E36E600030811 /* MockDatabaseManager.swift in Sources */,
 				F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */,
 				F04BEAA9211266DD00591950 /* FetchBannerSpec.swift in Sources */,

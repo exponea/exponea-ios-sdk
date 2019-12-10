@@ -189,7 +189,11 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("Setting pushNotificationsDelegate") {
-                Exponea.logger = MockLogger()
+                var logger: MockLogger!
+                beforeEach {
+                    logger = MockLogger()
+                    Exponea.logger = logger
+                }
                 class MockDelegate: PushNotificationManagerDelegate {
                     func pushNotificationOpened(with action: ExponeaNotificationActionType,
                                                 value: String?, extraData: [AnyHashable: Any]?) {}
@@ -199,17 +203,17 @@ class ExponeaSpec: QuickSpec {
                     let delegate = MockDelegate()
                     exponea.pushNotificationsDelegate = delegate
                     expect(exponea.pushNotificationsDelegate).to(beNil())
-                    expect(MockLogger.messages.last)
+                    expect(logger.messages.last)
                         .to(match("Cannot set push notifications delegate."))
                 }
                 it("Should set delegate after Exponea is configured") {
                     let exponea = Exponea()
                     exponea.configure(plistName: "ExponeaConfig")
                     let delegate = MockDelegate()
-                    MockLogger.messages.removeAll()
+                    logger.messages.removeAll()
                     exponea.pushNotificationsDelegate = delegate
                     expect(exponea.pushNotificationsDelegate).to(be(delegate))
-                    expect(MockLogger.messages).to(beEmpty())
+                    expect(logger.messages).to(beEmpty())
                 }
             }
 

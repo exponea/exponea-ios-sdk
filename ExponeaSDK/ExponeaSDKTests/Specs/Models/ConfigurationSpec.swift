@@ -109,8 +109,10 @@ class ConfigurationSpec: QuickSpec {
                 })
             })
             context("getting project tokens", {
+                var logger: MockLogger!
                 beforeEach {
-                    Exponea.logger = MockLogger()
+                    logger = MockLogger()
+                    Exponea.logger = logger
                 }
                 it("should return default project token") {
                     let configuration = try! Configuration(
@@ -121,7 +123,7 @@ class ConfigurationSpec: QuickSpec {
                     let tokens = configuration.tokens(for: .sessionStart)
                     expect { tokens.count }.to(equal(1))
                     expect { tokens.first }.to(equal("token"))
-                    expect { MockLogger.messages }.to(beEmpty())
+                    expect { logger.messages }.to(beEmpty())
                 }
 
                 it("should return project mapping tokens") {
@@ -135,7 +137,7 @@ class ConfigurationSpec: QuickSpec {
                     expect { tokens.count }.to(equal(2))
                     expect { tokens[0] }.to(equal("token2"))
                     expect { tokens[1] }.to(equal("token3"))
-                    expect { MockLogger.messages }.to(beEmpty())
+                    expect { logger.messages }.to(beEmpty())
                 }
 
                 it("should return default token for event not in project mapping") {
@@ -148,7 +150,7 @@ class ConfigurationSpec: QuickSpec {
                     let tokens = configuration.tokens(for: .sessionEnd)
                     expect { tokens.count }.to(equal(1))
                     expect { tokens.first }.to(equal("token"))
-                    expect { MockLogger.messages }.to(beEmpty())
+                    expect { logger.messages }.to(beEmpty())
                 }
             })
         }

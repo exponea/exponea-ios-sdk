@@ -56,6 +56,9 @@ public class Exponea: ExponeaType {
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
 
+    /// Manager responsible for loading and displaying in-app messages
+    internal var inAppMessagesManager: InAppMessagesManagerType?
+
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
         if UserDefaults(suiteName: Constants.General.userDefaultsSuite) == nil {
@@ -127,18 +130,25 @@ public class Exponea: ExponeaType {
         Exponea.logger.log(.verbose, message: "Configuring Exponea with provided configuration:\n\(configuration)")
         let exception = objc_tryCatch {
             do {
-                // Create database
                 let database = try DatabaseManager()
 
-                // Recreate repository
                 let repository = ServerRepository(configuration: configuration)
                 self.repository = repository
 
-                // Finally, configuring tracking manager
-                self.trackingManager = try TrackingManager(repository: repository,
-                                                       database: database,
-                                                       userDefaults: userDefaults)
+                let trackingManager = try TrackingManager(
+                    repository: repository,
+                    database: database,
+                    userDefaults: userDefaults
+                )
+                self.trackingManager = trackingManager
                 processSavedCampaignData()
+
+                self.inAppMessagesManager = InAppMessagesManager(
+                    repository: repository,
+                    trackingManager: trackingManager
+                )
+                self.inAppMessagesManager?.preload()
+
             } catch {
                 // Failing gracefully, if setup failed
                 Exponea.logger.log(.error, message: """
