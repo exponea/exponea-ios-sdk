@@ -137,14 +137,6 @@ public protocol ExponeaType: class {
 
     // MARK: - Data Fetching -
 
-    /// Fetches the recommendation for a customer.
-    ///
-    /// - Parameters:
-    ///     - request: List of recommendation from a specific customer to be retrieve.
-    ///     - completion: Object containing the data requested.
-    func fetchRecommendation(with request: RecommendationRequest,
-                             completion: @escaping (Result<RecommendationResponse>) -> Void)
-
     /// Fetch all available banners.
     ///
     /// - Parameters:

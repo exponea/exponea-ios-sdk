@@ -12,9 +12,6 @@ import Foundation
 enum Routes {
     case identifyCustomer
     case customEvent
-    case customerRecommendation
-    case customerAttributes
-    case customerEvents
     case banners
     case personalization
     case campaignClick

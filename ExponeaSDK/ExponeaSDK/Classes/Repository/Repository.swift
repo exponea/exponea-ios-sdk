@@ -32,32 +32,6 @@ protocol TrackingRepository {
 }
 
 protocol FetchRepository {
-    /// Fetch a recommendation by its ID for particular customer.
-    ///
-    /// - Parameters:
-    ///   - customerIds: Identification of a customer.
-    ///   - recommendation: Recommendations for the customer.
-    ///   - completion: Object containing the request result.
-    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String: JSONValue],
-                             completion: @escaping (Result<RecommendationResponse>) -> Void)
-
-    /// Fetch multiple customer attributes at once
-    ///
-    /// - Parameters:
-    ///   - customerIds: Identification of a customer.
-    ///   - attributes: List of attributes you want to retrieve.
-    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String: JSONValue],
-                         completion: @escaping (Result<AttributesResponse>) -> Void)
-
-    /// Fetch customer events by its type.
-    ///
-    /// - Parameters:
-    ///   - customerIds: Identification of a customer.
-    ///   - events: List of event types to be retrieve.
-    ///   - completion: Object containing the request result.
-    func fetchEvents(events: EventsRequest, for customerIds: [String: JSONValue],
-                     completion: @escaping (Result<EventsResponse>) -> Void)
-
     /// Fetch all available banners.
     ///
     /// - Parameters:

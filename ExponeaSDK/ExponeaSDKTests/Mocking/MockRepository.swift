@@ -13,9 +13,6 @@ final class MockRepository: RepositoryType {
 
     var trackCustomerResult: EmptyResult<RepositoryError>? = EmptyResult.failure(RepositoryError.connectionError)
     var trackEventResult: EmptyResult<RepositoryError>? = EmptyResult.failure(RepositoryError.connectionError)
-    var fetchRecommendationResult: Result<RecommendationResponse>? = Result.failure(RepositoryError.connectionError)
-    var fetchAttributesResult: Result<AttributesResponse>? = Result.failure(RepositoryError.connectionError)
-    var fetchEventsResult: Result<EventsResponse>? = Result.failure(RepositoryError.connectionError)
     var fetchBannersResult: Result<BannerResponse>? = Result.failure(RepositoryError.connectionError)
     var fetchPersonalizationResult: Result<PersonalizationResponse>? = Result.failure(RepositoryError.connectionError)
     var fetchConsentsResult: Result<ConsentsResponse>? = Result.failure(RepositoryError.connectionError)
@@ -45,36 +42,6 @@ final class MockRepository: RepositoryType {
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     ) {
         if let mockResult = trackEventResult {
-            completion(mockResult)
-        }
-    }
-
-    func fetchRecommendation(
-        recommendation: RecommendationRequest,
-        for customerIds: [String: JSONValue],
-        completion: @escaping (Result<RecommendationResponse>) -> Void
-    ) {
-        if let mockResult = fetchRecommendationResult {
-            completion(mockResult)
-        }
-    }
-
-    func fetchAttributes(
-        attributes: [AttributesDescription],
-        for customerIds: [String: JSONValue],
-        completion: @escaping (Result<AttributesResponse>) -> Void
-    ) {
-        if let mockResult = fetchAttributesResult {
-            completion(mockResult)
-        }
-    }
-
-    func fetchEvents(
-        events: EventsRequest,
-        for customerIds: [String: JSONValue],
-        completion: @escaping (Result<EventsResponse>) -> Void
-    ) {
-        if let mockResult = fetchEventsResult {
             completion(mockResult)
         }
     }

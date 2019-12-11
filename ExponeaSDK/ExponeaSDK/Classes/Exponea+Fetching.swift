@@ -11,17 +11,6 @@ import Foundation
 // MARK: - Fetching -
 
 extension Exponea {
-    public func fetchRecommendation(with request: RecommendationRequest,
-                                    completion: @escaping (Result<RecommendationResponse>) -> Void) {
-        executeSafelyWithDependencies({
-            $0.repository.fetchRecommendation(
-                recommendation: request,
-                for: $0.trackingManager.customerIds,
-                completion: $1
-            )
-        }, completion: completion)
-    }
-
     public func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
         executeSafelyWithDependencies({
             guard $0.configuration.authorization != Authorization.none else {

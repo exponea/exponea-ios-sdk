@@ -62,20 +62,6 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.trackSessionStart()).notTo(raiseException())
                     expect(exponea.trackSessionEnd()).notTo(raiseException())
                 }
-                it("Should fail fetching recommendation") {
-                    waitUntil { done in
-                        exponea.fetchRecommendation(
-                            with: RecommendationRequest(type: "mock_type", id: "mock_id")
-                        ) { response in
-                            guard case .failure = response else {
-                                XCTFail("Expected .failure got \(response)")
-                                done()
-                                return
-                            }
-                            done()
-                        }
-                    }
-                }
                 it("Should fail fetching data") {
                     waitUntil { done in
                         exponea.fetchBanners { response in
