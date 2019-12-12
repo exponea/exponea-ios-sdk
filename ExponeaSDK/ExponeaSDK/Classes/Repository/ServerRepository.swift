@@ -112,6 +112,44 @@ extension ServerRepository: TrackingRepository {
 }
 
 extension ServerRepository: RepositoryType {
+    func fetchRecommendation<T: RecommendationUserData>(
+        request: RecommendationRequest,
+        for customerIds: [String: JSONValue],
+        completion: @escaping (Result<RecommendationResponse<T>>) -> Void
+    ) {
+        let router = RequestFactory(
+            baseUrl: configuration.baseUrl,
+            projectToken: configuration.fetchingToken,
+            route: .customerAttributes
+        )
+        let request = router.prepareRequest(
+            authorization: configuration.authorization,
+            parameters: request,
+            customerIds: customerIds
+        )
+
+        session
+            .dataTask(
+                with: request,
+                completionHandler: router.handler(
+                    with: { (result: Result<WrappedRecommendationResponse<T>>) in
+                        if let response = result.value {
+                            // response is wrapped into an array of results for requests.
+                            // we only sent one request, so we only care about first result
+                            if response.success, response.results.count > 0 {
+                                completion(Result.success(response.results[0]))
+                            } else {
+                                completion(Result.failure(RepositoryError.serverError(nil)))
+                            }
+                        } else {
+                            completion(Result.failure(result.error ?? RepositoryError.serverError(nil)))
+                        }
+                    }
+                )
+            )
+            .resume()
+    }
+
     /// Fetch all available banners.
     ///
     /// - Parameters:

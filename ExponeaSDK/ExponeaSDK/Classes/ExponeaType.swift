@@ -137,6 +137,19 @@ public protocol ExponeaType: class {
 
     // MARK: - Data Fetching -
 
+    /// Fetch recommendations for customer.
+    /// Recommendations contain fields as defined on Exponea backend.
+    /// You have to define your own struct for contents of those fields
+    ///  and call this generic function with it in callback.
+    ///
+    /// - Parameters:
+    ///   - options: Parameters for recommendation request
+    ///   - completion: Object containing the request result.
+    func fetchRecommendation<T: RecommendationUserData>(
+        with options: RecommendationOptions,
+        completion: @escaping (Result<RecommendationResponse<T>>) -> Void
+    )
+
     /// Fetch all available banners.
     ///
     /// - Parameters:

@@ -13,6 +13,8 @@ final class MockRepository: RepositoryType {
 
     var trackCustomerResult: EmptyResult<RepositoryError>? = EmptyResult.failure(RepositoryError.connectionError)
     var trackEventResult: EmptyResult<RepositoryError>? = EmptyResult.failure(RepositoryError.connectionError)
+    var fetchRecommendationResult: Result<RecommendationResponse<EmptyRecommendationData>>?
+        = Result.failure(RepositoryError.connectionError)
     var fetchBannersResult: Result<BannerResponse>? = Result.failure(RepositoryError.connectionError)
     var fetchPersonalizationResult: Result<PersonalizationResponse>? = Result.failure(RepositoryError.connectionError)
     var fetchConsentsResult: Result<ConsentsResponse>? = Result.failure(RepositoryError.connectionError)
@@ -42,6 +44,16 @@ final class MockRepository: RepositoryType {
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     ) {
         if let mockResult = trackEventResult {
+            completion(mockResult)
+        }
+    }
+
+    func fetchRecommendation<T>(
+        request: RecommendationRequest,
+        for customerIds: [String: JSONValue],
+        completion: @escaping (Result<RecommendationResponse<T>>) -> Void
+    ) where T: RecommendationUserData {
+        if let mockResult = fetchRecommendationResult as? Result<RecommendationResponse<T>> {
             completion(mockResult)
         }
     }
