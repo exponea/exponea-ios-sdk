@@ -32,7 +32,8 @@ class InAppMessagesManagerSpec: QuickSpec {
             manager = InAppMessagesManager(
                 repository: repository,
                 trackingManager: MockTrackingManager(),
-                cache: cache
+                cache: cache,
+                presenter: MockInAppMessageDialogPresenter()
             )
         }
 
@@ -73,6 +74,25 @@ class InAppMessagesManagerSpec: QuickSpec {
         it("should get in-app messages from cache") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             expect(manager.getInAppMessage()).to(equal(SampleInAppMessage.getSampleInAppMessage()))
+        }
+
+        it("should show dialog") {
+            cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
+            waitUntil { done in
+                manager.showInAppMessage { shown in
+                    expect(shown).to(beTrue())
+                    done()
+                }
+            }
+        }
+
+        it("should not show dialog without messages") {
+            waitUntil { done in
+                manager.showInAppMessage { shown in
+                    expect(shown).to(beFalse())
+                    done()
+                }
+            }
         }
     }
 }

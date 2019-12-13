@@ -13,15 +13,18 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private let trackingManager: TrackingManagerType
     // cache is synchronous, be careful about calling it from main thread
     private let cache: InAppMessagesCacheType
+    private let presenter: InAppMessageDialogPresenterType
 
     init(
         repository: RepositoryType,
         trackingManager: TrackingManagerType,
-        cache: InAppMessagesCacheType = InAppMessagesCache()
+        cache: InAppMessagesCacheType = InAppMessagesCache(),
+        presenter: InAppMessageDialogPresenterType = InAppMessageDialogPresenter()
     ) {
         self.repository = repository
         self.trackingManager = trackingManager
         self.cache = cache
+        self.presenter = presenter
     }
 
     func preload(completion: (() -> Void)?) {
@@ -40,5 +43,27 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
     func getInAppMessage() -> InAppMessage? {
         return self.cache.getInAppMessages().randomElement()
+    }
+
+    private func getImageData(message: InAppMessage) -> Data? {
+        let imageUrl = URL(string: message.payload.imageUrl)
+        return try? Data(contentsOf: imageUrl!)
+    }
+
+    func showInAppMessage(callback: ((Bool) -> Void)? = nil) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let message = self.getInAppMessage(),
+                  let imageData = self.getImageData(message: message) else {
+                callback?(false)
+                return
+            }
+
+            self.presenter.presentInAppMessage(
+                payload: message.payload,
+                imageData: imageData,
+                actionCallback: { print("ACTION CLICKED - not implemented") },
+                presentedCallback: { presented in callback?(presented) }
+            )
+        }
     }
 }
