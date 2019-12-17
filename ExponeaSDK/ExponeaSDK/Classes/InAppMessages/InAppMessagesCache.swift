@@ -58,4 +58,56 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         return []
     }
 
+    private func getFileName(imageUrl: String) -> String {
+        guard let data = imageUrl.data(using: .utf8) else {
+            return imageUrl
+        }
+        return data
+            .base64EncodedString()
+            .replacingOccurrences(of: "=", with: "")
+            .replacingOccurrences(of: "/", with: "")
+    }
+
+    func deleteImages(except: [String]) {
+        let exceptFileNames = except.map { getFileName(imageUrl: $0) }
+        guard let directory = getCacheDirectoryURL() else {
+            return
+        }
+        let fileURLs = try? fileManager.contentsOfDirectory(
+            at: directory,
+            includingPropertiesForKeys: nil,
+            options: []
+        )
+        fileURLs?.forEach { url in
+            let fileName = url.lastPathComponent
+            if  fileName != InAppMessagesCache.inAppMessagesFileName && !exceptFileNames.contains(fileName) {
+                try? fileManager.removeItem(at: url)
+            }
+        }
+    }
+
+    func hasImageData(at imageUrl: String) -> Bool {
+        guard let directory = getCacheDirectoryURL() else {
+            return false
+        }
+        let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
+        return fileManager.fileExists(atPath: fileUrl.path)
+    }
+
+    func saveImageData(at imageUrl: String, data: Data) {
+        guard let directory = getCacheDirectoryURL() else {
+            return
+        }
+        let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
+        try? data.write(to: fileUrl, options: .atomic)
+    }
+
+    func getImageData(at imageUrl: String) -> Data? {
+        guard let directory = getCacheDirectoryURL() else {
+            return nil
+        }
+        let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
+        return try? Data(contentsOf: fileUrl)
+    }
+
 }

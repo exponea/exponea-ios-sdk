@@ -11,4 +11,9 @@ import Foundation
 protocol InAppMessagesCacheType {
     func saveInAppMessages(inAppMessages: [InAppMessage])
     func getInAppMessages() -> [InAppMessage]
+
+    func deleteImages(except: [String])
+    func hasImageData(at imageUrl: String) -> Bool
+    func saveImageData(at imageUrl: String, data: Data)
+    func getImageData(at imageUrl: String) -> Data?
 }

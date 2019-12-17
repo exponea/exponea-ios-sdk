@@ -36,18 +36,30 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                     return
                 }
                 self.cache.saveInAppMessages(inAppMessages: response.data)
-                completion?()
+                self.cache.deleteImages(except: response.data.map { $0.payload.imageUrl })
+                self.preloadImages(inAppMessages: response.data, completion: completion)
             }
         }
     }
 
+    private func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
+        inAppMessages.forEach { message in
+            if let imageUrl = URL(string: message.payload.imageUrl),
+               let data = try? Data(contentsOf: imageUrl) {
+                self.cache.saveImageData(at: message.payload.imageUrl, data: data)
+            }
+        }
+        completion?()
+    }
+
     func getInAppMessage() -> InAppMessage? {
-        return self.cache.getInAppMessages().randomElement()
+        return self.cache.getInAppMessages()
+            .filter { return self.cache.hasImageData(at: $0.payload.imageUrl) }
+            .randomElement()
     }
 
     private func getImageData(message: InAppMessage) -> Data? {
-        let imageUrl = URL(string: message.payload.imageUrl)
-        return try? Data(contentsOf: imageUrl!)
+        return cache.getImageData(at: message.payload.imageUrl)
     }
 
     func showInAppMessage(callback: ((Bool) -> Void)? = nil) {

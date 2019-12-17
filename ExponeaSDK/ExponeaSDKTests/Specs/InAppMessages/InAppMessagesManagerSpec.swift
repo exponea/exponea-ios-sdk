@@ -71,13 +71,26 @@ class InAppMessagesManagerSpec: QuickSpec {
             expect(manager.getInAppMessage()).to(beNil())
         }
 
-        it("should get in-app messages from cache") {
+        it("should get in-app messages from cache if image is precached") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
+            cache.saveImageData(
+                at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl,
+                data: "mock data".data(using: .utf8)!
+            )
             expect(manager.getInAppMessage()).to(equal(SampleInAppMessage.getSampleInAppMessage()))
+        }
+
+        it("should not get in-app messages from cache if image is not precached") {
+            cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
+            expect(manager.getInAppMessage()).to(beNil())
         }
 
         it("should show dialog") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
+            cache.saveImageData(
+                at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl,
+                data: "mock data".data(using: .utf8)!
+            )
             waitUntil { done in
                 manager.showInAppMessage { shown in
                     expect(shown).to(beTrue())
