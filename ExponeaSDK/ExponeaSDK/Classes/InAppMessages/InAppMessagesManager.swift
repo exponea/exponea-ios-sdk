@@ -10,26 +10,23 @@ import Foundation
 
 final class InAppMessagesManager: InAppMessagesManagerType {
     private let repository: RepositoryType
-    private let trackingManager: TrackingManagerType
     // cache is synchronous, be careful about calling it from main thread
     private let cache: InAppMessagesCacheType
     private let presenter: InAppMessageDialogPresenterType
 
     init(
         repository: RepositoryType,
-        trackingManager: TrackingManagerType,
         cache: InAppMessagesCacheType = InAppMessagesCache(),
         presenter: InAppMessageDialogPresenterType = InAppMessageDialogPresenter()
     ) {
         self.repository = repository
-        self.trackingManager = trackingManager
         self.cache = cache
         self.presenter = presenter
     }
 
-    func preload(completion: (() -> Void)?) {
+    func preload(for customerIds: [String: JSONValue], completion: (() -> Void)?) {
         DispatchQueue.global(qos: .background).async {
-            self.repository.fetchInAppMessages(for: self.trackingManager.customerIds) { result in
+            self.repository.fetchInAppMessages(for: customerIds) { result in
                 guard case .success(let response) = result else {
                     Exponea.logger.log(.warning, message: "Fetching in-app messages from server failed.")
                     completion?()
@@ -52,20 +49,43 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         completion?()
     }
 
-    func getInAppMessage() -> InAppMessage? {
+    func getInAppMessage(for eventType: String) -> InAppMessage? {
         return self.cache.getInAppMessages()
-            .filter { return self.cache.hasImageData(at: $0.payload.imageUrl) }
-            .randomElement()
+            .filter {
+                return self.cache.hasImageData(at: $0.payload.imageUrl)
+                    && applyDateFilter(to: $0)
+                    && applyEventFilter(to: $0, eventType: eventType)
+            }.randomElement()
     }
 
-    private func getImageData(message: InAppMessage) -> Data? {
+    private func getImageData(for message: InAppMessage) -> Data? {
         return cache.getImageData(at: message.payload.imageUrl)
     }
 
-    func showInAppMessage(callback: ((Bool) -> Void)? = nil) {
+    private func applyDateFilter(to message: InAppMessage) -> Bool {
+        guard message.dateFilter.enabled else {
+            return true
+        }
+        if let start = message.dateFilter.startDate, start > Date() {
+            return false
+        }
+        if let end = message.dateFilter.endDate, end < Date() {
+            return false
+        }
+        return true
+    }
+
+    private func applyEventFilter(to message: InAppMessage, eventType: String) -> Bool {
+        guard let triggerType = message.trigger.type, let triggerEventType = message.trigger.eventType else {
+            return false
+        }
+        return triggerType == "event" && triggerEventType == eventType
+    }
+
+    func showInAppMessage(for eventType: String, callback: ((Bool) -> Void)? = nil) {
         DispatchQueue.global(qos: .userInitiated).async {
-            guard let message = self.getInAppMessage(),
-                  let imageData = self.getImageData(message: message) else {
+            guard let message = self.getInAppMessage(for: eventType),
+                  let imageData = self.getImageData(for: message) else {
                 callback?(false)
                 return
             }

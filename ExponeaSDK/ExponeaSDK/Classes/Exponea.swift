@@ -56,9 +56,6 @@ public class Exponea: ExponeaType {
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
 
-    /// Manager responsible for loading and displaying in-app messages
-    internal var inAppMessagesManager: InAppMessagesManagerType?
-
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
         if UserDefaults(suiteName: Constants.General.userDefaultsSuite) == nil {
@@ -142,13 +139,6 @@ public class Exponea: ExponeaType {
                 )
                 self.trackingManager = trackingManager
                 processSavedCampaignData()
-
-                self.inAppMessagesManager = InAppMessagesManager(
-                    repository: repository,
-                    trackingManager: trackingManager
-                )
-                self.inAppMessagesManager?.preload()
-
             } catch {
                 // Failing gracefully, if setup failed
                 Exponea.logger.log(.error, message: """

@@ -9,17 +9,17 @@
 import Foundation
 
 protocol InAppMessagesManagerType {
-    func preload(completion: (() -> Void)?)
-    func getInAppMessage() -> InAppMessage?
-    func showInAppMessage(callback: ((Bool) -> Void)?)
+    func preload(for customerIds: [String: JSONValue], completion: (() -> Void)?)
+    func getInAppMessage(for eventType: String) -> InAppMessage?
+    func showInAppMessage(for eventType: String, callback: ((Bool) -> Void)?)
 }
 
 extension InAppMessagesManagerType {
-    func preload() {
-        preload(completion: nil)
+    func preload(for customerIds: [String: JSONValue]) {
+        preload(for: customerIds, completion: nil)
     }
 
-    func showInAppMessage() {
-        showInAppMessage(callback: nil)
+    func showInAppMessage(for eventType: String) {
+        showInAppMessage(for: eventType, callback: nil)
     }
 }

@@ -45,7 +45,11 @@ struct SampleInAppMessage {
     }
     """
 
-    static func getSampleInAppMessage(id: String? = nil) -> InAppMessage {
+    static func getSampleInAppMessage(
+        id: String? = nil,
+        dateFilter: DateFilter? = nil,
+        trigger: InAppMessageTrigger? = nil
+    ) -> InAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
             name: "Test serving in-app message",
@@ -69,8 +73,8 @@ struct SampleInAppMessage {
             ),
             variantId: 0,
             variantName: "Variant A",
-            trigger: InAppMessageTrigger(type: "event", eventType: "session_start"),
-            dateFilter: DateFilter(
+            trigger: trigger ?? InAppMessageTrigger(type: "event", eventType: "session_start"),
+            dateFilter: dateFilter ?? DateFilter(
                 enabled: false,
                 startDate: Date(timeIntervalSince1970: 1570744800),
                 endDate: nil

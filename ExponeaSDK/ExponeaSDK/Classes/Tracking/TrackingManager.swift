@@ -38,6 +38,9 @@ class TrackingManager {
     /// The manager for automatic push registration and delivery tracking
     internal var notificationsManager: PushNotificationManagerType?
 
+    /// Manager responsible for loading and displaying in-app messages
+    internal var inAppMessagesManager: InAppMessagesManagerType
+
     /// Used for periodic data flushing.
     internal var flushingTimer: Timer?
 
@@ -96,6 +99,8 @@ class TrackingManager {
         self.reachability = reachability
         try? self.reachability.startNotifier()
 
+        self.inAppMessagesManager = InAppMessagesManager(repository: repository)
+
         initialSetup()
     }
 
@@ -140,6 +145,8 @@ class TrackingManager {
                                                selector: #selector(applicationDidEnterBackground),
                                                name: UIApplication.didEnterBackgroundNotification,
                                                object: nil)
+
+        inAppMessagesManager.preload(for: customerIds)
     }
 
     /// Installation event is fired only once for the whole lifetime of the app on one
@@ -232,18 +239,30 @@ extension TrackingManager: TrackingManagerType {
 
     open func trackInstall(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.installation)])
+        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.installation)
     }
 
     open func trackEvent(with data: [DataType]) throws {
         try database.trackEvent(with: data)
+        let eventTypes = data.compactMap { dataType -> String? in
+            if case DataType.eventType(let eventType) = dataType {
+                return eventType
+            }
+            return nil
+        }
+        eventTypes.forEach {
+            self.inAppMessagesManager.showInAppMessage(for: $0)
+        }
     }
 
     open func trackCampaignClick(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.campaignClick)])
+        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.campaignClick)
     }
 
     open func trackPayment(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.payment)])
+        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.payment)
     }
 
     open func trackPushToken(with data: [DataType]) throws {
@@ -252,18 +271,22 @@ extension TrackingManager: TrackingManagerType {
 
     open func trackPushOpened(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushOpen)])
+        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.pushOpen)
     }
 
     open func trackPushDelivered(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushDelivered)])
+        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.pushDelivered)
     }
 
     open func trackStartSession(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.sessionStart)])
+        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.sessionStart)
     }
 
     open func trackEndSession(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.sessionEnd)])
+        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.sessionEnd)
     }
 }
 
