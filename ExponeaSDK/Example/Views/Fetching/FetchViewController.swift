@@ -36,7 +36,7 @@ class FetchViewController: UIViewController {
                 switch result {
                 case .success(let recommendation):
                     DispatchQueue.main.async {
-                        AppDelegate.memoryLogger.logMessage("\(recom)")
+                        AppDelegate.memoryLogger.logMessage("\(recommendation)")
                         self.showAlert(
                             title: "Fetch Recommendation",
                             message: """
