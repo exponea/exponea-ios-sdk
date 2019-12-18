@@ -17,6 +17,7 @@ class InAppMessageDialogPresenter: InAppMessageDialogPresenterType {
         payload: InAppMessagePayload,
         imageData: Data,
         actionCallback: @escaping () -> Void,
+        dismissCallback: @escaping () -> Void,
         presentedCallback: ((Bool) -> Void)? = nil
     ) {
         DispatchQueue.main.async {
@@ -41,6 +42,7 @@ class InAppMessageDialogPresenter: InAppMessageDialogPresenterType {
             dialogVC.payload = payload
             dialogVC.image = image
             dialogVC.actionCallback = actionCallback
+            dialogVC.dismissCallback = dismissCallback
 
             guard let viewController = self.getTopViewController() else {
                 Exponea.logger.log(.error, message: "Unable to present in-app message dialog - no view controller")

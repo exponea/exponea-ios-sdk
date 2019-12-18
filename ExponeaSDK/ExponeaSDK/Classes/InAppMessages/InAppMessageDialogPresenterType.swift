@@ -11,6 +11,7 @@ protocol InAppMessageDialogPresenterType {
         payload: InAppMessagePayload,
         imageData: Data,
         actionCallback: @escaping () -> Void,
+        dismissCallback: @escaping () -> Void,
         presentedCallback: ((Bool) -> Void)?
     )
 }

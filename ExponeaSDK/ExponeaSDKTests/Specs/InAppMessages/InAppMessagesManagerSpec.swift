@@ -22,6 +22,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         var cache: MockInAppMessagesCache!
         var repository: MockRepository!
         var manager: InAppMessagesManager!
+        var presenter: MockInAppMessageDialogPresenter!
 
         beforeEach {
             cache = MockInAppMessagesCache()
@@ -29,10 +30,11 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
+            presenter = MockInAppMessageDialogPresenter()
             manager = InAppMessagesManager(
                 repository: repository,
                 cache: cache,
-                presenter: MockInAppMessageDialogPresenter()
+                presenter: presenter
             )
         }
 
@@ -153,6 +155,81 @@ class InAppMessagesManagerSpec: QuickSpec {
                     expect(shown).to(beFalse())
                     done()
                 }
+            }
+        }
+
+        context("tracking events") {
+            var delegate: MockInAppMessageTrackingDelegate!
+            beforeEach {
+                delegate = MockInAppMessageTrackingDelegate()
+                cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
+                cache.saveImageData(
+                    at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl,
+                    data: "mock data".data(using: .utf8)!
+                )
+            }
+
+            it("should not track anything if no message is shown") {
+                presenter.presentResult = false
+                waitUntil { done in manager.showInAppMessage(
+                    for: "session_start",
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                expect(delegate.calls).to(beEmpty())
+            }
+
+            it("should track show event when displaying message") {
+                waitUntil { done in manager.showInAppMessage(
+                    for: "session_start",
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                expect(delegate.calls).to(equal([
+                    MockInAppMessageTrackingDelegate.CallData(
+                        message: SampleInAppMessage.getSampleInAppMessage(),
+                        action: "show",
+                        interaction: false
+                    )
+                ]))
+            }
+
+            it("should track dismiss event when closing message") {
+                waitUntil { done in manager.showInAppMessage(
+                    for: "session_start",
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                presenter.presentedMessages[0].dismissCallback()
+                expect(delegate.calls).to(equal([
+                    MockInAppMessageTrackingDelegate.CallData(
+                        message: SampleInAppMessage.getSampleInAppMessage(),
+                        action: "show",
+                        interaction: false
+                    ),
+                    MockInAppMessageTrackingDelegate.CallData(
+                        message: SampleInAppMessage.getSampleInAppMessage(),
+                        action: "close",
+                        interaction: false
+                    )
+                ]))
+            }
+
+            it("should track action event when action button pressed on message") {
+                waitUntil { done in manager.showInAppMessage(
+                    for: "session_start",
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                presenter.presentedMessages[0].actionCallback()
+                expect(delegate.calls).to(equal([
+                    MockInAppMessageTrackingDelegate.CallData(
+                        message: SampleInAppMessage.getSampleInAppMessage(),
+                        action: "show",
+                        interaction: false
+                    ),
+                    MockInAppMessageTrackingDelegate.CallData(
+                        message: SampleInAppMessage.getSampleInAppMessage(),
+                        action: "click",
+                        interaction: true
+                    )
+                ]))
             }
         }
     }

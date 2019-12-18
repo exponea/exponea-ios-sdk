@@ -93,6 +93,7 @@ final class InAppMessageDialogPresenterSpec: QuickSpec {
                         payload: payload,
                         imageData: lenaImageData,
                         actionCallback: {},
+                        dismissCallback: {},
                         presentedCallback: { success in
                             expect(success).to(beTrue())
                             done()
@@ -106,6 +107,7 @@ final class InAppMessageDialogPresenterSpec: QuickSpec {
                         payload: payload,
                         imageData: lenaImageData,
                         actionCallback: {},
+                        dismissCallback: {},
                         presentedCallback: { success in
                             expect(success).to(beFalse())
                             done()
@@ -121,6 +123,7 @@ final class InAppMessageDialogPresenterSpec: QuickSpec {
                         payload: payload,
                         imageData: "something".data(using: .utf8)!,
                         actionCallback: {},
+                        dismissCallback: {},
                         presentedCallback: { success in
                             expect(success).to(beFalse())
                             done()

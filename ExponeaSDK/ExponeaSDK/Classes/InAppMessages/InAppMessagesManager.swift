@@ -82,7 +82,11 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         return triggerType == "event" && triggerEventType == eventType
     }
 
-    func showInAppMessage(for eventType: String, callback: ((Bool) -> Void)? = nil) {
+    func showInAppMessage(
+        for eventType: String,
+        trackingDelegate: InAppMessageTrackingDelegate? = nil,
+        callback: ((Bool) -> Void)? = nil) {
+        Exponea.logger.log(.verbose, message: "Attempting to show in-app message for event type \(eventType).")
         DispatchQueue.global(qos: .userInitiated).async {
             guard let message = self.getInAppMessage(for: eventType),
                   let imageData = self.getImageData(for: message) else {
@@ -93,8 +97,19 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             self.presenter.presentInAppMessage(
                 payload: message.payload,
                 imageData: imageData,
-                actionCallback: { print("ACTION CLICKED - not implemented") },
-                presentedCallback: { presented in callback?(presented) }
+                actionCallback: {
+                    print("ACTION CLICKED - not implemented")
+                    trackingDelegate?.track(message: message, action: "click", interaction: true)
+                },
+                dismissCallback: {
+                    trackingDelegate?.track(message: message, action: "close", interaction: false)
+                },
+                presentedCallback: { presented in
+                    if presented {
+                        trackingDelegate?.track(message: message, action: "show", interaction: false)
+                    }
+                    callback?(presented)
+                }
             )
         }
     }

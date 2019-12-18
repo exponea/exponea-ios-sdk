@@ -89,6 +89,8 @@
 		05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05E1A3802359B3A500E5EDDE /* .swiftlint.yml */; };
 		05EB8B6C2344F4D700AAC98B /* Configuration+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */; };
 		05FB1BB7236AE9220089C529 /* NotificationDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */; };
+		05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */; };
+		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */; };
 		4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F5F2C22DF98C00069E71D /* MockExponea.swift */; };
@@ -386,6 +388,8 @@
 		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Configuration+Validation.swift"; sourceTree = "<group>"; };
 		05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDataSpec.swift; sourceTree = "<group>"; };
+		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
+		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackUniversalLinkSpec.swift; sourceTree = "<group>"; };
@@ -744,6 +748,7 @@
 				05CDD83A23911A1400C7291A /* InAppMessagesCacheType.swift */,
 				05CDD834239114A900C7291A /* InAppMessagesManager.swift */,
 				05CDD836239114F700C7291A /* InAppMessagesManagerType.swift */,
+				05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */,
 			);
 			path = InAppMessages;
 			sourceTree = "<group>";
@@ -1212,6 +1217,7 @@
 				C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */,
 				05AA63BD2342413E00D78452 /* NetworkStubbing.swift */,
 				057F447C239904050070DF30 /* SampleInAppMessage.swift */,
+				05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
@@ -1718,6 +1724,7 @@
 				4C588F8722AAAB3400916EE4 /* CampaignData+Properties.swift in Sources */,
 				0567723B237462FB0082167C /* UIApplication+UIApplicationDelegating.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
+				05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */,
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
 				05CDD8392391193E00C7291A /* InAppMessagesCache.swift in Sources */,
 				019F1AC52087666900368FB1 /* DataType.swift in Sources */,
@@ -1865,6 +1872,7 @@
 				057F4481239909DC0070DF30 /* MockRepository.swift in Sources */,
 				0567724123746B9B0082167C /* PushNotificationSwizzlerSpec.swift in Sources */,
 				057F447B2398FE930070DF30 /* InAppMessagesCacheSpec.swift in Sources */,
+				05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */,
 				F063BEAA207E36E600030811 /* MockDatabaseManager.swift in Sources */,
 				F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */,
 				F04BEAA9211266DD00591950 /* FetchBannerSpec.swift in Sources */,

@@ -224,6 +224,7 @@ extension TrackingManager: TrackingManagerType {
             case .pushOpened: try trackPushOpened(with: payload)
             case .pushDelivered: try trackPushDelivered(with: payload)
             case .campaignClick: try trackCampaignClick(with: payload)
+            case .banner: try trackBanner(with: payload)
             }
         }
 
@@ -239,7 +240,10 @@ extension TrackingManager: TrackingManagerType {
 
     open func trackInstall(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.installation)])
-        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.installation)
+        self.inAppMessagesManager.showInAppMessage(
+            for: Constants.EventTypes.installation,
+            trackingDelegate: self
+        )
     }
 
     open func trackEvent(with data: [DataType]) throws {
@@ -251,18 +255,24 @@ extension TrackingManager: TrackingManagerType {
             return nil
         }
         eventTypes.forEach {
-            self.inAppMessagesManager.showInAppMessage(for: $0)
+           self.inAppMessagesManager.showInAppMessage(for: $0, trackingDelegate: self)
         }
     }
 
     open func trackCampaignClick(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.campaignClick)])
-        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.campaignClick)
+        self.inAppMessagesManager.showInAppMessage(
+            for: Constants.EventTypes.campaignClick,
+            trackingDelegate: self
+        )
     }
 
     open func trackPayment(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.payment)])
-        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.payment)
+        self.inAppMessagesManager.showInAppMessage(
+            for: Constants.EventTypes.payment,
+            trackingDelegate: self
+        )
     }
 
     open func trackPushToken(with data: [DataType]) throws {
@@ -271,22 +281,38 @@ extension TrackingManager: TrackingManagerType {
 
     open func trackPushOpened(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushOpen)])
-        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.pushOpen)
+        self.inAppMessagesManager.showInAppMessage(
+            for: Constants.EventTypes.pushOpen,
+            trackingDelegate: self
+        )
     }
 
     open func trackPushDelivered(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushDelivered)])
-        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.pushDelivered)
+        self.inAppMessagesManager.showInAppMessage(
+            for: Constants.EventTypes.pushDelivered,
+            trackingDelegate: self
+        )
     }
 
     open func trackStartSession(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.sessionStart)])
-        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.sessionStart)
+        self.inAppMessagesManager.showInAppMessage(
+            for: Constants.EventTypes.sessionStart,
+            trackingDelegate: self
+        )
     }
 
     open func trackEndSession(with data: [DataType]) throws {
         try database.trackEvent(with: data + [.eventType(Constants.EventTypes.sessionEnd)])
-        self.inAppMessagesManager.showInAppMessage(for: Constants.EventTypes.sessionEnd)
+        self.inAppMessagesManager.showInAppMessage(
+            for: Constants.EventTypes.sessionEnd,
+            trackingDelegate: self
+        )
+    }
+
+    open func trackBanner(with data: [DataType]) throws {
+        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.banner)])
     }
 }
 
@@ -780,6 +806,34 @@ extension TrackingManager: PaymentManagerDelegate {
         do {
             try track(.payment, with: data)
             Exponea.logger.log(.verbose, message: Constants.SuccessMessages.paymentDone)
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+    }
+}
+
+// MARK: - In-app messages -
+
+extension TrackingManager: InAppMessageTrackingDelegate {
+    public func track(message: InAppMessage, action: String, interaction: Bool) {
+        do {
+            try track(
+                .banner,
+                with: [
+                    .properties(device.properties),
+                    .properties([
+                        "action": .string(action),
+                        "banner_id": .string(message.id),
+                        "banner_name": .string(message.name),
+                        "banner_type": .string(message.messageType),
+                        "interaction": .bool(interaction),
+                        "os": .string("iOS"),
+                        "type": .string("in-app message"),
+                        "variant_id": .int(message.variantId),
+                        "variant_name": .string(message.variantName)
+                    ])
+                ]
+            )
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
         }

@@ -51,6 +51,7 @@ public enum Constants {
         static let pushOpen = "campaign"
         static let pushDelivered = "campaign"
         static let campaignClick = "campaign_click"
+        static let banner = "banner"
     }
 
     /// Error messages

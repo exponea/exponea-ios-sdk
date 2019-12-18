@@ -28,11 +28,13 @@ class InAppMessageDialogViewController: UIViewController {
     @IBOutlet weak var closeButton: UIButton!
 
     @IBAction func closeButtonAction(_ sender: Any) {
+        dismissCallback?()
         dismiss(animated: true)
     }
 
     var payload: InAppMessagePayload?
     var actionCallback: (() -> Void)?
+    var dismissCallback: (() -> Void)?
     var image: UIImage?
 
     override func viewDidLoad() {

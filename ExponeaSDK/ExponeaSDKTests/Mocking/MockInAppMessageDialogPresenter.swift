@@ -9,12 +9,36 @@
 @testable import ExponeaSDK
 
 class MockInAppMessageDialogPresenter: InAppMessageDialogPresenterType {
+    struct PresentedMessageData {
+        let payload: InAppMessagePayload
+        let imageData: Data
+        let actionCallback: () -> Void
+        let dismissCallback: () -> Void
+        let presentedCallback: ((Bool) -> Void)?
+    }
+
+    public var presentedMessages: [PresentedMessageData] = []
+
+    public var presentResult: Bool = true
+
     func presentInAppMessage(
         payload: InAppMessagePayload,
         imageData: Data,
         actionCallback: @escaping () -> Void,
+        dismissCallback: @escaping () -> Void,
         presentedCallback: ((Bool) -> Void)?
     ) {
-        presentedCallback?(true)
+        if presentResult {
+            presentedMessages.append(
+                PresentedMessageData(
+                    payload: payload,
+                    imageData: imageData,
+                    actionCallback: actionCallback,
+                    dismissCallback: dismissCallback,
+                    presentedCallback: presentedCallback
+                )
+            )
+        }
+        presentedCallback?(presentResult)
     }
 }
