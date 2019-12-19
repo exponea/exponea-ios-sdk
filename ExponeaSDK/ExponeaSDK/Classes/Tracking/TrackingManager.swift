@@ -99,7 +99,10 @@ class TrackingManager {
         self.reachability = reachability
         try? self.reachability.startNotifier()
 
-        self.inAppMessagesManager = InAppMessagesManager(repository: repository)
+        self.inAppMessagesManager = InAppMessagesManager(
+            repository: repository,
+            displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults)
+        )
 
         initialSetup()
     }
@@ -379,7 +382,9 @@ extension TrackingManager {
         }
 
         // Start the session with current date
-        sessionStartTime = Date().timeIntervalSince1970
+        let sessionStartDate = Date()
+        sessionStartTime = sessionStartDate.timeIntervalSince1970
+        inAppMessagesManager.sessionDidStart(at: sessionStartDate)
 
         let data: [DataType] = [
             .properties(device.properties),

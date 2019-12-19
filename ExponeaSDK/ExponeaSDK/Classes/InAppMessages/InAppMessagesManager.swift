@@ -13,15 +13,23 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     // cache is synchronous, be careful about calling it from main thread
     private let cache: InAppMessagesCacheType
     private let presenter: InAppMessageDialogPresenterType
+    private let displayStatusStore: InAppMessageDisplayStatusStore
+    private var sessionStartDate: Date = Date()
 
     init(
         repository: RepositoryType,
         cache: InAppMessagesCacheType = InAppMessagesCache(),
+        displayStatusStore: InAppMessageDisplayStatusStore,
         presenter: InAppMessageDialogPresenterType = InAppMessageDialogPresenter()
     ) {
         self.repository = repository
         self.cache = cache
         self.presenter = presenter
+        self.displayStatusStore = displayStatusStore
+    }
+
+    func sessionDidStart(at date: Date) {
+        sessionStartDate = date
     }
 
     func preload(for customerIds: [String: JSONValue], completion: (() -> Void)?) {
@@ -53,33 +61,17 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         return self.cache.getInAppMessages()
             .filter {
                 return self.cache.hasImageData(at: $0.payload.imageUrl)
-                    && applyDateFilter(to: $0)
-                    && applyEventFilter(to: $0, eventType: eventType)
+                    && $0.applyDateFilter(date: Date())
+                    && $0.applyEventFilter(eventType: eventType)
+                    && $0.applyFrequencyFilter(
+                           displayState: displayStatusStore.status(for: $0),
+                           sessionStart: sessionStartDate
+                       )
             }.randomElement()
     }
 
     private func getImageData(for message: InAppMessage) -> Data? {
         return cache.getImageData(at: message.payload.imageUrl)
-    }
-
-    private func applyDateFilter(to message: InAppMessage) -> Bool {
-        guard message.dateFilter.enabled else {
-            return true
-        }
-        if let start = message.dateFilter.startDate, start > Date() {
-            return false
-        }
-        if let end = message.dateFilter.endDate, end < Date() {
-            return false
-        }
-        return true
-    }
-
-    private func applyEventFilter(to message: InAppMessage, eventType: String) -> Bool {
-        guard let triggerType = message.trigger.type, let triggerEventType = message.trigger.eventType else {
-            return false
-        }
-        return triggerType == "event" && triggerEventType == eventType
     }
 
     func showInAppMessage(
@@ -99,6 +91,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 imageData: imageData,
                 actionCallback: {
                     print("ACTION CLICKED - not implemented")
+                    self.displayStatusStore.didInteract(with: message, at: Date())
                     trackingDelegate?.track(message: message, action: "click", interaction: true)
                 },
                 dismissCallback: {
@@ -106,6 +99,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 },
                 presentedCallback: { presented in
                     if presented {
+                        self.displayStatusStore.didDisplay(message, at: Date())
                         trackingDelegate?.track(message: message, action: "show", interaction: false)
                     }
                     callback?(presented)

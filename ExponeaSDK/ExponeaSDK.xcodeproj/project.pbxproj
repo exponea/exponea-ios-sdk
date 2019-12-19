@@ -34,6 +34,9 @@
 		053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053E12CA23A26098009CEF03 /* Recommendation.swift */; };
 		053E12CD23A26187009CEF03 /* RecommendationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053E12CC23A26187009CEF03 /* RecommendationOptions.swift */; };
 		053E12CF23A264AD009CEF03 /* ServerRepositoryFetchRecommendationsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053E12CE23A264AD009CEF03 /* ServerRepositoryFetchRecommendationsSpec.swift */; };
+		053EC59923AA32A7004D1C8B /* InAppMessageDisplayStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59823AA32A7004D1C8B /* InAppMessageDisplayStatus.swift */; };
+		053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59A23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift */; };
+		053EC59F23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */; };
 		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */; };
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
@@ -334,6 +337,9 @@
 		053E12CA23A26098009CEF03 /* Recommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recommendation.swift; sourceTree = "<group>"; };
 		053E12CC23A26187009CEF03 /* RecommendationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationOptions.swift; sourceTree = "<group>"; };
 		053E12CE23A264AD009CEF03 /* ServerRepositoryFetchRecommendationsSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepositoryFetchRecommendationsSpec.swift; sourceTree = "<group>"; };
+		053EC59823AA32A7004D1C8B /* InAppMessageDisplayStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayStatus.swift; sourceTree = "<group>"; };
+		053EC59A23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayStateStore.swift; sourceTree = "<group>"; };
+		053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayStatusStoreSpec.swift; sourceTree = "<group>"; };
 		05583E9A23603BA900F7084E /* PushNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParser.swift; sourceTree = "<group>"; };
 		05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParserSpec.swift; sourceTree = "<group>"; };
 		05664249237309C300CCDB98 /* SwizzleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleSpec.swift; sourceTree = "<group>"; };
@@ -701,6 +707,7 @@
 				057F44862399322D0070DF30 /* InAppMessageDialogViewControllerSpec.swift */,
 				057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */,
 				057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */,
+				053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */,
 			);
 			path = InAppMessages;
 			sourceTree = "<group>";
@@ -718,6 +725,7 @@
 			children = (
 				05B4D64E238FEC1000F5010F /* InAppMessage.swift */,
 				05B4D650238FEF3900F5010F /* InAppMessagePayload.swift */,
+				053EC59823AA32A7004D1C8B /* InAppMessageDisplayStatus.swift */,
 			);
 			path = InAppMessage;
 			sourceTree = "<group>";
@@ -749,6 +757,7 @@
 				05CDD834239114A900C7291A /* InAppMessagesManager.swift */,
 				05CDD836239114F700C7291A /* InAppMessagesManagerType.swift */,
 				05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */,
+				053EC59A23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift */,
 			);
 			path = InAppMessages;
 			sourceTree = "<group>";
@@ -946,13 +955,6 @@
 		C0EB5DA020BB57ED00F1031F /* Requests */ = {
 			isa = PBXGroup;
 			children = (
-				01EC2DAC207E53E40031BFEB /* AttributesDescription.swift */,
-				01EC2DAA207E53D90031BFEB /* AttributesListDescription.swift */,
-				01EC2DA8207E4FC10031BFEB /* CustomerExportRequest.swift */,
-				01EC2DA6207E4FBA0031BFEB /* EventsRequest.swift */,
-				05B4D649238FE9DC00F5010F /* InAppMessagesRequest.swift */,
-				C07E420820CA89DE00920809 /* PersonalizationRequest.swift */,
-				01EC2DA4207E4F8F0031BFEB /* RecommendationRequest.swift */,
 				C07E420820CA89DE00920809 /* PersonalizationRequest.swift */,
 				05B4D649238FE9DC00F5010F /* InAppMessagesRequest.swift */,
 				05BF1C7523A10F1800FDC101 /* RecommendationRequest.swift */,
@@ -965,13 +967,6 @@
 			children = (
 				C07E420420CA898700920809 /* BannerResponse.swift */,
 				B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */,
-				C07F1BC6209A474A004FE933 /* EntityValueResponse.swift */,
-				F029BF20208A089C00342498 /* EventsResponse.swift */,
-				05B4D64B238FEB9200F5010F /* InAppMessagesResponse.swift */,
-				C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */,
-				C07E420020CA896B00920809 /* PersonalizationResponse.swift */,
-				F029BF2A208A2BC300342498 /* RecommendationResponse.swift */,
-				F029BF2C208A2C5200342498 /* StringResponse.swift */,
 				C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */,
 				C07E420020CA896B00920809 /* PersonalizationResponse.swift */,
 				05B4D64B238FEB9200F5010F /* InAppMessagesResponse.swift */,
@@ -1731,7 +1726,6 @@
 				C07E420B20CA8A3300920809 /* Banner.swift in Sources */,
 				C07E420F20CA8AF700920809 /* DateFilter.swift in Sources */,
 				057F448F23995DC20070DF30 /* InAppMessageDialogPresenterType.swift in Sources */,
-				01EC2DAD207E53E40031BFEB /* AttributesDescription.swift in Sources */,
 				053E12CD23A26187009CEF03 /* RecommendationOptions.swift in Sources */,
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
 				C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */,
@@ -1779,6 +1773,7 @@
 				05CDD837239114F700C7291A /* InAppMessagesManagerType.swift in Sources */,
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
 				C0329E6120F76EBF0051F5DF /* URLResponse+Debug.swift in Sources */,
+				053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */,
 				F029BF29208A099500342498 /* Routes.swift in Sources */,
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				C0D9B08120A3C0D50066FB1E /* Authorization.swift in Sources */,
@@ -1786,6 +1781,7 @@
 				05A6A3EB23954654008475E7 /* InAppMessageDialogViewController.swift in Sources */,
 				F04BEAAB21126D2000591950 /* DeviceTarget.swift in Sources */,
 				C03B23D821AAFDBB00360EE6 /* ExponeaNotificationActionType.swift in Sources */,
+				053EC59923AA32A7004D1C8B /* InAppMessageDisplayStatus.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
 				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
@@ -1812,7 +1808,6 @@
 				C09C33CB221C097100715603 /* NotificationData+Properties.swift in Sources */,
 				05A931F02375A73500D45200 /* mock_notification_response.m in Sources */,
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
-				F029BF2D208A2C5200342498 /* StringResponse.swift in Sources */,
 				0580BBC923969D1F0058323D /* InAppMessageDialogPresenter.swift in Sources */,
 				C07E421220CA8B9900920809 /* DeviceTargetType.swift in Sources */,
 				0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */,
@@ -1855,7 +1850,6 @@
 				05BB22B2236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift in Sources */,
 				057F44852399301A0070DF30 /* UIColor+FromHexStringSpec.swift in Sources */,
 				0567723F237464990082167C /* PushNotificationDelegateObserverSpec.swift in Sources */,
-				F067441720878FA1003C0293 /* FetchEventsSpec.swift in Sources */,
 				057F44872399322D0070DF30 /* InAppMessageDialogViewControllerSpec.swift in Sources */,
 				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,
 				C084D0EB2181C5EA005C0CA8 /* MockUserNotificationCenter.swift in Sources */,
@@ -1878,6 +1872,7 @@
 				F04BEAA9211266DD00591950 /* FetchBannerSpec.swift in Sources */,
 				05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */,
 				F04BEA8E21118F4700591950 /* ResultSpec.swift in Sources */,
+				053EC59F23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift in Sources */,
 				057F449123995EA00070DF30 /* MockInAppMessageDialogPresenter.swift in Sources */,
 				F0BE60F221105FF70082ABD8 /* EventTypeSpec.swift in Sources */,
 				0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */,

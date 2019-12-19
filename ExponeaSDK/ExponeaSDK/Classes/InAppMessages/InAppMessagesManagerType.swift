@@ -16,6 +16,7 @@ protocol InAppMessagesManagerType {
         trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((Bool) -> Void)?
     )
+    func sessionDidStart(at date: Date)
 }
 
 extension InAppMessagesManagerType {

@@ -14,7 +14,7 @@ struct SampleInAppMessage {
         "id": "5dd86f44511946ea55132f29",
         "name": "Test serving in-app message",
         "message_type": "modal",
-        "frequency": "only_once",
+        "frequency": "unknown",
         "payload": {
             "image_url":"https://i.ytimg.com/vi/t4nM1FoUqYs/maxresdefault.jpg",
             "title":"filip.vozar@exponea.com",
@@ -48,13 +48,14 @@ struct SampleInAppMessage {
     static func getSampleInAppMessage(
         id: String? = nil,
         dateFilter: DateFilter? = nil,
-        trigger: InAppMessageTrigger? = nil
+        trigger: InAppMessageTrigger? = nil,
+        frequency: InAppMessageFrequency? = nil
     ) -> InAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
             name: "Test serving in-app message",
             messageType: "modal",
-            frequency: "only_once",
+            rawFrequency: frequency?.rawValue ?? "unknown",
             payload: InAppMessagePayload(
                 imageUrl: "https://i.ytimg.com/vi/t4nM1FoUqYs/maxresdefault.jpg",
                 title: "filip.vozar@exponea.com",

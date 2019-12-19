@@ -23,6 +23,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         var repository: MockRepository!
         var manager: InAppMessagesManager!
         var presenter: MockInAppMessageDialogPresenter!
+        var displayStore: InAppMessageDisplayStatusStore!
 
         beforeEach {
             cache = MockInAppMessagesCache()
@@ -31,9 +32,11 @@ class InAppMessagesManagerSpec: QuickSpec {
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
             presenter = MockInAppMessageDialogPresenter()
+            displayStore = InAppMessageDisplayStatusStore(userDefaults: MockUserDefaults())
             manager = InAppMessagesManager(
                 repository: repository,
                 cache: cache,
+                displayStatusStore: displayStore,
                 presenter: presenter
             )
         }
@@ -132,6 +135,41 @@ class InAppMessagesManagerSpec: QuickSpec {
                 runTest(InAppMessageTrigger(type: nil, eventType: nil), "session_start", false)
                 runTest(InAppMessageTrigger(type: "event", eventType: "payment"), "session_start", false)
                 runTest(InAppMessageTrigger(type: "event", eventType: "payment"), "payment", true)
+            }
+
+            context("with frequency filter") {
+                let createMessage = { (frequency: InAppMessageFrequency) in
+                    let message = SampleInAppMessage.getSampleInAppMessage(frequency: frequency)
+                    cache.saveInAppMessages(inAppMessages: [message])
+                    cache.saveImageData(at: message.payload.imageUrl, data: "mock data".data(using: .utf8)!)
+                }
+                it("should apply always filter") {
+                    createMessage(.always)
+                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                }
+                it("should apply only_once filter") {
+                    createMessage(.onlyOnce)
+                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                    waitUntil { done in manager.showInAppMessage(for: "session_start") { _ in done() } }
+                    expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+                }
+                it("should apply until_visitor_interacts filter") {
+                    createMessage(.untilVisitorInteracts)
+                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                    waitUntil { done in manager.showInAppMessage(for: "session_start") { _ in done() } }
+                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                    presenter.presentedMessages[0].actionCallback()
+                    expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+                }
+                it("should apply once_per_visit filter") {
+                    createMessage(.oncePerVisit)
+                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                    waitUntil { done in manager.showInAppMessage(for: "session_start") { _ in done() } }
+                    expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+                    manager.sessionDidStart(at: Date())
+                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                }
             }
         }
 
