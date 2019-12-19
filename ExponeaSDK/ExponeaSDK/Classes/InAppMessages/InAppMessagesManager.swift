@@ -58,7 +58,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     }
 
     func getInAppMessage(for eventType: String) -> InAppMessage? {
-        return self.cache.getInAppMessages()
+        let messages = self.cache.getInAppMessages()
             .filter {
                 return self.cache.hasImageData(at: $0.payload.imageUrl)
                     && $0.applyDateFilter(date: Date())
@@ -67,7 +67,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                            displayState: displayStatusStore.status(for: $0),
                            sessionStart: sessionStartDate
                        )
-            }.randomElement()
+            }
+        Exponea.logger.log(.verbose, message: "Found \(messages.count) eligible in-app messages.")
+        return messages.randomElement()
     }
 
     private func getImageData(for message: InAppMessage) -> Data? {
@@ -77,7 +79,8 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     func showInAppMessage(
         for eventType: String,
         trackingDelegate: InAppMessageTrackingDelegate? = nil,
-        callback: ((Bool) -> Void)? = nil) {
+        callback: ((Bool) -> Void)? = nil
+    ) {
         Exponea.logger.log(.verbose, message: "Attempting to show in-app message for event type \(eventType).")
         DispatchQueue.global(qos: .userInitiated).async {
             guard let message = self.getInAppMessage(for: eventType),
