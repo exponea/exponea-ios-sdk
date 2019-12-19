@@ -29,32 +29,32 @@ public class ExponeaNotificationContentService {
     public func didReceive(_ notification: UNNotification,
                            context: NSExtensionContext?,
                            viewController: UIViewController) {
-        if #available(iOS 12.0, *) {
-            // Make sure we have context
-            guard let context = context else { return }
-
-            // Parse the actions
-            guard let actionsObject = notification.request.content.userInfo["actions"],
-            let data = try? JSONSerialization.data(withJSONObject: actionsObject, options: []),
-            let actions = try? decoder.decode([ExponeaNotificationAction].self, from: data)  else {
-                return
-            }
-
-            // Create actions
-            context.notificationActions = []
-            for (index, action) in actions.enumerated() {
-                let unAction = ExponeaNotificationAction.createNotificationAction(type: action.action,
-                                                                                  title: action.title,
-                                                                                  index: index)
-                context.notificationActions.append(unAction)
-            }
-        }
-
+        createActions(notification: notification, context: context)
         // Add image if any
         if let first = notification.request.content.attachments.first,
             first.url.startAccessingSecurityScopedResource() {
             attachmentUrl = first.url
             createImageView(on: viewController.view, with: first.url.path)
+        }
+    }
+
+    private func createActions(notification: UNNotification, context: NSExtensionContext?) {
+        guard #available(iOS 12.0, *),
+              let context = context,
+              let actionsObject = notification.request.content.userInfo["actions"],
+              let data = try? JSONSerialization.data(withJSONObject: actionsObject, options: []),
+              let actions = try? decoder.decode([ExponeaNotificationAction].self, from: data) else {
+            return
+        }
+        context.notificationActions = []
+        for (index, action) in actions.enumerated() {
+            context.notificationActions.append(
+                ExponeaNotificationAction.createNotificationAction(
+                    type: action.action,
+                    title: action.title,
+                    index: index
+                )
+            )
         }
     }
 
