@@ -30,10 +30,15 @@ final class MockExponea: Exponea {
             let repository = ServerRepository(configuration: configuration)
             self.repository = repository
 
+            self.flushingManager = try! FlushingManager(database: database, repository: repository)
+
             // Finally, configuring tracking manager
-            self.trackingManager = try! TrackingManager(repository: repository,
-                                                   database: database,
-                                                   userDefaults: userDefaults)
+            self.trackingManager = try! TrackingManager(
+                repository: repository,
+                database: database,
+                flushingManager: flushingManager!,
+                userDefaults: userDefaults
+            )
             processSavedCampaignData()
         } catch {
             // Failing gracefully, if setup failed

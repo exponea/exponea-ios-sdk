@@ -33,22 +33,16 @@ class TrackingManager {
         }
     }
 
-    internal let reachability: Reachability
-
     /// The manager for automatic push registration and delivery tracking
     internal var notificationsManager: PushNotificationManagerType?
 
     /// Manager responsible for loading and displaying in-app messages
     internal var inAppMessagesManager: InAppMessagesManagerType
 
-    /// Used for periodic data flushing.
-    internal var flushingTimer: Timer?
+    internal var flushingManager: FlushingManagerType
 
     /// User defaults used to store basic data and flags.
     internal let userDefaults: UserDefaults
-
-    internal let flushingSemaphore = DispatchSemaphore(value: 1)
-    internal var isFlushingData: Bool = false
 
     // Background task, if there is any - used to track sessions and flush data.
     internal var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid {
@@ -72,18 +66,10 @@ class TrackingManager {
         }
     }
 
-    /// Flushing mode specifies how often and if should data be automatically flushed to Exponea.
-    /// See `FlushingMode` for available values.
-    public var flushingMode: FlushingMode = .immediate {
-        didSet {
-            Exponea.logger.log(.verbose, message: "Flushing mode updated to: \(flushingMode).")
-            updateFlushingMode()
-        }
-    }
-
     init(repository: RepositoryType,
          database: DatabaseManagerType,
          device: DeviceProperties = DeviceProperties(),
+         flushingManager: FlushingManagerType,
          paymentManager: PaymentManagerType = PaymentManager(),
          userDefaults: UserDefaults) throws {
         self.repository = repository
@@ -92,12 +78,7 @@ class TrackingManager {
         self.paymentManager = paymentManager
         self.userDefaults = userDefaults
 
-        // Start reachability
-        guard let reachability = Reachability(hostname: repository.configuration.hostname) else {
-            throw TrackingManagerError.cannotStartReachability
-        }
-        self.reachability = reachability
-        try? self.reachability.startNotifier()
+        self.flushingManager = flushingManager
 
         self.inAppMessagesManager = InAppMessagesManager(
             repository: repository,
@@ -232,8 +213,8 @@ extension TrackingManager: TrackingManagerType {
         }
 
         // If we have immediate flushing mode, flush after tracking
-        if case .immediate = flushingMode {
-            flushDataWith(delay: Constants.Tracking.immediateFlushDelay)
+        if case .immediate = self.flushingManager.flushingMode {
+            self.flushingManager.flushDataWith(delay: Constants.Tracking.immediateFlushDelay)
         }
     }
 
@@ -441,13 +422,7 @@ extension TrackingManager {
         // Let the notification manager know the app has becom active
         notificationsManager?.applicationDidBecomeActive()
 
-        // Reschedule flushing timer if using periodic flushing mode
-        if case let .periodic(interval) = flushingMode {
-            flushingTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(interval),
-                                                 repeats: true) { _ in
-                self.flushData()
-            }
-        }
+        flushingManager.applicationDidBecomeActive()
 
         // Track session start, if we are allowed to
         if repository.configuration.automaticSessionTracking {
@@ -466,6 +441,7 @@ extension TrackingManager {
     }
 
     internal func applicationDidEnterBackgroundUnsafe() {
+        self.flushingManager.applicationDidEnterBackground()
         // Save last session background time, in case we get terminated
         sessionBackgroundTime = Date().timeIntervalSince1970
 
@@ -514,18 +490,10 @@ extension TrackingManager {
                 }
             }
 
-            switch self.flushingMode {
-            case .periodic:
-                // Invalidate the timer
-                self.flushingTimer?.invalidate()
-                self.flushingTimer = nil
-
-                // Continue to flush data on line below
-                fallthrough
-
-            case .automatic, .immediate:
+            switch self.flushingManager.flushingMode {
+            case .periodic, .automatic, .immediate:
                 // Only stop background task after we upload
-                self.flushData(completion: { [weak self] in
+                self.flushingManager.flushData(completion: { [weak self] in
                     guard let weakSelf = self else { return }
                     UIApplication.shared.endBackgroundTask(weakSelf.backgroundTask)
                     weakSelf.backgroundTask = UIBackgroundTaskIdentifier.invalid
@@ -558,248 +526,6 @@ extension TrackingManager {
             return true
         } else {
             return false
-        }
-    }
-}
-
-// MARK: - Flushing -
-
-extension TrackingManager {
-
-    private func flushDataWith(delay: Double) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-            guard let `self` = self else { return }
-            self.flushData()
-        }
-    }
-
-    @objc func flushData() {
-        flushData(completion: nil)
-    }
-
-    /// Method that flushes all data to the API.
-    ///
-    /// - Parameter completion: A completion that is called after all calls succeed or fail.
-    func flushData(completion: (() -> Void)?) {
-        do {
-            // Check if flush is in progress
-            flushingSemaphore.wait()
-            guard !isFlushingData else {
-                Exponea.logger.log(.warning, message: "Data flushing in progress, ignoring another flush call.")
-                flushingSemaphore.signal()
-                completion?()
-                return
-            }
-            isFlushingData = true
-            flushingSemaphore.signal()
-
-            // Check if we have an internet connection otherwise bail
-            guard reachability.connection != .none else {
-                Exponea.logger.log(.warning, message: "Connection issues when flushing data, not flushing.")
-                isFlushingData = false
-                completion?()
-                return
-            }
-
-            // Pull from db
-            let events = try database.fetchTrackEvent().reversed()
-            let customers = try database.fetchTrackCustomer().reversed()
-
-            Exponea.logger.log(.verbose, message: """
-                Flushing data: \(events.count + customers.count) total objects to upload, \
-                \(events.count) events and \(customers.count) customer updates.
-                """)
-
-            // Check if we have any data otherwise bail
-            guard !events.isEmpty || !customers.isEmpty else {
-                isFlushingData = false
-                completion?()
-                return
-            }
-
-            var customersDone = false
-            var eventsDone = false
-
-            flushCustomerTracking(Array(customers), completion: {
-                customersDone = true
-                if eventsDone && customersDone {
-                    self.isFlushingData = false
-                    completion?()
-                }
-            })
-
-            flushEventTracking(Array(events), completion: {
-                eventsDone = true
-                if eventsDone && customersDone {
-                    self.isFlushingData = false
-                    completion?()
-                }
-            })
-        } catch {
-            Exponea.logger.log(.error, message: error.localizedDescription)
-            self.isFlushingData = false
-            completion?()
-        }
-    }
-
-    func flushCustomerTracking(_ customers: [TrackCustomerThreadSafe], completion: (() -> Void)? = nil) {
-        var counter = customers.count
-        for customer in customers {
-            repository.trackCustomer(with: customer.dataTypes, for: customerIds) { [weak self] (result) in
-                switch result {
-                case .success:
-                    Exponea.logger.log(.verbose, message: """
-                        Successfully uploaded customer update: \(customer.managedObjectID).
-                        """)
-                    do {
-                        try self?.database.delete(customer)
-                    } catch {
-                        Exponea.logger.log(.error, message: """
-                            Failed to remove object from database: \(customer.managedObjectID).
-                            \(error.localizedDescription)
-                            """)
-                    }
-                case .failure(let error):
-                    switch error {
-                    case .connectionError, .serverError(nil):
-                        // If server or connection error, bail here and do not increase retry count
-                        Exponea.logger.log(.warning, message: """
-                            Failed to upload customer event due to connection or server error. \
-                            \(error.localizedDescription)
-                            """)
-
-                    default:
-                        // Handle all other errors regularly
-                        Exponea.logger.log(.error, message: """
-                            Failed to upload customer update. \(error.localizedDescription)
-                            """)
-
-                        // If we have reached the max count of retries, delete the object.
-                        // Otherwise save changes and try again next time.
-                        do {
-                            let max = self?.repository.configuration.flushEventMaxRetries
-                                ?? Constants.Session.maxRetries
-                            if customer.retries + 1 >= max {
-                                Exponea.logger.log(.error, message: """
-                                    Maximum retry count reached, deleting customer event: \(customer.managedObjectID)
-                                    """)
-                                try self?.database.delete(customer)
-                            } else {
-                                Exponea.logger.log(.error, message: """
-                                    Increasing retry count (\(customer.retries)) for customer event: \
-                                    \(customer.managedObjectID)
-                                    """)
-                                try self?.database.addRetry(customer)
-                            }
-                        } catch {
-                            Exponea.logger.log(.error, message: """
-                                Failed to update retry count or remove object from database: \
-                                \(customer.managedObjectID). \(error.localizedDescription)
-                                """)
-                        }
-                    }
-                }
-
-                // Handle request counter, potentially call completion
-                counter -= 1
-                if counter == 0 {
-                    completion?()
-                }
-            }
-        }
-
-        // If we have no customer updates, call completion
-        if customers.isEmpty {
-            completion?()
-        }
-    }
-
-    func flushEventTracking(_ events: [TrackEventThreadSafe], completion: (() -> Void)? = nil) {
-        var counter = events.count
-        for event in events {
-            repository.trackEvent(with: event.dataTypes, for: customerIds) { [weak self] (result) in
-                switch result {
-                case .success:
-                    Exponea.logger.log(.verbose, message: "Successfully uploaded event: \(event.managedObjectID).")
-                    do {
-                        try self?.database.delete(event)
-                    } catch {
-                        Exponea.logger.log(.error, message: """
-                            Failed to remove object from database: \(event.managedObjectID). \
-                            \(error.localizedDescription)
-                            """)
-                    }
-                case .failure(let error):
-                    switch error {
-                    case .connectionError, .serverError:
-                        // If server or connection error, bail here and do not increase retry count
-                        Exponea.logger.log(.warning, message: """
-                            Failed to upload event due to connection or server error. \
-                            \(error.localizedDescription)
-                            """)
-
-                    default:
-                        Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
-
-                        // If we have reached the max count of retries, delete the object.
-                        // Otherwise save changes and try again next time.
-                        do {
-                            let max = self?.repository.configuration.flushEventMaxRetries
-                                ?? Constants.Session.maxRetries
-                            if event.retries + 1 >= max {
-                                Exponea.logger.log(.error, message: """
-                                    Maximum retry count reached, deleting event: \(event.managedObjectID)
-                                    """)
-                                try self?.database.delete(event)
-                            } else {
-                                Exponea.logger.log(.error, message: """
-                                    Increasing retry count (\(event.retries)) for event: \(event.managedObjectID)
-                                    """)
-                                try self?.database.addRetry(event)
-                            }
-                        } catch {
-                            Exponea.logger.log(.error, message: """
-                                Failed to update retry count or remove object from database: \(event.managedObjectID).
-                                \(error.localizedDescription)
-                                """)
-                        }
-                    }
-                }
-
-                // Handle request counter, potentially call completion
-                counter -= 1
-                if counter == 0 {
-                    completion?()
-                }
-            }
-        }
-
-        // If we have no events, call completion
-        if events.isEmpty {
-            completion?()
-        }
-    }
-
-    func updateFlushingMode() {
-        // Invalidate timers
-        flushingTimer?.invalidate()
-        flushingTimer = nil
-
-        // Update for new flushing mode
-        switch flushingMode {
-        case .immediate:
-            // Immediately flush any data we might have
-            flushDataWith(delay: Constants.Tracking.immediateFlushDelay)
-
-        case .periodic(let interval):
-            // Schedule a timer for the specified interval
-            flushingTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(interval),
-                                                 repeats: true) { _ in
-                self.flushData()
-            }
-        default:
-            // No need to do anything for manual or automatic (tracked on app events) or immediate
-            break
         }
     }
 }
@@ -868,14 +594,14 @@ extension TrackingManager {
         let currentToken = customerPushToken
         if let token = currentToken, let projectToken = repository.configuration.tokens(for: .registerPushToken).first {
             try trackPushToken(with: [.projectToken(projectToken), .pushNotificationToken(nil)])
-            flushData {
+            self.flushingManager.flushData {
                 do {
                     try perform()
                     try self.trackPushToken(with: [.projectToken(projectToken), .pushNotificationToken(token)])
                 } catch {
                     Exponea.logger.log(.error, message: error.localizedDescription)
                 }
-                self.flushData()
+                self.flushingManager.flushData()
             }
         } else {
             try perform()

@@ -263,7 +263,7 @@ extension Exponea {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
-            dependencies.trackingManager.flushData()
+            dependencies.flushingManager.flushData()
         }
     }
 

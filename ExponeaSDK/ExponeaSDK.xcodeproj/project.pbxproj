@@ -49,6 +49,10 @@
 		0567724123746B9B0082167C /* PushNotificationSwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */; };
 		0567724323746DDC0082167C /* MockPushNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567724223746DDC0082167C /* MockPushNotificationManager.swift */; };
 		056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056772442374703B0082167C /* PushNotificationManagerType.swift */; };
+		05735EA123A3950800DA0FA9 /* FlushingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05735EA023A3950800DA0FA9 /* FlushingManager.swift */; };
+		05735EA323A3975100DA0FA9 /* FlushingManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05735EA223A3975100DA0FA9 /* FlushingManagerType.swift */; };
+		05735EA723A3B3B700DA0FA9 /* FlushingManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05735EA623A3B3B700DA0FA9 /* FlushingManagerSpec.swift */; };
+		05735EA923A3B53600DA0FA9 /* MockFlushingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05735EA823A3B53600DA0FA9 /* MockFlushingManager.swift */; };
 		057F447B2398FE930070DF30 /* InAppMessagesCacheSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */; };
 		057F447D239904050070DF30 /* SampleInAppMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447C239904050070DF30 /* SampleInAppMessage.swift */; };
 		057F447F239908650070DF30 /* InAppMessagesManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */; };
@@ -352,6 +356,10 @@
 		0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationSwizzlerSpec.swift; sourceTree = "<group>"; };
 		0567724223746DDC0082167C /* MockPushNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPushNotificationManager.swift; sourceTree = "<group>"; };
 		056772442374703B0082167C /* PushNotificationManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerType.swift; sourceTree = "<group>"; };
+		05735EA023A3950800DA0FA9 /* FlushingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingManager.swift; sourceTree = "<group>"; };
+		05735EA223A3975100DA0FA9 /* FlushingManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingManagerType.swift; sourceTree = "<group>"; };
+		05735EA623A3B3B700DA0FA9 /* FlushingManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingManagerSpec.swift; sourceTree = "<group>"; };
+		05735EA823A3B53600DA0FA9 /* MockFlushingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFlushingManager.swift; sourceTree = "<group>"; };
 		057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesCacheSpec.swift; sourceTree = "<group>"; };
 		057F447C239904050070DF30 /* SampleInAppMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleInAppMessage.swift; sourceTree = "<group>"; };
 		057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesManagerSpec.swift; sourceTree = "<group>"; };
@@ -652,6 +660,7 @@
 				05FB1BB5236AE9010089C529 /* Shared */,
 				F0CA58F7207F783E00C89A7F /* Tracking */,
 				05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */,
+				05735EA523A3B39C00DA0FA9 /* Flushing */,
 				052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */,
 				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
 			);
@@ -698,6 +707,23 @@
 				0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */,
 			);
 			path = "Push Notifications";
+			sourceTree = "<group>";
+		};
+		05735EA423A397F700DA0FA9 /* Flushing */ = {
+			isa = PBXGroup;
+			children = (
+				05735EA023A3950800DA0FA9 /* FlushingManager.swift */,
+				05735EA223A3975100DA0FA9 /* FlushingManagerType.swift */,
+			);
+			path = Flushing;
+			sourceTree = "<group>";
+		};
+		05735EA523A3B39C00DA0FA9 /* Flushing */ = {
+			isa = PBXGroup;
+			children = (
+				05735EA623A3B3B700DA0FA9 /* FlushingManagerSpec.swift */,
+			);
+			path = Flushing;
 			sourceTree = "<group>";
 		};
 		057F44792398FE7D0070DF30 /* InAppMessages */ = {
@@ -1213,6 +1239,11 @@
 				05AA63BD2342413E00D78452 /* NetworkStubbing.swift */,
 				057F447C239904050070DF30 /* SampleInAppMessage.swift */,
 				05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */,
+				05BB22B6236B300F0098C406 /* MockTrackingManager.swift */,
+				0567724223746DDC0082167C /* MockPushNotificationManager.swift */,
+				057F4480239909DC0070DF30 /* MockRepository.swift */,
+				057F448223990E320070DF30 /* MockInAppMessagesCache.swift */,
+				05735EA823A3B53600DA0FA9 /* MockFlushingManager.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
@@ -1297,6 +1328,7 @@
 				F0E757E1207CF9BE00FE8C21 /* Repository */,
 				01EC2DB0207E55C10031BFEB /* Tracking */,
 				05D0E5552386C63800413AE2 /* Exponea+Configuration.swift */,
+				05735EA423A397F700DA0FA9 /* Flushing */,
 				C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */,
 				C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */,
 				F0E757ED207D025300FE8C21 /* Exponea.swift */,
@@ -1769,6 +1801,7 @@
 				C0EB5D8C20B70D5000F1031F /* Swizzler.swift in Sources */,
 				05B4D64A238FE9DC00F5010F /* InAppMessagesRequest.swift in Sources */,
 				C0D9B07B20A3B2410066FB1E /* TrackingManagerError.swift in Sources */,
+				05735EA123A3950800DA0FA9 /* FlushingManager.swift in Sources */,
 				4C6BD13622ABA743004487A8 /* CampaignData.swift in Sources */,
 				05CDD837239114F700C7291A /* InAppMessagesManagerType.swift in Sources */,
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
@@ -1801,6 +1834,7 @@
 				C030AF4A216F4910004413F0 /* PushNotificationManager+UIResponder.swift in Sources */,
 				F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */,
 				C0F2407420BDA42600CAF7CE /* ExportFormat.swift in Sources */,
+				05735EA323A3975100DA0FA9 /* FlushingManagerType.swift in Sources */,
 				C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */,
 				C030AF48216F4335004413F0 /* PushNotificationReceiver.swift in Sources */,
 				C07E421620CA8D1800920809 /* BannerTrigger.swift in Sources */,
@@ -1854,6 +1888,7 @@
 				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,
 				C084D0EB2181C5EA005C0CA8 /* MockUserNotificationCenter.swift in Sources */,
 				F04BEA9021119C1500591950 /* AuthorizationSpec.swift in Sources */,
+				05735EA923A3B53600DA0FA9 /* MockFlushingManager.swift in Sources */,
 				050961062322552300D59C01 /* MockLogger.swift in Sources */,
 				C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */,
 				05D9F62E2387EE6600C47509 /* Exponea+ConfigurationSpec.swift in Sources */,
@@ -1870,6 +1905,7 @@
 				F063BEAA207E36E600030811 /* MockDatabaseManager.swift in Sources */,
 				F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */,
 				F04BEAA9211266DD00591950 /* FetchBannerSpec.swift in Sources */,
+				05735EA723A3B3B700DA0FA9 /* FlushingManagerSpec.swift in Sources */,
 				05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */,
 				F04BEA8E21118F4700591950 /* ResultSpec.swift in Sources */,
 				053EC59F23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift in Sources */,
