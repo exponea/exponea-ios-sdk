@@ -93,9 +93,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 payload: message.payload,
                 imageData: imageData,
                 actionCallback: {
-                    print("ACTION CLICKED - not implemented")
                     self.displayStatusStore.didInteract(with: message, at: Date())
                     trackingDelegate?.track(message: message, action: "click", interaction: true)
+                    self.processInAppMessageAction(message: message)
                 },
                 dismissCallback: {
                     trackingDelegate?.track(message: message, action: "close", interaction: false)
@@ -107,6 +107,32 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                     }
                     callback?(presented)
                 }
+            )
+        }
+    }
+
+    private func processInAppMessageAction(message: InAppMessage) {
+        // there are no other actions right now, add enum later
+        if message.payload.buttonType == "deep-link", let url = URL(string: message.payload.buttonLink) {
+            let application = UIApplication.shared
+            application.open(
+                url,
+                options: [:],
+                completionHandler: { success in
+                    // If no success opening url using shared app,
+                    // try opening using current app
+                    if !success {
+                        _ = application.delegate?.application?(application, open: url, options: [:])
+                    }
+                }
+            )
+        } else {
+            Exponea.logger.log(
+                .error,
+                message: """
+                    Unable to process in-app message action
+                    type: \(message.payload.buttonType) link: \(message.payload.buttonLink)"
+                """
             )
         }
     }

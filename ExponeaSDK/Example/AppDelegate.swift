@@ -71,13 +71,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate {
     func showAlert(_ title: String, _ message: String?) {
         let alert = UIAlertController(title: title, message: message ?? "no body", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        alert.addAction(
+            UIAlertAction(
+                title: "Ok",
+                style: .default,
+                handler: { [weak self] _ in self?.alertWindow?.isHidden = true }
+            )
+        )
         if alertWindow == nil {
             alertWindow = UIWindow(frame: UIScreen.main.bounds)
             alertWindow?.rootViewController = UIViewController()
             alertWindow?.windowLevel = .alert + 1
-            alertWindow?.makeKeyAndVisible()
         }
+        alertWindow?.makeKeyAndVisible()
         alertWindow?.rootViewController?.present(alert, animated: true, completion: nil)
     }
 }
