@@ -587,6 +587,8 @@ extension TrackingManager {
             sessionBackgroundTime = 0
             sessionEndTime = 0
 
+            inAppMessagesManager.anonymize()
+
             // Re-do initial setup
             initialSetup()
         }

@@ -39,6 +39,10 @@ final class InAppMessageDisplayStatusStore {
         saveDisplayStates(displayStates)
     }
 
+    func clear() {
+        userDefaults.removeObject(forKey: Constants.General.inAppMessageDisplayStatusUserDefaultsKey)
+    }
+
     private func getDisplayStates() -> [String: InAppMessageDisplayStatus] {
         guard let data = userDefaults.data(
                 forKey: Constants.General.inAppMessageDisplayStatusUserDefaultsKey

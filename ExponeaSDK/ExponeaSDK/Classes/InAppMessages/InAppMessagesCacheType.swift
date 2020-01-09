@@ -16,4 +16,6 @@ protocol InAppMessagesCacheType {
     func hasImageData(at imageUrl: String) -> Bool
     func saveImageData(at imageUrl: String, data: Data)
     func getImageData(at imageUrl: String) -> Data?
+
+    func clear()
 }

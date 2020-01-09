@@ -76,5 +76,16 @@ class InAppMessagesCacheSpec: QuickSpec {
                 expect(cache.getImageData(at: "http://domain.com/image4.jpg")).to(beNil())
             }
         }
+
+        it("should clear data") {
+            let cache = InAppMessagesCache()
+            cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
+            expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
+            cache.saveImageData(at: "http://domain.com/image1.jpg", data: "data1".data(using: .utf8)!)
+            expect(cache.getImageData(at: "http://domain.com/image1.jpg")).notTo(beNil())
+            cache.clear()
+            expect(cache.getInAppMessages()).to(equal([]))
+            expect(cache.getImageData(at: "http://domain.com/image1.jpg")).to(beNil())
+        }
     }
 }

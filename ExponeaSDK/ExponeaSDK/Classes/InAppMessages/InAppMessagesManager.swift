@@ -32,6 +32,11 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         sessionStartDate = date
     }
 
+    func anonymize() {
+        cache.clear()
+        displayStatusStore.clear()
+    }
+
     func preload(for customerIds: [String: JSONValue], completion: (() -> Void)?) {
         DispatchQueue.global(qos: .background).async {
             self.repository.fetchInAppMessages(for: customerIds) { result in

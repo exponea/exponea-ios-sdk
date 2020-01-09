@@ -17,6 +17,7 @@ protocol InAppMessagesManagerType {
         callback: ((Bool) -> Void)?
     )
     func sessionDidStart(at date: Date)
+    func anonymize()
 }
 
 extension InAppMessagesManagerType {

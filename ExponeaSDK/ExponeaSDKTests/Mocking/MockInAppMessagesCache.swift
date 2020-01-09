@@ -35,4 +35,9 @@ final class MockInAppMessagesCache: InAppMessagesCacheType {
     func getImageData(at imageUrl: String) -> Data? {
         return images[imageUrl]
     }
+
+    func clear() {
+        images = [:]
+        messages = []
+    }
 }

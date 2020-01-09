@@ -110,4 +110,8 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         return try? Data(contentsOf: fileUrl)
     }
 
+    func clear() {
+        deleteImages(except: [])
+        saveInAppMessages(inAppMessages: [])
+    }
 }

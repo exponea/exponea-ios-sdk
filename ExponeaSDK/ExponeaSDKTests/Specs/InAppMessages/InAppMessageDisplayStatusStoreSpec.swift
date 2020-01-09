@@ -55,5 +55,13 @@ class InAppMessageDisplayStatusStoreSpec: QuickSpec {
             expect(InAppMessageDisplayStatusStore(userDefaults: userDefaults).status(for: self.message))
                 .to(equal(self.emptyState))
         }
+
+        it("should clear data") {
+            let store = InAppMessageDisplayStatusStore(userDefaults: userDefaults)
+            displayStore.didDisplay(self.message, at: Date())
+            store.clear()
+            expect(store.status(for: self.message))
+                .to(equal(InAppMessageDisplayStatus(displayed: nil, interacted: nil)))
+        }
     }
 }
