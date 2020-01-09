@@ -19,11 +19,11 @@ It has been written 100% in Swift with ❤️
 
 ```ruby
 # Add this under your main application target
-pod "ExponeaSDK", "~> 2.5.1"
+pod "ExponeaSDK", "~> 2.5.2"
 
 # If you also use rich push notifications,
 # add this line to your notification service extension target.
-pod "ExponeaSDK-Notifications", "~> 2.5.1"
+pod "ExponeaSDK-Notifications", "~> 2.5.2"
 ```
 
 > Read more about rich push notifications support [here](./Documentation/PUSH.md).
@@ -33,7 +33,7 @@ pod "ExponeaSDK-Notifications", "~> 2.5.1"
 > Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks. The latter one is only supposed to be used in a notification service extension if you wish support rich push notifications. Read more about rich push notifications [here](./Documentation/PUSH.md).
 
 ```
-github "exponea/exponea-ios-sdk" ~> 2.5.1
+github "exponea/exponea-ios-sdk" ~> 2.5.2
 ```
 
 ## 📱 Demo Application
