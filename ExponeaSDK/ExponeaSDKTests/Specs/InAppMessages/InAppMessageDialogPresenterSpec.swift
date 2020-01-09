@@ -94,8 +94,8 @@ final class InAppMessageDialogPresenterSpec: QuickSpec {
                         imageData: lenaImageData,
                         actionCallback: {},
                         dismissCallback: {},
-                        presentedCallback: { success in
-                            expect(success).to(beTrue())
+                        presentedCallback: { presented in
+                            expect(presented).notTo(beNil())
                             done()
                     })
                 }
@@ -108,8 +108,8 @@ final class InAppMessageDialogPresenterSpec: QuickSpec {
                         imageData: lenaImageData,
                         actionCallback: {},
                         dismissCallback: {},
-                        presentedCallback: { success in
-                            expect(success).to(beFalse())
+                        presentedCallback: { presented in
+                            expect(presented).to(beNil())
                             done()
                     })
                 }
@@ -124,9 +124,58 @@ final class InAppMessageDialogPresenterSpec: QuickSpec {
                         imageData: "something".data(using: .utf8)!,
                         actionCallback: {},
                         dismissCallback: {},
-                        presentedCallback: { success in
-                            expect(success).to(beFalse())
+                        presentedCallback: { presented in
+                            expect(presented).to(beNil())
                             done()
+                    })
+                }
+            }
+
+            it("should not present dialog while presenting another") {
+                let window = UIWindow()
+                window.rootViewController = UIViewController()
+                let presenter = InAppMessageDialogPresenter(window: window)
+                let present = { callback in
+                    presenter.presentInAppMessage(
+                        payload: payload,
+                        imageData: lenaImageData,
+                        actionCallback: {},
+                        dismissCallback: {},
+                        presentedCallback: callback)
+                }
+                var presentedDialog: InAppMessageDialogViewController?
+                waitUntil { done in
+                    present({ presented in
+                        expect(presented).notTo(beNil())
+                        presentedDialog = presented
+                        done()
+                    })
+                }
+                waitUntil { done in
+                    present({ presented in
+                        expect(presented).to(beNil())
+                        done()
+                    })
+                }
+                presentedDialog?.dismissCallback?()
+                waitUntil { done in
+                    present({ presented in
+                        expect(presented).notTo(beNil())
+                        presentedDialog = presented
+                        done()
+                    })
+                }
+                waitUntil { done in
+                    present({ presented in
+                        expect(presented).to(beNil())
+                        done()
+                    })
+                }
+                presentedDialog?.actionCallback?()
+                waitUntil { done in
+                    present({ presented in
+                        expect(presented).notTo(beNil())
+                        done()
                     })
                 }
             }

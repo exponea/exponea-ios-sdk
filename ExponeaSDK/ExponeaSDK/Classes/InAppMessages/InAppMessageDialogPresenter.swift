@@ -9,6 +9,8 @@
 class InAppMessageDialogPresenter: InAppMessageDialogPresenterType {
     private let window: UIWindow?
 
+    private var presenting = false
+
     init(window: UIWindow? = nil) {
         self.window = window
     }
@@ -18,8 +20,12 @@ class InAppMessageDialogPresenter: InAppMessageDialogPresenterType {
         imageData: Data,
         actionCallback: @escaping () -> Void,
         dismissCallback: @escaping () -> Void,
-        presentedCallback: ((Bool) -> Void)? = nil
+        presentedCallback: ((InAppMessageDialogViewController?) -> Void)? = nil
     ) {
+        guard !presenting else {
+            presentedCallback?(nil)
+            return
+        }
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(
                 name: "InAppMessageDialog",
@@ -28,7 +34,7 @@ class InAppMessageDialogPresenter: InAppMessageDialogPresenterType {
             guard let dialogVC = storyboard.instantiateViewController(withIdentifier: "InAppMessageDialog")
                     as? InAppMessageDialogViewController else {
                 Exponea.logger.log(.error, message: "Unable to instantiate in-app message view controller")
-                presentedCallback?(false)
+                presentedCallback?(nil)
                 return
             }
             guard let image = self.createImage(
@@ -36,21 +42,28 @@ class InAppMessageDialogPresenter: InAppMessageDialogPresenterType {
                 maxDimensionInPixels: self.getMaxScreenDimension()
             ) else {
                 Exponea.logger.log(.error, message: "Unable to create in-app message image")
-                presentedCallback?(false)
+                presentedCallback?(nil)
                 return
             }
             dialogVC.payload = payload
             dialogVC.image = image
-            dialogVC.actionCallback = actionCallback
-            dialogVC.dismissCallback = dismissCallback
+            dialogVC.actionCallback = {
+                self.presenting = false
+                actionCallback()
+            }
+            dialogVC.dismissCallback = {
+                self.presenting = false
+                dismissCallback()
+            }
 
             guard let viewController = self.getTopViewController() else {
                 Exponea.logger.log(.error, message: "Unable to present in-app message dialog - no view controller")
-                presentedCallback?(false)
+                presentedCallback?(nil)
                 return
             }
             viewController.present(dialogVC, animated: true)
-            presentedCallback?(true)
+            self.presenting = true
+            presentedCallback?(dialogVC)
         }
     }
 

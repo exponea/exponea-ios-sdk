@@ -180,8 +180,8 @@ class InAppMessagesManagerSpec: QuickSpec {
                 data: "mock data".data(using: .utf8)!
             )
             waitUntil { done in
-                manager.showInAppMessage(for: "session_start") { shown in
-                    expect(shown).to(beTrue())
+                manager.showInAppMessage(for: "session_start") { viewController in
+                    expect(viewController).notTo(beNil())
                     done()
                 }
             }
@@ -189,8 +189,8 @@ class InAppMessagesManagerSpec: QuickSpec {
 
         it("should not show dialog without messages") {
             waitUntil { done in
-                manager.showInAppMessage(for: "session_start") { shown in
-                    expect(shown).to(beFalse())
+                manager.showInAppMessage(for: "session_start") { viewController in
+                    expect(viewController).to(beNil())
                     done()
                 }
             }

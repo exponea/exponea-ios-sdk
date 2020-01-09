@@ -14,7 +14,7 @@ protocol InAppMessagesManagerType {
     func showInAppMessage(
         for eventType: String,
         trackingDelegate: InAppMessageTrackingDelegate?,
-        callback: ((Bool) -> Void)?
+        callback: ((InAppMessageDialogViewController?) -> Void)?
     )
     func sessionDidStart(at date: Date)
     func anonymize()

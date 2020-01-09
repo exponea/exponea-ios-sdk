@@ -14,19 +14,20 @@ class MockInAppMessageDialogPresenter: InAppMessageDialogPresenterType {
         let imageData: Data
         let actionCallback: () -> Void
         let dismissCallback: () -> Void
-        let presentedCallback: ((Bool) -> Void)?
+        let presentedCallback: ((InAppMessageDialogViewController?) -> Void)?
     }
 
     public var presentedMessages: [PresentedMessageData] = []
 
     public var presentResult: Bool = true
+    public var mockViewController = InAppMessageDialogViewController()
 
     func presentInAppMessage(
         payload: InAppMessagePayload,
         imageData: Data,
         actionCallback: @escaping () -> Void,
         dismissCallback: @escaping () -> Void,
-        presentedCallback: ((Bool) -> Void)?
+        presentedCallback: ((InAppMessageDialogViewController?) -> Void)?
     ) {
         if presentResult {
             presentedMessages.append(
@@ -39,6 +40,6 @@ class MockInAppMessageDialogPresenter: InAppMessageDialogPresenterType {
                 )
             )
         }
-        presentedCallback?(presentResult)
+        presentedCallback?(presentResult ? mockViewController : nil)
     }
 }

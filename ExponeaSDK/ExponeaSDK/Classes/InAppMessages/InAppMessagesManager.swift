@@ -84,13 +84,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     func showInAppMessage(
         for eventType: String,
         trackingDelegate: InAppMessageTrackingDelegate? = nil,
-        callback: ((Bool) -> Void)? = nil
+        callback: ((InAppMessageDialogViewController?) -> Void)? = nil
     ) {
         Exponea.logger.log(.verbose, message: "Attempting to show in-app message for event type \(eventType).")
         DispatchQueue.global(qos: .userInitiated).async {
             guard let message = self.getInAppMessage(for: eventType),
                   let imageData = self.getImageData(for: message) else {
-                callback?(false)
+                callback?(nil)
                 return
             }
 
@@ -106,7 +106,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                     trackingDelegate?.track(message: message, action: "close", interaction: false)
                 },
                 presentedCallback: { presented in
-                    if presented {
+                    if presented != nil {
                         self.displayStatusStore.didDisplay(message, at: Date())
                         trackingDelegate?.track(message: message, action: "show", interaction: false)
                     }
