@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "ExponeaSDK"
-  s.version      = "2.5.0"
+  s.version      = "2.5.1"
   s.summary      = "Exponea SDK used to track and fetch data from Exponea Experience Cloud."
 
   # This description is used to generate tags and improve search results.

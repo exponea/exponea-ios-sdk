@@ -1,5 +1,10 @@
 ## Release Notes
 
+## Release Notes for 2.5.1
+#### December 19, 2019
+* Bug Fixes
+  * Fixed an issue where anonymize() would fail with automatic push notification tracking enabled on iOS 10
+
 ## Release Notes for 2.5.0
 #### November 26, 2019
 * Features
