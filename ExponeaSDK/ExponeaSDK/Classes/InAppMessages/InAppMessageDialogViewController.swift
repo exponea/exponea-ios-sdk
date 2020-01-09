@@ -42,6 +42,16 @@ class InAppMessageDialogViewController: UIViewController {
         if let payload = payload, let image = image {
             setupView(payload: payload, image: image)
         }
+        // touches outside of the dialog should close the dialog
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(onTapOutside))
+        gestureRecognizer.cancelsTouchesInView = false
+        gestureRecognizer.delegate = self
+        view.addGestureRecognizer(gestureRecognizer)
+    }
+
+    @objc private func onTapOutside() {
+        dismissCallback?()
+        dismiss(animated: true)
     }
 
     private func setupView(payload: InAppMessagePayload, image: UIImage) {
@@ -87,5 +97,12 @@ class InAppMessageDialogViewController: UIViewController {
 
     private func parseFontSize(_ fontSize: String) -> CGFloat {
         return CGFloat(Float(fontSize.replacingOccurrences(of: "px", with: "")) ?? 16)
+    }
+}
+
+// recognizes touches outside of the dialog
+extension InAppMessageDialogViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return touch.view?.isDescendant(of: self.backgroundView) == false
     }
 }
