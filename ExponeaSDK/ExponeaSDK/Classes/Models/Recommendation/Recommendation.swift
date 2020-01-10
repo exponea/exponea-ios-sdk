@@ -11,8 +11,8 @@ import Foundation
 /// Contains both system and user defined data returned from server.
 /// Use your own struct implementing RecommendationUserData protocol, data will be decoded into it
 public struct Recommendation<T: RecommendationUserData>: Codable, Equatable {
-    let systemData: RecommendationSystemData
-    let userData: T
+    public let systemData: RecommendationSystemData
+    public let userData: T
 
     public init(from decoder: Decoder) throws {
         systemData = try RecommendationSystemData.init(from: decoder)
@@ -26,10 +26,10 @@ public struct Recommendation<T: RecommendationUserData>: Codable, Equatable {
 }
 
 public struct RecommendationSystemData: Codable, Equatable {
-    let engineName: String
-    let itemId: String
-    let recommendationId: String
-    let recommendationVariantId: String?
+    public let engineName: String
+    public let itemId: String
+    public let recommendationId: String
+    public let recommendationVariantId: String?
 
     public init(
         engineName: String,
