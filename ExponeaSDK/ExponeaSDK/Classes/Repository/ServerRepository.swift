@@ -93,9 +93,11 @@ extension ServerRepository: TrackingRepository {
         }
 
         // Setup router
-        let router = RequestFactory(baseUrl: configuration.baseUrl,
-                                    projectToken: projectToken,
-                                    route: eventType == Constants.EventTypes.campaignClick ? .campaignClick : .customEvent)
+        let router = RequestFactory(
+            baseUrl: configuration.baseUrl,
+            projectToken: projectToken,
+            route: eventType == Constants.EventTypes.campaignClick ? .campaignClick : .customEvent
+        )
         // Prepare parameters and request
         let params = TrackingParameters(customerIds: customerIds, properties: properties,
                                         timestamp: timestamp, eventType: eventType)
@@ -110,62 +112,41 @@ extension ServerRepository: TrackingRepository {
 }
 
 extension ServerRepository: RepositoryType {
-    /// Fetch a recommendation by its ID for particular customer.
-    ///
-    /// - Parameters:
-    ///   - recommendation: Recommendations for the customer.
-    ///   - customerIds: Identification of a customer.
-    ///   - completion: Object containing the request result.
-    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String: JSONValue],
-                             completion: @escaping (Result<RecommendationResponse>) -> Void) {
-        let router = RequestFactory(baseUrl: configuration.baseUrl,
-                                    projectToken: configuration.fetchingToken,
-                                    route: .customerRecommendation)
-        let parameters = CustomerParameters(customer: customerIds, recommendation: recommendation)
-        let request = router.prepareRequest(authorization: configuration.authorization, parameters: parameters)
+    func fetchRecommendation<T: RecommendationUserData>(
+        request: RecommendationRequest,
+        for customerIds: [String: JSONValue],
+        completion: @escaping (Result<RecommendationResponse<T>>) -> Void
+    ) {
+        let router = RequestFactory(
+            baseUrl: configuration.baseUrl,
+            projectToken: configuration.fetchingToken,
+            route: .customerAttributes
+        )
+        let request = router.prepareRequest(
+            authorization: configuration.authorization,
+            parameters: request,
+            customerIds: customerIds
+        )
 
         session
-            .dataTask(with: request, completionHandler: router.handler(with: completion))
-            .resume()
-    }
-
-    /// Fetch multiple customer attributes at once
-    ///
-    /// - Parameters:
-    ///   - attributes: List of attributes you want to retrieve.
-    ///   - customerIds: Identification of a customer.
-    func fetchAttributes(attributes: [AttributesDescription],
-                         for customerIds: [String: JSONValue],
-                         completion: @escaping (Result<AttributesResponse>) -> Void) {
-        let router = RequestFactory(baseUrl: configuration.baseUrl,
-                                    projectToken: configuration.fetchingToken,
-                                    route: .customerAttributes)
-        let parameters = CustomerParameters(customer: customerIds, attributes: attributes)
-        let request = router.prepareRequest(authorization: configuration.authorization,
-                                            parameters: parameters)
-
-        session
-            .dataTask(with: request, completionHandler: router.handler(with: completion))
-            .resume()
-    }
-
-    /// Fetch customer events by it's type
-    ///
-    /// - Parameters:
-    ///   - events: List of event types to be retrieve.
-    ///   - customerId: Identification of a customer.
-    ///   - completion: Object containing the request result.
-    func fetchEvents(events: EventsRequest,
-                     for customerIds: [String: JSONValue],
-                     completion: @escaping (Result<EventsResponse>) -> Void) {
-        let router = RequestFactory(baseUrl: configuration.baseUrl,
-                                    projectToken: configuration.fetchingToken,
-                                    route: .customerEvents)
-        let parameters = CustomerParameters(customer: customerIds, events: events)
-        let request = router.prepareRequest(authorization: configuration.authorization,
-                                            parameters: parameters)
-        session
-            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .dataTask(
+                with: request,
+                completionHandler: router.handler(
+                    with: { (result: Result<WrappedRecommendationResponse<T>>) in
+                        if let response = result.value {
+                            // response is wrapped into an array of results for requests.
+                            // we only sent one request, so we only care about first result
+                            if response.success, response.results.count > 0 {
+                                completion(Result.success(response.results[0]))
+                            } else {
+                                completion(Result.failure(RepositoryError.serverError(nil)))
+                            }
+                        } else {
+                            completion(Result.failure(result.error ?? RepositoryError.serverError(nil)))
+                        }
+                    }
+                )
+            )
             .resume()
     }
 
@@ -212,6 +193,25 @@ extension ServerRepository: RepositoryType {
                                     projectToken: configuration.fetchingToken,
                                     route: .consents)
         let request = router.prepareRequest(authorization: configuration.authorization)
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
+
+    func fetchInAppMessages(
+        for customerIds: [String: JSONValue],
+        completion: @escaping (Result<InAppMessagesResponse>) -> Void
+    ) {
+        let router = RequestFactory(
+            baseUrl: configuration.baseUrl,
+            projectToken: configuration.fetchingToken,
+            route: .inAppMessages
+        )
+        let request = router.prepareRequest(
+            authorization: configuration.authorization,
+            parameters: InAppMessagesRequest(),
+            customerIds: customerIds
+        )
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()

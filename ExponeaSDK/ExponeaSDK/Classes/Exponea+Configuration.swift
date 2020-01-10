@@ -58,7 +58,7 @@ public extension Exponea {
             )
         }
 
-        public static let disabled: AutomaticPushNotificationTracking = AutomaticPushNotificationTracking(enabled: false)
+        public static let disabled = AutomaticPushNotificationTracking(enabled: false)
     }
 
     struct AutomaticSessionTracking {

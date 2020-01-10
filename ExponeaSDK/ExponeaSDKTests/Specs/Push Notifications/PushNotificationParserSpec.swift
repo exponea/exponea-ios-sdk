@@ -410,8 +410,9 @@ class PushNotificationParserSpec: QuickSpec {
         testCases.forEach { testCase in
             it("should parse \(testCase.name)") {
                 let userInfo = testCase.userInfoJson != nil
-                    ? try! JSONSerialization.jsonObject(with: testCase.userInfoJson!.data(using: .utf8)!, options: []) as AnyObject
-                    : nil
+                    ? try! JSONSerialization.jsonObject(
+                        with: testCase.userInfoJson!.data(using: .utf8)!, options: []
+                    ) as AnyObject : nil
                 let parsedData = PushNotificationParser.parsePushOpened(
                     userInfoObject: userInfo,
                     actionIdentifier: testCase.actionIdentifier

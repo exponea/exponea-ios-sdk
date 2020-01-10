@@ -49,7 +49,9 @@ final class SwizzlerSpec: QuickSpec {
                 class_getInstanceMethod(SwizzleTestClass.self, #selector(SwizzleTestClass.getResult))!
             )
             expect(swizzle?.name).to(equal("test swizzle"))
-            expect(swizzle?.description).to(equal("Swizzle on ExponeaSDKTests.SwizzleTestClass::getResult [test swizzle,]"))
+            expect(swizzle?.description).to(
+                equal("Swizzle on ExponeaSDKTests.SwizzleTestClass::getResult [test swizzle,]")
+            )
         }
     }
 }

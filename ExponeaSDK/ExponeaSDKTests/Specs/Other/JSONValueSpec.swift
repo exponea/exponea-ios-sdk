@@ -106,7 +106,7 @@ class JSONValueSpec: QuickSpec {
                 it("should be equal", closure: {
                     let val = JSONValue.array([.int(123), .string("string"), .bool(true)])
                     expect(val.jsonConvertible).to(beAKindOf(Array<JSONValue>.self))
-                    let array = val.jsonConvertible as? Array<JSONValue>
+                    let array = val.jsonConvertible as? [JSONValue]
                     let converted = array?.map({ $0.jsonConvertible })
 
                     expect(converted?.first).to(beAKindOf(Int.self))
@@ -120,7 +120,7 @@ class JSONValueSpec: QuickSpec {
                     let val = JSONValue.dictionary(["test": .string("value")])
                     expect(val.jsonConvertible).to(beAKindOf(Dictionary<String, JSONValue>.self))
 
-                    let dict = val.jsonConvertible as? Dictionary<String, JSONValue>
+                    let dict = val.jsonConvertible as? [String: JSONValue]
                     let converted = dict?.mapValues({ $0.jsonConvertible })
 
                     expect(converted?["test"]).to(beAKindOf(String.self))
@@ -274,7 +274,7 @@ class JSONValueSpec: QuickSpec {
                     let object = val.rawValue
                     expect(object).to(beAKindOf(Array<Any>.self))
 
-                    let array = object as? Array<Any>
+                    let array = object as? [Any]
                     expect(array?.first).to(beAKindOf(String.self))
 
                     let str = array?.first as? String
@@ -288,7 +288,7 @@ class JSONValueSpec: QuickSpec {
                     let object = val.rawValue
                     expect(object).to(beAKindOf(Dictionary<AnyHashable, Any>.self))
 
-                    let dict = object as? Dictionary<AnyHashable, Any>
+                    let dict = object as? [AnyHashable: Any]
                     expect(dict?["mykey"]).to(beAKindOf(String.self))
 
                     let str = dict?["mykey"] as? String

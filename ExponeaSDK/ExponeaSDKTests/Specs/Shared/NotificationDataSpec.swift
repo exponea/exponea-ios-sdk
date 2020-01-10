@@ -43,7 +43,9 @@ class NotificationDataSpec: QuickSpec {
             TestCase(
                 name: "with few properties",
                 data: ["event_type": "some event type", "actionId": 123, "platform": "ios", "language": "en"],
-                expectedNotificationData: NotificationData(eventType: "some event type", actionId: 123, platform: "ios", language: "en"),
+                expectedNotificationData: NotificationData(
+                    eventType: "some event type", actionId: 123, platform: "ios", language: "en"
+                ),
                 expectedProperties: [
                     "action_id": .int(123),
                     "platform": .string("ios"),

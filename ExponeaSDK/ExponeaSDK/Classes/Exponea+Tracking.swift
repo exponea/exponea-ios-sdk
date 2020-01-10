@@ -181,7 +181,9 @@ extension Exponea {
     // MARK: Campaign data
 
     internal func processSavedCampaignData() {
-        guard var events = self.userDefaults.array(forKey: Constants.General.savedCampaignClickEvent) as? [Data] else { return }
+        guard var events = self.userDefaults.array(forKey: Constants.General.savedCampaignClickEvent) as? [Data] else {
+            return
+        }
         trackLastCampaignEvent(events.popLast())
         trackOtherCampaignEvents(events)
         // remove all stored events if processed
@@ -200,8 +202,14 @@ extension Exponea {
     private func trackOtherCampaignEvents(_ events: [Data]) {
         for event in events {
             guard let campaignData = try? JSONDecoder().decode(CampaignData.self, from: event),
-                let campaignDataProperties = campaignData.campaignData as? [String: JSONConvertible] else { continue }
-            trackEvent(properties: campaignDataProperties, timestamp: campaignData.timestamp, eventType: Constants.EventTypes.campaignClick)
+                  let campaignDataProperties = campaignData.campaignData as? [String: JSONConvertible] else {
+                continue
+            }
+            trackEvent(
+                properties: campaignDataProperties,
+                timestamp: campaignData.timestamp,
+                eventType: Constants.EventTypes.campaignClick
+            )
         }
     }
 
@@ -238,7 +246,10 @@ extension Exponea {
                 if try dependencies.trackingManager.hasPendingEvent(ofType: Constants.EventTypes.sessionStart,
                                                                 withMaxAge: Constants.Session.sessionUpdateThreshold) {
                     Exponea.logger.log(.verbose, message: "Amending session start event with campaign data")
-                    try dependencies.trackingManager.updateLastPendingEvent(ofType: Constants.EventTypes.sessionStart, with: data.utmData)
+                    try dependencies.trackingManager.updateLastPendingEvent(
+                        ofType: Constants.EventTypes.sessionStart,
+                        with: data.utmData
+                    )
                 }
             }
         }
@@ -252,7 +263,7 @@ extension Exponea {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient("token, basic")
             }
-            dependencies.trackingManager.flushData()
+            dependencies.flushingManager.flushData()
         }
     }
 

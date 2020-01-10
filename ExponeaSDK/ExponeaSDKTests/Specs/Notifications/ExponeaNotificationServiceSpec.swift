@@ -15,7 +15,8 @@ import Nimble
 final class ExponeaNotificationServiceSpec: QuickSpec {
     private func getRecordedNotifications() -> [Data]? {
         let userDefaults = UserDefaults(suiteName: "mock-app-group")!
-        if let delivered = userDefaults.array(forKey: ExponeaSDK.Constants.General.deliveredPushUserDefaultsKey) as? [Data] {
+        if let delivered = userDefaults.array(forKey: ExponeaSDK.Constants.General.deliveredPushUserDefaultsKey)
+           as? [Data] {
             return delivered
         }
         return nil
@@ -45,15 +46,27 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
         it("should record multiple notifications into user defaults") {
             let service = ExponeaNotificationService(appGroup: "mock-app-group")
-            service.saveNotificationForLaterTracking(userInfo: ["attributes": ["campaign_name": "mock campaign name"]])
-            service.saveNotificationForLaterTracking(userInfo: ["attributes": ["campaign_name": "second mock campaign name"]])
-            service.saveNotificationForLaterTracking(userInfo: ["attributes": ["campaign_name": "third mock campaign name"]])
+            service.saveNotificationForLaterTracking(
+                userInfo: ["attributes": ["campaign_name": "mock campaign name"]]
+            )
+            service.saveNotificationForLaterTracking(
+                userInfo: ["attributes": ["campaign_name": "second mock campaign name"]]
+            )
+            service.saveNotificationForLaterTracking(
+                userInfo: ["attributes": ["campaign_name": "third mock campaign name"]]
+            )
 
             let delivered = self.getRecordedNotifications()!
             expect(delivered.count).to(equal(3))
-            expect(ExponeaSDK.NotificationData.deserialize(from: delivered[0])?.campaignName).to(equal("mock campaign name"))
-            expect(ExponeaSDK.NotificationData.deserialize(from: delivered[1])?.campaignName).to(equal("second mock campaign name"))
-            expect(ExponeaSDK.NotificationData.deserialize(from: delivered[2])?.campaignName).to(equal("third mock campaign name"))
+            expect(ExponeaSDK.NotificationData.deserialize(from: delivered[0])?.campaignName).to(
+                equal("mock campaign name")
+            )
+            expect(ExponeaSDK.NotificationData.deserialize(from: delivered[1])?.campaignName).to(
+                equal("second mock campaign name")
+            )
+            expect(ExponeaSDK.NotificationData.deserialize(from: delivered[2])?.campaignName).to(
+                equal("third mock campaign name")
+            )
         }
     }
 }

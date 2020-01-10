@@ -47,54 +47,10 @@ struct MockData {
         ]
     }()
 
-    let recommendRequest = RecommendationRequest(type: "recommendation",
-                                                 id: "592ff585fb60094e02bfaf6a",
-                                                 size: 10,
-                                                 strategy: "winner",
-                                                 knowItems: false,
-                                                 anti: false,
-                                                 items: [
-                                                    "items": JSONValue.dictionary([
-                                                            "item01": .int(1),
-                                                            "item02": .int(2)])
-                                                ])
-
-    let attributesDesc = AttributesDescription(key: "id",
-                                               value: "registered",
-                                               identificationKey: "property",
-                                               identificationValue: "first_name")
-
-    let eventRequest = EventsRequest(eventTypes: ["install",
-                                                  "session_start",
-                                                  "session_end"],
-                                     sortOrder: nil,
-                                     limit: nil,
-                                     skip: nil)
-
-    let customerExportRequest = CustomerExportRequest(attributes: nil,
-                                                      filter: nil,
-                                                      executionTime: nil,
-                                                      timezone: nil,
-                                                      responseFormat: ExportFormat.csv)
-
     let personalizationRequest = PersonalizationRequest(ids: ["1", "2", "3"],
                                                         timeout: 5,
                                                         timezone: "GMT+2",
                                                         customParameters: nil)
-
-    let customerParameters = CustomerParameters(customer: ["registered": .string("marian.galik@exponea.com")],
-                                                property: "myProperty",
-                                                id: "123",
-                                                recommendation: nil,
-                                                attributes: nil,
-                                                events: nil,
-                                                data: nil)
-
-    let event = Event(type: "purchase",
-                      timestamp: nil,
-                      properties: ["name": .string("iPad"),
-                                   "description": .string("Tablet")],
-                      errors: nil)
 
     let purchasedItem = PurchasedItem(grossAmount: 10.0,
                                       currency: "EUR",
@@ -122,17 +78,12 @@ struct MockData {
         return data
     }
 
-    let sessionStart = Event(type: "session_start",
-                      timestamp: nil,
-                      properties: ["name": .string("iPad"),
-                                   "description": .string("Tablet")],
-                      errors: nil)
-
     let campaignData: [String: JSONValue] = [
+        // swiftlint:disable:next line_length
         "url": .string("https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&xnpe_cmp=cmp&itt=usertoken"),
         "platform": .string("iOS")
     ]
 
+    // swiftlint:disable:next line_length
     let campaignUrl = URL(string: "https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&xnpe_cmp=cmp&itt=usertoken")
-    let universalLinkEvent = Event(type: "campaign_click", timestamp: nil, properties: [:], errors: nil)
 }

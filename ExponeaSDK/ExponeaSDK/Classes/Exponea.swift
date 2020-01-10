@@ -50,8 +50,11 @@ public class Exponea: ExponeaType {
         }
     }
 
-    /// The manager responsible for all tracking, observing and processing data.
+    /// The manager responsible for tracking data and sessions.
     internal var trackingManager: TrackingManagerType?
+
+    /// The manager responsible for flushing data to Exponea servers.
+    internal var flushingManager: FlushingManagerType?
 
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
@@ -67,20 +70,20 @@ public class Exponea: ExponeaType {
     /// Sets the flushing mode for usage
     public var flushingMode: FlushingMode {
         get {
-            guard let trackingManager = trackingManager else {
+            guard let flushingManager = flushingManager else {
                 Exponea.logger.log(.warning, message: "Exponea not configured, falling back to manual flushing mode.")
                 return .manual
             }
 
-            return trackingManager.flushingMode
+            return flushingManager.flushingMode
         }
         set {
-            guard let trackingManager = trackingManager else {
+            guard var flushingManager = flushingManager else {
                 Exponea.logger.log(.warning, message: "Exponea not configured, can't set flushing mode.")
                 return
             }
 
-            trackingManager.flushingMode = newValue
+            flushingManager.flushingMode = newValue
         }
     }
 
@@ -92,7 +95,10 @@ public class Exponea: ExponeaType {
         }
         set {
             guard let notificationsManager = trackingManager?.notificationsManager else {
-                Exponea.logger.log(.warning, message: "Cannot set push notifications delegate. " + Constants.ErrorMessages.sdkNotConfigured)
+                Exponea.logger.log(
+                    .warning,
+                    message: "Cannot set push notifications delegate. " + Constants.ErrorMessages.sdkNotConfigured
+                )
                 return
             }
             notificationsManager.delegate = newValue
@@ -124,17 +130,25 @@ public class Exponea: ExponeaType {
         Exponea.logger.log(.verbose, message: "Configuring Exponea with provided configuration:\n\(configuration)")
         let exception = objc_tryCatch {
             do {
-                // Create database
                 let database = try DatabaseManager()
 
-                // Recreate repository
                 let repository = ServerRepository(configuration: configuration)
                 self.repository = repository
 
-                // Finally, configuring tracking manager
-                self.trackingManager = try TrackingManager(repository: repository,
-                                                       database: database,
-                                                       userDefaults: userDefaults)
+                let flushingManager = try FlushingManager(
+                    database: database,
+                    repository: repository
+                )
+                self.flushingManager = flushingManager
+
+                let trackingManager = try TrackingManager(
+                    repository: repository,
+                    database: database,
+                    flushingManager: flushingManager,
+                    userDefaults: userDefaults
+                )
+
+                self.trackingManager = trackingManager
                 processSavedCampaignData()
             } catch {
                 // Failing gracefully, if setup failed
@@ -161,7 +175,8 @@ internal extension Exponea {
     typealias Dependencies = (
         configuration: Configuration,
         repository: RepositoryType,
-        trackingManager: TrackingManagerType
+        trackingManager: TrackingManagerType,
+        flushingManager: FlushingManagerType
     )
 
     typealias CompletionHandler<T> = ((Result<T>) -> Void)
@@ -174,10 +189,11 @@ internal extension Exponea {
     func getDependenciesIfConfigured() throws -> Dependencies {
         guard let configuration = configuration,
             let repository = repository,
-            let trackingManager = trackingManager else {
+            let trackingManager = trackingManager,
+            let flushingManager = flushingManager else {
                 throw ExponeaError.notConfigured
         }
-        return (configuration, repository, trackingManager)
+        return (configuration, repository, trackingManager, flushingManager)
     }
 
     func executeSafelyWithDependencies<T>(

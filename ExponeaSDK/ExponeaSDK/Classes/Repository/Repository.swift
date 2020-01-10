@@ -33,30 +33,18 @@ protocol TrackingRepository {
 
 protocol FetchRepository {
     /// Fetch a recommendation by its ID for particular customer.
+    /// Recommendations contain fields as defined on Exponea backend.
+    /// You can define your own struct for contents of those fields and call this generic function with that struct.
     ///
     /// - Parameters:
+    ///   - request: Recommendations request.
     ///   - customerIds: Identification of a customer.
-    ///   - recommendation: Recommendations for the customer.
     ///   - completion: Object containing the request result.
-    func fetchRecommendation(recommendation: RecommendationRequest, for customerIds: [String: JSONValue],
-                             completion: @escaping (Result<RecommendationResponse>) -> Void)
-
-    /// Fetch multiple customer attributes at once
-    ///
-    /// - Parameters:
-    ///   - customerIds: Identification of a customer.
-    ///   - attributes: List of attributes you want to retrieve.
-    func fetchAttributes(attributes: [AttributesDescription], for customerIds: [String: JSONValue],
-                         completion: @escaping (Result<AttributesResponse>) -> Void)
-
-    /// Fetch customer events by its type.
-    ///
-    /// - Parameters:
-    ///   - customerIds: Identification of a customer.
-    ///   - events: List of event types to be retrieve.
-    ///   - completion: Object containing the request result.
-    func fetchEvents(events: EventsRequest, for customerIds: [String: JSONValue],
-                     completion: @escaping (Result<EventsResponse>) -> Void)
+    func fetchRecommendation<T: RecommendationUserData>(
+        request: RecommendationRequest,
+        for customerIds: [String: JSONValue],
+        completion: @escaping (Result<RecommendationResponse<T>>
+    ) -> Void)
 
     /// Fetch all available banners.
     ///
@@ -78,6 +66,11 @@ protocol FetchRepository {
     /// - Parameter completion: A closure executed upon request completion containing the result
     ///                         which has either the returned data or error.
     func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void)
+
+    func fetchInAppMessages(
+        for customerIds: [String: JSONValue],
+        completion: @escaping (Result<InAppMessagesResponse>) -> Void
+    )
 }
 
 protocol RepositoryType: class, TrackingRepository, FetchRepository {

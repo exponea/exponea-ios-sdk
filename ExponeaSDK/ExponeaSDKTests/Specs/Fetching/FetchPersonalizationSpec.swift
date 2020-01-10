@@ -33,7 +33,10 @@ class FetchPersonalizationSpec: QuickSpec {
                 let mockData = MockData()
 
                 waitUntil(timeout: 3) { done in
-                    repo.fetchPersonalization(with: mockData.personalizationRequest, for: mockData.customerIds) { (result) in
+                    repo.fetchPersonalization(
+                        with: mockData.personalizationRequest,
+                        for: mockData.customerIds
+                    ) { (result) in
                         it("Result error should be nil") {
                             expect(result.error).to(beNil())
                         }

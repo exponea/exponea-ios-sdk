@@ -106,17 +106,23 @@ class DatabaseManagerSpec: QuickSpec {
                     it("should add new property", closure: {
                         let sampleEvent = createSampleEvent()
                         let updateData = DataType.properties(["newcustomprop": .string("newcustomval")])
-                        expect { try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData) }.toNot(raiseException())
+                        expect {
+                            try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData)
+                        }.toNot(raiseException())
                         let updatedEvent = fetchSampleEvent()
                         expect { updatedEvent.properties?.count}.to(equal(2))
                         expect { updatedEvent.properties?["customprop"]?.rawValue as? String }.to(equal("customval"))
-                        expect { updatedEvent.properties?["newcustomprop"]?.rawValue as? String }.to(equal("newcustomval"))
+                        expect {
+                            updatedEvent.properties?["newcustomprop"]?.rawValue as? String
+                        }.to(equal("newcustomval"))
                     })
 
                     it("should update existing property", closure: {
                         let sampleEvent = createSampleEvent()
                         let updateData = DataType.properties(["customprop": .string("newcustomval")])
-                        expect { try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData) }.toNot(raiseException())
+                        expect {
+                            try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData)
+                        }.toNot(raiseException())
                         let updatedEvent = fetchSampleEvent()
                         expect { updatedEvent.properties?.count}.to(equal(1))
                         expect { updatedEvent.properties?["customprop"]?.rawValue as? String }.to(equal("newcustomval"))
@@ -278,7 +284,10 @@ class DatabaseManagerSpec: QuickSpec {
 
                 let eventData2: [DataType] = [
                     .projectToken("differenttoken"),
-                    .properties(["customprop": .string("customval"), "array": .array([.string("test"), .string("ab")])]),
+                    .properties([
+                        "customprop": .string("customval"),
+                        "array": .array([.string("test"), .string("ab")])
+                    ]),
                     .eventType("myevent")
                 ]
 

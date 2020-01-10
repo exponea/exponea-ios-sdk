@@ -13,12 +13,16 @@ class NotificationService: UNNotificationServiceExtension {
 
     let exponeaService = ExponeaNotificationService(appGroup: "group.com.exponea.ExponeaSDK-Example2")
 
-    override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+    override func didReceive(
+        _ request: UNNotificationRequest,
+        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+    ) {
         exponeaService.process(request: request, contentHandler: contentHandler)
     }
 
     // Called just before the extension will be terminated by the system.
-    // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
+    // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise
+    // the original push payload will be used.
     override func serviceExtensionTimeWillExpire() {
         exponeaService.serviceExtensionTimeWillExpire()
     }

@@ -39,7 +39,9 @@ final class PushNotificationManagerSpec: QuickSpec {
         describe("tracking stored delivered push notifications") {
             func getFirstStoredNotification() -> ExponeaSDK.NotificationData? {
                 let userDefaults = UserDefaults(suiteName: "mock-app-group")!
-                let data = userDefaults.array(forKey: ExponeaSDK.Constants.General.deliveredPushUserDefaultsKey) as? [Data]
+                let data = userDefaults.array(
+                    forKey: ExponeaSDK.Constants.General.deliveredPushUserDefaultsKey
+                ) as? [Data]
                 guard let delivered = data, !delivered.isEmpty else {
                     return nil
                 }
@@ -140,7 +142,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     "action_name": .string("Unnamed mobile push"),
                                     "action_id": .int(2),
                                     "platform": .string("ios"),
-                                    "recipient": .string("051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"),
+                                    "recipient":
+                                        .string("051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"),
                                     "campaign_id": .string("5db9ab54b073dfb424ccfa6f"),
                                     "action_type": .string("mobile notification"),
                                     "campaign_name": .string("Wassil's push"),

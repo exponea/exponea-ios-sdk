@@ -1,5 +1,11 @@
 ## Release Notes
 
+## Release Notes for 2.5.2
+#### January 10, 2020
+* Bug Fixes
+  * Fixed: Fetch recommendations functionality was calling obsolete endpoint. (see [FETCH.md](./FETCH.md))
+  * Fixed: Notification image was not displayed when notification did not contain any action buttons.
+
 ## Release Notes for 2.5.1
 #### December 19, 2019
 * Bug Fixes

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct DateFilter: Codable {
+public struct DateFilter: Codable, Equatable {
     public let enabled: Bool
     public let startDate: Date?
     public let endDate: Date?

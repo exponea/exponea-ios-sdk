@@ -17,8 +17,13 @@ struct PushNotificationParser {
         let eventData: [DataType]
         let extraData: [String: Any]?
 
-        static func == (lhs: PushNotificationParser.PushOpenedData, rhs: PushNotificationParser.PushOpenedData) -> Bool {
-            guard lhs.actionType == rhs.actionType && lhs.actionValue == rhs.actionValue && lhs.eventData == rhs.eventData else {
+        static func == (
+            lhs: PushNotificationParser.PushOpenedData,
+            rhs: PushNotificationParser.PushOpenedData
+        ) -> Bool {
+            guard lhs.actionType == rhs.actionType &&
+                  lhs.actionValue == rhs.actionValue &&
+                  lhs.eventData == rhs.eventData else {
                 return false
             }
             if lhs.extraData == nil && rhs.extraData == nil {

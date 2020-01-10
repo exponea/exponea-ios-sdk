@@ -24,15 +24,15 @@ struct RequestFactory {
         switch self.route {
         case .identifyCustomer: return baseUrl + "/track/v2/projects/\(projectToken)/customers"
         case .customEvent: return baseUrl + "/track/v2/projects/\(projectToken)/customers/events"
-        case .customerRecommendation: return baseUrl + "/data/v2/projects/\(projectToken)/customers/attributes"
         case .customerAttributes: return baseUrl + "/data/v2/projects/\(projectToken)/customers/attributes"
-        case .customerEvents: return baseUrl + "/data/v2/projects/\(projectToken)/customers/events"
         case .banners: return baseUrl + "/data/v2/projects/\(projectToken)/configuration/banners"
         case .consents: return baseUrl + "/data/v2/projects/\(projectToken)/consent/categories"
         case .personalization:
             return baseUrl + "/data/v2/projects/\(projectToken)/customers/personalisation/show-banners"
         case .campaignClick:
             return baseUrl + "/track/v2/projects/\(projectToken)/campaigns/clicks"
+        case .inAppMessages:
+            return baseUrl + "/webxp/s/\(projectToken)/inappmessages"
         }
     }
 }
@@ -110,7 +110,9 @@ extension RequestFactory {
                 switch result {
                 case .success(let data):
                     do {
-                        let object = try JSONDecoder().decode(T.self, from: data)
+                        let jsonDecoder = JSONDecoder()
+                        jsonDecoder.dateDecodingStrategy = .secondsSince1970
+                        let object = try jsonDecoder.decode(T.self, from: data)
                         DispatchQueue.main.async {
                             completion(.success(object))
                         }

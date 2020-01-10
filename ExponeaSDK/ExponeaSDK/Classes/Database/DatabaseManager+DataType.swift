@@ -47,16 +47,18 @@ extension DatabaseManager {
     static func processDictionary(_ dictionary: NSDictionary) -> JSONValue {
         var valueDictionary: [String: JSONValue] = [:]
 
-        for (k, v) in dictionary {
-            guard let key = k as? String else {
+        for (anyKey, anyValue) in dictionary {
+            guard let key = anyKey as? String else {
                 Exponea.logger.log(.warning,
-                                   message: "Skipping dictionary pair because key is not a string: \(k.self).")
+                                   message: "Skipping dictionary pair because key is not a string: \(anyKey.self).")
                 continue
             }
 
-            guard let value = v as? NSObject else {
-                Exponea.logger.log(.warning,
-                                   message: "Skipping dictionary pair because value is not an object: \(v.self).")
+            guard let value = anyValue as? NSObject else {
+                Exponea.logger.log(
+                    .warning,
+                    message: "Skipping dictionary pair because value is not an object: \(anyValue.self)."
+                )
                 continue
             }
 

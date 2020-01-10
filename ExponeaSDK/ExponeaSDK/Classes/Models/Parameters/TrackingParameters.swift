@@ -42,7 +42,8 @@ extension TrackingParameters: RequestParametersType {
         if eventType == Constants.EventTypes.campaignClick {
             parameters["url"] = properties["url"]
             parameters["properties"] = properties["properties"]
-            parameters["age"] = .double(Double(Date().timeIntervalSince1970) - (timestamp ?? Double(Date().timeIntervalSince1970)))
+            parameters["age"] =
+                .double(Double(Date().timeIntervalSince1970) - (timestamp ?? Double(Date().timeIntervalSince1970)))
         } else {
             /// Preparing properties param
             parameters["properties"] = .dictionary(properties)

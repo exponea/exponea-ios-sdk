@@ -47,4 +47,7 @@ public enum EventType: String, Decodable {
     case pushOpened = "PUSH_OPENED"
 
     case campaignClick = "CAMPAIGN_CLICK"
+
+    // Tracking of in-app message related events
+    case banner = "BANNER"
 }

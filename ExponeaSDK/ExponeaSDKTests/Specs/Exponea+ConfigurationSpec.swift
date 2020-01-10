@@ -12,8 +12,11 @@ import Nimble
 @testable import ExponeaSDK
 
 class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
-    func pushNotificationOpened(with action: ExponeaNotificationActionType, value: String?, extraData: [AnyHashable: Any]?) {
-    }
+    func pushNotificationOpened(
+        with action: ExponeaNotificationActionType,
+        value: String?,
+        extraData: [AnyHashable: Any]?
+    ) {}
 
     override func spec() {
         describe("Creating configuration") {

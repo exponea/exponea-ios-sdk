@@ -32,7 +32,10 @@ class TrackUniversalLinkSpec: QuickSpec {
                     withRequestHook: { request in lastRequest = request }
                 )
                 waitUntil(timeout: 3) { done in
-                    repository.trackEvent(with: data + [.eventType(Constants.EventTypes.campaignClick)], for: mockData.customerIds) { result in
+                    repository.trackEvent(
+                        with: data + [.eventType(Constants.EventTypes.campaignClick)],
+                        for: mockData.customerIds
+                    ) { result in
                         it("should have nil result error") {
                             expect(result.error).to(beNil())
                         }
@@ -66,7 +69,10 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect {
                             try exponea.trackingManager!.updateLastPendingEvent(
                                 ofType: Constants.EventTypes.sessionStart,
-                                with: .timestamp(Date().timeIntervalSince1970 - Constants.Session.sessionUpdateThreshold))
+                                with: .timestamp(
+                                    Date().timeIntervalSince1970 - Constants.Session.sessionUpdateThreshold
+                                )
+                            )
                         }.notTo(raiseException())
 
                         // track campaign click, session_start should not be updated with utm params

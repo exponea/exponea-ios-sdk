@@ -33,8 +33,13 @@ public protocol ExponeaType: class {
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     ///   - appGroup: The app group used to share data among extensions, fx. for push delivered tracking.
     ///   - defaultProperties: A list of properties to be added to all tracking events.
-    func configure(projectToken: String, authorization: Authorization, baseUrl: String?,
-                   appGroup: String?, defaultProperties: [String: JSONConvertible]?)
+    func configure(
+        projectToken: String,
+        authorization: Authorization,
+        baseUrl: String?,
+        appGroup: String?,
+        defaultProperties: [String: JSONConvertible]?
+    )
 
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
     /// you to track events to multiple projects, even the same event to more project at once.
@@ -46,8 +51,14 @@ public protocol ExponeaType: class {
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     ///   - appGroup: The app group used to share data among extensions, fx. for push delivered tracking.
     ///   - defaultProperties: A list of properties to be added to all tracking events.
-    func configure(projectToken: String, projectMapping: [EventType: [String]],
-                   authorization: Authorization, baseUrl: String?, appGroup: String?, defaultProperties: [String: JSONConvertible]?)
+    func configure(
+        projectToken: String,
+        projectMapping: [EventType: [String]],
+        authorization: Authorization,
+        baseUrl: String?,
+        appGroup: String?,
+        defaultProperties: [String: JSONConvertible]?
+    )
 
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
     ///
@@ -91,7 +102,11 @@ public protocol ExponeaType: class {
     ///     - customerId: Specify your customer with external id, for example an email address.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
-    func identifyCustomer(customerIds: [String: JSONConvertible]?, properties: [String: JSONConvertible], timestamp: Double?)
+    func identifyCustomer(
+        customerIds: [String: JSONConvertible]?,
+        properties: [String: JSONConvertible],
+        timestamp: Double?
+    )
 
     /// This method can be used to manually flush all available data to Exponea.
     func flushData()
@@ -122,13 +137,18 @@ public protocol ExponeaType: class {
 
     // MARK: - Data Fetching -
 
-    /// Fetches the recommendation for a customer.
+    /// Fetch recommendations for customer.
+    /// Recommendations contain fields as defined on Exponea backend.
+    /// You have to define your own struct for contents of those fields
+    ///  and call this generic function with it in callback.
     ///
     /// - Parameters:
-    ///     - request: List of recommendation from a specific customer to be retrieve.
-    ///     - completion: Object containing the data requested.
-    func fetchRecommendation(with request: RecommendationRequest,
-                             completion: @escaping (Result<RecommendationResponse>) -> Void)
+    ///   - options: Parameters for recommendation request
+    ///   - completion: Object containing the request result.
+    func fetchRecommendation<T: RecommendationUserData>(
+        with options: RecommendationOptions,
+        completion: @escaping (Result<RecommendationResponse<T>>) -> Void
+    )
 
     /// Fetch all available banners.
     ///

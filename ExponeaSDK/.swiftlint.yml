@@ -5,15 +5,17 @@ disabled_rules:
     - file_length
     - function_body_length
     - function_parameter_count
-    - identifier_name
-    - line_length
     - notification_center_detachment
-    - syntactic_sugar
     - type_body_length
     - force_unwrapping
 
 opt_in_rules:
     - force_unwrapping
+
+identifier_name:
+    excluded:
+        - id
+        - db
 
 excluded:
     - Pods

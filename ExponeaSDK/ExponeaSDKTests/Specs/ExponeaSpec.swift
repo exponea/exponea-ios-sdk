@@ -41,13 +41,15 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.trackEvent(properties: [:], timestamp: nil, eventType: nil)).notTo(raiseException())
                 }
                 it("Should not crash tracking campaign click") {
-                    expect(exponea.trackCampaignClick(url: URL(string: "mockUrl")!, timestamp: nil)).notTo(raiseException())
+                    expect(exponea.trackCampaignClick(url: URL(string: "mockUrl")!, timestamp: nil))
+                        .notTo(raiseException())
                 }
                 it("Should not crash tracking payment") {
                     expect(exponea.trackPayment(properties: [:], timestamp: nil)).notTo(raiseException())
                 }
                 it("Should not crash identifing customer") {
-                    expect(exponea.identifyCustomer(customerIds: [:], properties: [:], timestamp: nil)).notTo(raiseException())
+                    expect(exponea.identifyCustomer(customerIds: [:], properties: [:], timestamp: nil))
+                        .notTo(raiseException())
                 }
                 it("Should not crash tracking push token") {
                     expect(exponea.trackPushToken("token".data(using: .utf8)!)).notTo(raiseException())
@@ -59,18 +61,6 @@ class ExponeaSpec: QuickSpec {
                 it("Should not crash tracking session") {
                     expect(exponea.trackSessionStart()).notTo(raiseException())
                     expect(exponea.trackSessionEnd()).notTo(raiseException())
-                }
-                it("Should fail fetching recommendation") {
-                    waitUntil { done in
-                        exponea.fetchRecommendation(with: RecommendationRequest(type: "mock_type", id: "mock_id")) { response in
-                            guard case .failure = response else {
-                                XCTFail("Expected .failure got \(response)")
-                                done()
-                                return
-                            }
-                            done()
-                        }
-                    }
                 }
                 it("Should fail fetching data") {
                     waitUntil { done in
@@ -115,7 +105,10 @@ class ExponeaSpec: QuickSpec {
             context("After being configured from string") {
                 let exponea = Exponea()
                 Exponea.shared = exponea
-                Exponea.shared.configure(projectToken: "0aef3a96-3804-11e8-b710-141877340e97", authorization: .token(""))
+                Exponea.shared.configure(
+                    projectToken: "0aef3a96-3804-11e8-b710-141877340e97",
+                    authorization: .token("")
+                )
 
                 it("Should return the correct project token") {
                     expect(exponea.configuration?.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
@@ -182,7 +175,11 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("Setting pushNotificationsDelegate") {
-                Exponea.logger = MockLogger()
+                var logger: MockLogger!
+                beforeEach {
+                    logger = MockLogger()
+                    Exponea.logger = logger
+                }
                 class MockDelegate: PushNotificationManagerDelegate {
                     func pushNotificationOpened(with action: ExponeaNotificationActionType,
                                                 value: String?, extraData: [AnyHashable: Any]?) {}
@@ -192,17 +189,17 @@ class ExponeaSpec: QuickSpec {
                     let delegate = MockDelegate()
                     exponea.pushNotificationsDelegate = delegate
                     expect(exponea.pushNotificationsDelegate).to(beNil())
-                    expect(MockLogger.messages.last)
+                    expect(logger.messages.last)
                         .to(match("Cannot set push notifications delegate."))
                 }
                 it("Should set delegate after Exponea is configured") {
                     let exponea = Exponea()
                     exponea.configure(plistName: "ExponeaConfig")
                     let delegate = MockDelegate()
-                    MockLogger.messages.removeAll()
+                    logger.messages.removeAll()
                     exponea.pushNotificationsDelegate = delegate
                     expect(exponea.pushNotificationsDelegate).to(be(delegate))
-                    expect(MockLogger.messages).to(beEmpty())
+                    expect(logger.messages).to(beEmpty())
                 }
             }
 
@@ -322,7 +319,8 @@ class ExponeaSpec: QuickSpec {
                                 done()
                                 return
                             }
-                            guard let error = result.error as? ExponeaError, case .nsExceptionInconsistency = error else {
+                            guard let error = result.error as? ExponeaError,
+                                  case .nsExceptionInconsistency = error else {
                                 XCTFail("Result error should be .nsExceptionInconsistency")
                                 done()
                                 return
