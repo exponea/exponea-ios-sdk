@@ -19,6 +19,7 @@ struct VSAppCenterAPIRequestData: Encodable {
 enum VSAppCenterAPILog {
     case fatalError(VSAppCenterAPIAppleErrorReport)
     case nonFatalError(VSAppCenterAPIHandledErrorReport)
+    case startSession(VSAppCenterAPIStartSession)
 }
 
 extension VSAppCenterAPILog: Encodable {
@@ -28,11 +29,22 @@ extension VSAppCenterAPILog: Encodable {
             try fatalError.encode(to: encoder)
         case .nonFatalError(let nonFatalError):
             try nonFatalError.encode(to: encoder)
+        case .startSession(let startSession):
+            try startSession.encode(to: encoder)
         }
     }
 }
 
-struct VSAppCenterAPIHandledErrorReport: Encodable {
+protocol VSAppCenterAPILogData: Encodable {
+    var id: String { get }
+    var sid: String { get }
+    var type: String { get }
+    var device: VSAppCenterAPIDevice { get }
+    var userId: String? { get }
+    var timestamp: String { get }
+}
+
+struct VSAppCenterAPIHandledErrorReport: VSAppCenterAPILogData {
     let id: String
     let type: String = "handledError"
     let fatal: Bool = false
@@ -41,13 +53,14 @@ struct VSAppCenterAPIHandledErrorReport: Encodable {
     let exception: VSAppCenterAPIException
     let timestamp: String
     let appLaunchTimestamp: String
+    var sid: String
 
     // Below are fields that are required by App Center, but we don't need them(for now)
     let processId: Int = 0
     let processName: String = "placeholder"
 }
 
-struct VSAppCenterAPIAppleErrorReport: Encodable {
+struct VSAppCenterAPIAppleErrorReport: VSAppCenterAPILogData {
     let id: String
     let type: String = "appleError"
     let fatal: Bool = true
@@ -56,6 +69,7 @@ struct VSAppCenterAPIAppleErrorReport: Encodable {
     let exception: VSAppCenterAPIException
     let timestamp: String
     let appLaunchTimestamp: String
+    var sid: String
 
     // Below are fields that are required by App Center, but we don't need them(for now)
     let processId: Int = 0
@@ -112,4 +126,13 @@ struct VSAppCenterAPIException: Codable {
     let type: String
     let message: String
     let frames: [VSAppCenterAPIStackFrame]
+}
+
+struct VSAppCenterAPIStartSession: VSAppCenterAPILogData {
+    let id: String
+    let type: String = "startSession"
+    let userId: String?
+    let device: VSAppCenterAPIDevice
+    let timestamp: String
+    let sid: String
 }

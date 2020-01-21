@@ -45,7 +45,13 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
     }
 
     override func spec() {
+        var upload: VSAppCenterTelemetryUpload!
         beforeEach {
+            upload = VSAppCenterTelemetryUpload(
+                installId: UUID().uuidString,
+                userId: "mock_user_id",
+                runId: "mock_run_id"
+            )
             self.stubNetwork(statusCode: 200)
         }
         afterEach {
@@ -54,8 +60,12 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
         }
         context("processing error logs") {
             it("should format fatal crashlog") {
-                let upload = VSAppCenterTelemetryUpload(installId: UUID().uuidString, userId: "mock_user_id")
-                let crashLog = CrashLog(exception: self.getRaisedException(), fatal: true, launchDate: Date())
+                let crashLog = CrashLog(
+                    exception: self.getRaisedException(),
+                    fatal: true,
+                    launchDate: Date(),
+                    runId: "mock-run-id"
+                )
                 if case .fatalError(let errorReport) = upload.getVSAppCenterAPIErrorReport(crashLog) {
                     expect(errorReport.fatal).to(equal(true))
                     expect(errorReport.exception.type).to(equal("name of test exception"))
@@ -64,9 +74,13 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                     XCTFail("expected fatal error")
                 }
             }
-            it("should format fatal crashlog") {
-                let upload = VSAppCenterTelemetryUpload(installId: UUID().uuidString, userId: "mock_user_id")
-                let crashLog = CrashLog(exception: self.getRaisedException(), fatal: false, launchDate: Date())
+            it("should format non-fatal crashlog") {
+                let crashLog = CrashLog(
+                    exception: self.getRaisedException(),
+                    fatal: false,
+                    launchDate: Date(),
+                    runId: "mock-run-id"
+                )
                 if case .nonFatalError(let errorReport) = upload.getVSAppCenterAPIErrorReport(crashLog) {
                     expect(errorReport.fatal).to(equal(false))
                     expect(errorReport.exception.type).to(equal("name of test exception"))
@@ -78,8 +92,12 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
 
             it("should successfully upload error log") {
                 self.stubNetwork(statusCode: 200)
-                let upload = VSAppCenterTelemetryUpload(installId: UUID().uuidString, userId: "mock_user_id")
-                let crashLog = CrashLog(exception: self.getRaisedException(), fatal: true, launchDate: Date())
+                let crashLog = CrashLog(
+                    exception: self.getRaisedException(),
+                    fatal: true,
+                    launchDate: Date(),
+                    runId: "mock-run-id"
+                )
                 waitUntil { done in
                     upload.upload(crashLog: crashLog) { result in
                         expect(result).to(beTrue())
@@ -90,8 +108,12 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
 
             it("should fail to upload error log on non-200 status code") {
                 self.stubNetwork(statusCode: 404)
-                let upload = VSAppCenterTelemetryUpload(installId: UUID().uuidString, userId: "mock_user_id")
-                let crashLog = CrashLog(exception: self.getRaisedException(), fatal: true, launchDate: Date())
+                let crashLog = CrashLog(
+                    exception: self.getRaisedException(),
+                    fatal: true,
+                    launchDate: Date(),
+                    runId: "mock-run-id"
+                )
                 waitUntil { done in
                     upload.upload(crashLog: crashLog) { result in
                         expect(result).to(beFalse())

@@ -16,10 +16,24 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
 
     private static let formatter = ISO8601DateFormatter()
 
-    init(installId: String, userId: String) {
+    init(installId: String, userId: String, runId: String) {
         self.session = URLSession(configuration: .default)
         self.installId = installId
         self.userId = userId
+        upload(sessionStartWithRunId: runId)
+    }
+
+    func upload(sessionStartWithRunId runId: String) {
+        let startSession = VSAppCenterAPILog.startSession(
+            VSAppCenterAPIStartSession(
+                id: UUID().uuidString,
+                userId: userId,
+                device: getVSAppCenterAPIDevice(),
+                timestamp: formatTimestamp(timestamp: Date().timeIntervalSince1970),
+                sid: runId
+            )
+        )
+        upload(data: VSAppCenterAPIRequestData(logs: [startSession])) { _ in }
     }
 
     func upload(crashLog: CrashLog, completionHandler: @escaping (Bool) -> Void) {
@@ -69,6 +83,7 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
                     exception: getVSAppCenterAPIException(log.errorData),
                     timestamp: formatTimestamp(timestamp: log.timestamp),
                     appLaunchTimestamp: formatTimestamp(timestamp: log.launchTimestamp),
+                    sid: log.runId,
                     osExceptionType: log.errorData.type
                 )
             )
@@ -80,7 +95,8 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
                     device: getVSAppCenterAPIDevice(),
                     exception: getVSAppCenterAPIException(log.errorData),
                     timestamp: formatTimestamp(timestamp: log.timestamp),
-                    appLaunchTimestamp: formatTimestamp(timestamp: log.launchTimestamp)
+                    appLaunchTimestamp: formatTimestamp(timestamp: log.launchTimestamp),
+                    sid: log.runId
                 )
             )
         }

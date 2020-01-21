@@ -16,11 +16,13 @@ final class CrashManager {
     let storage: TelemetryStorage
     let upload: TelemetryUpload
     let launchDate: Date
+    let runId: String
 
-    init(storage: TelemetryStorage, upload: TelemetryUpload, launchDate: Date) {
+    init(storage: TelemetryStorage, upload: TelemetryUpload, launchDate: Date, runId: String) {
         self.storage = storage
         self.upload = upload
         self.launchDate = launchDate
+        self.runId = runId
     }
 
     var oldHandler: NSUncaughtExceptionHandler?
@@ -37,13 +39,13 @@ final class CrashManager {
         Exponea.logger.log(.error, message: "Handling uncaught exception")
         if TelemetryUtility.isSDKRelated(stackTrace: exception.callStackSymbols) {
             storage.saveCrashLog(
-                CrashLog(exception: exception, fatal: true, launchDate: launchDate)
+                CrashLog(exception: exception, fatal: true, launchDate: launchDate, runId: runId)
             )
         }
     }
 
     func caughtExceptionHandler(_ exception: NSException) {
-        let crashLog = CrashLog(exception: exception, fatal: false, launchDate: launchDate)
+        let crashLog = CrashLog(exception: exception, fatal: false, launchDate: launchDate, runId: runId)
         upload.upload(crashLog: crashLog) { result in
             if !result {
                 Exponea.logger.log(.error, message: "Uploading crash log failed")
@@ -52,7 +54,13 @@ final class CrashManager {
     }
 
     func caughtErrorHandler(_ error: Error, stackTrace: [String]) {
-        let crashLog = CrashLog(error: error, stackTrace: stackTrace, fatal: false, launchDate: launchDate)
+        let crashLog = CrashLog(
+            error: error,
+            stackTrace: stackTrace,
+            fatal: false,
+            launchDate: launchDate,
+            runId: runId
+        )
         upload.upload(crashLog: crashLog) { result in
             if !result {
                 Exponea.logger.log(.error, message: "Uploading crash log failed")

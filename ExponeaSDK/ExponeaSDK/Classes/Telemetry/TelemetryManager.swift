@@ -20,9 +20,11 @@ final class TelemetryManager {
         upload: TelemetryUpload? = nil
     ) {
         let installId = TelemetryUtility.getInstallId(userDefaults: userDefaults)
+        let runId = UUID().uuidString
         self.storage = storage ?? FileTelemetryStorage()
-        self.upload = upload ?? VSAppCenterTelemetryUpload(installId: installId, userId: userId ?? installId)
-        crashManager = CrashManager(storage: self.storage, upload: self.upload, launchDate: Date())
+        self.upload =
+            upload ?? VSAppCenterTelemetryUpload(installId: installId, userId: userId ?? installId, runId: runId)
+        crashManager = CrashManager(storage: self.storage, upload: self.upload, launchDate: Date(), runId: runId)
     }
 
     func report(exception: NSException) {

@@ -29,6 +29,10 @@ final class CrashManagerSpec: QuickSpec {
         }!
     }
 
+    func getMockCrashLog() -> CrashLog {
+        return CrashLog(exception: getRaisedException(), fatal: true, launchDate: Date(), runId: "mock_run_id")
+    }
+
     override func spec() {
         var storage: MockTelemetryStorage!
         var upload: MockTelemetryUpload!
@@ -41,21 +45,21 @@ final class CrashManagerSpec: QuickSpec {
         }
 
         it("should listen to uncaught exceptions") {
-            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date())
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
             crashManager.start()
             expect(NSGetUncaughtExceptionHandler()).notTo(beNil())
         }
 
         it("should call original uncaught exceptions handler") {
             NSSetUncaughtExceptionHandler({ MockExceptionHandler.handleException($0) })
-            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date())
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
             crashManager.start()
             NSGetUncaughtExceptionHandler()?(self.getRaisedException())
             expect(MockExceptionHandler.called).to(beTrue())
         }
 
         it("should save uncaught exception") {
-            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date())
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
             crashManager.start()
             NSGetUncaughtExceptionHandler()?(self.getRaisedException())
             expect(storage.getAllCrashLogs().count).to(equal(1))
@@ -64,25 +68,25 @@ final class CrashManagerSpec: QuickSpec {
         }
 
         it("should upload crash logs") {
-            let crashLog = CrashLog(exception: self.getRaisedException(), fatal: true, launchDate: Date())
+            let crashLog = self.getMockCrashLog()
             storage.saveCrashLog(crashLog)
-            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date())
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
             crashManager.start()
             expect(upload.uploadedCrashLogs.count).to(equal(1))
         }
 
         it("should delete crash log once uploaded") {
-            let crashLog = CrashLog(exception: self.getRaisedException(), fatal: true, launchDate: Date())
+            let crashLog = self.getMockCrashLog()
             storage.saveCrashLog(crashLog)
-            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date())
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
             crashManager.start()
             expect(storage.getAllCrashLogs().count).to(equal(0))
         }
 
         it("should not delete crash log when upload fails") {
-            let crashLog = CrashLog(exception: self.getRaisedException(), fatal: true, launchDate: Date())
+            let crashLog = self.getMockCrashLog()
             storage.saveCrashLog(crashLog)
-            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date())
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
             upload.result = false
             crashManager.start()
             expect(storage.getAllCrashLogs().count).to(equal(1))
