@@ -112,7 +112,8 @@ class TrackingManager {
                 appGroup: repository.configuration.appGroup,
                 tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
                 currentPushToken: database.customer.pushToken,
-                lastTokenTrackDate: database.customer.lastTokenTrackDate
+                lastTokenTrackDate: database.customer.lastTokenTrackDate,
+                urlOpener: UrlOpener()
             )
         }
 

@@ -53,6 +53,10 @@
 		05735EA323A3975100DA0FA9 /* FlushingManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05735EA223A3975100DA0FA9 /* FlushingManagerType.swift */; };
 		05735EA723A3B3B700DA0FA9 /* FlushingManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05735EA623A3B3B700DA0FA9 /* FlushingManagerSpec.swift */; };
 		05735EA923A3B53600DA0FA9 /* MockFlushingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05735EA823A3B53600DA0FA9 /* MockFlushingManager.swift */; };
+		057D476723C87F0B00AEE902 /* UrlOpenerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057D476623C87F0B00AEE902 /* UrlOpenerType.swift */; };
+		057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057D476823C87F8500AEE902 /* UrlOpener.swift */; };
+		057D476B23C885D800AEE902 /* MockUrlOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057D476A23C885D800AEE902 /* MockUrlOpener.swift */; };
+		057D476D23C889BE00AEE902 /* PushNotificationsTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057D476C23C889BE00AEE902 /* PushNotificationsTestData.swift */; };
 		057F447B2398FE930070DF30 /* InAppMessagesCacheSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */; };
 		057F447D239904050070DF30 /* SampleInAppMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447C239904050070DF30 /* SampleInAppMessage.swift */; };
 		057F447F239908650070DF30 /* InAppMessagesManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */; };
@@ -360,6 +364,10 @@
 		05735EA223A3975100DA0FA9 /* FlushingManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingManagerType.swift; sourceTree = "<group>"; };
 		05735EA623A3B3B700DA0FA9 /* FlushingManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingManagerSpec.swift; sourceTree = "<group>"; };
 		05735EA823A3B53600DA0FA9 /* MockFlushingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFlushingManager.swift; sourceTree = "<group>"; };
+		057D476623C87F0B00AEE902 /* UrlOpenerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlOpenerType.swift; sourceTree = "<group>"; };
+		057D476823C87F8500AEE902 /* UrlOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlOpener.swift; sourceTree = "<group>"; };
+		057D476A23C885D800AEE902 /* MockUrlOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUrlOpener.swift; sourceTree = "<group>"; };
+		057D476C23C889BE00AEE902 /* PushNotificationsTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationsTestData.swift; sourceTree = "<group>"; };
 		057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesCacheSpec.swift; sourceTree = "<group>"; };
 		057F447C239904050070DF30 /* SampleInAppMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleInAppMessage.swift; sourceTree = "<group>"; };
 		057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesManagerSpec.swift; sourceTree = "<group>"; };
@@ -705,6 +713,7 @@
 				05BB22B4236B2F780098C406 /* PushNotificationManagerSpec.swift */,
 				05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */,
 				0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */,
+				057D476C23C889BE00AEE902 /* PushNotificationsTestData.swift */,
 			);
 			path = "Push Notifications";
 			sourceTree = "<group>";
@@ -724,6 +733,15 @@
 				05735EA623A3B3B700DA0FA9 /* FlushingManagerSpec.swift */,
 			);
 			path = Flushing;
+			sourceTree = "<group>";
+		};
+		057D476523C87ECE00AEE902 /* Deeplinking */ = {
+			isa = PBXGroup;
+			children = (
+				057D476623C87F0B00AEE902 /* UrlOpenerType.swift */,
+				057D476823C87F8500AEE902 /* UrlOpener.swift */,
+			);
+			path = Deeplinking;
 			sourceTree = "<group>";
 		};
 		057F44792398FE7D0070DF30 /* InAppMessages */ = {
@@ -1229,11 +1247,7 @@
 				F063BEA9207E36E600030811 /* MockDatabaseManager.swift */,
 				4C3F5F2C22DF98C00069E71D /* MockExponea.swift */,
 				057F449023995EA00070DF30 /* MockInAppMessageDialogPresenter.swift */,
-				057F448223990E320070DF30 /* MockInAppMessagesCache.swift */,
 				050961052322552300D59C01 /* MockLogger.swift */,
-				0567724223746DDC0082167C /* MockPushNotificationManager.swift */,
-				057F4480239909DC0070DF30 /* MockRepository.swift */,
-				05BB22B6236B300F0098C406 /* MockTrackingManager.swift */,
 				050805722326510100BDA235 /* MockUserDefaults.swift */,
 				C084D0EA2181C5EA005C0CA8 /* MockUserNotificationCenter.swift */,
 				05AA63BD2342413E00D78452 /* NetworkStubbing.swift */,
@@ -1244,6 +1258,7 @@
 				057F4480239909DC0070DF30 /* MockRepository.swift */,
 				057F448223990E320070DF30 /* MockInAppMessagesCache.swift */,
 				05735EA823A3B53600DA0FA9 /* MockFlushingManager.swift */,
+				057D476A23C885D800AEE902 /* MockUrlOpener.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
@@ -1329,6 +1344,7 @@
 				01EC2DB0207E55C10031BFEB /* Tracking */,
 				05D0E5552386C63800413AE2 /* Exponea+Configuration.swift */,
 				05735EA423A397F700DA0FA9 /* Flushing */,
+				057D476523C87ECE00AEE902 /* Deeplinking */,
 				C0F2406B20BC50A000CAF7CE /* Exponea+Fetching.swift */,
 				C0F2406D20BC511500CAF7CE /* Exponea+Tracking.swift */,
 				F0E757ED207D025300FE8C21 /* Exponea.swift */,
@@ -1782,6 +1798,7 @@
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
 				05CDD83B23911A1400C7291A /* InAppMessagesCacheType.swift in Sources */,
 				C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */,
+				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ServerRepository.swift in Sources */,
 				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
@@ -1807,6 +1824,7 @@
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
 				C0329E6120F76EBF0051F5DF /* URLResponse+Debug.swift in Sources */,
 				053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */,
+				057D476723C87F0B00AEE902 /* UrlOpenerType.swift in Sources */,
 				F029BF29208A099500342498 /* Routes.swift in Sources */,
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				C0D9B08120A3C0D50066FB1E /* Authorization.swift in Sources */,
@@ -1863,6 +1881,7 @@
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
 				050961002321566000D59C01 /* TrackingManagerSpec.swift in Sources */,
 				4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */,
+				057D476D23C889BE00AEE902 /* PushNotificationsTestData.swift in Sources */,
 				C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */,
 				F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */,
 				053E12CF23A264AD009CEF03 /* ServerRepositoryFetchRecommendationsSpec.swift in Sources */,
@@ -1873,6 +1892,7 @@
 				F04BEA8821111D4F00591950 /* PurchasedItemSpec.swift in Sources */,
 				F04BEA8B2111217700591950 /* RepositoryErrorSpec.swift in Sources */,
 				F04BEA972111A1E900591950 /* PersonalizationRequestSpec.swift in Sources */,
+				057D476B23C885D800AEE902 /* MockUrlOpener.swift in Sources */,
 				050805732326510100BDA235 /* MockUserDefaults.swift in Sources */,
 				019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */,
 				05FB1BB7236AE9220089C529 /* NotificationDataSpec.swift in Sources */,

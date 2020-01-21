@@ -19,158 +19,6 @@ class PushNotificationParserSpec: QuickSpec {
         let expected: PushNotificationParser.PushOpenedData?
     }
 
-    let basicNotification = """
-        {
-          "aps" : {
-            "alert" : "Test push notification title",
-            "mutable-content" : 1
-          },
-          "message" : "test push notification message",
-          "action" : "app",
-          "legacy_ios_category" : null,
-          "title" : "Test push notification title"
-        }
-    """
-
-    let deeplinkNotification = """
-        {
-          "title" : "Test push notification title",
-          "message" : "test push notification message",
-          "action" : "deeplink",
-          "aps" : {
-            "alert" : "Test push notification title",
-            "mutable-content" : 1
-          },
-          "legacy_ios_category" : null,
-          "url" : "some_url"
-        }
-    """
-
-    let browserNotification = """
-        {
-          "message" : "test push notification message",
-          "title" : "Test push notification title",
-          "legacy_ios_category" : null,
-          "aps" : {
-            "alert" : "Test push notification title",
-            "mutable-content" : 1
-          },
-          "url" : "http://google.com",
-          "action" : "browser"
-        }
-    """
-
-    let customActionsNotification = """
-        {
-          "legacy_ios_category" : null,
-          "actions" : [
-            {
-              "title" : "Action 1 title",
-              "action" : "app"
-            },
-            {
-              "title" : "Action 2 title",
-              "action" : "deeplink",
-              "url" : "app://deeplink"
-            },
-            {
-              "title" : "Action 3 title",
-              "action" : "browser",
-              "url" : "http://google.com"
-            }
-          ],
-          "message" : "test push notification message",
-          "aps" : {
-            "alert" : "Test push notification title",
-            "mutable-content" : 1
-          },
-          "action" : "app",
-          "title" : "Test push notification title"
-        }
-    """
-
-    let extraDataNotification = """
-        {
-          "aps" : {
-            "alert" : "Test push notification title",
-            "mutable-content" : 1
-          },
-          "attributes" : {
-            "campaign_id" : "some campaign id",
-            "campaign_name" : "some campaign name",
-            "action_id" : 123,
-            "something_else" : "some other value",
-            "something" : "some value"
-          },
-          "action" : "app",
-          "title" : "Test push notification title",
-          "legacy_ios_category" : null,
-          "message" : "test push notification message"
-        }
-    """
-
-    let customEventTypeNotification = """
-        {
-          "aps" : {
-            "alert" : "Test push notification title",
-            "mutable-content" : 1
-          },
-          "message" : "test push notification message",
-          "action" : "app",
-          "legacy_ios_category" : null,
-          "title" : "Test push notification title",
-          "attributes" : {
-            "event_type": "custom push opened"
-          }
-        }
-    """
-
-    let productionNotification = """
-        {
-          "url_params" : [
-
-          ],
-          "attributes" : {
-            "subject" : "Notification title",
-            "action_name" : "Unnamed mobile push",
-            "event_type" : "campaign",
-            "action_id" : 2,
-            "platform" : "ios",
-            "some property" : "some value",
-            "language" : "",
-            "recipient" : "051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47",
-            "campaign_policy" : "",
-            "campaign_id" : "5db9ab54b073dfb424ccfa6f",
-            "action_type" : "mobile notification",
-            "campaign_name" : "Wassil's push"
-          },
-          "action" : "app",
-          "legacy_ios_category" : null,
-          "message" : "Notification text",
-          "aps" : {
-            "alert" : "Notification title",
-            "mutable-content" : 1
-          },
-          "actions" : [
-            {
-              "title" : "Action 1 title",
-              "action" : "app"
-            },
-            {
-              "title" : "Action 2 title",
-              "action" : "deeplink",
-              "url" : "http://deeplink?search=something"
-            },
-            {
-              "title" : "Action 3 title",
-              "action" : "browser",
-              "url" : "http://google.com?search=something"
-            }
-          ],
-          "title" : "Notification title"
-        }
-    """
-
     override func spec() {
         let testCases = [
             TestCase(
@@ -181,7 +29,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "empty action",
-                userInfoJson: basicNotification,
+                userInfoJson: PushNotificationsTestData().deliveredBasicNotification,
                 actionIdentifier: nil,
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .openApp,
@@ -198,7 +46,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "basic notification",
-                userInfoJson: basicNotification,
+                userInfoJson: PushNotificationsTestData().deliveredBasicNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .openApp,
@@ -215,7 +63,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "deeplink notification",
-                userInfoJson: deeplinkNotification,
+                userInfoJson: PushNotificationsTestData().deliveredDeeplinkNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .deeplink,
@@ -232,7 +80,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "browser notification",
-                userInfoJson: browserNotification,
+                userInfoJson: PushNotificationsTestData().deliveredBrowserNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .browser,
@@ -249,7 +97,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "custom action notification when notification action is selected",
-                userInfoJson: customActionsNotification,
+                userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .openApp,
@@ -266,7 +114,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "custom action notification when first action is selected",
-                userInfoJson: customActionsNotification,
+                userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_0",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .openApp,
@@ -283,7 +131,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "custom action notification when second action is selected",
-                userInfoJson: customActionsNotification,
+                userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_1",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .deeplink,
@@ -300,7 +148,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "custom action notification when third action is selected",
-                userInfoJson: customActionsNotification,
+                userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_2",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .browser,
@@ -317,7 +165,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "extra data notification",
-                userInfoJson: extraDataNotification,
+                userInfoJson: PushNotificationsTestData().deliveredExtraDataNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .openApp,
@@ -345,7 +193,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "custom event type notification",
-                userInfoJson: customEventTypeNotification,
+                userInfoJson: PushNotificationsTestData().deliveredCustomEventTypeNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .openApp,
@@ -367,7 +215,7 @@ class PushNotificationParserSpec: QuickSpec {
             ),
             TestCase(
                 name: "production notification",
-                userInfoJson: productionNotification,
+                userInfoJson: PushNotificationsTestData().deliveredProductionNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
                     actionType: .openApp,

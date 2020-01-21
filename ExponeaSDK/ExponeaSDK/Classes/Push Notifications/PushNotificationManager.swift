@@ -20,6 +20,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     private let appGroup: String? // used for sharing data across extensions, fx. for push delivered tracking
     private let tokenTrackFrequency: TokenTrackFrequency
+    private let urlOpener: UrlOpenerType
     private var currentPushToken: String?
     private var lastTokenTrackDate: Date
     lazy var pushNotificationSwizzler = PushNotificationSwizzler(self)
@@ -36,12 +37,14 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
          appGroup: String?,
          tokenTrackFrequency: TokenTrackFrequency,
          currentPushToken: String?,
-         lastTokenTrackDate: Date?) {
+         lastTokenTrackDate: Date?,
+         urlOpener: UrlOpenerType) {
         self.appGroup = appGroup
         self.trackingManager = trackingManager
         self.tokenTrackFrequency = tokenTrackFrequency
         self.currentPushToken = currentPushToken
         self.lastTokenTrackDate = lastTokenTrackDate ?? .distantPast
+        self.urlOpener = urlOpener
         super.init()
 
         pushNotificationSwizzler.addAutomaticPushTracking()
@@ -69,61 +72,6 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             return
         }
 
-        var postAction: (() -> Void)?
-
-        switch pushOpenedData.actionType {
-        case .none, .openApp:
-            // No need to do anything, app was opened automatically
-            break
-
-        case .browser, .deeplink:
-            // Open the deeplink, iOS will handle if deeplink to safari/other apps
-            if let value = pushOpenedData.actionValue, let url = URL(string: value) {
-                // Create an action to be executed after tracking
-                postAction = {
-                    let application = UIApplication.shared
-
-                    let openDeeplink = {
-                        application.open(url, options: [:], completionHandler: { success in
-                            // If no success opening url using shared app,
-                            // try opening using current app
-                            if !success {
-                                _ = application.delegate?.application?(
-                                    application,
-                                    open: url,
-                                    options: [:])
-                            }
-                        })
-                    }
-
-                    // Validate this is a valid URL, prevents NSUserActivity crash with invalid URL
-                    // only http/https is allowed
-                    // https://developer.apple.com/documentation/foundation/nsuseractivity/1418086-webpageurl
-                    // eg. MYDEEPLINK::HOME:SCREEN:1, exponea://deeplink
-                    guard url.absoluteString.isValidURL, url.scheme == "http" || url.scheme == "https" else {
-                        openDeeplink()
-                        return
-                    }
-
-                    // Simulate universal link user activity
-                    let userActivity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
-                    userActivity.webpageURL = url
-
-                    // Try and open the link as universal link first
-                    let success = application.delegate?.application?(
-                        application,
-                        continue: userActivity,
-                        restorationHandler: { _ in }
-                    ) ?? false
-
-                    // If universal links failed to open, let application handle the URL open
-                    if !success {
-                        openDeeplink()
-                    }
-                }
-            }
-        }
-
         // Track the event
         do {
             try trackingManager?.track(pushOpenedData.eventType, with: pushOpenedData.eventData)
@@ -138,8 +86,21 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             extraData: pushOpenedData.extraData
         )
 
-        // If we have post process action, execute it
-        postAction?()
+        switch pushOpenedData.actionType {
+        case .none, .openApp:
+            // No need to do anything, app was opened automatically
+            break
+
+        case .browser:
+            if let value = pushOpenedData.actionValue, let url = URL(string: value) {
+                urlOpener.openBrowserLink(url)
+            }
+
+        case .deeplink:
+            if let value = pushOpenedData.actionValue, let url = URL(string: value) {
+                urlOpener.openDeeplink(url)
+            }
+        }
     }
 
     func handlePushTokenRegistered(dataObject: AnyObject?) {
