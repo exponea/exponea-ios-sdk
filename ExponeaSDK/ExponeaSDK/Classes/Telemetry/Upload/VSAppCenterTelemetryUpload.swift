@@ -37,8 +37,12 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     }
 
     func upload(crashLog: CrashLog, completionHandler: @escaping (Bool) -> Void) {
+        var logs = [getVSAppCenterAPIErrorReport(crashLog)]
+        if !crashLog.logs.isEmpty, let attachment = getVSAppCenterAPIErrorAttachment(crashLog) {
+            logs.append(attachment)
+        }
         upload(
-            data: VSAppCenterAPIRequestData(logs: [getVSAppCenterAPIErrorReport(crashLog)]),
+            data: VSAppCenterAPIRequestData(logs: logs),
             completionHandler: completionHandler
         )
     }
@@ -100,6 +104,23 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
                 )
             )
         }
+    }
+
+    func getVSAppCenterAPIErrorAttachment(_ log: CrashLog) -> VSAppCenterAPILog? {
+        guard let data = log.logs.joined(separator: "\n").data(using: .utf8) else {
+            return nil
+        }
+        return .errorAttachment(
+            VSAppCenterAPIErrorAttachment(
+                id: UUID().uuidString,
+                userId: self.userId,
+                device: getVSAppCenterAPIDevice(),
+                timestamp: formatTimestamp(timestamp: log.timestamp),
+                sid: log.runId,
+                errorId: log.id,
+                data: data.base64EncodedString()
+            )
+        )
     }
 
     func formatTimestamp(timestamp: Double) -> String {

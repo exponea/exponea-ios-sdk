@@ -18,6 +18,10 @@ final class CrashManager {
     let launchDate: Date
     let runId: String
 
+    private let logsQueue = DispatchQueue(label: "com.exponea.telemetry.crashmanager.logs", attributes: .concurrent)
+    static let maxLogMessages = 100
+    private var logMessages: [String] = []
+
     init(storage: TelemetryStorage, upload: TelemetryUpload, launchDate: Date, runId: String) {
         self.storage = storage
         self.upload = upload
@@ -39,13 +43,19 @@ final class CrashManager {
         Exponea.logger.log(.error, message: "Handling uncaught exception")
         if TelemetryUtility.isSDKRelated(stackTrace: exception.callStackSymbols) {
             storage.saveCrashLog(
-                CrashLog(exception: exception, fatal: true, launchDate: launchDate, runId: runId)
+                CrashLog(exception: exception, fatal: true, launchDate: launchDate, runId: runId, logs: getLogs())
             )
         }
     }
 
     func caughtExceptionHandler(_ exception: NSException) {
-        let crashLog = CrashLog(exception: exception, fatal: false, launchDate: launchDate, runId: runId)
+        let crashLog = CrashLog(
+            exception: exception,
+            fatal: false,
+            launchDate: launchDate,
+            runId: runId,
+            logs: getLogs()
+        )
         upload.upload(crashLog: crashLog) { result in
             if !result {
                 Exponea.logger.log(.error, message: "Uploading crash log failed")
@@ -59,12 +69,28 @@ final class CrashManager {
             stackTrace: stackTrace,
             fatal: false,
             launchDate: launchDate,
-            runId: runId
+            runId: runId,
+            logs: getLogs()
         )
         upload.upload(crashLog: crashLog) { result in
             if !result {
                 Exponea.logger.log(.error, message: "Uploading crash log failed")
             }
+        }
+    }
+
+    func reportLog(_ message: String) {
+        logsQueue.sync {
+            self.logMessages.append(message)
+            if self.logMessages.count > CrashManager.maxLogMessages {
+                self.logMessages.removeFirst()
+            }
+        }
+    }
+
+    func getLogs() -> [String] {
+        return logsQueue.sync {
+            self.logMessages
         }
     }
 

@@ -90,6 +90,23 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                 }
             }
 
+            it("should format error attachment") {
+                let crashLog = CrashLog(
+                    exception: self.getRaisedException(),
+                    fatal: false,
+                    launchDate: Date(),
+                    runId: "mock-run-id",
+                    logs: ["log1", "log2", "log3"]
+                )
+                if case .errorAttachment(let errorAttachment) = upload.getVSAppCenterAPIErrorAttachment(crashLog) {
+                    expect(errorAttachment.errorId).to(equal(crashLog.id))
+                    expect(errorAttachment.data).to(equal("bG9nMQpsb2cyCmxvZzM="))
+                } else {
+                    XCTFail("expected error attachment")
+                }
+
+            }
+
             it("should successfully upload error log") {
                 self.stubNetwork(statusCode: 200)
                 let crashLog = CrashLog(

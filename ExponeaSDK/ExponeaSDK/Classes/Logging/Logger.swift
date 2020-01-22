@@ -62,6 +62,7 @@ open class Logger {
     ///
     /// - Parameter message: The message you want to log.
     open func logMessage(_ message: String) {
+        CrashManager.current?.reportLog(message)
         print(message)
     }
 

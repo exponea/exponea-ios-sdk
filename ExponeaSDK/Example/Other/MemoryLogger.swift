@@ -35,7 +35,7 @@ class MemoryLogger: Logger {
     }
 
     override func logMessage(_ message: String) {
-        print(message)
+        super.logMessage(message)
 
         DispatchQueue.main.async {
             self.delegate?.logUpdated()

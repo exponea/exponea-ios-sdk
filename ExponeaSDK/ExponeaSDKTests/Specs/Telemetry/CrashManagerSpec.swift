@@ -91,5 +91,28 @@ final class CrashManagerSpec: QuickSpec {
             crashManager.start()
             expect(storage.getAllCrashLogs().count).to(equal(1))
         }
+
+        it("should get empty logs") {
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
+            expect(crashManager.getLogs()).to(beEmpty())
+        }
+
+        it("should save and get logs") {
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
+            crashManager.reportLog("log1")
+            crashManager.reportLog("log2")
+            crashManager.reportLog("log3")
+            expect(crashManager.getLogs()).to(equal(["log1", "log2", "log3"]))
+        }
+
+        it("should append logs to crashlogs") {
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
+            crashManager.reportLog("log1")
+            crashManager.reportLog("log2")
+            crashManager.reportLog("log3")
+            crashManager.caughtErrorHandler(ExponeaError.notConfigured, stackTrace: ["stack trace element"])
+            expect(upload.uploadedCrashLogs.count).to(equal(1))
+            expect(upload.uploadedCrashLogs[0].logs).to(equal(["log1", "log2", "log3"]))
+        }
     }
 }

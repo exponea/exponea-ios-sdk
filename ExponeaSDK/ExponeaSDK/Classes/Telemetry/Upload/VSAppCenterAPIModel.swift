@@ -20,6 +20,7 @@ enum VSAppCenterAPILog {
     case fatalError(VSAppCenterAPIAppleErrorReport)
     case nonFatalError(VSAppCenterAPIHandledErrorReport)
     case startSession(VSAppCenterAPIStartSession)
+    case errorAttachment(VSAppCenterAPIErrorAttachment)
 }
 
 extension VSAppCenterAPILog: Encodable {
@@ -31,6 +32,8 @@ extension VSAppCenterAPILog: Encodable {
             try nonFatalError.encode(to: encoder)
         case .startSession(let startSession):
             try startSession.encode(to: encoder)
+        case .errorAttachment(let errorAttachment):
+            try errorAttachment.encode(to: encoder)
         }
     }
 }
@@ -135,4 +138,16 @@ struct VSAppCenterAPIStartSession: VSAppCenterAPILogData {
     let device: VSAppCenterAPIDevice
     let timestamp: String
     let sid: String
+}
+
+struct VSAppCenterAPIErrorAttachment: VSAppCenterAPILogData {
+    let id: String
+    let type: String = "errorAttachment"
+    let userId: String?
+    let device: VSAppCenterAPIDevice
+    let timestamp: String
+    let sid: String
+    let errorId: String
+    let contentType: String = "text/plain"
+    let data: String // base64 data
 }

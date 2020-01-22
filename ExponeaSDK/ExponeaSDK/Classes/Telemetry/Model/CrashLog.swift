@@ -15,8 +15,9 @@ final class CrashLog: Codable, Equatable {
     let timestamp: Double
     let launchTimestamp: Double
     let runId: String
+    let logs: [String]
 
-    init(exception: NSException, fatal: Bool, launchDate: Date, runId: String) {
+    init(exception: NSException, fatal: Bool, launchDate: Date, runId: String, logs: [String] = []) {
         id = UUID().uuidString
         errorData = ErrorData(
             type: exception.name.rawValue,
@@ -27,9 +28,10 @@ final class CrashLog: Codable, Equatable {
         timestamp = Date().timeIntervalSince1970
         launchTimestamp = launchDate.timeIntervalSince1970
         self.runId = runId
+        self.logs = logs
     }
 
-    init(error: Error, stackTrace: [String], fatal: Bool, launchDate: Date, runId: String) {
+    init(error: Error, stackTrace: [String], fatal: Bool, launchDate: Date, runId: String, logs: [String] = []) {
         id = UUID().uuidString
         errorData = ErrorData(
             type: String(describing: type(of: error)),
@@ -40,6 +42,7 @@ final class CrashLog: Codable, Equatable {
         timestamp = Date().timeIntervalSince1970
         launchTimestamp = launchDate.timeIntervalSince1970
         self.runId = runId
+        self.logs = logs
     }
 
     static func == (lhs: CrashLog, rhs: CrashLog) -> Bool {
