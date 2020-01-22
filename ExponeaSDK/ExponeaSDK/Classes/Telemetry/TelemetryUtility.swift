@@ -21,4 +21,32 @@ final class TelemetryUtility {
         userDefaults.set(installId, forKey: telemetryInstallId)
         return installId
     }
+
+    static func formatConfigurationForTracking(_ config: Configuration) -> [String: String] {
+        let defaultConfig = Configuration()
+        return [
+            "projectToken":
+                config.projectToken != nil && config.projectToken?.isEmpty == false ? "[REDACTED]" : "",
+            "projectMapping":
+                config.projectMapping != nil && config.projectMapping?.isEmpty == false ? "[REDACTED]" : "",
+            "baseUrl":
+                "\(config.baseUrl)\(config.baseUrl == defaultConfig.baseUrl ? " [default]" : "")",
+            "defaultProperties":
+                config.defaultProperties != nil && config.defaultProperties?.isEmpty == false ? "[REDACTED]" : "",
+            "sessionTimeout":
+                "\(config.sessionTimeout)\(config.sessionTimeout == defaultConfig.sessionTimeout ? " [default]" : "")",
+            "automaticSessionTracking":
+                String(describing: config.automaticSessionTracking),
+            "automaticPushNotificationTracking":
+                String(describing: config.automaticPushNotificationTracking),
+            "tokenTrackFrequency":
+                "\(config.tokenTrackFrequency)"
+                    + "\(config.tokenTrackFrequency == defaultConfig.tokenTrackFrequency ? " [default]" : "")",
+            "appGroup":
+                String(describing: config.appGroup),
+            "flushEventMaxRetries":
+                "\(config.flushEventMaxRetries)"
+                    + "\(config.flushEventMaxRetries == defaultConfig.flushEventMaxRetries ? " [default]" : "")"
+        ]
+    }
 }

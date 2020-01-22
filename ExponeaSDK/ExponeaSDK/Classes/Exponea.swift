@@ -139,6 +139,7 @@ public class Exponea: ExponeaType {
                         userId: database.customer.uuid.uuidString
                     )
                     telemetryManager?.start()
+                    telemetryManager?.report(initEventWithConfiguration: configuration)
                 }
 
                 let repository = ServerRepository(configuration: configuration)

@@ -13,6 +13,7 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     let session: URLSession
     let userId: String
     let installId: String
+    let runId: String
 
     private static let formatter = ISO8601DateFormatter()
 
@@ -20,6 +21,7 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
         self.session = URLSession(configuration: .default)
         self.installId = installId
         self.userId = userId
+        self.runId = runId
         upload(sessionStartWithRunId: runId)
     }
 
@@ -34,6 +36,29 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
             )
         )
         upload(data: VSAppCenterAPIRequestData(logs: [startSession])) { _ in }
+    }
+
+    func upload(
+        eventWithName name: String,
+        properties: [String: String],
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        upload(
+            data: VSAppCenterAPIRequestData(logs: [
+                .event(
+                    VSAppCenterAPIEvent(
+                        id: UUID().uuidString,
+                        userId: userId,
+                        device: getVSAppCenterAPIDevice(),
+                        timestamp: formatTimestamp(timestamp: Date().timeIntervalSince1970),
+                        sid: runId,
+                        name: name,
+                        properties: properties
+                    )
+                )
+            ]),
+            completionHandler: completionHandler
+        )
     }
 
     func upload(crashLog: CrashLog, completionHandler: @escaping (Bool) -> Void) {

@@ -8,4 +8,5 @@
 
 protocol TelemetryUpload: class {
     func upload(crashLog: CrashLog, completionHandler: @escaping (Bool) -> Void)
+    func upload(eventWithName: String, properties: [String: String], completionHandler: @escaping (Bool) -> Void)
 }

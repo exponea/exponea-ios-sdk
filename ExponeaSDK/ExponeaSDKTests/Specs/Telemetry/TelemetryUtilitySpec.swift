@@ -41,5 +41,53 @@ final class TelemetryUtilitySpec: QuickSpec {
                 expect(TelemetryUtility.getInstallId(userDefaults: userDefaults)).to(equal(installId))
             }
         }
+        describe("formatting configuration for tracking") {
+            it("should format default configuration") {
+                expect(TelemetryUtility.formatConfigurationForTracking(Configuration())).to(
+                    equal([
+                        "defaultProperties": "",
+                        "automaticPushNotificationTracking": "true",
+                        "baseUrl": "https://api.exponea.com [default]",
+                        "appGroup": "nil",
+                        "automaticSessionTracking": "true",
+                        "tokenTrackFrequency": "onTokenChange [default]",
+                        "flushEventMaxRetries": "5 [default]",
+                        "projectMapping": "",
+                        "projectToken": "",
+                        "sessionTimeout": "6.0 [default]"
+                    ])
+                )
+            }
+            it("should format non-default configuration") {
+                let configuration = try! Configuration(
+                    projectToken: "mock-project-token",
+                    projectMapping: [EventType.banner: ["other-mock-project-token"]],
+                    authorization: .token("mock-authorization"),
+                    baseUrl: "http://mock-base-url.com",
+                    defaultProperties: ["default-property": "default-property-value"],
+                    sessionTimeout: 12345,
+                    automaticSessionTracking: false,
+                    automaticPushNotificationTracking: false,
+                    tokenTrackFrequency: TokenTrackFrequency.daily,
+                    appGroup: "mock-app-group",
+                    flushEventMaxRetries: 123
+                )
+                expect(TelemetryUtility.formatConfigurationForTracking(configuration)).to(
+                    equal([
+                        "tokenTrackFrequency": "daily",
+                        "projectToken": "[REDACTED]",
+                        "appGroup": "Optional(\"mock-app-group\")",
+                        "flushEventMaxRetries": "123",
+                        "defaultProperties": "[REDACTED]",
+                        "baseUrl": "http://mock-base-url.com",
+                        "sessionTimeout": "12345.0",
+                        "automaticSessionTracking": "false",
+                        "automaticPushNotificationTracking": "false",
+                        "projectMapping": "[REDACTED]"
+                    ])
+                )
+
+            }
+        }
     }
 }

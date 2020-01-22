@@ -35,6 +35,21 @@ final class TelemetryManager {
         crashManager.caughtErrorHandler(error, stackTrace: stackTrace)
     }
 
+    func report(eventWithName name: String, properties: [String: String]) {
+        upload.upload(eventWithName: name, properties: properties) { result in
+            if !result {
+                Exponea.logger.log(.error, message: "Uploading telemetry event failed.")
+            }
+        }
+    }
+
+    func report(initEventWithConfiguration configuration: Configuration) {
+        var properties: [String: String] = TelemetryUtility.formatConfigurationForTracking(configuration)
+        let version = Bundle(for: Exponea.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        properties["sdkVersion"] = version
+        report(eventWithName: "init", properties: properties)
+    }
+
     func start() {
         crashManager.start()
     }

@@ -138,6 +138,26 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                     }
                 }
             }
+
+            it("should successfully upload event log") {
+                self.stubNetwork(statusCode: 200)
+                waitUntil { done in
+                    upload.upload(eventWithName: "mock-event-name", properties: ["mock-property": "value"]) { result in
+                        expect(result).to(beTrue())
+                        done()
+                    }
+                }
+            }
+
+            it("should fail to upload event log on non-200 status code") {
+                self.stubNetwork(statusCode: 404)
+                waitUntil { done in
+                    upload.upload(eventWithName: "mock-event-name", properties: ["mock-property": "value"]) { result in
+                        expect(result).to(beFalse())
+                        done()
+                    }
+                }
+            }
         }
     }
 }

@@ -48,7 +48,7 @@ public struct Configuration: Decodable {
         case defaultProperties
     }
 
-    private init() {}
+    init() {}
 
     /// Creates the configuration object with the provided properties.
     ///

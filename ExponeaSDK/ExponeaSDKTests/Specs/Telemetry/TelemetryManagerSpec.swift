@@ -52,5 +52,22 @@ final class TelemetryManagerSpec: QuickSpec {
             expect(self.upload.uploadedCrashLogs[0].errorData.message).to(equal("Object does not exist."))
             expect(self.upload.uploadedCrashLogs[0].errorData.stackTrace).to(equal(["something", "something else"]))
         }
+
+        it("should report event") {
+            self.manager.report(
+                eventWithName: "event_name",
+                properties: ["property": "value", "other_property": "other_value"]
+            )
+            expect(self.upload.uploadedEvents.count).to(equal(1))
+            expect(self.upload.uploadedEvents[0].name).to(equal("event_name"))
+            expect(self.upload.uploadedEvents[0].properties)
+                .to(equal(["property": "value", "other_property": "other_value"]))
+        }
+
+        it("should report init event") {
+            self.manager.report(initEventWithConfiguration: Configuration())
+            expect(self.upload.uploadedEvents.count).to(equal(1))
+            expect(self.upload.uploadedEvents[0].name).to(equal("init"))
+        }
     }
 }
