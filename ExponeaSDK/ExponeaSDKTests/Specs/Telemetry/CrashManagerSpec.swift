@@ -29,8 +29,14 @@ final class CrashManagerSpec: QuickSpec {
         }!
     }
 
-    func getMockCrashLog() -> CrashLog {
-        return CrashLog(exception: getRaisedException(), fatal: true, launchDate: Date(), runId: "mock_run_id")
+    func getMockCrashLog(date: Date? = nil) -> CrashLog {
+        return CrashLog(
+            exception: getRaisedException(),
+            fatal: true,
+            date: date ?? Date(),
+            launchDate: Date(),
+            runId: "mock_run_id"
+        )
     }
 
     override func spec() {
@@ -90,6 +96,19 @@ final class CrashManagerSpec: QuickSpec {
             upload.result = false
             crashManager.start()
             expect(storage.getAllCrashLogs().count).to(equal(1))
+        }
+
+        it("should delete old crash logs instead of uploading") {
+            var crashLog = self.getMockCrashLog(date: Date())
+            storage.saveCrashLog(crashLog)
+            crashLog = self.getMockCrashLog(date: Date().addingTimeInterval(-60 * 60 * 24 * 16)) // 16 days ago
+            storage.saveCrashLog(crashLog)
+            crashLog = self.getMockCrashLog(date: Date().addingTimeInterval(-60 * 60 * 24 * 10)) // 10 days ago
+            storage.saveCrashLog(crashLog)
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
+            crashManager.start()
+            expect(storage.getAllCrashLogs().count).to(equal(0))
+            expect(upload.uploadedCrashLogs.count).to(equal(2))
         }
 
         it("should get empty logs") {

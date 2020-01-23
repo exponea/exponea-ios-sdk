@@ -14,7 +14,13 @@ final class FileTelemetryStorageSpec: QuickSpec {
     let mockException = NSException()
 
     func getMockCrashLog() -> CrashLog {
-        return CrashLog(exception: self.mockException, fatal: true, launchDate: Date(), runId: "mock_run_id")
+        return CrashLog(
+            exception: self.mockException,
+            fatal: true,
+            date: Date(),
+            launchDate: Date(),
+            runId: "mock_run_id"
+        )
     }
 
     override func spec() {

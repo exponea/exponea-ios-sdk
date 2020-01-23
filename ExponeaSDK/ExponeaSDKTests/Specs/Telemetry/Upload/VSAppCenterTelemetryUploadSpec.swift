@@ -63,6 +63,7 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                 let crashLog = CrashLog(
                     exception: self.getRaisedException(),
                     fatal: true,
+                    date: Date(),
                     launchDate: Date(),
                     runId: "mock-run-id"
                 )
@@ -78,6 +79,7 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                 let crashLog = CrashLog(
                     exception: self.getRaisedException(),
                     fatal: false,
+                    date: Date(),
                     launchDate: Date(),
                     runId: "mock-run-id"
                 )
@@ -94,6 +96,7 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                 let crashLog = CrashLog(
                     exception: self.getRaisedException(),
                     fatal: false,
+                    date: Date(),
                     launchDate: Date(),
                     runId: "mock-run-id",
                     logs: ["log1", "log2", "log3"]
@@ -112,6 +115,7 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                 let crashLog = CrashLog(
                     exception: self.getRaisedException(),
                     fatal: true,
+                    date: Date(),
                     launchDate: Date(),
                     runId: "mock-run-id"
                 )
@@ -128,6 +132,7 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                 let crashLog = CrashLog(
                     exception: self.getRaisedException(),
                     fatal: true,
+                    date: Date(),
                     launchDate: Date(),
                     runId: "mock-run-id"
                 )

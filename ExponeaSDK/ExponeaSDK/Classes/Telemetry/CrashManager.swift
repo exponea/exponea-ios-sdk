@@ -13,6 +13,8 @@ final class CrashManager {
     // let's just keep reference to current crash manager, so we can still easily create new ones in tests
     static var current: CrashManager?
 
+    static let logRetention: Double = 60 * 60 * 24 * 15 // 15 days
+
     let storage: TelemetryStorage
     let upload: TelemetryUpload
     let launchDate: Date
@@ -43,7 +45,14 @@ final class CrashManager {
         Exponea.logger.log(.error, message: "Handling uncaught exception")
         if TelemetryUtility.isSDKRelated(stackTrace: exception.callStackSymbols) {
             storage.saveCrashLog(
-                CrashLog(exception: exception, fatal: true, launchDate: launchDate, runId: runId, logs: getLogs())
+                CrashLog(
+                    exception: exception,
+                    fatal: true,
+                    date: Date(),
+                    launchDate: launchDate,
+                    runId: runId,
+                    logs: getLogs()
+                )
             )
         }
     }
@@ -52,6 +61,7 @@ final class CrashManager {
         let crashLog = CrashLog(
             exception: exception,
             fatal: false,
+            date: Date(),
             launchDate: launchDate,
             runId: runId,
             logs: getLogs()
@@ -68,6 +78,7 @@ final class CrashManager {
             error: error,
             stackTrace: stackTrace,
             fatal: false,
+            date: Date(),
             launchDate: launchDate,
             runId: runId,
             logs: getLogs()
@@ -96,13 +107,17 @@ final class CrashManager {
 
     func uploadCrashLogs() {
         storage.getAllCrashLogs().forEach { crashLog in
-            upload.upload(crashLog: crashLog) { result in
-                if result {
-                    Exponea.logger.log(.verbose, message: "Successfully uploaded crash log")
-                    self.storage.deleteCrashLog(crashLog)
-                } else {
-                    Exponea.logger.log(.error, message: "Uploading crash log failed")
+            if crashLog.timestamp > Date().timeIntervalSince1970 - CrashManager.logRetention {
+                upload.upload(crashLog: crashLog) { result in
+                    if result {
+                        Exponea.logger.log(.verbose, message: "Successfully uploaded crash log")
+                        self.storage.deleteCrashLog(crashLog)
+                    } else {
+                        Exponea.logger.log(.error, message: "Uploading crash log failed")
+                    }
                 }
+            } else {
+                self.storage.deleteCrashLog(crashLog)
             }
         }
     }

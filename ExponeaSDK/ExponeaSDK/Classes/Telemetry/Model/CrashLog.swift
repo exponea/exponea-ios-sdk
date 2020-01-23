@@ -17,7 +17,14 @@ final class CrashLog: Codable, Equatable {
     let runId: String
     let logs: [String]
 
-    init(exception: NSException, fatal: Bool, launchDate: Date, runId: String, logs: [String] = []) {
+    init(
+        exception: NSException,
+        fatal: Bool,
+        date: Date,
+        launchDate: Date,
+        runId: String,
+        logs: [String] = []
+    ) {
         id = UUID().uuidString
         errorData = ErrorData(
             type: exception.name.rawValue,
@@ -25,13 +32,21 @@ final class CrashLog: Codable, Equatable {
             stackTrace: exception.callStackSymbols
         )
         self.isFatal = fatal
-        timestamp = Date().timeIntervalSince1970
+        timestamp = date.timeIntervalSince1970
         launchTimestamp = launchDate.timeIntervalSince1970
         self.runId = runId
         self.logs = logs
     }
 
-    init(error: Error, stackTrace: [String], fatal: Bool, launchDate: Date, runId: String, logs: [String] = []) {
+    init(
+        error: Error,
+        stackTrace: [String],
+        fatal: Bool,
+        date: Date,
+        launchDate: Date,
+        runId: String,
+        logs: [String] = []
+    ) {
         id = UUID().uuidString
         errorData = ErrorData(
             type: String(describing: type(of: error)),
@@ -39,7 +54,7 @@ final class CrashLog: Codable, Equatable {
             stackTrace: stackTrace
         )
         self.isFatal = fatal
-        timestamp = Date().timeIntervalSince1970
+        timestamp = date.timeIntervalSince1970
         launchTimestamp = launchDate.timeIntervalSince1970
         self.runId = runId
         self.logs = logs
