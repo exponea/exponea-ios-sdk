@@ -46,7 +46,8 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
                         payload: payload,
                         image: UIImage(),
                         actionCallback: actionCallback,
-                        dismissCallback: dismissCallback
+                        dismissCallback: dismissCallback,
+                        fullscreen: false
                     )
                 )
             }

@@ -21,16 +21,20 @@ final class InAppMessageDialogViewSpec: QuickSpec {
             image = UIImage(contentsOfFile: bundle.path(forResource: "lena", ofType: "jpeg")!)
         }
 
-        it("should setup dialog with payload") {
-            let dialog: InAppMessageDialogView = InAppMessageDialogView(
-                payload: payload,
-                image: image,
-                actionCallback: {},
-                dismissCallback: {}
-            )
-            dialog.viewController.beginAppearanceTransition(true, animated: false)
-            expect(dialog.bodyTextView.text).to(equal(payload.bodyText))
-            expect(dialog.titleTextView.text).to(equal(payload.title))
+        let fullscreenSettings = [true, false]
+        fullscreenSettings.forEach { fullscreen in
+            it("should setup \(fullscreen ? "fullscreen" : "modal") dialog with payload") {
+                let dialog: InAppMessageDialogView = InAppMessageDialogView(
+                    payload: payload,
+                    image: image,
+                    actionCallback: {},
+                    dismissCallback: {},
+                    fullscreen: fullscreen
+                )
+                dialog.viewController.beginAppearanceTransition(true, animated: false)
+                expect(dialog.bodyTextView.text).to(equal(payload.bodyText))
+                expect(dialog.titleTextView.text).to(equal(payload.title))
+            }
         }
     }
 }

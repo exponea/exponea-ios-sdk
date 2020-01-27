@@ -8,13 +8,14 @@
 
 import UIKit
 
-class InAppMessageDialogView: UIViewController, InAppMessageView {
+final class InAppMessageDialogView: UIViewController, InAppMessageView {
     var viewController: UIViewController { return self }
 
     let payload: InAppMessagePayload
     let image: UIImage
     let actionCallback: (() -> Void)
     let dismissCallback: (() -> Void)
+    let fullscreen: Bool
 
     let dialogContainerView: UIView = UIView() // whole dialog
 
@@ -31,12 +32,14 @@ class InAppMessageDialogView: UIViewController, InAppMessageView {
         payload: InAppMessagePayload,
         image: UIImage,
         actionCallback: @escaping (() -> Void),
-        dismissCallback: @escaping (() -> Void)
+        dismissCallback: @escaping (() -> Void),
+        fullscreen: Bool
     ) {
         self.payload = payload
         self.image = image
         self.actionCallback = actionCallback
         self.dismissCallback = dismissCallback
+        self.fullscreen = fullscreen
 
         super.init(nibName: nil, bundle: nil)
 
@@ -72,7 +75,9 @@ class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     override func viewDidLayoutSubviews() {
-        setupImageHeightConstraint()
+        if !fullscreen {
+            setupImageHeightConstraint()
+        }
     }
 
     @objc private func onTapOutside() {
@@ -88,22 +93,37 @@ class InAppMessageDialogView: UIViewController, InAppMessageView {
 
         view.addSubview(dialogContainerView)
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             dialogContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             dialogContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-
-            dialogContainerView.topAnchor.constraint(
-                greaterThanOrEqualTo: view.layoutMarginsGuide.topAnchor,
-                constant: 20
-            ),
-            dialogContainerView.bottomAnchor.constraint(
-                lessThanOrEqualTo: view.layoutMarginsGuide.bottomAnchor,
-                constant: -20
-            ),
             dialogContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: view.layoutMarginsGuide.leadingAnchor),
-            dialogContainerView.trailingAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.trailingAnchor),
-            dialogContainerView.widthAnchor.constraint(lessThanOrEqualToConstant: 600)
-        ])
+            dialogContainerView.trailingAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.trailingAnchor)
+        ]
+        if fullscreen {
+            constraints.append(contentsOf: [
+                dialogContainerView.topAnchor.constraint(
+                    equalTo: view.layoutMarginsGuide.topAnchor,
+                    constant: 20
+                ),
+                dialogContainerView.bottomAnchor.constraint(
+                    equalTo: view.layoutMarginsGuide.bottomAnchor,
+                    constant: -20
+                )
+            ])
+        } else {
+            constraints.append(contentsOf: [
+                dialogContainerView.widthAnchor.constraint(lessThanOrEqualToConstant: 600),
+                dialogContainerView.topAnchor.constraint(
+                    greaterThanOrEqualTo: view.layoutMarginsGuide.topAnchor,
+                    constant: 20
+                ),
+                dialogContainerView.bottomAnchor.constraint(
+                    lessThanOrEqualTo: view.layoutMarginsGuide.bottomAnchor,
+                    constant: -20
+                )
+            ])
+        }
+        NSLayoutConstraint.activate(constraints)
     }
 
     private func setupImage() {
@@ -112,14 +132,17 @@ class InAppMessageDialogView: UIViewController, InAppMessageView {
         imageView.image = image
 
         dialogContainerView.addSubview(imageView)
-        let heightConstraint = imageView.heightAnchor.constraint(lessThanOrEqualToConstant: 150)
-        NSLayoutConstraint.activate([
+        var constraints = [
             imageView.topAnchor.constraint(equalTo: dialogContainerView.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: dialogContainerView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: dialogContainerView.trailingAnchor),
-            heightConstraint
-        ])
-        imageViewHeightConstraint = heightConstraint
+            imageView.trailingAnchor.constraint(equalTo: dialogContainerView.trailingAnchor)
+        ]
+        if !fullscreen {
+            let heightConstraint = imageView.heightAnchor.constraint(lessThanOrEqualToConstant: 150)
+            constraints.append(heightConstraint)
+            imageViewHeightConstraint = heightConstraint
+        }
+        NSLayoutConstraint.activate(constraints)
     }
 
     private func setupImageHeightConstraint() {

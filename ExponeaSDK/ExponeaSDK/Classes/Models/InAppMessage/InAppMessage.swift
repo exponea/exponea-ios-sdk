@@ -90,6 +90,6 @@ enum InAppMessageFrequency: String {
 enum InAppMessageType: String, CaseIterable {
     case modal
     case alert
-    //case fullscreen = "fullscreen"
+    case fullscreen
     //case slideIn = "slide_in"
 }

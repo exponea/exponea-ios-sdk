@@ -91,16 +91,21 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 actionCallback: actionCallback,
                 dismissCallback: dismissCallback
             )
-        case .modal:
+        case .modal, .fullscreen:
             guard let image = image else {
                 Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
                 throw InAppMessagePresenterError.unableToCreateViewController
+            }
+            var fullscreen = false
+            if case .fullscreen = messageType {
+                fullscreen = true
             }
             return InAppMessageDialogView(
                 payload: payload,
                 image: image,
                 actionCallback: actionCallback,
-                dismissCallback: dismissCallback
+                dismissCallback: dismissCallback,
+                fullscreen: fullscreen
             )
         }
     }
