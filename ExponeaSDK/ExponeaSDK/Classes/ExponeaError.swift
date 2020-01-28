@@ -14,7 +14,7 @@ import Foundation
 /// - configurationError(String)
 /// - authorizationInsufficient(String)
 /// - unknownError(String?)
-public enum ExponeaError: Error {
+public enum ExponeaError: LocalizedError {
     case notConfigured
     case configurationError(String)
     case authorizationInsufficient(String)
@@ -22,7 +22,7 @@ public enum ExponeaError: Error {
     case nsExceptionRaised(NSException)
     case nsExceptionInconsistency
 
-    public var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
         case .notConfigured:
             return """
