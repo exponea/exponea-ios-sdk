@@ -200,25 +200,12 @@ internal extension Exponea {
         _ closure: DependencyTask<T>,
         completion: @escaping CompletionHandler<T>
     ) {
-        if nsExceptionRaised {
-            Exponea.logger.log(.error, message: ExponeaError.nsExceptionInconsistency.localizedDescription)
-            completion(.failure(ExponeaError.nsExceptionInconsistency))
-            return
-        }
-        let exception = objc_tryCatch {
-            do {
+        executeSafely({
                 let dependencies = try getDependenciesIfConfigured()
                 try closure(dependencies, completion)
-            } catch {
-                Exponea.logger.log(.error, message: error.localizedDescription)
-                completion(.failure(error))
-            }
-        }
-        if let exception = exception {
-            nsExceptionRaised = true
-            Exponea.logger.log(.error, message: ExponeaError.nsExceptionRaised(exception).localizedDescription)
-            completion(.failure(ExponeaError.nsExceptionRaised(exception)))
-        }
+            },
+            errorHandler: { error in completion(.failure(error)) }
+        )
     }
 
     func executeSafelyWithDependencies(_ closure: (Exponea.Dependencies) throws -> Void) {
@@ -226,8 +213,13 @@ internal extension Exponea {
     }
 
     func executeSafely(_ closure: () throws -> Void) {
+        executeSafely(closure, errorHandler: nil)
+    }
+
+    func executeSafely(_ closure: () throws -> Void, errorHandler: ((Error) -> Void)?) {
         if nsExceptionRaised {
             Exponea.logger.log(.error, message: ExponeaError.nsExceptionInconsistency.localizedDescription)
+            errorHandler?(ExponeaError.nsExceptionInconsistency)
             return
         }
         let exception = objc_tryCatch {
@@ -235,11 +227,13 @@ internal extension Exponea {
                 try closure()
             } catch {
                 Exponea.logger.log(.error, message: error.localizedDescription)
+                errorHandler?(error)
             }
         }
         if let exception = exception {
             Exponea.logger.log(.error, message: ExponeaError.nsExceptionRaised(exception).localizedDescription)
             nsExceptionRaised = true
+            errorHandler?(ExponeaError.nsExceptionRaised(exception))
         }
     }
 }
