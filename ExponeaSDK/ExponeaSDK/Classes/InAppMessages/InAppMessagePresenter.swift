@@ -8,7 +8,8 @@
 
 final class InAppMessagePresenter: InAppMessagePresenterType {
     enum InAppMessagePresenterError: Error {
-        case unableToCreateViewController
+        case unableToCreateView
+        case unableToPresentView
     }
 
     private let window: UIWindow?
@@ -48,7 +49,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 }
 
                 guard let viewController = self.getTopViewController() else {
-                    Exponea.logger.log(.error, message: "Unable to present in-app message dialog - no view controller")
+                    Exponea.logger.log(.error, message: "Unable to present in-app message - no view controller")
                     presentedCallback?(nil)
                     return
                 }
@@ -67,7 +68,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                             dismissCallback()
                         }
                     )
-                    viewController.present(inAppMessageView.viewController, animated: true)
+                    try inAppMessageView.present(
+                        in: viewController,
+                        window: self.window ?? UIApplication.shared.keyWindow
+                    )
                     self.presenting = true
                     presentedCallback?(inAppMessageView)
                 } catch {
@@ -94,7 +98,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         case .modal, .fullscreen:
             guard let image = image else {
                 Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
-                throw InAppMessagePresenterError.unableToCreateViewController
+                throw InAppMessagePresenterError.unableToCreateView
             }
             var fullscreen = false
             if case .fullscreen = messageType {
@@ -106,6 +110,17 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 actionCallback: actionCallback,
                 dismissCallback: dismissCallback,
                 fullscreen: fullscreen
+            )
+        case .slideIn:
+            guard let image = image else {
+                Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
+                throw InAppMessagePresenterError.unableToCreateView
+            }
+            return InAppMessageSlideInView(
+                payload: payload,
+                image: image,
+                actionCallback: actionCallback,
+                dismissCallback: dismissCallback
             )
         }
     }

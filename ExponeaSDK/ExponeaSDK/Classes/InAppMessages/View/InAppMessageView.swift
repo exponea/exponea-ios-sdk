@@ -9,8 +9,8 @@
 import Foundation
 
 protocol InAppMessageView {
-    var viewController: UIViewController { get }
-
     var actionCallback: (() -> Void) { get }
     var dismissCallback: (() -> Void) { get }
+
+    func present(in viewController: UIViewController, window: UIWindow?) throws
 }

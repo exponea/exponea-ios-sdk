@@ -9,8 +9,6 @@
 import UIKit
 
 final class InAppMessageDialogView: UIViewController, InAppMessageView {
-    var viewController: UIViewController { return self }
-
     let payload: InAppMessagePayload
     let image: UIImage
     let actionCallback: (() -> Void)
@@ -49,6 +47,10 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
 
     required init?(coder: NSCoder) {
         return nil
+    }
+
+    func present(in viewController: UIViewController, window: UIWindow?) {
+        viewController.present(self, animated: true)
     }
 
     override func loadView() {

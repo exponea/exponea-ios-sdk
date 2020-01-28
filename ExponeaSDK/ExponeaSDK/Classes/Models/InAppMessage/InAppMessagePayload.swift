@@ -23,6 +23,7 @@ struct InAppMessagePayload: Codable, Equatable {
     public let buttonBackgroundColor: String
     public let backgroundColor: String
     public let closeButtonColor: String
+    public let messagePosition: String?
 
     enum CodingKeys: String, CodingKey {
         case imageUrl = "image_url"
@@ -39,5 +40,6 @@ struct InAppMessagePayload: Codable, Equatable {
         case buttonBackgroundColor = "button_background_color"
         case backgroundColor = "background_color"
         case closeButtonColor = "close_button_color"
+        case messagePosition = "message_position"
     }
 }

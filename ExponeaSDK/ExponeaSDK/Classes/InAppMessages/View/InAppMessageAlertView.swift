@@ -7,8 +7,6 @@
 //
 
 final class InAppMessageAlertView: InAppMessageView {
-    var viewController: UIViewController { return alertController }
-
     let alertController: UIAlertController
     let actionCallback: (() -> Void)
     let dismissCallback: (() -> Void)
@@ -31,5 +29,9 @@ final class InAppMessageAlertView: InAppMessageView {
         alertController.addAction(
             UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in dismissCallback() })
         )
+    }
+
+    func present(in viewController: UIViewController, window: UIWindow?) {
+        viewController.present(alertController, animated: true)
     }
 }

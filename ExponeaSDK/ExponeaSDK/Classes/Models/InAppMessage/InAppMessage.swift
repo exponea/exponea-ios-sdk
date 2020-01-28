@@ -91,5 +91,5 @@ enum InAppMessageType: String, CaseIterable {
     case modal
     case alert
     case fullscreen
-    //case slideIn = "slide_in"
+    case slideIn = "slide_in"
 }

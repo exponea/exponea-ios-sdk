@@ -61,6 +61,7 @@
 		057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057D476823C87F8500AEE902 /* UrlOpener.swift */; };
 		057D476B23C885D800AEE902 /* MockUrlOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057D476A23C885D800AEE902 /* MockUrlOpener.swift */; };
 		057D476D23C889BE00AEE902 /* PushNotificationsTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057D476C23C889BE00AEE902 /* PushNotificationsTestData.swift */; };
+		057E367523E0503F00DDD6C1 /* InAppMessageSlideInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057E367423E0503F00DDD6C1 /* InAppMessageSlideInView.swift */; };
 		057F447B2398FE930070DF30 /* InAppMessagesCacheSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */; };
 		057F447D239904050070DF30 /* SampleInAppMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447C239904050070DF30 /* SampleInAppMessage.swift */; };
 		057F447F239908650070DF30 /* InAppMessagesManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */; };
@@ -402,6 +403,7 @@
 		057D476823C87F8500AEE902 /* UrlOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlOpener.swift; sourceTree = "<group>"; };
 		057D476A23C885D800AEE902 /* MockUrlOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUrlOpener.swift; sourceTree = "<group>"; };
 		057D476C23C889BE00AEE902 /* PushNotificationsTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationsTestData.swift; sourceTree = "<group>"; };
+		057E367423E0503F00DDD6C1 /* InAppMessageSlideInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageSlideInView.swift; sourceTree = "<group>"; };
 		057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesCacheSpec.swift; sourceTree = "<group>"; };
 		057F447C239904050070DF30 /* SampleInAppMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleInAppMessage.swift; sourceTree = "<group>"; };
 		057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesManagerSpec.swift; sourceTree = "<group>"; };
@@ -919,6 +921,7 @@
 				05D2D39923DEE60200E3E79A /* InAppMessageView.swift */,
 				05A6A3EA23954654008475E7 /* InAppMessageDialogView.swift */,
 				05D2D39B23DEF1E300E3E79A /* InAppMessageAlertView.swift */,
+				057E367423E0503F00DDD6C1 /* InAppMessageSlideInView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -2039,6 +2042,7 @@
 				F029BF29208A099500342498 /* Routes.swift in Sources */,
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				C0D9B08120A3C0D50066FB1E /* Authorization.swift in Sources */,
+				057E367523E0503F00DDD6C1 /* InAppMessageSlideInView.swift in Sources */,
 				01C2AD4C208F60ED0012F663 /* TrackingParameters.swift in Sources */,
 				05A6A3EB23954654008475E7 /* InAppMessageDialogView.swift in Sources */,
 				0591906A23EC2FAB0037BD88 /* EventFilterConstraint+Operators.swift in Sources */,

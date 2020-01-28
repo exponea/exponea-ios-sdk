@@ -31,7 +31,7 @@ final class InAppMessageDialogViewSpec: QuickSpec {
                     dismissCallback: {},
                     fullscreen: fullscreen
                 )
-                dialog.viewController.beginAppearanceTransition(true, animated: false)
+                dialog.beginAppearanceTransition(true, animated: false)
                 expect(dialog.bodyTextView.text).to(equal(payload.bodyText))
                 expect(dialog.titleTextView.text).to(equal(payload.title))
             }

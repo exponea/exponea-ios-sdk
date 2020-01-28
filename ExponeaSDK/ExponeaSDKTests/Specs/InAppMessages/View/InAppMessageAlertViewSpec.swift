@@ -21,7 +21,7 @@ final class InAppMessageAlertViewSpec: QuickSpec {
                 actionCallback: {},
                 dismissCallback: {}
             )
-            guard let alertController = alertView.viewController as? UIAlertController else {
+            guard let alertController = alertView.alertController as? UIAlertController else {
                 XCTFail("In-app message alert view should create UIAlertController")
                 return
             }
