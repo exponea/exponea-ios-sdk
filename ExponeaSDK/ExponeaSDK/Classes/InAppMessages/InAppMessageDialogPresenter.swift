@@ -27,16 +27,6 @@ class InAppMessageDialogPresenter: InAppMessageDialogPresenterType {
             return
         }
         DispatchQueue.main.async {
-            let storyboard = UIStoryboard(
-                name: "InAppMessageDialog",
-                bundle: Bundle(for: ExponeaSDK.Exponea.self)
-            )
-            guard let dialogVC = storyboard.instantiateViewController(withIdentifier: "InAppMessageDialog")
-                    as? InAppMessageDialogViewController else {
-                Exponea.logger.log(.error, message: "Unable to instantiate in-app message view controller")
-                presentedCallback?(nil)
-                return
-            }
             guard let image = self.createImage(
                 imageData: imageData,
                 maxDimensionInPixels: self.getMaxScreenDimension()
@@ -45,22 +35,24 @@ class InAppMessageDialogPresenter: InAppMessageDialogPresenterType {
                 presentedCallback?(nil)
                 return
             }
-            dialogVC.payload = payload
-            dialogVC.image = image
-            dialogVC.actionCallback = {
-                self.presenting = false
-                actionCallback()
-            }
-            dialogVC.dismissCallback = {
-                self.presenting = false
-                dismissCallback()
-            }
-
             guard let viewController = self.getTopViewController() else {
                 Exponea.logger.log(.error, message: "Unable to present in-app message dialog - no view controller")
                 presentedCallback?(nil)
                 return
             }
+            let dialogVC = InAppMessageDialogViewController(
+                payload: payload,
+                image: image,
+                actionCallback: {
+                    self.presenting = false
+                    actionCallback()
+                },
+                dismissCallback: {
+                    self.presenting = false
+                    dismissCallback()
+                }
+            )
+
             viewController.present(dialogVC, animated: true)
             self.presenting = true
             presentedCallback?(dialogVC)

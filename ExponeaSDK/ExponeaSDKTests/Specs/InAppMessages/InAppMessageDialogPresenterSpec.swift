@@ -157,7 +157,7 @@ final class InAppMessageDialogPresenterSpec: QuickSpec {
                         done()
                     })
                 }
-                presentedDialog?.dismissCallback?()
+                presentedDialog?.dismissCallback()
                 waitUntil { done in
                     present({ presented in
                         expect(presented).notTo(beNil())
@@ -171,7 +171,7 @@ final class InAppMessageDialogPresenterSpec: QuickSpec {
                         done()
                     })
                 }
-                presentedDialog?.actionCallback?()
+                presentedDialog?.actionCallback()
                 waitUntil { done in
                     present({ presented in
                         expect(presented).notTo(beNil())

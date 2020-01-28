@@ -71,7 +71,6 @@
 		057F4495239960650070DF30 /* mountain.png in Resources */ = {isa = PBXBuildFile; fileRef = 057F4493239960650070DF30 /* mountain.png */; };
 		0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0580BBC6239698E60058323D /* UIColor+FromHexString.swift */; };
 		0580BBC923969D1F0058323D /* InAppMessageDialogPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0580BBC823969D1F0058323D /* InAppMessageDialogPresenter.swift */; };
-		05A6A3E923954531008475E7 /* InAppMessageDialog.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05A6A3E823954531008475E7 /* InAppMessageDialog.storyboard */; };
 		05A6A3EB23954654008475E7 /* InAppMessageDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A6A3EA23954654008475E7 /* InAppMessageDialogViewController.swift */; };
 		05A931F02375A73500D45200 /* mock_notification_response.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A931EE2375A50100D45200 /* mock_notification_response.m */; };
 		05A931F12375A7BE00D45200 /* mock_notification_response.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931ED2375A4EE00D45200 /* mock_notification_response.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -377,7 +376,6 @@
 		057F4493239960650070DF30 /* mountain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mountain.png; sourceTree = "<group>"; };
 		0580BBC6239698E60058323D /* UIColor+FromHexString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+FromHexString.swift"; sourceTree = "<group>"; };
 		0580BBC823969D1F0058323D /* InAppMessageDialogPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDialogPresenter.swift; sourceTree = "<group>"; };
-		05A6A3E823954531008475E7 /* InAppMessageDialog.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = InAppMessageDialog.storyboard; sourceTree = "<group>"; };
 		05A6A3EA23954654008475E7 /* InAppMessageDialogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDialogViewController.swift; sourceTree = "<group>"; };
 		05A931ED2375A4EE00D45200 /* mock_notification_response.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mock_notification_response.h; sourceTree = "<group>"; };
 		05A931EE2375A50100D45200 /* mock_notification_response.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mock_notification_response.m; sourceTree = "<group>"; };
@@ -744,14 +742,6 @@
 				053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */,
 			);
 			path = InAppMessages;
-			sourceTree = "<group>";
-		};
-		05A6A3E723954508008475E7 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				05A6A3E823954531008475E7 /* InAppMessageDialog.storyboard */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		05B4D64D238FEBCC00F5010F /* InAppMessage */ = {
@@ -1128,7 +1118,6 @@
 			isa = PBXGroup;
 			children = (
 				F0E757EC207D023A00FE8C21 /* Classes */,
-				05A6A3E723954508008475E7 /* Resources */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
 			);
 			path = ExponeaSDK;
@@ -1591,7 +1580,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */,
-				05A6A3E923954531008475E7 /* InAppMessageDialog.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

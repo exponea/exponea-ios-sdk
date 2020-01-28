@@ -20,8 +20,6 @@ class MockInAppMessageDialogPresenter: InAppMessageDialogPresenterType {
     public var presentedMessages: [PresentedMessageData] = []
 
     public var presentResult: Bool = true
-    public var mockViewController = InAppMessageDialogViewController()
-
     func presentInAppMessage(
         payload: InAppMessagePayload,
         imageData: Data,
@@ -39,7 +37,18 @@ class MockInAppMessageDialogPresenter: InAppMessageDialogPresenterType {
                     presentedCallback: presentedCallback
                 )
             )
+            DispatchQueue.main.async {
+                presentedCallback?(
+                    InAppMessageDialogViewController(
+                        payload: payload,
+                        image: UIImage(),
+                        actionCallback: actionCallback,
+                        dismissCallback: dismissCallback
+                    )
+                )
+            }
+        } else {
+            presentedCallback?(nil)
         }
-        presentedCallback?(presentResult ? mockViewController : nil)
     }
 }
