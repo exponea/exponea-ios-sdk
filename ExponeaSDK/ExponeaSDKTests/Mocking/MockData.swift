@@ -52,13 +52,6 @@ struct MockData {
                                                         timezone: "GMT+2",
                                                         customParameters: nil)
 
-    let purchasedItem = PurchasedItem(grossAmount: 10.0,
-                                      currency: "EUR",
-                                      paymentSystem: "Bank Transfer",
-                                      productId: "123",
-                                      productTitle: "iPad",
-                                      receipt: nil)
-
     let recommendationResponse = retrieveDataFromFile(with: "get-recommendation", fileType: "json")
     let eventsResponse = retrieveDataFromFile(with: "get-events", fileType: "json")
     let bannerResponse = retrieveDataFromFile(with: "get-banner", fileType: "json")

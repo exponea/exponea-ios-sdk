@@ -25,14 +25,6 @@ class TrackingManager {
         return database.customer.pushToken
     }
 
-    /// Payment manager responsible to track all in app payments.
-    internal var paymentManager: PaymentManagerType {
-        didSet {
-            paymentManager.delegate = self
-            paymentManager.startObservingPayments()
-        }
-    }
-
     /// The manager for automatic push registration and delivery tracking
     internal var notificationsManager: PushNotificationManagerType?
 
@@ -70,12 +62,10 @@ class TrackingManager {
          database: DatabaseManagerType,
          device: DeviceProperties = DeviceProperties(),
          flushingManager: FlushingManagerType,
-         paymentManager: PaymentManagerType = PaymentManager(),
          userDefaults: UserDefaults) throws {
         self.repository = repository
         self.database = database
         self.device = device
-        self.paymentManager = paymentManager
         self.userDefaults = userDefaults
 
         self.flushingManager = flushingManager
@@ -527,19 +517,6 @@ extension TrackingManager {
             return true
         } else {
             return false
-        }
-    }
-}
-
-// MARK: - Payments -
-
-extension TrackingManager: PaymentManagerDelegate {
-    public func trackPaymentEvent(with data: [DataType]) {
-        do {
-            try track(.payment, with: data)
-            Exponea.logger.log(.verbose, message: Constants.SuccessMessages.paymentDone)
-        } catch {
-            Exponea.logger.log(.error, message: error.localizedDescription)
         }
     }
 }

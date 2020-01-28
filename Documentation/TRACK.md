@@ -107,3 +107,15 @@ trackSessionEnd()
 ```
 Exponea.shared.trackSessionEnd()
 ```
+
+### Track Payment
+
+```
+trackPayment(properties: [String: JSONConvertible], timestamp: Double?)
+```
+
+#### 💻 Usage
+
+```
+Exponea.shared.trackPayment(properties: ["value": "99", "custom_info": "sample payment"], timestamp: nil)
+```

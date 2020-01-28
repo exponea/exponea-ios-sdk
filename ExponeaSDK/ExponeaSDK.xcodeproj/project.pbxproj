@@ -163,7 +163,6 @@
 		C0A6DEA820EAC16900C5F744 /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9C20EAC16900C5F744 /* Customer.swift */; };
 		C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */; };
 		C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DEAD20EAC32700C5F744 /* DatabaseManager+DataType.swift */; };
-		C0D9B07920A38A8C0066FB1E /* PaymentManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */; };
 		C0D9B07B20A3B2410066FB1E /* TrackingManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */; };
 		C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */; };
 		C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07E20A3B8070066FB1E /* DatabaseManagerError.swift */; };
@@ -205,7 +204,6 @@
 		F029BF27208A096900342498 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF26208A096900342498 /* HTTPMethod.swift */; };
 		F029BF29208A099500342498 /* Routes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF28208A099500342498 /* Routes.swift */; };
 		F029BF35208DBE1200342498 /* get-recommendation.json in Resources */ = {isa = PBXBuildFile; fileRef = F029BF34208DBE1100342498 /* get-recommendation.json */; };
-		F04BEA8821111D4F00591950 /* PurchasedItemSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA8721111D4F00591950 /* PurchasedItemSpec.swift */; };
 		F04BEA8B2111217700591950 /* RepositoryErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA8A2111217700591950 /* RepositoryErrorSpec.swift */; };
 		F04BEA8E21118F4700591950 /* ResultSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA8D21118F4700591950 /* ResultSpec.swift */; };
 		F04BEA9021119C1500591950 /* AuthorizationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEA8F21119C1500591950 /* AuthorizationSpec.swift */; };
@@ -220,9 +218,6 @@
 		F04BEAAB21126D2000591950 /* DeviceTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEAAA21126D2000591950 /* DeviceTarget.swift */; };
 		F04BEAAD211270CC00591950 /* FetchPersonalizationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04BEAAC211270CC00591950 /* FetchPersonalizationSpec.swift */; };
 		F063BEAA207E36E600030811 /* MockDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F063BEA9207E36E600030811 /* MockDatabaseManager.swift */; };
-		F0674410208731F9003C0293 /* PaymentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067440F208731F9003C0293 /* PaymentManager.swift */; };
-		F0674412208732AF003C0293 /* PaymentManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0674411208732AF003C0293 /* PaymentManagerType.swift */; };
-		F067441420873813003C0293 /* PurchasedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F067441320873813003C0293 /* PurchasedItem.swift */; };
 		F0BE60F221105FF70082ABD8 /* EventTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */; };
 		F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60FF21107D3A0082ABD8 /* TrackingParametersSpec.swift */; };
 		F0BE6105211080F30082ABD8 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE6104211080F30082ABD8 /* MockData.swift */; };
@@ -475,7 +470,6 @@
 		C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackEvent.swift; sourceTree = "<group>"; };
 		C0A6DEAD20EAC32700C5F744 /* DatabaseManager+DataType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseManager+DataType.swift"; sourceTree = "<group>"; };
 		C0BF069121466B3D007C4E4C /* DatabaseModel v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v2.xcdatamodel"; sourceTree = "<group>"; };
-		C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManagerDelegate.swift; sourceTree = "<group>"; };
 		C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManagerError.swift; sourceTree = "<group>"; };
 		C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaError.swift; sourceTree = "<group>"; };
 		C0D9B07E20A3B8070066FB1E /* DatabaseManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManagerError.swift; sourceTree = "<group>"; };
@@ -523,7 +517,6 @@
 		F029BF26208A096900342498 /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		F029BF28208A099500342498 /* Routes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routes.swift; sourceTree = "<group>"; };
 		F029BF34208DBE1100342498 /* get-recommendation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "get-recommendation.json"; sourceTree = "<group>"; };
-		F04BEA8721111D4F00591950 /* PurchasedItemSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasedItemSpec.swift; sourceTree = "<group>"; };
 		F04BEA8A2111217700591950 /* RepositoryErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryErrorSpec.swift; sourceTree = "<group>"; };
 		F04BEA8D21118F4700591950 /* ResultSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultSpec.swift; sourceTree = "<group>"; };
 		F04BEA8F21119C1500591950 /* AuthorizationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationSpec.swift; sourceTree = "<group>"; };
@@ -538,9 +531,6 @@
 		F04BEAAA21126D2000591950 /* DeviceTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTarget.swift; sourceTree = "<group>"; };
 		F04BEAAC211270CC00591950 /* FetchPersonalizationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPersonalizationSpec.swift; sourceTree = "<group>"; };
 		F063BEA9207E36E600030811 /* MockDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDatabaseManager.swift; sourceTree = "<group>"; };
-		F067440F208731F9003C0293 /* PaymentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManager.swift; sourceTree = "<group>"; };
-		F0674411208732AF003C0293 /* PaymentManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentManagerType.swift; sourceTree = "<group>"; };
-		F067441320873813003C0293 /* PurchasedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasedItem.swift; sourceTree = "<group>"; };
 		F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTypeSpec.swift; sourceTree = "<group>"; };
 		F0BE60FF21107D3A0082ABD8 /* TrackingParametersSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingParametersSpec.swift; sourceTree = "<group>"; };
 		F0BE6104211080F30082ABD8 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
@@ -1098,7 +1088,6 @@
 				01764BC32087742100D0D673 /* ConfigurationSpec.swift */,
 				F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */,
 				F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */,
-				F04BEA8721111D4F00591950 /* PurchasedItemSpec.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1202,16 +1191,6 @@
 			path = json;
 			sourceTree = "<group>";
 		};
-		F067440E208731CF003C0293 /* Payment */ = {
-			isa = PBXGroup;
-			children = (
-				F067440F208731F9003C0293 /* PaymentManager.swift */,
-				C0D9B07820A38A8C0066FB1E /* PaymentManagerDelegate.swift */,
-				F0674411208732AF003C0293 /* PaymentManagerType.swift */,
-			);
-			path = Payment;
-			sourceTree = "<group>";
-		};
 		F067441520878F8C003C0293 /* Fetching */ = {
 			isa = PBXGroup;
 			children = (
@@ -1285,7 +1264,6 @@
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
 				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
 				C09C33CA221C097100715603 /* NotificationData+Properties.swift */,
-				F067441320873813003C0293 /* PurchasedItem.swift */,
 				B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */,
 			);
 			path = Models;
@@ -1338,7 +1316,6 @@
 				0191639D207E14C9005FD174 /* Logging */,
 				F0C1C1CE207384ED005EB697 /* Models */,
 				F0E757DE207CF98600FE8C21 /* Others */,
-				F067440E208731CF003C0293 /* Payment */,
 				C0EB5D9120B811DE00F1031F /* Push Notifications */,
 				F0E757E1207CF9BE00FE8C21 /* Repository */,
 				01EC2DB0207E55C10031BFEB /* Tracking */,
@@ -1778,7 +1755,6 @@
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
 				C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */,
 				01EC2DB4207E58080031BFEB /* EventType.swift in Sources */,
-				F0674410208731F9003C0293 /* PaymentManager.swift in Sources */,
 				23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */,
 				F029BF27208A096900342498 /* HTTPMethod.swift in Sources */,
 				B40E9F5D22FAD25A0085B8A1 /* TokenTrackFrequency.swift in Sources */,
@@ -1787,12 +1763,10 @@
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
 				05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */,
 				C0F2406E20BC511500CAF7CE /* Exponea+Tracking.swift in Sources */,
-				C0D9B07920A38A8C0066FB1E /* PaymentManagerDelegate.swift in Sources */,
 				05B4D64C238FEB9200F5010F /* InAppMessagesResponse.swift in Sources */,
 				C0A6DEA820EAC16900C5F744 /* Customer.swift in Sources */,
 				B42DA68922B03F7700BBA225 /* Consent.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
-				F0674412208732AF003C0293 /* PaymentManagerType.swift in Sources */,
 				056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */,
 				C0EB5D9F20BB530000F1031F /* ExponeaType.swift in Sources */,
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
@@ -1837,7 +1811,6 @@
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
 				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
-				F067441420873813003C0293 /* PurchasedItem.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				0567723D237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift in Sources */,
@@ -1889,7 +1862,6 @@
 				F04BEA9221119DD200591950 /* HTTPMethodSpec.swift in Sources */,
 				B42DA69022B0594D00BBA225 /* FetchConsentsSpec.swift in Sources */,
 				01764BC42087742100D0D673 /* ConfigurationSpec.swift in Sources */,
-				F04BEA8821111D4F00591950 /* PurchasedItemSpec.swift in Sources */,
 				F04BEA8B2111217700591950 /* RepositoryErrorSpec.swift in Sources */,
 				F04BEA972111A1E900591950 /* PersonalizationRequestSpec.swift in Sources */,
 				057D476B23C885D800AEE902 /* MockUrlOpener.swift in Sources */,

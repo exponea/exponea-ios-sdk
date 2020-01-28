@@ -59,7 +59,6 @@ Then you can start using all the other features:
 * [Data Flushing](./Documentation/FLUSH.md)
 * [Push Notifications](./Documentation/PUSH.md)
 * [Fetch Data](./Documentation/FETCH.md)
-* [Payments](./Documentation/PAYMENT.md)
 * [Anonymize](./Documentation/ANONYMIZE.md)
 
 ## 🔗 Useful links
