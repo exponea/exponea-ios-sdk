@@ -72,7 +72,9 @@ struct SampleInAppMessage {
                 buttonBackgroundColor: "#f44cac",
                 backgroundColor: "#ffffff",
                 closeButtonColor: "#ffffff",
-                messagePosition: nil
+                messagePosition: nil,
+                textPosition: nil,
+                textOverImage: nil
             ),
             variantId: 0,
             variantName: "Variant A",

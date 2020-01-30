@@ -9,6 +9,11 @@
 import UIKit
 
 final class InAppMessageDialogView: UIViewController, InAppMessageView {
+    enum TextPosition {
+        case top
+        case bottom
+    }
+
     let payload: InAppMessagePayload
     let image: UIImage
     let actionCallback: (() -> Void)
@@ -16,6 +21,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     let fullscreen: Bool
 
     let dialogContainerView: UIView = UIView() // whole dialog
+    let dialogStackView: UIStackView = UIStackView()
 
     let imageView: UIImageView = UIImageView()
     var imageViewHeightConstraint: NSLayoutConstraint?
@@ -25,6 +31,13 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     let titleTextView: UITextView = UITextView()
     let bodyTextView: UITextView = UITextView()
     let actionButton: UIButton = UIButton()
+
+    var textPosition: TextPosition {
+        return (payload.textPosition == "top") ? .top : .bottom
+    }
+    var textOverImage: Bool {
+        return payload.textOverImage == true
+    }
 
     init(
         payload: InAppMessagePayload,
@@ -62,6 +75,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         super.viewDidLoad()
 
         setupDialogContainer()
+        setupPositions()
         setupImage()
         setupBackground()
         setupTitle()
@@ -95,9 +109,15 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
 
         view.addSubview(dialogContainerView)
 
+        dialogStackView.translatesAutoresizingMaskIntoConstraints = false
+        dialogStackView.axis = .vertical
+        dialogContainerView.addSubview(dialogStackView)
+
         var constraints = [
-            dialogContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            dialogContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            dialogStackView.leadingAnchor.constraint(equalTo: dialogContainerView.leadingAnchor),
+            dialogStackView.trailingAnchor.constraint(equalTo: dialogContainerView.trailingAnchor),
+            dialogStackView.topAnchor.constraint(equalTo: dialogContainerView.topAnchor),
+            dialogStackView.bottomAnchor.constraint(equalTo: dialogContainerView.bottomAnchor),
             dialogContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: view.layoutMarginsGuide.leadingAnchor),
             dialogContainerView.trailingAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.trailingAnchor)
         ]
@@ -114,6 +134,8 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
             ])
         } else {
             constraints.append(contentsOf: [
+                dialogContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                dialogContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
                 dialogContainerView.widthAnchor.constraint(lessThanOrEqualToConstant: 600),
                 dialogContainerView.topAnchor.constraint(
                     greaterThanOrEqualTo: view.layoutMarginsGuide.topAnchor,
@@ -128,14 +150,34 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         NSLayoutConstraint.activate(constraints)
     }
 
+    private func setupPositions() {
+        if textOverImage {
+            dialogStackView.addArrangedSubview(imageView)
+            dialogStackView.addSubview(backgroundView)
+            switch textPosition {
+            case.top:
+                backgroundView.topAnchor.constraint(equalTo: dialogStackView.topAnchor).isActive = true
+            case.bottom:
+                backgroundView.bottomAnchor.constraint(equalTo: dialogStackView.bottomAnchor).isActive = true
+            }
+        } else {
+            switch textPosition {
+            case.top:
+                dialogStackView.addArrangedSubview(backgroundView)
+                dialogStackView.addArrangedSubview(imageView)
+            case.bottom:
+                dialogStackView.addArrangedSubview(imageView)
+                dialogStackView.addArrangedSubview(backgroundView)
+            }
+        }
+    }
+
     private func setupImage() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.image = image
 
-        dialogContainerView.addSubview(imageView)
         var constraints = [
-            imageView.topAnchor.constraint(equalTo: dialogContainerView.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: dialogContainerView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: dialogContainerView.trailingAnchor)
         ]
@@ -155,16 +197,15 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
 
     private func setupBackground() {
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
-
-        backgroundView.backgroundColor = UIColor(fromHexString: payload.backgroundColor)
-
-        dialogContainerView.addSubview(backgroundView)
+        if textOverImage {
+            backgroundView.backgroundColor = UIColor.clear
+        } else {
+            backgroundView.backgroundColor = UIColor(fromHexString: payload.backgroundColor)
+        }
 
         NSLayoutConstraint.activate([
             backgroundView.leadingAnchor.constraint(equalTo: dialogContainerView.leadingAnchor),
-            backgroundView.trailingAnchor.constraint(equalTo: dialogContainerView.trailingAnchor),
-            backgroundView.topAnchor.constraint(equalTo: imageView.bottomAnchor),
-            backgroundView.bottomAnchor.constraint(equalTo: dialogContainerView.bottomAnchor)
+            backgroundView.trailingAnchor.constraint(equalTo: dialogContainerView.trailingAnchor)
         ])
     }
 
