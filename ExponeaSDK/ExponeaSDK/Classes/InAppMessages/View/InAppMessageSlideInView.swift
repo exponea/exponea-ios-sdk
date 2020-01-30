@@ -220,7 +220,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         ])
     }
 
-    private func parseFontSize(_ fontSize: String) -> CGFloat {
-        return CGFloat(Float(fontSize.replacingOccurrences(of: "px", with: "")) ?? 16)
+    private func parseFontSize(_ fontSize: String?) -> CGFloat {
+        return CGFloat(Float((fontSize ?? "").replacingOccurrences(of: "px", with: "")) ?? 16)
     }
 }

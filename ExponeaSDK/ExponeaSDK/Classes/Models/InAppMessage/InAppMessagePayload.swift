@@ -9,20 +9,20 @@
 import Foundation
 
 struct InAppMessagePayload: Codable, Equatable {
-    public let imageUrl: String
-    public let title: String
-    public let titleTextColor: String
-    public let titleTextSize: String
-    public let bodyText: String
-    public let bodyTextColor: String
-    public let bodyTextSize: String
-    public let buttonText: String
-    public let buttonType: String
-    public let buttonLink: String
-    public let buttonTextColor: String
-    public let buttonBackgroundColor: String
-    public let backgroundColor: String
-    public let closeButtonColor: String
+    public let imageUrl: String?
+    public let title: String?
+    public let titleTextColor: String?
+    public let titleTextSize: String?
+    public let bodyText: String?
+    public let bodyTextColor: String?
+    public let bodyTextSize: String?
+    public let buttonText: String?
+    public let buttonType: String?
+    public let buttonLink: String?
+    public let buttonTextColor: String?
+    public let buttonBackgroundColor: String?
+    public let backgroundColor: String?
+    public let closeButtonColor: String?
     public let messagePosition: String?
 
     enum CodingKeys: String, CodingKey {

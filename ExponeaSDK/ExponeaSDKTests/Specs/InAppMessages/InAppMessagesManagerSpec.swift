@@ -78,7 +78,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         it("should get in-app messages from cache if image is needed and precached") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
-                at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl,
+                at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
             expect(manager.getInAppMessage(for: "session_start"))
@@ -102,7 +102,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                         inAppMessages: [SampleInAppMessage.getSampleInAppMessage(dateFilter: dateFilter)]
                     )
                     cache.saveImageData(
-                        at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl,
+                        at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
@@ -127,7 +127,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                         inAppMessages: [SampleInAppMessage.getSampleInAppMessage(trigger: trigger)]
                     )
                     cache.saveImageData(
-                        at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl,
+                        at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
@@ -146,7 +146,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 let createMessage = { (frequency: InAppMessageFrequency) in
                     let message = SampleInAppMessage.getSampleInAppMessage(frequency: frequency)
                     cache.saveInAppMessages(inAppMessages: [message])
-                    cache.saveImageData(at: message.payload.imageUrl, data: "mock data".data(using: .utf8)!)
+                    cache.saveImageData(at: message.payload.imageUrl!, data: "mock data".data(using: .utf8)!)
                 }
                 it("should apply always filter") {
                     createMessage(.always)
@@ -181,7 +181,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         it("should show dialog") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
-                at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl,
+                at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
             waitUntil { done in
@@ -207,7 +207,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 delegate = MockInAppMessageTrackingDelegate()
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
-                    at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl,
+                    at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
                     data: "mock data".data(using: .utf8)!
                 )
             }

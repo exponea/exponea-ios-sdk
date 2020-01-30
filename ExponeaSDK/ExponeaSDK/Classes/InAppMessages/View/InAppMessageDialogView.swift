@@ -256,8 +256,8 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         dismiss(animated: true)
     }
 
-    private func parseFontSize(_ fontSize: String) -> CGFloat {
-        return CGFloat(Float(fontSize.replacingOccurrences(of: "px", with: "")) ?? 16)
+    private func parseFontSize(_ fontSize: String?) -> CGFloat {
+        return CGFloat(Float((fontSize ?? "").replacingOccurrences(of: "px", with: "")) ?? 16)
     }
 }
 

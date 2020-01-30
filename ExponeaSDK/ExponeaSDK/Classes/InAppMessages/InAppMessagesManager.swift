@@ -46,7 +46,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                     return
                 }
                 self.cache.saveInAppMessages(inAppMessages: response.data)
-                self.cache.deleteImages(except: response.data.map { $0.payload.imageUrl })
+                self.cache.deleteImages(except: response.data.compactMap { $0.payload.imageUrl })
                 self.preloadImages(inAppMessages: response.data, completion: completion)
             }
         }
@@ -54,10 +54,11 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
     private func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
         inAppMessages.forEach { message in
-            if !message.payload.imageUrl.isEmpty,
-               let imageUrl = URL(string: message.payload.imageUrl),
+            if let imageUrlString = message.payload.imageUrl,
+               !imageUrlString.isEmpty,
+               let imageUrl = URL(string: imageUrlString),
                let data = try? Data(contentsOf: imageUrl) {
-                self.cache.saveImageData(at: message.payload.imageUrl, data: data)
+                self.cache.saveImageData(at: imageUrlString, data: data)
             }
         }
         completion?()
@@ -66,7 +67,8 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     func getInAppMessage(for eventType: String) -> InAppMessage? {
         let messages = self.cache.getInAppMessages()
             .filter {
-                return ($0.payload.imageUrl.isEmpty || self.cache.hasImageData(at: $0.payload.imageUrl))
+                let imageUrl = $0.payload.imageUrl ?? ""
+                return (imageUrl.isEmpty || self.cache.hasImageData(at: imageUrl))
                     && $0.applyDateFilter(date: Date())
                     && $0.applyEventFilter(eventType: eventType)
                     && $0.applyFrequencyFilter(
@@ -79,7 +81,10 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     }
 
     private func getImageData(for message: InAppMessage) -> Data? {
-        return cache.getImageData(at: message.payload.imageUrl)
+        guard let imageUrl = message.payload.imageUrl else {
+            return nil
+        }
+        return cache.getImageData(at: imageUrl)
     }
 
     func showInAppMessage(
@@ -94,7 +99,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 return
             }
             var imageData: Data?
-            if !message.payload.imageUrl.isEmpty {
+            if !(message.payload.imageUrl ?? "").isEmpty {
                 guard let createdImageData = self.getImageData(for: message) else {
                     callback?(nil)
                     return
@@ -127,7 +132,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
     private func processInAppMessageAction(message: InAppMessage) {
         // there are no other actions right now, add enum later
-        if message.payload.buttonType == "deep-link", let url = URL(string: message.payload.buttonLink) {
+        if message.payload.buttonType == "deep-link",
+           let buttonLink = message.payload.buttonLink,
+           let url = URL(string: buttonLink) {
             let application = UIApplication.shared
             application.open(
                 url,
@@ -145,7 +152,8 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 .error,
                 message: """
                     Unable to process in-app message action
-                    type: \(message.payload.buttonType) link: \(message.payload.buttonLink)"
+                    type: \(String(describing: message.payload.buttonType))
+                    link: \(String(describing: message.payload.buttonLink))"
                 """
             )
         }

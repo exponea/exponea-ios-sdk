@@ -7,8 +7,11 @@
 //
 
 extension UIColor {
-    convenience init(fromHexString: String) {
-        var cString: String = fromHexString.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+    convenience init?(fromHexString optionalStringColor: String?) {
+        guard let stringColor = optionalStringColor else {
+            return nil
+        }
+        var cString: String = stringColor.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         var rgbValue: UInt32 = 0
 
         if cString.hasPrefix("#") {
