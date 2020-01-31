@@ -15,7 +15,10 @@ final class InAppMessageAlertView: InAppMessageView {
         payload: InAppMessagePayload,
         actionCallback: @escaping (() -> Void),
         dismissCallback: @escaping (() -> Void)
-    ) {
+    ) throws {
+        guard payload.buttonText != nil else {
+            throw InAppMessagePresenter.InAppMessagePresenterError.unableToCreateView
+        }
         self.actionCallback = actionCallback
         self.dismissCallback = dismissCallback
         alertController = UIAlertController(

@@ -28,6 +28,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     let closeButton: UIButton = UIButton()
 
     let backgroundView: UIView = UIView() // part of dialog that contains texts and button
+    let contentsStackView: UIStackView = UIStackView()
     let titleTextView: UITextView = UITextView()
     let bodyTextView: UITextView = UITextView()
     let actionButton: UIButton = UIButton()
@@ -203,53 +204,63 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
             backgroundView.backgroundColor = UIColor(fromHexString: payload.backgroundColor)
         }
 
+        contentsStackView.translatesAutoresizingMaskIntoConstraints = false
+        contentsStackView.axis = .vertical
+        contentsStackView.alignment = .center
+        backgroundView.addSubview(contentsStackView)
+
         NSLayoutConstraint.activate([
             backgroundView.leadingAnchor.constraint(equalTo: dialogContainerView.leadingAnchor),
-            backgroundView.trailingAnchor.constraint(equalTo: dialogContainerView.trailingAnchor)
+            backgroundView.trailingAnchor.constraint(equalTo: dialogContainerView.trailingAnchor),
+            contentsStackView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
+            contentsStackView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor),
+            contentsStackView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 20),
+            contentsStackView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -20)
         ])
     }
 
     private func setupTitle() {
+        guard payload.title != nil else {
+            return
+        }
         titleTextView.translatesAutoresizingMaskIntoConstraints = false
         titleTextView.isScrollEnabled = false
         titleTextView.textAlignment = .center
+        titleTextView.isEditable = false
+        titleTextView.isSelectable = false
         titleTextView.text = payload.title
         titleTextView.textColor = UIColor(fromHexString: payload.titleTextColor)
         titleTextView.backgroundColor = .clear
         titleTextView.font = .boldSystemFont(ofSize: parseFontSize(payload.titleTextSize))
         titleTextView.setContentCompressionResistancePriority(.required, for: .vertical)
-        titleTextView.textContainerInset = UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
+        titleTextView.textContainerInset = UIEdgeInsets(top: 0, left: 20, bottom: 10, right: 20)
 
-        backgroundView.addSubview(titleTextView)
-
-        NSLayoutConstraint.activate([
-            titleTextView.topAnchor.constraint(equalTo: backgroundView.topAnchor),
-            titleTextView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
-            titleTextView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
-        ])
+        contentsStackView.addArrangedSubview(titleTextView)
     }
 
     private func setupBody() {
+        guard payload.bodyText != nil else {
+            return
+        }
         bodyTextView.translatesAutoresizingMaskIntoConstraints = false
         bodyTextView.isScrollEnabled = false
         bodyTextView.textAlignment = .center
+        bodyTextView.isEditable = false
+        bodyTextView.isSelectable = false
         bodyTextView.text = payload.bodyText
         bodyTextView.textColor = UIColor(fromHexString: payload.bodyTextColor)
         bodyTextView.backgroundColor = .clear
         bodyTextView.font = .systemFont(ofSize: parseFontSize(payload.bodyTextSize))
         bodyTextView.setContentCompressionResistancePriority(.required, for: .vertical)
-        bodyTextView.textContainerInset = UIEdgeInsets(top: 0, left: 20, bottom: 20, right: 20)
+        bodyTextView.textContainerInset = UIEdgeInsets(top: 0, left: 20, bottom: 10, right: 20)
 
-        backgroundView.addSubview(bodyTextView)
-
-        NSLayoutConstraint.activate([
-            bodyTextView.topAnchor.constraint(equalTo: titleTextView.bottomAnchor),
-            bodyTextView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
-            bodyTextView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
-        ])
+        contentsStackView.addArrangedSubview(bodyTextView)
     }
 
     private func setupActionButton() {
+        guard payload.buttonText != nil else {
+            return
+        }
         actionButton.translatesAutoresizingMaskIntoConstraints = false
         actionButton.titleLabel?.translatesAutoresizingMaskIntoConstraints = false
         actionButton.layer.cornerRadius = 5
@@ -260,15 +271,12 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         actionButton.backgroundColor = UIColor(fromHexString: payload.buttonBackgroundColor)
         actionButton.addTarget(self, action: #selector(actionButtonAction), for: .touchUpInside)
 
-        backgroundView.addSubview(actionButton)
+        contentsStackView.addArrangedSubview(actionButton)
 
         NSLayoutConstraint.activate([
             actionButton.heightAnchor.constraint(equalToConstant: 50),
             actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
-            actionButton.widthAnchor.constraint(lessThanOrEqualTo: backgroundView.widthAnchor),
-            actionButton.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
-            actionButton.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -20),
-            actionButton.topAnchor.constraint(equalTo: bodyTextView.bottomAnchor)
+            actionButton.widthAnchor.constraint(lessThanOrEqualTo: contentsStackView.widthAnchor)
         ])
     }
 

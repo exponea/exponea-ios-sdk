@@ -90,7 +90,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
     ) throws -> InAppMessageView {
         switch messageType {
         case .alert:
-            return InAppMessageAlertView(
+            return try InAppMessageAlertView(
                 payload: payload,
                 actionCallback: actionCallback,
                 dismissCallback: dismissCallback

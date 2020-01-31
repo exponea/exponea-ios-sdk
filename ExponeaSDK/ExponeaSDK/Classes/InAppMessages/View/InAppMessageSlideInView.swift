@@ -16,6 +16,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
 
     private let imageView: UIImageView = UIImageView()
 
+    private let stackView: UIStackView = UIStackView()
     private let titleTextView: UITextView = UITextView()
     private let bodyTextView: UITextView = UITextView()
     private let actionButton: UIButton = UIButton()
@@ -117,6 +118,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     func setup() {
         setupContainer()
         setupImage()
+        setupStack()
         setupTitle()
         setupBody()
         setupActionButton()
@@ -152,7 +154,23 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         ])
     }
 
+    private func setupStack() {
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            stackView.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -10)
+        ])
+    }
+
     private func setupTitle() {
+        guard payload.title != nil else {
+            return
+        }
         titleTextView.translatesAutoresizingMaskIntoConstraints = false
         titleTextView.isScrollEnabled = false
         titleTextView.textAlignment = .left
@@ -163,17 +181,14 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         titleTextView.backgroundColor = .clear
         titleTextView.font = .boldSystemFont(ofSize: parseFontSize(payload.titleTextSize))
         titleTextView.setContentCompressionResistancePriority(.required, for: .vertical)
-        titleTextView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        addSubview(titleTextView)
-
-        NSLayoutConstraint.activate([
-            titleTextView.topAnchor.constraint(equalTo: imageView.topAnchor),
-            titleTextView.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
-            titleTextView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
+        titleTextView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
+        stackView.addArrangedSubview(titleTextView)
     }
 
     private func setupBody() {
+        guard payload.bodyText != nil else {
+            return
+        }
         bodyTextView.translatesAutoresizingMaskIntoConstraints = false
         bodyTextView.isScrollEnabled = false
         bodyTextView.textAlignment = .left
@@ -184,18 +199,12 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         bodyTextView.backgroundColor = .clear
         bodyTextView.font = .systemFont(ofSize: parseFontSize(payload.bodyTextSize))
         bodyTextView.setContentCompressionResistancePriority(.required, for: .vertical)
-        bodyTextView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        addSubview(bodyTextView)
-
-        NSLayoutConstraint.activate([
-            bodyTextView.topAnchor.constraint(equalTo: titleTextView.bottomAnchor, constant: 5),
-            bodyTextView.leadingAnchor.constraint(equalTo: titleTextView.leadingAnchor),
-            bodyTextView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
+        bodyTextView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
+        stackView.addArrangedSubview(bodyTextView)
     }
 
     private func setupActionButton() {
-        guard let titleLabel = actionButton.titleLabel else {
+        guard let titleLabel = actionButton.titleLabel, payload.buttonText != nil else {
             return
         }
 
@@ -209,14 +218,11 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         actionButton.backgroundColor = UIColor(fromHexString: payload.buttonBackgroundColor)
         actionButton.addTarget(self, action: #selector(actionButtonAction), for: .touchUpInside)
 
-        addSubview(actionButton)
+        stackView.addArrangedSubview(actionButton)
 
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: 5),
-            titleLabel.trailingAnchor.constraint(equalTo: actionButton.trailingAnchor, constant: -5),
-            actionButton.topAnchor.constraint(equalTo: bodyTextView.bottomAnchor, constant: 5),
-            actionButton.leadingAnchor.constraint(equalTo: bodyTextView.leadingAnchor, constant: 5),
-            actionButton.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -5)
+            titleLabel.trailingAnchor.constraint(equalTo: actionButton.trailingAnchor, constant: -5)
         ])
     }
 
