@@ -534,7 +534,7 @@ extension TrackingManager: InAppMessageTrackingDelegate {
                         "action": .string(action),
                         "banner_id": .string(message.id),
                         "banner_name": .string(message.name),
-                        "banner_type": .string(message.messageType),
+                        "banner_type": .string(message.rawMessageType),
                         "interaction": .bool(interaction),
                         "os": .string("iOS"),
                         "type": .string("in-app message"),

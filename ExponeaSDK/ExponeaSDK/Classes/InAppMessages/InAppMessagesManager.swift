@@ -12,7 +12,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private let repository: RepositoryType
     // cache is synchronous, be careful about calling it from main thread
     private let cache: InAppMessagesCacheType
-    private let presenter: InAppMessageDialogPresenterType
+    private let presenter: InAppMessagePresenterType
     private let displayStatusStore: InAppMessageDisplayStatusStore
     private var sessionStartDate: Date = Date()
 
@@ -20,7 +20,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         repository: RepositoryType,
         cache: InAppMessagesCacheType = InAppMessagesCache(),
         displayStatusStore: InAppMessageDisplayStatusStore,
-        presenter: InAppMessageDialogPresenterType = InAppMessageDialogPresenter()
+        presenter: InAppMessagePresenterType = InAppMessagePresenter()
     ) {
         self.repository = repository
         self.cache = cache
@@ -54,7 +54,8 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
     private func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
         inAppMessages.forEach { message in
-            if let imageUrl = URL(string: message.payload.imageUrl),
+            if !message.payload.imageUrl.isEmpty,
+               let imageUrl = URL(string: message.payload.imageUrl),
                let data = try? Data(contentsOf: imageUrl) {
                 self.cache.saveImageData(at: message.payload.imageUrl, data: data)
             }
@@ -65,7 +66,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     func getInAppMessage(for eventType: String) -> InAppMessage? {
         let messages = self.cache.getInAppMessages()
             .filter {
-                return self.cache.hasImageData(at: $0.payload.imageUrl)
+                return ($0.payload.imageUrl.isEmpty || self.cache.hasImageData(at: $0.payload.imageUrl))
                     && $0.applyDateFilter(date: Date())
                     && $0.applyEventFilter(eventType: eventType)
                     && $0.applyFrequencyFilter(
@@ -84,17 +85,25 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     func showInAppMessage(
         for eventType: String,
         trackingDelegate: InAppMessageTrackingDelegate? = nil,
-        callback: ((InAppMessageDialogViewController?) -> Void)? = nil
+        callback: ((InAppMessageView?) -> Void)? = nil
     ) {
         Exponea.logger.log(.verbose, message: "Attempting to show in-app message for event type \(eventType).")
         DispatchQueue.global(qos: .userInitiated).async {
-            guard let message = self.getInAppMessage(for: eventType),
-                  let imageData = self.getImageData(for: message) else {
+            guard let message = self.getInAppMessage(for: eventType) else {
                 callback?(nil)
                 return
             }
+            var imageData: Data?
+            if !message.payload.imageUrl.isEmpty {
+                guard let createdImageData = self.getImageData(for: message) else {
+                    callback?(nil)
+                    return
+                }
+                imageData = createdImageData
+            }
 
             self.presenter.presentInAppMessage(
+                messageType: message.messageType,
                 payload: message.payload,
                 imageData: imageData,
                 actionCallback: {

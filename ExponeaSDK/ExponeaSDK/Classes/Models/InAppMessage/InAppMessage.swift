@@ -11,7 +11,8 @@ import Foundation
 struct InAppMessage: Codable, Equatable {
     public let id: String
     public let name: String
-    public let messageType: String
+    public let rawMessageType: String
+    public var messageType: InAppMessageType { return InAppMessageType(rawValue: rawMessageType) ?? .alert }
     public let rawFrequency: String
     public var frequency: InAppMessageFrequency? { return InAppMessageFrequency(rawValue: rawFrequency) }
     public let payload: InAppMessagePayload
@@ -23,7 +24,7 @@ struct InAppMessage: Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id = "id"
         case name
-        case messageType = "message_type"
+        case rawMessageType = "message_type"
         case rawFrequency = "frequency"
         case payload
         case variantId = "variant_id"
@@ -84,4 +85,11 @@ enum InAppMessageFrequency: String {
     case onlyOnce = "only_once"
     case oncePerVisit = "once_per_visit"
     case untilVisitorInteracts = "until_visitor_interacts"
+}
+
+enum InAppMessageType: String, CaseIterable {
+    case modal
+    case alert
+    //case fullscreen = "fullscreen"
+    //case slideIn = "slide_in"
 }

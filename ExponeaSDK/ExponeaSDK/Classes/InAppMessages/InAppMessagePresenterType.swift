@@ -1,17 +1,18 @@
 //
-//  InAppMessageDialogPresenterType.swift
+//  InAppMessagePresenterType.swift
 //  ExponeaSDK
 //
 //  Created by Panaxeo on 05/12/2019.
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-protocol InAppMessageDialogPresenterType {
+protocol InAppMessagePresenterType {
     func presentInAppMessage(
+        messageType: InAppMessageType,
         payload: InAppMessagePayload,
-        imageData: Data,
+        imageData: Data?,
         actionCallback: @escaping () -> Void,
         dismissCallback: @escaping () -> Void,
-        presentedCallback: ((InAppMessageDialogViewController?) -> Void)?
+        presentedCallback: ((InAppMessageView?) -> Void)?
     )
 }

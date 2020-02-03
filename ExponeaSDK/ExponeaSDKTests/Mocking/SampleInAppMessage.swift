@@ -49,15 +49,16 @@ struct SampleInAppMessage {
         id: String? = nil,
         dateFilter: DateFilter? = nil,
         trigger: InAppMessageTrigger? = nil,
-        frequency: InAppMessageFrequency? = nil
+        frequency: InAppMessageFrequency? = nil,
+        imageUrl: String? = nil
     ) -> InAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
             name: "Test serving in-app message",
-            messageType: "modal",
+            rawMessageType: "modal",
             rawFrequency: frequency?.rawValue ?? "unknown",
             payload: InAppMessagePayload(
-                imageUrl: "https://i.ytimg.com/vi/t4nM1FoUqYs/maxresdefault.jpg",
+                imageUrl: imageUrl ?? "https://i.ytimg.com/vi/t4nM1FoUqYs/maxresdefault.jpg",
                 title: "filip.vozar@exponea.com",
                 titleTextColor: "#000000",
                 titleTextSize: "22px",

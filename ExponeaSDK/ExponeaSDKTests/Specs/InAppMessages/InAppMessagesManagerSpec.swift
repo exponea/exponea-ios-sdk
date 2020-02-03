@@ -22,7 +22,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         var cache: MockInAppMessagesCache!
         var repository: MockRepository!
         var manager: InAppMessagesManager!
-        var presenter: MockInAppMessageDialogPresenter!
+        var presenter: MockInAppMessagePresenter!
         var displayStore: InAppMessageDisplayStatusStore!
 
         beforeEach {
@@ -31,7 +31,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            presenter = MockInAppMessageDialogPresenter()
+            presenter = MockInAppMessagePresenter()
             displayStore = InAppMessageDisplayStatusStore(userDefaults: MockUserDefaults())
             manager = InAppMessagesManager(
                 repository: repository,
@@ -75,7 +75,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             expect(manager.getInAppMessage(for: "session_start")).to(beNil())
         }
 
-        it("should get in-app messages from cache if image is precached") {
+        it("should get in-app messages from cache if image is needed and precached") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
                 at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl,
@@ -85,9 +85,14 @@ class InAppMessagesManagerSpec: QuickSpec {
                 .to(equal(SampleInAppMessage.getSampleInAppMessage()))
         }
 
-        it("should not get in-app messages from cache if image is not precached") {
+        it("should not get in-app messages from cache if image is needed and not precached") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+        }
+
+        it("should not get in-app messages from cache if image is needed and not precached") {
+            cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage(imageUrl: "")])
+            expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
         }
 
         context("filtering messages") {

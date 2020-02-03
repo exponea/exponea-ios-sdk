@@ -1,5 +1,5 @@
 //
-//  MockInAppMessageDialogPresenter.swift
+//  MockInAppMessagePresenter.swift
 //  ExponeaSDKTests
 //
 //  Created by Panaxeo on 05/12/2019.
@@ -8,28 +8,31 @@
 
 @testable import ExponeaSDK
 
-class MockInAppMessageDialogPresenter: InAppMessageDialogPresenterType {
+class MockInAppMessagePresenter: InAppMessagePresenterType {
     struct PresentedMessageData {
+        let messageType: InAppMessageType
         let payload: InAppMessagePayload
-        let imageData: Data
+        let imageData: Data?
         let actionCallback: () -> Void
         let dismissCallback: () -> Void
-        let presentedCallback: ((InAppMessageDialogViewController?) -> Void)?
+        let presentedCallback: ((InAppMessageView?) -> Void)?
     }
 
     public var presentedMessages: [PresentedMessageData] = []
 
     public var presentResult: Bool = true
     func presentInAppMessage(
+        messageType: InAppMessageType,
         payload: InAppMessagePayload,
-        imageData: Data,
+        imageData: Data?,
         actionCallback: @escaping () -> Void,
         dismissCallback: @escaping () -> Void,
-        presentedCallback: ((InAppMessageDialogViewController?) -> Void)?
+        presentedCallback: ((InAppMessageView?) -> Void)?
     ) {
         if presentResult {
             presentedMessages.append(
                 PresentedMessageData(
+                    messageType: messageType,
                     payload: payload,
                     imageData: imageData,
                     actionCallback: actionCallback,
@@ -39,7 +42,7 @@ class MockInAppMessageDialogPresenter: InAppMessageDialogPresenterType {
             )
             DispatchQueue.main.async {
                 presentedCallback?(
-                    InAppMessageDialogViewController(
+                    InAppMessageDialogView(
                         payload: payload,
                         image: UIImage(),
                         actionCallback: actionCallback,

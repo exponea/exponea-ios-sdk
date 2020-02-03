@@ -1,5 +1,5 @@
 //
-//  InAppMessageDialogViewController.swift
+//  InAppMessageDialogView.swift
 //  ExponeaSDK
 //
 //  Created by Panaxeo on 02/12/2019.
@@ -8,7 +8,9 @@
 
 import UIKit
 
-class InAppMessageDialogViewController: UIViewController {
+class InAppMessageDialogView: UIViewController, InAppMessageView {
+    var viewController: UIViewController { return self }
+
     let payload: InAppMessagePayload
     let image: UIImage
     let actionCallback: (() -> Void)
@@ -235,7 +237,7 @@ class InAppMessageDialogViewController: UIViewController {
 }
 
 // recognizes touches outside of the dialog
-extension InAppMessageDialogViewController: UIGestureRecognizerDelegate {
+extension InAppMessageDialogView: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         return touch.view?.isDescendant(of: self.backgroundView) == false
     }
