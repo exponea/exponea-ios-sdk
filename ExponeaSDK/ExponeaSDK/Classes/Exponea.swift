@@ -59,6 +59,8 @@ public class Exponea: ExponeaType {
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
 
+    internal var telemetryManager: TelemetryManager?
+
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
         if UserDefaults(suiteName: Constants.General.userDefaultsSuite) == nil {
@@ -131,6 +133,13 @@ public class Exponea: ExponeaType {
         let exception = objc_tryCatch {
             do {
                 let database = try DatabaseManager()
+                if !Exponea.isBeingTested {
+                    telemetryManager = TelemetryManager(
+                        userDefaults: userDefaults,
+                        userId: database.customer.uuid.uuidString
+                    )
+                    telemetryManager?.start()
+                }
 
                 let repository = ServerRepository(configuration: configuration)
                 self.repository = repository
@@ -151,6 +160,7 @@ public class Exponea: ExponeaType {
                 self.trackingManager = trackingManager
                 processSavedCampaignData()
             } catch {
+                telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
                 // Failing gracefully, if setup failed
                 Exponea.logger.log(.error, message: """
                     Error while creating dependencies, Exponea cannot be configured.\n\(error.localizedDescription)
@@ -159,6 +169,7 @@ public class Exponea: ExponeaType {
         }
         if let exception = exception {
             nsExceptionRaised = true
+            telemetryManager?.report(exception: exception)
             Exponea.logger.log(.error, message: """
             Error while creating dependencies, Exponea cannot be configured.\n
             \(ExponeaError.nsExceptionRaised(exception).localizedDescription)
@@ -227,10 +238,12 @@ internal extension Exponea {
                 try closure()
             } catch {
                 Exponea.logger.log(.error, message: error.localizedDescription)
+                telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
                 errorHandler?(error)
             }
         }
         if let exception = exception {
+            telemetryManager?.report(exception: exception)
             Exponea.logger.log(.error, message: ExponeaError.nsExceptionRaised(exception).localizedDescription)
             nsExceptionRaised = true
             errorHandler?(ExponeaError.nsExceptionRaised(exception))
