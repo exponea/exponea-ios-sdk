@@ -13,7 +13,7 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
         let messageType: InAppMessageType
         let payload: InAppMessagePayload
         let imageData: Data?
-        let actionCallback: () -> Void
+        let actionCallback: (InAppMessagePayloadButton) -> Void
         let dismissCallback: () -> Void
         let presentedCallback: ((InAppMessageView?) -> Void)?
     }
@@ -25,7 +25,7 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
         messageType: InAppMessageType,
         payload: InAppMessagePayload,
         imageData: Data?,
-        actionCallback: @escaping () -> Void,
+        actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
         dismissCallback: @escaping () -> Void,
         presentedCallback: ((InAppMessageView?) -> Void)?
     ) {

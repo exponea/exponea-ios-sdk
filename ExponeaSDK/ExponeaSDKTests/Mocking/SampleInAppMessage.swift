@@ -23,11 +23,15 @@ struct SampleInAppMessage {
             "body_text":"This is an example of your in-app message body text.",
             "body_text_color":"#000000",
             "body_text_size":"14px",
-            "button_text":"Action",
-            "button_type":"deep-link",
-            "button_link":"https://someaddress.com",
-            "button_text_color":"#ffffff",
-            "button_background_color":"#f44cac",
+            "buttons": [
+                {
+                    "button_text":"Action",
+                    "button_type":"deep-link",
+                    "button_link":"https://someaddress.com",
+                    "button_text_color":"#ffffff",
+                    "button_background_color":"#f44cac"
+                }
+            ],
             "background_color":"#ffffff",
             "close_button_color":"#ffffff"
         },
@@ -65,11 +69,15 @@ struct SampleInAppMessage {
                 bodyText: "This is an example of your in-app message body text.",
                 bodyTextColor: "#000000",
                 bodyTextSize: "14px",
-                buttonText: "Action",
-                buttonType: "deep-link",
-                buttonLink: "https://someaddress.com",
-                buttonTextColor: "#ffffff",
-                buttonBackgroundColor: "#f44cac",
+                buttons: [
+                    InAppMessagePayloadButton(
+                        buttonText: "Action",
+                        rawButtonType: "deep-link",
+                        buttonLink: "https://someaddress.com",
+                        buttonTextColor: "#ffffff",
+                        buttonBackgroundColor: "#f44cac"
+                    )
+                ],
                 backgroundColor: "#ffffff",
                 closeButtonColor: "#ffffff",
                 messagePosition: nil,

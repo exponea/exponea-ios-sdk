@@ -16,7 +16,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
 
     let payload: InAppMessagePayload
     let image: UIImage
-    let actionCallback: (() -> Void)
+    let actionCallback: ((InAppMessagePayloadButton) -> Void)
     let dismissCallback: (() -> Void)
     let fullscreen: Bool
 
@@ -31,7 +31,9 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     let contentsStackView: UIStackView = UIStackView()
     let titleTextView: UITextView = UITextView()
     let bodyTextView: UITextView = UITextView()
-    let actionButton: UIButton = UIButton()
+    let actionButtonsStackView: UIStackView = UIStackView()
+    let actionButton1: InAppMessageActionButton = InAppMessageActionButton()
+    let actionButton2: InAppMessageActionButton = InAppMessageActionButton()
 
     var textPosition: TextPosition {
         return (payload.textPosition == "top") ? .top : .bottom
@@ -43,7 +45,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     init(
         payload: InAppMessagePayload,
         image: UIImage,
-        actionCallback: @escaping (() -> Void),
+        actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
         dismissCallback: @escaping (() -> Void),
         fullscreen: Bool
     ) {
@@ -81,7 +83,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         setupBackground()
         setupTitle()
         setupBody()
-        setupActionButton()
+        setupActionButtons()
         setupCloseButton()
 
         // touches outside of the dialog should close the dialog
@@ -257,26 +259,50 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         contentsStackView.addArrangedSubview(bodyTextView)
     }
 
-    private func setupActionButton() {
+    private func setupActionButtons() {
+        guard let buttons = payload.buttons else {
+            return
+        }
+        actionButtonsStackView.translatesAutoresizingMaskIntoConstraints = false
+        actionButtonsStackView.axis = .horizontal
+        actionButtonsStackView.alignment = .center
+        actionButtonsStackView.spacing = 20
+        contentsStackView.addArrangedSubview(actionButtonsStackView)
+
+        if !buttons.isEmpty {
+            setupActionButton(actionButton: actionButton1, payload: buttons[0])
+        }
+        if buttons.count > 1 {
+            setupActionButton(actionButton: actionButton2, payload: buttons[1])
+        }
+    }
+
+    private func setupActionButton(actionButton: InAppMessageActionButton, payload: InAppMessagePayloadButton) {
         guard payload.buttonText != nil else {
             return
         }
         actionButton.translatesAutoresizingMaskIntoConstraints = false
         actionButton.titleLabel?.translatesAutoresizingMaskIntoConstraints = false
         actionButton.layer.cornerRadius = 5
-        actionButton.titleEdgeInsets = UIEdgeInsets(top: 15, left: 30, bottom: 15, right: 30)
+        actionButton.contentEdgeInsets = UIEdgeInsets(top: 15, left: 30, bottom: 15, right: 30)
         actionButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
         actionButton.setTitle(payload.buttonText, for: .normal)
         actionButton.setTitleColor(UIColor(fromHexString: payload.buttonTextColor), for: .normal)
         actionButton.backgroundColor = UIColor(fromHexString: payload.buttonBackgroundColor)
-        actionButton.addTarget(self, action: #selector(actionButtonAction), for: .touchUpInside)
+        actionButton.payload = payload
+        switch payload.buttonType {
+        case .cancel:
+            actionButton.addTarget(self, action: #selector(closeButtonAction), for: .touchUpInside)
+        case .deeplink:
+            actionButton.addTarget(self, action: #selector(actionButtonAction), for: .touchUpInside)
+        }
 
-        contentsStackView.addArrangedSubview(actionButton)
+        actionButtonsStackView.addArrangedSubview(actionButton)
 
         NSLayoutConstraint.activate([
             actionButton.heightAnchor.constraint(equalToConstant: 50),
             actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
-            actionButton.widthAnchor.constraint(lessThanOrEqualTo: contentsStackView.widthAnchor)
+            actionButton.widthAnchor.constraint(lessThanOrEqualTo: actionButtonsStackView.widthAnchor)
         ])
     }
 
@@ -295,9 +321,12 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         ])
     }
 
-    @objc func actionButtonAction(_ sender: Any) {
+    @objc func actionButtonAction(_ sender: InAppMessageActionButton) {
+        guard let payload = sender.payload else {
+            return
+        }
         dismiss(animated: true)
-        actionCallback()
+        actionCallback(payload)
     }
 
     @objc func closeButtonAction(_ sender: Any) {

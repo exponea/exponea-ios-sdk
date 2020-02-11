@@ -40,6 +40,7 @@
 		053EC59923AA32A7004D1C8B /* InAppMessageDisplayStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59823AA32A7004D1C8B /* InAppMessageDisplayStatus.swift */; };
 		053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59A23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift */; };
 		053EC59F23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */; };
+		054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */; };
 		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */; };
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
@@ -382,6 +383,7 @@
 		053EC59823AA32A7004D1C8B /* InAppMessageDisplayStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayStatus.swift; sourceTree = "<group>"; };
 		053EC59A23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayStateStore.swift; sourceTree = "<group>"; };
 		053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayStatusStoreSpec.swift; sourceTree = "<group>"; };
+		054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageActionButton.swift; sourceTree = "<group>"; };
 		05583E9A23603BA900F7084E /* PushNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParser.swift; sourceTree = "<group>"; };
 		05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParserSpec.swift; sourceTree = "<group>"; };
 		05664249237309C300CCDB98 /* SwizzleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleSpec.swift; sourceTree = "<group>"; };
@@ -922,6 +924,7 @@
 				05A6A3EA23954654008475E7 /* InAppMessageDialogView.swift */,
 				05D2D39B23DEF1E300E3E79A /* InAppMessageAlertView.swift */,
 				057E367423E0503F00DDD6C1 /* InAppMessageSlideInView.swift */,
+				054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1961,6 +1964,7 @@
 				05EB8B6C2344F4D700AAC98B /* Configuration+Validation.swift in Sources */,
 				C02C562921C9B71D0087A990 /* ExponeaNotificationAction.swift in Sources */,
 				F0E757E5207CFA5300FE8C21 /* RequestFactory.swift in Sources */,
+				054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */,
 				05B4D64F238FEC1000F5010F /* InAppMessage.swift in Sources */,
 				C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */,
 				C07E420920CA89DE00920809 /* PersonalizationRequest.swift in Sources */,

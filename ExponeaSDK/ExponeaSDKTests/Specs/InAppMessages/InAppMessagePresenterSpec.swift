@@ -94,7 +94,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             messageType: messageType,
                             payload: payload,
                             imageData: lenaImageData,
-                            actionCallback: {},
+                            actionCallback: { _ in },
                             dismissCallback: {},
                             presentedCallback: { presented in
                                 expect(presented).notTo(beNil())
@@ -109,7 +109,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             messageType: messageType,
                             payload: payload,
                             imageData: lenaImageData,
-                            actionCallback: {},
+                            actionCallback: { _ in },
                             dismissCallback: {},
                             presentedCallback: { presented in
                                 expect(presented).to(beNil())
@@ -126,7 +126,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             messageType: messageType,
                             payload: payload,
                             imageData: "something".data(using: .utf8)!,
-                            actionCallback: {},
+                            actionCallback: { _ in },
                             dismissCallback: {},
                             presentedCallback: { presented in
                                 expect(presented).to(beNil())
@@ -144,7 +144,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             messageType: messageType,
                             payload: payload,
                             imageData: lenaImageData,
-                            actionCallback: {},
+                            actionCallback: { _ in },
                             dismissCallback: {},
                             presentedCallback: callback)
                     }
@@ -176,7 +176,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             done()
                         })
                     }
-                    presentedDialog?.actionCallback()
+                    presentedDialog?.actionCallback(payload.buttons![0])
                     waitUntil { done in
                         present({ presented in
                             expect(presented).notTo(beNil())

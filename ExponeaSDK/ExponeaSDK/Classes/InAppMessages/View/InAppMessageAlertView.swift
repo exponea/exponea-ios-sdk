@@ -8,15 +8,15 @@
 
 final class InAppMessageAlertView: InAppMessageView {
     let alertController: UIAlertController
-    let actionCallback: (() -> Void)
+    let actionCallback: ((InAppMessagePayloadButton) -> Void)
     let dismissCallback: (() -> Void)
 
     init(
         payload: InAppMessagePayload,
-        actionCallback: @escaping (() -> Void),
+        actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
         dismissCallback: @escaping (() -> Void)
     ) throws {
-        guard payload.buttonText != nil else {
+        guard let buttons = payload.buttons else {
             throw InAppMessagePresenter.InAppMessagePresenterError.unableToCreateView
         }
         self.actionCallback = actionCallback
@@ -26,12 +26,25 @@ final class InAppMessageAlertView: InAppMessageView {
             message: payload.bodyText,
             preferredStyle: .alert
         )
-        alertController.addAction(
-            UIAlertAction(title: payload.buttonText, style: .default, handler: { _ in actionCallback() })
-        )
-        alertController.addAction(
-            UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in dismissCallback() })
-        )
+        var hasCancelButton = false
+        buttons.forEach { button in
+            switch button.buttonType {
+            case .cancel:
+                hasCancelButton = true
+                alertController.addAction(
+                    UIAlertAction(title: button.buttonText, style: .cancel, handler: { _ in dismissCallback() })
+                )
+            case .deeplink:
+                alertController.addAction(
+                    UIAlertAction(title: button.buttonText, style: .default, handler: { _ in actionCallback(button) })
+                )
+            }
+        }
+        if !hasCancelButton {
+            alertController.addAction(
+                UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in dismissCallback() })
+            )
+        }
     }
 
     func present(in viewController: UIViewController, window: UIWindow?) {

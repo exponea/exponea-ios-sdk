@@ -24,7 +24,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         messageType: InAppMessageType,
         payload: InAppMessagePayload,
         imageData: Data?,
-        actionCallback: @escaping () -> Void,
+        actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
         dismissCallback: @escaping () -> Void,
         presentedCallback: ((InAppMessageView?) -> Void)? = nil
     ) {
@@ -59,9 +59,9 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                         messageType: messageType,
                         payload: payload,
                         image: image,
-                        actionCallback: {
+                        actionCallback: { button in
                             self.presenting = false
-                            actionCallback()
+                            actionCallback(button)
                         },
                         dismissCallback: {
                             self.presenting = false
@@ -85,7 +85,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         messageType: InAppMessageType,
         payload: InAppMessagePayload,
         image: UIImage?,
-        actionCallback: @escaping () -> Void,
+        actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
         dismissCallback: @escaping () -> Void
     ) throws -> InAppMessageView {
         switch messageType {

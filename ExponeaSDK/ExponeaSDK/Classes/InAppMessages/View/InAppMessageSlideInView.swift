@@ -11,7 +11,7 @@ import UIKit
 final class InAppMessageSlideInView: UIView, InAppMessageView {
     private let payload: InAppMessagePayload
     private let image: UIImage
-    let actionCallback: (() -> Void)
+    let actionCallback: ((InAppMessagePayloadButton) -> Void)
     let dismissCallback: (() -> Void)
 
     private let imageView: UIImageView = UIImageView()
@@ -19,7 +19,9 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     private let stackView: UIStackView = UIStackView()
     private let titleTextView: UITextView = UITextView()
     private let bodyTextView: UITextView = UITextView()
-    private let actionButton: UIButton = UIButton()
+    private let actionButtonsStackView: UIStackView = UIStackView()
+    private let actionButton1: InAppMessageActionButton = InAppMessageActionButton()
+    private let actionButton2: InAppMessageActionButton = InAppMessageActionButton()
 
     private var displayOnBottom: Bool {
         return payload.messagePosition == "bottom"
@@ -32,7 +34,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     init(
         payload: InAppMessagePayload,
         image: UIImage,
-        actionCallback: @escaping (() -> Void),
+        actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
         dismissCallback: @escaping (() -> Void)
     ) {
         self.payload = payload
@@ -91,9 +93,19 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         }
     }
 
-    @objc func actionButtonAction(_ sender: Any) {
+    @objc func actionButtonAction(_ sender: InAppMessageActionButton) {
+        guard let payload = sender.payload else {
+            return
+        }
         removeFromSuperview()
-        actionCallback()
+        actionCallback(payload)
+    }
+
+    @objc func cancelButtonAction(_ sender: Any) {
+        animateOut {
+            self.removeFromSuperview()
+            self.dismissCallback()
+        }
     }
 
     func animateIn(completion: (() -> Void)? = nil) {
@@ -121,7 +133,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         setupStack()
         setupTitle()
         setupBody()
-        setupActionButton()
+        setupActionButtons()
     }
 
     private func setupContainer() {
@@ -203,7 +215,25 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         stackView.addArrangedSubview(bodyTextView)
     }
 
-    private func setupActionButton() {
+    private func setupActionButtons() {
+        actionButtonsStackView.translatesAutoresizingMaskIntoConstraints = false
+        actionButtonsStackView.axis = .horizontal
+        actionButtonsStackView.alignment = .center
+        actionButtonsStackView.spacing = 10
+        stackView.addArrangedSubview(actionButtonsStackView)
+
+        guard let buttons = payload.buttons else {
+            return
+        }
+        if !buttons.isEmpty {
+            setupActionButton(actionButton: actionButton1, payload: buttons[0])
+        }
+        if buttons.count > 1 {
+            setupActionButton(actionButton: actionButton2, payload: buttons[1])
+        }
+    }
+
+    private func setupActionButton(actionButton: InAppMessageActionButton, payload: InAppMessagePayloadButton) {
         guard let titleLabel = actionButton.titleLabel, payload.buttonText != nil else {
             return
         }
@@ -213,17 +243,19 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
 
         actionButton.layer.cornerRadius = 5
         titleLabel.font = .boldSystemFont(ofSize: 12)
+        actionButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         actionButton.setTitle(payload.buttonText, for: .normal)
         actionButton.setTitleColor(UIColor(fromHexString: payload.buttonTextColor), for: .normal)
         actionButton.backgroundColor = UIColor(fromHexString: payload.buttonBackgroundColor)
-        actionButton.addTarget(self, action: #selector(actionButtonAction), for: .touchUpInside)
+        actionButton.payload = payload
+        switch payload.buttonType {
+        case .cancel:
+            actionButton.addTarget(self, action: #selector(cancelButtonAction), for: .touchUpInside)
+        case .deeplink:
+            actionButton.addTarget(self, action: #selector(actionButtonAction), for: .touchUpInside)
+        }
 
-        stackView.addArrangedSubview(actionButton)
-
-        NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: 5),
-            titleLabel.trailingAnchor.constraint(equalTo: actionButton.trailingAnchor, constant: -5)
-        ])
+        actionButtonsStackView.addArrangedSubview(actionButton)
     }
 
     private func parseFontSize(_ fontSize: String?) -> CGFloat {

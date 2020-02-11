@@ -111,10 +111,10 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 messageType: message.messageType,
                 payload: message.payload,
                 imageData: imageData,
-                actionCallback: {
+                actionCallback: { button in
                     self.displayStatusStore.didInteract(with: message, at: Date())
                     trackingDelegate?.track(message: message, action: "click", interaction: true)
-                    self.processInAppMessageAction(message: message)
+                    self.processInAppMessageAction(button: button)
                 },
                 dismissCallback: {
                     trackingDelegate?.track(message: message, action: "close", interaction: false)
@@ -130,10 +130,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         }
     }
 
-    private func processInAppMessageAction(message: InAppMessage) {
-        // there are no other actions right now, add enum later
-        if message.payload.buttonType == "deep-link",
-           let buttonLink = message.payload.buttonLink,
+    private func processInAppMessageAction(button: InAppMessagePayloadButton) {
+        if case .deeplink = button.buttonType,
+           let buttonLink = button.buttonLink,
            let url = URL(string: buttonLink) {
             let application = UIApplication.shared
             application.open(
@@ -151,9 +150,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             Exponea.logger.log(
                 .error,
                 message: """
-                    Unable to process in-app message action
-                    type: \(String(describing: message.payload.buttonType))
-                    link: \(String(describing: message.payload.buttonLink))"
+                    Unable to process in-app message button action
+                    type: \(String(describing: button.buttonType))
+                    link: \(String(describing: button.buttonLink))"
                 """
             )
         }

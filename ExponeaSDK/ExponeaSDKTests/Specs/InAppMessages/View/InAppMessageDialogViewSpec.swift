@@ -27,7 +27,7 @@ final class InAppMessageDialogViewSpec: QuickSpec {
                 let dialog: InAppMessageDialogView = InAppMessageDialogView(
                     payload: payload,
                     image: image,
-                    actionCallback: {},
+                    actionCallback: { _ in },
                     dismissCallback: {},
                     fullscreen: fullscreen
                 )

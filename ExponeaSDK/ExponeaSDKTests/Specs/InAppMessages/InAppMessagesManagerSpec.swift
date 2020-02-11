@@ -164,7 +164,9 @@ class InAppMessagesManagerSpec: QuickSpec {
                     expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
                     waitUntil { done in manager.showInAppMessage(for: "session_start") { _ in done() } }
                     expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
-                    presenter.presentedMessages[0].actionCallback()
+                    presenter.presentedMessages[0].actionCallback(
+                        SampleInAppMessage.getSampleInAppMessage().payload.buttons![0]
+                    )
                     expect(manager.getInAppMessage(for: "session_start")).to(beNil())
                 }
                 it("should apply once_per_visit filter") {
@@ -260,7 +262,9 @@ class InAppMessagesManagerSpec: QuickSpec {
                     for: "session_start",
                     trackingDelegate: delegate
                 ) { _ in done() } }
-                presenter.presentedMessages[0].actionCallback()
+                presenter.presentedMessages[0].actionCallback(
+                    SampleInAppMessage.getSampleInAppMessage().payload.buttons![0]
+                )
                 expect(delegate.calls).to(equal([
                     MockInAppMessageTrackingDelegate.CallData(
                         message: SampleInAppMessage.getSampleInAppMessage(),
