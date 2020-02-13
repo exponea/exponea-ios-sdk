@@ -58,6 +58,18 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         return []
     }
 
+    func getInAppMessagesTimestamp() -> TimeInterval {
+        guard let directory = getCacheDirectoryURL(),
+              let attributes = try? fileManager.attributesOfItem(
+                atPath: directory.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName).path
+              ),
+              let modificationDate = attributes[FileAttributeKey.modificationDate] as? Date
+        else {
+            return 0
+        }
+        return modificationDate.timeIntervalSince1970
+    }
+
     private func getFileName(imageUrl: String) -> String {
         guard let data = imageUrl.data(using: .utf8) else {
             return imageUrl

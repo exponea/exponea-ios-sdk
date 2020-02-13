@@ -16,7 +16,7 @@ protocol InAppMessagesManagerType {
         trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)?
     )
-    func sessionDidStart(at date: Date)
+    func sessionDidStart(at date: Date, for customerIds: [String: JSONValue], completion: (() -> Void)?)
     func anonymize()
 }
 

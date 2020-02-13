@@ -49,6 +49,34 @@ class InAppMessagesManagerSpec: QuickSpec {
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
         }
 
+        it("should preload messages on session start after timeout") {
+            repository.fetchInAppMessagesResult = Result.success(
+                InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
+            )
+            waitUntil { done in manager.preload(for: [:]) { done() } }
+            expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
+            repository.fetchInAppMessagesResult = Result.success(
+                InAppMessagesResponse(success: true, data: [])
+            )
+            cache.setInAppMessagesTimestamp(10000)
+            waitUntil { done in manager.sessionDidStart(at: Date(timeIntervalSince1970: 12345), for: [:]) { done() } }
+            expect(cache.getInAppMessages()).to(equal([]))
+        }
+
+        it("should not preload messages on session start during timeout") {
+            repository.fetchInAppMessagesResult = Result.success(
+                InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
+            )
+            waitUntil { done in manager.preload(for: [:]) { done() } }
+            expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
+            repository.fetchInAppMessagesResult = Result.success(
+                InAppMessagesResponse(success: true, data: [])
+            )
+            cache.setInAppMessagesTimestamp(12300)
+            waitUntil { done in manager.sessionDidStart(at: Date(timeIntervalSince1970: 12345), for: [:]) { done() } }
+            expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
+        }
+
         it("should not overwrite preloaded messages on failure") {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
@@ -193,7 +221,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
                     waitUntil { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
-                    manager.sessionDidStart(at: Date())
+                    manager.sessionDidStart(at: Date(), for: [:], completion: nil)
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
                 }
             }

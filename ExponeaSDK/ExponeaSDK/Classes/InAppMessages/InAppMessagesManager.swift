@@ -9,6 +9,8 @@
 import Foundation
 
 final class InAppMessagesManager: InAppMessagesManagerType {
+    private static let refreshCacheAfter: TimeInterval = 60 * 30 // refresh on session start if cache is older than this
+
     private let repository: RepositoryType
     // cache is synchronous, be careful about calling it from main thread
     private let cache: InAppMessagesCacheType
@@ -31,8 +33,14 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         self.urlOpener = urlOpener
     }
 
-    func sessionDidStart(at date: Date) {
+    func sessionDidStart(at date: Date, for customerIds: [String: JSONValue], completion: (() -> Void)?) {
         sessionStartDate = date
+        let refreshTime = cache.getInAppMessagesTimestamp() + InAppMessagesManager.refreshCacheAfter
+        if refreshTime < date.timeIntervalSince1970 {
+            preload(for: customerIds, completion: completion)
+        } else {
+            completion?()
+        }
     }
 
     func anonymize() {

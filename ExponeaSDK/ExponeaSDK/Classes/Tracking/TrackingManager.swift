@@ -297,7 +297,7 @@ extension TrackingManager {
         // Start the session with current date
         let sessionStartDate = Date()
         sessionStartTime = sessionStartDate.timeIntervalSince1970
-        inAppMessagesManager.sessionDidStart(at: sessionStartDate)
+        inAppMessagesManager.sessionDidStart(at: sessionStartDate, for: customerIds, completion: nil)
 
         let data: [DataType] = [
             .properties(device.properties),

@@ -11,6 +11,7 @@
 final class MockInAppMessagesCache: InAppMessagesCacheType {
     private var messages: [InAppMessage] = []
     private var images: [String: Data] = [:]
+    private var timestamp: TimeInterval = 0
 
     func saveInAppMessages(inAppMessages: [InAppMessage]) {
         self.messages = inAppMessages
@@ -18,6 +19,14 @@ final class MockInAppMessagesCache: InAppMessagesCacheType {
 
     func getInAppMessages() -> [InAppMessage] {
         return messages
+    }
+
+    func getInAppMessagesTimestamp() -> TimeInterval {
+        return timestamp
+    }
+
+    func setInAppMessagesTimestamp(_ timestamp: TimeInterval) {
+        self.timestamp = timestamp
     }
 
     func deleteImages(except: [String]) {
