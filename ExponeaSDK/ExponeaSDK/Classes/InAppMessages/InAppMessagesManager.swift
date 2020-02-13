@@ -10,6 +10,14 @@ import Foundation
 
 final class InAppMessagesManager: InAppMessagesManagerType {
     private static let refreshCacheAfter: TimeInterval = 60 * 30 // refresh on session start if cache is older than this
+    private static let maxPendingMessageAge: TimeInterval = 3 // time window to show pending message after preloading
+
+    struct InAppMessageShowRequest {
+        let event: [DataType]
+        weak var trackingDelegate: InAppMessageTrackingDelegate?
+        var callback: ((InAppMessageView?) -> Void)?
+        let timestamp: TimeInterval
+    }
 
     private let repository: RepositoryType
     // cache is synchronous, be careful about calling it from main thread
@@ -18,6 +26,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private let displayStatusStore: InAppMessageDisplayStatusStore
     private let urlOpener: UrlOpener
     private var sessionStartDate: Date = Date()
+
+    private var preloaded = false
+    private var pendingShowRequests: [InAppMessageShowRequest] = []
 
     init(
         repository: RepositoryType,
@@ -49,10 +60,12 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     }
 
     func preload(for customerIds: [String: JSONValue], completion: (() -> Void)?) {
+        preloaded = false
         DispatchQueue.global(qos: .background).async {
             self.repository.fetchInAppMessages(for: customerIds) { result in
                 guard case .success(let response) = result else {
                     Exponea.logger.log(.warning, message: "Fetching in-app messages from server failed.")
+                    self.preloaded = true // even though this failed, we can try to use cached data from another run
                     completion?()
                     return
                 }
@@ -63,23 +76,62 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         }
     }
 
-    private func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
-        inAppMessages.forEach { message in
-            if let imageUrlString = message.payload.imageUrl,
-               !imageUrlString.isEmpty,
-               let imageUrl = URL(string: imageUrlString),
-               let data = try? Data(contentsOf: imageUrl) {
-                self.cache.saveImageData(at: imageUrlString, data: data)
-            }
+    @discardableResult private func preloadImage(for message: InAppMessage) -> Bool {
+        guard let imageUrlString = message.payload.imageUrl, !imageUrlString.isEmpty else {
+            return true // there is no image, call preload successful
         }
+        if let imageUrl = URL(string: imageUrlString),
+           let data = try? Data(contentsOf: imageUrl) {
+            self.cache.saveImageData(at: imageUrlString, data: data)
+            return true
+        }
+        return false
+    }
+
+    private func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
+        var messages = inAppMessages
+        // if there is a pending message that we should display, preload image for it first and show, then preload rest
+        if let pending = pickPendingMessage(requireImageLoaded: false), preloadImage(for: pending.1) {
+            messages.removeAll { $0 == pending.1 }
+            showPendingInAppMessage(pickedMessage: pending)
+        }
+        messages.forEach { message in preloadImage(for: message)}
+        preloaded = true
+        showPendingInAppMessage(pickedMessage: nil)
         completion?()
     }
 
-    func getInAppMessages(for event: [DataType]) -> [InAppMessage] {
+    private func pickPendingMessage(requireImageLoaded: Bool) -> (InAppMessageShowRequest, InAppMessage)? {
+        var pendingMessages: [(InAppMessageShowRequest, InAppMessage)] = []
+        pendingShowRequests.filter {
+            $0.timestamp + InAppMessagesManager.maxPendingMessageAge > Date().timeIntervalSince1970
+        }.forEach { request in
+            getInAppMessages(for: request.event, requireImage: requireImageLoaded).forEach { message in
+                pendingMessages.append((request, message))
+            }
+        }
+        let highestPriority = pendingMessages.map { $0.1.priority }.compactMap { $0 }.max() ?? 0
+        return pendingMessages.filter { $0.1.priority ?? 0 >= highestPriority }.randomElement()
+    }
+
+    private func showPendingInAppMessage(pickedMessage: (InAppMessageShowRequest, InAppMessage)?) {
+        guard let pending = pickedMessage ?? pickPendingMessage(requireImageLoaded: true) else {
+            return
+        }
+        pendingShowRequests = []
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let trackingDelegate = pending.0.trackingDelegate else {
+                return
+            }
+            self.showInAppMessage(pending.1, trackingDelegate: trackingDelegate, callback: pending.0.callback)
+        }
+    }
+
+    func getInAppMessages(for event: [DataType], requireImage: Bool) -> [InAppMessage] {
         let messages = self.cache.getInAppMessages()
             .filter {
                 let imageUrl = $0.payload.imageUrl ?? ""
-                return (imageUrl.isEmpty || self.cache.hasImageData(at: imageUrl))
+                return (!requireImage || (imageUrl.isEmpty || self.cache.hasImageData(at: imageUrl)))
                     && $0.applyDateFilter(date: Date())
                     && $0.applyEventFilter(event: event)
                     && $0.applyFrequencyFilter(
@@ -91,8 +143,8 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         return messages.filter { $0.priority ?? 0 >= highestPriority }
     }
 
-    func getInAppMessage(for event: [DataType]) -> InAppMessage? {
-        let messages = getInAppMessages(for: event)
+    func getInAppMessage(for event: [DataType], requireImage: Bool) -> InAppMessage? {
+        let messages = getInAppMessages(for: event, requireImage: requireImage)
         Exponea.logger.log(.verbose, message: "Found \(messages.count) eligible in-app messages.")
         return messages.randomElement()
     }
@@ -113,41 +165,61 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             .verbose,
             message: "Attempting to show in-app message for event with types \(event.eventTypes)."
         )
+        guard preloaded else {
+            Exponea.logger.log(.verbose, message: "Data not preloaded, saving message for later.")
+            pendingShowRequests.append(
+                InAppMessageShowRequest(
+                    event: event,
+                    trackingDelegate: trackingDelegate,
+                    callback: callback,
+                    timestamp: Date().timeIntervalSince1970
+                )
+            )
+            return
+        }
         DispatchQueue.global(qos: .userInitiated).async {
             guard let message = self.getInAppMessage(for: event) else {
                 callback?(nil)
                 return
             }
-            var imageData: Data?
-            if !(message.payload.imageUrl ?? "").isEmpty {
-                guard let createdImageData = self.getImageData(for: message) else {
-                    callback?(nil)
-                    return
-                }
-                imageData = createdImageData
-            }
-
-            self.presenter.presentInAppMessage(
-                messageType: message.messageType,
-                payload: message.payload,
-                imageData: imageData,
-                actionCallback: { button in
-                    self.displayStatusStore.didInteract(with: message, at: Date())
-                    trackingDelegate?.track(message: message, action: "click", interaction: true)
-                    self.processInAppMessageAction(button: button)
-                },
-                dismissCallback: {
-                    trackingDelegate?.track(message: message, action: "close", interaction: false)
-                },
-                presentedCallback: { presented in
-                    if presented != nil {
-                        self.displayStatusStore.didDisplay(message, at: Date())
-                        trackingDelegate?.track(message: message, action: "show", interaction: false)
-                    }
-                    callback?(presented)
-                }
-            )
+            self.showInAppMessage(message, trackingDelegate: trackingDelegate, callback: callback)
         }
+    }
+
+    private func showInAppMessage(
+        _ message: InAppMessage,
+        trackingDelegate: InAppMessageTrackingDelegate?,
+        callback: ((InAppMessageView?) -> Void)? = nil
+    ) {
+        var imageData: Data?
+        if !(message.payload.imageUrl ?? "").isEmpty {
+            guard let createdImageData = self.getImageData(for: message) else {
+                callback?(nil)
+                return
+            }
+            imageData = createdImageData
+        }
+
+        self.presenter.presentInAppMessage(
+            messageType: message.messageType,
+            payload: message.payload,
+            imageData: imageData,
+            actionCallback: { button in
+                self.displayStatusStore.didInteract(with: message, at: Date())
+                trackingDelegate?.track(message: message, action: "click", interaction: true)
+                self.processInAppMessageAction(button: button)
+            },
+            dismissCallback: {
+                trackingDelegate?.track(message: message, action: "close", interaction: false)
+            },
+            presentedCallback: { presented in
+                if presented != nil {
+                    self.displayStatusStore.didDisplay(message, at: Date())
+                    trackingDelegate?.track(message: message, action: "show", interaction: false)
+                }
+                callback?(presented)
+            }
+        )
     }
 
     private func processInAppMessageAction(button: InAppMessagePayloadButton) {
