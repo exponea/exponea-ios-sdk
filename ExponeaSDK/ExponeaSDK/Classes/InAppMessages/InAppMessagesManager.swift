@@ -14,18 +14,21 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private let cache: InAppMessagesCacheType
     private let presenter: InAppMessagePresenterType
     private let displayStatusStore: InAppMessageDisplayStatusStore
+    private let urlOpener: UrlOpener
     private var sessionStartDate: Date = Date()
 
     init(
         repository: RepositoryType,
         cache: InAppMessagesCacheType = InAppMessagesCache(),
         displayStatusStore: InAppMessageDisplayStatusStore,
-        presenter: InAppMessagePresenterType = InAppMessagePresenter()
+        presenter: InAppMessagePresenterType = InAppMessagePresenter(),
+        urlOpener: UrlOpener = UrlOpener()
     ) {
         self.repository = repository
         self.cache = cache
         self.presenter = presenter
         self.displayStatusStore = displayStatusStore
+        self.urlOpener = urlOpener
     }
 
     func sessionDidStart(at date: Date) {
@@ -143,18 +146,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         if case .deeplink = button.buttonType,
            let buttonLink = button.buttonLink,
            let url = URL(string: buttonLink) {
-            let application = UIApplication.shared
-            application.open(
-                url,
-                options: [:],
-                completionHandler: { success in
-                    // If no success opening url using shared app,
-                    // try opening using current app
-                    if !success {
-                        _ = application.delegate?.application?(application, open: url, options: [:])
-                    }
-                }
-            )
+            urlOpener.openDeeplink(url)
         } else {
             Exponea.logger.log(
                 .error,
