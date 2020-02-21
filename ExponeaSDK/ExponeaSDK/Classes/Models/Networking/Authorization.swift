@@ -20,7 +20,7 @@ extension Authorization: CustomStringConvertible {
         switch self {
         case .none:
             return "No Authorization"
-        case .token(_):
+        case .token:
             return "Token Authorization (token redacted)"
         }
     }

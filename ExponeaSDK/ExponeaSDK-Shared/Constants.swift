@@ -9,10 +9,10 @@
 import Foundation
 
 /// enum with constants used through the SDK
-enum Constants {
+public enum Constants {
     /// Network
-    enum Repository {
-        static let baseUrl = "https://api.exponea.com"
+    public enum Repository {
+        public static let baseUrl = "https://api.exponea.com"
         static let contentType = "application/json"
         static let headerContentType = "content-type"
         static let headerAccept = "accept"
@@ -51,6 +51,7 @@ enum Constants {
         static let pushOpen = "campaign"
         static let pushDelivered = "campaign"
         static let campaignClick = "campaign_click"
+        static let banner = "banner"
     }
 
     /// Error messages
@@ -69,9 +70,9 @@ enum Constants {
     }
 
     /// Default session values represented in seconds
-    enum Session {
-        static let defaultTimeout = 6.0
-        static let maxRetries = 5
+    public enum Session {
+        public static let defaultTimeout = 6.0
+        public static let maxRetries = 5
         static let sessionUpdateThreshold = 3.0
     }
 
@@ -86,5 +87,6 @@ enum Constants {
         static let userDefaultsSuite = "ExponeaSDK"
         static let deliveredPushUserDefaultsKey = "EXPONEA_DELIVERED_PUSH_TRACKING"
         static let savedCampaignClickEvent = "EXPONEA_SAVED_CAMPAIGN_CLICK"
+        static let inAppMessageDisplayStatusUserDefaultsKey = "EXPONEA_IN_APP_MESSAGE_DISPLAY_STATUS"
     }
 }

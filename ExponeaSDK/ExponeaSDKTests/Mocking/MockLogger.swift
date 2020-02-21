@@ -10,10 +10,10 @@ import Foundation
 
 @testable import ExponeaSDK
 
-class MockLogger : Logger {
-    public static var messages: [String] = []
+class MockLogger: Logger {
+    public var messages: [String] = []
     override open func logMessage(_ message: String) {
-        MockLogger.messages.append(message)
+        messages.append(message)
         super.logMessage(message)
     }
 }

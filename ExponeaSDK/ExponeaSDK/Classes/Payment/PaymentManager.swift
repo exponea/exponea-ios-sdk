@@ -9,15 +9,15 @@
 import Foundation
 import StoreKit
 
-public class PaymentManager: NSObject, PaymentManagerType {
+class PaymentManager: NSObject, PaymentManagerType {
     internal var deviceProperties = DeviceProperties()
     internal var receipt: String?
-    
+
     /// The delegat that is responsible for tracking payment events.
     public weak var delegate: PaymentManagerDelegate?
-    
+
     public override init() { }
-    
+
     init(delegate: PaymentManagerDelegate) {
         self.delegate = delegate
     }
@@ -47,14 +47,20 @@ public class PaymentManager: NSObject, PaymentManagerType {
                 """)
             return
         }
-        
+
         delegate.trackPaymentEvent(with: [.timestamp(nil), .properties(properties)])
     }
 }
 
 extension PaymentManager: SKPaymentTransactionObserver {
-    /// Track the information for the successfully payment and removing from the queue.
     public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        Exponea.shared.executeSafely {
+            paymentQueueUnsafe(queue, updatedTransactions: transactions)
+        }
+    }
+
+    /// Track the information for the successfully payment and removing from the queue.
+    public func paymentQueueUnsafe(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         for transaction in transactions {
             switch transaction.transactionState {
             case .purchased:
@@ -75,19 +81,25 @@ extension PaymentManager: SKPaymentTransactionObserver {
 }
 
 extension PaymentManager: SKProductsRequestDelegate {
-    /// Retrive information from the purchase item.
     public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        Exponea.shared.executeSafely {
+            productsRequestUnsafe(request, didReceive: response)
+        }
+    }
+
+    /// Retrive information from the purchase item.
+    public func productsRequestUnsafe(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         for product in response.products {
             let currencyCode = Locale.current.currencyCode ?? "N/A"
             let currency = Locale.current.localizedString(forCurrencyCode: currencyCode) ?? "N/A"
-            
+
             let item = PurchasedItem(grossAmount: Double(truncating: product.price),
                                      currency: currency,
                                      paymentSystem: Constants.General.iTunesStore,
                                      productId: product.productIdentifier,
                                      productTitle: product.localizedTitle,
                                      receipt: receipt)
-            
+
             let properties = item.properties.merging(deviceProperties.properties,
                                                      uniquingKeysWith: { first, _ in return first })
             trackPayment(properties: properties)

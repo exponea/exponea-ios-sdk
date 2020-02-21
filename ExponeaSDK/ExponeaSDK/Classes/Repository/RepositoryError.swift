@@ -16,7 +16,7 @@ protocol ErrorInitialisable: Error {
 ///
 /// - missingData: Holds any missing data while trying to call the Expone API.
 /// - invalidResponse: Holds any invalid response when calling the Exponea API.
-public enum RepositoryError: LocalizedError, ErrorInitialisable {
+enum RepositoryError: LocalizedError, ErrorInitialisable {
     case notAuthorized(ErrorResponse?)
     case missingData(String)
     case serverError(MultipleErrorResponse?)
@@ -24,7 +24,7 @@ public enum RepositoryError: LocalizedError, ErrorInitialisable {
     case invalidResponse(URLResponse?)
     case connectionError
     case unknown(Error)
-    
+
     /// Return a formatted error message while doing API calls to Exponea.
     public var errorDescription: String? {
         switch self {
@@ -34,7 +34,8 @@ public enum RepositoryError: LocalizedError, ErrorInitialisable {
         case .missingData(let details):
             return "Request is missing required data: \(details)"
         case .invalidResponse(let response):
-            return "An invalid response was received from the API: \(response != nil ? "\(response!)" : "No response")"
+            return "An invalid response was received from the API: " +
+                "\(response != nil ? "\(String(describing: response))" : "No response")"
         case .serverError(let response):
             return response?.errors.description ?? "There was a server error, please try again later."
         case .urlNotFound(let response):
@@ -45,7 +46,7 @@ public enum RepositoryError: LocalizedError, ErrorInitialisable {
             return "\(error.localizedDescription)"
         }
     }
-    
+
     static func create(from error: Error) -> RepositoryError {
         if let error = error as? RepositoryError {
             return error

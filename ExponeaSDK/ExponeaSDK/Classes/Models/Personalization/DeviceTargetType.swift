@@ -9,7 +9,7 @@
 import Foundation
 
 public enum DeviceTargetType: String, Codable {
-    case any = "any"
-    case desktop = "desktop"
-    case mobile = "mobile"
+    case any
+    case desktop
+    case mobile
 }

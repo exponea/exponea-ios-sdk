@@ -21,19 +21,24 @@ final class MockExponea: Exponea {
     // override Exponea sharedInitializer to add mock database manager insead of coreData
     public override func sharedInitializer(configuration: Configuration) {
         Exponea.logger.log(.verbose, message: "Configuring MockExponea with provided configuration:\n\(configuration)")
-        
+
         do {
             // Create database
             database = try MockDatabaseManager()
-            
+
             // Recreate repository
             let repository = ServerRepository(configuration: configuration)
             self.repository = repository
 
+            self.flushingManager = try! FlushingManager(database: database, repository: repository)
+
             // Finally, configuring tracking manager
-            self.trackingManager = TrackingManager(repository: repository,
-                                                   database: database,
-                                                   userDefaults: userDefaults)
+            self.trackingManager = try! TrackingManager(
+                repository: repository,
+                database: database,
+                flushingManager: flushingManager!,
+                userDefaults: userDefaults
+            )
             processSavedCampaignData()
         } catch {
             // Failing gracefully, if setup failed

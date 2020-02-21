@@ -13,7 +13,7 @@ public enum ExponeaNotificationActionType: String, Codable {
     case browser = "browser"
     case deeplink = "deeplink"
     case none = ""
-    
+
     var identifier: String {
         switch self {
         case .openApp: return "EXPONEA_ACTION_APP"
@@ -22,7 +22,7 @@ public enum ExponeaNotificationActionType: String, Codable {
         default: return ""
         }
     }
-    
+
     init?(identifier: String) {
         switch identifier {
         case "EXPONEA_ACTION_APP": self = .openApp

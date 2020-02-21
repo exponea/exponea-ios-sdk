@@ -13,7 +13,7 @@ import Foundation
 /// - csv: Export will be formatted as comma separated values.
 /// - tableJSON: Same as CSV, but presented in JSON form.
 /// - nativeJSON: Native JSON format, almost the same as table_json, but the column names are not collapsed to strings.
-public enum ExportFormat: String {
+enum ExportFormat: String {
     case csv = "csv"
     case tableJSON = "table_json"
     case nativeJSON = "native_json"

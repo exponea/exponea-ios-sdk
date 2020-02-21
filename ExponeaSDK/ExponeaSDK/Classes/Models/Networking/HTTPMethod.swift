@@ -9,7 +9,7 @@
 import Foundation
 
 /// Define the type of HTTP method used to perform the request
-public enum HTTPMethod: String {
+enum HTTPMethod: String {
     case post = "POST"
     case put = "PUT"
     case get = "GET"

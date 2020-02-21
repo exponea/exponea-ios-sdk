@@ -9,8 +9,8 @@
 import Foundation
 
 /// Delegate that will be notified of payments that happened.
-public protocol PaymentManagerDelegate: class {
-    
+protocol PaymentManagerDelegate: class {
+
     /// This function will be called whenever a payment has been observed with according information.
     ///
     /// - Parameter data: Data related to the payment, such as timestamp, value, name and similar.

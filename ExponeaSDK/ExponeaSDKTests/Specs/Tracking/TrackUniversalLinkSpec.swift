@@ -16,32 +16,32 @@ import Mockingjay
 
 class TrackUniversalLinkSpec: QuickSpec {
     override func spec() {
-        // Load the mock center, to prevent crashes
-        _ = MockUserNotificationCenter.shared
         let mockData = MockData()
 
         describe("Track universal link") {
             context("repository") {
                 let repository = ServerRepository(configuration: try! Configuration(plistName: "ExponeaConfig"))
-                let data: [DataType] = [.projectToken(mockData.projectToken),
+                let projectToken = UUID().uuidString
+                let data: [DataType] = [.projectToken(projectToken),
                                         .properties(mockData.campaignData),
                                         .timestamp(nil)]
-                var lastRequest: URLRequest? = nil
-                MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
-                    lastRequest = request
-                    return true
-                }) { (request) -> (Response) in
-                    let data = "sample response".data(using: .utf8)!
-                    let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-                    return Response.success(stubResponse, .content(data))
-                }
+                var lastRequest: URLRequest?
+                NetworkStubbing.stubNetwork(
+                    forProjectToken: projectToken,
+                    withStatusCode: 200,
+                    withRequestHook: { request in lastRequest = request }
+                )
                 waitUntil(timeout: 3) { done in
-                    repository.trackEvent(with: data + [.eventType(Constants.EventTypes.campaignClick)], for: mockData.customerIds) { result in
+                    repository.trackEvent(
+                        with: data + [.eventType(Constants.EventTypes.campaignClick)],
+                        for: mockData.customerIds
+                    ) { result in
                         it("should have nil result error") {
                             expect(result.error).to(beNil())
                         }
                         it("should call correct url") {
-                            expect(lastRequest?.url?.absoluteString).to(equal("https://api.exponea.com/track/v2/projects/TokenForUnitTest/campaigns/clicks"))
+                            expect(lastRequest?.url?.absoluteString)
+                                .to(equal("https://api.exponea.com/track/v2/projects/\(projectToken)/campaigns/clicks"))
                         }
                         done()
                     }
@@ -69,7 +69,10 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect {
                             try exponea.trackingManager!.updateLastPendingEvent(
                                 ofType: Constants.EventTypes.sessionStart,
-                                with: .timestamp(Date().timeIntervalSince1970 - Constants.Session.sessionUpdateThreshold))
+                                with: .timestamp(
+                                    Date().timeIntervalSince1970 - Constants.Session.sessionUpdateThreshold
+                                )
+                            )
                         }.notTo(raiseException())
 
                         // track campaign click, session_start should not be updated with utm params

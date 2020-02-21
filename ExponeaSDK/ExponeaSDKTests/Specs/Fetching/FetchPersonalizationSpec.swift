@@ -17,36 +17,41 @@ class FetchPersonalizationSpec: QuickSpec {
     override func spec() {
         describe("A personalization") {
             context("Fetch personalization from mock repository") {
-                
-                let configuration = try! Configuration(plistName: "ExponeaConfig")
+                let configuration = try! Configuration(
+                    projectToken: UUID().uuidString,
+                    authorization: .token("mock-token"),
+                    baseUrl: "https://mock-base-url.com"
+                )
                 let repo = ServerRepository(configuration: configuration)
 
-                MockingjayProtocol.addStub(matcher: { (request) -> (Bool) in
-                    return true
-                }) { (request) -> (Response) in
-                    let data = MockData().personalizationResponse
-                    let stubResponse = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-                    return Response.success(stubResponse, .content(data))
-                }
+                NetworkStubbing.stubNetwork(
+                    forProjectToken: configuration.projectToken!,
+                    withStatusCode: 200,
+                    withResponseData: MockData().personalizationResponse
+                )
+
                 let mockData = MockData()
-                
+
                 waitUntil(timeout: 3) { done in
-                    repo.fetchPersonalization(with: mockData.personalizationRequest, for: mockData.customerIds) { (result) in
+                    repo.fetchPersonalization(
+                        with: mockData.personalizationRequest,
+                        for: mockData.customerIds
+                    ) { (result) in
                         it("Result error should be nil") {
                             expect(result.error).to(beNil())
                         }
-                        
+
                         context("Validating personalization data") {
                             let data = result.value?.data[0]
-                            
+
                             it("html should contain value [String: exponea-banner]") {
                                 expect(data?.html).to(contain("exponea-banner"))
                             }
-                            
+
                             it("script should have the prefix [String: var self = this]") {
                                 expect(data?.script).to(beginWith("var self = this"))
                             }
-                            
+
                             it("style should have the prefix [String: .exponea-leaderboard]") {
                                 expect(data?.style).to(beginWith(".exponea-leaderboard"))
                             }

@@ -9,25 +9,25 @@
 import Foundation
 
 internal struct PurchasedItem {
-    
+
     /// <#Description#>
     internal var grossAmount: Double
-    
+
     /// <#Description#>
     internal var currency: String
-    
+
     /// <#Description#>
     internal var paymentSystem: String
-    
+
     /// <#Description#>
     internal var productId: String
-    
+
     /// <#Description#>
     internal var productTitle: String
-    
+
     /// <#Description#>
     internal var receipt: String?
-    
+
     /// Returns an array with all purchased info.
     internal var properties: [String: JSONValue] {
         var data = [String: JSONValue]()

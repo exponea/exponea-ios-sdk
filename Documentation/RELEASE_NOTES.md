@@ -1,5 +1,36 @@
 ## Release Notes
 
+## Release Notes for 2.5.2
+#### January 10, 2020
+* Bug Fixes
+  * Fixed: Fetch recommendations functionality was calling obsolete endpoint. (see [FETCH.md](./FETCH.md))
+  * Fixed: Notification image was not displayed when notification did not contain any action buttons.
+
+## Release Notes for 2.5.1
+#### December 19, 2019
+* Bug Fixes
+  * Fixed an issue where anonymize() would fail with automatic push notification tracking enabled on iOS 10
+
+## Release Notes for 2.5.0
+#### November 26, 2019
+* Features
+  * The SDK can now be fully configured also in the code, not only with the configuration file and thus making it more flexible. This new feature is based on https://github.com/exponea/exponea-ios-sdk/issues/10.
+* Bug Fixes
+  * Fixed: https://github.com/exponea/exponea-ios-sdk/issues/8 - A push notification might have opened the application multiple times if there are multiple SDKs integrated in the application. This shouldn't happen anymore.
+  * Fixed: URL link checking is now more robust and handles also incorrectly formatted URL links.
+
+## 2.4.0
+#### November 05, 2019
+* Features
+  * The SDK has a new protective layer for the public API as well as for the interaction with the operating system. It means that in the production setup it prefers to fail silently instead of crashing the whole application.
+  * Push notification events now contain more information about campaigns and the action taken and are consistent with Exponea Android SDK.
+* Bug Fixes
+  * Increased overall code quality by fixing many lint errors. This makes many warnings from the SDK disappear when the application is compiled.
+  * The internal mechanisms of the SDK are now really hidden and not usable by the application. It prevents developers from using some undocumented internal part of the SDK in an inappropriate way.
+  * Fixed: We fixed a networking issue which cancelled all network requests made by the whole application (not only the SDK) after calling the anonymize() method.
+  * Fixed: SDK Initialization now handles database initialization properly. Previously there were some critical errors that could crash the application.
+  * There are significant improvements in the unit tests of the SDK.
+
 ### 2.3.0
 #### September 30, 2019
 * Features

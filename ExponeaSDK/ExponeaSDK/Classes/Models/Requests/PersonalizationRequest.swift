@@ -13,11 +13,11 @@ public struct PersonalizationRequest: Codable {
     public let timeout: Int
     public let timezone: String
     public let customParameters: [String: JSONValue]?
-    
+
     enum CodingKeys: String, CodingKey {
         case ids = "personalisation_ids", timeout, timezone, customParameters = "params"
     }
-    
+
     public init(ids: [String],
                 timeout: Int = 30,
                 timezone: String = Calendar.current.timeZone.identifier,
@@ -30,17 +30,17 @@ public struct PersonalizationRequest: Codable {
 }
 
 extension PersonalizationRequest: RequestParametersType {
-    var parameters: [String : JSONValue] {
-        var params: [String : JSONValue] = [
-            CodingKeys.ids.rawValue : .array(ids.map({ $0.jsonValue })),
-            CodingKeys.timeout.rawValue : timeout.jsonValue,
-            CodingKeys.timezone.rawValue : timezone.jsonValue,
-            ]
-        
+    var parameters: [String: JSONValue] {
+        var params: [String: JSONValue] = [
+            CodingKeys.ids.rawValue: .array(ids.map({ $0.jsonValue })),
+            CodingKeys.timeout.rawValue: timeout.jsonValue,
+            CodingKeys.timezone.rawValue: timezone.jsonValue
+        ]
+
         if let customParameters = customParameters {
             params[CodingKeys.customParameters.rawValue] = .dictionary(customParameters)
         }
-        
+
         return params
     }
 }

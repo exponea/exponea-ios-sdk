@@ -1,6 +1,6 @@
 //
 //  TrackCustomer+CoreDataClass.swift
-//  
+//
 //
 //  Created by Dominik Hadl on 02/07/2018.
 //
@@ -10,26 +10,26 @@ import Foundation
 import CoreData
 
 @objc(TrackCustomer)
-public class TrackCustomer: NSManagedObject {
+class TrackCustomer: NSManagedObjectWithContext {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackCustomer> {
         return NSFetchRequest<TrackCustomer>(entityName: "TrackCustomer")
     }
-    
+
     @NSManaged public var projectToken: String?
     @NSManaged public var timestamp: Double
     @NSManaged public var customer: Customer?
     @NSManaged public var retries: NSNumber
-    
+
     var dataTypes: [DataType] {
         let data: [DataType]? = managedObjectContext?.performAndWait {
             var data: [DataType] = []
-            
+
             // Add project token.
             if let token = projectToken {
                 data.append(.projectToken(token))
             }
-            
+
             // Convert all properties to key value items.
             if let properties = properties as? Set<KeyValueItem> {
                 var props: [String: JSONValue] = [:]
@@ -41,15 +41,15 @@ public class TrackCustomer: NSManagedObject {
                             """)
                         return
                     }
-                    
+
                     props[key] = DatabaseManager.processObject(object)
                 })
                 data.append(.properties(props))
             }
-            
+
             return data
         }
-        
+
         return data ?? []
     }
 }
@@ -61,18 +61,18 @@ extension TrackCustomer: HasKeyValueProperties {
 
     @objc(addPropertiesObject:)
     @NSManaged public func addToProperties(_ value: KeyValueItem)
-    
+
     @objc(removePropertiesObject:)
     @NSManaged public func removeFromProperties(_ value: KeyValueItem)
-    
+
     @objc(addProperties:)
     @NSManaged public func addToProperties(_ values: NSSet)
-    
+
     @objc(removeProperties:)
     @NSManaged public func removeFromProperties(_ values: NSSet)
 }
 
-public class TrackCustomerThreadSafe {
+class TrackCustomerThreadSafe {
     public let managedObjectID: NSManagedObjectID
     public let projectToken: String?
     public let timestamp: Double
@@ -80,19 +80,12 @@ public class TrackCustomerThreadSafe {
     public let retries: Int
 
     public var properties: [String: JSONValue]? {
-        let propertyDataType = dataTypes.first { datatype in
-            if case .properties = datatype {
-                return true
+        return dataTypes.map { datatype -> [String: JSONValue]? in
+            if case .properties(let data) = datatype {
+                return data
             }
-            return false
-        }
-        guard propertyDataType != nil else {
             return nil
-        }
-        if case .properties(let data) = propertyDataType! {
-            return data
-        }
-        return nil
+        }.first { $0 != nil } ?? nil
     }
 
     init(_ trackCustomer: TrackCustomer) {

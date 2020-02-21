@@ -16,7 +16,7 @@ protocol MemoryLoggerDelegate: class {
 class MemoryLogger: Logger {
     var logs: [String] = []
     weak var delegate: MemoryLoggerDelegate?
-    
+
     override func log(_ level: LogLevel,
                       message: String,
                       fileName: String = #file,
@@ -26,17 +26,17 @@ class MemoryLogger: Logger {
         guard logLevel.rawValue >= level.rawValue else {
             return false
         }
-        
+
         // For example app purposes, create log with less clutter
         logs.append("\(level.name): \(message)")
-        
+
         // Get the SDK logging
         return super.log(level, message: message, fileName: fileName, line: line, funcName: funcName)
     }
-    
+
     override func logMessage(_ message: String) {
         print(message)
-        
+
         DispatchQueue.main.async {
             self.delegate?.logUpdated()
         }

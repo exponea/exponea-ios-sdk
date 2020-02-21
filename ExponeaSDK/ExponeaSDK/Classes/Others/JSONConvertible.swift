@@ -50,7 +50,6 @@ extension Double: JSONConvertible {
 //    }
 //}
 
-
 //extension Array: JSONConvertible where Element == JSONConvertible {
 //    public var jsonValue: JSONValue {
 //        return .array(self.map({ $0.jsonValue }))
@@ -78,35 +77,39 @@ public indirect enum JSONValue {
     case double(Double)
     case dictionary([String: JSONValue])
     case array([JSONValue])
-    
+
     static func convert(_ dictionary: [String: Any]) -> [String: JSONValue] {
         var result: [String: JSONValue] = [:]
         for (key, value) in dictionary {
+            // swiftlint:disable force_cast
             switch value {
             case is Bool: result[key] = .bool(value as! Bool)
             case is Int: result[key] = .int(value as! Int)
             case is Double: result[key] = .double(value as! Double)
             case is String: result[key] = .string(value as! String)
-            case is Array<Any>: result[key] = .array(convert(value as! [Any]))
-            case is Dictionary<String, Any>: result[key] = .dictionary(convert(value as! [String: Any]))
+            case is [Any]: result[key] = .array(convert(value as! [Any]))
+            case is [String: Any]: result[key] = .dictionary(convert(value as! [String: Any]))
             default:
                 Exponea.logger.log(.warning, message: "Can't convert value to JSONValue: \(value).")
                 continue
             }
+            // swiftlint:enable force_cast
         }
         return result
     }
-    
+
     static func convert(_ array: [Any]) -> [JSONValue] {
         var result: [JSONValue] = []
         for value in array {
             switch value {
+            // swiftlint:disable force_cast
             case is Bool: result.append(.bool(value as! Bool))
             case is Int: result.append(.int(value as! Int))
             case is Double: result.append(.double(value as! Double))
             case is String: result.append(.string(value as! String))
-            case is Array<Any>: result.append(.array(convert(value as! [Any])))
-            case is Dictionary<String, Any>: result.append(.dictionary(convert(value as! [String: Any])))
+            case is [Any]: result.append(.array(convert(value as! [Any])))
+            case is [String: Any]: result.append(.dictionary(convert(value as! [String: Any])))
+            // swiftlint:enable force_cast
             default:
                 Exponea.logger.log(.warning, message: "Can't convert value to JSONValue: \(value).")
                 continue
@@ -127,7 +130,7 @@ extension JSONValue {
         case .array(let array): return array.map { $0.rawValue }
         }
     }
-    
+
     var jsonConvertible: JSONConvertible {
         switch self {
         case .string(let string): return string
@@ -143,7 +146,7 @@ extension JSONValue {
 extension JSONValue: Codable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        
+
         do {
             self = .dictionary(try container.decode([String: JSONValue].self))
         } catch DecodingError.typeMismatch {
@@ -166,7 +169,7 @@ extension JSONValue: Codable, Equatable {
             }
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
@@ -178,7 +181,7 @@ extension JSONValue: Codable, Equatable {
         case .dictionary(let dictionary): try container.encode(dictionary)
         }
     }
-    
+
     public static func == (_ left: JSONValue, _ right: JSONValue) -> Bool {
         switch (left, right) {
         case (.int(let int1), .int(let int2)): return int1 == int2

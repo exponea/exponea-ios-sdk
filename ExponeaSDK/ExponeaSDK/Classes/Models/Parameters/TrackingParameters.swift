@@ -19,7 +19,7 @@ struct TrackingParameters {
     var timestamp: Double?
     /// Name of the tracking event.
     var eventType: String?
-    
+
     init(customerIds: [String: JSONValue],
          properties: [String: JSONValue],
          timestamp: Double? = nil,
@@ -38,11 +38,12 @@ extension TrackingParameters: RequestParametersType {
 
         /// Preparing customers_ids params
         parameters["customer_ids"] = .dictionary(customerIds)
-        
+
         if eventType == Constants.EventTypes.campaignClick {
             parameters["url"] = properties["url"]
             parameters["properties"] = properties["properties"]
-            parameters["age"] = .double(Double(Date().timeIntervalSince1970) - (timestamp ?? Double(Date().timeIntervalSince1970)))
+            parameters["age"] =
+                .double(Double(Date().timeIntervalSince1970) - (timestamp ?? Double(Date().timeIntervalSince1970)))
         } else {
             /// Preparing properties param
             parameters["properties"] = .dictionary(properties)

@@ -69,14 +69,7 @@ After you have setup the app groups, the last step is to finish SDK integration.
 
 Finally, you need to make two modifications to make automatic delivered push notification tracking work, one in the app and one in the extension code.
 
-1. Inside your app, where you configure Exponea, add the `appGroup` as a parameter to the `Configuration` initializer with your own app group identifier:  
-
-   ```swift
-   Exponea.shared.configure(projectToken: "myToken",
-                            authorization: .token("myAuth"),
-                            baseUrl: "https://api.exponea.com",
-                            appGroup: "group.com.Exponea.ExponeaSDK-Example")
-   ```
+1. Make sure that the configuration you used to setup Exponea SDK contains the same `appGroup` as you setup in previous step. Either add the key to your `.plist` or if you configured the SDK programmatically, check your `automaticPushNotificationTracking`, it should be `.enabled(appGroup: "YOUR APP GROUP" ...)`
 2. In the extension, modify the code where you create the `ExponeaNotificationService` to look like the following:
 
    ```

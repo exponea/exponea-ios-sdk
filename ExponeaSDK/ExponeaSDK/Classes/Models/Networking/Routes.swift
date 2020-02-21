@@ -9,16 +9,15 @@
 import Foundation
 
 /// Identification of endpoints for Exponea API
-public enum Routes {
+enum Routes {
     case identifyCustomer
     case customEvent
-    case customerRecommendation
     case customerAttributes
-    case customerEvents
     case banners
     case personalization
     case campaignClick
     case consents
+    case inAppMessages
 
     var method: HTTPMethod {
         switch self {

@@ -14,7 +14,7 @@ import ExponeaSDKNotifications
 class NotificationViewController: UIViewController, UNNotificationContentExtension {
 
     let exponeaService = ExponeaNotificationContentService()
-    
+
     func didReceive(_ notification: UNNotification) {
         exponeaService.didReceive(notification, context: extensionContext, viewController: self)
     }

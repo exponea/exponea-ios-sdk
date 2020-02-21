@@ -40,7 +40,7 @@ public enum Result<T> {
 ///
 /// - success
 /// - failure(Error)
-public enum EmptyResult<T: Error> {
+enum EmptyResult<T: Error> {
     case success
     case failure(T)
 
