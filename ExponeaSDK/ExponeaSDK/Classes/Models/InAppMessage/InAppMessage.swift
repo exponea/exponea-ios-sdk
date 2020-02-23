@@ -18,8 +18,9 @@ struct InAppMessage: Codable, Equatable {
     public let payload: InAppMessagePayload
     public let variantId: Int
     public let variantName: String
-    public let trigger: InAppMessageTrigger
+    public let trigger: EventFilter
     public let dateFilter: DateFilter
+    public let priority: Int?
 
     enum CodingKeys: String, CodingKey {
         case id = "id"
@@ -31,6 +32,7 @@ struct InAppMessage: Codable, Equatable {
         case variantName = "variant_name"
         case trigger
         case dateFilter = "date_filter"
+        case priority = "load_priority"
     }
 
     func applyDateFilter(date: Date) -> Bool {
@@ -46,11 +48,22 @@ struct InAppMessage: Codable, Equatable {
         return true
     }
 
-    func applyEventFilter(eventType: String) -> Bool {
-        guard let triggerType = trigger.type, let triggerEventType = trigger.eventType else {
-            return false
+    func applyEventFilter(event: [DataType]) -> Bool {
+        let eventTypes = event.eventTypes
+        let timestamp = event.latestTimestamp
+        let properties = event.properties
+        var passed = false
+        eventTypes.forEach { eventType in
+            let filterEvent = EventFilterEvent(eventType: eventType, properties: properties, timestamp: timestamp)
+            do {
+                if try trigger.passes(event: filterEvent) {
+                    passed = true
+                }
+            } catch {
+                Exponea.logger.log(.error, message: "Error applying in-app message event filter \(error)")
+            }
         }
-        return triggerType == "event" && triggerEventType == eventType
+        return passed
     }
 
     func applyFrequencyFilter(displayState: InAppMessageDisplayStatus, sessionStart: Date) -> Bool {

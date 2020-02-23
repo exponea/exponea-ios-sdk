@@ -43,6 +43,7 @@
 		054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */; };
 		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */; };
+		0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */; };
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
 		0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */; };
 		0566424E2373198B00CCDB98 /* SwizzleTestClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424D2373198B00CCDB98 /* SwizzleTestClass.swift */; };
@@ -386,6 +387,7 @@
 		054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageActionButton.swift; sourceTree = "<group>"; };
 		05583E9A23603BA900F7084E /* PushNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParser.swift; sourceTree = "<group>"; };
 		05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParserSpec.swift; sourceTree = "<group>"; };
+		0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypeSpec.swift; sourceTree = "<group>"; };
 		05664249237309C300CCDB98 /* SwizzleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleSpec.swift; sourceTree = "<group>"; };
 		0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzlerSpec.swift; sourceTree = "<group>"; };
 		0566424D2373198B00CCDB98 /* SwizzleTestClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleTestClass.swift; sourceTree = "<group>"; };
@@ -1317,6 +1319,7 @@
 				01764BC32087742100D0D673 /* ConfigurationSpec.swift */,
 				F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */,
 				F0BE60F121105FF70082ABD8 /* EventTypeSpec.swift */,
+				0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2153,6 +2156,7 @@
 				05F3EFE22382A814006E83F4 /* CrashManagerSpec.swift in Sources */,
 				05BB22B7236B300F0098C406 /* MockTrackingManager.swift in Sources */,
 				05D2D3A023DF07E800E3E79A /* InAppMessageAlertViewSpec.swift in Sources */,
+				0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */,
 				0591907723EC5F5A0037BD88 /* EventFilterConstraintSpec.swift in Sources */,
 				0591906D23EC45050037BD88 /* StringOperatorsSpec.swift in Sources */,
 				057F4481239909DC0070DF30 /* MockRepository.swift in Sources */,

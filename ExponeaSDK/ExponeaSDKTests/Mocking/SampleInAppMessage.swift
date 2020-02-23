@@ -38,8 +38,8 @@ struct SampleInAppMessage {
         "variant_id": 0,
         "variant_name": "Variant A",
         "trigger": {
-            "type": "event",
-            "event_type": "session_start"
+            "event_type": "session_start",
+            "filter": []
         },
         "date_filter": {
             "enabled": false,
@@ -52,9 +52,10 @@ struct SampleInAppMessage {
     static func getSampleInAppMessage(
         id: String? = nil,
         dateFilter: DateFilter? = nil,
-        trigger: InAppMessageTrigger? = nil,
+        trigger: EventFilter? = nil,
         frequency: InAppMessageFrequency? = nil,
-        imageUrl: String? = nil
+        imageUrl: String? = nil,
+        priority: Int? = nil
     ) -> InAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
@@ -86,12 +87,13 @@ struct SampleInAppMessage {
             ),
             variantId: 0,
             variantName: "Variant A",
-            trigger: trigger ?? InAppMessageTrigger(type: "event", eventType: "session_start"),
+            trigger: trigger ?? EventFilter(eventType: "session_start", filter: []),
             dateFilter: dateFilter ?? DateFilter(
                 enabled: false,
                 startDate: Date(timeIntervalSince1970: 1570744800),
                 endDate: nil
-            )
+            ),
+            priority: priority
         )
     }
 }

@@ -64,18 +64,24 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         completion?()
     }
 
-    func getInAppMessage(for eventType: String) -> InAppMessage? {
+    func getInAppMessages(for event: [DataType]) -> [InAppMessage] {
         let messages = self.cache.getInAppMessages()
             .filter {
                 let imageUrl = $0.payload.imageUrl ?? ""
                 return (imageUrl.isEmpty || self.cache.hasImageData(at: imageUrl))
                     && $0.applyDateFilter(date: Date())
-                    && $0.applyEventFilter(eventType: eventType)
+                    && $0.applyEventFilter(event: event)
                     && $0.applyFrequencyFilter(
                            displayState: displayStatusStore.status(for: $0),
                            sessionStart: sessionStartDate
                        )
             }
+        let highestPriority = messages.map { $0.priority }.compactMap { $0 }.max() ?? 0
+        return messages.filter { $0.priority ?? 0 >= highestPriority }
+    }
+
+    func getInAppMessage(for event: [DataType]) -> InAppMessage? {
+        let messages = getInAppMessages(for: event)
         Exponea.logger.log(.verbose, message: "Found \(messages.count) eligible in-app messages.")
         return messages.randomElement()
     }
@@ -88,13 +94,16 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     }
 
     func showInAppMessage(
-        for eventType: String,
+        for event: [DataType],
         trackingDelegate: InAppMessageTrackingDelegate? = nil,
         callback: ((InAppMessageView?) -> Void)? = nil
     ) {
-        Exponea.logger.log(.verbose, message: "Attempting to show in-app message for event type \(eventType).")
+        Exponea.logger.log(
+            .verbose,
+            message: "Attempting to show in-app message for event with types \(event.eventTypes)."
+        )
         DispatchQueue.global(qos: .userInitiated).async {
-            guard let message = self.getInAppMessage(for: eventType) else {
+            guard let message = self.getInAppMessage(for: event) else {
                 callback?(nil)
                 return
             }

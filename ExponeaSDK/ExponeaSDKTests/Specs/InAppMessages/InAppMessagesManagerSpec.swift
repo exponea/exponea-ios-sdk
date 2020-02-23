@@ -72,7 +72,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         it("should get nil in-app message on cold start") {
-            expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+            expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
         }
 
         it("should get in-app messages from cache if image is needed and precached") {
@@ -81,18 +81,18 @@ class InAppMessagesManagerSpec: QuickSpec {
                 at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
-            expect(manager.getInAppMessage(for: "session_start"))
+            expect(manager.getInAppMessage(for: [.eventType("session_start")]))
                 .to(equal(SampleInAppMessage.getSampleInAppMessage()))
         }
 
         it("should not get in-app messages from cache if image is needed and not precached") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
-            expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+            expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
         }
 
         it("should not get in-app messages from cache if image is needed and not precached") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage(imageUrl: "")])
-            expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+            expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
         }
 
         context("filtering messages") {
@@ -106,9 +106,9 @@ class InAppMessagesManagerSpec: QuickSpec {
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
-                        expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                        expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
                     } else {
-                        expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+                        expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
                     }
                 }
                 let future = Date().addingTimeInterval(100)
@@ -122,7 +122,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should apply trigger filter to messages") {
-                let runTest = { (trigger: InAppMessageTrigger, eventType: String, included: Bool) in
+                let runTest = { (trigger: EventFilter, data: [DataType], included: Bool) in
                     cache.saveInAppMessages(
                         inAppMessages: [SampleInAppMessage.getSampleInAppMessage(trigger: trigger)]
                     )
@@ -131,15 +131,34 @@ class InAppMessagesManagerSpec: QuickSpec {
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
-                        expect(manager.getInAppMessage(for: eventType)).notTo(beNil())
+                        expect(manager.getInAppMessage(for: data)).notTo(beNil())
                     } else {
-                        expect(manager.getInAppMessage(for: eventType)).to(beNil())
+                        expect(manager.getInAppMessage(for: data)).to(beNil())
                     }
                 }
-                runTest(InAppMessageTrigger(type: "event", eventType: "session_start"), "session_start", true)
-                runTest(InAppMessageTrigger(type: nil, eventType: nil), "session_start", false)
-                runTest(InAppMessageTrigger(type: "event", eventType: "payment"), "session_start", false)
-                runTest(InAppMessageTrigger(type: "event", eventType: "payment"), "payment", true)
+                runTest(EventFilter(eventType: "session_start", filter: []), [.eventType("session_start")], true)
+                runTest(EventFilter(eventType: "payment", filter: []), [.eventType("session_start")], false)
+                runTest(EventFilter(eventType: "payment", filter: []), [.eventType("payment")], true)
+                let complexFilter = EventFilter(
+                    eventType: "payment",
+                    filter: [
+                        EventPropertyFilter.property("item_id", StringConstraint.contains("sub")),
+                        EventPropertyFilter.timestamp(NumberConstraint.greaterThan(1234))
+                    ]
+                )
+                runTest(complexFilter, [.eventType("payment")], false)
+                runTest(complexFilter, [.eventType("payment"), .properties(["item_id": .string("substring")])], false)
+                runTest(complexFilter, [.eventType("payment"), .timestamp(12345)], false)
+                runTest(
+                    complexFilter,
+                    [.eventType("payment"), .properties(["item_id": .string("substring")]), .timestamp(123)],
+                    false
+                )
+                runTest(
+                    complexFilter,
+                    [.eventType("payment"), .properties(["item_id": .string("substring")]), .timestamp(12345)],
+                    true
+                )
             }
 
             context("with frequency filter") {
@@ -150,33 +169,79 @@ class InAppMessagesManagerSpec: QuickSpec {
                 }
                 it("should apply always filter") {
                     createMessage(.always)
-                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
-                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
                 }
                 it("should apply only_once filter") {
                     createMessage(.onlyOnce)
-                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
-                    waitUntil { done in manager.showInAppMessage(for: "session_start") { _ in done() } }
-                    expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    waitUntil { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
                 }
                 it("should apply until_visitor_interacts filter") {
                     createMessage(.untilVisitorInteracts)
-                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
-                    waitUntil { done in manager.showInAppMessage(for: "session_start") { _ in done() } }
-                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    waitUntil { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
                     presenter.presentedMessages[0].actionCallback(
                         SampleInAppMessage.getSampleInAppMessage().payload.buttons![0]
                     )
-                    expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
                 }
                 it("should apply once_per_visit filter") {
                     createMessage(.oncePerVisit)
-                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
-                    waitUntil { done in manager.showInAppMessage(for: "session_start") { _ in done() } }
-                    expect(manager.getInAppMessage(for: "session_start")).to(beNil())
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    waitUntil { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
                     manager.sessionDidStart(at: Date())
-                    expect(manager.getInAppMessage(for: "session_start")).notTo(beNil())
+                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
                 }
+            }
+
+            it("should apply priority filter") {
+                let runTest = { (allMessages: [InAppMessage], expectedMessages: [InAppMessage]) -> Void in
+                    cache.saveInAppMessages(inAppMessages: allMessages)
+                    allMessages.forEach {
+                        cache.saveImageData(at: $0.payload.imageUrl!, data: "mock data".data(using: .utf8)!)
+                    }
+                    expect(
+                        manager.getInAppMessages(for: [.eventType("session_start")])
+                    ).to(equal(expectedMessages))
+                }
+                runTest(
+                    [
+                        SampleInAppMessage.getSampleInAppMessage(id: "1"),
+                        SampleInAppMessage.getSampleInAppMessage(id: "2"),
+                        SampleInAppMessage.getSampleInAppMessage(id: "3")
+                    ],
+                    [
+                        SampleInAppMessage.getSampleInAppMessage(id: "1"),
+                        SampleInAppMessage.getSampleInAppMessage(id: "2"),
+                        SampleInAppMessage.getSampleInAppMessage(id: "3")
+                    ]
+                )
+                runTest(
+                    [
+                        SampleInAppMessage.getSampleInAppMessage(id: "1", priority: 0),
+                        SampleInAppMessage.getSampleInAppMessage(id: "2"),
+                        SampleInAppMessage.getSampleInAppMessage(id: "3", priority: -1)
+                    ],
+                    [
+                        SampleInAppMessage.getSampleInAppMessage(id: "1", priority: 0),
+                        SampleInAppMessage.getSampleInAppMessage(id: "2")
+                    ]
+                )
+                runTest(
+                    [
+                        SampleInAppMessage.getSampleInAppMessage(id: "1", priority: 2),
+                        SampleInAppMessage.getSampleInAppMessage(id: "2", priority: 2),
+                        SampleInAppMessage.getSampleInAppMessage(id: "3", priority: 1)
+                    ],
+                    [
+                        SampleInAppMessage.getSampleInAppMessage(id: "1", priority: 2),
+                        SampleInAppMessage.getSampleInAppMessage(id: "2", priority: 2)
+                    ]
+                )
             }
         }
 
@@ -187,7 +252,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 data: "mock data".data(using: .utf8)!
             )
             waitUntil { done in
-                manager.showInAppMessage(for: "session_start") { viewController in
+                manager.showInAppMessage(for: [.eventType("session_start")]) { viewController in
                     expect(viewController).notTo(beNil())
                     done()
                 }
@@ -196,7 +261,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
         it("should not show dialog without messages") {
             waitUntil { done in
-                manager.showInAppMessage(for: "session_start") { viewController in
+                manager.showInAppMessage(for: [.eventType("session_start")]) { viewController in
                     expect(viewController).to(beNil())
                     done()
                 }
@@ -217,7 +282,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             it("should not track anything if no message is shown") {
                 presenter.presentResult = false
                 waitUntil { done in manager.showInAppMessage(
-                    for: "session_start",
+                    for: [.eventType("session_start")],
                     trackingDelegate: delegate
                 ) { _ in done() } }
                 expect(delegate.calls).to(beEmpty())
@@ -225,7 +290,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             it("should track show event when displaying message") {
                 waitUntil { done in manager.showInAppMessage(
-                    for: "session_start",
+                    for: [.eventType("session_start")],
                     trackingDelegate: delegate
                 ) { _ in done() } }
                 expect(delegate.calls).to(equal([
@@ -239,7 +304,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             it("should track dismiss event when closing message") {
                 waitUntil { done in manager.showInAppMessage(
-                    for: "session_start",
+                    for: [.eventType("session_start")],
                     trackingDelegate: delegate
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
@@ -259,7 +324,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             it("should track action event when action button pressed on message") {
                 waitUntil { done in manager.showInAppMessage(
-                    for: "session_start",
+                    for: [.eventType("session_start")],
                     trackingDelegate: delegate
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(

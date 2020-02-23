@@ -10,9 +10,9 @@ import Foundation
 
 protocol InAppMessagesManagerType {
     func preload(for customerIds: [String: JSONValue], completion: (() -> Void)?)
-    func getInAppMessage(for eventType: String) -> InAppMessage?
+    func getInAppMessage(for event: [DataType]) -> InAppMessage?
     func showInAppMessage(
-        for eventType: String,
+        for event: [DataType],
         trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)?
     )
@@ -25,7 +25,7 @@ extension InAppMessagesManagerType {
         preload(for: customerIds, completion: nil)
     }
 
-    func showInAppMessage(for eventType: String, trackingDelegate: InAppMessageTrackingDelegate?) {
-        showInAppMessage(for: eventType, trackingDelegate: trackingDelegate, callback: nil)
+    func showInAppMessage(for event: [DataType], trackingDelegate: InAppMessageTrackingDelegate?) {
+        showInAppMessage(for: event, trackingDelegate: trackingDelegate, callback: nil)
     }
 }

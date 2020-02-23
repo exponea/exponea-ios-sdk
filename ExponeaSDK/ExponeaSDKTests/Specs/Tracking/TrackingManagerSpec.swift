@@ -54,7 +54,7 @@ class TrackingManagerSpec: QuickSpec {
             it("should track event into database") {
                 let data: [DataType] = [.projectToken(configuration.projectToken!),
                                         .properties(MockData().properties)]
-                expect { try trackingManager.trackEvent(with: data) }.notTo(raiseException())
+                expect { try trackingManager.track(EventType.customEvent, with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
             }
 

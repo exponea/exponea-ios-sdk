@@ -103,7 +103,7 @@ final class EventFilterSpec: QuickSpec {
             it ("should decode payload from server") {
                 let payload = """
                     {
-                        "type":"banner",
+                        "event_type":"banner",
                         "filter":[
                             {
                                 "attribute":{
@@ -187,7 +187,7 @@ final class EventFilterSpec: QuickSpec {
                 let getPayload: (String, String, String) -> String = { attributeType, constraintType, filterOperator in
                     return """
                     {
-                        "type":"banner",
+                        "event_type":"banner",
                         "filter":[
                             {
                                 "attribute":{ "type":"\(attributeType)", "property":"os_version"},

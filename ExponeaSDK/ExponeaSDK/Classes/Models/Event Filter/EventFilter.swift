@@ -46,7 +46,7 @@ struct EventFilter: Codable, Equatable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case eventType = "type"
+        case eventType = "event_type"
         case filter = "filter"
     }
 }

@@ -186,20 +186,26 @@ extension TrackingManager: TrackingManagerType {
 
         /// For each project token we have, track the data.
         for projectToken in tokens {
-            let payload: [DataType] = [.projectToken(projectToken)] + (data ?? [])
+            var payload: [DataType] = [.projectToken(projectToken)] + (data ?? [])
+            if let stringEventType = getEventTypeString(type: type) {
+                payload.append(.eventType(stringEventType))
+            }
 
             switch type {
-            case .install: try trackInstall(with: payload)
-            case .sessionStart: try trackStartSession(with: payload)
-            case .sessionEnd: try trackEndSession(with: payload)
-            case .customEvent: try trackEvent(with: payload)
-            case .identifyCustomer: try identifyCustomer(with: payload)
-            case .payment: try trackPayment(with: payload)
-            case .registerPushToken: try trackPushToken(with: payload)
-            case .pushOpened: try trackPushOpened(with: payload)
-            case .pushDelivered: try trackPushDelivered(with: payload)
-            case .campaignClick: try trackCampaignClick(with: payload)
-            case .banner: try trackBanner(with: payload)
+            case .identifyCustomer,
+                 .registerPushToken:
+                try database.identifyCustomer(with: payload)
+            case .install,
+                 .sessionStart,
+                 .sessionEnd,
+                 .customEvent,
+                 .payment,
+                 .pushOpened,
+                 .pushDelivered,
+                 .campaignClick,
+                 .banner:
+                try database.trackEvent(with: payload)
+                self.inAppMessagesManager.showInAppMessage(for: payload, trackingDelegate: self)
             }
         }
 
@@ -209,85 +215,20 @@ extension TrackingManager: TrackingManagerType {
         }
     }
 
-    open func identifyCustomer(with data: [DataType]) throws {
-        try database.identifyCustomer(with: data)
-    }
-
-    open func trackInstall(with data: [DataType]) throws {
-        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.installation)])
-        self.inAppMessagesManager.showInAppMessage(
-            for: Constants.EventTypes.installation,
-            trackingDelegate: self
-        )
-    }
-
-    open func trackEvent(with data: [DataType]) throws {
-        try database.trackEvent(with: data)
-        let eventTypes = data.compactMap { dataType -> String? in
-            if case DataType.eventType(let eventType) = dataType {
-                return eventType
-            }
-            return nil
+    func getEventTypeString(type: EventType) -> String? {
+        switch type {
+        case .identifyCustomer: return nil
+        case .registerPushToken: return nil
+        case .customEvent: return nil
+        case .install: return Constants.EventTypes.installation
+        case .sessionStart: return Constants.EventTypes.sessionStart
+        case .sessionEnd: return Constants.EventTypes.sessionEnd
+        case .payment: return Constants.EventTypes.payment
+        case .pushOpened: return Constants.EventTypes.pushOpen
+        case .pushDelivered: return Constants.EventTypes.pushDelivered
+        case .campaignClick: return Constants.EventTypes.campaignClick
+        case .banner: return Constants.EventTypes.banner
         }
-        eventTypes.forEach {
-           self.inAppMessagesManager.showInAppMessage(for: $0, trackingDelegate: self)
-        }
-    }
-
-    open func trackCampaignClick(with data: [DataType]) throws {
-        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.campaignClick)])
-        self.inAppMessagesManager.showInAppMessage(
-            for: Constants.EventTypes.campaignClick,
-            trackingDelegate: self
-        )
-    }
-
-    open func trackPayment(with data: [DataType]) throws {
-        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.payment)])
-        self.inAppMessagesManager.showInAppMessage(
-            for: Constants.EventTypes.payment,
-            trackingDelegate: self
-        )
-    }
-
-    open func trackPushToken(with data: [DataType]) throws {
-        try database.identifyCustomer(with: data)
-    }
-
-    open func trackPushOpened(with data: [DataType]) throws {
-        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushOpen)])
-        self.inAppMessagesManager.showInAppMessage(
-            for: Constants.EventTypes.pushOpen,
-            trackingDelegate: self
-        )
-    }
-
-    open func trackPushDelivered(with data: [DataType]) throws {
-        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.pushDelivered)])
-        self.inAppMessagesManager.showInAppMessage(
-            for: Constants.EventTypes.pushDelivered,
-            trackingDelegate: self
-        )
-    }
-
-    open func trackStartSession(with data: [DataType]) throws {
-        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.sessionStart)])
-        self.inAppMessagesManager.showInAppMessage(
-            for: Constants.EventTypes.sessionStart,
-            trackingDelegate: self
-        )
-    }
-
-    open func trackEndSession(with data: [DataType]) throws {
-        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.sessionEnd)])
-        self.inAppMessagesManager.showInAppMessage(
-            for: Constants.EventTypes.sessionEnd,
-            trackingDelegate: self
-        )
-    }
-
-    open func trackBanner(with data: [DataType]) throws {
-        try database.trackEvent(with: data + [.eventType(Constants.EventTypes.banner)])
     }
 }
 
@@ -573,11 +514,14 @@ extension TrackingManager {
 
         let currentToken = customerPushToken
         if let token = currentToken, let projectToken = repository.configuration.tokens(for: .registerPushToken).first {
-            try trackPushToken(with: [.projectToken(projectToken), .pushNotificationToken(nil)])
+            try track(EventType.registerPushToken, with: [.projectToken(projectToken), .pushNotificationToken(nil)])
             self.flushingManager.flushData {
                 do {
                     try perform()
-                    try self.trackPushToken(with: [.projectToken(projectToken), .pushNotificationToken(token)])
+                    try self.track(
+                        EventType.registerPushToken,
+                        with: [.projectToken(projectToken), .pushNotificationToken(token)]
+                    )
                 } catch {
                     Exponea.logger.log(.error, message: error.localizedDescription)
                 }

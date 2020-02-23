@@ -36,3 +36,25 @@ enum DataType: Equatable {
     /// If nil, it will delete the existing push notification token if any.
     case pushNotificationToken(String?)
 }
+
+extension Array where Iterator.Element == DataType {
+    var eventTypes: [String] {
+        return compactMap { if case .eventType(let eventType) = $0 { return eventType } else { return nil } }
+    }
+
+    var latestTimestamp: Double? {
+        return compactMap {
+            if case .timestamp(let timestamp) = $0 { return timestamp } else { return nil }
+        }.sorted().last
+    }
+
+    var properties: [String: Any?] {
+        var properties: [String: Any?] = [:]
+        forEach {
+            if case .properties(let props) = $0 {
+                props.forEach { properties.updateValue($0.value.rawValue, forKey: $0.key) }
+            }
+        }
+        return properties
+    }
+}
