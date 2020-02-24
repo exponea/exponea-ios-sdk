@@ -138,6 +138,7 @@
 		05F3EFEF2382C192006E83F4 /* TelemetryUtilitySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFEE2382C192006E83F4 /* TelemetryUtilitySpec.swift */; };
 		05F3EFF12382C757006E83F4 /* VSAppCenterAPIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFF02382C757006E83F4 /* VSAppCenterAPIModel.swift */; };
 		05FB1BB7236AE9220089C529 /* NotificationDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */; };
+		05FD178F2403C4CC003A799B /* BuildConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FD178E2403C4CC003A799B /* BuildConfiguration.swift */; };
 		05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */; };
 		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
@@ -481,6 +482,7 @@
 		05F3EFEE2382C192006E83F4 /* TelemetryUtilitySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryUtilitySpec.swift; sourceTree = "<group>"; };
 		05F3EFF02382C757006E83F4 /* VSAppCenterAPIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSAppCenterAPIModel.swift; sourceTree = "<group>"; };
 		05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDataSpec.swift; sourceTree = "<group>"; };
+		05FD178E2403C4CC003A799B /* BuildConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildConfiguration.swift; sourceTree = "<group>"; };
 		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1526,6 +1528,7 @@
 				0580BBC6239698E60058323D /* UIColor+FromHexString.swift */,
 				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
+				05FD178E2403C4CC003A799B /* BuildConfiguration.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -1970,6 +1973,7 @@
 				054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */,
 				05B4D64F238FEC1000F5010F /* InAppMessage.swift in Sources */,
 				C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */,
+				05FD178F2403C4CC003A799B /* BuildConfiguration.swift in Sources */,
 				C07E420920CA89DE00920809 /* PersonalizationRequest.swift in Sources */,
 				05BF1C7623A10F1800FDC101 /* RecommendationRequest.swift in Sources */,
 				0591906623EC1D190037BD88 /* NumberOperators.swift in Sources */,

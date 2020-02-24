@@ -8,7 +8,13 @@
 
 final class VSAppCenterTelemetryUpload: TelemetryUpload {
     let defaultUploadURL = "https://in.appcenter.ms/logs?Api-Version=1.0.0"
-    let appSecret = "7172e098-ec8e-4d1b-9f9e-3e5107d8b22a"
+    let debugAppSecret = "7172e098-ec8e-4d1b-9f9e-3e5107d8b22a"
+    let releaseAppSecret = "4d80509d-4d1c-4d50-b472-ce8f5c650708"
+    var appSecret: String {
+        var secret = releaseAppSecret
+        inDebugBuild { secret = debugAppSecret }
+        return secret
+    }
 
     let session: URLSession
     let userId: String
