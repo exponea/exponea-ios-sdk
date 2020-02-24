@@ -128,49 +128,37 @@ class FlushingManager: FlushingManagerType {
         }
     }
 
-    func flushTrackingObjects(_ trackingObjects: [TrackingObjectProxy], completion: (() -> Void)? = nil) {
-        var counter = trackingObjects.count
+    func flushTrackingObjects(_ flushableObjects: [FlushableObject], completion: (() -> Void)? = nil) {
+        var counter = flushableObjects.count
         guard counter > 0 else {
             completion?()
             return
         }
-        for trackingObject in trackingObjects {
-            if let customer = trackingObject as? TrackCustomerProxy {
-                repository.trackCustomer(with: customer.dataTypes, for: database.customer.ids) { [weak self] (result) in
-                    self?.onTrackingObjectFlush(trackingObject: customer, result: result)
-                    counter -= 1
-                    if counter == 0 {
-                        completion?()
-                    }
+        for flushableObject in flushableObjects {
+            repository.trackObject(flushableObject.trackingObject, for: database.customer.ids) { [weak self] (result) in
+                self?.onObjectFlush(flushableObject: flushableObject, result: result)
+                counter -= 1
+                if counter == 0 {
+                    completion?()
                 }
-            } else if let event = trackingObject as? TrackEventProxy {
-                repository.trackEvent(with: event.dataTypes, for: database.customer.ids) { [weak self] (result) in
-                    self?.onTrackingObjectFlush(trackingObject: event, result: result)
-                    counter -= 1
-                    if counter == 0 {
-                        completion?()
-                    }
-                }
-            } else {
-                fatalError("Unknown tracking object type")
             }
         }
     }
 
-    func onTrackingObjectFlush(trackingObject: TrackingObjectProxy, result: EmptyResult<RepositoryError>) {
+    func onObjectFlush(flushableObject: FlushableObject, result: EmptyResult<RepositoryError>) {
         switch result {
         case .success:
             Exponea.logger.log(
                 .verbose,
-                message: "Successfully uploaded tracking object: \(trackingObject.managedObjectID)."
+                message: "Successfully uploaded tracking object: \(flushableObject.databaseObjectProxy.objectID)."
             )
             do {
-                try database.delete(trackingObject)
+                try database.delete(flushableObject.databaseObjectProxy)
             } catch {
                 Exponea.logger.log(
                     .error,
                     message: """
-                    Failed to remove tracking object from database: \(trackingObject.managedObjectID).
+                    Failed to remove tracking object from database: \(flushableObject.databaseObjectProxy.objectID).
                     \(error.localizedDescription)
                     """
                 )
@@ -191,38 +179,38 @@ class FlushingManager: FlushingManagerType {
                     .error,
                     message: "Failed to upload customer update. \(error.localizedDescription)"
                 )
-                increaseTrackingObjectRetry(trackingObject: trackingObject)
+                increaseRetry(for: flushableObject.databaseObjectProxy)
             }
         }
     }
 
-    func increaseTrackingObjectRetry(trackingObject: TrackingObjectProxy) {
+    func increaseRetry(for databaseObjectProxy: DatabaseObjectProxy) {
         do {
             let max = repository.configuration.flushEventMaxRetries
-            if trackingObject.retries + 1 >= max {
+            if databaseObjectProxy.retries + 1 >= max {
                 Exponea.logger.log(
                     .error,
                     message: """
-                    Maximum retry count reached, deleting tracking object: \(trackingObject.managedObjectID)
+                    Maximum retry count reached, deleting tracking object: \(databaseObjectProxy.objectID)
                     """
                 )
-                try database.delete(trackingObject)
+                try database.delete(databaseObjectProxy)
             } else {
                 Exponea.logger.log(
                     .error,
                     message: """
-                    Increasing retry count (\(trackingObject.retries)) for tracking object: \
-                    \(trackingObject.managedObjectID)
+                    Increasing retry count (\(databaseObjectProxy.retries)) for tracking object: \
+                    \(databaseObjectProxy.objectID)
                     """
                 )
-                try database.addRetry(trackingObject)
+                try database.addRetry(databaseObjectProxy)
             }
         } catch {
             Exponea.logger.log(
                 .error,
                 message: """
                 Failed to update retry count or remove object from database: \
-                \(trackingObject.managedObjectID). \(error.localizedDescription)
+                \(databaseObjectProxy.objectID). \(error.localizedDescription)
                 """
             )
         }

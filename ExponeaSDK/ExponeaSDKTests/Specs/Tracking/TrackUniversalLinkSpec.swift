@@ -24,7 +24,8 @@ class TrackUniversalLinkSpec: QuickSpec {
                 let projectToken = UUID().uuidString
                 let data: [DataType] = [.projectToken(projectToken),
                                         .properties(mockData.campaignData),
-                                        .timestamp(nil)]
+                                        .timestamp(nil),
+                                        .eventType(Constants.EventTypes.campaignClick)]
                 var lastRequest: URLRequest?
                 NetworkStubbing.stubNetwork(
                     forProjectToken: projectToken,
@@ -32,8 +33,14 @@ class TrackUniversalLinkSpec: QuickSpec {
                     withRequestHook: { request in lastRequest = request }
                 )
                 waitUntil(timeout: 3) { done in
-                    repository.trackEvent(
-                        with: data + [.eventType(Constants.EventTypes.campaignClick)],
+                    let event = EventTrackingObject(
+                        projectToken: projectToken,
+                        eventType: Constants.EventTypes.campaignClick,
+                        timestamp: 123,
+                        dataTypes: data
+                    )
+                    repository.trackObject(
+                        event,
                         for: mockData.customerIds
                     ) { result in
                         it("should have nil result error") {
@@ -60,7 +67,8 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).notTo(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(equal("mycampaign"))
+                        expect(sessionStart!.event.dataTypes.properties["utm_campaign"] as? String)
+                            .to(equal("mycampaign"))
                     }
                     it("track campaign_click and should not update session when called after update threshold") {
                         let exponea = MockExponea()
@@ -82,7 +90,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).notTo(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).toNot(beNil())
-                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
+                        expect(sessionStart!.event.dataTypes.properties["utm_campaign"] as? String).to(beNil())
                     }
                 }
                 context("before SDK started") {
@@ -98,7 +106,8 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).notTo(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(equal("mycampaign"))
+                        expect(sessionStart!.event.dataTypes.properties["utm_campaign"] as? String)
+                            .to(equal("mycampaign"))
                     }
                     it("processes saved campaigns only once") {
                         let exponea = MockExponea()
@@ -110,7 +119,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         exponea.processSavedCampaignData()
                         var trackEvents: [TrackEventProxy] = []
                         expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
-                        expect {trackEvents.filter({ $0.eventType == "campaign_click"}).count }.to(equal(1))
+                        expect {trackEvents.filter({ $0.event.eventType == "campaign_click"}).count }.to(equal(1))
                     }
                 }
             }
@@ -121,5 +130,5 @@ class TrackUniversalLinkSpec: QuickSpec {
 func findEvent(exponea: MockExponea, eventType: String) -> TrackEventProxy? {
     var trackEvents: [TrackEventProxy] = []
     expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
-    return trackEvents.first(where: { $0.eventType == eventType })
+    return trackEvents.first(where: { $0.event.eventType == eventType })
 }

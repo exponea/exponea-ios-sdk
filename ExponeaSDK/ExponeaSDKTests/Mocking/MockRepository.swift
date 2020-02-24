@@ -11,8 +11,7 @@
 final class MockRepository: RepositoryType {
     var configuration: Configuration
 
-    var trackCustomerResult: EmptyResult<RepositoryError>? = EmptyResult.failure(RepositoryError.connectionError)
-    var trackEventResult: EmptyResult<RepositoryError>? = EmptyResult.failure(RepositoryError.connectionError)
+    var trackObjectResult: EmptyResult<RepositoryError>? = EmptyResult.failure(RepositoryError.connectionError)
     var fetchRecommendationResult: Result<RecommendationResponse<EmptyRecommendationData>>?
         = Result.failure(RepositoryError.connectionError)
     var fetchBannersResult: Result<BannerResponse>? = Result.failure(RepositoryError.connectionError)
@@ -28,22 +27,12 @@ final class MockRepository: RepositoryType {
         fatalError("Not implemented")
     }
 
-    func trackCustomer(
-        with data: [DataType],
+    func trackObject(
+        _ object: TrackingObject,
         for customerIds: [String: JSONValue],
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     ) {
-        if let mockResult = trackCustomerResult {
-            completion(mockResult)
-        }
-    }
-
-    func trackEvent(
-        with data: [DataType],
-        for customerIds: [String: JSONValue],
-        completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
-    ) {
-        if let mockResult = trackEventResult {
+        if let mockResult = trackObjectResult {
             completion(mockResult)
         }
     }

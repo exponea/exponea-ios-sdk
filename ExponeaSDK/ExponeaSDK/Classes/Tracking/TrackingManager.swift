@@ -155,7 +155,7 @@ class TrackingManager {
 extension TrackingManager: TrackingManagerType {
     public func hasPendingEvent(ofType type: String, withMaxAge maxAge: Double) throws -> Bool {
         let events = try database.fetchTrackEvent()
-            .filter({ $0.eventType == type && $0.timestamp + maxAge >= Date().timeIntervalSince1970})
+            .filter({ $0.event.eventType == type && $0.event.timestamp + maxAge >= Date().timeIntervalSince1970 })
         return !events.isEmpty
     }
 
@@ -163,14 +163,14 @@ extension TrackingManager: TrackingManagerType {
     // Event may be logged multiple times - for every project token
     public func updateLastPendingEvent(ofType type: String, with data: DataType) throws {
         var events = try database.fetchTrackEvent()
-            .filter({ $0.eventType == type })
-            .sorted(by: {$0.timestamp < $1.timestamp})
+            .filter({ $0.event.eventType == type })
+            .sorted(by: { $0.event.timestamp < $1.event.timestamp })
         var projectTokens: Set<String> = []
         while !events.isEmpty {
             let event = events.removeLast()
-            if let projectToken = event.projectToken, !projectTokens.contains(projectToken) {
+            if let projectToken = event.event.projectToken, !projectTokens.contains(projectToken) {
                 projectTokens.insert(projectToken)
-                try database.updateEvent(withId: event.managedObjectID, withData: data)
+                try database.updateEvent(withId: event.databaseObjectProxy.objectID, withData: data)
             }
         }
     }

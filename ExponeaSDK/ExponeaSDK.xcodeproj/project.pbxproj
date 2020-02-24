@@ -77,6 +77,7 @@
 		057F4495239960650070DF30 /* mountain.png in Resources */ = {isa = PBXBuildFile; fileRef = 057F4493239960650070DF30 /* mountain.png */; };
 		0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0580BBC6239698E60058323D /* UIColor+FromHexString.swift */; };
 		0580BBC923969D1F0058323D /* InAppMessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0580BBC823969D1F0058323D /* InAppMessagePresenter.swift */; };
+		058DD93F24113F2100E5BF91 /* FlushableObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD93E24113F2100E5BF91 /* FlushableObject.swift */; };
 		0591905B23EC1A170037BD88 /* EventFilterAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591905A23EC1A170037BD88 /* EventFilterAttribute.swift */; };
 		0591905D23EC1A550037BD88 /* EventFilterConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591905C23EC1A550037BD88 /* EventFilterConstraint.swift */; };
 		0591905F23EC1AE50037BD88 /* EventFilterOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591905E23EC1AE50037BD88 /* EventFilterOperator.swift */; };
@@ -423,6 +424,7 @@
 		057F4493239960650070DF30 /* mountain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mountain.png; sourceTree = "<group>"; };
 		0580BBC6239698E60058323D /* UIColor+FromHexString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+FromHexString.swift"; sourceTree = "<group>"; };
 		0580BBC823969D1F0058323D /* InAppMessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagePresenter.swift; sourceTree = "<group>"; };
+		058DD93E24113F2100E5BF91 /* FlushableObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushableObject.swift; sourceTree = "<group>"; };
 		0591905A23EC1A170037BD88 /* EventFilterAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterAttribute.swift; sourceTree = "<group>"; };
 		0591905C23EC1A550037BD88 /* EventFilterConstraint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterConstraint.swift; sourceTree = "<group>"; };
 		0591905E23EC1AE50037BD88 /* EventFilterOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterOperator.swift; sourceTree = "<group>"; };
@@ -1133,6 +1135,7 @@
 				C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */,
 				C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */,
 				05FD17922403D8E9003A799B /* TrackingObject.swift */,
+				058DD93E24113F2100E5BF91 /* FlushableObject.swift */,
 			);
 			path = "Core Data";
 			sourceTree = "<group>";
@@ -2076,6 +2079,7 @@
 				B4AF83BB22C6108200061350 /* String+URLValidation.swift in Sources */,
 				05D0E5562386C63800413AE2 /* Exponea+Configuration.swift in Sources */,
 				F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */,
+				058DD93F24113F2100E5BF91 /* FlushableObject.swift in Sources */,
 				C07E420520CA898700920809 /* BannerResponse.swift in Sources */,
 				C07E420D20CA8A3C00920809 /* Personalization.swift in Sources */,
 				C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */,

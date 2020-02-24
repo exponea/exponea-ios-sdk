@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 @objc(TrackCustomer)
-class TrackCustomer: NSManagedObjectWithContext, TrackingObject {
+class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackCustomer> {
         return NSFetchRequest<TrackCustomer>(entityName: "TrackCustomer")
@@ -72,18 +72,18 @@ extension TrackCustomer: HasKeyValueProperties {
     @NSManaged public func removeFromProperties(_ values: NSSet)
 }
 
-class TrackCustomerProxy: TrackingObjectProxy {
-    public let managedObjectID: NSManagedObjectID
-    public let projectToken: String?
-    public let timestamp: Double
-    public let dataTypes: [DataType]
-    public let retries: Int
+final class TrackCustomerProxy: FlushableObject {
+    var trackingObject: TrackingObject { return customer }
 
-    init(_ trackCustomer: TrackCustomer) {
-        managedObjectID = trackCustomer.objectID
-        projectToken = trackCustomer.projectToken
-        timestamp = trackCustomer.timestamp
-        dataTypes = trackCustomer.dataTypes
-        retries = trackCustomer.retries.intValue
+    let customer: CustomerTrackingObject
+    let databaseObjectProxy: DatabaseObjectProxy
+
+    init(_ customer: TrackCustomer) {
+        self.customer = CustomerTrackingObject(
+            projectToken: customer.projectToken,
+            timestamp: customer.timestamp,
+            dataTypes: customer.dataTypes
+        )
+        self.databaseObjectProxy = DatabaseObjectProxy(customer)
     }
 }

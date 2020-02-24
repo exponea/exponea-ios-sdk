@@ -318,22 +318,22 @@ extension DatabaseManager: DatabaseManagerType {
         }
     }
 
-    public func addRetry(_ event: TrackingObjectProxy) throws {
+    public func addRetry(_ databaseObjectProxy: DatabaseObjectProxy) throws {
         try context.performAndWait {
-            guard let object = try? context.existingObject(with: event.managedObjectID) else {
+            guard let object = try? context.existingObject(with: databaseObjectProxy.objectID) else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
-            guard var trackEvent: TrackingObject = object as? TrackingObject else {
+            guard var databaseObject: DatabaseObject = object as? DatabaseObject else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
-            trackEvent.retries = NSNumber(value: event.retries + 1)
+            databaseObject.retries = NSNumber(value: databaseObjectProxy.retries + 1)
             try context.save()
         }
     }
 
-    public func delete(_ trackingObject: TrackingObjectProxy) throws {
+    public func delete(_ databaseObjectProxy: DatabaseObjectProxy) throws {
         try context.performAndWait {
-            guard let object = try? context.existingObject(with: trackingObject.managedObjectID) else {
+            guard let object = try? context.existingObject(with: databaseObjectProxy.objectID) else {
                 return
             }
             context.delete(object)

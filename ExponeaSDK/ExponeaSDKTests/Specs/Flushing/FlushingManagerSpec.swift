@@ -87,7 +87,7 @@ class FlushingManagerSpec: QuickSpec {
                         flushingManager.flushData(completion: {done()})
                     }
                     expect { try database.fetchTrackEvent().count }.to(equal(1))
-                    expect { try database.fetchTrackEvent().first?.retries }.to(equal(attempt))
+                    expect { try database.fetchTrackEvent().first?.databaseObjectProxy.retries }.to(equal(attempt))
                 }
                 waitUntil { done in
                     flushingManager.flushData(completion: {done()})

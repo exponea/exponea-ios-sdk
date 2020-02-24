@@ -10,25 +10,12 @@ import Foundation
 
 /// Protocol containing the possibles tracking methods.
 protocol TrackingRepository {
-    /// Tracks the data of the data type property for a customer.
-    ///
-    /// - Parameters:
-    ///     - data: Object containing the data to be used to track a customer data.
-    ///     - customerIds: Customer identification.
-    ///     - completion: Object containing the request result.
-    func trackCustomer(with data: [DataType],
-                       for customerIds: [String: JSONValue],
-                       completion: @escaping ((EmptyResult<RepositoryError>) -> Void))
 
-    /// Tracks new events for a customer.
-    ///
-    /// - Parameters:
-    ///     - data: Object containing the data to be used to track a customer data.
-    ///     - customerIds: Customer identification.
-    ///     - completion: Object containing the request result.
-    func trackEvent(with data: [DataType],
-                    for customerIds: [String: JSONValue],
-                    completion: @escaping ((EmptyResult<RepositoryError>) -> Void))
+    func trackObject(
+        _ object: TrackingObject,
+        for customerIds: [String: JSONValue],
+        completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
+    )
 }
 
 protocol FetchRepository {

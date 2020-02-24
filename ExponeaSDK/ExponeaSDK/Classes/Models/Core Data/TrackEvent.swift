@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 @objc(TrackEvent)
-class TrackEvent: NSManagedObjectWithContext, TrackingObject {
+class TrackEvent: NSManagedObjectWithContext, DatabaseObject {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackEvent> {
         return NSFetchRequest<TrackEvent>(entityName: "TrackEvent")
@@ -84,20 +84,19 @@ extension TrackEvent: HasKeyValueProperties {
     @NSManaged public func removeFromProperties(_ values: NSSet)
 }
 
-class TrackEventProxy: TrackingObjectProxy {
-    public let managedObjectID: NSManagedObjectID
-    public let eventType: String?
-    public let projectToken: String?
-    public let timestamp: Double
-    public let dataTypes: [DataType]
-    public let retries: Int
+final class TrackEventProxy: FlushableObject {
+    var trackingObject: TrackingObject { return event }
 
-    init(_ trackEvent: TrackEvent) {
-        managedObjectID = trackEvent.objectID
-        eventType = trackEvent.eventType
-        projectToken = trackEvent.projectToken
-        timestamp = trackEvent.timestamp
-        dataTypes = trackEvent.dataTypes
-        retries = trackEvent.retries.intValue
+    let event: EventTrackingObject
+    let databaseObjectProxy: DatabaseObjectProxy
+
+    init(_ event: TrackEvent) {
+        self.event = EventTrackingObject(
+            projectToken: event.projectToken,
+            eventType: event.eventType,
+            timestamp: event.timestamp,
+            dataTypes: event.dataTypes
+        )
+        self.databaseObjectProxy = DatabaseObjectProxy(event)
     }
 }

@@ -20,9 +20,9 @@ protocol DatabaseManagerType: class {
     func fetchTrackCustomer() throws -> [TrackCustomerProxy]
     func fetchTrackEvent() throws -> [TrackEventProxy]
 
-    func addRetry(_ object: TrackingObjectProxy) throws
+    func addRetry(_ object: DatabaseObjectProxy) throws
 
-    func delete(_ object: TrackingObjectProxy) throws
+    func delete(_ object: DatabaseObjectProxy) throws
 
     /// Completely clears the database, including the Customer object.
     /// Useful for completely anonymizing the user.

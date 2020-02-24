@@ -21,90 +21,69 @@ final class ServerRepository {
 }
 
 extension ServerRepository: TrackingRepository {
-
-    /// Tracks the data of the data type property for a customer.
-    ///
-    /// - Parameters:
-    ///     - data: Object containing the data to be used to track a customer data.
-    ///     - customer: Customer identification.
-    ///     - completion: Object containing the request result.
-    func trackCustomer(with data: [DataType], for customerIds: [String: JSONValue],
-                       completion: @escaping ((EmptyResult<RepositoryError>) -> Void)) {
-        var token: String?
+    func trackObject(
+        _ trackingObject: TrackingObject,
+        for customerIds: [String: JSONValue],
+        completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
+    ) {
         var properties: [String: JSONValue] = [:]
 
-        for item in data {
+        for item in trackingObject.dataTypes {
             switch item {
-            case .projectToken(let string): token = string
             case .properties(let props): properties.merge(props, uniquingKeysWith: { first, _ in return first })
             default: continue
             }
         }
 
-        guard let projectToken = token else {
+        guard let projectToken = trackingObject.projectToken else {
             completion(.failure(RepositoryError.missingData("Project token not provided.")))
             return
         }
 
-        // Setup router
-        let router = RequestFactory(baseUrl: configuration.baseUrl,
-                                    projectToken: projectToken,
-                                    route: .identifyCustomer)
-
-        // Prepare parameters and request
-        let params = TrackingParameters(customerIds: customerIds, properties: properties)
-        let request = router.prepareRequest(authorization: configuration.authorization,
-                                            parameters: params)
-
-        // Run the data task
-        session
-            .dataTask(with: request, completionHandler: router.handler(with: completion))
-            .resume()
+        if let customer = trackingObject as? CustomerTrackingObject {
+            uploadTrackingData(
+                projectToken: projectToken,
+                trackingParameters: TrackingParameters(
+                    customerIds: customerIds,
+                    properties: properties,
+                    timestamp: customer.timestamp
+                ),
+                route: .identifyCustomer,
+                completion: completion
+            )
+        } else if let event = trackingObject as? EventTrackingObject {
+            uploadTrackingData(
+                projectToken: projectToken,
+                trackingParameters: TrackingParameters(
+                    customerIds: customerIds,
+                    properties: properties,
+                    timestamp: event.timestamp,
+                    eventType: event.eventType
+                ),
+                route: event.eventType == Constants.EventTypes.campaignClick ? .campaignClick : .customEvent,
+                completion: completion
+            )
+        } else {
+            fatalError("Unknown tracking object type")
+        }
     }
 
-    /// Add new events into a customer
-    ///
-    /// - Parameters:
-    ///     - projectToken: Project token (you can find it in the overview section of your Exponea project)
-    ///     - customerId: “cookie” for identifying anonymous customers or “registered” for identifying known customers)
-    ///     - properties: Properties that should be updated
-    ///     - timestamp: Timestamp should always be UNIX timestamp format
-    ///     - eventType: Type of event to be tracked
-    func trackEvent(with data: [DataType], for customerIds: [String: JSONValue],
-                    completion: @escaping ((EmptyResult<RepositoryError>) -> Void)) {
-        var token: String?
-        var properties: [String: JSONValue] = [:]
-        var timestamp: Double?
-        var eventType: String?
-
-        for item in data {
-            switch item {
-            case .projectToken(let string): token = string
-            case .properties(let props): properties.merge(props, uniquingKeysWith: { first, _ in return first })
-            case .timestamp(let timeInterval): timestamp = timeInterval ?? Date().timeIntervalSince1970
-            case .eventType(let type): eventType = type
-            default: continue
-            }
-        }
-
-        guard let projectToken = token else {
-            completion(.failure(RepositoryError.missingData("Project token not provided.")))
-            return
-        }
-
-        // Setup router
+    func uploadTrackingData(
+        projectToken: String,
+        trackingParameters: TrackingParameters,
+        route: Routes,
+        completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
+    ) {
         let router = RequestFactory(
             baseUrl: configuration.baseUrl,
             projectToken: projectToken,
-            route: eventType == Constants.EventTypes.campaignClick ? .campaignClick : .customEvent
+            route: route
         )
-        // Prepare parameters and request
-        let params = TrackingParameters(customerIds: customerIds, properties: properties,
-                                        timestamp: timestamp, eventType: eventType)
-        let request = router.prepareRequest(authorization: configuration.authorization,
-                                            parameters: params)
+        let request = router.prepareRequest(
+            authorization: configuration.authorization,
+            parameters: trackingParameters
+        )
 
-        // Run the data task
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()

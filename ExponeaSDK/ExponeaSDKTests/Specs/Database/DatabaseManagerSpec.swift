@@ -55,16 +55,16 @@ class DatabaseManagerSpec: QuickSpec {
 
                     let object = objects[0]
                     expect(db.customer.ids["registered"]).to(equal("myemail".jsonValue))
-                    expect(object.projectToken).to(equal("mytoken"))
-                    let props = object.dataTypes.properties
+                    expect(object.customer.projectToken).to(equal("mytoken"))
+                    let props = object.customer.dataTypes.properties
                     expect(props.count).to(equal(2))
 
                     expect(props["customprop"] as? String).to(equal("customval"))
                     expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
 
-                    expect(object.timestamp).to(equal(100))
+                    expect(object.customer.timestamp).to(equal(100))
 
-                    expect { try db.delete(object) }.toNot(raiseException())
+                    expect { try db.delete(object.databaseObjectProxy) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
                     expect(objects).to(beEmpty())
                 })
@@ -76,12 +76,12 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(objects.count).to(equal(1))
 
                     let object = objects[0]
-                    expect(object.projectToken).to(equal("mytoken"))
-                    expect(object.dataTypes.properties["customprop"] as? String).to(equal("customval"))
-                    expect(object.timestamp).to(equal(100))
-                    expect(object.eventType).to(equal("myevent"))
+                    expect(object.event.projectToken).to(equal("mytoken"))
+                    expect(object.event.dataTypes.properties["customprop"] as? String).to(equal("customval"))
+                    expect(object.event.timestamp).to(equal(100))
+                    expect(object.event.eventType).to(equal("myevent"))
 
-                    expect { try db.delete(object) }.toNot(raiseException())
+                    expect { try db.delete(object.databaseObjectProxy) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects).to(beEmpty())
                 })
@@ -107,9 +107,9 @@ class DatabaseManagerSpec: QuickSpec {
                         let sampleEvent = createSampleEvent()
                         let updateData = DataType.properties(["newcustomprop": .string("newcustomval")])
                         expect {
-                            try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData)
+                            try db.updateEvent(withId: sampleEvent.databaseObjectProxy.objectID, withData: updateData)
                         }.toNot(raiseException())
-                        let updatedEvent = fetchSampleEvent()
+                        let updatedEvent = fetchSampleEvent().event
                         expect { updatedEvent.dataTypes.properties.count}.to(equal(2))
                         expect { updatedEvent.dataTypes.properties["customprop"] as? String }.to(equal("customval"))
                         expect {
@@ -121,19 +121,21 @@ class DatabaseManagerSpec: QuickSpec {
                         let sampleEvent = createSampleEvent()
                         let updateData = DataType.properties(["customprop": .string("newcustomval")])
                         expect {
-                            try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData)
+                            try db.updateEvent(withId: sampleEvent.databaseObjectProxy.objectID, withData: updateData)
                         }.toNot(raiseException())
-                        let updatedEvent = fetchSampleEvent()
+                        let updatedEvent = fetchSampleEvent().event
                         expect { updatedEvent.dataTypes.properties.count}.to(equal(1))
                         expect { updatedEvent.dataTypes.properties["customprop"] as? String }.to(equal("newcustomval"))
                     })
 
                     it("should throw updating an object if it was deleted", closure: {
                         let sampleEvent = createSampleEvent()
-                        expect { try db.delete(sampleEvent) }.toNot(raiseException())
+                        expect { try db.delete(sampleEvent.databaseObjectProxy) }.toNot(raiseException())
                         let updateData = DataType.properties(["newcustomprop": .string("newcustomval")])
-                        expect { try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData) }
-                            .to(throwError(DatabaseManagerError.objectDoesNotExist))
+                        expect {
+                            try db.updateEvent(withId: sampleEvent.databaseObjectProxy.objectID, withData: updateData)
+
+                        }.to(throwError(DatabaseManagerError.objectDoesNotExist))
                     })
 
                     it("should throw updating wrong object", closure: {
@@ -197,19 +199,19 @@ class DatabaseManagerSpec: QuickSpec {
 
                     let object = objects[0]
                     expect(db.customer.ids["registered"]).to(equal("myemail".jsonValue))
-                    expect(object.projectToken).to(equal("mytoken"))
-                    let props = object.dataTypes.properties
+                    expect(object.customer.projectToken).to(equal("mytoken"))
+                    let props = object.customer.dataTypes.properties
                     expect(props.count).to(equal(2))
 
                     expect(props["customprop"] as? String).to(equal("customval"))
                     expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
 
-                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
+                    expect(object.customer.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
 
                     waitUntil { done in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
-                            expect { try db.delete(object) }.toNot(raiseException())
+                            expect { try db.delete(object.databaseObjectProxy) }.toNot(raiseException())
                             done()
                         }
                     }
@@ -243,21 +245,21 @@ class DatabaseManagerSpec: QuickSpec {
                     waitUntil(action: { (done) in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
-                            expect(object.projectToken).to(equal("mytoken"))
+                            expect(object.event.projectToken).to(equal("mytoken"))
                             done()
                         }
                     })
 
-                    expect(object.dataTypes.properties["customprop"] as? String).to(equal("customval"))
+                    expect(object.event.dataTypes.properties["customprop"] as? String).to(equal("customval"))
 
-                    expect(object.eventType).to(equal("myevent"))
+                    expect(object.event.eventType).to(equal("myevent"))
 
-                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
+                    expect(object.event.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
 
                     waitUntil(action: { (done) in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
-                            expect { try db.delete(object) }.toNot(raiseException())
+                            expect { try db.delete(object.databaseObjectProxy) }.toNot(raiseException())
                             done()
                         }
                     })
