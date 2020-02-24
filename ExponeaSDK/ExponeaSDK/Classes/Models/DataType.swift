@@ -57,4 +57,23 @@ extension Array where Iterator.Element == DataType {
         }
         return properties
     }
+
+    func addProperties(_ properties: [String: JSONConvertible]?) -> [DataType] {
+        guard let jsonProperties = properties?.mapValues({ $0.jsonValue }) else {
+            return self
+        }
+        var hasProperties = false
+        var updatedData = self.map { (dataType: DataType) -> DataType in
+            if case .properties(let props) = dataType {
+                hasProperties = true
+                return .properties(jsonProperties.merging(props, uniquingKeysWith: { (_, new) in new }))
+            } else {
+                return dataType
+            }
+        }
+        if !hasProperties {
+            updatedData.append(.properties(jsonProperties))
+        }
+        return updatedData
+    }
 }

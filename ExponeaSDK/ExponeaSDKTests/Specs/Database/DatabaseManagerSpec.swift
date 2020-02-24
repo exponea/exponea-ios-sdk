@@ -56,11 +56,11 @@ class DatabaseManagerSpec: QuickSpec {
                     let object = objects[0]
                     expect(db.customer.ids["registered"]).to(equal("myemail".jsonValue))
                     expect(object.projectToken).to(equal("mytoken"))
-                    let props = object.properties!
+                    let props = object.dataTypes.properties
                     expect(props.count).to(equal(2))
 
-                    expect(props["customprop"]?.rawValue as? String).to(equal("customval"))
-                    expect(props["apple_push_notification_id"]?.rawValue as? String).to(equal("pushtoken"))
+                    expect(props["customprop"] as? String).to(equal("customval"))
+                    expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
 
                     expect(object.timestamp).to(equal(100))
 
@@ -77,7 +77,7 @@ class DatabaseManagerSpec: QuickSpec {
 
                     let object = objects[0]
                     expect(object.projectToken).to(equal("mytoken"))
-                    expect(object.properties!["customprop"]?.rawValue as? String).to(equal("customval"))
+                    expect(object.dataTypes.properties["customprop"] as? String).to(equal("customval"))
                     expect(object.timestamp).to(equal(100))
                     expect(object.eventType).to(equal("myevent"))
 
@@ -110,10 +110,10 @@ class DatabaseManagerSpec: QuickSpec {
                             try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData)
                         }.toNot(raiseException())
                         let updatedEvent = fetchSampleEvent()
-                        expect { updatedEvent.properties?.count}.to(equal(2))
-                        expect { updatedEvent.properties?["customprop"]?.rawValue as? String }.to(equal("customval"))
+                        expect { updatedEvent.dataTypes.properties.count}.to(equal(2))
+                        expect { updatedEvent.dataTypes.properties["customprop"] as? String }.to(equal("customval"))
                         expect {
-                            updatedEvent.properties?["newcustomprop"]?.rawValue as? String
+                            updatedEvent.dataTypes.properties["newcustomprop"] as? String
                         }.to(equal("newcustomval"))
                     })
 
@@ -124,8 +124,8 @@ class DatabaseManagerSpec: QuickSpec {
                             try db.updateEvent(withId: sampleEvent.managedObjectID, withData: updateData)
                         }.toNot(raiseException())
                         let updatedEvent = fetchSampleEvent()
-                        expect { updatedEvent.properties?.count}.to(equal(1))
-                        expect { updatedEvent.properties?["customprop"]?.rawValue as? String }.to(equal("newcustomval"))
+                        expect { updatedEvent.dataTypes.properties.count}.to(equal(1))
+                        expect { updatedEvent.dataTypes.properties["customprop"] as? String }.to(equal("newcustomval"))
                     })
 
                     it("should throw updating an object if it was deleted", closure: {
@@ -198,11 +198,11 @@ class DatabaseManagerSpec: QuickSpec {
                     let object = objects[0]
                     expect(db.customer.ids["registered"]).to(equal("myemail".jsonValue))
                     expect(object.projectToken).to(equal("mytoken"))
-                    let props = object.properties!
+                    let props = object.dataTypes.properties
                     expect(props.count).to(equal(2))
 
-                    expect(props["customprop"]?.rawValue as? String).to(equal("customval"))
-                    expect(props["apple_push_notification_id"]?.rawValue as? String).to(equal("pushtoken"))
+                    expect(props["customprop"] as? String).to(equal("customval"))
+                    expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
 
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
 
@@ -248,7 +248,7 @@ class DatabaseManagerSpec: QuickSpec {
                         }
                     })
 
-                    expect(object.properties!["customprop"]?.rawValue as? String).to(equal("customval"))
+                    expect(object.dataTypes.properties["customprop"] as? String).to(equal("customval"))
 
                     expect(object.eventType).to(equal("myevent"))
 

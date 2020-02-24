@@ -60,7 +60,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).notTo(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.properties?["utm_campaign"]?.rawValue as? String).to(equal("mycampaign"))
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(equal("mycampaign"))
                     }
                     it("track campaign_click and should not update session when called after update threshold") {
                         let exponea = MockExponea()
@@ -82,7 +82,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).notTo(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).toNot(beNil())
-                        expect(sessionStart!.properties?["utm_campaign"]?.rawValue as? String).to(beNil())
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
                     }
                 }
                 context("before SDK started") {
@@ -98,7 +98,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).notTo(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.properties?["utm_campaign"]?.rawValue as? String).to(equal("mycampaign"))
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(equal("mycampaign"))
                     }
                     it("processes saved campaigns only once") {
                         let exponea = MockExponea()

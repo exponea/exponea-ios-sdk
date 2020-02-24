@@ -79,15 +79,6 @@ class TrackCustomerThreadSafe {
     public let dataTypes: [DataType]
     public let retries: Int
 
-    public var properties: [String: JSONValue]? {
-        return dataTypes.map { datatype -> [String: JSONValue]? in
-            if case .properties(let data) = datatype {
-                return data
-            }
-            return nil
-        }.first { $0 != nil } ?? nil
-    }
-
     init(_ trackCustomer: TrackCustomer) {
         managedObjectID = trackCustomer.objectID
         projectToken = trackCustomer.projectToken

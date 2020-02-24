@@ -190,7 +190,7 @@ extension TrackingManager: TrackingManagerType {
             if let stringEventType = getEventTypeString(type: type) {
                 payload.append(.eventType(stringEventType))
             }
-
+            payload = payload.addProperties(repository.configuration.defaultProperties)
             switch type {
             case .identifyCustomer,
                  .registerPushToken:
