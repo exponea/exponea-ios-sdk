@@ -24,7 +24,7 @@
 import SystemConfiguration
 import Foundation
 
-public enum ReachabilityError: Error {
+enum ExponeaReachabilityError: Error {
     case FailedToCreateWithAddress(sockaddr_in)
     case FailedToCreateWithHostname(String)
     case UnableToSetCallback
@@ -33,16 +33,16 @@ public enum ReachabilityError: Error {
 }
 
 @available(*, unavailable, renamed: "Notification.Name.reachabilityChanged")
-public let ReachabilityChangedNotification = NSNotification.Name("ReachabilityChangedNotification")
+let ExponeaReachabilityChangedNotification = NSNotification.Name("ReachabilityChangedNotification")
 
-public extension Notification.Name {
+extension Notification.Name {
     static let reachabilityChanged = Notification.Name("reachabilityChanged")
 }
 
-public class Reachability {
+class ExponeaReachability {
 
-    public typealias NetworkReachable = (Reachability) -> ()
-    public typealias NetworkUnreachable = (Reachability) -> ()
+    public typealias NetworkReachable = (ExponeaReachability) -> ()
+    public typealias NetworkUnreachable = (ExponeaReachability) -> ()
 
     @available(*, unavailable, renamed: "Connection")
     public enum NetworkStatus: CustomStringConvertible {
@@ -145,7 +145,7 @@ public class Reachability {
     }
 }
 
-public extension Reachability {
+extension ExponeaReachability {
 
     // MARK: - *** Notifier methods ***
     func startNotifier() throws {
@@ -154,20 +154,20 @@ public extension Reachability {
         let callback: SCNetworkReachabilityCallBack = { (reachability, flags, info) in
             guard let info = info else { return }
 
-            let reachability = Unmanaged<Reachability>.fromOpaque(info).takeUnretainedValue()
+            let reachability = Unmanaged<ExponeaReachability>.fromOpaque(info).takeUnretainedValue()
             reachability.flags = flags
         }
 
         var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
-        context.info = UnsafeMutableRawPointer(Unmanaged<Reachability>.passUnretained(self).toOpaque())
+        context.info = UnsafeMutableRawPointer(Unmanaged<ExponeaReachability>.passUnretained(self).toOpaque())
         if !SCNetworkReachabilitySetCallback(reachabilityRef, callback, &context) {
             stopNotifier()
-            throw ReachabilityError.UnableToSetCallback
+            throw ExponeaReachabilityError.UnableToSetCallback
         }
 
         if !SCNetworkReachabilitySetDispatchQueue(reachabilityRef, reachabilitySerialQueue) {
             stopNotifier()
-            throw ReachabilityError.UnableToSetDispatchQueue
+            throw ExponeaReachabilityError.UnableToSetDispatchQueue
         }
 
         // Perform an initial check
@@ -216,14 +216,14 @@ public extension Reachability {
     }
 }
 
-fileprivate extension Reachability {
+fileprivate extension ExponeaReachability {
 
     func setReachabilityFlags() throws {
         try reachabilitySerialQueue.sync { [unowned self] in
             var flags = SCNetworkReachabilityFlags()
             if !SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags) {
                 self.stopNotifier()
-                throw ReachabilityError.UnableToGetInitialFlags
+                throw ExponeaReachabilityError.UnableToGetInitialFlags
             }
 
             self.flags = flags
@@ -243,7 +243,7 @@ fileprivate extension Reachability {
 
 extension SCNetworkReachabilityFlags {
 
-    typealias Connection = Reachability.Connection
+    typealias Connection = ExponeaReachability.Connection
 
     var connection: Connection {
         guard isReachableFlagSet else { return .none }

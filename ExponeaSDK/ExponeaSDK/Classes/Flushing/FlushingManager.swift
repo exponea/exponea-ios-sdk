@@ -10,7 +10,7 @@ class FlushingManager: FlushingManagerType {
     private let database: DatabaseManagerType
     private let repository: RepositoryType
 
-    private let reachability: Reachability
+    private let reachability: ExponeaReachability
 
     private let flushingSemaphore = DispatchSemaphore(value: 1)
     private var isFlushingData: Bool = false
@@ -38,7 +38,7 @@ class FlushingManager: FlushingManagerType {
         self.repository = repository
 
         // Start reachability
-        guard let reachability = Reachability(hostname: repository.configuration.hostname) else {
+        guard let reachability = ExponeaReachability(hostname: repository.configuration.hostname) else {
             throw TrackingManagerError.cannotStartReachability
         }
         self.reachability = reachability
