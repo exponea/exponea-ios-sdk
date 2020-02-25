@@ -7,6 +7,6 @@
 //
 
 protocol UrlOpenerType {
-    func openBrowserLink(_ url: URL)
-    func openDeeplink(_ url: URL)
+    func openBrowserLink(_ urlString: String)
+    func openDeeplink(_ urlString: String)
 }

@@ -10,14 +10,14 @@ import Foundation
 @testable import ExponeaSDK
 
 final class MockUrlOpener: UrlOpenerType {
-    var openedBrowserLinks: [URL] = []
-    var openedDeeplinks: [URL] = []
+    var openedBrowserLinks: [String] = []
+    var openedDeeplinks: [String] = []
 
-    func openBrowserLink(_ url: URL) {
-        openedBrowserLinks.append(url)
+    func openBrowserLink(_ urlString: String) {
+        openedBrowserLinks.append(urlString)
     }
 
-    func openDeeplink(_ url: URL) {
-        openedDeeplinks.append(url)
+    func openDeeplink(_ urlString: String) {
+        openedDeeplinks.append(urlString)
     }
 }

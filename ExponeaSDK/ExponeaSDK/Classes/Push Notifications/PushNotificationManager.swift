@@ -92,13 +92,13 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             break
 
         case .browser:
-            if let value = pushOpenedData.actionValue, let url = URL(string: value) {
-                urlOpener.openBrowserLink(url)
+            if let value = pushOpenedData.actionValue {
+                urlOpener.openBrowserLink(value)
             }
 
         case .deeplink:
-            if let value = pushOpenedData.actionValue, let url = URL(string: value) {
-                urlOpener.openDeeplink(url)
+            if let value = pushOpenedData.actionValue {
+                urlOpener.openDeeplink(value)
             }
         }
     }

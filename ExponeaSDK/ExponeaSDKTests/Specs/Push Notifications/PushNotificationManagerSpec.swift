@@ -367,13 +367,15 @@ final class PushNotificationManagerSpec: QuickSpec {
                     }
                     if testCase.expectedBrowserLinkOpened != nil {
                         expect(urlOpener.openedBrowserLinks.count).to(equal(1))
-                        expect(urlOpener.openedBrowserLinks[0]).to(equal(testCase.expectedBrowserLinkOpened))
+                        expect(urlOpener.openedBrowserLinks[0]).to(
+                            equal(testCase.expectedBrowserLinkOpened?.absoluteString)
+                        )
                     } else {
                         expect(urlOpener.openedBrowserLinks).to(beEmpty())
                     }
                     if testCase.expectedDeeplinkOpened != nil {
                         expect(urlOpener.openedDeeplinks.count).to(equal(1))
-                        expect(urlOpener.openedDeeplinks[0]).to(equal(testCase.expectedDeeplinkOpened))
+                        expect(urlOpener.openedDeeplinks[0]).to(equal(testCase.expectedDeeplinkOpened?.absoluteString))
                     } else {
                         expect(urlOpener.openedDeeplinks).to(beEmpty())
                     }

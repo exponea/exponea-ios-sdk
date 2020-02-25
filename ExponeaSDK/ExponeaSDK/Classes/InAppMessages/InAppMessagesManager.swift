@@ -224,9 +224,8 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
     private func processInAppMessageAction(button: InAppMessagePayloadButton) {
         if case .deeplink = button.buttonType,
-           let buttonLink = button.buttonLink,
-           let url = URL(string: buttonLink) {
-            urlOpener.openDeeplink(url)
+           let buttonLink = button.buttonLink {
+            urlOpener.openDeeplink(buttonLink)
         } else {
             Exponea.logger.log(
                 .error,
