@@ -91,10 +91,10 @@ final class CrashManager {
     }
 
     func reportLog(_ message: String) {
-        logsQueue.sync {
-            self.logMessages.append(message)
-            if self.logMessages.count > CrashManager.maxLogMessages {
-                self.logMessages.removeFirst()
+        logsQueue.sync { [weak self] in
+            self?.logMessages.append(message)
+            if self?.logMessages.count ?? 0 > CrashManager.maxLogMessages {
+                self?.logMessages.removeFirst()
             }
         }
     }
