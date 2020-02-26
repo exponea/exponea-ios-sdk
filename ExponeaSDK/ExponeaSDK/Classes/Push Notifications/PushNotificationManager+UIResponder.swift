@@ -9,9 +9,11 @@
 import Foundation
 
 extension UIResponder {
-    @objc func application(_ application: UIApplication,
-                           newDidReceiveRemoteNotification userInfo: [AnyHashable: Any],
-                           fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    @objc func exponeaApplication(
+        _ application: UIApplication,
+        newDidReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
         // Get the swizzle
         let selector = PushSelectorMapping.handlerReceive.original
         guard let originalMethod = class_getInstanceMethod(type(of: self), selector),
@@ -30,7 +32,11 @@ extension UIResponder {
         }
     }
 
-    @objc func application(_ application: UIApplication, newDidReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+    @objc func exponeaApplication(
+        _ application: UIApplication,
+        newDidReceiveRemoteNotification
+        userInfo: [AnyHashable: Any]
+    ) {
         // Get the swizzle
         let selector = PushSelectorMapping.deprecatedReceive.original
         guard let originalMethod = class_getInstanceMethod(type(of: self), selector),
@@ -49,7 +55,7 @@ extension UIResponder {
         }
     }
 
-    @objc func applicationSwizzle(_ application: UIApplication, didRegisterPushToken deviceToken: Data) {
+    @objc func exponeaApplicationSwizzle(_ application: UIApplication, didRegisterPushToken deviceToken: Data) {
         // Get the swizzle
         let selector = PushSelectorMapping.registration.original
         guard let originalMethod = class_getInstanceMethod(type(of: self), selector),

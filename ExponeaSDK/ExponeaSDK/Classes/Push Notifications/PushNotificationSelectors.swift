@@ -32,19 +32,19 @@ internal enum PushSelectorMapping {
 
     internal enum Swizzled {
         static let registration = #selector(
-            UIResponder.applicationSwizzle(_:didRegisterPushToken:)
+            UIResponder.exponeaApplicationSwizzle(_:didRegisterPushToken:)
         )
 
         static let newReceive = #selector(
-            NSObject.userNotificationCenter(_:newDidReceive:withCompletionHandler:)
+            NSObject.exponeaUserNotificationCenter(_:newDidReceive:withCompletionHandler:)
         )
 
         static let handlerReceive = #selector(
-            UIResponder.application(_:newDidReceiveRemoteNotification:fetchCompletionHandler:)
+            UIResponder.exponeaApplication(_:newDidReceiveRemoteNotification:fetchCompletionHandler:)
         )
 
         static let deprecatedReceive = #selector(
-            UIResponder.application(_:newDidReceiveRemoteNotification:)
+            UIResponder.exponeaApplication(_:newDidReceiveRemoteNotification:)
         )
     }
 

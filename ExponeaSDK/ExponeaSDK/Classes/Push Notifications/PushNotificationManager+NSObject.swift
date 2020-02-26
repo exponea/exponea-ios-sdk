@@ -10,9 +10,11 @@ import Foundation
 import UserNotifications
 
 extension NSObject {
-    @objc func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                      newDidReceive response: UNNotificationResponse,
-                                      withCompletionHandler completionHandler: @escaping () -> Void) {
+    @objc func exponeaUserNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        newDidReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         let selector = PushSelectorMapping.newReceive.original
 
         guard let originalMethod = class_getInstanceMethod(type(of: self), selector),
