@@ -19,7 +19,7 @@ extension Exponea {
     public func trackEvent(properties: [String: JSONConvertible], timestamp: Double?, eventType: String?) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient
             }
             var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })), .timestamp(timestamp)]
 
@@ -41,7 +41,7 @@ extension Exponea {
     public func trackPayment(properties: [String: JSONConvertible], timestamp: Double?) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient
             }
             let data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })), .timestamp(timestamp)]
 
@@ -62,7 +62,7 @@ extension Exponea {
                                  timestamp: Double?) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient
             }
             var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })), .timestamp(timestamp)]
             if var ids = customerIds {
@@ -97,7 +97,7 @@ extension Exponea {
     public func trackPushToken(_ token: String?) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient
             }
             let data: [DataType] = [.pushNotificationToken(token)]
 
@@ -110,7 +110,7 @@ extension Exponea {
     public func trackPushOpened(with userInfo: [AnyHashable: Any]) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient
             }
 
             guard let payload = userInfo as? [String: Any] else {
@@ -135,7 +135,7 @@ extension Exponea {
     public func trackSessionStart() {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient
             }
             try dependencies.trackingManager.triggerSessionStart()
         }
@@ -145,7 +145,7 @@ extension Exponea {
     public func trackSessionEnd() {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient
             }
             try dependencies.trackingManager.triggerSessionEnd()
         }
@@ -205,7 +205,7 @@ extension Exponea {
         executeSafelyWithDependencies { dependencies in
             // Create initial data
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token")
+                throw ExponeaError.authorizationInsufficient
             }
             // Do the actual tracking
             try dependencies.trackingManager.track(.campaignClick, with: [data.campaignDataProperties])
@@ -234,7 +234,7 @@ extension Exponea {
     public func flushData() {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient
             }
             dependencies.flushingManager.flushData()
         }
@@ -247,7 +247,7 @@ extension Exponea {
     public func anonymize() {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient("token, basic")
+                throw ExponeaError.authorizationInsufficient
             }
 
             try dependencies.trackingManager.anonymize()

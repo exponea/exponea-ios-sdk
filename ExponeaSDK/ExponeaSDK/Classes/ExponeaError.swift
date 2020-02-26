@@ -9,17 +9,18 @@
 import Foundation
 
 /// Data types that thrown the possible errors on the configuration object.
-///
-/// - notConfigured
-/// - configurationError(String)
-/// - authorizationInsufficient(String)
-/// - unknownError(String?)
 public enum ExponeaError: LocalizedError {
+    /// Exponea SDK functionality used before configuring the SDK.
     case notConfigured
+    /// Unable to configure Exponea SDK.
     case configurationError(String)
-    case authorizationInsufficient(String)
+    /// Authorization provided in Configuration is not sufficient to perform the operation.
+    case authorizationInsufficient
+    /// Uknown error occured, check the description provided.
     case unknownError(String?)
+    /// Safety wrapper caught NSException while executing SDK operation.
     case nsExceptionRaised(NSException)
+    /// After Exponea SDK runs into an NSException, further calls to SDK will fail with this exception.
     case nsExceptionInconsistency
 
     public var errorDescription: String? {
@@ -33,10 +34,10 @@ public enum ExponeaError: LocalizedError {
             \(details)
             """
 
-        case .authorizationInsufficient(let required):
+        case .authorizationInsufficient:
             return """
-            You don't have sufficient authorizaiton to perform this action. Please, double check your
-            authorization status. This function requires authorization \(required.capitalized).
+            You don't have sufficient authorization to perform this action. Please, double check your
+            authorization status.
             """
 
         case .nsExceptionRaised(let exception):
