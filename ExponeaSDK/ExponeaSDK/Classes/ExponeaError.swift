@@ -25,9 +25,7 @@ public enum ExponeaError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .notConfigured:
-            return """
-            Exponea SDK is not configured properly. Please, double check your Exponea setup.
-            """
+            return Constants.ErrorMessages.sdkNotConfigured
 
         case .configurationError(let details):
             return """

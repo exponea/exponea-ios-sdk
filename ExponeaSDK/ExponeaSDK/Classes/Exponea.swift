@@ -73,7 +73,10 @@ public class Exponea: ExponeaType {
     public var flushingMode: FlushingMode {
         get {
             guard let flushingManager = flushingManager else {
-                Exponea.logger.log(.warning, message: "Exponea not configured, falling back to manual flushing mode.")
+                Exponea.logger.log(
+                    .warning,
+                    message: "Falling back to manual flushing mode. " + Constants.ErrorMessages.sdkNotConfigured
+                )
                 return .manual
             }
 
@@ -81,7 +84,10 @@ public class Exponea: ExponeaType {
         }
         set {
             guard var flushingManager = flushingManager else {
-                Exponea.logger.log(.warning, message: "Exponea not configured, can't set flushing mode.")
+                Exponea.logger.log(
+                    .warning,
+                    message: "Cannot set flushing mode. " + Constants.ErrorMessages.sdkNotConfigured
+                )
                 return
             }
 

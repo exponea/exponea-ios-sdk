@@ -20,8 +20,7 @@ class ExponeaErrorSpec: QuickSpec {
 
                 it("Error not configured") {
                     let exponeaError = ExponeaError.notConfigured
-                    let errorDesc = "Exponea SDK is not configured properly. Please, double check your Exponea setup."
-                    expect(exponeaError.localizedDescription).to(equal(errorDesc))
+                    expect(exponeaError.localizedDescription).to(equal(Constants.ErrorMessages.sdkNotConfigured))
                 }
 
                 it("Configured error") {
