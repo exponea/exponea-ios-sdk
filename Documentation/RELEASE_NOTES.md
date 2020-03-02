@@ -1,5 +1,15 @@
 ## Release Notes
 
+## Release Notes for 2.6.0
+#### March 02, 2020
+* Features
+  * New in-app messages - display rich messages when app starts or an event is tracked - even when offline. This SDK is fully ready for the feature when it is publicly available soon.
+  * The SDK is now able to report the SDK-related crashes to Exponea. This helps us keep the SDK in a good shape and work on fixes as soon as possible.
+* Bug fixes
+  * Fixed: Browser notification action now always opens the url browser
+  * Fixed: Default properties are now added to all events, including system events
+  * Removed: Automatic payment tracking was broken and has been removed from the Exponea iOS SDK. In case you're interested in this functionality let us know.
+
 ## Release Notes for 2.5.2
 #### January 10, 2020
 * Bug Fixes
