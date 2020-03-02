@@ -44,11 +44,11 @@ extension Array where Iterator.Element == DataType {
         }.sorted().last
     }
 
-    var properties: [String: Any?] {
-        var properties: [String: Any?] = [:]
+    var properties: [String: JSONConvertible?] {
+        var properties: [String: JSONConvertible?] = [:]
         forEach {
             if case .properties(let props) = $0 {
-                props.forEach { properties.updateValue($0.value.rawValue, forKey: $0.key) }
+                props.forEach { properties.updateValue($0.value.jsonConvertible, forKey: $0.key) }
             }
         }
         return properties

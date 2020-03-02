@@ -40,33 +40,15 @@ extension Double: JSONConvertible {
     }
 }
 
-/// --------
-
-/// When Swift 4.2 is released, use the following and remove workarounds.
-
-//extension Dictionary: JSONConvertible where Key == String, Value == JSONConvertible {
-//    public var jsonValue: JSONValue {
-//        return .dictionary(self.mapValues({ $0.jsonValue }))
-//    }
-//}
-
-//extension Array: JSONConvertible where Element == JSONConvertible {
-//    public var jsonValue: JSONValue {
-//        return .array(self.map({ $0.jsonValue }))
-//    }
-//}
-
-/// --------
-
-extension Dictionary: JSONConvertible where Key == String, Value == JSONValue {
+extension Dictionary: JSONConvertible where Key == String, Value == JSONConvertible {
     public var jsonValue: JSONValue {
-        return .dictionary(self)
+        return .dictionary(self.mapValues({ $0.jsonValue }))
     }
 }
 
-extension Array: JSONConvertible where Element == JSONValue {
+extension Array: JSONConvertible where Element == JSONConvertible {
     public var jsonValue: JSONValue {
-        return .array(self)
+        return .array(self.map({ $0.jsonValue }))
     }
 }
 
@@ -137,8 +119,8 @@ extension JSONValue {
         case .bool(let bool): return bool
         case .int(let int): return int
         case .double(let double): return double
-        case .dictionary(let dictionary): return dictionary
-        case .array(let array): return array
+        case .dictionary(let dictionary): return dictionary.mapValues { $0.jsonConvertible }
+        case .array(let array): return array.map { $0.jsonConvertible }
         }
     }
 }

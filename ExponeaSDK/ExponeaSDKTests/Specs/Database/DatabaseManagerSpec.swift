@@ -131,6 +131,20 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(objects).to(beEmpty())
                 })
 
+                it("should track event with complex properties") {
+                    let complexData: [DataType] = [.properties([
+                        "array": [123, "abc", false].jsonValue,
+                        "dictionary": ["int": 123, "string": "abc", "bool": true].jsonValue
+                    ])]
+                    expect { try db.trackEvent(with: complexData, into: myProject) }.toNot(raiseException())
+                    let objects: [TrackEventProxy] = (try? db.fetchTrackEvent()) ?? []
+                    let object: TrackEventProxy = objects[0]
+                    expect(object.dataTypes.properties["array"]??.jsonValue)
+                        .to(equal([123, "abc", false].jsonValue))
+                    expect(object.dataTypes.properties["dictionary"]??.jsonValue)
+                        .to(equal(["int": 123, "string": "abc", "bool": true].jsonValue))
+                }
+
                 describe("update", {
                     func createSampleEvent() -> TrackEventProxy {
                         var objects: [TrackEventProxy] = []

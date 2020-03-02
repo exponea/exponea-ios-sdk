@@ -48,16 +48,16 @@ class JSONValueSpec: QuickSpec {
             }
             context("with array") {
                 it("should be equal", closure: {
-                    let array = [JSONValue.int(123), JSONValue.string("string"), JSONValue.bool(true)]
+                    let array: [JSONConvertible] = [123, "string", true]
                     expect(array.jsonValue).to(equal(.array([.int(123), .string("string"), .bool(true)])))
                 })
             }
             context("with dictionary") {
                 it("should be equal", closure: {
-                    let dictionary: [String: JSONValue] = [
-                        "intvalue": .int(123),
-                        "stringvalue": .string("myvalue"),
-                        "boolvalue": .bool(true)
+                    let dictionary: [String: JSONConvertible] = [
+                        "intvalue": 123,
+                        "stringvalue": "myvalue",
+                        "boolvalue": true
                     ]
                     let expected = JSONValue.dictionary([
                         "intvalue": .int(123),
@@ -105,27 +105,24 @@ class JSONValueSpec: QuickSpec {
             context("with array") {
                 it("should be equal", closure: {
                     let val = JSONValue.array([.int(123), .string("string"), .bool(true)])
-                    expect(val.jsonConvertible).to(beAKindOf(Array<JSONValue>.self))
-                    let array = val.jsonConvertible as? [JSONValue]
-                    let converted = array?.map({ $0.jsonConvertible })
+                    expect(val.jsonConvertible).to(beAKindOf(Array<JSONConvertible>.self))
+                    let array = val.jsonConvertible as? [JSONConvertible]
 
-                    expect(converted?.first).to(beAKindOf(Int.self))
+                    expect(array?.first).to(beAKindOf(Int.self))
 
-                    let int = converted?.first as? Int
+                    let int = array?.first as? Int
                     expect(int).to(equal(123))
                 })
             }
             context("with dictionary") {
                 it("should be equal", closure: {
                     let val = JSONValue.dictionary(["test": .string("value")])
-                    expect(val.jsonConvertible).to(beAKindOf(Dictionary<String, JSONValue>.self))
+                    expect(val.jsonConvertible).to(beAKindOf(Dictionary<String, JSONConvertible>.self))
 
-                    let dict = val.jsonConvertible as? [String: JSONValue]
-                    let converted = dict?.mapValues({ $0.jsonConvertible })
+                    let dict = val.jsonConvertible as? [String: JSONConvertible]
+                    expect(dict?["test"]).to(beAKindOf(String.self))
 
-                    expect(converted?["test"]).to(beAKindOf(String.self))
-
-                    let string = converted?["test"] as? String
+                    let string = dict?["test"] as? String
                     expect(string).to(equal("value"))
                 })
             }
