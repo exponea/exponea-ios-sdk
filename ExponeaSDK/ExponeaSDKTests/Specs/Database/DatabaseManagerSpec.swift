@@ -48,7 +48,7 @@ class DatabaseManagerSpec: QuickSpec {
                 })
 
                 it("should identify, fetch and delete a customer", closure: {
-                    var objects: [TrackCustomerThreadSafe] = []
+                    var objects: [TrackCustomerProxy] = []
                     expect { try db.identifyCustomer(with: customerData) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
                     expect(objects.count).to(equal(1))
@@ -70,7 +70,7 @@ class DatabaseManagerSpec: QuickSpec {
                 })
 
                 it("should track, fetch and delete an event", closure: {
-                    var objects: [TrackEventThreadSafe] = []
+                    var objects: [TrackEventProxy] = []
                     expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects.count).to(equal(1))
@@ -87,8 +87,8 @@ class DatabaseManagerSpec: QuickSpec {
                 })
 
                 describe("update", {
-                    func createSampleEvent() -> TrackEventThreadSafe {
-                        var objects: [TrackEventThreadSafe] = []
+                    func createSampleEvent() -> TrackEventProxy {
+                        var objects: [TrackEventProxy] = []
                         expect { try db.trackEvent(with: eventData) }.toNot(raiseException())
                         expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                         expect(objects.count).to(equal(1))
@@ -96,8 +96,8 @@ class DatabaseManagerSpec: QuickSpec {
                         return objects[0]
                     }
 
-                    func fetchSampleEvent() -> TrackEventThreadSafe {
-                        var objects: [TrackEventThreadSafe] = []
+                    func fetchSampleEvent() -> TrackEventProxy {
+                        var objects: [TrackEventProxy] = []
                         expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                         expect(objects.count).to(equal(1))
                         return objects[0]
@@ -174,7 +174,7 @@ class DatabaseManagerSpec: QuickSpec {
                 })
 
                 it("should identify, fetch and delete a track customer event", closure: {
-                    var objects: [TrackCustomerThreadSafe] = []
+                    var objects: [TrackCustomerProxy] = []
                     var expectedTimestamp: Double = 1
 
                     waitUntil { done in
@@ -218,7 +218,7 @@ class DatabaseManagerSpec: QuickSpec {
                 })
 
                 it("should track, fetch and delete an event", closure: {
-                    var objects: [TrackEventThreadSafe] = []
+                    var objects: [TrackEventProxy] = []
                     var expectedTimestamp: Double = 1
 
                     waitUntil { done in
@@ -301,7 +301,7 @@ class DatabaseManagerSpec: QuickSpec {
                         return nil
                     }.toNot(raiseException())
 
-                    var objects: [TrackEventThreadSafe] = []
+                    var objects: [TrackEventProxy] = []
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects.count).to(equal(1000))
                 })
@@ -316,14 +316,14 @@ class DatabaseManagerSpec: QuickSpec {
                         return nil
                         }.toNot(raiseException())
 
-                    var objects: [TrackCustomerThreadSafe] = []
+                    var objects: [TrackCustomerProxy] = []
                     expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
                     expect(objects.count).to(equal(1000))
                 })
 
                 it("should not crash when tracking event from multiple threads") {
                     db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
-                    var objects: [TrackEventThreadSafe] = []
+                    var objects: [TrackEventProxy] = []
 
                     waitUntil(timeout: 6.0, action: { (allDone) in
                         var doneCount = 0

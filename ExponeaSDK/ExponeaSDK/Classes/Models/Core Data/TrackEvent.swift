@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 @objc(TrackEvent)
-class TrackEvent: NSManagedObjectWithContext {
+class TrackEvent: NSManagedObjectWithContext, TrackingObject {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackEvent> {
         return NSFetchRequest<TrackEvent>(entityName: "TrackEvent")
@@ -84,7 +84,7 @@ extension TrackEvent: HasKeyValueProperties {
     @NSManaged public func removeFromProperties(_ values: NSSet)
 }
 
-class TrackEventThreadSafe {
+class TrackEventProxy: TrackingObjectProxy {
     public let managedObjectID: NSManagedObjectID
     public let eventType: String?
     public let projectToken: String?

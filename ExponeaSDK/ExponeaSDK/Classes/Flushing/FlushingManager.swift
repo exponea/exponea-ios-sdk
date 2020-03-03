@@ -99,13 +99,16 @@ class FlushingManager: FlushingManagerType {
             }
 
             // Pull from db
-            let events = try database.fetchTrackEvent().reversed()
-            let customers = try database.fetchTrackCustomer().reversed()
+            let events = try database.fetchTrackEvent()
+            let customers = try database.fetchTrackCustomer()
 
-            Exponea.logger.log(.verbose, message: """
+            Exponea.logger.log(
+                .verbose,
+                message: """
                 Flushing data: \(events.count + customers.count) total objects to upload, \
                 \(events.count) events and \(customers.count) customer updates.
-                """)
+                """
+            )
 
             // Check if we have any data otherwise bail
             guard !events.isEmpty || !customers.isEmpty else {
@@ -114,24 +117,10 @@ class FlushingManager: FlushingManagerType {
                 return
             }
 
-            var customersDone = false
-            var eventsDone = false
-
-            flushCustomerTracking(Array(customers), completion: {
-                customersDone = true
-                if eventsDone && customersDone {
-                    self.isFlushingData = false
-                    completion?()
-                }
-            })
-
-            flushEventTracking(Array(events), completion: {
-                eventsDone = true
-                if eventsDone && customersDone {
-                    self.isFlushingData = false
-                    completion?()
-                }
-            })
+            flushTrackingObjects((customers + events).reversed()) {
+                self.isFlushingData = false
+                completion?()
+            }
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
             self.isFlushingData = false
@@ -139,141 +128,103 @@ class FlushingManager: FlushingManagerType {
         }
     }
 
-    func flushCustomerTracking(_ customers: [TrackCustomerThreadSafe], completion: (() -> Void)? = nil) {
-        var counter = customers.count
-        for customer in customers {
-            repository.trackCustomer(with: customer.dataTypes, for: database.customer.ids) { [weak self] (result) in
-                switch result {
-                case .success:
-                    Exponea.logger.log(.verbose, message: """
-                        Successfully uploaded customer update: \(customer.managedObjectID).
-                        """)
-                    do {
-                        try self?.database.delete(customer)
-                    } catch {
-                        Exponea.logger.log(.error, message: """
-                            Failed to remove object from database: \(customer.managedObjectID).
-                            \(error.localizedDescription)
-                            """)
-                    }
-                case .failure(let error):
-                    switch error {
-                    case .connectionError, .serverError(nil):
-                        // If server or connection error, bail here and do not increase retry count
-                        Exponea.logger.log(.warning, message: """
-                            Failed to upload customer event due to connection or server error. \
-                            \(error.localizedDescription)
-                            """)
-
-                    default:
-                        // Handle all other errors regularly
-                        Exponea.logger.log(.error, message: """
-                            Failed to upload customer update. \(error.localizedDescription)
-                            """)
-
-                        // If we have reached the max count of retries, delete the object.
-                        // Otherwise save changes and try again next time.
-                        do {
-                            let max = self?.repository.configuration.flushEventMaxRetries
-                                ?? Constants.Session.maxRetries
-                            if customer.retries + 1 >= max {
-                                Exponea.logger.log(.error, message: """
-                                    Maximum retry count reached, deleting customer event: \(customer.managedObjectID)
-                                    """)
-                                try self?.database.delete(customer)
-                            } else {
-                                Exponea.logger.log(.error, message: """
-                                    Increasing retry count (\(customer.retries)) for customer event: \
-                                    \(customer.managedObjectID)
-                                    """)
-                                try self?.database.addRetry(customer)
-                            }
-                        } catch {
-                            Exponea.logger.log(.error, message: """
-                                Failed to update retry count or remove object from database: \
-                                \(customer.managedObjectID). \(error.localizedDescription)
-                                """)
-                        }
-                    }
-                }
-
-                // Handle request counter, potentially call completion
-                counter -= 1
-                if counter == 0 {
-                    completion?()
-                }
-            }
-        }
-
-        // If we have no customer updates, call completion
-        if customers.isEmpty {
+    func flushTrackingObjects(_ trackingObjects: [TrackingObjectProxy], completion: (() -> Void)? = nil) {
+        var counter = trackingObjects.count
+        guard counter > 0 else {
             completion?()
+            return
+        }
+        for trackingObject in trackingObjects {
+            if let customer = trackingObject as? TrackCustomerProxy {
+                repository.trackCustomer(with: customer.dataTypes, for: database.customer.ids) { [weak self] (result) in
+                    self?.onTrackingObjectFlush(trackingObject: customer, result: result)
+                    counter -= 1
+                    if counter == 0 {
+                        completion?()
+                    }
+                }
+            } else if let event = trackingObject as? TrackEventProxy {
+                repository.trackEvent(with: event.dataTypes, for: database.customer.ids) { [weak self] (result) in
+                    self?.onTrackingObjectFlush(trackingObject: event, result: result)
+                    counter -= 1
+                    if counter == 0 {
+                        completion?()
+                    }
+                }
+            } else {
+                fatalError("Unknown tracking object type")
+            }
         }
     }
 
-    func flushEventTracking(_ events: [TrackEventThreadSafe], completion: (() -> Void)? = nil) {
-        var counter = events.count
-        for event in events {
-            repository.trackEvent(with: event.dataTypes, for: database.customer.ids) { [weak self] (result) in
-                switch result {
-                case .success:
-                    Exponea.logger.log(.verbose, message: "Successfully uploaded event: \(event.managedObjectID).")
-                    do {
-                        try self?.database.delete(event)
-                    } catch {
-                        Exponea.logger.log(.error, message: """
-                            Failed to remove object from database: \(event.managedObjectID). \
-                            \(error.localizedDescription)
-                            """)
-                    }
-                case .failure(let error):
-                    switch error {
-                    case .connectionError, .serverError:
-                        // If server or connection error, bail here and do not increase retry count
-                        Exponea.logger.log(.warning, message: """
-                            Failed to upload event due to connection or server error. \
-                            \(error.localizedDescription)
-                            """)
-
-                    default:
-                        Exponea.logger.log(.error, message: "Failed to upload event. \(error.localizedDescription)")
-
-                        // If we have reached the max count of retries, delete the object.
-                        // Otherwise save changes and try again next time.
-                        do {
-                            let max = self?.repository.configuration.flushEventMaxRetries
-                                ?? Constants.Session.maxRetries
-                            if event.retries + 1 >= max {
-                                Exponea.logger.log(.error, message: """
-                                    Maximum retry count reached, deleting event: \(event.managedObjectID)
-                                    """)
-                                try self?.database.delete(event)
-                            } else {
-                                Exponea.logger.log(.error, message: """
-                                    Increasing retry count (\(event.retries)) for event: \(event.managedObjectID)
-                                    """)
-                                try self?.database.addRetry(event)
-                            }
-                        } catch {
-                            Exponea.logger.log(.error, message: """
-                                Failed to update retry count or remove object from database: \(event.managedObjectID).
-                                \(error.localizedDescription)
-                                """)
-                        }
-                    }
-                }
-
-                // Handle request counter, potentially call completion
-                counter -= 1
-                if counter == 0 {
-                    completion?()
-                }
+    func onTrackingObjectFlush(trackingObject: TrackingObjectProxy, result: EmptyResult<RepositoryError>) {
+        switch result {
+        case .success:
+            Exponea.logger.log(
+                .verbose,
+                message: "Successfully uploaded tracking object: \(trackingObject.managedObjectID)."
+            )
+            do {
+                try database.delete(trackingObject)
+            } catch {
+                Exponea.logger.log(
+                    .error,
+                    message: """
+                    Failed to remove tracking object from database: \(trackingObject.managedObjectID).
+                    \(error.localizedDescription)
+                    """
+                )
+            }
+        case .failure(let error):
+            switch error {
+            case .connectionError, .serverError(nil):
+                // If server or connection error, bail here and do not increase retry count
+                Exponea.logger.log(
+                    .warning,
+                    message: """
+                    Failed to upload customer event due to connection or server error. \
+                    \(error.localizedDescription)
+                    """
+                )
+            default:
+                Exponea.logger.log(
+                    .error,
+                    message: "Failed to upload customer update. \(error.localizedDescription)"
+                )
+                increaseTrackingObjectRetry(trackingObject: trackingObject)
             }
         }
+    }
 
-        // If we have no events, call completion
-        if events.isEmpty {
-            completion?()
+    func increaseTrackingObjectRetry(trackingObject: TrackingObjectProxy) {
+        do {
+            let max = repository.configuration.flushEventMaxRetries
+            if trackingObject.retries + 1 >= max {
+                Exponea.logger.log(
+                    .error,
+                    message: """
+                    Maximum retry count reached, deleting tracking object: \(trackingObject.managedObjectID)
+                    """
+                )
+                try database.delete(trackingObject)
+            } else {
+                Exponea.logger.log(
+                    .error,
+                    message: """
+                    Increasing retry count (\(trackingObject.retries)) for tracking object: \
+                    \(trackingObject.managedObjectID)
+                    """
+                )
+                try database.addRetry(trackingObject)
+            }
+        } catch {
+            Exponea.logger.log(
+                .error,
+                message: """
+                Failed to update retry count or remove object from database: \
+                \(trackingObject.managedObjectID). \(error.localizedDescription)
+                """
+            )
         }
     }
 }

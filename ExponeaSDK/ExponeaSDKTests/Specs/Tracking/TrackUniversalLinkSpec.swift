@@ -108,7 +108,7 @@ class TrackUniversalLinkSpec: QuickSpec {
 
                         exponea.configure(plistName: "ExponeaConfig")
                         exponea.processSavedCampaignData()
-                        var trackEvents: [TrackEventThreadSafe] = []
+                        var trackEvents: [TrackEventProxy] = []
                         expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
                         expect {trackEvents.filter({ $0.eventType == "campaign_click"}).count }.to(equal(1))
                     }
@@ -118,8 +118,8 @@ class TrackUniversalLinkSpec: QuickSpec {
     }
 }
 
-func findEvent(exponea: MockExponea, eventType: String) -> TrackEventThreadSafe? {
-    var trackEvents: [TrackEventThreadSafe] = []
+func findEvent(exponea: MockExponea, eventType: String) -> TrackEventProxy? {
+    var trackEvents: [TrackEventProxy] = []
     expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
     return trackEvents.first(where: { $0.eventType == eventType })
 }

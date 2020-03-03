@@ -223,9 +223,6 @@ extension DatabaseManager: DatabaseManagerType {
                 message: "Adding track event \(trackEvent.eventType ?? "nil") to database: \(trackEvent.objectID)"
             )
 
-            // Insert the object into the database
-            context.insert(trackEvent)
-
             // Save the customer properties into CoreData
             try context.save()
         }
@@ -304,44 +301,29 @@ extension DatabaseManager: DatabaseManagerType {
     /// Fetch all Tracking Customers from CoreData
     ///
     /// - Returns: An array of tracking customer updates, if any are stored in the database.
-    public func fetchTrackCustomer() throws -> [TrackCustomerThreadSafe] {
+    public func fetchTrackCustomer() throws -> [TrackCustomerProxy] {
         return try context.performAndWait {
             let trackCustomerEvents: [TrackCustomer] = try context.fetch(TrackCustomer.fetchRequest())
-            return trackCustomerEvents.map {TrackCustomerThreadSafe($0)}
+            return trackCustomerEvents.map {TrackCustomerProxy($0)}
         }
     }
 
     /// Fetch all Tracking Events from CoreData
     ///
     /// - Returns: An array of tracking events, if any are stored in the database.
-    public func fetchTrackEvent() throws -> [TrackEventThreadSafe] {
+    public func fetchTrackEvent() throws -> [TrackEventProxy] {
         return try context.performAndWait {
             let trackEvents: [TrackEvent] = try context.fetch(TrackEvent.fetchRequest())
-            return trackEvents.map {TrackEventThreadSafe($0)}
+            return trackEvents.map {TrackEventProxy($0)}
         }
     }
 
-    /// Increase number of retries on TrackCustomer object
-    public func addRetry(_ customerEvent: TrackCustomerThreadSafe) throws {
-        try context.performAndWait {
-            guard let object = try? context.existingObject(with: customerEvent.managedObjectID) else {
-                throw DatabaseManagerError.objectDoesNotExist
-            }
-            guard let trackCustomer: TrackCustomer = object as? TrackCustomer else {
-                throw DatabaseManagerError.objectDoesNotExist
-            }
-            trackCustomer.retries = NSNumber(value: customerEvent.retries + 1)
-            try context.save()
-        }
-    }
-
-    /// Increase number of retries on TrackEventThreadSafe object
-    public func addRetry(_ event: TrackEventThreadSafe) throws {
+    public func addRetry(_ event: TrackingObjectProxy) throws {
         try context.performAndWait {
             guard let object = try? context.existingObject(with: event.managedObjectID) else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
-            guard let trackEvent: TrackEvent = object as? TrackEvent else {
+            guard var trackEvent: TrackingObject = object as? TrackingObject else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
             trackEvent.retries = NSNumber(value: event.retries + 1)
@@ -349,27 +331,9 @@ extension DatabaseManager: DatabaseManagerType {
         }
     }
 
-    /// Detele a Tracking Event Object from CoreData
-    ///
-    /// - Parameters:
-    ///     - object: Tracking Event Object to be deleted from CoreData
-    public func delete(_ trackEvent: TrackEventThreadSafe) throws {
+    public func delete(_ trackingObject: TrackingObjectProxy) throws {
         try context.performAndWait {
-            guard let object = try? context.existingObject(with: trackEvent.managedObjectID) else {
-                return
-            }
-            context.delete(object)
-            try context.save()
-        }
-    }
-
-    /// Detele a Tracking Customer Object from CoreData
-    ///
-    /// - Parameters:
-    ///     - object: Tracking Customer Object to be deleted from CoreData
-    public func delete(_ trackCustomer: TrackCustomerThreadSafe) throws {
-        try context.performAndWait {
-            guard let object = try? context.existingObject(with: trackCustomer.managedObjectID) else {
+            guard let object = try? context.existingObject(with: trackingObject.managedObjectID) else {
                 return
             }
             context.delete(object)

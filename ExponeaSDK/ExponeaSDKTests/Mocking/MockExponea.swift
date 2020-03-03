@@ -48,7 +48,7 @@ final class MockExponea: Exponea {
         }
     }
 
-    public func fetchTrackEvents() throws -> [TrackEventThreadSafe] {
+    public func fetchTrackEvents() throws -> [TrackEventProxy] {
         return try database.fetchTrackEvent()
     }
 }

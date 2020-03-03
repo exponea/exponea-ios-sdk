@@ -17,14 +17,12 @@ protocol DatabaseManagerType: class {
     func identifyCustomer(with data: [DataType]) throws
     func updateEvent(withId id: NSManagedObjectID, withData data: DataType) throws
 
-    func fetchTrackCustomer() throws -> [TrackCustomerThreadSafe]
-    func fetchTrackEvent() throws -> [TrackEventThreadSafe]
+    func fetchTrackCustomer() throws -> [TrackCustomerProxy]
+    func fetchTrackEvent() throws -> [TrackEventProxy]
 
-    func addRetry(_ object: TrackCustomerThreadSafe) throws
-    func addRetry(_ object: TrackEventThreadSafe) throws
+    func addRetry(_ object: TrackingObjectProxy) throws
 
-    func delete(_ object: TrackCustomerThreadSafe) throws
-    func delete(_ object: TrackEventThreadSafe) throws
+    func delete(_ object: TrackingObjectProxy) throws
 
     /// Completely clears the database, including the Customer object.
     /// Useful for completely anonymizing the user.
