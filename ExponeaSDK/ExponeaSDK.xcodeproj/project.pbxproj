@@ -89,6 +89,10 @@
 		058DD8EE24111A2600E5BF91 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639B207E11BF005FD174 /* Logger.swift */; };
 		058DD8EF24111A5000E5BF91 /* ExponeaError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */; };
 		058DD93F24113F2100E5BF91 /* FlushableObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD93E24113F2100E5BF91 /* FlushableObject.swift */; };
+		058DD92324112F2D00E5BF91 /* TrackingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92224112F2D00E5BF91 /* TrackingRepository.swift */; };
+		058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92424112F5600E5BF91 /* FetchRepository.swift */; };
+		058DD92724112F8100E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92624112F8100E5BF91 /* ServerRepository+TrackingRepository.swift */; };
+		058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92824112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift */; };
 		0591905B23EC1A170037BD88 /* EventFilterAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591905A23EC1A170037BD88 /* EventFilterAttribute.swift */; };
 		0591905D23EC1A550037BD88 /* EventFilterConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591905C23EC1A550037BD88 /* EventFilterConstraint.swift */; };
 		0591905F23EC1AE50037BD88 /* EventFilterOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591905E23EC1AE50037BD88 /* EventFilterOperator.swift */; };
@@ -437,6 +441,10 @@
 		0580BBC823969D1F0058323D /* InAppMessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagePresenter.swift; sourceTree = "<group>"; };
 		058DD8EA2411199D00E5BF91 /* Exponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exponea.swift; sourceTree = "<group>"; };
 		058DD93E24113F2100E5BF91 /* FlushableObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushableObject.swift; sourceTree = "<group>"; };
+		058DD92224112F2D00E5BF91 /* TrackingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingRepository.swift; sourceTree = "<group>"; };
+		058DD92424112F5600E5BF91 /* FetchRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchRepository.swift; sourceTree = "<group>"; };
+		058DD92624112F8100E5BF91 /* ServerRepository+TrackingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerRepository+TrackingRepository.swift"; sourceTree = "<group>"; };
+		058DD92824112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerRepository+FetchingRepository.swift"; sourceTree = "<group>"; };
 		0591905A23EC1A170037BD88 /* EventFilterAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterAttribute.swift; sourceTree = "<group>"; };
 		0591905C23EC1A550037BD88 /* EventFilterConstraint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterConstraint.swift; sourceTree = "<group>"; };
 		0591905E23EC1AE50037BD88 /* EventFilterOperator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterOperator.swift; sourceTree = "<group>"; };
@@ -1585,6 +1593,10 @@
 				C0753E8F20A43D3900A779FF /* RepositoryError.swift */,
 				F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */,
 				F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */,
+				058DD92224112F2D00E5BF91 /* TrackingRepository.swift */,
+				058DD92424112F5600E5BF91 /* FetchRepository.swift */,
+				058DD92624112F8100E5BF91 /* ServerRepository+TrackingRepository.swift */,
+				058DD92824112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -2052,6 +2064,7 @@
 				05F3EFF12382C757006E83F4 /* VSAppCenterAPIModel.swift in Sources */,
 				23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */,
 				05F3EFE42382BAB6006E83F4 /* TelemetryUtility.swift in Sources */,
+				058DD92724112F8100E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */,
 				05F3EFD8237E938D006E83F4 /* CrashLog.swift in Sources */,
 				F029BF27208A096900342498 /* HTTPMethod.swift in Sources */,
 				B40E9F5D22FAD25A0085B8A1 /* TokenTrackFrequency.swift in Sources */,
@@ -2075,6 +2088,7 @@
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
 				05CDD83B23911A1400C7291A /* InAppMessagesCacheType.swift in Sources */,
 				C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */,
+				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ServerRepository.swift in Sources */,
@@ -2119,8 +2133,10 @@
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
 				0591906223EC1CEC0037BD88 /* GenericOperators.swift in Sources */,
 				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
+				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
+				058DD92324112F2D00E5BF91 /* TrackingRepository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				0567723D237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift in Sources */,
 				0591905F23EC1AE50037BD88 /* EventFilterOperator.swift in Sources */,
