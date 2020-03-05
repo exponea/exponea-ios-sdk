@@ -17,9 +17,9 @@ class ExponeaSpec: QuickSpec {
     override func spec() {
         describe("Exponea SDK") {
             context("Before being configured") {
-                var exponea = Exponea()
+                var exponea = ExponeaInternal()
                 beforeEach {
-                    exponea = Exponea()
+                    exponea = ExponeaInternal()
                 }
 
                 it("Should return a nil configuration") {
@@ -103,7 +103,7 @@ class ExponeaSpec: QuickSpec {
                 }
             }
             context("After being configured from string") {
-                let exponea = Exponea()
+                let exponea = ExponeaInternal()
                 Exponea.shared = exponea
                 Exponea.shared.configure(
                     projectToken: "0aef3a96-3804-11e8-b710-141877340e97",
@@ -115,7 +115,7 @@ class ExponeaSpec: QuickSpec {
                 }
             }
             context("After being configured from plist file") {
-                let exponea = Exponea()
+                let exponea = ExponeaInternal()
                 Exponea.shared = exponea
                 Exponea.shared.configure(plistName: "ExponeaConfig")
 
@@ -134,7 +134,7 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("After being configured from advanced plist file") {
-                let exponea = Exponea()
+                let exponea = ExponeaInternal()
                 Exponea.shared = exponea
                 Exponea.shared.configure(plistName: "config_valid")
 
@@ -152,7 +152,7 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("Setting exponea properties after configuration") {
-                let exponea = Exponea()
+                let exponea = ExponeaInternal()
                 Exponea.shared = exponea
                 Exponea.shared.configure(plistName: "ExponeaConfig")
 
@@ -185,7 +185,7 @@ class ExponeaSpec: QuickSpec {
                                                 value: String?, extraData: [AnyHashable: Any]?) {}
                 }
                 it("Should log warning before Exponea is configured") {
-                    let exponea = Exponea()
+                    let exponea = ExponeaInternal()
                     let delegate = MockDelegate()
                     exponea.pushNotificationsDelegate = delegate
                     expect(exponea.pushNotificationsDelegate).to(beNil())
@@ -193,7 +193,7 @@ class ExponeaSpec: QuickSpec {
                         .to(match("Cannot set push notifications delegate."))
                 }
                 it("Should set delegate after Exponea is configured") {
-                    let exponea = Exponea()
+                    let exponea = ExponeaInternal()
                     exponea.configure(plistName: "ExponeaConfig")
                     let delegate = MockDelegate()
                     logger.messages.removeAll()
@@ -205,8 +205,8 @@ class ExponeaSpec: QuickSpec {
 
             context("executing with dependencies") {
                 it("should complete with .failure when exponea is not configured") {
-                    let exponea = Exponea()
-                    let task: Exponea.DependencyTask<String> = {_, completion in
+                    let exponea = ExponeaInternal()
+                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
                         completion(Result.success("success!"))
                     }
                     waitUntil { done in
@@ -226,9 +226,9 @@ class ExponeaSpec: QuickSpec {
                     }
                 }
                 it("should complete with .success when exponea is configured") {
-                    let exponea = Exponea()
+                    let exponea = ExponeaInternal()
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: Exponea.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
                         completion(Result.success("success!"))
                     }
                     waitUntil { done in
@@ -245,12 +245,12 @@ class ExponeaSpec: QuickSpec {
                 }
 
                 it("should complete with .failure when tasks throws an error") {
-                    let exponea = Exponea()
+                    let exponea = ExponeaInternal()
                     exponea.configure(plistName: "ExponeaConfig")
                     enum MyError: Error {
                         case someError(message: String)
                     }
-                    let task: Exponea.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
                         throw MyError.someError(message: "something went wrong")
                     }
                     waitUntil { done in
@@ -271,9 +271,9 @@ class ExponeaSpec: QuickSpec {
                 }
 
                 it("should complete with .failure when tasks raises NSException") {
-                    let exponea = Exponea()
+                    let exponea = ExponeaInternal()
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: Exponea.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
                         NSException(
                             name: NSExceptionName(rawValue: "mock exception name"),
                             reason: "mock reason",
@@ -297,9 +297,9 @@ class ExponeaSpec: QuickSpec {
                     }
                 }
                 it("should complete any task with .failure after NSException was raised") {
-                    let exponea = Exponea()
+                    let exponea = ExponeaInternal()
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: Exponea.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
                         NSException(
                             name: NSExceptionName(rawValue: "mock exception name"),
                             reason: "mock reason",
@@ -309,7 +309,7 @@ class ExponeaSpec: QuickSpec {
                     waitUntil { done in
                         exponea.executeSafelyWithDependencies(task) { _ in done() }
                     }
-                    let nextTask: Exponea.DependencyTask<String> = {_, completion in
+                    let nextTask: ExponeaInternal.DependencyTask<String> = {_, completion in
                         completion(Result.success("success!"))
                     }
                     waitUntil { done in

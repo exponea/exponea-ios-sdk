@@ -1,5 +1,5 @@
 //
-//  Exponea+Tracking.swift
+//  ExponeaInternal+Tracking.swift
 //  ExponeaSDK
 //
 //  Created by Dominik Hadl on 28/05/2018.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Exponea {
+extension ExponeaInternal {
     /// Adds new events to a customer. All events will be stored into coredata
     /// until it will be flushed (send to api).
     ///

@@ -23,6 +23,9 @@ final class CrashManager {
     private let logsQueue = DispatchQueue(label: "com.exponea.telemetry.crashmanager.logs", attributes: .concurrent)
     static let maxLogMessages = 100
     private var logMessages: [String] = []
+    private var logHookId: String?
+
+    var oldHandler: NSUncaughtExceptionHandler?
 
     init(storage: TelemetryStorage, upload: TelemetryUpload, launchDate: Date, runId: String) {
         self.storage = storage
@@ -31,9 +34,14 @@ final class CrashManager {
         self.runId = runId
     }
 
-    var oldHandler: NSUncaughtExceptionHandler?
+    deinit {
+        if let hookId = logHookId {
+            Exponea.logger.removeLogHook(with: hookId)
+        }
+    }
 
     func start() {
+        logHookId = Exponea.logger.addLogHook(self.reportLog(_:))
         uploadCrashLogs()
         oldHandler = NSGetUncaughtExceptionHandler()
         CrashManager.current = self

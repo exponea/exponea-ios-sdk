@@ -1,5 +1,5 @@
 //
-//  Exponea.swift
+//  ExponeaInternal.swift
 //  ExponeaSDK
 //
 //  Created by Ricardo Tokashiki on 06/04/2018.
@@ -8,12 +8,16 @@
 
 import Foundation
 
-public class Exponea: ExponeaType {
+extension Exponea {
     /// Shared instance of ExponeaSDK.
-    public internal(set) static var shared = Exponea()
+    public internal(set) static var shared = ExponeaInternal()
 
-    /// A logger used to log all messages from the SDK.
-    public static var logger: Logger = Logger()
+    internal static let isBeingTested: Bool = {
+        return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+    }()
+}
+
+public class ExponeaInternal: ExponeaType {
 
     /// The configuration object containing all the configuration data necessary for Exponea SDK to work.
     ///
@@ -113,10 +117,6 @@ public class Exponea: ExponeaType {
         }
     }
 
-    internal static let isBeingTested: Bool = {
-        return ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
-    }()
-
     // Once ExponeaSDK runs into a NSException, all further calls will be disabled
     internal var nsExceptionRaised: Bool = false
 
@@ -187,7 +187,7 @@ public class Exponea: ExponeaType {
 
 // MARK: - Dependencies + Safety wrapper -
 
-internal extension Exponea {
+internal extension ExponeaInternal {
 
     /// Alias for dependencies required across various internal and public functions of Exponea.
     typealias Dependencies = (
@@ -198,7 +198,7 @@ internal extension Exponea {
     )
 
     typealias CompletionHandler<T> = ((Result<T>) -> Void)
-    typealias DependencyTask<T> = (Exponea.Dependencies, @escaping CompletionHandler<T>) throws -> Void
+    typealias DependencyTask<T> = (ExponeaInternal.Dependencies, @escaping CompletionHandler<T>) throws -> Void
 
     /// Gets the Exponea dependencies. If Exponea wasn't configured it will throw an error instead.
     ///
@@ -226,7 +226,7 @@ internal extension Exponea {
         )
     }
 
-    func executeSafelyWithDependencies(_ closure: (Exponea.Dependencies) throws -> Void) {
+    func executeSafelyWithDependencies(_ closure: (ExponeaInternal.Dependencies) throws -> Void) {
         executeSafelyWithDependencies({ dep, _ in try closure(dep) }, completion: {_ in } as CompletionHandler<Any>)
     }
 
@@ -260,7 +260,7 @@ internal extension Exponea {
 
 // MARK: - Public -
 
-public extension Exponea {
+public extension ExponeaInternal {
 
     // MARK: - Configure -
 

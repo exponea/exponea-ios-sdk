@@ -88,13 +88,15 @@ public extension Exponea {
             self.maxRetries = maxRetries
         }
     }
+}
 
+public extension ExponeaInternal {
     func configure(
-        _ projectSettings: ProjectSettings,
-        automaticPushNotificationTracking: AutomaticPushNotificationTracking,
-        automaticSessionTracking: AutomaticSessionTracking = .enabled(),
+        _ projectSettings: Exponea.ProjectSettings,
+        automaticPushNotificationTracking: Exponea.AutomaticPushNotificationTracking,
+        automaticSessionTracking: Exponea.AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
-        flushingSetup: FlushingSetup = FlushingSetup.default
+        flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default
     ) {
         do {
             let configuration = try Configuration(

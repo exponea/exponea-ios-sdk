@@ -1,5 +1,5 @@
 //
-//  Exponea+Fetching.swift
+//  ExponeaInternal+Fetching.swift
 //  ExponeaSDK
 //
 //  Created by Dominik Hadl on 28/05/2018.
@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Fetching -
 
-extension Exponea {
+extension ExponeaInternal {
     public func fetchRecommendation<T: RecommendationUserData>(
         with options: RecommendationOptions,
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void

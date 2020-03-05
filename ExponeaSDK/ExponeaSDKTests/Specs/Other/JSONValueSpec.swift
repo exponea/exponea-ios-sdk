@@ -19,31 +19,31 @@ class JSONValueSpec: QuickSpec {
             context("with Bool") {
                 it("should be equal", closure: {
                     let bool = true
-                    expect(bool.jsonValue).to(equal(.bool(true)))
+                    expect(bool.jsonValue).to(equal(JSONValue.bool(true)))
                 })
             }
             context("with Int") {
                 it("should be equal", closure: {
                     let number = 12345
-                    expect(number.jsonValue).to(equal(.int(12345)))
+                    expect(number.jsonValue).to(equal(JSONValue.int(12345)))
                 })
             }
             context("with Double") {
                 it("should be equal", closure: {
                     let number = 12345.678
-                    expect(number.jsonValue).to(equal(.double(12345.678)))
+                    expect(number.jsonValue).to(equal(JSONValue.double(12345.678)))
                 })
             }
             context("with String") {
                 it("should be equal", closure: {
                     let string = "my string"
-                    expect(string.jsonValue).to(equal(.string("my string")))
+                    expect(string.jsonValue).to(equal(JSONValue.string("my string")))
                 })
             }
             context("with NSString") {
                 it("should be equal", closure: {
                     let string = NSString(string: "my string")
-                    expect(string.jsonValue).to(equal(.string("my string")))
+                    expect(string.jsonValue).to(equal(JSONValue.string("my string")))
                 })
             }
             context("with array") {

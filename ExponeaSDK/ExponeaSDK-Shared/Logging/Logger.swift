@@ -24,6 +24,8 @@ open class Logger {
     /// Default level of logging is set to `.warning`.
     open var logLevel: LogLevel = .warning
 
+    private var logHooks: [String: (String) -> Void] = [:]
+
     required public init() { }
 
     /// Main log function used to log messages with appropriate level along with additional debug information.
@@ -62,8 +64,18 @@ open class Logger {
     ///
     /// - Parameter message: The message you want to log.
     open func logMessage(_ message: String) {
-        CrashManager.current?.reportLog(message)
+        logHooks.forEach { $0.value(message) }
         print(message)
+    }
+
+    func addLogHook(_ hook: @escaping (String) -> Void) -> String {
+        let id = UUID().uuidString
+        logHooks[id] = hook
+        return id
+    }
+
+    func removeLogHook(with id: String) {
+        logHooks.removeValue(forKey: id)
     }
 
     /// Returns the source file name from a provided a file path.

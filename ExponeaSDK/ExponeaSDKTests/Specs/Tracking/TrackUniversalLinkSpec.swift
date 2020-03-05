@@ -57,7 +57,7 @@ class TrackUniversalLinkSpec: QuickSpec {
             context("Tracking manager") {
                 context("with SDK started") {
                     it("track campaign_click and update session when called within update threshold") {
-                        let exponea = MockExponea()
+                        let exponea = MockExponeaImplementation()
                         exponea.configure(plistName: "ExponeaConfig")
 
                         // track campaign click, session_start should be updated with utm params
@@ -71,7 +71,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                             .to(equal("mycampaign"))
                     }
                     it("track campaign_click and should not update session when called after update threshold") {
-                        let exponea = MockExponea()
+                        let exponea = MockExponeaImplementation()
                         exponea.configure(plistName: "ExponeaConfig")
                         Exponea.logger.logLevel = .verbose
                         expect {
@@ -95,7 +95,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                 }
                 context("before SDK started") {
                     it("track campaign_click and update session when called within update threshold") {
-                        let exponea = MockExponea()
+                        let exponea = MockExponeaImplementation()
 
                         // track campaign click, session_start should be updated with utm params
                         exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
@@ -110,7 +110,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                             .to(equal("mycampaign"))
                     }
                     it("processes saved campaigns only once") {
-                        let exponea = MockExponea()
+                        let exponea = MockExponeaImplementation()
 
                         // track campaign click, session_start should be updated with utm params
                         exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
@@ -127,7 +127,7 @@ class TrackUniversalLinkSpec: QuickSpec {
     }
 }
 
-func findEvent(exponea: MockExponea, eventType: String) -> TrackEventProxy? {
+func findEvent(exponea: MockExponeaImplementation, eventType: String) -> TrackEventProxy? {
     var trackEvents: [TrackEventProxy] = []
     expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
     return trackEvents.first(where: { $0.event.eventType == eventType })

@@ -55,6 +55,31 @@ class LoggerSpec: QuickSpec {
                     expect(logger.log(.warning, message: "test")).toNot(beTrue())
                 })
             })
+
+            describe("log hooks") {
+                it("should add and call log hooks") {
+                    let logger = Logger()
+                    var hookCalled = false
+                    let hook = { (_ : String) in
+                        hookCalled = true
+                    }
+                    _ = logger.addLogHook(hook)
+                    logger.log(.warning, message: "test message")
+                    expect(hookCalled).to(beTrue())
+                }
+
+                it("should remove log hooks") {
+                    let logger = Logger()
+                    var hookCalled = false
+                    let hook = { (_ : String) in
+                        hookCalled = true
+                    }
+                    let hookId = logger.addLogHook(hook)
+                    logger.removeLogHook(with: hookId)
+                    logger.log(.warning, message: "test message")
+                    expect(hookCalled).to(beFalse())
+                }
+            }
         }
     }
 }

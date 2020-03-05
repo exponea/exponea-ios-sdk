@@ -10,11 +10,6 @@ import Foundation
 
 /// Protocol of what types of events are available in the Exponea SDK.
 public protocol ExponeaType: class {
-    /// Shared instance of Exponea SDK.
-    static var shared: Exponea { get }
-    /// Logger shared instance.
-    static var logger: Logger { get set }
-
     /// Configurarion object.
     var configuration: Configuration? { get }
     /// Identification of the flushing mode used in to send the data to the Exponea API.

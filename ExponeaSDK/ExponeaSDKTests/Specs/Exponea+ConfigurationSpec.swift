@@ -21,7 +21,7 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
     override func spec() {
         describe("Creating configuration") {
             it("should setup simplest configuration") {
-                let exponea = Exponea()
+                let exponea = ExponeaInternal()
                 exponea.configure(
                     Exponea.ProjectSettings(
                         projectToken: "mock-project-token",
@@ -47,7 +47,7 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
             }
 
             it("should setup complex configuration") {
-                let exponea = Exponea()
+                let exponea = ExponeaInternal()
                 exponea.configure(
                     Exponea.ProjectSettings(
                         projectToken: "mock-project-token",

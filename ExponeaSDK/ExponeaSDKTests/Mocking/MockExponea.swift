@@ -10,7 +10,7 @@
 
 import CoreData
 
-final class MockExponea: Exponea {
+final class MockExponeaImplementation: ExponeaInternal {
     private var database: DatabaseManager!
 
     override init() {

@@ -133,5 +133,13 @@ final class CrashManagerSpec: QuickSpec {
             expect(upload.uploadedCrashLogs.count).to(equal(1))
             expect(upload.uploadedCrashLogs[0].logs).to(equal(["log1", "log2", "log3"]))
         }
+
+        it("should hook to logger logs") {
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
+            crashManager.start()
+            expect(crashManager.getLogs()).to(beEmpty())
+            Exponea.logger.log(.error, message: "Logging test message")
+            expect(crashManager.getLogs()).notTo(beEmpty())
+        }
     }
 }
