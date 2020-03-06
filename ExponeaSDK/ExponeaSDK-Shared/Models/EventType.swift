@@ -16,7 +16,7 @@ import Foundation
 /// - trackEvent
 /// - trackCustomer
 /// - payment
-public enum EventType: String, Decodable {
+public enum EventType: String, Codable {
 
     /// Install event is fired only once when the app is first installed.
     case install = "INSTALL"

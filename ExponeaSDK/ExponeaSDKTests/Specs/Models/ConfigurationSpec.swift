@@ -154,5 +154,67 @@ class ConfigurationSpec: QuickSpec {
                 }
             })
         }
+
+        describe("saving to user defaults") {
+            let appGroup = "appgroup"
+            beforeEach {
+                let defaults = UserDefaults(suiteName: appGroup)!
+                defaults.dictionaryRepresentation().keys.forEach { defaults.removeObject(forKey: $0) }
+            }
+
+            it("load nil if there is no nothing stored in user defaults") {
+                expect(Configuration.loadFromUserDefaults(appGroup: appGroup)).to(beNil())
+            }
+
+            it("load nil if stored configuration has incorrect format") {
+                UserDefaults(suiteName: appGroup)?.set(
+                    "some data".data(using: .utf8),
+                    forKey: Constants.General.deliveredPushUserDefaultsKey
+                )
+                expect(Configuration.loadFromUserDefaults(appGroup: appGroup)).to(beNil())
+            }
+
+            it("should not save anything without app group") {
+                let configuration = try! Configuration(
+                    projectToken: "project-token",
+                    projectMapping: nil,
+                    authorization: .none,
+                    baseUrl: nil
+                )
+                configuration.saveToUserDefaults()
+                expect(UserDefaults(suiteName: appGroup)?.data(forKey: Constants.General.deliveredPushUserDefaultsKey))
+                    .to(beNil())
+            }
+
+            it("save and load empty configuration") {
+                let configuration = try! Configuration(
+                    projectToken: "project-token",
+                    projectMapping: nil,
+                    authorization: .none,
+                    baseUrl: nil,
+                    appGroup: appGroup
+                )
+                configuration.saveToUserDefaults()
+                expect(Configuration.loadFromUserDefaults(appGroup: appGroup)).to(equal(configuration))
+            }
+
+            it("save and load complete configuration") {
+                let configuration = try! Configuration(
+                    projectToken: "project-token",
+                    projectMapping: [EventType.banner: ["token1"]],
+                    authorization: .token("test"),
+                    baseUrl: "https://some.base.url",
+                    defaultProperties: ["prop": "value", "other-prop": "other-value"],
+                    sessionTimeout: 1234,
+                    automaticSessionTracking: false,
+                    automaticPushNotificationTracking: false,
+                    tokenTrackFrequency: .daily,
+                    appGroup: appGroup,
+                    flushEventMaxRetries: 200
+                )
+                configuration.saveToUserDefaults()
+                expect(Configuration.loadFromUserDefaults(appGroup: appGroup)).to(equal(configuration))
+            }
+        }
     }
 }

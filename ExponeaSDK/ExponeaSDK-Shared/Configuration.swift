@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 /// A configuration object used to configure Exponea when initialising.
-public struct Configuration: Decodable {
+public struct Configuration: Codable, Equatable {
     public internal(set) var projectMapping: [EventType: [String]]?
     public internal(set) var projectToken: String?
     public internal(set) var authorization: Authorization = .none
@@ -37,15 +37,15 @@ public struct Configuration: Decodable {
     enum CodingKeys: String, CodingKey {
         case projectMapping
         case projectToken
+        case authorization
+        case baseUrl
+        case defaultProperties
         case sessionTimeout
         case automaticSessionTracking
         case automaticPushNotificationTracking
         case tokenTrackFrequency
-        case authorization
-        case baseUrl
-        case flushEventMaxRetries
         case appGroup
-        case defaultProperties
+        case flushEventMaxRetries
     }
 
     init() {}
@@ -152,15 +152,8 @@ public struct Configuration: Decodable {
         }
 
         // Authorization
-        if let authorization = try container.decodeIfPresent(String.self, forKey: .authorization) {
-            let components = authorization.split(separator: " ")
-
-            if components.count == 2 {
-                switch components.first {
-                case "Token": self.authorization = .token(String(components[1]))
-                default: break
-                }
-            }
+        if let authorization = try container.decodeIfPresent(Authorization.self, forKey: .authorization) {
+            self.authorization = authorization
         }
 
         // Project token mapping
@@ -219,14 +212,44 @@ public struct Configuration: Decodable {
             self.defaultProperties = properties
         }
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if let mapping = projectMapping {
+            let projectMappingWithStringKeys = Dictionary(
+                uniqueKeysWithValues: mapping.map { (key: EventType, value: [String]) in (key.rawValue, value) }
+            )
+            try container.encode(projectMappingWithStringKeys, forKey: .projectMapping)
+        }
+        try container.encode(projectToken, forKey: .projectToken)
+        try container.encode(authorization, forKey: .authorization)
+        try container.encode(baseUrl, forKey: .baseUrl)
+        try container.encode(defaultProperties?.mapValues { $0.jsonValue }, forKey: .defaultProperties)
+        try container.encode(sessionTimeout, forKey: .sessionTimeout)
+        try container.encode(automaticSessionTracking, forKey: .automaticSessionTracking)
+        try container.encode(automaticPushNotificationTracking, forKey: .automaticPushNotificationTracking)
+        try container.encode(tokenTrackFrequency, forKey: .tokenTrackFrequency)
+        try container.encode(appGroup, forKey: .appGroup)
+        try container.encode(flushEventMaxRetries, forKey: .flushEventMaxRetries)
+    }
+
+    public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+        return
+            lhs.projectMapping == rhs.projectMapping &&
+            lhs.projectToken == rhs.projectToken &&
+            lhs.authorization == rhs.authorization &&
+            lhs.baseUrl == rhs.baseUrl &&
+            lhs.defaultProperties?.mapValues { $0.jsonValue} == rhs.defaultProperties?.mapValues { $0.jsonValue} &&
+            lhs.sessionTimeout == rhs.sessionTimeout &&
+            lhs.automaticSessionTracking == rhs.automaticSessionTracking &&
+            lhs.automaticSessionTracking == rhs.automaticSessionTracking &&
+            lhs.tokenTrackFrequency == rhs.tokenTrackFrequency &&
+            lhs.appGroup == rhs.appGroup &&
+            lhs.flushEventMaxRetries == rhs.flushEventMaxRetries
+    }
 }
 
 extension Configuration {
-
-    /// <#Description#>
-    ///
-    /// - Parameter eventType: <#eventType description#>
-    /// - Returns: <#return value description#>
     func tokens(for eventType: EventType) -> [String] {
         /// Check if we have project mapping, otherwise fall back to project token if present.
         guard let mapping = projectMapping else {

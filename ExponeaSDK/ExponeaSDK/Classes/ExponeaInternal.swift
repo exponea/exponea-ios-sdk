@@ -166,6 +166,8 @@ public class ExponeaInternal: ExponeaType {
 
                 self.trackingManager = trackingManager
                 processSavedCampaignData()
+
+                configuration.saveToUserDefaults()
             } catch {
                 telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
                 // Failing gracefully, if setup failed

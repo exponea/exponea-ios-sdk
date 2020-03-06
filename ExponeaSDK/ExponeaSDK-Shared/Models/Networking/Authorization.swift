@@ -10,9 +10,33 @@ import Foundation
 
 /// Data type to identify which kind of authorization the sdk should use
 /// when making http calls for the Exponea API.
-public enum Authorization: Equatable {
+public enum Authorization: Equatable, Codable {
     case none
     case token(String)
+
+    public init(from decoder: Decoder) throws {
+        self = .none
+        let container = try decoder.singleValueContainer()
+        guard let authorization = try? container.decode(String.self) else {
+            return
+        }
+        let components = authorization.split(separator: " ")
+
+        if components.count == 2 {
+            switch components.first {
+            case "Token": self = .token(String(components[1]))
+            default: break
+            }
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .none: try container.encodeNil()
+        case .token(let token): try container.encode("Token \(token)")
+        }
+    }
 }
 
 extension Authorization: CustomStringConvertible {
