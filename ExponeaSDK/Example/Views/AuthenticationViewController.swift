@@ -61,7 +61,7 @@ class AuthenticationViewController: UIViewController {
                 baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text
             ),
             automaticPushNotificationTracking: .enabled(
-                appGroup: "group.com.Exponea.ExponeaSDK-Example",
+                appGroup: "group.com.exponea.ExponeaSDK-Example2",
                 delegate: UIApplication.shared.delegate as? AppDelegate
             ),
             defaultProperties: [
