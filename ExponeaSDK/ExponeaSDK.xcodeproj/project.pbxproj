@@ -31,6 +31,9 @@
 		05114E69234747BC00201EE6 /* objc_tryCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 05114E68234747BC00201EE6 /* objc_tryCatch.m */; };
 		05114E6B2347483F00201EE6 /* objc_tryCatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 05114E6A234747DE00201EE6 /* objc_tryCatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0515975A23E44D8000DF8691 /* InAppMessagePresenterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0515975923E44D8000DF8691 /* InAppMessagePresenterSpec.swift */; };
+		05297974241919BF00A90526 /* ExponeaSDKQuickConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05297973241919BF00A90526 /* ExponeaSDKQuickConfiguration.swift */; };
+		052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052979772419224500A90526 /* UNAuthorizationStatusProvider.swift */; };
+		0529797A241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05297979241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift */; };
 		052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */; };
 		052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */; };
 		05324BF023D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05324BEF23D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift */; };
@@ -423,6 +426,9 @@
 		05114E68234747BC00201EE6 /* objc_tryCatch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = objc_tryCatch.m; sourceTree = "<group>"; };
 		05114E6A234747DE00201EE6 /* objc_tryCatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objc_tryCatch.h; sourceTree = "<group>"; };
 		0515975923E44D8000DF8691 /* InAppMessagePresenterSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessagePresenterSpec.swift; sourceTree = "<group>"; };
+		05297973241919BF00A90526 /* ExponeaSDKQuickConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSDKQuickConfiguration.swift; sourceTree = "<group>"; };
+		052979772419224500A90526 /* UNAuthorizationStatusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UNAuthorizationStatusProvider.swift; sourceTree = "<group>"; };
+		05297979241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUNAuthorizationStatusProviding.swift; sourceTree = "<group>"; };
 		052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerErrorSpec.swift; sourceTree = "<group>"; };
 		052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
 		05324BEF23D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSAppCenterTelemetryUploadSpec.swift; sourceTree = "<group>"; };
@@ -802,6 +808,7 @@
 				05735EA523A3B39C00DA0FA9 /* Flushing */,
 				052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */,
 				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
+				05297973241919BF00A90526 /* ExponeaSDKQuickConfiguration.swift */,
 			);
 			path = Specs;
 			sourceTree = "<group>";
@@ -1352,6 +1359,7 @@
 				05677238237453250082167C /* PushNotificationSwizzler.swift */,
 				0567723A237462FB0082167C /* UIApplication+UIApplicationDelegating.swift */,
 				0567723C237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift */,
+				052979772419224500A90526 /* UNAuthorizationStatusProvider.swift */,
 			);
 			path = "Push Notifications";
 			sourceTree = "<group>";
@@ -1599,6 +1607,7 @@
 				057F448223990E320070DF30 /* MockInAppMessagesCache.swift */,
 				05735EA823A3B53600DA0FA9 /* MockFlushingManager.swift */,
 				057D476A23C885D800AEE902 /* MockUrlOpener.swift */,
+				05297979241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
@@ -2220,6 +2229,7 @@
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
 				05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
+				052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */,
 				0591906223EC1CEC0037BD88 /* GenericOperators.swift in Sources */,
 				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
@@ -2269,6 +2279,7 @@
 				05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */,
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
 				05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */,
+				0529797A241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift in Sources */,
 				057F448323990E320070DF30 /* MockInAppMessagesCache.swift in Sources */,
 				F0BE6105211080F30082ABD8 /* MockData.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
@@ -2292,6 +2303,7 @@
 				057D476B23C885D800AEE902 /* MockUrlOpener.swift in Sources */,
 				050805732326510100BDA235 /* MockUserDefaults.swift in Sources */,
 				019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */,
+				05297974241919BF00A90526 /* ExponeaSDKQuickConfiguration.swift in Sources */,
 				05FB1BB7236AE9220089C529 /* NotificationDataSpec.swift in Sources */,
 				C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */,
 				F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */,

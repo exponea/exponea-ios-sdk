@@ -520,15 +520,12 @@ extension TrackingManager {
         }
 
         let currentToken = customerPushToken
-        if let token = currentToken, let projectToken = repository.configuration.tokens(for: .registerPushToken).first {
-            try track(EventType.registerPushToken, with: [.projectToken(projectToken), .pushNotificationToken(nil)])
+        if let token = currentToken {
+            try track(EventType.registerPushToken, with: [.pushNotificationToken(nil)])
             self.flushingManager.flushData {
                 do {
                     try perform()
-                    try self.track(
-                        EventType.registerPushToken,
-                        with: [.projectToken(projectToken), .pushNotificationToken(token)]
-                    )
+                    try self.track(EventType.registerPushToken, with: [.pushNotificationToken(token)])
                 } catch {
                     Exponea.logger.log(.error, message: error.localizedDescription)
                 }

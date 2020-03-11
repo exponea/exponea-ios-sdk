@@ -49,7 +49,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
         pushNotificationSwizzler.addAutomaticPushTracking()
         checkForDeliveredPushMessages()
-        checkForPushTokenFrequency()
+        verifyPushStatusAndTrackPushToken()
     }
 
     deinit {
@@ -113,16 +113,8 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         guard let tokenData = dataObject as? Data else {
             return
         }
-
-        // Update current push token
         currentPushToken = tokenData.tokenString
-
-        do {
-            let data = [DataType.pushNotificationToken(currentPushToken)]
-            try trackingManager?.track(.registerPushToken, with: data)
-        } catch {
-            Exponea.logger.log(.error, message: "Error logging push token. \(error.localizedDescription)")
-        }
+        trackCurrentPushToken()
     }
 
     internal func checkForDeliveredPushMessages() {
@@ -181,28 +173,41 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         userDefaults?.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
     }
 
-    func checkForPushTokenFrequency() {
-        func trackPushToken() {
-            do {
-                let data = [DataType.pushNotificationToken(currentPushToken)]
-                try trackingManager?.track(.registerPushToken, with: data)
-            } catch {
-                Exponea.logger.log(.error, message: "Error logging push token. \(error.localizedDescription)")
+    func verifyPushStatusAndTrackPushToken() {
+        UNAuthorizationStatusProvider.current.getAuthorizationStatus { status in
+            if case .authorized = status {
+                self.checkForPushTokenFrequency()
+            } else {
+                let hadToken = self.currentPushToken != nil
+                self.currentPushToken = nil
+                if hadToken {
+                    self.trackCurrentPushToken()
+                }
             }
         }
+    }
 
+    private func trackCurrentPushToken() {
+        do {
+            try trackingManager?.track(.registerPushToken, with: [.pushNotificationToken(currentPushToken)])
+        } catch {
+            Exponea.logger.log(.error, message: "Error tracking current push token. \(error.localizedDescription)")
+        }
+    }
+
+    private func checkForPushTokenFrequency() {
         switch tokenTrackFrequency {
         case .everyLaunch:
             // Track push token
             lastTokenTrackDate = .init()
-            trackPushToken()
+            trackCurrentPushToken()
 
         case .daily:
             // Compare last track dates, if equal or more than a day, track
             let now = Date()
-            if lastTokenTrackDate.timeIntervalSince(now) >= 86400 {
+            if abs(lastTokenTrackDate.timeIntervalSince(now)) >= 60 * 60 * 24 {
                 lastTokenTrackDate = now
-                trackPushToken()
+                trackCurrentPushToken()
             }
 
         case .onTokenChange:
@@ -215,6 +220,6 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 extension PushNotificationManager {
     func applicationDidBecomeActive() {
         checkForDeliveredPushMessages()
-        checkForPushTokenFrequency()
+        verifyPushStatusAndTrackPushToken()
     }
 }

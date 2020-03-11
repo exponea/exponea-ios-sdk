@@ -124,8 +124,6 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
     }
 
     override func spec() {
-        _ = MockUserNotificationCenter.shared
-
         var mockApplication: UIApplicationDelegating!
         var mockCenter: BasicUNUserNotificationCenterDelegating!
         var manager: MockPushNotificationManager!

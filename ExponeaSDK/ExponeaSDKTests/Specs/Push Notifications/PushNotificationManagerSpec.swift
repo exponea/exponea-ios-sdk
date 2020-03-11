@@ -69,19 +69,27 @@ final class PushNotificationManagerSpec: QuickSpec {
         var trackingManager: MockTrackingManager!
         var pushManager: PushNotificationManager!
         var urlOpener: MockUrlOpener!
+
+        func createPushManager(
+            currentToken: String?,
+            tokenTrackFrequency: ExponeaSDK.TokenTrackFrequency,
+            lastTokenTrackDate: Date = Date()
+        ) {
+            pushManager = PushNotificationManager(
+                trackingManager: trackingManager,
+                appGroup: "mock-app-group",
+                tokenTrackFrequency: tokenTrackFrequency,
+                currentPushToken: currentToken,
+                lastTokenTrackDate: lastTokenTrackDate,
+                urlOpener: urlOpener
+            )
+        }
+
         beforeEach {
             UserDefaults.standard.removePersistentDomain(forName: "mock-app-group")
             trackingManager = MockTrackingManager()
             urlOpener = MockUrlOpener()
-            pushManager = PushNotificationManager(
-                trackingManager: trackingManager,
-                appGroup: "mock-app-group",
-                tokenTrackFrequency:
-                TokenTrackFrequency.daily,
-                currentPushToken: "mock-push-token",
-                lastTokenTrackDate: Date(),
-                urlOpener: urlOpener
-            )
+            createPushManager(currentToken: "mock-push-token", tokenTrackFrequency: .daily)
         }
 
         describe("tracking stored delivered push notifications") {
@@ -380,6 +388,71 @@ final class PushNotificationManagerSpec: QuickSpec {
                         expect(urlOpener.openedDeeplinks).to(beEmpty())
                     }
                 }
+            }
+        }
+
+        describe("tracking push token") {
+            let mockTokenData = "mock_token_data".data(using: .utf8)! as AnyObject
+            it("should track push token after registration") {
+                pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .registerPushToken,
+                        data: [.pushNotificationToken("6D6F636B5F746F6B656E5F64617461")]
+                    )
+                ]))
+            }
+
+            it("should not track token on app foreground in 'daily' frequency within one day") {
+                createPushManager(
+                    currentToken: "mock-token",
+                    tokenTrackFrequency: .daily,
+                    lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 + 10)
+                )
+                expect(trackingManager.trackedEvents).to(beEmpty())
+            }
+
+            it("should track token on app foreground in 'daily' frequency after one day") {
+                createPushManager(
+                    currentToken: "mock-token",
+                    tokenTrackFrequency: .daily,
+                    lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 - 10)
+                )
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .registerPushToken,
+                        data: [.pushNotificationToken("mock-token")]
+                    )
+                ]))
+            }
+
+            it("should track token on app foreground in 'everyLaunch' frequency") {
+                createPushManager(
+                    currentToken: "mock-token",
+                    tokenTrackFrequency: .everyLaunch,
+                    lastTokenTrackDate: Date(timeIntervalSince1970: 1)
+                )
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .registerPushToken,
+                        data: [.pushNotificationToken("mock-token")]
+                    )
+                ]))
+            }
+
+            it("should track nil as token if not authorized") {
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
+                createPushManager(
+                    currentToken: "mock-token",
+                    tokenTrackFrequency: .daily,
+                    lastTokenTrackDate: Date(timeIntervalSince1970: 1)
+                )
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .registerPushToken,
+                        data: [.pushNotificationToken(nil)]
+                    )
+                ]))
             }
         }
     }
