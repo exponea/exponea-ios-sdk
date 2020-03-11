@@ -50,7 +50,7 @@ final class CrashLog: Codable, Equatable {
         id = UUID().uuidString
         errorData = ErrorData(
             type: String(describing: type(of: error)),
-            message: error.localizedDescription,
+            message: "\((error as NSError).domain):\((error as NSError).code) \(error.localizedDescription)",
             stackTrace: stackTrace
         )
         self.isFatal = fatal

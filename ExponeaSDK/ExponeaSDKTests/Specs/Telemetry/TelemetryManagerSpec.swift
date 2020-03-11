@@ -41,7 +41,7 @@ final class TelemetryManagerSpec: QuickSpec {
             expect(self.upload.uploadedCrashLogs[0].errorData.message).to(equal("reason for test exception"))
         }
 
-        it("should report error") {
+        it("should report sdk/swift error") {
             self.manager.report(
                 error: DatabaseManagerError.objectDoesNotExist,
                 stackTrace: ["something", "something else"]
@@ -49,7 +49,25 @@ final class TelemetryManagerSpec: QuickSpec {
             expect(self.upload.uploadedCrashLogs.count).to(equal(1))
             expect(self.upload.uploadedCrashLogs[0].isFatal).to(equal(false))
             expect(self.upload.uploadedCrashLogs[0].errorData.type).to(equal("DatabaseManagerError"))
-            expect(self.upload.uploadedCrashLogs[0].errorData.message).to(equal("Object does not exist."))
+            expect(self.upload.uploadedCrashLogs[0].errorData.message)
+                .to(equal("ExponeaSDK.DatabaseManagerError:4 Object does not exist."))
+            expect(self.upload.uploadedCrashLogs[0].errorData.stackTrace).to(equal(["something", "something else"]))
+        }
+
+        it("should report NSError") {
+            self.manager.report(
+                error: NSError(
+                    domain: "custom domain",
+                    code: 123,
+                    userInfo: [NSLocalizedDescriptionKey: "localized error"]
+                ),
+                stackTrace: ["something", "something else"]
+            )
+            expect(self.upload.uploadedCrashLogs.count).to(equal(1))
+            expect(self.upload.uploadedCrashLogs[0].isFatal).to(equal(false))
+            expect(self.upload.uploadedCrashLogs[0].errorData.type).to(equal("NSError"))
+            expect(self.upload.uploadedCrashLogs[0].errorData.message)
+                .to(equal("custom domain:123 localized error"))
             expect(self.upload.uploadedCrashLogs[0].errorData.stackTrace).to(equal(["something", "something else"]))
         }
 
