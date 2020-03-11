@@ -251,35 +251,18 @@ public struct Configuration: Codable, Equatable {
 
 extension Configuration {
     func tokens(for eventType: EventType) -> [String] {
-        /// Check if we have project mapping, otherwise fall back to project token if present.
-        guard let mapping = projectMapping else {
-            guard let projectToken = projectToken else {
-                Exponea.logger.log(.error, message: "No project token or token mapping found.")
-                return []
-            }
-
-            return [projectToken]
+        var tokens: [String] = []
+        if let projectToken = projectToken {
+            tokens.append(projectToken)
+        }
+        if let mapping = projectMapping, let mappedTokens = mapping[eventType] {
+            tokens.append(contentsOf: mappedTokens)
         }
 
-        /// Return correct token mapping if present and not empty.
-        if let tokens = mapping[eventType], !tokens.isEmpty {
-            return tokens
-        } else {
-            /// First check if we have default token
-            if let token = projectToken {
-                return [token]
-            }
-
-            /// If we have no project token nor token mapping, fail and log error.
-            guard let first = mapping.first else {
-                Exponea.logger.log(.error, message: "No project token found.")
-                return []
-            }
-
-            /// Otherwise grab first token in token mapping and warn about falling back to it.
-            Exponea.logger.log(.warning, message: "No token mapping found for event, falling back to \(first.key).")
-            return first.value
+        if tokens.isEmpty {
+            Exponea.logger.log(.error, message: "No project token or token mapping found.")
         }
+        return tokens
     }
 
     /// Returns a single token suitable for fetching customer data.

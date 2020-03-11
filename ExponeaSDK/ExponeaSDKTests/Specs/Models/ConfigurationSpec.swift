@@ -134,9 +134,10 @@ class ConfigurationSpec: QuickSpec {
                         baseUrl: "baseUrl"
                     )
                     let tokens = configuration.tokens(for: .sessionStart)
-                    expect { tokens.count }.to(equal(2))
-                    expect { tokens[0] }.to(equal("token2"))
-                    expect { tokens[1] }.to(equal("token3"))
+                    expect { tokens.count }.to(equal(3))
+                    expect { tokens[0] }.to(equal("token"))
+                    expect { tokens[1] }.to(equal("token2"))
+                    expect { tokens[2] }.to(equal("token3"))
                     expect { logger.messages }.to(beEmpty())
                 }
 
