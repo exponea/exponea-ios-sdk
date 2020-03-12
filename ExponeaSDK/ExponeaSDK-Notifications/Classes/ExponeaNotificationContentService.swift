@@ -12,11 +12,7 @@ import UserNotificationsUI
 
 public class ExponeaNotificationContentService {
 
-    private let decoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return decoder
-    }()
+    private let decoder: JSONDecoder = JSONDecoder.snakeCase
 
     private var attachmentUrl: URL?
 

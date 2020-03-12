@@ -37,11 +37,7 @@ struct PushNotificationParser {
         }
     }
 
-    static let decoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return decoder
-    }()
+    static let decoder: JSONDecoder = JSONDecoder.snakeCase
 
     static func parsePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) -> PushOpenedData? {
         guard let userInfo = userInfoObject as? [String: Any] else {

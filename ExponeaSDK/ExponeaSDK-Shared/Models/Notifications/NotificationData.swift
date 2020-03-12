@@ -74,14 +74,10 @@ public struct NotificationData: Codable {
     }
 
     public static func deserialize(from data: Data) -> NotificationData? {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return try? decoder.decode(NotificationData.self, from: data)
+        return try? JSONDecoder.snakeCase.decode(NotificationData.self, from: data)
     }
 
     public func serialize() -> Data? {
-        let encoder = JSONEncoder()
-        encoder.keyEncodingStrategy = .convertToSnakeCase
-        return try? encoder.encode(self)
+        return try? JSONEncoder.snakeCase.encode(self)
     }
 }

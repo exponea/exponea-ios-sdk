@@ -45,6 +45,8 @@
 		053EC59F23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */; };
 		05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05457FAD241BCFF30067226F /* TelemetryEventType.swift */; };
 		054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */; };
+		0551A0AC241A81FE009A5A5E /* JSON+SnakeCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */; };
+		0551A0AD241A838B009A5A5E /* JSON+SnakeCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */; };
 		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */; };
 		055EAD242417CE3100E2F364 /* mock_notification_request.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B97D302417CD4A00FE9309 /* mock_notification_request.h */; };
@@ -440,6 +442,7 @@
 		053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayStatusStoreSpec.swift; sourceTree = "<group>"; };
 		05457FAD241BCFF30067226F /* TelemetryEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryEventType.swift; sourceTree = "<group>"; };
 		054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageActionButton.swift; sourceTree = "<group>"; };
+		0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSON+SnakeCase.swift"; sourceTree = "<group>"; };
 		05583E9A23603BA900F7084E /* PushNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParser.swift; sourceTree = "<group>"; };
 		05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParserSpec.swift; sourceTree = "<group>"; };
 		0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypeSpec.swift; sourceTree = "<group>"; };
@@ -979,6 +982,7 @@
 				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
 				05B97D2C2417C95200FE9309 /* JSONConvertible.swift */,
+				0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -2103,6 +2107,7 @@
 				058DD92D241130CD00E5BF91 /* TrackingRepository.swift in Sources */,
 				058DD93D241132B200E5BF91 /* DataType.swift in Sources */,
 				058DD8E72411193200E5BF91 /* Authorization.swift in Sources */,
+				0551A0AD241A838B009A5A5E /* JSON+SnakeCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2234,6 +2239,8 @@
 				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
+				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
+				0551A0AC241A81FE009A5A5E /* JSON+SnakeCase.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
 				058DD92324112F2D00E5BF91 /* TrackingRepository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,

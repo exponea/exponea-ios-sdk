@@ -27,11 +27,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     internal weak var delegate: PushNotificationManagerDelegate?
 
-    let decoder: JSONDecoder = {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        return decoder
-    }()
+    let decoder: JSONDecoder = JSONDecoder.snakeCase
 
     init(trackingManager: TrackingManagerType,
          appGroup: String?,
