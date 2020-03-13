@@ -55,11 +55,11 @@ final class TelemetryManagerSpec: QuickSpec {
 
         it("should report event") {
             self.manager.report(
-                eventWithName: "event_name",
+                eventWithType: .fetchBanner,
                 properties: ["property": "value", "other_property": "other_value"]
             )
             expect(self.upload.uploadedEvents.count).to(equal(1))
-            expect(self.upload.uploadedEvents[0].name).to(equal("event_name"))
+            expect(self.upload.uploadedEvents[0].name).to(equal("fetchBanner"))
             expect(self.upload.uploadedEvents[0].properties)
                 .to(equal([
                     "appVersion": "",

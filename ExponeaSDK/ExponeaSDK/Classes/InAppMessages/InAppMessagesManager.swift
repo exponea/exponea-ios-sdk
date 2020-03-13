@@ -216,6 +216,10 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 if presented != nil {
                     self.displayStatusStore.didDisplay(message, at: Date())
                     trackingDelegate?.track(message: message, action: "show", interaction: false)
+                    Exponea.shared.telemetryManager?.report(
+                        eventWithType: .showInAppMessage,
+                        properties: ["messageType": message.rawMessageType]
+                    )
                 }
                 callback?(presented)
             }

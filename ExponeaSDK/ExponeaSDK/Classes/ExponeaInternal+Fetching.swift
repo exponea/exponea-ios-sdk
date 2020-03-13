@@ -21,6 +21,7 @@ extension ExponeaInternal {
                 for: $0.trackingManager.customerIds,
                 completion: $1
             )
+            telemetryManager?.report(eventWithType: .fetchRecommendation, properties: [:])
         }, completion: completion)
     }
 
@@ -31,6 +32,8 @@ extension ExponeaInternal {
             }
 
             $0.repository.fetchBanners(completion: $1)
+
+            telemetryManager?.report(eventWithType: .fetchBanner, properties: [:])
         }, completion: completion)
     }
 
@@ -46,6 +49,8 @@ extension ExponeaInternal {
                 for: $0.trackingManager.customerIds,
                 completion: $1
             )
+
+            telemetryManager?.report(eventWithType: .fetchPersonalization, properties: [:])
         }, completion: completion)
     }
 
@@ -60,6 +65,8 @@ extension ExponeaInternal {
             }
 
             $0.repository.fetchConsents(completion: $1)
+
+            telemetryManager?.report(eventWithType: .fetchConsents, properties: [:])
         }, completion: completion)
     }
 }
