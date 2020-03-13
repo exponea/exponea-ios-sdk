@@ -49,4 +49,26 @@ final class TelemetryUtility {
                     + "\(config.flushEventMaxRetries == defaultConfig.flushEventMaxRetries ? " [default]" : "")"
         ]
     }
+
+    private static func getPlistValue(bundle: Bundle = Bundle.main, key: String, defaultValue: String = "") -> String {
+        return bundle.infoDictionary?[key] as? String ?? defaultValue
+    }
+
+    struct AppInfo {
+        let appName: String
+        let appVersion: String
+        let appBuild: String
+    }
+
+    static var appInfo: AppInfo {
+        return AppInfo(
+            appName: getPlistValue(key: "CFBundleIdentifier"),
+            appVersion: getPlistValue(key: "CFBundleShortVersionString"),
+            appBuild: getPlistValue(key: "CFBundleVersion")
+        )
+    }
+
+    static var sdkVersion: String {
+        return getPlistValue(bundle: Bundle(for: ExponeaSDK.Exponea.self), key: "CFBundleShortVersionString")
+    }
 }

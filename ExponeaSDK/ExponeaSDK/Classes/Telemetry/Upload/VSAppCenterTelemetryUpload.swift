@@ -158,18 +158,14 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
         return VSAppCenterTelemetryUpload.formatter.string(from: Date(timeIntervalSince1970: timestamp))
     }
 
-    func getPlistValue(bundle: Bundle = Bundle.main, key: String, defaultValue: String = "") -> String {
-        return Bundle.main.infoDictionary?[key] as? String ?? defaultValue
-    }
-
     func getVSAppCenterAPIDevice() -> VSAppCenterAPIDevice {
-        let bundleIdentifier = getPlistValue(key: "CFBundleIdentifier")
+        let appInfo = TelemetryUtility.appInfo
         return VSAppCenterAPIDevice(
-            appNamespace: bundleIdentifier,
-            appVersion: "\(bundleIdentifier)-\(getPlistValue(key: "CFBundleShortVersionString"))",
-            appBuild: getPlistValue(key: "CFBundleVersion"),
+            appNamespace: appInfo.appName,
+            appVersion: "\(appInfo.appName)-\(appInfo.appVersion)",
+            appBuild: appInfo.appBuild,
             sdkName: "ExponeaSDK.ios",
-            sdkVersion: getPlistValue(bundle: Bundle(for: ExponeaSDK.Exponea.self), key: "CFBundleShortVersionString"),
+            sdkVersion: TelemetryUtility.sdkVersion,
             osName: UIDevice.current.systemName,
             osVersion: UIDevice.current.systemVersion,
             model: UIDevice.current.model,

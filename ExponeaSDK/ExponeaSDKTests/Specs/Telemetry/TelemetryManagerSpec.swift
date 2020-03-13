@@ -61,7 +61,14 @@ final class TelemetryManagerSpec: QuickSpec {
             expect(self.upload.uploadedEvents.count).to(equal(1))
             expect(self.upload.uploadedEvents[0].name).to(equal("event_name"))
             expect(self.upload.uploadedEvents[0].properties)
-                .to(equal(["property": "value", "other_property": "other_value"]))
+                .to(equal([
+                    "appVersion": "",
+                    "appName": "com.apple.dt.xctest.tool",
+                    "sdkVersion": "2.6.0", "appNameVersionSdkVersion": "com.apple.dt.xctest.tool -  - SDK 2.6.0",
+                    "appNameVersion": "com.apple.dt.xctest.tool - ",
+                    "property": "value",
+                    "other_property": "other_value"
+                ]))
         }
 
         it("should report init event") {

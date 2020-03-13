@@ -36,7 +36,17 @@ final class TelemetryManager {
     }
 
     func report(eventWithName name: String, properties: [String: String]) {
-        upload.upload(eventWithName: name, properties: properties) { result in
+        let appInfo = TelemetryUtility.appInfo
+        var allProperties = [
+            "sdkVersion": TelemetryUtility.sdkVersion,
+            "appName": appInfo.appName,
+            "appVersion": appInfo.appVersion,
+            "appNameVersion": "\(appInfo.appName) - \(appInfo.appVersion)",
+            "appNameVersionSdkVersion":
+                "\(appInfo.appName) - \(appInfo.appVersion) - SDK \(TelemetryUtility.sdkVersion)"
+        ]
+        allProperties.merge(properties, uniquingKeysWith: { first, _ in return first })
+        upload.upload(eventWithName: name, properties: allProperties) { result in
             if !result {
                 Exponea.logger.log(.error, message: "Uploading telemetry event failed.")
             }
@@ -44,10 +54,7 @@ final class TelemetryManager {
     }
 
     func report(initEventWithConfiguration configuration: Configuration) {
-        var properties: [String: String] = TelemetryUtility.formatConfigurationForTracking(configuration)
-        let version = Bundle(for: Exponea.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-        properties["sdkVersion"] = version
-        report(eventWithName: "init", properties: properties)
+        report(eventWithName: "init", properties: TelemetryUtility.formatConfigurationForTracking(configuration))
     }
 
     func start() {
