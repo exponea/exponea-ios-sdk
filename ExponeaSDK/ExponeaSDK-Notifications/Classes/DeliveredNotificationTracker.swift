@@ -1,0 +1,98 @@
+//
+//  DeliveredNotificationTracker.swift
+//  ExponeaSDK
+//
+//  Created by Panaxeo on 09/03/2020.
+//  Copyright © 2020 Exponea. All rights reserved.
+//
+
+import Foundation
+
+final class DeliveredNotificationTracker {
+    private let events: [EventTrackingObject]
+    private let customerIds: [String: JSONValue]
+    private let repository: ServerRepository
+
+    init(appGroup: String, request: UNNotificationRequest) throws {
+        guard let userInfo = (request.content.mutableCopy() as? UNMutableNotificationContent)?.userInfo else {
+            throw DeliveredNotificationTrackerError.unableToGetUserInfo
+        }
+        guard let configuration = Configuration.loadFromUserDefaults(appGroup: appGroup) else {
+            throw DeliveredNotificationTrackerError.configurationNotFound
+        }
+        guard let customerIds = EventTrackingObject.loadCustomerIdsFromUserDefaults(appGroup: appGroup) else {
+            throw DeliveredNotificationTrackerError.customerIdsNotFound
+        }
+        let attributes = userInfo["attributes"] as? [String: Any] ?? [:]
+        let notification = NotificationData.deserialize(from: attributes) ?? NotificationData()
+
+        repository = ServerRepository(configuration: configuration)
+        self.customerIds = customerIds
+        events = DeliveredNotificationTracker.generateTrackingObjects(
+            configuration: configuration,
+            notification: notification
+        )
+    }
+
+    func track(onSuccess: @escaping () -> Void, onFailure: @escaping () -> Void) {
+        guard events.count > 0 else {
+            onSuccess()
+            return
+        }
+        var remainingRequests = events.count
+        var failedRequests = 0
+        events.forEach { event in
+            repository.trackObject(
+                event,
+                for: customerIds, completion: { result in
+                    if case .failure(let error) = result {
+                        Exponea.logger.log(.error, message: "Failed to upload push delivered event \(error)")
+                        failedRequests += 1
+                    }
+                    remainingRequests -= 1
+                    if remainingRequests == 0 {
+                        if failedRequests == 0 {
+                            onSuccess()
+                        } else {
+                            onFailure()
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    static func generateTrackingObjects(
+        configuration: Configuration,
+        notification: NotificationData
+    ) -> [EventTrackingObject] {
+        var properties = configuration.defaultProperties?.mapValues { $0.jsonValue } ?? [:]
+        properties = properties.merging(notification.properties, uniquingKeysWith: { (_, new) in new })
+        properties["status"] = .string("delivered")
+
+        let eventType = notification.eventType != nil ? EventType.customEvent : EventType.pushDelivered
+        let tokens = configuration.tokens(for: eventType)
+        return tokens.map { token in
+            return EventTrackingObject(
+                projectToken: token,
+                eventType: notification.eventType ?? Constants.EventTypes.pushDelivered,
+                timestamp: notification.timestamp.timeIntervalSince1970,
+                dataTypes: [.properties(properties)]
+            )
+        }
+    }
+}
+
+enum DeliveredNotificationTrackerError: LocalizedError {
+    case unableToGetUserInfo
+    case configurationNotFound
+    case customerIdsNotFound
+
+    public var errorDescription: String? {
+        switch self {
+        case .unableToGetUserInfo: return "Unable to get user info object from notification."
+        case .configurationNotFound: return "Cannot get configuration object from UserDefaults."
+        case .customerIdsNotFound: return "Cannot get customer ids object from UserDefaults."
+        }
+    }
+}

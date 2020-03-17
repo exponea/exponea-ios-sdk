@@ -44,6 +44,11 @@
 		054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */; };
 		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */; };
+		055EAD242417CE3100E2F364 /* mock_notification_request.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B97D302417CD4A00FE9309 /* mock_notification_request.h */; };
+		055EAD252417CE7900E2F364 /* ExponeaSDKTests.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */; };
+		055EAD262417CE9D00E2F364 /* mock_notification_response.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931ED2375A4EE00D45200 /* mock_notification_response.h */; };
+		055EAD272417CF3C00E2F364 /* mock_notification_response.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A931EE2375A50100D45200 /* mock_notification_response.m */; };
+		055EAD282417CF4700E2F364 /* mock_notification_request.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D252417B55400FE9309 /* mock_notification_request.m */; };
 		0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */; };
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
 		0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */; };
@@ -79,12 +84,15 @@
 		0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0580BBC6239698E60058323D /* UIColor+FromHexString.swift */; };
 		0580BBC923969D1F0058323D /* InAppMessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0580BBC823969D1F0058323D /* InAppMessagePresenter.swift */; };
 		05835C9224124830002F4571 /* Configuration+UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05835C9124124830002F4571 /* Configuration+UserDefaults.swift */; };
+		05880530241663D8001AAE8A /* Configuration+UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05835C9124124830002F4571 /* Configuration+UserDefaults.swift */; };
+		0588053124166BE0001AAE8A /* NotificationData+Properties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09C33CA221C097100715603 /* NotificationData+Properties.swift */; };
+		0588053424166E43001AAE8A /* DeliveredNotificationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0588053224166DD1001AAE8A /* DeliveredNotificationTracker.swift */; };
+		05880538241682F8001AAE8A /* ExponeaInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05880537241682F8001AAE8A /* ExponeaInternal.swift */; };
 		058DD8E3241118DB00E5BF91 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757EF207D027300FE8C21 /* Configuration.swift */; };
 		058DD8E4241118DE00E5BF91 /* Configuration+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */; };
 		058DD8E5241118FD00E5BF91 /* EventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB3207E58080031BFEB /* EventType.swift */; };
 		058DD8E72411193200E5BF91 /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B08020A3C0D50066FB1E /* Authorization.swift */; };
 		058DD8E82411194900E5BF91 /* TokenTrackFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */; };
-		058DD8E92411197300E5BF91 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */; };
 		058DD8EB2411199D00E5BF91 /* Exponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD8EA2411199D00E5BF91 /* Exponea.swift */; };
 		058DD8EC241119EC00E5BF91 /* Exponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD8EA2411199D00E5BF91 /* Exponea.swift */; };
 		058DD8ED24111A2400E5BF91 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639E207E14D9005FD174 /* LogLevel.swift */; };
@@ -94,6 +102,22 @@
 		058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92424112F5600E5BF91 /* FetchRepository.swift */; };
 		058DD92724112F8100E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92624112F8100E5BF91 /* ServerRepository+TrackingRepository.swift */; };
 		058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92824112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift */; };
+		058DD92B241130C900E5BF91 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */; };
+		058DD92C241130CB00E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92624112F8100E5BF91 /* ServerRepository+TrackingRepository.swift */; };
+		058DD92D241130CD00E5BF91 /* TrackingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92224112F2D00E5BF91 /* TrackingRepository.swift */; };
+		058DD92E2411310700E5BF91 /* Routes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF28208A099500342498 /* Routes.swift */; };
+		058DD92F2411310700E5BF91 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF26208A096900342498 /* HTTPMethod.swift */; };
+		058DD9302411310700E5BF91 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029BF24208A08F800342498 /* Result.swift */; };
+		058DD9312411315100E5BF91 /* RequestParametersType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5DA520BB59BD00F1031F /* RequestParametersType.swift */; };
+		058DD9322411315400E5BF91 /* TrackingParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C2AD4B208F60ED0012F663 /* TrackingParameters.swift */; };
+		058DD9332411315F00E5BF91 /* RepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E8F20A43D3900A779FF /* RepositoryError.swift */; };
+		058DD935241131AC00E5BF91 /* MultipleErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */; };
+		058DD936241131BD00E5BF91 /* RequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */; };
+		058DD9382411320300E5BF91 /* URLResponse+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */; };
+		058DD9392411320600E5BF91 /* URLRequest+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */; };
+		058DD93B2411323F00E5BF91 /* TrackingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD93A2411323F00E5BF91 /* TrackingObject.swift */; };
+		058DD93C2411324900E5BF91 /* TrackingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD93A2411323F00E5BF91 /* TrackingObject.swift */; };
+		058DD93D241132B200E5BF91 /* DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019F1AC42087666800368FB1 /* DataType.swift */; };
 		058DD93F24113F2100E5BF91 /* FlushableObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD93E24113F2100E5BF91 /* FlushableObject.swift */; };
 		0591905B23EC1A170037BD88 /* EventFilterAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591905A23EC1A170037BD88 /* EventFilterAttribute.swift */; };
 		0591905D23EC1A550037BD88 /* EventFilterConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591905C23EC1A550037BD88 /* EventFilterConstraint.swift */; };
@@ -110,9 +134,6 @@
 		0591907523EC5C740037BD88 /* EventFilterAttributeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591907423EC5C740037BD88 /* EventFilterAttributeSpec.swift */; };
 		0591907723EC5F5A0037BD88 /* EventFilterConstraintSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591907623EC5F5A0037BD88 /* EventFilterConstraintSpec.swift */; };
 		05A6A3EB23954654008475E7 /* InAppMessageDialogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A6A3EA23954654008475E7 /* InAppMessageDialogView.swift */; };
-		05A931F02375A73500D45200 /* mock_notification_response.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A931EE2375A50100D45200 /* mock_notification_response.m */; };
-		05A931F12375A7BE00D45200 /* mock_notification_response.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931ED2375A4EE00D45200 /* mock_notification_response.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		05A931F32375AB5A00D45200 /* ExponeaSDKTests.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
 		05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BD2342413E00D78452 /* NetworkStubbing.swift */; };
 		05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05AA63CA2343805C00D78452 /* .swiftlint.yml */; };
@@ -122,6 +143,9 @@
 		05B4D651238FEF3900F5010F /* InAppMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B4D650238FEF3900F5010F /* InAppMessagePayload.swift */; };
 		05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B4D657238FF6DC00F5010F /* InAppMessageSpec.swift */; };
 		05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */; };
+		05B97D212417B2C400FE9309 /* DeliveredNotificationTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D202417B2C300FE9309 /* DeliveredNotificationTrackerSpec.swift */; };
+		05B97D2D2417C95200FE9309 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D2C2417C95200FE9309 /* JSONConvertible.swift */; };
+		05B97D2E2417C97300FE9309 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D2C2417C95200FE9309 /* JSONConvertible.swift */; };
 		05BB22B2236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB22B1236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift */; };
 		05BB22B3236B1F740098C406 /* ExponeaSDKNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ED33B421A6FB0F003649C3 /* ExponeaSDKNotifications.framework */; };
 		05BB22B5236B2F780098C406 /* PushNotificationManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB22B4236B2F780098C406 /* PushNotificationManagerSpec.swift */; };
@@ -157,7 +181,6 @@
 		05F3EFF12382C757006E83F4 /* VSAppCenterAPIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFF02382C757006E83F4 /* VSAppCenterAPIModel.swift */; };
 		05FB1BB7236AE9220089C529 /* NotificationDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */; };
 		05FD178F2403C4CC003A799B /* BuildConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FD178E2403C4CC003A799B /* BuildConfiguration.swift */; };
-		05FD17932403D8E9003A799B /* TrackingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FD17922403D8E9003A799B /* TrackingObject.swift */; };
 		05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */; };
 		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
@@ -174,7 +197,6 @@
 		B42DA69222B05A0100BBA225 /* get-consents.json in Resources */ = {isa = PBXBuildFile; fileRef = B42DA69122B05A0100BBA225 /* get-consents.json */; };
 		B4AF83BB22C6108200061350 /* String+URLValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AF83BA22C6108200061350 /* String+URLValidation.swift */; };
 		C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */; };
-		C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */; };
 		C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C028C3A12110980600B03ED4 /* JSONValueSpec.swift */; };
 		C02C562221C9B01D0087A990 /* ExponeaNotificationActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03B23D721AAFDBB00360EE6 /* ExponeaNotificationActionType.swift */; };
 		C02C562321C9B4640087A990 /* ExponeaNotificationContentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08D53C721B946E700EA2C13 /* ExponeaNotificationContentService.swift */; };
@@ -283,14 +305,20 @@
 		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		F0E757E5207CFA5300FE8C21 /* RequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */; };
 		F0E757E9207CFA7A00FE8C21 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */; };
-		F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757EA207CFA9700FE8C21 /* Repository.swift */; };
-		F0E757EE207D025300FE8C21 /* ExponeaInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757ED207D025300FE8C21 /* ExponeaInternal.swift */; };
+		F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757EA207CFA9700FE8C21 /* RepositoryType.swift */; };
 		F0E757F0207D027300FE8C21 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757EF207D027300FE8C21 /* Configuration.swift */; };
 		F0E757F3207D02F100FE8C21 /* ExponeaSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */; };
 		F0E757F5207D032500FE8C21 /* ExponeaConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0E757F4207D032500FE8C21 /* ExponeaConfig.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		05B97D382417CDFD00FE9309 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F021E850206CF10200788ABC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0ED33B321A6FB0F003649C3;
+			remoteInfo = ExponeaSDKNotifications;
+		};
 		C02C562621C9B4F20087A990 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F021E850206CF10200788ABC /* Project object */;
@@ -443,11 +471,14 @@
 		0580BBC6239698E60058323D /* UIColor+FromHexString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+FromHexString.swift"; sourceTree = "<group>"; };
 		0580BBC823969D1F0058323D /* InAppMessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagePresenter.swift; sourceTree = "<group>"; };
 		05835C9124124830002F4571 /* Configuration+UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Configuration+UserDefaults.swift"; sourceTree = "<group>"; };
+		0588053224166DD1001AAE8A /* DeliveredNotificationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveredNotificationTracker.swift; sourceTree = "<group>"; };
+		05880537241682F8001AAE8A /* ExponeaInternal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaInternal.swift; sourceTree = "<group>"; };
 		058DD8EA2411199D00E5BF91 /* Exponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exponea.swift; sourceTree = "<group>"; };
 		058DD92224112F2D00E5BF91 /* TrackingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingRepository.swift; sourceTree = "<group>"; };
 		058DD92424112F5600E5BF91 /* FetchRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchRepository.swift; sourceTree = "<group>"; };
 		058DD92624112F8100E5BF91 /* ServerRepository+TrackingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerRepository+TrackingRepository.swift"; sourceTree = "<group>"; };
 		058DD92824112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerRepository+FetchingRepository.swift"; sourceTree = "<group>"; };
+		058DD93A2411323F00E5BF91 /* TrackingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingObject.swift; sourceTree = "<group>"; };
 		058DD93E24113F2100E5BF91 /* FlushableObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushableObject.swift; sourceTree = "<group>"; };
 		0591905A23EC1A170037BD88 /* EventFilterAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterAttribute.swift; sourceTree = "<group>"; };
 		0591905C23EC1A550037BD88 /* EventFilterConstraint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterConstraint.swift; sourceTree = "<group>"; };
@@ -476,6 +507,10 @@
 		05B4D650238FEF3900F5010F /* InAppMessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagePayload.swift; sourceTree = "<group>"; };
 		05B4D657238FF6DC00F5010F /* InAppMessageSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageSpec.swift; sourceTree = "<group>"; };
 		05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSManagedObjectWithContext.swift; sourceTree = "<group>"; };
+		05B97D202417B2C300FE9309 /* DeliveredNotificationTrackerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveredNotificationTrackerSpec.swift; sourceTree = "<group>"; };
+		05B97D252417B55400FE9309 /* mock_notification_request.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mock_notification_request.m; sourceTree = "<group>"; };
+		05B97D2C2417C95200FE9309 /* JSONConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
+		05B97D302417CD4A00FE9309 /* mock_notification_request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mock_notification_request.h; sourceTree = "<group>"; };
 		05BB22B1236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationServiceSpec.swift; sourceTree = "<group>"; };
 		05BB22B4236B2F780098C406 /* PushNotificationManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerSpec.swift; sourceTree = "<group>"; };
 		05BB22B6236B300F0098C406 /* MockTrackingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTrackingManager.swift; sourceTree = "<group>"; };
@@ -510,7 +545,6 @@
 		05F3EFF02382C757006E83F4 /* VSAppCenterAPIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSAppCenterAPIModel.swift; sourceTree = "<group>"; };
 		05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDataSpec.swift; sourceTree = "<group>"; };
 		05FD178E2403C4CC003A799B /* BuildConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildConfiguration.swift; sourceTree = "<group>"; };
-		05FD17922403D8E9003A799B /* TrackingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingObject.swift; sourceTree = "<group>"; };
 		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -532,7 +566,6 @@
 		B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = "ExponeaSDK-Notifications.podspec"; path = "../ExponeaSDK-Notifications.podspec"; sourceTree = "<group>"; };
 		B4FE42FEB4796BF54B37662B /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleErrorResponse.swift; sourceTree = "<group>"; };
-		C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
 		C028C3A12110980600B03ED4 /* JSONValueSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueSpec.swift; sourceTree = "<group>"; };
 		C02C562821C9B71D0087A990 /* ExponeaNotificationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationAction.swift; sourceTree = "<group>"; };
 		C030AF47216F4335004413F0 /* PushNotificationReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationReceiver.swift; sourceTree = "<group>"; };
@@ -644,8 +677,7 @@
 		F0E757DF207CF99E00FE8C21 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestFactory.swift; sourceTree = "<group>"; };
 		F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
-		F0E757EA207CFA9700FE8C21 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
-		F0E757ED207D025300FE8C21 /* ExponeaInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaInternal.swift; sourceTree = "<group>"; };
+		F0E757EA207CFA9700FE8C21 /* RepositoryType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryType.swift; sourceTree = "<group>"; };
 		F0E757EF207D027300FE8C21 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSpec.swift; sourceTree = "<group>"; };
 		F0E757F4207D032500FE8C21 /* ExponeaConfig.plist */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; path = ExponeaConfig.plist; sourceTree = "<group>"; };
@@ -732,6 +764,8 @@
 				F021E869206CF10200788ABC /* Info.plist */,
 				05A931ED2375A4EE00D45200 /* mock_notification_response.h */,
 				05A931EE2375A50100D45200 /* mock_notification_response.m */,
+				05B97D302417CD4A00FE9309 /* mock_notification_request.h */,
+				05B97D252417B55400FE9309 /* mock_notification_request.m */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -877,11 +911,15 @@
 		058DD8E12411189300E5BF91 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				C0EB5DA420BB59A500F1031F /* Parameters */,
+				058DD9342411319500E5BF91 /* Responses */,
 				058DD8E62411192200E5BF91 /* Networking */,
 				058DD8E22411189E00E5BF91 /* Notifications */,
+				019F1AC42087666800368FB1 /* DataType.swift */,
 				01EC2DB3207E58080031BFEB /* EventType.swift */,
 				B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */,
 				4C6BD13522ABA743004487A8 /* CampaignData.swift */,
+				058DD93A2411323F00E5BF91 /* TrackingObject.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -892,6 +930,7 @@
 				C02C562821C9B71D0087A990 /* ExponeaNotificationAction.swift */,
 				C03B23D721AAFDBB00360EE6 /* ExponeaNotificationActionType.swift */,
 				C0F7A59C21AE921300BA392F /* NotificationData.swift */,
+				C09C33CA221C097100715603 /* NotificationData+Properties.swift */,
 			);
 			path = Notifications;
 			sourceTree = "<group>";
@@ -900,8 +939,41 @@
 			isa = PBXGroup;
 			children = (
 				C0D9B08020A3C0D50066FB1E /* Authorization.swift */,
+				F029BF26208A096900342498 /* HTTPMethod.swift */,
+				F029BF24208A08F800342498 /* Result.swift */,
+				F029BF28208A099500342498 /* Routes.swift */,
 			);
 			path = Networking;
+			sourceTree = "<group>";
+		};
+		058DD92A241130A900E5BF91 /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */,
+				C0753E8F20A43D3900A779FF /* RepositoryError.swift */,
+				F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */,
+				058DD92624112F8100E5BF91 /* ServerRepository+TrackingRepository.swift */,
+				058DD92224112F2D00E5BF91 /* TrackingRepository.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		058DD9342411319500E5BF91 /* Responses */ = {
+			isa = PBXGroup;
+			children = (
+				C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */,
+			);
+			path = Responses;
+			sourceTree = "<group>";
+		};
+		058DD937241131F400E5BF91 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
+				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
+				05B97D2C2417C95200FE9309 /* JSONConvertible.swift */,
+			);
+			path = Other;
 			sourceTree = "<group>";
 		};
 		0591906023EC1CD90037BD88 /* Operators */ = {
@@ -948,6 +1020,7 @@
 			isa = PBXGroup;
 			children = (
 				05BB22B1236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift */,
+				05B97D202417B2C300FE9309 /* DeliveredNotificationTrackerSpec.swift */,
 			);
 			path = Notifications;
 			sourceTree = "<group>";
@@ -1128,11 +1201,12 @@
 		C0249EBD2212D15500D4F5D8 /* ExponeaSDK-Shared */ = {
 			isa = PBXGroup;
 			children = (
+				058DD937241131F400E5BF91 /* Other */,
+				058DD92A241130A900E5BF91 /* Repository */,
 				0191639D207E14C9005FD174 /* Logging */,
 				058DD8E12411189300E5BF91 /* Models */,
 				F0E757DF207CF99E00FE8C21 /* Constants.swift */,
 				F0E757EF207D027300FE8C21 /* Configuration.swift */,
-				C02252C820B5F5FC00FDB7E3 /* JSONConvertible.swift */,
 				05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */,
 				05835C9124124830002F4571 /* Configuration+UserDefaults.swift */,
 				C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */,
@@ -1193,7 +1267,6 @@
 				05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */,
 				C0A6DE9920EAC16800C5F744 /* TrackCustomer.swift */,
 				C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */,
-				05FD17922403D8E9003A799B /* TrackingObject.swift */,
 				058DD93E24113F2100E5BF91 /* FlushableObject.swift */,
 			);
 			path = "Core Data";
@@ -1298,22 +1371,11 @@
 			children = (
 				C07E420420CA898700920809 /* BannerResponse.swift */,
 				B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */,
-				C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */,
 				C07E420020CA896B00920809 /* PersonalizationResponse.swift */,
 				05B4D64B238FEB9200F5010F /* InAppMessagesResponse.swift */,
 				05BF1C7923A1139B00FDC101 /* RecommendationResponse.swift */,
 			);
 			path = Responses;
-			sourceTree = "<group>";
-		};
-		C0EB5DA220BB594300F1031F /* Networking */ = {
-			isa = PBXGroup;
-			children = (
-				F029BF26208A096900342498 /* HTTPMethod.swift */,
-				F029BF24208A08F800342498 /* Result.swift */,
-				F029BF28208A099500342498 /* Routes.swift */,
-			);
-			path = Networking;
 			sourceTree = "<group>";
 		};
 		C0EB5DA420BB59A500F1031F /* Parameters */ = {
@@ -1349,6 +1411,7 @@
 			children = (
 				C08D53C721B946E700EA2C13 /* ExponeaNotificationContentService.swift */,
 				C0ED33C021A6FB6B003649C3 /* ExponeaNotificationService.swift */,
+				0588053224166DD1001AAE8A /* DeliveredNotificationTracker.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -1548,18 +1611,14 @@
 				B42DA68A22B03FAC00BBA225 /* Consents */,
 				C0A6DE9420EAC14200C5F744 /* Core Data */,
 				05B4D64D238FEBCC00F5010F /* InAppMessage */,
-				C0EB5DA220BB594300F1031F /* Networking */,
-				C0EB5DA420BB59A500F1031F /* Parameters */,
 				C07E421020CA8B0900920809 /* Personalization */,
 				C0EB5DA020BB57ED00F1031F /* Requests */,
 				C0EB5DA120BB57FB00F1031F /* Responses */,
 				4C588F8622AAAB3300916EE4 /* CampaignData+Properties.swift */,
-				019F1AC42087666800368FB1 /* DataType.swift */,
 				C07E420E20CA8AF700920809 /* DateFilter.swift */,
 				F0CA58F5207F612200C89A7F /* DeviceProperties.swift */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
 				01EC2DC0207F63970031BFEB /* FlushingMode.swift */,
-				C09C33CA221C097100715603 /* NotificationData+Properties.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1585,8 +1644,6 @@
 				C0F2406920BC38EC00CAF7CE /* Swizzle.swift */,
 				C0EB5D8B20B70D5000F1031F /* Swizzler.swift */,
 				0580BBC6239698E60058323D /* UIColor+FromHexString.swift */,
-				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
-				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
 				05FD178E2403C4CC003A799B /* BuildConfiguration.swift */,
 			);
 			path = Others;
@@ -1595,13 +1652,8 @@
 		F0E757E1207CF9BE00FE8C21 /* Repository */ = {
 			isa = PBXGroup;
 			children = (
-				F0E757EA207CFA9700FE8C21 /* Repository.swift */,
-				C0753E8F20A43D3900A779FF /* RepositoryError.swift */,
-				F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */,
-				F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */,
-				058DD92224112F2D00E5BF91 /* TrackingRepository.swift */,
+				F0E757EA207CFA9700FE8C21 /* RepositoryType.swift */,
 				058DD92424112F5600E5BF91 /* FetchRepository.swift */,
-				058DD92624112F8100E5BF91 /* ServerRepository+TrackingRepository.swift */,
 				058DD92824112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift */,
 			);
 			path = Repository;
@@ -1623,7 +1675,7 @@
 				057D476523C87ECE00AEE902 /* Deeplinking */,
 				C0F2406B20BC50A000CAF7CE /* ExponeaInternal+Fetching.swift */,
 				C0F2406D20BC511500CAF7CE /* ExponeaInternal+Tracking.swift */,
-				F0E757ED207D025300FE8C21 /* ExponeaInternal.swift */,
+				05880537241682F8001AAE8A /* ExponeaInternal.swift */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 			);
 			path = Classes;
@@ -1632,6 +1684,16 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		05B97D3A2417CE0D00FE9309 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				055EAD252417CE7900E2F364 /* ExponeaSDKTests.h in Headers */,
+				055EAD262417CE9D00E2F364 /* mock_notification_response.h in Headers */,
+				055EAD242417CE3100E2F364 /* mock_notification_request.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0ED33AF21A6FB0F003649C3 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1644,8 +1706,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05A931F32375AB5A00D45200 /* ExponeaSDKTests.h in Headers */,
-				05A931F12375A7BE00D45200 /* mock_notification_response.h in Headers */,
 				05114E6B2347483F00201EE6 /* objc_tryCatch.h in Headers */,
 				F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */,
 			);
@@ -1755,6 +1815,7 @@
 			buildConfigurationList = F021E870206CF10200788ABC /* Build configuration list for PBXNativeTarget "ExponeaSDKTests" */;
 			buildPhases = (
 				66B6C7F3C0CC28444D9F6CED /* [CP] Check Pods Manifest.lock */,
+				05B97D3A2417CE0D00FE9309 /* Headers */,
 				F021E85E206CF10200788ABC /* Sources */,
 				F021E85F206CF10200788ABC /* Frameworks */,
 				F021E860206CF10200788ABC /* Resources */,
@@ -1763,6 +1824,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				05B97D392417CDFD00FE9309 /* PBXTargetDependency */,
 				C0861C0220F919CF00C57997 /* PBXTargetDependency */,
 			);
 			name = ExponeaSDKTests;
@@ -1823,7 +1885,7 @@
 					};
 					F021E861206CF10200788ABC = {
 						CreatedOnToolsVersion = 9.2;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = 1130;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -1998,21 +2060,39 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0588053424166E43001AAE8A /* DeliveredNotificationTracker.swift in Sources */,
+				058DD92B241130C900E5BF91 /* ServerRepository.swift in Sources */,
+				058DD9392411320600E5BF91 /* URLRequest+Debug.swift in Sources */,
 				C09C33C7221C08C300715603 /* Constants.swift in Sources */,
+				058DD92F2411310700E5BF91 /* HTTPMethod.swift in Sources */,
 				C0ED33C121A6FB6B003649C3 /* ExponeaNotificationService.swift in Sources */,
+				058DD93C2411324900E5BF91 /* TrackingObject.swift in Sources */,
+				05B97D2E2417C97300FE9309 /* JSONConvertible.swift in Sources */,
 				058DD8E3241118DB00E5BF91 /* Configuration.swift in Sources */,
 				058DD8EC241119EC00E5BF91 /* Exponea.swift in Sources */,
+				058DD92C241130CB00E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */,
 				C02C562221C9B01D0087A990 /* ExponeaNotificationActionType.swift in Sources */,
+				05880530241663D8001AAE8A /* Configuration+UserDefaults.swift in Sources */,
 				058DD8E5241118FD00E5BF91 /* EventType.swift in Sources */,
+				058DD935241131AC00E5BF91 /* MultipleErrorResponse.swift in Sources */,
 				C02C562321C9B4640087A990 /* ExponeaNotificationContentService.swift in Sources */,
+				058DD9322411315400E5BF91 /* TrackingParameters.swift in Sources */,
+				058DD9302411310700E5BF91 /* Result.swift in Sources */,
 				058DD8EF24111A5000E5BF91 /* ExponeaError.swift in Sources */,
 				C09C33CD221C19B300715603 /* NotificationData.swift in Sources */,
-				058DD8E92411197300E5BF91 /* JSONConvertible.swift in Sources */,
 				058DD8E82411194900E5BF91 /* TokenTrackFrequency.swift in Sources */,
 				058DD8EE24111A2600E5BF91 /* Logger.swift in Sources */,
+				058DD9382411320300E5BF91 /* URLResponse+Debug.swift in Sources */,
+				058DD936241131BD00E5BF91 /* RequestFactory.swift in Sources */,
 				C02C562A21C9B71D0087A990 /* ExponeaNotificationAction.swift in Sources */,
 				058DD8ED24111A2400E5BF91 /* LogLevel.swift in Sources */,
+				058DD9332411315F00E5BF91 /* RepositoryError.swift in Sources */,
+				058DD9312411315100E5BF91 /* RequestParametersType.swift in Sources */,
 				058DD8E4241118DE00E5BF91 /* Configuration+Validation.swift in Sources */,
+				0588053124166BE0001AAE8A /* NotificationData+Properties.swift in Sources */,
+				058DD92E2411310700E5BF91 /* Routes.swift in Sources */,
+				058DD92D241130CD00E5BF91 /* TrackingRepository.swift in Sources */,
+				058DD93D241132B200E5BF91 /* DataType.swift in Sources */,
 				058DD8E72411193200E5BF91 /* Authorization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2050,7 +2130,6 @@
 				0591906623EC1D190037BD88 /* NumberOperators.swift in Sources */,
 				C0F2406C20BC50A000CAF7CE /* ExponeaInternal+Fetching.swift in Sources */,
 				C07E421420CA8C1B00920809 /* BannerFrequency.swift in Sources */,
-				F0E757EE207D025300FE8C21 /* ExponeaInternal.swift in Sources */,
 				4C588F8722AAAB3400916EE4 /* CampaignData+Properties.swift in Sources */,
 				0567723B237462FB0082167C /* UIApplication+UIApplicationDelegating.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
@@ -2072,13 +2151,14 @@
 				05F3EFE42382BAB6006E83F4 /* TelemetryUtility.swift in Sources */,
 				058DD92724112F8100E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */,
 				05F3EFD8237E938D006E83F4 /* CrashLog.swift in Sources */,
+				058DD93B2411323F00E5BF91 /* TrackingObject.swift in Sources */,
 				F029BF27208A096900342498 /* HTTPMethod.swift in Sources */,
 				B40E9F5D22FAD25A0085B8A1 /* TokenTrackFrequency.swift in Sources */,
 				05F3EFDC237E96FA006E83F4 /* FileTelemetryStorage.swift in Sources */,
 				B42DA68E22B0556100BBA225 /* ConsentsResponse.swift in Sources */,
 				05F3EFDA237E9415006E83F4 /* ErrorData.swift in Sources */,
-				C02252C920B5F5FC00FDB7E3 /* JSONConvertible.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
+				05880538241682F8001AAE8A /* ExponeaInternal.swift in Sources */,
 				05F3EFCF237E926B006E83F4 /* CrashManager.swift in Sources */,
 				05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */,
 				C0F2406E20BC511500CAF7CE /* ExponeaInternal+Tracking.swift in Sources */,
@@ -2104,6 +2184,7 @@
 				05114E69234747BC00201EE6 /* objc_tryCatch.m in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */,
+				05B97D2D2417C95200FE9309 /* JSONConvertible.swift in Sources */,
 				05F3EFE62382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift in Sources */,
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				05835C9224124830002F4571 /* Configuration+UserDefaults.swift in Sources */,
@@ -2143,7 +2224,7 @@
 				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
-				F0E757EB207CFA9700FE8C21 /* Repository.swift in Sources */,
+				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
 				058DD92324112F2D00E5BF91 /* TrackingRepository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				0567723D237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift in Sources */,
@@ -2169,9 +2250,7 @@
 				C07E421620CA8D1800920809 /* BannerTrigger.swift in Sources */,
 				C0EB5DA620BB59BD00F1031F /* RequestParametersType.swift in Sources */,
 				C09C33CB221C097100715603 /* NotificationData+Properties.swift in Sources */,
-				05A931F02375A73500D45200 /* mock_notification_response.m in Sources */,
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
-				05FD17932403D8E9003A799B /* TrackingObject.swift in Sources */,
 				0580BBC923969D1F0058323D /* InAppMessagePresenter.swift in Sources */,
 				C07E421220CA8B9900920809 /* DeviceTargetType.swift in Sources */,
 				0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */,
@@ -2185,6 +2264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				057F447F239908650070DF30 /* InAppMessagesManagerSpec.swift in Sources */,
+				055EAD272417CF3C00E2F364 /* mock_notification_response.m in Sources */,
 				05324BF023D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift in Sources */,
 				05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */,
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
@@ -2239,7 +2319,9 @@
 				052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */,
 				05F3EFE22382A814006E83F4 /* CrashManagerSpec.swift in Sources */,
 				05BB22B7236B300F0098C406 /* MockTrackingManager.swift in Sources */,
+				05B97D212417B2C400FE9309 /* DeliveredNotificationTrackerSpec.swift in Sources */,
 				05D2D3A023DF07E800E3E79A /* InAppMessageAlertViewSpec.swift in Sources */,
+				055EAD282417CF4700E2F364 /* mock_notification_request.m in Sources */,
 				0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */,
 				0591907723EC5F5A0037BD88 /* EventFilterConstraintSpec.swift in Sources */,
 				0591906D23EC45050037BD88 /* StringOperatorsSpec.swift in Sources */,
@@ -2266,6 +2348,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		05B97D392417CDFD00FE9309 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0ED33B321A6FB0F003649C3 /* ExponeaSDKNotifications */;
+			targetProxy = 05B97D382417CDFD00FE9309 /* PBXContainerItemProxy */;
+		};
 		C02C562721C9B4F20087A990 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0ED33B321A6FB0F003649C3 /* ExponeaSDKNotifications */;
@@ -2707,6 +2794,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "ExponeaSDKTests/Supporting Files/ExponeaSDKTests.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2724,6 +2812,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "ExponeaSDKTests/Supporting Files/ExponeaSDKTests.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

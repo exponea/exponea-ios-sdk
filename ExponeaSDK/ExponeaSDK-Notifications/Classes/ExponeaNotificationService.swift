@@ -17,6 +17,17 @@ public class ExponeaNotificationService {
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
 
+    var notificationTracked: Bool = false {
+        didSet {
+            checkDone()
+        }
+    }
+    var contentCreated: Bool = false {
+        didSet {
+            checkDone()
+        }
+    }
+
     public init(appGroup: String? = nil) {
         self.appGroup = appGroup
     }
@@ -25,12 +36,18 @@ public class ExponeaNotificationService {
         self.request = request
         self.contentHandler = contentHandler
 
+        trackDeliveredNotification()
         createContent()
     }
 
     public func serviceExtensionTimeWillExpire() {
         // Clean, after we are finished
         defer { clean() }
+
+        // we failed to track notification
+        if !notificationTracked {
+            saveNotificationForLaterTracking(request: request)
+        }
 
         // Try to call content handler with current content
         if let content = bestAttemptContent {
@@ -42,7 +59,6 @@ public class ExponeaNotificationService {
         // Create a mutable content and make sure it works
         bestAttemptContent = (request?.content.mutableCopy() as? UNMutableNotificationContent)
 
-        // Modify
         if let content = bestAttemptContent {
             bestAttemptContent?.title = content.userInfo["title"] as? String ?? "NO TITLE"
             bestAttemptContent?.body = content.userInfo["message"] as? String ?? ""
@@ -67,30 +83,54 @@ public class ExponeaNotificationService {
             if let imagePath = content.userInfo["image"] as? String,
                 let url = URL(string: imagePath),
                 let data = try? Data(contentsOf: url, options: []),
-                let attachment = save("image.png", data: data, options: nil) {
+                let attachment = saveImage("image.png", data: data, options: nil) {
                 bestAttemptContent?.attachments = [attachment]
             }
-
-            saveNotificationForLaterTracking(userInfo: content.userInfo)
         }
-
-        // We're done modifying, notify
-        if let content = bestAttemptContent {
-            contentHandler?(content)
-        }
-
-        // Finally clean
-        clean()
+        contentCreated = true
     }
 
-    func saveNotificationForLaterTracking(userInfo: [AnyHashable: Any]) {
-        guard let appGroup = appGroup else {
+    func trackDeliveredNotification() {
+        guard let appGroup = appGroup, let request = request else {
+            notificationTracked = true
             return
         }
-        guard let userDefaults = UserDefaults(suiteName: appGroup) else {
-            return
+        do {
+            try DeliveredNotificationTracker(appGroup: appGroup, request: request)
+                .track(
+                    onSuccess: {
+                        self.notificationTracked = true
+                    },
+                    onFailure: {
+                        self.saveNotificationForLaterTracking(request: request)
+                        self.notificationTracked = true
+                    }
+                )
+        } catch {
+            Exponea.logger.log(
+                .error,
+                message: "Failed to track delivered push notification: \(error.localizedDescription)"
+            )
+            self.saveNotificationForLaterTracking(request: request)
+            self.notificationTracked = true
         }
+    }
 
+    func checkDone() {
+        if notificationTracked && contentCreated {
+            if let content = bestAttemptContent {
+                contentHandler?(content)
+            }
+            clean()
+        }
+    }
+
+    func saveNotificationForLaterTracking(request: UNNotificationRequest?) {
+        guard let appGroup = appGroup,
+              let userDefaults = UserDefaults(suiteName: appGroup),
+              let userInfo = request?.content.userInfo else {
+            return
+        }
         let attributes = userInfo["attributes"] as? [String: Any] ?? [:]
         let notification = NotificationData.deserialize(from: attributes) ?? NotificationData()
 
@@ -101,20 +141,14 @@ public class ExponeaNotificationService {
         }
     }
 
-    func save(_ identifier: String, data: Data, options: [AnyHashable: Any]?) -> UNNotificationAttachment? {
+    func saveImage(_ identifier: String, data: Data, options: [AnyHashable: Any]?) -> UNNotificationAttachment? {
         let url = URL(fileURLWithPath: NSTemporaryDirectory())
         let directory = url.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: true)
-
         do {
-            try FileManager.default.createDirectory(at: directory,
-                                                    withIntermediateDirectories: true,
-                                                    attributes: nil)
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
             let fileURL = directory.appendingPathComponent(identifier)
             try data.write(to: fileURL, options: [])
-            return try UNNotificationAttachment.init(identifier: identifier,
-                                                     url: fileURL,
-                                                     options: options)
-
+            return try UNNotificationAttachment.init(identifier: identifier, url: fileURL, options: options)
         } catch {
             return nil
         }

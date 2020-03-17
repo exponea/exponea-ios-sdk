@@ -86,6 +86,10 @@ class TrackingManager {
         // Track initial install event if necessary.
         trackInstallEvent()
 
+        if let appGroup = repository.configuration.appGroup {
+            database.customer.saveIdsToUserDefaults(appGroup: appGroup)
+        }
+
         /// Add the observers when the automatic session tracking is true.
         if repository.configuration.automaticSessionTracking {
             do {
@@ -194,6 +198,9 @@ extension TrackingManager: TrackingManagerType {
             switch type {
             case .identifyCustomer,
                  .registerPushToken:
+                if let appGroup = repository.configuration.appGroup {
+                    database.customer.saveIdsToUserDefaults(appGroup: appGroup)
+                }
                 try database.identifyCustomer(with: payload)
             case .install,
                  .sessionStart,

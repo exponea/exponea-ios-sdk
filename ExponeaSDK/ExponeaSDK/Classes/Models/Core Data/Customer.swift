@@ -147,3 +147,13 @@ class CustomerThreadSafe {
         ids = customer.ids
     }
 }
+
+extension CustomerThreadSafe {
+    func saveIdsToUserDefaults(appGroup: String) {
+        guard let userDefaults = UserDefaults(suiteName: appGroup),
+              let data = try? JSONEncoder().encode(ids) else {
+            return
+        }
+        userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
+    }
+}

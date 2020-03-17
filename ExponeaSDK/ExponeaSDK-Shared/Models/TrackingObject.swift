@@ -14,7 +14,7 @@ protocol TrackingObject {
     var timestamp: Double { get }
 }
 
-final class EventTrackingObject: TrackingObject {
+final class EventTrackingObject: TrackingObject, Equatable {
     public let projectToken: String?
     public let eventType: String?
     public let timestamp: Double
@@ -25,6 +25,13 @@ final class EventTrackingObject: TrackingObject {
         self.eventType = eventType
         self.timestamp = timestamp
         self.dataTypes = dataTypes
+    }
+
+    static func == (lhs: EventTrackingObject, rhs: EventTrackingObject) -> Bool {
+        return lhs.projectToken == rhs.projectToken
+            && lhs.eventType == rhs.eventType
+            && lhs.timestamp == rhs.timestamp
+            && lhs.dataTypes == rhs.dataTypes
     }
 }
 
@@ -37,5 +44,15 @@ final class CustomerTrackingObject: TrackingObject {
         self.projectToken = projectToken
         self.timestamp = timestamp
         self.dataTypes = dataTypes
+    }
+}
+
+extension TrackingObject {
+    static func loadCustomerIdsFromUserDefaults(appGroup: String) -> [String: JSONValue]? {
+        guard let userDefaults = UserDefaults(suiteName: appGroup),
+              let data = userDefaults.data(forKey: Constants.General.lastKnownCustomerIds) else {
+            return nil
+        }
+        return try? JSONDecoder().decode([String: JSONValue].self, from: data)
     }
 }

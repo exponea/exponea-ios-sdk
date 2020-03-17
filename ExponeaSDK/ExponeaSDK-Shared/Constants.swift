@@ -89,5 +89,6 @@ public enum Constants {
         static let savedCampaignClickEvent = "EXPONEA_SAVED_CAMPAIGN_CLICK"
         static let inAppMessageDisplayStatusUserDefaultsKey = "EXPONEA_IN_APP_MESSAGE_DISPLAY_STATUS"
         static let lastKnownConfiguration = "EXPONEA_LAST_KNOWN_CONFIGURATION"
+        static let lastKnownCustomerIds = "EXPONEA_LAST_KNOWN_CUSTOMER_IDS"
     }
 }

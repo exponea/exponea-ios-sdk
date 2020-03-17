@@ -207,7 +207,7 @@ final class PushNotificationManagerSpec: QuickSpec {
             testCases.forEach { testCase in
                 it("should track notification with \(testCase.name)") {
                     let service = ExponeaNotificationService(appGroup: "mock-app-group")
-                    service.saveNotificationForLaterTracking(userInfo: testCase.userInfo)
+                    service.saveNotificationForLaterTracking(request: mock_notification_request(testCase.userInfo))
                     let storedNotification = getFirstStoredNotification()!
                     pushManager.checkForDeliveredPushMessages()
                     expect(trackingManager.trackedEvents.count).to(equal(1))
