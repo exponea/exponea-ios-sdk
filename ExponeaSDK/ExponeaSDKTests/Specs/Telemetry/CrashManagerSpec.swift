@@ -73,6 +73,22 @@ final class CrashManagerSpec: QuickSpec {
             expect(storage.getAllCrashLogs()[0].errorData.message).to(equal("mock reason"))
         }
 
+        it("should upload caught exception") {
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
+            upload.result = true
+            crashManager.caughtErrorHandler(ExponeaError.unknownError("error"), stackTrace: [])
+            expect(storage.getAllCrashLogs().count).to(equal(0))
+            expect(upload.uploadedCrashLogs.count).to(equal(1))
+        }
+
+        it("should save caught exception if upload fails") {
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
+            upload.result = false
+            crashManager.caughtErrorHandler(ExponeaError.unknownError("error"), stackTrace: [])
+            expect(storage.getAllCrashLogs().count).to(equal(1))
+            expect(upload.uploadedCrashLogs.count).to(equal(1))
+        }
+
         it("should upload crash logs") {
             let crashLog = self.getMockCrashLog()
             storage.saveCrashLog(crashLog)

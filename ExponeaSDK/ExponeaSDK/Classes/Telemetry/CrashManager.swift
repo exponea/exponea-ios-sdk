@@ -66,34 +66,37 @@ final class CrashManager {
     }
 
     func caughtExceptionHandler(_ exception: NSException) {
-        let crashLog = CrashLog(
-            exception: exception,
-            fatal: false,
-            date: Date(),
-            launchDate: launchDate,
-            runId: runId,
-            logs: getLogs()
+        uploadCaughtCrashLog(
+            CrashLog(
+                exception: exception,
+                fatal: false,
+                date: Date(),
+                launchDate: launchDate,
+                runId: runId,
+                logs: getLogs()
+            )
         )
-        upload.upload(crashLog: crashLog) { result in
-            if !result {
-                Exponea.logger.log(.error, message: "Uploading crash log failed")
-            }
-        }
     }
 
     func caughtErrorHandler(_ error: Error, stackTrace: [String]) {
-        let crashLog = CrashLog(
-            error: error,
-            stackTrace: stackTrace,
-            fatal: false,
-            date: Date(),
-            launchDate: launchDate,
-            runId: runId,
-            logs: getLogs()
+        uploadCaughtCrashLog(
+            CrashLog(
+                error: error,
+                stackTrace: stackTrace,
+                fatal: false,
+                date: Date(),
+                launchDate: launchDate,
+                runId: runId,
+                logs: getLogs()
+            )
         )
+    }
+
+    func uploadCaughtCrashLog(_ crashLog: CrashLog) {
         upload.upload(crashLog: crashLog) { result in
             if !result {
                 Exponea.logger.log(.error, message: "Uploading crash log failed")
+                self.storage.saveCrashLog(crashLog)
             }
         }
     }
