@@ -20,7 +20,7 @@ final class CrashManager {
     let launchDate: Date
     let runId: String
 
-    private let logsQueue = DispatchQueue(label: "com.exponea.telemetry.crashmanager.logs", attributes: .concurrent)
+    private let logsQueue = DispatchQueue(label: "com.exponea.telemetry.crashmanager.logs")
     static let maxLogMessages = 100
     private var logMessages: [String] = []
     private var logHookId: String?

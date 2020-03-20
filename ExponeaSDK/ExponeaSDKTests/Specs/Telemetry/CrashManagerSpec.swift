@@ -157,5 +157,20 @@ final class CrashManagerSpec: QuickSpec {
             Exponea.logger.log(.error, message: "Logging test message")
             expect(crashManager.getLogs()).notTo(beEmpty())
         }
+
+        it("should report logs from multiple threads") {
+            let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
+            waitUntil { done in
+                let group = DispatchGroup()
+                for _ in 0..<100 {
+                    group.enter()
+                    DispatchQueue.global(qos: .background).async {
+                        crashManager.reportLog("mock-message")
+                        group.leave()
+                    }
+                }
+                group.notify(queue: .main, execute: done)
+            }
+        }
     }
 }
