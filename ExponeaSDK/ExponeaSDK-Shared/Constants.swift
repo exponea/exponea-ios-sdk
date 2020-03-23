@@ -27,7 +27,6 @@ public enum Constants {
         static let installTracked = "installTracked"
         static let sessionStarted = "sessionStarted"
         static let sessionEnded = "sessionEnded"
-        static let sessionBackgrounded = "sessionBackgrounded"
         static let timeout = "sessionTimeout"
         static let autoSessionTrack = "automaticSessionTrack"
         static let appVersion = "CFBundleShortVersionString"

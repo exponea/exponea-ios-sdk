@@ -37,16 +37,11 @@ protocol TrackingManagerType: class {
     /// Returns true if there is a pending(not yet sent to server) event that is newer than `age`
     func hasPendingEvent(ofType type: String, withMaxAge age: Double) throws -> Bool
 
-    // MARK: - Session -
+    // When reacting to delegates, we don't know if session was already started, we need to ensure that
+    func ensureAutomaticSessionStarted()
 
-    // Checks if there is a currently active session
-    var hasActiveSession: Bool { get }
-
-    /// Starts a session and tracks the event.
-    func triggerSessionStart() throws
-
-    /// Ends a session and tracks the event.
-    func triggerSessionEnd() throws
+    func manualSessionStart()
+    func manualSessionEnd()
 
     /// Anonymizes the user by deleting all identifiers (including cookie) and deletes all database data.
     func anonymize() throws

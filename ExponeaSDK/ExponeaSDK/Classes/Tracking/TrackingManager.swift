@@ -33,6 +33,13 @@ class TrackingManager {
 
     internal var flushingManager: FlushingManagerType
 
+    // Manager for  session tracking
+    private lazy var sessionManager: SessionManagerType = SessionManager(
+        configuration: repository.configuration,
+        userDefaults: userDefaults,
+        trackingDelegate: self
+    )
+
     /// User defaults used to store basic data and flags.
     internal let userDefaults: UserDefaults
 
@@ -90,14 +97,7 @@ class TrackingManager {
             database.customer.saveIdsToUserDefaults(appGroup: appGroup)
         }
 
-        /// Add the observers when the automatic session tracking is true.
-        if repository.configuration.automaticSessionTracking {
-            do {
-                try triggerInitialSession()
-            } catch {
-                Exponea.logger.log(.error, message: "Session start tracking error: \(error.localizedDescription)")
-            }
-        }
+        self.sessionManager.applicationDidBecomeActive()
 
         /// Add the observers when the automatic push notification tracking is true.
         if repository.configuration.automaticPushNotificationTracking {
@@ -237,114 +237,50 @@ extension TrackingManager: TrackingManagerType {
         case .banner: return Constants.EventTypes.banner
         }
     }
+
+    func ensureAutomaticSessionStarted() {
+        sessionManager.ensureSessionStarted()
+    }
+
+    func manualSessionStart() {
+        sessionManager.manualSessionStart()
+    }
+
+    func manualSessionEnd() {
+        sessionManager.manualSessionStart()
+    }
 }
 
-// MARK: - Sessions
+// MARK: - Session tracking delegate
+
+extension TrackingManager: SessionTrackingDelegate {
+    func trackSessionStart(at timestamp: TimeInterval) {
+        inAppMessagesManager.sessionDidStart(
+            at: Date(timeIntervalSince1970: timestamp),
+            for: customerIds,
+            completion: nil
+        )
+        do {
+            try track(.sessionStart, with: [.properties(device.properties), .timestamp(timestamp)])
+        } catch {
+            Exponea.logger.log(.error, message: "Session start tracking error: \(error.localizedDescription)")
+        }
+    }
+
+    func trackSessionEnd(at timestamp: TimeInterval, withDuration duration: TimeInterval) {
+        var properties = device.properties
+        properties["duration"] = .double(duration)
+        do {
+            try track(.sessionEnd, with: [.properties(properties), .timestamp(timestamp)])
+        } catch {
+            Exponea.logger.log(.error, message: "Session end tracking error: \(error.localizedDescription)")
+        }
+    }
+}
+
+// MARK: - Application lifecycle
 
 extension TrackingManager {
-    internal var sessionStartTime: Double {
-        get {
-            return userDefaults.double(forKey: Constants.Keys.sessionStarted)
-        }
-        set {
-            userDefaults.set(newValue, forKey: Constants.Keys.sessionStarted)
-        }
-    }
-
-    internal var sessionEndTime: Double {
-        get {
-            return userDefaults.double(forKey: Constants.Keys.sessionEnded)
-        }
-        set {
-            userDefaults.set(newValue, forKey: Constants.Keys.sessionEnded)
-        }
-    }
-
-    internal var sessionBackgroundTime: Double {
-        get {
-            return userDefaults.double(forKey: Constants.Keys.sessionBackgrounded)
-        }
-        set {
-            userDefaults.set(newValue, forKey: Constants.Keys.sessionBackgrounded)
-        }
-    }
-
-    var hasActiveSession: Bool {
-        return sessionStartTime != 0
-    }
-
-    internal func triggerInitialSession() throws {
-        // If we have a previously started session and a last session background time,
-        // but no end time then we can assume that the app was terminated and we can use
-        // the last background time as a session end.
-        if sessionStartTime != 0 && sessionEndTime == 0 && sessionBackgroundTime != 0 {
-            sessionEndTime = sessionBackgroundTime
-            sessionBackgroundTime = 0
-        }
-
-        try triggerSessionStart()
-    }
-
-    open func triggerSessionStart() throws {
-        // If session end time is set, app was terminated
-        if sessionStartTime != 0 && sessionEndTime != 0 {
-            Exponea.logger.log(.verbose, message: "App was terminated previously, first tracking previous session end.")
-            try triggerSessionEnd()
-        }
-
-        // Track previous session if we are past session timeout
-        if shouldTrackCurrentSession {
-            Exponea.logger.log(.verbose, message: "We're past session timeout, first tracking previous session end.")
-            try triggerSessionEnd()
-        } else if sessionStartTime != 0 {
-            Exponea.logger.log(.verbose, message: "Continuing current session as we're within session timeout.")
-            return
-        }
-
-        // Start the session with current date
-        let sessionStartDate = Date()
-        sessionStartTime = sessionStartDate.timeIntervalSince1970
-        inAppMessagesManager.sessionDidStart(at: sessionStartDate, for: customerIds, completion: nil)
-
-        let data: [DataType] = [
-            .properties(device.properties),
-            .timestamp(sessionStartTime)
-        ]
-
-        // Track session start
-        try track(.sessionStart, with: data)
-
-        Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionStart)
-    }
-
-    open func triggerSessionEnd() throws {
-        guard sessionStartTime != 0 else {
-            Exponea.logger.log(.error, message: "Can't end session as no session was started.")
-            return
-        }
-
-        // Set the session end to the time when session end is triggered or if it was set previously
-        // (for example after app has been terminated)
-        sessionEndTime = sessionEndTime == 0 ? Date().timeIntervalSince1970 : sessionEndTime
-
-        // Prepare data to persist into coredata.
-        var properties = device.properties
-
-        // Calculate the duration of the session and add to properties.
-        let duration = sessionEndTime - sessionStartTime
-        properties["duration"] = .double(duration)
-
-        // Track session end
-        try track(.sessionEnd, with: [.properties(properties),
-                                      .timestamp(sessionEndTime)])
-
-        // Reset session times
-        sessionStartTime = 0
-        sessionEndTime = 0
-
-        Exponea.logger.log(.verbose, message: Constants.SuccessMessages.sessionEnd)
-    }
-
     @objc internal func applicationDidBecomeActive() {
         Exponea.shared.executeSafely {
             applicationDidBecomeActiveUnsafe()
@@ -360,17 +296,8 @@ extension TrackingManager {
 
         // Let the notification manager know the app has becom active
         notificationsManager?.applicationDidBecomeActive()
-
         flushingManager.applicationDidBecomeActive()
-
-        // Track session start, if we are allowed to
-        if repository.configuration.automaticSessionTracking {
-            do {
-                try triggerSessionStart()
-            } catch {
-                Exponea.logger.log(.error, message: "Session start tracking error: \(error.localizedDescription)")
-            }
-        }
+        sessionManager.applicationDidBecomeActive()
     }
 
     @objc internal func applicationDidEnterBackground() {
@@ -380,9 +307,8 @@ extension TrackingManager {
     }
 
     internal func applicationDidEnterBackgroundUnsafe() {
-        self.flushingManager.applicationDidEnterBackground()
-        // Save last session background time, in case we get terminated
-        sessionBackgroundTime = Date().timeIntervalSince1970
+        flushingManager.applicationDidEnterBackground()
+        sessionManager.applicationDidEnterBackground()
 
         // Make sure to not create a new background task, if we already have one.
         guard backgroundTask == UIBackgroundTaskIdentifier.invalid else {
@@ -402,7 +328,7 @@ extension TrackingManager {
 
         // Schedule the task to run using delay if applicable
         let shouldDelay = repository.configuration.automaticSessionTracking
-        let delay = shouldDelay ? Constants.Session.defaultTimeout : 0
+        let delay = shouldDelay ? repository.configuration.sessionTimeout : 0
         queue.asyncAfter(deadline: .now() + delay, execute: item)
 
         Exponea.logger.log(.verbose, message: "Started background task with delay \(delay)s.")
@@ -419,15 +345,7 @@ extension TrackingManager {
                 return
             }
 
-            // If we track sessions automatically
-            if self.repository.configuration.automaticSessionTracking {
-                do {
-                    try self.triggerSessionEnd()
-                    self.sessionBackgroundTime = 0
-                } catch {
-                    Exponea.logger.log(.error, message: "Session end tracking error: \(error.localizedDescription)")
-                }
-            }
+            self.sessionManager.doSessionTimeoutBackgroundWork()
 
             switch self.flushingManager.flushingMode {
             case .periodic, .automatic, .immediate:
@@ -446,26 +364,6 @@ extension TrackingManager {
         }
 
         return DispatchWorkItem { Exponea.shared.executeSafely { unsafeWork() } }
-    }
-
-    internal var shouldTrackCurrentSession: Bool {
-        /// Avoid tracking if session not started
-        guard sessionStartTime != 0 else {
-            return false
-        }
-
-        // Get current time to calculate duration
-        let currentTime = Date().timeIntervalSince1970
-
-        /// Calculate the session duration
-        let sessionDuration = sessionEndTime - currentTime
-
-        /// Session should be ended
-        if sessionDuration > repository.configuration.sessionTimeout {
-            return true
-        } else {
-            return false
-        }
     }
 }
 
@@ -509,9 +407,7 @@ extension TrackingManager {
             try database.clear()
 
             // Clear the session data
-            sessionStartTime = 0
-            sessionBackgroundTime = 0
-            sessionEndTime = 0
+            sessionManager.clear()
 
             inAppMessagesManager.anonymize()
 

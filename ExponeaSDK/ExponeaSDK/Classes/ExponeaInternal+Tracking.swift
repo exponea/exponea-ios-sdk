@@ -131,23 +131,21 @@ extension ExponeaInternal {
     }
 
     // MARK: Sessions
-
     public func trackSessionStart() {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            try dependencies.trackingManager.triggerSessionStart()
+            dependencies.trackingManager.manualSessionStart()
         }
     }
 
-    /// Tracks a
     public func trackSessionEnd() {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            try dependencies.trackingManager.triggerSessionEnd()
+            dependencies.trackingManager.manualSessionEnd()
         }
     }
 
@@ -211,10 +209,7 @@ extension ExponeaInternal {
             try dependencies.trackingManager.track(.campaignClick, with: [data.campaignDataProperties])
             if dependencies.configuration.automaticSessionTracking {
                 // Campaign click should result in new session, unless there is an active session
-                if !dependencies.trackingManager.hasActiveSession {
-                    Exponea.logger.log(.verbose, message: "Triggering session start for campaign click")
-                    try dependencies.trackingManager.triggerSessionStart()
-                }
+                dependencies.trackingManager.ensureAutomaticSessionStarted()
                 // If the session was tracked before tracking campaign click, amend it
                 if try dependencies.trackingManager.hasPendingEvent(ofType: Constants.EventTypes.sessionStart,
                                                                 withMaxAge: Constants.Session.sessionUpdateThreshold) {

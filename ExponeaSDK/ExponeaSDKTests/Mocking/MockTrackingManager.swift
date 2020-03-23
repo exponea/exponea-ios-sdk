@@ -38,14 +38,6 @@ internal class MockTrackingManager: TrackingManagerType {
         fatalError("Not implemented")
     }
 
-    func triggerSessionStart() throws {
-        fatalError("Not implemented")
-    }
-
-    func triggerSessionEnd() throws {
-        fatalError("Not implemented")
-    }
-
     func flushData() {
         fatalError("Not implemented")
     }
@@ -55,6 +47,18 @@ internal class MockTrackingManager: TrackingManagerType {
     }
 
     func anonymize() throws {
+        fatalError("Not implemented")
+    }
+
+    func ensureAutomaticSessionStarted() {
+        fatalError("Not implemented")
+    }
+
+    func manualSessionStart() {
+        fatalError("Not implemented")
+    }
+
+    func manualSessionEnd() {
         fatalError("Not implemented")
     }
 }

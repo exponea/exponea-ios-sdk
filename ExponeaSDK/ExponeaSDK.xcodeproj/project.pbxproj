@@ -158,6 +158,9 @@
 		05BF1C7623A10F1800FDC101 /* RecommendationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF1C7523A10F1800FDC101 /* RecommendationRequest.swift */; };
 		05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BF1C7923A1139B00FDC101 /* RecommendationResponse.swift */; };
 		05C024E223EAEBDD0046CCFC /* EventFilterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C024E123EAEBDD0046CCFC /* EventFilterSpec.swift */; };
+		05C289312428A13D0021220C /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C289302428A13D0021220C /* SessionManager.swift */; };
+		05C289332428A1480021220C /* SessionManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C289322428A1480021220C /* SessionManagerType.swift */; };
+		05C289362428DDAA0021220C /* SessionManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C289352428DDAA0021220C /* SessionManagerSpec.swift */; };
 		05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CDD834239114A900C7291A /* InAppMessagesManager.swift */; };
 		05CDD837239114F700C7291A /* InAppMessagesManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CDD836239114F700C7291A /* InAppMessagesManagerType.swift */; };
 		05CDD8392391193E00C7291A /* InAppMessagesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CDD8382391193E00C7291A /* InAppMessagesCache.swift */; };
@@ -526,6 +529,9 @@
 		05BF1C7523A10F1800FDC101 /* RecommendationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationRequest.swift; sourceTree = "<group>"; };
 		05BF1C7923A1139B00FDC101 /* RecommendationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationResponse.swift; sourceTree = "<group>"; };
 		05C024E123EAEBDD0046CCFC /* EventFilterSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterSpec.swift; sourceTree = "<group>"; };
+		05C289302428A13D0021220C /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		05C289322428A1480021220C /* SessionManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerType.swift; sourceTree = "<group>"; };
+		05C289352428DDAA0021220C /* SessionManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerSpec.swift; sourceTree = "<group>"; };
 		05CDD834239114A900C7291A /* InAppMessagesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesManager.swift; sourceTree = "<group>"; };
 		05CDD836239114F700C7291A /* InAppMessagesManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesManagerType.swift; sourceTree = "<group>"; };
 		05CDD8382391193E00C7291A /* InAppMessagesCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesCache.swift; sourceTree = "<group>"; };
@@ -808,6 +814,7 @@
 				05FB1BB5236AE9010089C529 /* Shared */,
 				F0CA58F7207F783E00C89A7F /* Tracking */,
 				05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */,
+				05C289342428DD850021220C /* Sessions */,
 				05735EA523A3B39C00DA0FA9 /* Flushing */,
 				052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */,
 				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
@@ -1045,6 +1052,23 @@
 				0591907623EC5F5A0037BD88 /* EventFilterConstraintSpec.swift */,
 			);
 			path = "Event Filter";
+			sourceTree = "<group>";
+		};
+		05C2892F2428A1270021220C /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				05C289302428A13D0021220C /* SessionManager.swift */,
+				05C289322428A1480021220C /* SessionManagerType.swift */,
+			);
+			path = Sessions;
+			sourceTree = "<group>";
+		};
+		05C289342428DD850021220C /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				05C289352428DDAA0021220C /* SessionManagerSpec.swift */,
+			);
+			path = Sessions;
 			sourceTree = "<group>";
 		};
 		05CDD8332391147E00C7291A /* InAppMessages */ = {
@@ -1684,6 +1708,7 @@
 				F0E757E1207CF9BE00FE8C21 /* Repository */,
 				01EC2DB0207E55C10031BFEB /* Tracking */,
 				05D0E5552386C63800413AE2 /* Exponea+Configuration.swift */,
+				05C2892F2428A1270021220C /* Sessions */,
 				05735EA423A397F700DA0FA9 /* Flushing */,
 				057D476523C87ECE00AEE902 /* Deeplinking */,
 				C0F2406B20BC50A000CAF7CE /* ExponeaInternal+Fetching.swift */,
@@ -2163,6 +2188,7 @@
 				05F3EFF12382C757006E83F4 /* VSAppCenterAPIModel.swift in Sources */,
 				23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */,
 				05F3EFE42382BAB6006E83F4 /* TelemetryUtility.swift in Sources */,
+				05C289312428A13D0021220C /* SessionManager.swift in Sources */,
 				058DD92724112F8100E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */,
 				05F3EFD8237E938D006E83F4 /* CrashLog.swift in Sources */,
 				058DD93B2411323F00E5BF91 /* TrackingObject.swift in Sources */,
@@ -2174,6 +2200,7 @@
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
 				05880538241682F8001AAE8A /* ExponeaInternal.swift in Sources */,
 				05F3EFCF237E926B006E83F4 /* CrashManager.swift in Sources */,
+				05C289332428A1480021220C /* SessionManagerType.swift in Sources */,
 				05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */,
 				C0F2406E20BC511500CAF7CE /* ExponeaInternal+Tracking.swift in Sources */,
 				05B4D64C238FEB9200F5010F /* InAppMessagesResponse.swift in Sources */,
@@ -2288,6 +2315,7 @@
 				0529797A241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift in Sources */,
 				057F448323990E320070DF30 /* MockInAppMessagesCache.swift in Sources */,
 				F0BE6105211080F30082ABD8 /* MockData.swift in Sources */,
+				05C289362428DDAA0021220C /* SessionManagerSpec.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
 				050961002321566000D59C01 /* TrackingManagerSpec.swift in Sources */,
 				05F3EFEF2382C192006E83F4 /* TelemetryUtilitySpec.swift in Sources */,
