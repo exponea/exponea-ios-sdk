@@ -82,7 +82,8 @@ final class TelemetryManagerSpec: QuickSpec {
                 .to(equal([
                     "appVersion": "",
                     "appName": "com.apple.dt.xctest.tool",
-                    "sdkVersion": "2.6.0", "appNameVersionSdkVersion": "com.apple.dt.xctest.tool -  - SDK 2.6.0",
+                    "sdkVersion": TelemetryUtility.sdkVersion,
+                    "appNameVersionSdkVersion": "com.apple.dt.xctest.tool -  - SDK \(TelemetryUtility.sdkVersion)",
                     "appNameVersion": "com.apple.dt.xctest.tool - ",
                     "property": "value",
                     "other_property": "other_value"

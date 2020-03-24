@@ -1,5 +1,14 @@
 ## Release Notes
 
+## Release Notes for 2.6.1
+#### March 24, 2020
+* Features
+  * Push notification delivery is tracked at the time of delivery. Before, the app had to be started again to flush the events to the server.
+  * Push notification token is removed from Exponea servers when user changes push notification permission.
+* Bug fixes
+  * Fixed: Random crash in log reporting.
+  * Fixed: Push notification token wasn't tracked in `DAILY` mode.
+
 ## Release Notes for 2.6.0
 #### March 02, 2020
 * Features
