@@ -21,12 +21,12 @@ final class GenericOperatorsSpec: QuickSpec {
         )
 
         describe("is set operator") {
-            it ("should pass for existing prop") {
+            it("should pass for existing prop") {
                 expect(
                     IsSetOperator.passes(event: testEvent, attribute: PropertyAttribute("string"), operands: [])
                 ).to(beTrue())
             }
-            it ("should fail for non-existing prop") {
+            it("should fail for non-existing prop") {
                 expect(
                     IsSetOperator.passes(event: testEvent, attribute: PropertyAttribute("missing"), operands: [])
                 ).to(beFalse())
@@ -34,12 +34,12 @@ final class GenericOperatorsSpec: QuickSpec {
         }
 
         describe("is not set operator") {
-            it ("should fail for existing prop") {
+            it("should fail for existing prop") {
                 expect(
                     IsNotSetOperator.passes(event: testEvent, attribute: PropertyAttribute("string"), operands: [])
                 ).to(beFalse())
             }
-            it ("should pass for non-existing prop") {
+            it("should pass for non-existing prop") {
                 expect(
                     IsNotSetOperator.passes(event: testEvent, attribute: PropertyAttribute("missing"), operands: [])
                 ).to(beTrue())
@@ -47,17 +47,17 @@ final class GenericOperatorsSpec: QuickSpec {
         }
 
         describe("has value operator") {
-            it ("should pass for prop with value") {
+            it("should pass for prop with value") {
                 expect(
                     HasValueOperator.passes(event: testEvent, attribute: PropertyAttribute("string"), operands: [])
                 ).to(beTrue())
             }
-            it ("should fail for non-existing prop") {
+            it("should fail for non-existing prop") {
                 expect(
                     HasValueOperator.passes(event: testEvent, attribute: PropertyAttribute("missing"), operands: [])
                 ).to(beFalse())
             }
-            it ("should fail for prop with nil value") {
+            it("should fail for prop with nil value") {
                 expect(
                     HasValueOperator.passes(event: testEvent, attribute: PropertyAttribute("nil"), operands: [])
                 ).to(beFalse())
@@ -65,17 +65,17 @@ final class GenericOperatorsSpec: QuickSpec {
         }
 
         describe("has no value operator") {
-            it ("should fail for prop with value") {
+            it("should fail for prop with value") {
                 expect(
                     HasNoValueOperator.passes(event: testEvent, attribute: PropertyAttribute("string"), operands: [])
                 ).to(beFalse())
             }
-            it ("should fail for non-existing prop") {
+            it("should fail for non-existing prop") {
                 expect(
                     HasNoValueOperator.passes(event: testEvent, attribute: PropertyAttribute("missing"), operands: [])
                 ).to(beFalse())
             }
-            it ("should pass for prop with nil value") {
+            it("should pass for prop with nil value") {
                 expect(
                     HasNoValueOperator.passes(event: testEvent, attribute: PropertyAttribute("nil"), operands: [])
                 ).to(beTrue())

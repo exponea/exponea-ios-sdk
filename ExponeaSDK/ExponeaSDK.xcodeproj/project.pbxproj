@@ -2241,7 +2241,6 @@
 				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
 				0551A0AC241A81FE009A5A5E /* JSON+SnakeCase.swift in Sources */,
-				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
 				058DD92324112F2D00E5BF91 /* TrackingRepository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				0567723D237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift in Sources */,

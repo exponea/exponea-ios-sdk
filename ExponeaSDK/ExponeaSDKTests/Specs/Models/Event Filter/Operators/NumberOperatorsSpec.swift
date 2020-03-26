@@ -38,7 +38,7 @@ final class NumberOperatorsSpec: QuickSpec {
         }
 
         describe("equal to operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(EqualToOperator.self, PropertyAttribute("string"), ["0"])).to(beFalse())
                 expect(passes(EqualToOperator.self, PropertyAttribute("integer"), ["0"])).to(beFalse())
                 expect(passes(EqualToOperator.self, PropertyAttribute("zero"), ["0"])).to(beTrue())
@@ -55,7 +55,7 @@ final class NumberOperatorsSpec: QuickSpec {
         }
 
         describe("in between operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(InBetweenOperator.self, PropertyAttribute("string"), ["-1", "1"])).to(beFalse())
                 expect(passes(InBetweenOperator.self, PropertyAttribute("integer"), ["-1", "1"])).to(beFalse())
                 expect(passes(InBetweenOperator.self, PropertyAttribute("zero"), ["-1", "1"])).to(beTrue())
@@ -72,7 +72,7 @@ final class NumberOperatorsSpec: QuickSpec {
         }
 
         describe("not between operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(NotBetweenOperator.self, PropertyAttribute("string"), ["-1", "1"])).to(beFalse())
                 expect(passes(NotBetweenOperator.self, PropertyAttribute("integer"), ["-1", "1"])).to(beTrue())
                 expect(passes(NotBetweenOperator.self, PropertyAttribute("zero"), ["-1", "1"])).to(beFalse())
@@ -89,7 +89,7 @@ final class NumberOperatorsSpec: QuickSpec {
         }
 
         describe("less than operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(LessThanOperator.self, PropertyAttribute("string"), ["0"])).to(beFalse())
                 expect(passes(LessThanOperator.self, PropertyAttribute("integer"), ["0"])).to(beFalse())
                 expect(passes(LessThanOperator.self, PropertyAttribute("zero"), ["0"])).to(beFalse())
@@ -107,7 +107,7 @@ final class NumberOperatorsSpec: QuickSpec {
         }
 
         describe("greater than operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(GreaterThanOperator.self, PropertyAttribute("string"), ["0"])).to(beFalse())
                 expect(passes(GreaterThanOperator.self, PropertyAttribute("integer"), ["0"])).to(beTrue())
                 expect(passes(GreaterThanOperator.self, PropertyAttribute("zero"), ["0"])).to(beFalse())

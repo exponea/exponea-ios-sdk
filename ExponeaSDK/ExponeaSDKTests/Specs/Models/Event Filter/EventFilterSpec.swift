@@ -100,7 +100,7 @@ final class EventFilterSpec: QuickSpec {
                 expect(try! JSONDecoder().decode(EventFilter.self, from: data)).to(equal(filter))
             }
 
-            it ("should decode payload from server") {
+            it("should decode payload from server") {
                 let payload = """
                     {
                         "event_type":"banner",

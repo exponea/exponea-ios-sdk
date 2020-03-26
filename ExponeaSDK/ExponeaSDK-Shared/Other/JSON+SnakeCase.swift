@@ -23,4 +23,3 @@ extension JSONEncoder {
         return encoder
     }
 }
-

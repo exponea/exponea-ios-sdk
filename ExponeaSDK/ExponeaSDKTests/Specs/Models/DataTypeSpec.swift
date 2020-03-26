@@ -16,15 +16,15 @@ class DataTypeSpec: QuickSpec {
     override func spec() {
         describe("Array of DataType") {
             context("getting event types") {
-                it ("should return empty array for empty array") {
+                it("should return empty array for empty array") {
                     let data: [DataType] = []
                     expect(data.eventTypes).to(equal([]))
                 }
-                it ("should return empty array for event without event types") {
+                it("should return empty array for event without event types") {
                     let data: [DataType] = [.timestamp(nil), .customerIds([:])]
                     expect(data.eventTypes).to(equal([]))
                 }
-                it ("should return all event types") {
+                it("should return all event types") {
                     let data: [DataType] = [
                         .timestamp(nil),
                         .eventType("event type 1"),
@@ -38,19 +38,19 @@ class DataTypeSpec: QuickSpec {
             }
 
             context("getting latest timestamp") {
-                it ("should return nil for empty array") {
+                it("should return nil for empty array") {
                     let data: [DataType] = []
                     expect(data.latestTimestamp).to(beNil())
                 }
-                it ("should return nil for event without timestamp") {
+                it("should return nil for event without timestamp") {
                     let data: [DataType] = [.eventType("type"), .customerIds([:]), .properties([:])]
                     expect(data.latestTimestamp).to(beNil())
                 }
-                it ("should return nil for event with nil timestamp") {
+                it("should return nil for event with nil timestamp") {
                     let data: [DataType] = [.timestamp(nil), .eventType("type"), .customerIds([:]), .timestamp(nil)]
                     expect(data.latestTimestamp).to(beNil())
                 }
-                it ("should latest timestamp") {
+                it("should latest timestamp") {
                     let data: [DataType] = [
                         .timestamp(nil),
                         .timestamp(1),
@@ -64,11 +64,11 @@ class DataTypeSpec: QuickSpec {
             }
 
             context("getting properties") {
-                it ("should return empty map for empty array") {
+                it("should return empty map for empty array") {
                     let data: [DataType] = []
                     expect(data.properties).to(beEmpty())
                 }
-                it ("should merge all properties together") {
+                it("should merge all properties together") {
                     let data: [DataType] = [
                         .properties(["prop1": .string("prop1 value"), "prop2": .string("will we overwritten")]),
                         .properties(["prop2": .int(123), "prop3": .string("will we overwritten")]),

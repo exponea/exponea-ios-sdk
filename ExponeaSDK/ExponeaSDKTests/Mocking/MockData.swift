@@ -60,8 +60,6 @@ struct MockData {
     let consentsResponse = retrieveDataFromFile(with: "get-consents", fileType: "json")
 
     static func retrieveDataFromFile(with fileName: String, fileType: String) -> Data {
-
-        /// Get the json content of file
         guard
             let file = bundle.url(forResource: fileName, withExtension: fileType),
             let data = try? Data(contentsOf: file)

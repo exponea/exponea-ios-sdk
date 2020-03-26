@@ -31,7 +31,7 @@ final class StringOperatorsSpec: QuickSpec {
         }
 
         describe("equals operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(EqualsOperator.self, PropertyAttribute("string"), ["something"])).to(beTrue())
                 expect(passes(EqualsOperator.self, PropertyAttribute("number"), ["something"])).to(beFalse())
                 expect(passes(EqualsOperator.self, PropertyAttribute("true"), ["something"])).to(beFalse())
@@ -50,7 +50,7 @@ final class StringOperatorsSpec: QuickSpec {
         }
 
         describe("does not equal operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(DoesNotEqualOperator.self, PropertyAttribute("string"), ["something"])).to(beFalse())
                 expect(passes(DoesNotEqualOperator.self, PropertyAttribute("number"), ["something"])).to(beTrue())
                 expect(passes(DoesNotEqualOperator.self, PropertyAttribute("true"), ["something"])).to(beTrue())
@@ -69,7 +69,7 @@ final class StringOperatorsSpec: QuickSpec {
         }
 
         describe("in operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(InOperator.self, PropertyAttribute("string"), ["something", "false"])).to(beTrue())
                 expect(passes(InOperator.self, PropertyAttribute("number"), ["something", "false"])).to(beFalse())
                 expect(passes(InOperator.self, PropertyAttribute("true"), ["something", "false"])).to(beFalse())
@@ -89,7 +89,7 @@ final class StringOperatorsSpec: QuickSpec {
         }
 
         describe("not in operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(NotInOperator.self, PropertyAttribute("string"), ["something", "false"])).to(beFalse())
                 expect(passes(NotInOperator.self, PropertyAttribute("number"), ["something", "false"])).to(beTrue())
                 expect(passes(NotInOperator.self, PropertyAttribute("true"), ["something", "false"])).to(beTrue())
@@ -109,7 +109,7 @@ final class StringOperatorsSpec: QuickSpec {
         }
 
         describe("contains operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(ContainsOperator.self, PropertyAttribute("string"), ["t"])).to(beTrue())
                 expect(passes(ContainsOperator.self, PropertyAttribute("number"), ["t"])).to(beFalse())
                 expect(passes(ContainsOperator.self, PropertyAttribute("true"), ["t"])).to(beTrue())
@@ -128,7 +128,7 @@ final class StringOperatorsSpec: QuickSpec {
         }
 
         describe("does not contain operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(DoesNotContainOperator.self, PropertyAttribute("string"), ["t"])).to(beFalse())
                 expect(passes(DoesNotContainOperator.self, PropertyAttribute("number"), ["t"])).to(beTrue())
                 expect(passes(DoesNotContainOperator.self, PropertyAttribute("true"), ["t"])).to(beFalse())
@@ -147,7 +147,7 @@ final class StringOperatorsSpec: QuickSpec {
         }
 
         describe("starts with operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(StartsWithOperator.self, PropertyAttribute("string"), ["t"])).to(beFalse())
                 expect(passes(StartsWithOperator.self, PropertyAttribute("number"), ["t"])).to(beFalse())
                 expect(passes(StartsWithOperator.self, PropertyAttribute("true"), ["t"])).to(beTrue())
@@ -166,7 +166,7 @@ final class StringOperatorsSpec: QuickSpec {
         }
 
         describe("ends with operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(passes(EndsWithOperator.self, PropertyAttribute("string"), ["e"])).to(beFalse())
                 expect(passes(EndsWithOperator.self, PropertyAttribute("number"), ["e"])).to(beFalse())
                 expect(passes(EndsWithOperator.self, PropertyAttribute("true"), ["e"])).to(beTrue())
@@ -185,7 +185,7 @@ final class StringOperatorsSpec: QuickSpec {
         }
 
         describe("regex operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 let pattern = "^(some)*(123)*(thing)*"
                 expect(passes(RegexOperator.self, PropertyAttribute("string"), [pattern])).to(beTrue())
                 expect(passes(RegexOperator.self, PropertyAttribute("number"), [pattern])).to(beTrue())

@@ -24,7 +24,7 @@ final class BooleanOperatorsSpec: QuickSpec {
         let falseOperand = [EventFilterOperand(value: "false")]
 
         describe("is operator") {
-            it ("should pass correctly") {
+            it("should pass correctly") {
                 expect(
                     IsOperator.passes(event: testEvent, attribute: PropertyAttribute("true"), operands: trueOperand)
                 ).to(beTrue())
