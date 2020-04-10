@@ -11,8 +11,6 @@ import Foundation
 enum TelemetryEventType: String {
     case initialize = "init"
     case fetchRecommendation
-    case fetchBanner
-    case fetchPersonalization
     case fetchConsents
     case showInAppMessage
 }

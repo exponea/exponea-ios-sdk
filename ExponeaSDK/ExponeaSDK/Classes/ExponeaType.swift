@@ -145,20 +145,6 @@ public protocol ExponeaType: class {
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void
     )
 
-    /// Fetch all available banners.
-    ///
-    /// - Parameters:
-    ///   - completion: Object containing the request result.
-    func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void)
-
-    /// Fetch personalization (all banners) for current customer.
-    ///
-    /// - Parameters:
-    ///   - request: Personalization request containing all the information about the request banners.
-    ///   - completion: Object containing the request result.
-    func fetchPersonalization(with request: PersonalizationRequest,
-                              completion: @escaping (Result<PersonalizationResponse>) -> Void)
-
     /// Fetch the list of your existing consent categories.
     ///
     /// - Parameter completion: A closure executed upon request completion containing the result

@@ -25,35 +25,6 @@ extension ExponeaInternal {
         }, completion: completion)
     }
 
-    public func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
-        executeSafelyWithDependencies({
-            guard $0.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient
-            }
-
-            $0.repository.fetchBanners(completion: $1)
-
-            telemetryManager?.report(eventWithType: .fetchBanner, properties: [:])
-        }, completion: completion)
-    }
-
-    public func fetchPersonalization(with request: PersonalizationRequest,
-                                     completion: @escaping (Result<PersonalizationResponse>) -> Void) {
-        executeSafelyWithDependencies({
-            guard $0.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient
-            }
-
-            $0.repository.fetchPersonalization(
-                with: request,
-                for: $0.trackingManager.customerIds,
-                completion: $1
-            )
-
-            telemetryManager?.report(eventWithType: .fetchPersonalization, properties: [:])
-        }, completion: completion)
-    }
-
     /// Fetch the list of your existing consent categories.
     ///
     /// - Parameter completion: A closure executed upon request completion containing the result

@@ -47,40 +47,6 @@ extension ServerRepository: FetchRepository {
             .resume()
     }
 
-    /// Fetch all available banners.
-    ///
-    /// - Parameters:
-    ///   - completion: Object containing the request result.
-    func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
-        let router = RequestFactory(baseUrl: configuration.baseUrl,
-                                    projectToken: configuration.fetchingToken,
-                                    route: .banners)
-        let request = router.prepareRequest(authorization: configuration.authorization)
-        session
-            .dataTask(with: request, completionHandler: router.handler(with: completion))
-            .resume()
-    }
-
-    /// Fetch personalization (all banners) for current customer.
-    ///
-    /// - Parameters:
-    ///   - request: Personalization request containing all the information about the request banners.
-    ///   - customerIds: Identification of a customer.
-    ///   - completion: Object containing the request result.
-    func fetchPersonalization(with request: PersonalizationRequest,
-                              for customerIds: [String: JSONValue],
-                              completion: @escaping (Result<PersonalizationResponse>) -> Void) {
-        let router = RequestFactory(baseUrl: configuration.baseUrl,
-                                    projectToken: configuration.fetchingToken,
-                                    route: .personalization)
-        let request = router.prepareRequest(authorization: configuration.authorization,
-                                            parameters: request,
-                                            customerIds: customerIds)
-        session
-            .dataTask(with: request, completionHandler: router.handler(with: completion))
-            .resume()
-    }
-
     /// Fetch the list of your existing consent categories.
     ///
     /// - Parameter completion: A closure executed upon request completion containing the result

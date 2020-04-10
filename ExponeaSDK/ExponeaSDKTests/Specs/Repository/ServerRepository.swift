@@ -34,7 +34,7 @@ final class ServerRepositorySpec: QuickSpec {
                     )
                     let repo = ServerRepository(configuration: configuration)
                     var callbackCalled = false
-                    repo.fetchBanners { _ in callbackCalled = true}
+                    repo.fetchConsents { _ in callbackCalled = true}
                     repo.cancelRequests()
                     expect(callbackCalled).toEventually(beTrue())
                 }
@@ -51,7 +51,7 @@ final class ServerRepositorySpec: QuickSpec {
                     )
                     networkTask.resume()
                     waitUntil { done in
-                        repo.fetchBanners { _ in done()}
+                        repo.fetchConsents { _ in done()}
                         repo.cancelRequests()
                     }
                     expect(networkTask.state).to(equal(URLSessionTask.State.running))

@@ -14,8 +14,6 @@ final class MockRepository: RepositoryType {
     var trackObjectResult: EmptyResult<RepositoryError>? = EmptyResult.failure(RepositoryError.connectionError)
     var fetchRecommendationResult: Result<RecommendationResponse<EmptyRecommendationData>>?
         = Result.failure(RepositoryError.connectionError)
-    var fetchBannersResult: Result<BannerResponse>? = Result.failure(RepositoryError.connectionError)
-    var fetchPersonalizationResult: Result<PersonalizationResponse>? = Result.failure(RepositoryError.connectionError)
     var fetchConsentsResult: Result<ConsentsResponse>? = Result.failure(RepositoryError.connectionError)
     var fetchInAppMessagesResult: Result<InAppMessagesResponse>? = Result.failure(RepositoryError.connectionError)
 
@@ -43,22 +41,6 @@ final class MockRepository: RepositoryType {
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void
     ) where T: RecommendationUserData {
         if let mockResult = fetchRecommendationResult as? Result<RecommendationResponse<T>> {
-            completion(mockResult)
-        }
-    }
-
-    func fetchBanners(completion: @escaping (Result<BannerResponse>) -> Void) {
-        if let mockResult = fetchBannersResult {
-            completion(mockResult)
-        }
-    }
-
-    func fetchPersonalization(
-        with request: PersonalizationRequest,
-        for customerIds: [String: JSONValue],
-        completion: @escaping (Result<PersonalizationResponse>) -> Void
-    ) {
-        if let mockResult = fetchPersonalizationResult {
             completion(mockResult)
         }
     }

@@ -13,8 +13,6 @@ enum Routes {
     case identifyCustomer
     case customEvent
     case customerAttributes
-    case banners
-    case personalization
     case campaignClick
     case consents
     case inAppMessages

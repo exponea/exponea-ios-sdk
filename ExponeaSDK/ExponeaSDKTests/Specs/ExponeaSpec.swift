@@ -62,30 +62,6 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.trackSessionStart()).notTo(raiseException())
                     expect(exponea.trackSessionEnd()).notTo(raiseException())
                 }
-                it("Should fail fetching data") {
-                    waitUntil { done in
-                        exponea.fetchBanners { response in
-                            guard case .failure = response else {
-                                XCTFail("Expected .failure got \(response)")
-                                done()
-                                return
-                            }
-                            done()
-                        }
-                    }
-                }
-                it("Should fail fetching personalization") {
-                    waitUntil { done in
-                        exponea.fetchPersonalization(with: PersonalizationRequest(ids: [])) { response in
-                            guard case .failure = response else {
-                                XCTFail("Expected .failure got \(response)")
-                                done()
-                                return
-                            }
-                            done()
-                        }
-                    }
-                }
                 it("Should fail fetching consents") {
                     waitUntil { done in
                         exponea.fetchConsents { response in

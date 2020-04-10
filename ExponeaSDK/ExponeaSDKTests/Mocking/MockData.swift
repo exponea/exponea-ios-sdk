@@ -47,16 +47,6 @@ struct MockData {
         ]
     }()
 
-    let personalizationRequest = PersonalizationRequest(ids: ["1", "2", "3"],
-                                                        timeout: 5,
-                                                        timezone: "GMT+2",
-                                                        customParameters: nil)
-
-    let recommendationResponse = retrieveDataFromFile(with: "get-recommendation", fileType: "json")
-    let eventsResponse = retrieveDataFromFile(with: "get-events", fileType: "json")
-    let bannerResponse = retrieveDataFromFile(with: "get-banner", fileType: "json")
-    let personalizationResponse = retrieveDataFromFile(with: "get-personalization", fileType: "json")
-    let attributesResponse = retrieveDataFromFile(with: "get-attributes", fileType: "json")
     let consentsResponse = retrieveDataFromFile(with: "get-consents", fileType: "json")
 
     static func retrieveDataFromFile(with fileName: String, fileType: String) -> Data {
