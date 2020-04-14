@@ -72,7 +72,7 @@ final class ServerRepositoryFetchRecommendationsSpec: QuickSpec {
 
         it("should parse recommendation response") {
             NetworkStubbing.stubNetwork(
-                forProjectToken: configuration.projectToken!,
+                forProjectToken: configuration.projectToken,
                 withStatusCode: 200,
                 withResponseData: self.payload.data(using: .utf8)
             )

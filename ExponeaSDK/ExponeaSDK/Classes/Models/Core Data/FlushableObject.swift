@@ -24,6 +24,11 @@ final class DatabaseObjectProxy {
 }
 
 protocol FlushableObject {
-    var trackingObject: TrackingObject { get }
     var databaseObjectProxy: DatabaseObjectProxy { get }
+
+    func getTrackingObject(
+        defaultBaseUrl: String,
+        defaultProjectToken: String,
+        defaultAuthorization: Authorization
+    ) -> TrackingObject
 }

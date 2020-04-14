@@ -166,8 +166,6 @@ extension DatabaseManager: DatabaseManagerType {
                 throw DatabaseManagerError.wrongObjectType
             }
             switch data {
-            case .projectToken(let token):
-                event.projectToken = token
             case .eventType(let eventType):
                 event.eventType = eventType
             case .timestamp(let time):
@@ -185,24 +183,22 @@ extension DatabaseManager: DatabaseManagerType {
     /// Add any type of event into coredata.
     ///
     /// - Parameter data: See `DataType` for more information. Types specified below are required at minimum.
-    ///     - `projectToken`
     ///     - `customerId`
     ///     - `properties`
     ///     - `timestamp`
     ///     - `eventType`
-    public func trackEvent(with data: [DataType]) throws {
+    public func trackEvent(with data: [DataType], into project: ExponeaProject) throws {
         try context.performAndWait {
             let trackEvent = TrackEvent(context: context)
             trackEvent.customer = customerManagedObject
 
             // Always specify a timestamp
             trackEvent.timestamp = Date().timeIntervalSince1970
-
+            trackEvent.baseUrl = project.baseUrl
+            trackEvent.projectToken = project.projectToken
+            trackEvent.authorizationString = project.authorization.encode()
             for type in data {
                 switch type {
-                case .projectToken(let token):
-                    trackEvent.projectToken = token
-
                 case .eventType(let event):
                     trackEvent.eventType = event
 
@@ -231,24 +227,23 @@ extension DatabaseManager: DatabaseManagerType {
     /// Add customer properties into the database.
     ///
     /// - Parameter data: See `DataType` for more information. Types specified below are required at minimum.
-    ///     - `projectToken`
     ///     - `customerId`
     ///     - `properties`
     ///     - `timestamp`
     /// - Throws: <#throws value description#>
-    public func identifyCustomer(with data: [DataType]) throws {
+    public func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws {
         try context.performAndWait {
             let trackCustomer = TrackCustomer(context: context)
             trackCustomer.customer = customerManagedObject
 
             // Always specify a timestamp
             trackCustomer.timestamp = Date().timeIntervalSince1970
+            trackCustomer.baseUrl = project.baseUrl
+            trackCustomer.projectToken = project.projectToken
+            trackCustomer.authorizationString = project.authorization.encode()
 
             for type in data {
                 switch type {
-                case .projectToken(let token):
-                    trackCustomer.projectToken = token
-
                 case .customerIds(let ids):
                     trackCustomer.customer = fetchCustomerAndUpdate(with: ids)
 

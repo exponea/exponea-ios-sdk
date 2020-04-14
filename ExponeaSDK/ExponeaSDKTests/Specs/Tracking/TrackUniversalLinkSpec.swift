@@ -22,10 +22,11 @@ class TrackUniversalLinkSpec: QuickSpec {
             context("repository") {
                 let repository = ServerRepository(configuration: try! Configuration(plistName: "ExponeaConfig"))
                 let projectToken = UUID().uuidString
-                let data: [DataType] = [.projectToken(projectToken),
-                                        .properties(mockData.campaignData),
-                                        .timestamp(nil),
-                                        .eventType(Constants.EventTypes.campaignClick)]
+                let data: [DataType] = [
+                    .properties(mockData.campaignData),
+                    .timestamp(nil),
+                    .eventType(Constants.EventTypes.campaignClick)
+                ]
                 var lastRequest: URLRequest?
                 NetworkStubbing.stubNetwork(
                     forProjectToken: projectToken,
@@ -34,7 +35,11 @@ class TrackUniversalLinkSpec: QuickSpec {
                 )
                 waitUntil(timeout: 3) { done in
                     let event = EventTrackingObject(
-                        projectToken: projectToken,
+                        exponeaProject: ExponeaProject(
+                            baseUrl: "https://my-url.com",
+                            projectToken: projectToken,
+                            authorization: .none
+                        ),
                         eventType: Constants.EventTypes.campaignClick,
                         timestamp: 123,
                         dataTypes: data
@@ -48,7 +53,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         }
                         it("should call correct url") {
                             expect(lastRequest?.url?.absoluteString)
-                                .to(equal("https://api.exponea.com/track/v2/projects/\(projectToken)/campaigns/clicks"))
+                                .to(equal("https://my-url.com/track/v2/projects/\(projectToken)/campaigns/clicks"))
                         }
                         done()
                     }
@@ -67,7 +72,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).notTo(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.event.dataTypes.properties["utm_campaign"] as? String)
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String)
                             .to(equal("mycampaign"))
                     }
                     it("track campaign_click and should not update session when called after update threshold") {
@@ -90,7 +95,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).notTo(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).toNot(beNil())
-                        expect(sessionStart!.event.dataTypes.properties["utm_campaign"] as? String).to(beNil())
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
                     }
                 }
                 context("before SDK started") {
@@ -106,7 +111,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).notTo(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.event.dataTypes.properties["utm_campaign"] as? String)
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String)
                             .to(equal("mycampaign"))
                     }
                     it("processes saved campaigns only once") {
@@ -119,7 +124,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         exponea.processSavedCampaignData()
                         var trackEvents: [TrackEventProxy] = []
                         expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
-                        expect {trackEvents.filter({ $0.event.eventType == "campaign_click"}).count }.to(equal(1))
+                        expect {trackEvents.filter({ $0.eventType == "campaign_click"}).count }.to(equal(1))
                     }
                 }
             }
@@ -130,5 +135,5 @@ class TrackUniversalLinkSpec: QuickSpec {
 func findEvent(exponea: MockExponeaImplementation, eventType: String) -> TrackEventProxy? {
     var trackEvents: [TrackEventProxy] = []
     expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
-    return trackEvents.first(where: { $0.event.eventType == eventType })
+    return trackEvents.first(where: { $0.eventType == eventType })
 }

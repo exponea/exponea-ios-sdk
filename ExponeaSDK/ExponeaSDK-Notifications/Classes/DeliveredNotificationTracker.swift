@@ -71,10 +71,10 @@ final class DeliveredNotificationTracker {
         properties["status"] = .string("delivered")
 
         let eventType = notification.eventType != nil ? EventType.customEvent : EventType.pushDelivered
-        let tokens = configuration.tokens(for: eventType)
-        return tokens.map { token in
+        let projects = configuration.projects(for: eventType)
+        return projects.map { project in
             return EventTrackingObject(
-                projectToken: token,
+                exponeaProject: project,
                 eventType: notification.eventType ?? Constants.EventTypes.pushDelivered,
                 timestamp: notification.timestamp.timeIntervalSince1970,
                 dataTypes: [.properties(properties)]

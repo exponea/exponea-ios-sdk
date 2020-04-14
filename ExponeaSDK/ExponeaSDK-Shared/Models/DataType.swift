@@ -10,16 +10,11 @@ import Foundation
 
 /// Data types that can be associated with tracked events (described in `EventType`).
 ///
-/// - projectToken
 /// - customerId
 /// - properties
 /// - timestamp
 /// - eventType
 enum DataType: Equatable {
-
-    /// The token of the project that the tracking should be uploaded to.
-    case projectToken(String)
-
     /// Identifier of your customer, can be anything from an email to UUIDs.
     case customerIds([String: JSONValue])
 

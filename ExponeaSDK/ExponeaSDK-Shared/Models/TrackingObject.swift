@@ -9,26 +9,26 @@
 import Foundation
 
 protocol TrackingObject {
-    var projectToken: String? { get }
+    var exponeaProject: ExponeaProject { get }
     var dataTypes: [DataType] { get }
     var timestamp: Double { get }
 }
 
 final class EventTrackingObject: TrackingObject, Equatable {
-    public let projectToken: String?
+    public let exponeaProject: ExponeaProject
     public let eventType: String?
     public let timestamp: Double
     public let dataTypes: [DataType]
 
-    public init(projectToken: String?, eventType: String?, timestamp: Double, dataTypes: [DataType]) {
-        self.projectToken = projectToken
+    public init(exponeaProject: ExponeaProject, eventType: String?, timestamp: Double, dataTypes: [DataType]) {
+        self.exponeaProject = exponeaProject
         self.eventType = eventType
         self.timestamp = timestamp
         self.dataTypes = dataTypes
     }
 
     static func == (lhs: EventTrackingObject, rhs: EventTrackingObject) -> Bool {
-        return lhs.projectToken == rhs.projectToken
+        return lhs.exponeaProject == rhs.exponeaProject
             && lhs.eventType == rhs.eventType
             && lhs.timestamp == rhs.timestamp
             && lhs.dataTypes == rhs.dataTypes
@@ -36,12 +36,12 @@ final class EventTrackingObject: TrackingObject, Equatable {
 }
 
 final class CustomerTrackingObject: TrackingObject {
-    public let projectToken: String?
+    public let exponeaProject: ExponeaProject
     public let timestamp: Double
     public let dataTypes: [DataType]
 
-    public init(projectToken: String?, timestamp: Double, dataTypes: [DataType]) {
-        self.projectToken = projectToken
+    public init(exponeaProject: ExponeaProject, timestamp: Double, dataTypes: [DataType]) {
+        self.exponeaProject = exponeaProject
         self.timestamp = timestamp
         self.dataTypes = dataTypes
     }

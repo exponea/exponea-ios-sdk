@@ -36,10 +36,7 @@ class FlushingManagerSpec: QuickSpec {
 
                 flushingManager = try! FlushingManager(database: database, repository: repository)
 
-                eventData = [
-                    .projectToken(configuration.projectToken!),
-                    .properties(MockData().properties)
-                ]
+                eventData = [.properties(MockData().properties)]
             }
 
             afterEach {
@@ -47,11 +44,11 @@ class FlushingManagerSpec: QuickSpec {
             }
 
             it("should only allow one thread to flush") {
-                try! database.trackEvent(with: eventData)
+                try! database.trackEvent(with: eventData, into: configuration.mainProject)
 
                 var networkRequests: Int = 0
                 NetworkStubbing.stubNetwork(
-                    forProjectToken: configuration.projectToken!,
+                    forProjectToken: configuration.projectToken,
                     withStatusCode: 200,
                     withRequestHook: { _ in networkRequests += 1 }
                 )
@@ -71,8 +68,8 @@ class FlushingManagerSpec: QuickSpec {
             }
 
             it("should flush event") {
-                try! database.trackEvent(with: eventData)
-                NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken!, withStatusCode: 200)
+                try! database.trackEvent(with: eventData, into: configuration.mainProject)
+                NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 200)
                 waitUntil { done in
                     flushingManager.flushData(completion: {done()})
                 }
@@ -80,8 +77,8 @@ class FlushingManagerSpec: QuickSpec {
             }
 
             it("should retry flushing event `configuration.flushEventMaxRetries` times on weird errors") {
-                try! database.trackEvent(with: eventData)
-                NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken!, withStatusCode: 418)
+                try! database.trackEvent(with: eventData, into: configuration.mainProject)
+                NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 418)
                 for attempt in 1...4 {
                     waitUntil { done in
                         flushingManager.flushData(completion: {done()})
@@ -96,8 +93,8 @@ class FlushingManagerSpec: QuickSpec {
             }
 
             it("should retry flushing event forever on 500 errors") {
-                try! database.trackEvent(with: eventData)
-                NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken!, withStatusCode: 500)
+                try! database.trackEvent(with: eventData, into: configuration.mainProject)
+                NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 500)
                 for _ in 1...10 {
                     waitUntil { done in
                         flushingManager.flushData(completion: {done()})

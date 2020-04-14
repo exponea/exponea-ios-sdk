@@ -15,13 +15,13 @@ public extension Exponea {
         public let projectToken: String
         public let authorization: Authorization
         public let baseUrl: String
-        public let projectMapping: [EventType: [String]]?
+        public let projectMapping: [EventType: [ExponeaProject]]?
 
         public init(
             projectToken: String,
             authorization: Authorization,
             baseUrl: String? = nil,
-            projectMapping: [EventType: [String]]? = nil
+            projectMapping: [EventType: [ExponeaProject]]? = nil
         ) {
             self.projectToken = projectToken
             self.authorization = authorization

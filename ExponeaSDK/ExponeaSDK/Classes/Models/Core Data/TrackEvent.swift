@@ -16,8 +16,11 @@ class TrackEvent: NSManagedObjectWithContext, DatabaseObject {
         return NSFetchRequest<TrackEvent>(entityName: "TrackEvent")
     }
 
-    @NSManaged public var eventType: String?
+    @NSManaged public var baseUrl: String?
     @NSManaged public var projectToken: String?
+    @NSManaged public var authorizationString: String?
+
+    @NSManaged public var eventType: String?
     @NSManaged public var timestamp: Double
     @NSManaged public var customer: Customer?
     @NSManaged public var retries: NSNumber
@@ -28,11 +31,6 @@ extension TrackEvent {
     var dataTypes: [DataType] {
         let data: [DataType]? = managedObjectContext?.performAndWait {
             var data: [DataType] = []
-
-            // Add project token.
-            if let token = projectToken {
-                data.append(.projectToken(token))
-            }
 
             // Convert all properties to key value items.
             if let properties = properties as? Set<KeyValueItem> {
@@ -85,18 +83,44 @@ extension TrackEvent: HasKeyValueProperties {
 }
 
 final class TrackEventProxy: FlushableObject {
-    var trackingObject: TrackingObject { return event }
-
-    let event: EventTrackingObject
     let databaseObjectProxy: DatabaseObjectProxy
 
+    let baseUrl: String?
+    let projectToken: String?
+    let authorization: Authorization
+
+    let eventType: String?
+    let timestamp: TimeInterval
+    let dataTypes: [DataType]
+
     init(_ event: TrackEvent) {
-        self.event = EventTrackingObject(
-            projectToken: event.projectToken,
-            eventType: event.eventType,
-            timestamp: event.timestamp,
-            dataTypes: event.dataTypes
-        )
         self.databaseObjectProxy = DatabaseObjectProxy(event)
+        self.baseUrl = event.baseUrl
+        self.projectToken = event.projectToken
+        self.authorization = Authorization(from: event.authorizationString)
+        self.eventType = event.eventType
+        self.timestamp = event.timestamp
+        self.dataTypes = event.dataTypes
+    }
+
+    func getTrackingObject(
+        defaultBaseUrl: String,
+        defaultProjectToken: String,
+        defaultAuthorization: Authorization
+    ) -> TrackingObject {
+        var auth = authorization
+        if case .none = auth {
+            auth = defaultAuthorization
+        }
+        return EventTrackingObject(
+            exponeaProject: ExponeaProject(
+                baseUrl: baseUrl ?? defaultBaseUrl,
+                projectToken: projectToken ?? defaultProjectToken,
+                authorization: auth
+            ),
+            eventType: eventType,
+            timestamp: timestamp,
+            dataTypes: dataTypes
+        )
     }
 }

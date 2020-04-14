@@ -41,14 +41,14 @@ public protocol ExponeaType: class {
     ///
     /// - Parameters:
     ///   - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
-    ///   - projectMapping: The project token mapping dictionary providing all the tokens.
+    ///   - projectMapping: The project mapping dictionary providing all the tokens.
     ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
     ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
     ///   - appGroup: The app group used to share data among extensions, fx. for push delivered tracking.
     ///   - defaultProperties: A list of properties to be added to all tracking events.
     func configure(
         projectToken: String,
-        projectMapping: [EventType: [String]],
+        projectMapping: [EventType: [ExponeaProject]],
         authorization: Authorization,
         baseUrl: String?,
         appGroup: String?,

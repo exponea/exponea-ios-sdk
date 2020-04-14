@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Customer" representedClassName="Customer" syncable="YES">
+        <attribute name="lastTokenTrackDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="pushToken" optional="YES" attributeType="String"/>
+        <attribute name="uuid" attributeType="Transformable" customClassName="UUID"/>
+        <relationship name="customIds" toMany="YES" deletionRule="Nullify" destinationEntity="KeyValueItem" inverseName="customer" inverseEntity="KeyValueItem"/>
+        <relationship name="trackCustomer" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrackCustomer" inverseName="customer" inverseEntity="TrackCustomer"/>
+        <relationship name="trackEvent" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TrackEvent" inverseName="customer" inverseEntity="TrackEvent"/>
+    </entity>
+    <entity name="KeyValueItem" representedClassName="KeyValueItem" syncable="YES">
+        <attribute name="key" optional="YES" attributeType="String"/>
+        <attribute name="value" optional="YES" attributeType="Transformable"/>
+        <relationship name="customer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="customIds" inverseEntity="Customer"/>
+        <relationship name="trackCustomer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackCustomer" inverseName="properties" inverseEntity="TrackCustomer"/>
+        <relationship name="trackEvent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackEvent" inverseName="properties" inverseEntity="TrackEvent"/>
+    </entity>
+    <entity name="TrackCustomer" representedClassName="TrackCustomer" syncable="YES">
+        <attribute name="authorizationString" optional="YES" attributeType="String"/>
+        <attribute name="baseUrl" optional="YES" attributeType="String"/>
+        <attribute name="projectToken" optional="YES" attributeType="String"/>
+        <attribute name="retries" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="customer" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="trackCustomer" inverseEntity="Customer"/>
+        <relationship name="properties" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="KeyValueItem" inverseName="trackCustomer" inverseEntity="KeyValueItem"/>
+    </entity>
+    <entity name="TrackEvent" representedClassName="TrackEvent" syncable="YES">
+        <attribute name="authorizationString" optional="YES" attributeType="String"/>
+        <attribute name="baseUrl" optional="YES" attributeType="String"/>
+        <attribute name="eventType" optional="YES" attributeType="String"/>
+        <attribute name="projectToken" optional="YES" attributeType="String"/>
+        <attribute name="retries" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="customer" maxCount="1" deletionRule="Nullify" destinationEntity="Customer" inverseName="trackEvent" inverseEntity="Customer"/>
+        <relationship name="properties" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="KeyValueItem" inverseName="trackEvent" inverseEntity="KeyValueItem"/>
+    </entity>
+    <elements>
+        <element name="Customer" positionX="-29.83203125" positionY="-178.51171875" width="128" height="135"/>
+        <element name="KeyValueItem" positionX="-117" positionY="-63" width="128" height="120"/>
+        <element name="TrackCustomer" positionX="-326.96875" positionY="-110.0859375" width="128" height="148"/>
+        <element name="TrackEvent" positionX="176.1796875" positionY="-46.76953125" width="128" height="163"/>
+    </elements>
+</model>

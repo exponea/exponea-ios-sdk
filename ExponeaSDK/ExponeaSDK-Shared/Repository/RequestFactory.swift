@@ -10,17 +10,17 @@ import Foundation
 
 /// Path route with projectId
 struct RequestFactory {
-    public var baseUrl: String
-    public var projectToken: String
-    public var route: Routes
+    let exponeaProject: ExponeaProject
+    let route: Routes
 
-    public init(baseUrl: String, projectToken: String, route: Routes) {
-        self.baseUrl = baseUrl
-        self.projectToken = projectToken
+    init(exponeaProject: ExponeaProject, route: Routes) {
+        self.exponeaProject = exponeaProject
         self.route = route
     }
 
     public var path: String {
+        let baseUrl = exponeaProject.baseUrl
+        let projectToken = exponeaProject.projectToken
         switch self.route {
         case .identifyCustomer: return baseUrl + "/track/v2/projects/\(projectToken)/customers"
         case .customEvent: return baseUrl + "/track/v2/projects/\(projectToken)/customers/events"
@@ -35,9 +35,10 @@ struct RequestFactory {
 }
 
 extension RequestFactory {
-    func prepareRequest(authorization: Authorization,
-                        parameters: RequestParametersType? = nil,
-                        customerIds: [String: JSONValue]? = nil) -> URLRequest {
+    func prepareRequest(
+        parameters: RequestParametersType? = nil,
+        customerIds: [String: JSONValue]? = nil
+    ) -> URLRequest {
         var request = URLRequest(url: URL(string: path)!)
 
         // Create the basic request
@@ -48,7 +49,7 @@ extension RequestFactory {
                          forHTTPHeaderField: Constants.Repository.headerAccept)
 
         // Add authorization if it was provided
-        switch authorization {
+        switch exponeaProject.authorization {
         case .none: break
         case .token(let token):
             request.addValue("Token \(token)",

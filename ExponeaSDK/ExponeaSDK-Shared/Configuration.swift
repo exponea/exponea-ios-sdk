@@ -11,8 +11,8 @@ import CoreData
 
 /// A configuration object used to configure Exponea when initialising.
 public struct Configuration: Codable, Equatable {
-    public internal(set) var projectMapping: [EventType: [String]]?
-    public internal(set) var projectToken: String?
+    public internal(set) var projectMapping: [EventType: [ExponeaProject]]?
+    public internal(set) var projectToken: String
     public internal(set) var authorization: Authorization = .none
     public internal(set) var baseUrl: String = Constants.Repository.baseUrl
     public internal(set) var defaultProperties: [String: JSONConvertible]?
@@ -48,18 +48,20 @@ public struct Configuration: Codable, Equatable {
         case flushEventMaxRetries
     }
 
-    init() {}
+    init(projectToken: String) {
+        self.projectToken = projectToken
+    }
 
     /// Creates the configuration object with the provided properties.
     ///
     /// - Parameters:
     ///   - projectToken: The project token used for connecting with Exponea.
-    ///   - projectMapping: Optional project token mapping if you wish to send events to different projects.
+    ///   - projectMapping: Optional project mapping if you wish to send events to different projects.
     ///   - authorization: The authorization you want to use when tracking events.
     ///   - baseUrl: Your API base URL that the SDK will connect to.
     ///   - defaultProperties: Custom properties to be tracked in every event.
     public init(projectToken: String?,
-                projectMapping: [EventType: [String]]? = nil,
+                projectMapping: [EventType: [ExponeaProject]]? = nil,
                 authorization: Authorization,
                 baseUrl: String?,
                 appGroup: String? = nil,
@@ -83,7 +85,7 @@ public struct Configuration: Codable, Equatable {
 
     init(
         projectToken: String,
-        projectMapping: [EventType: [String]]?,
+        projectMapping: [EventType: [ExponeaProject]]?,
         authorization: Authorization = .none,
         baseUrl: String,
         defaultProperties: [String: JSONConvertible]?,
@@ -134,6 +136,7 @@ public struct Configuration: Codable, Equatable {
             // Stop if we found the file and decoded successfully
             return
         }
+        throw ExponeaError.configurationError("Configuration plist not found.")
     }
 
     // MARK: - Decodable -
@@ -142,9 +145,10 @@ public struct Configuration: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         // Project token
-        if let projectToken = try container.decodeIfPresent(String.self, forKey: .projectToken) {
-            self.projectToken = projectToken
+        guard let projectToken = try container.decodeIfPresent(String.self, forKey: .projectToken) else {
+            throw ExponeaError.configurationError("No project token provided.")
         }
+        self.projectToken = projectToken
 
         // Base URL
         if let baseUrl = try container.decodeIfPresent(String.self, forKey: .baseUrl) {
@@ -158,11 +162,11 @@ public struct Configuration: Codable, Equatable {
 
         // Project token mapping
         if let dictionary = try container.decodeIfPresent(
-            Dictionary<String, [String]>.self, forKey: .projectMapping) {
-            var mapping: [EventType: [String]] = [:]
-            for (_, element: (key: event, value: tokenArray)) in dictionary.enumerated() {
+            Dictionary<String, [ExponeaProject]>.self, forKey: .projectMapping) {
+            var mapping: [EventType: [ExponeaProject]] = [:]
+            for (_, element: (key: event, value: projectArray)) in dictionary.enumerated() {
                 guard let eventType = EventType(rawValue: event) else { continue }
-                mapping[eventType] = tokenArray
+                mapping[eventType] = projectArray
             }
             self.projectMapping = mapping
         }
@@ -217,7 +221,7 @@ public struct Configuration: Codable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         if let mapping = projectMapping {
             let projectMappingWithStringKeys = Dictionary(
-                uniqueKeysWithValues: mapping.map { (key: EventType, value: [String]) in (key.rawValue, value) }
+                uniqueKeysWithValues: mapping.map { (key: EventType, value: [ExponeaProject]) in (key.rawValue, value) }
             )
             try container.encode(projectMappingWithStringKeys, forKey: .projectMapping)
         }
@@ -250,33 +254,16 @@ public struct Configuration: Codable, Equatable {
 }
 
 extension Configuration {
-    func tokens(for eventType: EventType) -> [String] {
-        var tokens: [String] = []
-        if let projectToken = projectToken {
-            tokens.append(projectToken)
-        }
+    func projects(for eventType: EventType) -> [ExponeaProject] {
+        var projects: [ExponeaProject] = [mainProject]
         if let mapping = projectMapping, let mappedTokens = mapping[eventType] {
-            tokens.append(contentsOf: mappedTokens)
+            projects.append(contentsOf: mappedTokens)
         }
-
-        if tokens.isEmpty {
-            Exponea.logger.log(.error, message: "No project token or token mapping found.")
-        }
-        return tokens
+        return projects
     }
 
-    /// Returns a single token suitable for fetching customer data.
-    /// By default uses same token as for the `ActionType` value `.identifyCustomer`.
-    var fetchingToken: String {
-        guard let projectToken = projectToken else {
-            Exponea.logger.log(.warning, message: """
-            No default project token found, falling back to token for identify customer event type, if possible.
-            """)
-            let token = tokens(for: .identifyCustomer)
-            return token.first ?? ""
-        }
-
-        return projectToken
+    var mainProject: ExponeaProject {
+        ExponeaProject(baseUrl: baseUrl, projectToken: projectToken, authorization: authorization)
     }
 }
 
@@ -288,9 +275,7 @@ extension Configuration: CustomStringConvertible {
             text += "Project Token Mapping: \(mapping)\n"
         }
 
-        if let token = projectToken {
-            text += "Project Token: \(token)\n"
-        }
+        text += "Project Token: \(projectToken)\n"
 
         if let defaultProperties = defaultProperties {
             text += "Default Attributes: \(defaultProperties)\n"

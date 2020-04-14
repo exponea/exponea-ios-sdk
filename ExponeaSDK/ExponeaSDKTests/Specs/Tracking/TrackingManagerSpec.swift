@@ -53,31 +53,27 @@ class TrackingManagerSpec: QuickSpec {
             }
 
             it("should track event into database") {
-                let data: [DataType] = [.projectToken(configuration.projectToken!),
-                                        .properties(MockData().properties)]
+                let data: [DataType] = [.properties(MockData().properties)]
                 expect { try trackingManager.track(EventType.customEvent, with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent().count }.to(equal(1))
             }
 
             it("should add default properties to event with properties") {
                 let data: [DataType] = [
-                    .projectToken(configuration.projectToken!),
                     .properties(["prop": .string("value")]),
                     .timestamp(123456)
                 ]
                 expect { try trackingManager.track(EventType.customEvent, with: data) }.notTo(raiseException())
-                expect { try database.fetchTrackEvent()[0].event.dataTypes }.to(equal([
-                    .projectToken(configuration.projectToken!),
+                expect { try database.fetchTrackEvent()[0].dataTypes }.to(equal([
                     .properties(["prop": .string("value"), "default_prop": .string("default_value")]),
                     .timestamp(123456)
                 ]))
             }
 
             it("should add default properties to event without properties") {
-                let data: [DataType] = [.projectToken(configuration.projectToken!), .timestamp(123456)]
+                let data: [DataType] = [.timestamp(123456)]
                 expect { try trackingManager.track(EventType.customEvent, with: data) }.notTo(raiseException())
-                expect { try database.fetchTrackEvent()[0].event.dataTypes }.to(equal([
-                    .projectToken(configuration.projectToken!),
+                expect { try database.fetchTrackEvent()[0].dataTypes }.to(equal([
                     .properties(["default_prop": .string("default_value")]),
                     .timestamp(123456)
                 ]))
@@ -102,7 +98,7 @@ class TrackingManagerSpec: QuickSpec {
                                                             with: updateData)
                     }.notTo(raiseException())
                     let trackEvent = try! trackingManager.database.fetchTrackEvent().first!
-                    expect { trackEvent.event.dataTypes.properties["testkey"] as? String }.to(equal("testvalue"))
+                    expect { trackEvent.dataTypes.properties["testkey"] as? String }.to(equal("testvalue"))
                 }
 
                 it("should only update last event") {
@@ -125,9 +121,9 @@ class TrackingManagerSpec: QuickSpec {
                     }.notTo(raiseException())
                     let trackEvents = try! trackingManager.database.fetchTrackEvent()
                     trackEvents.forEach { trackEvent in
-                        if trackEvent.event.eventType == Constants.EventTypes.sessionEnd {
-                            let order = trackEvent.event.dataTypes.properties["order"] as? String
-                            let insertedData = trackEvent.event.dataTypes.properties["testkey"] as? String
+                        if trackEvent.eventType == Constants.EventTypes.sessionEnd {
+                            let order = trackEvent.dataTypes.properties["order"] as? String
+                            let insertedData = trackEvent.dataTypes.properties["testkey"] as? String
                             if order == "3" {
                                 expect { insertedData }.to(equal("testvalue"))
                             } else {
@@ -157,10 +153,10 @@ class TrackingManagerSpec: QuickSpec {
                     }.notTo(raiseException())
                     let trackEvents = try! trackingManager.database.fetchTrackEvent()
                     trackEvents.forEach { trackEvent in
-                        if trackEvent.event.eventType == Constants.EventTypes.sessionStart {
-                            if trackEvent.event.eventType == Constants.EventTypes.sessionEnd {
-                                let order = trackEvent.event.dataTypes.properties["order"] as? String
-                                let insertedData = trackEvent.event.dataTypes.properties["testkey"] as? String
+                        if trackEvent.eventType == Constants.EventTypes.sessionStart {
+                            if trackEvent.eventType == Constants.EventTypes.sessionEnd {
+                                let order = trackEvent.dataTypes.properties["order"] as? String
+                                let insertedData = trackEvent.dataTypes.properties["testkey"] as? String
                                 if order == "3" {
                                     expect { insertedData }.to(equal("testvalue"))
                                 } else {
@@ -180,7 +176,7 @@ class TrackingManagerSpec: QuickSpec {
                     )
                     let trackEvents = try! trackingManager.database.fetchTrackEvent()
                     expect(trackEvents.count).to(equal(1))
-                    let event = trackEvents[0].event
+                    let event = trackEvents[0]
                     expect(event.eventType).to(equal(Constants.EventTypes.banner))
                     expect(event.dataTypes.properties["banner_id"] as? String).to(equal("5dd86f44511946ea55132f29"))
                     expect(event.dataTypes.properties["banner_name"] as? String)

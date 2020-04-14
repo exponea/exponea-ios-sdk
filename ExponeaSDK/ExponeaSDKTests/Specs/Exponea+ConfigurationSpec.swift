@@ -53,7 +53,15 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                         projectToken: "mock-project-token",
                         authorization: .none,
                         baseUrl: "mock-url",
-                        projectMapping: [.payment: ["other-project-id"]]
+                        projectMapping: [
+                            .payment: [
+                                ExponeaProject(
+                                    baseUrl: "other-mock-url",
+                                    projectToken: "other-project-id",
+                                    authorization: .token("some-token")
+                                )
+                            ]
+                        ]
                     ),
                     automaticPushNotificationTracking: .enabled(
                         appGroup: "mock-app-group",
@@ -64,7 +72,15 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                     defaultProperties: ["mock-prop-1": "mock-value-1", "mock-prop-2": 123],
                     flushingSetup: Exponea.FlushingSetup(mode: .periodic(111), maxRetries: 123)
                 )
-                expect(exponea.configuration!.projectMapping).to(equal([.payment: ["other-project-id"]]))
+                expect(exponea.configuration!.projectMapping).to(
+                    equal([.payment: [
+                        ExponeaProject(
+                            baseUrl: "other-mock-url",
+                            projectToken: "other-project-id",
+                            authorization: .token("some-token")
+                        )
+                    ]])
+                )
                 expect(exponea.configuration!.projectToken).to(equal("mock-project-token"))
                 expect(exponea.configuration!.baseUrl).to(equal("mock-url"))
                 expect(exponea.configuration!.defaultProperties).notTo(beNil())

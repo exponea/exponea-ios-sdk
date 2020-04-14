@@ -14,16 +14,8 @@ extension ServerRepository: FetchRepository {
         for customerIds: [String: JSONValue],
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void
     ) {
-        let router = RequestFactory(
-            baseUrl: configuration.baseUrl,
-            projectToken: configuration.fetchingToken,
-            route: .customerAttributes
-        )
-        let request = router.prepareRequest(
-            authorization: configuration.authorization,
-            parameters: request,
-            customerIds: customerIds
-        )
+        let router = RequestFactory(exponeaProject: configuration.mainProject, route: .customerAttributes)
+        let request = router.prepareRequest(parameters: request, customerIds: customerIds)
 
         session
             .dataTask(
@@ -52,10 +44,8 @@ extension ServerRepository: FetchRepository {
     /// - Parameter completion: A closure executed upon request completion containing the result
     ///                         which has either the returned data or error.
     func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void) {
-        let router = RequestFactory(baseUrl: configuration.baseUrl,
-                                    projectToken: configuration.fetchingToken,
-                                    route: .consents)
-        let request = router.prepareRequest(authorization: configuration.authorization)
+        let router = RequestFactory(exponeaProject: configuration.mainProject, route: .consents)
+        let request = router.prepareRequest()
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
@@ -65,16 +55,8 @@ extension ServerRepository: FetchRepository {
         for customerIds: [String: JSONValue],
         completion: @escaping (Result<InAppMessagesResponse>) -> Void
     ) {
-        let router = RequestFactory(
-            baseUrl: configuration.baseUrl,
-            projectToken: configuration.fetchingToken,
-            route: .inAppMessages
-        )
-        let request = router.prepareRequest(
-            authorization: configuration.authorization,
-            parameters: InAppMessagesRequest(),
-            customerIds: customerIds
-        )
+        let router = RequestFactory(exponeaProject: configuration.mainProject, route: .inAppMessages)
+        let request = router.prepareRequest(parameters: InAppMessagesRequest(), customerIds: customerIds)
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()

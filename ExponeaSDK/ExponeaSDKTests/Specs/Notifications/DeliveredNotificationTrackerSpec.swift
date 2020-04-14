@@ -41,7 +41,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                     )
                 ).to(equal([
                     EventTrackingObject(
-                        projectToken: "mock-project-token",
+                        exponeaProject: configuration.mainProject,
                         eventType: "campaign",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [
@@ -80,7 +80,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                     )
                 ).to(equal([
                     EventTrackingObject(
-                        projectToken: "mock-project-token",
+                        exponeaProject: configuration.mainProject,
                         eventType: "campaign",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [
@@ -113,7 +113,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                     )
                 ).to(equal([
                     EventTrackingObject(
-                        projectToken: "mock-project-token",
+                        exponeaProject: configuration.mainProject,
                         eventType: "custom-event-type",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [
@@ -129,9 +129,17 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
             it("should generate events for project token mapping") {
                 let configuration = try! Configuration(
                     projectToken: "mock-project-token",
-                    projectMapping: [.pushDelivered: ["other-mock-project-token"]],
+                    projectMapping: [
+                        .pushDelivered: [
+                            ExponeaProject(
+                                baseUrl: "https://other-mock-base-url.com",
+                                projectToken: "other-mock-project-token",
+                                authorization: .token("other-mock-token")
+                            )
+                        ]
+                    ],
                     authorization: .token("mock-token"),
-                    baseUrl: nil,
+                    baseUrl: "https://mock-base-url.com",
                     appGroup: nil,
                     defaultProperties: nil
                 )
@@ -144,7 +152,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                     )
                 ).to(equal([
                     EventTrackingObject(
-                        projectToken: "mock-project-token",
+                        exponeaProject: configuration.mainProject,
                         eventType: "campaign",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [
@@ -155,7 +163,11 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         ]
                     ),
                     EventTrackingObject(
-                        projectToken: "other-mock-project-token",
+                        exponeaProject: ExponeaProject(
+                            baseUrl: "https://other-mock-base-url.com",
+                            projectToken: "other-mock-project-token",
+                            authorization: .token("other-mock-token")
+                        ),
                         eventType: "campaign",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [

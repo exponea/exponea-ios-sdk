@@ -16,7 +16,10 @@ class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
         return NSFetchRequest<TrackCustomer>(entityName: "TrackCustomer")
     }
 
+    @NSManaged public var baseUrl: String?
     @NSManaged public var projectToken: String?
+    @NSManaged public var authorizationString: String?
+
     @NSManaged public var timestamp: Double
     @NSManaged public var customer: Customer?
     @NSManaged public var retries: NSNumber
@@ -24,12 +27,6 @@ class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
     var dataTypes: [DataType] {
         let data: [DataType]? = managedObjectContext?.performAndWait {
             var data: [DataType] = []
-
-            // Add project token.
-            if let token = projectToken {
-                data.append(.projectToken(token))
-            }
-
             // Convert all properties to key value items.
             if let properties = properties as? Set<KeyValueItem> {
                 var props: [String: JSONValue] = [:]
@@ -73,17 +70,41 @@ extension TrackCustomer: HasKeyValueProperties {
 }
 
 final class TrackCustomerProxy: FlushableObject {
-    var trackingObject: TrackingObject { return customer }
-
-    let customer: CustomerTrackingObject
     let databaseObjectProxy: DatabaseObjectProxy
 
+    let baseUrl: String?
+    let projectToken: String?
+    let authorization: Authorization
+
+    let timestamp: TimeInterval
+    let dataTypes: [DataType]
+
     init(_ customer: TrackCustomer) {
-        self.customer = CustomerTrackingObject(
-            projectToken: customer.projectToken,
-            timestamp: customer.timestamp,
-            dataTypes: customer.dataTypes
-        )
         self.databaseObjectProxy = DatabaseObjectProxy(customer)
+        self.baseUrl = customer.baseUrl
+        self.projectToken = customer.projectToken
+        self.authorization = Authorization(from: customer.authorizationString)
+        self.timestamp = customer.timestamp
+        self.dataTypes = customer.dataTypes
+    }
+
+    func getTrackingObject(
+        defaultBaseUrl: String,
+        defaultProjectToken: String,
+        defaultAuthorization: Authorization
+    ) -> TrackingObject {
+        var auth = authorization
+        if case .none = auth {
+            auth = defaultAuthorization
+        }
+        return CustomerTrackingObject(
+            exponeaProject: ExponeaProject(
+                baseUrl: baseUrl ?? defaultBaseUrl,
+                projectToken: projectToken ?? defaultProjectToken,
+                authorization: auth
+            ),
+            timestamp: timestamp,
+            dataTypes: dataTypes
+        )
     }
 }

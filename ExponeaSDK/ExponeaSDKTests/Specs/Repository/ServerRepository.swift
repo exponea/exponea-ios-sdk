@@ -28,7 +28,7 @@ final class ServerRepositorySpec: QuickSpec {
                 it("should cancel pending requests") {
                     // stub network with a long running request that won't call callback unless cancelled
                     NetworkStubbing.stubNetwork(
-                        forProjectToken: configuration.projectToken!,
+                        forProjectToken: configuration.projectToken,
                         withStatusCode: 200,
                         withDelay: 1000
                     )
@@ -41,13 +41,13 @@ final class ServerRepositorySpec: QuickSpec {
 
                 it("should not cancel requests on shared URLSession") {
                     NetworkStubbing.stubNetwork(
-                        forProjectToken: configuration.projectToken!,
+                        forProjectToken: configuration.projectToken,
                         withStatusCode: 200,
                         withDelay: 1000
                     )
                     let repo = ServerRepository(configuration: configuration)
                     let networkTask = URLSession.shared.dataTask(
-                        with: URL(string: configuration.baseUrl + "/projects/\(configuration.projectToken!)")!
+                        with: URL(string: configuration.baseUrl + "/projects/\(configuration.projectToken)")!
                     )
                     networkTask.resume()
                     waitUntil { done in

@@ -25,7 +25,7 @@ class FetchConsentsSpec: QuickSpec {
                 let repo = ServerRepository(configuration: configuration)
 
                 NetworkStubbing.stubNetwork(
-                    forProjectToken: configuration.projectToken!,
+                    forProjectToken: configuration.projectToken,
                     withStatusCode: 200,
                     withResponseData: MockData().consentsResponse
                 )

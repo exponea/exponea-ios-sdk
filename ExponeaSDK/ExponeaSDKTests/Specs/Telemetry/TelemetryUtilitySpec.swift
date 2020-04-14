@@ -43,7 +43,7 @@ final class TelemetryUtilitySpec: QuickSpec {
         }
         describe("formatting configuration for tracking") {
             it("should format default configuration") {
-                expect(TelemetryUtility.formatConfigurationForTracking(Configuration())).to(
+                expect(TelemetryUtility.formatConfigurationForTracking(Configuration(projectToken: "token"))).to(
                     equal([
                         "defaultProperties": "",
                         "automaticPushNotificationTracking": "true",
@@ -53,7 +53,7 @@ final class TelemetryUtilitySpec: QuickSpec {
                         "tokenTrackFrequency": "onTokenChange [default]",
                         "flushEventMaxRetries": "5 [default]",
                         "projectMapping": "",
-                        "projectToken": "",
+                        "projectToken": "[REDACTED]",
                         "sessionTimeout": "6.0 [default]"
                     ])
                 )
@@ -61,7 +61,9 @@ final class TelemetryUtilitySpec: QuickSpec {
             it("should format non-default configuration") {
                 let configuration = try! Configuration(
                     projectToken: "mock-project-token",
-                    projectMapping: [EventType.banner: ["other-mock-project-token"]],
+                    projectMapping: [EventType.banner: [
+                        ExponeaProject(projectToken: "other-mock-project-token", authorization: .none)
+                    ]],
                     authorization: .token("mock-authorization"),
                     baseUrl: "http://mock-base-url.com",
                     defaultProperties: ["default-property": "default-property-value"],

@@ -23,14 +23,9 @@ extension ServerRepository: TrackingRepository {
             }
         }
 
-        guard let projectToken = trackingObject.projectToken else {
-            completion(.failure(RepositoryError.missingData("Project token not provided.")))
-            return
-        }
-
         if let customer = trackingObject as? CustomerTrackingObject {
             uploadTrackingData(
-                projectToken: projectToken,
+                into: trackingObject.exponeaProject,
                 trackingParameters: TrackingParameters(
                     customerIds: customerIds,
                     properties: properties,
@@ -41,7 +36,7 @@ extension ServerRepository: TrackingRepository {
             )
         } else if let event = trackingObject as? EventTrackingObject {
             uploadTrackingData(
-                projectToken: projectToken,
+                into: trackingObject.exponeaProject,
                 trackingParameters: TrackingParameters(
                     customerIds: customerIds,
                     properties: properties,
@@ -57,20 +52,13 @@ extension ServerRepository: TrackingRepository {
     }
 
     func uploadTrackingData(
-        projectToken: String,
+        into exponeaProject: ExponeaProject,
         trackingParameters: TrackingParameters,
         route: Routes,
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     ) {
-        let router = RequestFactory(
-            baseUrl: configuration.baseUrl,
-            projectToken: projectToken,
-            route: route
-        )
-        let request = router.prepareRequest(
-            authorization: configuration.authorization,
-            parameters: trackingParameters
-        )
+        let router = RequestFactory(exponeaProject: exponeaProject, route: route)
+        let request = router.prepareRequest(parameters: trackingParameters)
 
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))

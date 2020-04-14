@@ -159,7 +159,7 @@ class TrackingManager {
 extension TrackingManager: TrackingManagerType {
     public func hasPendingEvent(ofType type: String, withMaxAge maxAge: Double) throws -> Bool {
         let events = try database.fetchTrackEvent()
-            .filter({ $0.event.eventType == type && $0.event.timestamp + maxAge >= Date().timeIntervalSince1970 })
+            .filter({ $0.eventType == type && $0.timestamp + maxAge >= Date().timeIntervalSince1970 })
         return !events.isEmpty
     }
 
@@ -167,12 +167,12 @@ extension TrackingManager: TrackingManagerType {
     // Event may be logged multiple times - for every project token
     public func updateLastPendingEvent(ofType type: String, with data: DataType) throws {
         var events = try database.fetchTrackEvent()
-            .filter({ $0.event.eventType == type })
-            .sorted(by: { $0.event.timestamp < $1.event.timestamp })
+            .filter({ $0.eventType == type })
+            .sorted(by: { $0.timestamp < $1.timestamp })
         var projectTokens: Set<String> = []
         while !events.isEmpty {
             let event = events.removeLast()
-            if let projectToken = event.event.projectToken, !projectTokens.contains(projectToken) {
+            if let projectToken = event.projectToken, !projectTokens.contains(projectToken) {
                 projectTokens.insert(projectToken)
                 try database.updateEvent(withId: event.databaseObjectProxy.objectID, withData: data)
             }
@@ -181,16 +181,16 @@ extension TrackingManager: TrackingManagerType {
 
     open func track(_ type: EventType, with data: [DataType]?) throws {
         /// Get token mapping or fail if no token provided.
-        let tokens = repository.configuration.tokens(for: type)
-        if tokens.isEmpty {
+        let projects = repository.configuration.projects(for: type)
+        if projects.isEmpty {
             throw TrackingManagerError.unknownError("No project tokens provided.")
         }
 
         Exponea.logger.log(.verbose, message: "Tracking event of type: \(type) with params \(data ?? [])")
 
         /// For each project token we have, track the data.
-        for projectToken in tokens {
-            var payload: [DataType] = [.projectToken(projectToken)] + (data ?? [])
+        for project in projects {
+            var payload: [DataType] = data ?? []
             if let stringEventType = getEventTypeString(type: type) {
                 payload.append(.eventType(stringEventType))
             }
@@ -201,7 +201,7 @@ extension TrackingManager: TrackingManagerType {
                 if let appGroup = repository.configuration.appGroup {
                     database.customer.saveIdsToUserDefaults(appGroup: appGroup)
                 }
-                try database.identifyCustomer(with: payload)
+                try database.identifyCustomer(with: payload, into: project)
             case .install,
                  .sessionStart,
                  .sessionEnd,
@@ -211,7 +211,7 @@ extension TrackingManager: TrackingManagerType {
                  .pushDelivered,
                  .campaignClick,
                  .banner:
-                try database.trackEvent(with: payload)
+                try database.trackEvent(with: payload, into: project)
                 self.inAppMessagesManager.showInAppMessage(for: payload, trackingDelegate: self)
             }
         }

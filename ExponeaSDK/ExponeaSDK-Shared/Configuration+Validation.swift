@@ -30,13 +30,11 @@ extension Configuration {
         if URL(string: self.baseUrl) == nil {
             throw ConfigurationValidationError.baseUrlInvalid
         }
-        if let mainToken = self.projectToken {
-            try validateProjectToken(projectToken: mainToken)
-        }
+        try validateProjectToken(projectToken: projectToken)
         try self.projectMapping?.forEach { entry in
             try entry.value.forEach {
                 do {
-                    try validateProjectToken(projectToken: $0)
+                    try validateProjectToken(projectToken: $0.projectToken)
                 } catch {
                     throw ConfigurationValidationError.projectMappingInvalid(entry.key, error)
                 }

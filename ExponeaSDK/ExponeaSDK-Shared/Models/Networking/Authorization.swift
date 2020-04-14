@@ -15,12 +15,16 @@ public enum Authorization: Equatable, Codable {
     case token(String)
 
     public init(from decoder: Decoder) throws {
-        self = .none
         let container = try decoder.singleValueContainer()
-        guard let authorization = try? container.decode(String.self) else {
+        self.init(from: try? container.decode(String.self))
+    }
+
+    public init(from string: String?) {
+        self = .none
+        guard let string = string else {
             return
         }
-        let components = authorization.split(separator: " ")
+        let components = string.split(separator: " ")
 
         if components.count == 2 {
             switch components.first {
@@ -32,9 +36,17 @@ public enum Authorization: Equatable, Codable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
+        if let encoded = encode() {
+            try container.encode(encoded)
+        } else {
+            try container.encodeNil()
+        }
+    }
+
+    public func encode() -> String? {
         switch self {
-        case .none: try container.encodeNil()
-        case .token(let token): try container.encode("Token \(token)")
+        case .none: return nil
+        case .token(let token): return "Token \(token)"
         }
     }
 }

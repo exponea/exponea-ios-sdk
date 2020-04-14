@@ -135,7 +135,13 @@ class FlushingManager: FlushingManagerType {
             return
         }
         for flushableObject in flushableObjects {
-            repository.trackObject(flushableObject.trackingObject, for: database.customer.ids) { [weak self] (result) in
+            // older events in database might be missing some of the information, let's use current settings as defaults
+            let trackingObject = flushableObject.getTrackingObject(
+                defaultBaseUrl: repository.configuration.baseUrl,
+                defaultProjectToken: repository.configuration.projectToken,
+                defaultAuthorization: repository.configuration.authorization
+            )
+            repository.trackObject(trackingObject, for: database.customer.ids) { [weak self] (result) in
                 self?.onObjectFlush(flushableObject: flushableObject, result: result)
                 counter -= 1
                 if counter == 0 {

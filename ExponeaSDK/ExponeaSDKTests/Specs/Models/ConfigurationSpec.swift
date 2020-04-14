@@ -56,8 +56,13 @@ class ConfigurationSpec: QuickSpec {
                         _ = try Configuration(
                             projectToken: "token",
                             projectMapping: [
-                                .sessionStart: ["token2", "token3"],
-                                .sessionEnd: ["invalid token"]
+                                .sessionStart: [
+                                    ExponeaProject(projectToken: "token2", authorization: .none),
+                                    ExponeaProject(projectToken: "token3", authorization: .none)
+                                ],
+                                .sessionEnd: [
+                                    ExponeaProject(projectToken: "invalid token", authorization: .none)
+                                ]
                             ],
                             authorization: Authorization.none,
                             baseUrl: "baseUrl"
@@ -95,14 +100,25 @@ class ConfigurationSpec: QuickSpec {
                         let data = try Data(contentsOf: fileUrl)
                         let config = try PropertyListDecoder().decode(Configuration.self, from: data)
 
-                        let mapping: [EventType: [String]] = [
-                            .install: ["testToken1"],
-                            .customEvent: ["testToken2", "testToken3"],
-                            .payment: ["paymentToken"]
+                        let mapping: [EventType: [ExponeaProject]] = [
+                            .install: [
+                                ExponeaProject(projectToken: "testToken1", authorization: .token("authToken1"))
+                            ],
+                            .customEvent: [
+                                ExponeaProject(projectToken: "testToken2", authorization: .token("authToken2")),
+                                ExponeaProject(projectToken: "testToken3", authorization: .none)
+                            ],
+                            .payment: [
+                                ExponeaProject(
+                                    baseUrl: "https://mock-base-url.com",
+                                    projectToken: "testToken4",
+                                    authorization: .token("authToken4")
+                                )
                             ]
+                        ]
 
                         expect(config.projectMapping).to(equal(mapping))
-                        expect(config.projectToken).to(beNil())
+                        expect(config.projectToken).to(equal("testToken"))
                     } catch {
                         XCTFail("Failed to load test data - \(error)")
                     }
@@ -120,37 +136,63 @@ class ConfigurationSpec: QuickSpec {
                         authorization: Authorization.none,
                         baseUrl: "baseUrl"
                     )
-                    let tokens = configuration.tokens(for: .sessionStart)
-                    expect { tokens.count }.to(equal(1))
-                    expect { tokens.first }.to(equal("token"))
+                    let projects = configuration.projects(for: .sessionStart)
+                    expect { projects.count }.to(equal(1))
+                    expect { projects.first?.projectToken }.to(equal("token"))
                     expect { logger.messages }.to(beEmpty())
                 }
 
                 it("should return project mapping tokens") {
                     let configuration = try! Configuration(
                         projectToken: "token",
-                        projectMapping: [.sessionStart: ["token2", "token3"]],
+                        projectMapping: [.sessionStart: [
+                            ExponeaProject(projectToken: "token2", authorization: .none),
+                            ExponeaProject(
+                                baseUrl: "otherBaseUrl",
+                                projectToken: "token3",
+                                authorization: .token("some-token")
+                            )
+                        ]],
                         authorization: Authorization.none,
                         baseUrl: "baseUrl"
                     )
-                    let tokens = configuration.tokens(for: .sessionStart)
-                    expect { tokens.count }.to(equal(3))
-                    expect { tokens[0] }.to(equal("token"))
-                    expect { tokens[1] }.to(equal("token2"))
-                    expect { tokens[2] }.to(equal("token3"))
+                    let projects = configuration.projects(for: .sessionStart)
+                    expect { projects.count }.to(equal(3))
+                    expect { projects[0] }.to(equal(
+                        ExponeaProject(baseUrl: "baseUrl", projectToken: "token", authorization: .none)
+                    ))
+                    expect { projects[1] }.to(equal(
+                        ExponeaProject(
+                            baseUrl: Constants.Repository.baseUrl,
+                            projectToken: "token2",
+                            authorization: .none
+                        )
+                    ))
+                    expect { projects[2] }.to(equal(
+                        ExponeaProject(
+                            baseUrl: "otherBaseUrl",
+                            projectToken: "token3",
+                            authorization: .token("some-token")
+                        )
+                    ))
                     expect { logger.messages }.to(beEmpty())
                 }
 
                 it("should return default token for event not in project mapping") {
                     let configuration = try! Configuration(
                         projectToken: "token",
-                        projectMapping: [.sessionStart: ["token2", "token3"]],
+                        projectMapping: [.sessionStart: [
+                            ExponeaProject(projectToken: "token2", authorization: .none),
+                            ExponeaProject(projectToken: "token3", authorization: .none)
+                        ]],
                         authorization: Authorization.none,
                         baseUrl: "baseUrl"
                     )
-                    let tokens = configuration.tokens(for: .sessionEnd)
-                    expect { tokens.count }.to(equal(1))
-                    expect { tokens.first }.to(equal("token"))
+                    let projects = configuration.projects(for: .sessionEnd)
+                    expect { projects.count }.to(equal(1))
+                    expect { projects.first }.to(equal(
+                        ExponeaProject(baseUrl: "baseUrl", projectToken: "token", authorization: .none)
+                    ))
                     expect { logger.messages }.to(beEmpty())
                 }
             })
@@ -202,7 +244,13 @@ class ConfigurationSpec: QuickSpec {
             it("save and load complete configuration") {
                 let configuration = try! Configuration(
                     projectToken: "project-token",
-                    projectMapping: [EventType.banner: ["token1"]],
+                    projectMapping: [EventType.banner: [
+                        ExponeaProject(
+                            baseUrl: "https://other.base.url",
+                            projectToken: "other-project-token",
+                            authorization: .none
+                        )
+                    ]],
                     authorization: .token("test"),
                     baseUrl: "https://some.base.url",
                     defaultProperties: ["prop": "value", "other-prop": "other-value"],

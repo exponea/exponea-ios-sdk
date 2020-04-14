@@ -20,7 +20,7 @@ You can configure the SDK providing a configuration file with configuration vari
 
 #### projectMapping
 
-* In case you have more than one project token to track for one event, you should provide which "event types" each project token should be tracked.
+* In case you need to track events into more than one project, you can define project information for "event types" which should be tracked multiple times.
 
 #### defaultProperties
 
@@ -81,31 +81,50 @@ public func configure(plistName: String)
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+<plist version="1.0">
 <dict>
-	<key>sessionTimeout</key>
-	<integer>20</integer>
 	<key>projectToken</key>
 	<string>testToken</string>
+	<key>sessionTimeout</key>
+	<integer>20</integer>
 	<key>projectMapping</key>
 	<dict>
 		<key>INSTALL</key>
 		<array>
-			<string>testToken1</string>
+			<dict>
+				<key>projectToken</key>
+				<string>testToken1</string>
+				<key>authorization</key>
+				<string>Token authToken1</string>
+			</dict>
 		</array>
 		<key>TRACK_EVENT</key>
 		<array>
-			<string>testToken2</string>
-			<string>testToken3</string>
+			<dict>
+				<key>projectToken</key>
+				<string>testToken2</string>
+				<key>authorization</key>
+				<string>Token authToken2</string>
+			</dict>
+			<dict>
+				<key>projectToken</key>
+				<string>testToken3</string>
+				<key>authorization</key>
+				<string></string>
+			</dict>
 		</array>
 		<key>PAYMENT</key>
 		<array>
-			<string>paymentToken</string>
+			<dict>
+				<key>baseUrl</key>
+				<string>https://mock-base-url.com</string>
+				<key>projectToken</key>
+				<string>testToken4</string>
+				<key>authorization</key>
+				<string>Token authToken4</string>
+			</dict>
 		</array>
 	</dict>
-	<key>lastSessionStarted</key>
-	<integer>0</integer>
-	<key>lastSessionEnded</key>
-	<integer>0</integer>
 	<key>autoSessionTracking</key>
 	<false/>
 </dict>
@@ -175,7 +194,15 @@ Exponea.shared.configure(
 		projectToken: "YOUR PROJECT TOKEN",
 		authorization: .token("YOUR ACCESS TOKEN")
 		baseUrl: "https://YOUR URL",
-		projectMapping: [.payment: ["OTHER PROJECT ID"]]
+		projectMapping: [
+			.payment: [
+				ExponeaProject(
+					baseUrl: "https://YOUR URL",
+					projectToken: "YOUR OTHER PROJECT TOKEN",
+					authorization: .token("YOUR OTHER ACCESS TOKEN")
+				)
+			]
+		]
 	),
 	automaticPushNotificationTracking: .enabled(
 		appGroup: "YOUR APP GROUP",
