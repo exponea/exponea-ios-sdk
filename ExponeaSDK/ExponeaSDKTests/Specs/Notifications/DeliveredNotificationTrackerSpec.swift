@@ -37,11 +37,13 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                 expect(
                     DeliveredNotificationTracker.generateTrackingObjects(
                         configuration: configuration,
+                        customerIds: ["cookie": .string("mock-cookie")],
                         notification: notificationData
                     )
                 ).to(equal([
                     EventTrackingObject(
                         exponeaProject: configuration.mainProject,
+                        customerIds: ["cookie": .string("mock-cookie")],
                         eventType: "campaign",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [
@@ -76,11 +78,13 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                 expect(
                     DeliveredNotificationTracker.generateTrackingObjects(
                         configuration: configuration,
+                        customerIds: ["cookie": .string("mock-cookie")],
                         notification: notificationData
                     )
                 ).to(equal([
                     EventTrackingObject(
                         exponeaProject: configuration.mainProject,
+                        customerIds: ["cookie": .string("mock-cookie")],
                         eventType: "campaign",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [
@@ -109,11 +113,13 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                 expect(
                     DeliveredNotificationTracker.generateTrackingObjects(
                         configuration: configuration,
+                        customerIds: ["cookie": .string("mock-cookie")],
                         notification: notificationData
                     )
                 ).to(equal([
                     EventTrackingObject(
                         exponeaProject: configuration.mainProject,
+                        customerIds: ["cookie": .string("mock-cookie")],
                         eventType: "custom-event-type",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [
@@ -148,11 +154,13 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                 expect(
                     DeliveredNotificationTracker.generateTrackingObjects(
                         configuration: configuration,
+                        customerIds: ["cookie": .string("mock-cookie")],
                         notification: notificationData
                     )
                 ).to(equal([
                     EventTrackingObject(
                         exponeaProject: configuration.mainProject,
+                        customerIds: ["cookie": .string("mock-cookie")],
                         eventType: "campaign",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [
@@ -168,6 +176,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                             projectToken: "other-mock-project-token",
                             authorization: .token("other-mock-token")
                         ),
+                        customerIds: ["cookie": .string("mock-cookie")],
                         eventType: "campaign",
                         timestamp: notificationData.timestamp.timeIntervalSince1970,
                         dataTypes: [

@@ -10,7 +10,6 @@ import Foundation
 
 final class DeliveredNotificationTracker {
     private let events: [EventTrackingObject]
-    private let customerIds: [String: JSONValue]
     private let repository: ServerRepository
 
     init(appGroup: String, request: UNNotificationRequest) throws {
@@ -27,9 +26,10 @@ final class DeliveredNotificationTracker {
         let notification = NotificationData.deserialize(from: attributes) ?? NotificationData()
 
         repository = ServerRepository(configuration: configuration)
-        self.customerIds = customerIds
+
         events = DeliveredNotificationTracker.generateTrackingObjects(
             configuration: configuration,
+            customerIds: customerIds,
             notification: notification
         )
     }
@@ -42,28 +42,26 @@ final class DeliveredNotificationTracker {
         var remainingRequests = events.count
         var failedRequests = 0
         events.forEach { event in
-            repository.trackObject(
-                event,
-                for: customerIds, completion: { result in
-                    if case .failure(let error) = result {
-                        Exponea.logger.log(.error, message: "Failed to upload push delivered event \(error)")
-                        failedRequests += 1
-                    }
-                    remainingRequests -= 1
-                    if remainingRequests == 0 {
-                        if failedRequests == 0 {
-                            onSuccess()
-                        } else {
-                            onFailure()
-                        }
+            repository.trackObject(event) { result in
+                if case .failure(let error) = result {
+                    Exponea.logger.log(.error, message: "Failed to upload push delivered event \(error)")
+                    failedRequests += 1
+                }
+                remainingRequests -= 1
+                if remainingRequests == 0 {
+                    if failedRequests == 0 {
+                        onSuccess()
+                    } else {
+                        onFailure()
                     }
                 }
-            )
+            }
         }
     }
 
     static func generateTrackingObjects(
         configuration: Configuration,
+        customerIds: [String: JSONValue],
         notification: NotificationData
     ) -> [EventTrackingObject] {
         var properties = configuration.defaultProperties?.mapValues { $0.jsonValue } ?? [:]
@@ -75,6 +73,7 @@ final class DeliveredNotificationTracker {
         return projects.map { project in
             return EventTrackingObject(
                 exponeaProject: project,
+                customerIds: customerIds,
                 eventType: notification.eventType ?? Constants.EventTypes.pushDelivered,
                 timestamp: notification.timestamp.timeIntervalSince1970,
                 dataTypes: [.properties(properties)]

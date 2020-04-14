@@ -11,7 +11,6 @@ import Foundation
 protocol TrackingRepository {
     func trackObject(
         _ object: TrackingObject,
-        for customerIds: [String: JSONValue],
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     )
 }

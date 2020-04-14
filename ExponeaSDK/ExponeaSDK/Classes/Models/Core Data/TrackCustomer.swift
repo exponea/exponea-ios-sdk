@@ -76,6 +76,8 @@ final class TrackCustomerProxy: FlushableObject {
     let projectToken: String?
     let authorization: Authorization
 
+    let customerIds: [String: JSONValue]
+
     let timestamp: TimeInterval
     let dataTypes: [DataType]
 
@@ -84,6 +86,9 @@ final class TrackCustomerProxy: FlushableObject {
         self.baseUrl = customer.baseUrl
         self.projectToken = customer.projectToken
         self.authorization = Authorization(from: customer.authorizationString)
+
+        self.customerIds = customer.customer?.ids ?? [:]
+
         self.timestamp = customer.timestamp
         self.dataTypes = customer.dataTypes
     }
@@ -103,6 +108,7 @@ final class TrackCustomerProxy: FlushableObject {
                 projectToken: projectToken ?? defaultProjectToken,
                 authorization: auth
             ),
+            customerIds: customerIds,
             timestamp: timestamp,
             dataTypes: dataTypes
         )

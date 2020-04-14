@@ -11,11 +11,11 @@
 final class MockRepository: RepositoryType {
     var configuration: Configuration
 
-    var trackObjectResult: EmptyResult<RepositoryError>? = EmptyResult.failure(RepositoryError.connectionError)
-    var fetchRecommendationResult: Result<RecommendationResponse<EmptyRecommendationData>>?
+    var trackObjectResult: EmptyResult<RepositoryError> = EmptyResult.failure(RepositoryError.connectionError)
+    var fetchRecommendationResult: Result<RecommendationResponse<EmptyRecommendationData>>
         = Result.failure(RepositoryError.connectionError)
-    var fetchConsentsResult: Result<ConsentsResponse>? = Result.failure(RepositoryError.connectionError)
-    var fetchInAppMessagesResult: Result<InAppMessagesResponse>? = Result.failure(RepositoryError.connectionError)
+    var fetchConsentsResult: Result<ConsentsResponse> = Result.failure(RepositoryError.connectionError)
+    var fetchInAppMessagesResult: Result<InAppMessagesResponse> = Result.failure(RepositoryError.connectionError)
 
     init(configuration: Configuration) {
         self.configuration = configuration
@@ -27,12 +27,9 @@ final class MockRepository: RepositoryType {
 
     func trackObject(
         _ object: TrackingObject,
-        for customerIds: [String: JSONValue],
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     ) {
-        if let mockResult = trackObjectResult {
-            completion(mockResult)
-        }
+        completion(trackObjectResult)
     }
 
     func fetchRecommendation<T>(
@@ -40,23 +37,25 @@ final class MockRepository: RepositoryType {
         for customerIds: [String: JSONValue],
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void
     ) where T: RecommendationUserData {
-        if let mockResult = fetchRecommendationResult as? Result<RecommendationResponse<T>> {
-            completion(mockResult)
-        }
+        fatalError("Only implemented for EmptyRecommendationData")
+    }
+
+    func fetchRecommendation(
+        request: RecommendationRequest,
+        for customerIds: [String: JSONValue],
+        completion: @escaping (Result<RecommendationResponse<EmptyRecommendationData>>) -> Void
+    ) {
+        completion(fetchRecommendationResult)
     }
 
     func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void) {
-        if let mockResult = fetchConsentsResult {
-            completion(mockResult)
-        }
+        completion(fetchConsentsResult)
     }
 
     func fetchInAppMessages(
         for customerIds: [String: JSONValue],
         completion: @escaping (Result<InAppMessagesResponse>) -> Void
     ) {
-        if let mockResult = fetchInAppMessagesResult {
-            completion(mockResult)
-        }
+        completion(fetchInAppMessagesResult)
     }
 }

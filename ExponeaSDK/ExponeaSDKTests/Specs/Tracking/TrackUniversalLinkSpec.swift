@@ -40,14 +40,12 @@ class TrackUniversalLinkSpec: QuickSpec {
                             projectToken: projectToken,
                             authorization: .none
                         ),
+                        customerIds: mockData.customerIds,
                         eventType: Constants.EventTypes.campaignClick,
                         timestamp: 123,
                         dataTypes: data
                     )
-                    repository.trackObject(
-                        event,
-                        for: mockData.customerIds
-                    ) { result in
+                    repository.trackObject(event) { result in
                         it("should have nil result error") {
                             expect(result.error).to(beNil())
                         }

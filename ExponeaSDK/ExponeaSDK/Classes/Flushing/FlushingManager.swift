@@ -142,11 +142,18 @@ class FlushingManager: FlushingManagerType {
                 defaultProjectToken: repository.configuration.projectToken,
                 defaultAuthorization: repository.configuration.authorization
             )
-            repository.trackObject(trackingObject, for: database.customer.ids) { [weak self] (result) in
-                self?.onObjectFlush(flushableObject: flushableObject, result: result)
+            if trackingObject.customerIds.isEmpty {
                 counter -= 1
                 if counter == 0 {
                     completion?(.success(totalObjects))
+                }
+            } else {
+                repository.trackObject(trackingObject) { [weak self] (result) in
+                    self?.onObjectFlush(flushableObject: flushableObject, result: result)
+                    counter -= 1
+                    if counter == 0 {
+                        completion?()
+                    }
                 }
             }
         }

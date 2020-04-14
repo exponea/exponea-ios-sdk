@@ -11,7 +11,6 @@ import Foundation
 extension ServerRepository: TrackingRepository {
     func trackObject(
         _ trackingObject: TrackingObject,
-        for customerIds: [String: JSONValue],
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     ) {
         var properties: [String: JSONValue] = [:]
@@ -27,7 +26,7 @@ extension ServerRepository: TrackingRepository {
             uploadTrackingData(
                 into: trackingObject.exponeaProject,
                 trackingParameters: TrackingParameters(
-                    customerIds: customerIds,
+                    customerIds: customer.customerIds,
                     properties: properties,
                     timestamp: customer.timestamp
                 ),
@@ -38,7 +37,7 @@ extension ServerRepository: TrackingRepository {
             uploadTrackingData(
                 into: trackingObject.exponeaProject,
                 trackingParameters: TrackingParameters(
-                    customerIds: customerIds,
+                    customerIds: event.customerIds,
                     properties: properties,
                     timestamp: event.timestamp,
                     eventType: event.eventType
