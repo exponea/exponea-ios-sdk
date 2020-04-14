@@ -160,7 +160,7 @@ public class ExponeaInternal: ExponeaType {
                 if !Exponea.isBeingTested {
                     telemetryManager = TelemetryManager(
                         userDefaults: userDefaults,
-                        userId: database.customer.uuid.uuidString
+                        userId: database.currentCustomer.uuid.uuidString
                     )
                     telemetryManager?.start()
                     telemetryManager?.report(initEventWithConfiguration: configuration)

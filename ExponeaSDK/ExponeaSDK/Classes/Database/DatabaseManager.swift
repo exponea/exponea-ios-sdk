@@ -46,32 +46,42 @@ class DatabaseManager {
         persistentContainer = container
 
         // Initialise customer
-        _ = customer
-        Exponea.logger.log(.verbose, message: "Database initialised with customer:\n\(customer)")
+        _ = currentCustomer
+        Exponea.logger.log(.verbose, message: "Database initialised with customer:\n\(currentCustomer)")
     }
 }
 
 extension DatabaseManager {
-    public var customer: CustomerThreadSafe {
+    public var currentCustomer: CustomerThreadSafe {
         return context.performAndWait {
-            return CustomerThreadSafe(customerManagedObject)
+            return CustomerThreadSafe(currentCustomerManagedObject)
         }
     }
 
-    private var customerManagedObject: Customer {
+    private var currentCustomerManagedObject: Customer {
         return context.performAndWait {
             do {
                 let customers: [Customer] = try context.fetch(Customer.fetchRequest())
-
                 // If we have customer return it, otherwise create a new one
-                if let customer = customers.first {
-                    return customer
+                if let currentCustomer = customers.first {
+                    // if older customers don't have any events assigned to them, delete them
+                    for (index, customer) in customers.enumerated() {
+                        if index == 0 { continue }
+                        if customer.trackCustomer?.count == 0 && customer.trackEvent?.count == 0 {
+                            try? delete(customer.objectID)
+                        }
+                    }
+                    return currentCustomer
                 }
             } catch {
                 Exponea.logger.log(.warning, message: "No customer found saved in database, will create. \(error)")
             }
+            return makeNewCustomerInternal()
+        }
+    }
 
-            // Create and insert the object
+    private func makeNewCustomerInternal() -> Customer {
+        return context.performAndWait {
             let customer = Customer(uuid: UUID(), context: context)
             context.insert(customer)
 
@@ -89,9 +99,26 @@ extension DatabaseManager {
         }
     }
 
-    private func fetchCustomerAndUpdate(with ids: [String: JSONValue]) -> Customer {
+    func makeNewCustomer() {
+        _ = makeNewCustomerInternal()
+    }
+
+    /// Just list all customers in db. Mainly for debugging and testing
+    var customers: [CustomerThreadSafe] {
         return context.performAndWait {
-            let customer = self.customerManagedObject
+            do {
+                let customers: [Customer] = try context.fetch(Customer.fetchRequest())
+                return customers.map { CustomerThreadSafe($0)}
+            } catch {
+                Exponea.logger.log(.warning, message: "Error while fetching all customers. \(error)")
+                return []
+            }
+        }
+    }
+
+    private func fetchCurrentCustomerAndUpdate(with ids: [String: JSONValue]) -> Customer {
+        return context.performAndWait {
+            let customer = self.currentCustomerManagedObject
 
             // Add the ids to the customer entity
             for id in ids {
@@ -133,9 +160,9 @@ extension DatabaseManager {
         }
     }
 
-    private func fetchCustomerAndUpdate(pushToken: String?) -> Customer {
+    private func fetchCurrentCustomerAndUpdate(pushToken: String?) -> Customer {
         return context.performAndWait {
-            let customer = self.customerManagedObject
+            let customer = self.currentCustomerManagedObject
 
             // Update push token and last token track date
             customer.pushToken = pushToken
@@ -157,7 +184,7 @@ extension DatabaseManager {
 }
 
 extension DatabaseManager: DatabaseManagerType {
-    public func updateEvent(withId id: NSManagedObjectID, withData data: DataType) throws {
+    func updateEvent(withId id: NSManagedObjectID, withData data: DataType) throws {
         try context.performAndWait {
             guard let object = try? context.existingObject(with: id) else {
                 throw DatabaseManagerError.objectDoesNotExist
@@ -187,10 +214,10 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `properties`
     ///     - `timestamp`
     ///     - `eventType`
-    public func trackEvent(with data: [DataType], into project: ExponeaProject) throws {
+    func trackEvent(with data: [DataType], into project: ExponeaProject) throws {
         try context.performAndWait {
             let trackEvent = TrackEvent(context: context)
-            trackEvent.customer = customerManagedObject
+            trackEvent.customer = currentCustomerManagedObject
 
             // Always specify a timestamp
             trackEvent.timestamp = Date().timeIntervalSince1970
@@ -231,10 +258,10 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `properties`
     ///     - `timestamp`
     /// - Throws: <#throws value description#>
-    public func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws {
+    func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws {
         try context.performAndWait {
             let trackCustomer = TrackCustomer(context: context)
-            trackCustomer.customer = customerManagedObject
+            trackCustomer.customer = currentCustomerManagedObject
 
             // Always specify a timestamp
             trackCustomer.timestamp = Date().timeIntervalSince1970
@@ -245,7 +272,7 @@ extension DatabaseManager: DatabaseManagerType {
             for type in data {
                 switch type {
                 case .customerIds(let ids):
-                    trackCustomer.customer = fetchCustomerAndUpdate(with: ids)
+                    trackCustomer.customer = fetchCurrentCustomerAndUpdate(with: ids)
 
                 case .timestamp(let time):
                     trackCustomer.timestamp = time ?? trackCustomer.timestamp
@@ -261,7 +288,7 @@ extension DatabaseManager: DatabaseManagerType {
                     trackCustomer.addToProperties(item)
 
                     // Update push token on customer
-                    trackCustomer.customer = fetchCustomerAndUpdate(pushToken: token)
+                    trackCustomer.customer = fetchCurrentCustomerAndUpdate(pushToken: token)
 
                 default:
                     break
@@ -278,8 +305,10 @@ extension DatabaseManager: DatabaseManagerType {
     /// - Parameters:
     ///   - properties: <#properties description#>
     ///   - object: <#object description#>
-    internal func processProperties(_ properties: [String: JSONValue],
-                                    into object: HasKeyValueProperties) {
+    func processProperties(
+        _ properties: [String: JSONValue],
+        into object: HasKeyValueProperties
+    ) {
         for property in properties {
             let existingProperties = object.properties as? Set<KeyValueItem>
             if let existingProperty: KeyValueItem = existingProperties?.first(where: { $0.key == property.key }) {
@@ -296,7 +325,7 @@ extension DatabaseManager: DatabaseManagerType {
     /// Fetch all Tracking Customers from CoreData
     ///
     /// - Returns: An array of tracking customer updates, if any are stored in the database.
-    public func fetchTrackCustomer() throws -> [TrackCustomerProxy] {
+    func fetchTrackCustomer() throws -> [TrackCustomerProxy] {
         return try context.performAndWait {
             let trackCustomerEvents: [TrackCustomer] = try context.fetch(TrackCustomer.fetchRequest())
             return trackCustomerEvents.map {TrackCustomerProxy($0)}
@@ -306,14 +335,14 @@ extension DatabaseManager: DatabaseManagerType {
     /// Fetch all Tracking Events from CoreData
     ///
     /// - Returns: An array of tracking events, if any are stored in the database.
-    public func fetchTrackEvent() throws -> [TrackEventProxy] {
+    func fetchTrackEvent() throws -> [TrackEventProxy] {
         return try context.performAndWait {
             let trackEvents: [TrackEvent] = try context.fetch(TrackEvent.fetchRequest())
             return trackEvents.map {TrackEventProxy($0)}
         }
     }
 
-    public func addRetry(_ databaseObjectProxy: DatabaseObjectProxy) throws {
+    func addRetry(_ databaseObjectProxy: DatabaseObjectProxy) throws {
         try context.performAndWait {
             guard let object = try? context.existingObject(with: databaseObjectProxy.objectID) else {
                 throw DatabaseManagerError.objectDoesNotExist
@@ -326,34 +355,17 @@ extension DatabaseManager: DatabaseManagerType {
         }
     }
 
-    public func delete(_ databaseObjectProxy: DatabaseObjectProxy) throws {
+    func delete(_ databaseObjectProxy: DatabaseObjectProxy) throws {
+        try delete(databaseObjectProxy.objectID)
+    }
+
+    private func delete(_ objectID: NSManagedObjectID) throws {
         try context.performAndWait {
-            guard let object = try? context.existingObject(with: databaseObjectProxy.objectID) else {
+            guard let object = try? context.existingObject(with: objectID) else {
                 return
             }
             context.delete(object)
             try context.save()
-        }
-    }
-
-    public func clear() throws {
-        // Delete all persistent stores
-        let coordinator = persistentContainer.persistentStoreCoordinator
-        for store in coordinator.persistentStores {
-            // Make sure we have URL and it is a NSSQLiteStoreType
-            guard let url = store.url, store.type == NSSQLiteStoreType else { continue }
-            try coordinator.destroyPersistentStore(at: url, ofType: NSSQLiteStoreType, options: nil)
-        }
-
-        // Load new persistent store
-        var loadError: Error?
-        persistentContainer.loadPersistentStores(completionHandler: { loadError = $1 })
-
-        // Throw an error if we failed at loading a persistent store
-        if let loadError = loadError {
-            let error = DatabaseManagerError.unableToLoadPeristentStore(loadError.localizedDescription)
-            Exponea.logger.log(.error, message: error.localizedDescription)
-            throw error
         }
     }
 }

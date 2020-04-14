@@ -37,7 +37,7 @@ class TrackingManagerSpec: QuickSpec {
 
                 // Mark install event as already tracked
                 // - otherwise it's automatically tracked with immediate flushing, which makes testing difficult
-                let key = Constants.Keys.installTracked + database.customer.uuid.uuidString
+                let key = Constants.Keys.installTracked + database.currentCustomer.uuid.uuidString
                 userDefaults.set(true, forKey: key)
 
                 trackingManager = try! TrackingManager(

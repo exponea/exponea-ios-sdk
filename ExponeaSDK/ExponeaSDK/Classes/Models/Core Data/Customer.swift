@@ -13,10 +13,13 @@ import CoreData
 class Customer: NSManagedObjectWithContext {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Customer> {
-        return NSFetchRequest<Customer>(entityName: "Customer")
+        let request = NSFetchRequest<Customer>(entityName: "Customer")
+        request.sortDescriptors = [NSSortDescriptor(key: "creationTimestamp", ascending: false)]
+        return request
     }
 
     @NSManaged public var uuid: UUID
+    @NSManaged public var creationTimestamp: TimeInterval
     @NSManaged public var pushToken: String?
     @NSManaged public var lastTokenTrackDate: Date?
     @NSManaged public var customIds: NSSet?
@@ -55,6 +58,7 @@ class Customer: NSManagedObjectWithContext {
     init(uuid: UUID, context: NSManagedObjectContext) {
         super.init(context: context)
         self.uuid = uuid
+        self.creationTimestamp = Date().timeIntervalSince1970
     }
 }
 
@@ -66,11 +70,12 @@ extension Customer {
 
         // Add cookie, push token and last track date
         text += "UUID (cookie): \(uuid.uuidString)\n"
-        text += "Push Token: \(pushToken ?? "N/A")"
+        text += "Created at: \(Date(timeIntervalSince1970: creationTimestamp))\n"
+        text += "Push Token: \(pushToken ?? "N/A")\n"
         text += "Last Push Token Track Date: \(lastTokenTrackDate ?? Date.distantPast)"
 
         if let ids = customIds as? Set<KeyValueItem>, ids.count > 0 {
-            text += "Custom IDs: "
+            text += "\nCustom IDs: "
             for id in ids {
                 text += "\"\(String(describing: id.key))\" = \(String(describing: id.key)), "
             }

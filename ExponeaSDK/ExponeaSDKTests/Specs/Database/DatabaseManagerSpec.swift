@@ -43,18 +43,62 @@ class DatabaseManagerSpec: QuickSpec {
                     .pushNotificationToken("tokenthatisgoingtobeignored")
                 ]
 
-                it("should create customer", closure: {
-                    expect(db.customer).toNot(beNil())
-                })
+                describe("customer handling") {
+                    it("should create first customer") {
+                        expect(db.currentCustomer).toNot(beNil())
+                    }
+                    it("should create multiple customers") {
+                        expect(db.customers.count).to(equal(1))
+                        db.makeNewCustomer()
+                        expect(db.customers.count).to(equal(2))
+                        db.makeNewCustomer()
+                        expect(db.customers.count).to(equal(3))
+                    }
 
-                it("should identify, fetch and delete a customer", closure: {
+                    it("should return latest customer as currentCustomer") {
+                        let firstUUID = db.currentCustomer.uuid
+                        db.makeNewCustomer()
+                        let secondUUID = db.currentCustomer.uuid
+                        expect(firstUUID).notTo(equal(secondUUID))
+                        db.makeNewCustomer()
+                        let thirdUUID = db.currentCustomer.uuid
+                        expect(firstUUID).notTo(equal(thirdUUID))
+                        expect(secondUUID).notTo(equal(thirdUUID))
+                    }
+
+                    it("should delete old customers without events") {
+                        _ = db.currentCustomer.uuid
+                        db.makeNewCustomer()
+                        expect(db.customers.count).to(equal(2))
+                        // old customer has no events, it is deleted while fetching current customer
+                        let secondUUID = db.currentCustomer.uuid
+                        expect(db.customers.count).to(equal(1))
+                        expect(db.customers[0].uuid).to(equal(secondUUID))
+                    }
+
+                    it("should not delete old customers with events assigned") {
+                        let firstUUID = db.currentCustomer.uuid
+                        try! db.identifyCustomer(
+                            with: [.customerIds(["email": .string("a@b.com")])],
+                            into: ExponeaProject(projectToken: "mock", authorization: .none)
+                        )
+                        db.makeNewCustomer()
+                        expect(db.customers.count).to(equal(2))
+                        let identify = try! db.fetchTrackCustomer()[0]
+                        expect(identify.customerIds["cookie"]).to(equal(JSONValue.string(firstUUID.uuidString)))
+                        try! db.delete(identify.databaseObjectProxy)
+                        _ = db.currentCustomer
+                        expect(db.customers.count).to(equal(1))
+                    }
+                }
+                it("should identify, fetch and delete a customer identification", closure: {
                     var objects: [TrackCustomerProxy] = []
                     expect { try db.identifyCustomer(with: customerData, into: myProject) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
                     expect(objects.count).to(equal(1))
 
                     let object = objects[0]
-                    expect(db.customer.ids["registered"]).to(equal("myemail".jsonValue))
+                    expect(db.currentCustomer.ids["registered"]).to(equal("myemail".jsonValue))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
                     expect(props.count).to(equal(2))
@@ -139,7 +183,7 @@ class DatabaseManagerSpec: QuickSpec {
                     })
 
                     it("should throw updating wrong object", closure: {
-                        let customer = db.customer
+                        let customer = db.currentCustomer
                         let updateData = DataType.properties(["newcustomprop": .string("newcustomval")])
                         expect { try db.updateEvent(withId: customer.managedObjectID, withData: updateData) }
                             .to(throwError(DatabaseManagerError.wrongObjectType))
@@ -167,7 +211,7 @@ class DatabaseManagerSpec: QuickSpec {
                     waitUntil { done in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
-                            expect(db.customer).toNot(beNil())
+                            expect(db.currentCustomer).toNot(beNil())
                             done()
                         }
                     }
@@ -198,7 +242,7 @@ class DatabaseManagerSpec: QuickSpec {
                     }
 
                     let object = objects[0]
-                    expect(db.customer.ids["registered"]).to(equal("myemail".jsonValue))
+                    expect(db.currentCustomer.ids["registered"]).to(equal("myemail".jsonValue))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
                     expect(props.count).to(equal(2))
@@ -280,14 +324,6 @@ class DatabaseManagerSpec: QuickSpec {
                     .properties(["customprop": .string("customval")]),
                     .eventType("myevent"),
                     .pushNotificationToken("tokenthatisgoingtobeignored")
-                ]
-
-                let eventData2: [DataType] = [
-                    .properties([
-                        "customprop": .string("customval"),
-                        "array": .array([.string("test"), .string("ab")])
-                    ]),
-                    .eventType("myevent")
                 ]
 
                 it("should not crash when tracking event", closure: {

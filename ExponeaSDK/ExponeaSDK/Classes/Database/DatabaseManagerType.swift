@@ -11,7 +11,8 @@ import CoreData
 
 /// Protocol to manage Tracking events
 protocol DatabaseManagerType: class {
-    var customer: CustomerThreadSafe { get }
+    var currentCustomer: CustomerThreadSafe { get }
+    var customers: [CustomerThreadSafe] { get }
 
     func trackEvent(with data: [DataType], into project: ExponeaProject) throws
     func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws
@@ -24,7 +25,7 @@ protocol DatabaseManagerType: class {
 
     func delete(_ object: DatabaseObjectProxy) throws
 
-    /// Completely clears the database, including the Customer object.
-    /// Useful for completely anonymizing the user.
-    func clear() throws
+    /// Creates new clear customer object. Useful for anonymizing the user.
+    /// Existing events are tied to customer that was most recent when the event was created
+    func makeNewCustomer()
 }

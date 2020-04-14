@@ -17,12 +17,12 @@ class TrackingManager {
 
     /// The identifiers of the the current customer.
     var customerIds: [String: JSONValue] {
-        return database.customer.ids
+        return database.currentCustomer.ids
     }
 
     /// Returns the push token of the current customer if there is any.
     var customerPushToken: String? {
-        return database.customer.pushToken
+        return database.currentCustomer.pushToken
     }
 
     /// The manager for automatic push registration and delivery tracking
@@ -94,7 +94,7 @@ class TrackingManager {
         trackInstallEvent()
 
         if let appGroup = repository.configuration.appGroup {
-            database.customer.saveIdsToUserDefaults(appGroup: appGroup)
+            database.currentCustomer.saveIdsToUserDefaults(appGroup: appGroup)
         }
 
         self.sessionManager.applicationDidBecomeActive()
@@ -105,8 +105,8 @@ class TrackingManager {
                 trackingManager: self,
                 appGroup: repository.configuration.appGroup,
                 tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
-                currentPushToken: database.customer.pushToken,
-                lastTokenTrackDate: database.customer.lastTokenTrackDate,
+                currentPushToken: database.currentCustomer.pushToken,
+                lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
                 urlOpener: UrlOpener()
             )
         }
@@ -133,7 +133,7 @@ class TrackingManager {
     internal func trackInstallEvent() {
         /// Checking if the APP was launched before.
         /// If the key value is false, means that the event was not fired before.
-        let key = Constants.Keys.installTracked + database.customer.uuid.uuidString
+        let key = Constants.Keys.installTracked + database.currentCustomer.uuid.uuidString
         guard userDefaults.bool(forKey: key) == false else {
             Exponea.logger.log(.verbose, message: "Install event was already tracked, skipping.")
             return
@@ -199,7 +199,7 @@ extension TrackingManager: TrackingManagerType {
             case .identifyCustomer,
                  .registerPushToken:
                 if let appGroup = repository.configuration.appGroup {
-                    database.customer.saveIdsToUserDefaults(appGroup: appGroup)
+                    database.currentCustomer.saveIdsToUserDefaults(appGroup: appGroup)
                 }
                 try database.identifyCustomer(with: payload, into: project)
             case .install,
@@ -403,13 +403,13 @@ extension TrackingManager {
             // Cancel all request (in case flushing was ongoing)
             repository.cancelRequests()
 
-            // Clear all database contents
-            try database.clear()
-
             // Clear the session data
             sessionManager.clear()
 
             inAppMessagesManager.anonymize()
+
+            // Create new customer for tracking
+            database.createNewCustomer()
 
             // Re-do initial setup
             initialSetup()
