@@ -152,7 +152,7 @@ class FlushingManager: FlushingManagerType {
                     self?.onObjectFlush(flushableObject: flushableObject, result: result)
                     counter -= 1
                     if counter == 0 {
-                        completion?()
+                        completion?(.success(totalObjects))
                     }
                 }
             }

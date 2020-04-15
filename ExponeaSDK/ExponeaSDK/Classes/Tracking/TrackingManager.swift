@@ -82,6 +82,29 @@ class TrackingManager {
             displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults)
         )
 
+        // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(applicationDidBecomeActive),
+                                               name: UIApplication.didBecomeActiveNotification,
+                                               object: nil)
+
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(applicationDidEnterBackground),
+                                               name: UIApplication.didEnterBackgroundNotification,
+                                               object: nil)
+
+        /// Add the observers when the automatic push notification tracking is true.
+        if repository.configuration.automaticPushNotificationTracking {
+            notificationsManager = PushNotificationManager(
+                trackingManager: self,
+                appGroup: repository.configuration.appGroup,
+                tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
+                currentPushToken: database.currentCustomer.pushToken,
+                lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
+                urlOpener: UrlOpener()
+            )
+        }
+
         initialSetup()
     }
 
@@ -98,32 +121,6 @@ class TrackingManager {
         }
 
         self.sessionManager.applicationDidBecomeActive()
-
-        /// Add the observers when the automatic push notification tracking is true.
-        if repository.configuration.automaticPushNotificationTracking {
-            notificationsManager = PushNotificationManager(
-                trackingManager: self,
-                appGroup: repository.configuration.appGroup,
-                tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
-                currentPushToken: database.currentCustomer.pushToken,
-                lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
-                urlOpener: UrlOpener()
-            )
-        }
-
-        // First remove all observing
-        NotificationCenter.default.removeObserver(self)
-
-        // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidBecomeActive),
-                                               name: UIApplication.didBecomeActiveNotification,
-                                               object: nil)
-
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidEnterBackground),
-                                               name: UIApplication.didEnterBackgroundNotification,
-                                               object: nil)
 
         inAppMessagesManager.preload(for: customerIds)
     }
@@ -398,37 +395,19 @@ extension TrackingManager: InAppMessageTrackingDelegate {
 // MARK: - Anonymize -
 
 extension TrackingManager {
-    public func anonymize() throws {
-        func perform() throws {
-            // Cancel all request (in case flushing was ongoing)
-            repository.cancelRequests()
+    public func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) throws {
+        let pushToken = customerPushToken
+        try track(EventType.registerPushToken, with: [.pushNotificationToken(nil)])
+        sessionManager.clear()
+        inAppMessagesManager.anonymize()
 
-            // Clear the session data
-            sessionManager.clear()
+        repository.configuration.baseUrl = exponeaProject.baseUrl
+        repository.configuration.projectToken = exponeaProject.projectToken
+        repository.configuration.authorization = exponeaProject.authorization
+        repository.configuration.projectMapping = projectMapping
 
-            inAppMessagesManager.anonymize()
-
-            // Create new customer for tracking
-            database.createNewCustomer()
-
-            // Re-do initial setup
-            initialSetup()
-        }
-
-        let currentToken = customerPushToken
-        if let token = currentToken {
-            try track(EventType.registerPushToken, with: [.pushNotificationToken(nil)])
-            self.flushingManager.flushData { _ in
-                do {
-                    try perform()
-                    try self.track(EventType.registerPushToken, with: [.pushNotificationToken(token)])
-                } catch {
-                    Exponea.logger.log(.error, message: error.localizedDescription)
-                }
-                self.flushingManager.flushData()
-            }
-        } else {
-            try perform()
-        }
+        database.makeNewCustomer()
+        try track(EventType.registerPushToken, with: [.pushNotificationToken(pushToken)])
+        initialSetup()
     }
 }

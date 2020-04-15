@@ -46,7 +46,7 @@ internal class MockTrackingManager: TrackingManagerType {
         fatalError("Not implemented")
     }
 
-    func anonymize() throws {
+    func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) throws {
         fatalError("Not implemented")
     }
 

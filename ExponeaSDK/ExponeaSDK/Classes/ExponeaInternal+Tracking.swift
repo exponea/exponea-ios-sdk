@@ -241,15 +241,26 @@ extension ExponeaInternal {
 
     // MARK: Anonymize
 
-    /// Anonymizes the user and re-creates the database.
-    /// All customer identification (inclduing cookie) will be permanently deleted.
+    /// Anonymizes the user and starts tracking as if the app was just installed.
+    /// All customer identification (including cookie) will be permanently deleted.
     public func anonymize() {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient
-            }
+            anonymize(
+                exponeaProject: dependencies.configuration.mainProject,
+                projectMapping: dependencies.configuration.projectMapping
+            )
+        }
+    }
 
-            try dependencies.trackingManager.anonymize()
+    /// Anonymizes the user and starts tracking as if the app was just installed.
+    /// All customer identification (including cookie) will be permanently deleted.
+    /// Switches tracking into provided exponeaProject
+    public func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) {
+        executeSafelyWithDependencies { dependencies in
+            try dependencies.trackingManager.anonymize(
+                exponeaProject: exponeaProject,
+                projectMapping: projectMapping
+            )
         }
     }
 }
