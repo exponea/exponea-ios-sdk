@@ -12,13 +12,25 @@ protocol FlushingManagerType {
     var flushingMode: FlushingMode { get set }
 
     /// This method can be used to manually flush all available data to Exponea.
-    func flushData(completion: (() -> Void)?)
+    func flushData(completion: ((FlushResult) -> Void)?)
 
-    func flushDataWith(delay: Double, completion: (() -> Void)?)
+    func flushDataWith(delay: Double, completion: ((FlushResult) -> Void)?)
 
     func applicationDidBecomeActive()
 
     func applicationDidEnterBackground()
+}
+
+/// Result of flushing operation
+public enum FlushResult {
+    // Success with number of event/customer identification objects flushed.
+    case success(Int)
+    // Flush can only be running once at a time.
+    case flushAlreadyInProgress
+    // Unable to flush, we're not connected to internet
+    case noInternetConnection
+    // Unexpected error occured during flushing
+    case error(Error)
 }
 
 extension FlushingManagerType {

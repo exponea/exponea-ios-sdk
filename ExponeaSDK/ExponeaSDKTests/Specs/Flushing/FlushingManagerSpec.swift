@@ -58,7 +58,7 @@ class FlushingManagerSpec: QuickSpec {
                     for _ in 0..<10 {
                         group.enter()
                         DispatchQueue.global(qos: .background).async {
-                            flushingManager.flushData(completion: {group.leave()})
+                            flushingManager.flushData(completion: {_ in group.leave() })
                         }
                     }
                     group.notify(queue: .main, execute: done)
@@ -71,7 +71,7 @@ class FlushingManagerSpec: QuickSpec {
                 try! database.trackEvent(with: eventData, into: configuration.mainProject)
                 NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 200)
                 waitUntil { done in
-                    flushingManager.flushData(completion: {done()})
+                    flushingManager.flushData(completion: { _ in done() })
                 }
                 expect { try database.fetchTrackEvent().count }.to(equal(0))
             }
@@ -81,13 +81,13 @@ class FlushingManagerSpec: QuickSpec {
                 NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 418)
                 for attempt in 1...4 {
                     waitUntil { done in
-                        flushingManager.flushData(completion: {done()})
+                        flushingManager.flushData(completion: { _ in done() })
                     }
                     expect { try database.fetchTrackEvent().count }.to(equal(1))
                     expect { try database.fetchTrackEvent().first?.databaseObjectProxy.retries }.to(equal(attempt))
                 }
                 waitUntil { done in
-                    flushingManager.flushData(completion: {done()})
+                    flushingManager.flushData(completion: { _ in done() })
                 }
                 expect { try database.fetchTrackEvent().count }.to(equal(0))
             }
@@ -97,7 +97,7 @@ class FlushingManagerSpec: QuickSpec {
                 NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 500)
                 for _ in 1...10 {
                     waitUntil { done in
-                        flushingManager.flushData(completion: {done()})
+                        flushingManager.flushData(completion: { _ in done() })
                     }
                     expect { try database.fetchTrackEvent().count }.to(equal(1))
                 }

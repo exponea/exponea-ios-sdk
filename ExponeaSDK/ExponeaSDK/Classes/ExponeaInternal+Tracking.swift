@@ -224,14 +224,18 @@ extension ExponeaInternal {
     }
 
     // MARK: Flushing
-
     /// This method can be used to manually flush all available data to Exponea.
     public func flushData() {
+        flushData(completion: nil)
+    }
+
+    /// This method can be used to manually flush all available data to Exponea.
+    public func flushData(completion: ((FlushResult) -> Void)?) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            dependencies.flushingManager.flushData()
+            dependencies.flushingManager.flushData(completion: completion)
         }
     }
 

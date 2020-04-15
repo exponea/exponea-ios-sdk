@@ -10,12 +10,12 @@ import Foundation
 @testable import ExponeaSDK
 
 internal class MockFlushingManager: FlushingManagerType {
-    func flushDataWith(delay: Double, completion: (() -> Void)?) {
-        completion?()
+    func flushDataWith(delay: Double, completion: ((FlushResult) -> Void)?) {
+        completion?(.noInternetConnection)
     }
 
-    func flushData(completion: (() -> Void)?) {
-        completion?()
+    func flushData(completion: ((FlushResult) -> Void)?) {
+        completion?(.noInternetConnection)
     }
 
     var flushingMode: FlushingMode = .manual

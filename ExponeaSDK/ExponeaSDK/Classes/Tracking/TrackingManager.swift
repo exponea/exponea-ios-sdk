@@ -350,7 +350,7 @@ extension TrackingManager {
             switch self.flushingManager.flushingMode {
             case .periodic, .automatic, .immediate:
                 // Only stop background task after we upload
-                self.flushingManager.flushData(completion: { [weak self] in
+                self.flushingManager.flushData(completion: { [weak self] _ in
                     guard let weakSelf = self else { return }
                     UIApplication.shared.endBackgroundTask(weakSelf.backgroundTask)
                     weakSelf.backgroundTask = UIBackgroundTaskIdentifier.invalid
@@ -418,7 +418,7 @@ extension TrackingManager {
         let currentToken = customerPushToken
         if let token = currentToken {
             try track(EventType.registerPushToken, with: [.pushNotificationToken(nil)])
-            self.flushingManager.flushData {
+            self.flushingManager.flushData { _ in
                 do {
                     try perform()
                     try self.track(EventType.registerPushToken, with: [.pushNotificationToken(token)])

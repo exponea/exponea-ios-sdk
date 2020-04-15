@@ -67,7 +67,7 @@ class FlushingManager: FlushingManagerType {
         self.flushingTimer = nil
     }
 
-    func flushDataWith(delay: Double, completion: (() -> Void)?) {
+    func flushDataWith(delay: Double, completion: ((FlushResult) -> Void)?) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             guard let `self` = self else { return }
             self.flushData()
@@ -77,14 +77,14 @@ class FlushingManager: FlushingManagerType {
     /// Method that flushes all data to the API.
     ///
     /// - Parameter completion: A completion that is called after all calls succeed or fail.
-    func flushData(completion: (() -> Void)?) {
+    func flushData(completion: ((FlushResult) -> Void)?) {
         do {
             // Check if flush is in progress
             flushingSemaphore.wait()
             guard !isFlushingData else {
                 Exponea.logger.log(.warning, message: "Data flushing in progress, ignoring another flush call.")
                 flushingSemaphore.signal()
-                completion?()
+                completion?(.flushAlreadyInProgress)
                 return
             }
             isFlushingData = true
@@ -94,7 +94,7 @@ class FlushingManager: FlushingManagerType {
             guard reachability.connection != .none else {
                 Exponea.logger.log(.warning, message: "Connection issues when flushing data, not flushing.")
                 isFlushingData = false
-                completion?()
+                completion?(.noInternetConnection)
                 return
             }
 
@@ -113,25 +113,26 @@ class FlushingManager: FlushingManagerType {
             // Check if we have any data otherwise bail
             guard !events.isEmpty || !customers.isEmpty else {
                 isFlushingData = false
-                completion?()
+                completion?(.success(0))
                 return
             }
 
-            flushTrackingObjects((customers + events).reversed()) {
+            flushTrackingObjects((customers + events).reversed()) { result in
                 self.isFlushingData = false
-                completion?()
+                completion?(result)
             }
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
             self.isFlushingData = false
-            completion?()
+            completion?(.error(error))
         }
     }
 
-    func flushTrackingObjects(_ flushableObjects: [FlushableObject], completion: (() -> Void)? = nil) {
+    func flushTrackingObjects(_ flushableObjects: [FlushableObject], completion: ((FlushResult) -> Void)? = nil) {
+        let totalObjects = flushableObjects.count
         var counter = flushableObjects.count
         guard counter > 0 else {
-            completion?()
+            completion?(.success(0))
             return
         }
         for flushableObject in flushableObjects {
@@ -145,7 +146,7 @@ class FlushingManager: FlushingManagerType {
                 self?.onObjectFlush(flushableObject: flushableObject, result: result)
                 counter -= 1
                 if counter == 0 {
-                    completion?()
+                    completion?(.success(totalObjects))
                 }
             }
         }
