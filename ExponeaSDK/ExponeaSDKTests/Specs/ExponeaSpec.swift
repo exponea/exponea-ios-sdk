@@ -82,8 +82,11 @@ class ExponeaSpec: QuickSpec {
                 let exponea = ExponeaInternal()
                 Exponea.shared = exponea
                 Exponea.shared.configure(
-                    projectToken: "0aef3a96-3804-11e8-b710-141877340e97",
-                    authorization: .token("")
+                    Exponea.ProjectSettings(
+                        projectToken: "0aef3a96-3804-11e8-b710-141877340e97",
+                        authorization: .token("")
+                    ),
+                    automaticPushNotificationTracking: .disabled
                 )
 
                 it("Should return the correct project token") {
@@ -246,8 +249,9 @@ class ExponeaSpec: QuickSpec {
                     }
                 }
 
-                it("should complete with .failure when tasks raises NSException") {
+                it("should complete with .failure when tasks raises NSException in safe mode") {
                     let exponea = ExponeaInternal()
+                    exponea.safeModeEnabled = true
                     exponea.configure(plistName: "ExponeaConfig")
                     let task: ExponeaInternal.DependencyTask<String> = {_, completion in
                         NSException(
@@ -272,8 +276,10 @@ class ExponeaSpec: QuickSpec {
                         }
                     }
                 }
-                it("should complete any task with .failure after NSException was raised") {
+
+                it("should complete any task with .failure after NSException was raised in safe mode") {
                     let exponea = ExponeaInternal()
+                    exponea.safeModeEnabled = true
                     exponea.configure(plistName: "ExponeaConfig")
                     let task: ExponeaInternal.DependencyTask<String> = {_, completion in
                         NSException(
@@ -303,6 +309,30 @@ class ExponeaSpec: QuickSpec {
                             }
                             done()
                         }
+                    }
+                }
+
+                it("should re-raise NSException when not in safe mode") {
+                    let exponea = ExponeaInternal()
+                    exponea.safeModeEnabled = false
+                    exponea.configure(plistName: "ExponeaConfig")
+                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
+                        NSException(
+                            name: NSExceptionName(rawValue: "mock exception name"),
+                            reason: "mock reason",
+                            userInfo: nil
+                        ).raise()
+                    }
+                    waitUntil { done in
+                        let exception = objc_tryCatch {
+                            exponea.executeSafelyWithDependencies(task) { _ in }
+                        }
+                        guard exception != nil else {
+                            XCTFail("No exception raised")
+                            return
+                        }
+                        expect(exception?.reason).to(equal("mock reason"))
+                        done()
                     }
                 }
             }

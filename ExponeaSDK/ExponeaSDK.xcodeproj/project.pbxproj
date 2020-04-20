@@ -1642,13 +1642,13 @@
 				C0EB5D9120B811DE00F1031F /* Push Notifications */,
 				F0E757E1207CF9BE00FE8C21 /* Repository */,
 				01EC2DB0207E55C10031BFEB /* Tracking */,
-				05D0E5552386C63800413AE2 /* Exponea+Configuration.swift */,
 				05C2892F2428A1270021220C /* Sessions */,
 				05735EA423A397F700DA0FA9 /* Flushing */,
 				057D476523C87ECE00AEE902 /* Deeplinking */,
 				C0F2406B20BC50A000CAF7CE /* ExponeaInternal+Fetching.swift */,
 				C0F2406D20BC511500CAF7CE /* ExponeaInternal+Tracking.swift */,
 				05880537241682F8001AAE8A /* ExponeaInternal.swift */,
+				05D0E5552386C63800413AE2 /* Exponea+Configuration.swift */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 			);
 			path = Classes;

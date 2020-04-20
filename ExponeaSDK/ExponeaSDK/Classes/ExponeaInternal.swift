@@ -117,7 +117,25 @@ public class ExponeaInternal: ExponeaType {
         }
     }
 
-    // Once ExponeaSDK runs into a NSException, all further calls will be disabled
+    /// Any NSException inside Exponea SDK will be logged and swallowed if flag is enabled, otherwise
+    /// the exception will be rethrown.
+    /// Safemode is enabled for release builds and disabled for debug builds.
+    /// You can set the value to override this behavior for e.g. unit testing.
+    /// We advice strongly against disabling this for production builds.
+    public var safeModeEnabled: Bool {
+        get {
+            if let override = safeModeOverride {
+                return override
+            }
+            var enabled = true
+            inDebugBuild { enabled = false }
+            return enabled
+        }
+        set { safeModeOverride = newValue }
+    }
+    private var safeModeOverride: Bool?
+
+    /// Once ExponeaSDK runs into a NSException, all further calls will be disabled
     internal var nsExceptionRaised: Bool = false
 
     // MARK: - Init -
@@ -254,8 +272,13 @@ internal extension ExponeaInternal {
         if let exception = exception {
             telemetryManager?.report(exception: exception)
             Exponea.logger.log(.error, message: ExponeaError.nsExceptionRaised(exception).localizedDescription)
-            nsExceptionRaised = true
-            errorHandler?(ExponeaError.nsExceptionRaised(exception))
+            if safeModeEnabled {
+                nsExceptionRaised = true
+                errorHandler?(ExponeaError.nsExceptionRaised(exception))
+            } else {
+                Exponea.logger.log(.error, message: "Re-raising caugth NSException in debug build.")
+                exception.raise()
+            }
         }
     }
 }
