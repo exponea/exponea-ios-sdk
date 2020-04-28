@@ -165,7 +165,7 @@ final class PushNotificationSwizzler {
     ///
     /// - Parameter change: The KVO change object containing the old and new values.
     private func notificationsDelegateChanged(_ change: NSKeyValueObservedChange<UNUserNotificationCenterDelegate?>) {
-        if change.newValue == nil {
+        if change.newValue ?? nil == nil {
             receiver = PushNotificationReceiver()
             unUserNotificationCenterDelegating.delegate = receiver
         }
