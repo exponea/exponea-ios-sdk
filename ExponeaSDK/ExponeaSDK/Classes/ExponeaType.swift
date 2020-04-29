@@ -12,6 +12,8 @@ import Foundation
 public protocol ExponeaType: class {
     /// Configurarion object.
     var configuration: Configuration? { get }
+    /// Cookie of the current customer. Nil before the SDK is configured
+    var customerCookie: String? { get }
     /// Identification of the flushing mode used in to send the data to the Exponea API.
     var flushingMode: FlushingMode { get set }
     /// The delegate that gets callbacks about notification opens and/or actions. Only has effect if automatic

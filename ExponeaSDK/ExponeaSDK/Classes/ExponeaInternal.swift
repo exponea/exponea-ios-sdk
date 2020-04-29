@@ -54,6 +54,11 @@ public class ExponeaInternal: ExponeaType {
         }
     }
 
+    /// Cookie of the current customer. Nil before the SDK is configured
+    public var customerCookie: String? {
+        return trackingManager?.customerCookie
+    }
+
     /// The manager responsible for tracking data and sessions.
     internal var trackingManager: TrackingManagerType?
 

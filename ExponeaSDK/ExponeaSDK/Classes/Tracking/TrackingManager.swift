@@ -20,6 +20,10 @@ class TrackingManager {
         return database.currentCustomer.ids
     }
 
+    var customerCookie: String {
+        return database.currentCustomer.uuid.uuidString
+    }
+
     /// Returns the push token of the current customer if there is any.
     var customerPushToken: String? {
         return database.currentCustomer.pushToken

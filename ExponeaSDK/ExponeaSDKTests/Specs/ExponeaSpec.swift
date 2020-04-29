@@ -337,6 +337,28 @@ class ExponeaSpec: QuickSpec {
                 }
             }
 
+            context("getting customer cookie") {
+                it("should return nil before the SDK is configured") {
+                    let exponea = ExponeaInternal()
+                    expect(exponea.customerCookie).to(beNil())
+                }
+                it("should return customer cookie after SDK is configured") {
+                    let exponea = ExponeaInternal()
+                    exponea.configure(plistName: "ExponeaConfig")
+                    expect(exponea.customerCookie).notTo(beNil())
+                }
+                it("should return new customer cookie after anonymizing") {
+                    let exponea = ExponeaInternal()
+                    exponea.configure(plistName: "ExponeaConfig")
+                    let cookie1 = exponea.customerCookie
+                    exponea.anonymize()
+                    let cookie2 = exponea.customerCookie
+                    expect(cookie1).notTo(beNil())
+                    expect(cookie2).notTo(beNil())
+                    expect(cookie1).notTo(equal(cookie2))
+                }
+            }
+
             context("anonymizing") {
                 func checkEvent(event: TrackEventProxy, eventType: String, projectToken: String, userId: UUID) {
                     expect(event.eventType).to(equal(eventType))

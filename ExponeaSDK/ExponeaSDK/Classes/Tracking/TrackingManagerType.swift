@@ -14,6 +14,9 @@ protocol TrackingManagerType: class {
     /// The identifiers of the the current customer.
     var customerIds: [String: JSONValue] { get }
 
+    /// Cookie of the current customer.
+    var customerCookie: String { get }
+
     /// Returns the push token of the current customer if there is any.
     var customerPushToken: String? { get }
 
