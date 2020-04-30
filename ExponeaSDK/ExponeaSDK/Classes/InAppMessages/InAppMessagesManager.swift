@@ -128,24 +128,39 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     }
 
     func getInAppMessages(for event: [DataType], requireImage: Bool) -> [InAppMessage] {
-        let messages = self.cache.getInAppMessages()
-            .filter {
-                let imageUrl = $0.payload.imageUrl ?? ""
-                return (!requireImage || (imageUrl.isEmpty || self.cache.hasImageData(at: imageUrl)))
-                    && $0.applyDateFilter(date: Date())
-                    && $0.applyEventFilter(event: event)
-                    && $0.applyFrequencyFilter(
-                           displayState: displayStatusStore.status(for: $0),
-                           sessionStart: sessionStartDate
-                       )
-            }
+        var messages = self.cache.getInAppMessages()
+        Exponea.logger.log(
+            .verbose,
+            message: "Picking in-app message for eventTypes \(event.eventTypes). " +
+            "\(messages.count) messages available: \(messages.map { $0.name })."
+        )
+        messages = messages.filter {
+            let imageUrl = $0.payload.imageUrl ?? ""
+            return (!requireImage || (imageUrl.isEmpty || self.cache.hasImageData(at: imageUrl)))
+                && $0.applyDateFilter(date: Date())
+                && $0.applyEventFilter(event: event)
+                && $0.applyFrequencyFilter(
+                       displayState: displayStatusStore.status(for: $0),
+                       sessionStart: sessionStartDate
+                   )
+        }
+        Exponea.logger.log(
+            .verbose,
+            message: "\(messages.count) messages available after filtering. Picking highest priority message."
+        )
         let highestPriority = messages.map { $0.priority }.compactMap { $0 }.max() ?? 0
-        return messages.filter { $0.priority ?? 0 >= highestPriority }
+        messages = messages.filter { $0.priority ?? 0 >= highestPriority }
+        Exponea.logger.log(
+            .verbose,
+            message: "Got \(messages.count) messages with highest priority. \(messages.map { $0.name })")
+        return messages
     }
 
     func getInAppMessage(for event: [DataType], requireImage: Bool) -> InAppMessage? {
         let messages = getInAppMessages(for: event, requireImage: requireImage)
-        Exponea.logger.log(.verbose, message: "Found \(messages.count) eligible in-app messages.")
+        if messages.count > 1 {
+            Exponea.logger.log(.verbose, message: "Found \(messages.count) eligible in-app messages. Picking at random")
+        }
         return messages.randomElement()
     }
 
@@ -178,6 +193,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             return
         }
         DispatchQueue.global(qos: .userInitiated).async {
+            Exponea.logger.log(.verbose, message: "In-app message data preloaded, picking a message to display")
             guard let message = self.getInAppMessage(for: event) else {
                 callback?(nil)
                 return
@@ -191,6 +207,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)? = nil
     ) {
+        Exponea.logger.log(.verbose, message: "Attempting to show in-app message '\(message.name)'")
         var imageData: Data?
         if !(message.payload.imageUrl ?? "").isEmpty {
             guard let createdImageData = self.getImageData(for: message) else {

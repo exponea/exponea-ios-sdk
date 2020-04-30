@@ -40,9 +40,11 @@ struct InAppMessage: Codable, Equatable {
             return true
         }
         if let start = dateFilter.startDate, start > date {
+            Exponea.logger.log(.verbose, message: "Message '\(self.name)' outside of date range.")
             return false
         }
         if let end = dateFilter.endDate, end < date {
+            Exponea.logger.log(.verbose, message: "Message '\(self.name)' outside of date range.")
             return false
         }
         return true
@@ -63,6 +65,14 @@ struct InAppMessage: Codable, Equatable {
                 Exponea.logger.log(.error, message: "Error applying in-app message event filter \(error)")
             }
         }
+        if !passed {
+            let serializedTrigger = (try? JSONEncoder().encode(trigger)) ?? Data()
+            let stringTrigger = String(data: serializedTrigger, encoding: .utf8) ?? ""
+            Exponea.logger.log(
+                .verbose,
+                message: "Message '\(self.name)' failed event filter. Event: \(event). Message filter: \(stringTrigger)"
+            )
+        }
         return passed
     }
 
@@ -71,11 +81,23 @@ struct InAppMessage: Codable, Equatable {
         case .some(.always):
             return true
         case .some(.onlyOnce):
-            return displayState.displayed == nil
+            let shouldDisplay = displayState.displayed == nil
+            if !shouldDisplay {
+                Exponea.logger.log(.verbose, message: "Message '\(self.name)' already displayed.")
+            }
+            return shouldDisplay
         case .some(.oncePerVisit):
-            return displayState.displayed ?? Date(timeIntervalSince1970: 0) < sessionStart
+            let shouldDisplay = displayState.displayed ?? Date(timeIntervalSince1970: 0) < sessionStart
+            if !shouldDisplay {
+                Exponea.logger.log(.verbose, message: "Message '\(self.name)' already displayed this session.")
+            }
+            return shouldDisplay
         case .some(.untilVisitorInteracts):
-            return displayState.interacted == nil
+            let shouldDisplay = displayState.interacted == nil
+            if !shouldDisplay {
+                Exponea.logger.log(.verbose, message: "Message '\(self.name)' already interacted with.")
+            }
+            return shouldDisplay
         case .none:
             Exponea.logger.log(.warning, message: "Unknown in-app message frequency.")
             return true

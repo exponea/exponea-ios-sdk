@@ -100,10 +100,15 @@ final class InAppMessagesCache: InAppMessagesCacheType {
 
     func hasImageData(at imageUrl: String) -> Bool {
         guard let directory = getCacheDirectoryURL() else {
+            Exponea.logger.log(.warning, message: "Unable to get in-app message image cache directory")
             return false
         }
         let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
-        return fileManager.fileExists(atPath: fileUrl.path)
+        let exists = fileManager.fileExists(atPath: fileUrl.path)
+        if !exists {
+            Exponea.logger.log(.verbose, message: "In-app message image \(imageUrl) not found in cache.")
+        }
+        return exists
     }
 
     func saveImageData(at imageUrl: String, data: Data) {

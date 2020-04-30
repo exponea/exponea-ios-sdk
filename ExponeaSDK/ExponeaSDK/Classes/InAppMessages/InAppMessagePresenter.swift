@@ -29,9 +29,11 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         presentedCallback: ((InAppMessageView?) -> Void)? = nil
     ) {
         guard !presenting else {
+            Exponea.logger.log(.verbose, message: "Already presenting in-app message.")
             presentedCallback?(nil)
             return
         }
+        Exponea.logger.log(.verbose, message: "Will attempt to present in-app message on main thread.")
         DispatchQueue.main.async {
             Exponea.shared.executeSafely {
                 var image: UIImage?
@@ -73,8 +75,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                         window: self.window ?? UIApplication.shared.keyWindow
                     )
                     self.presenting = true
+                    Exponea.logger.log(.error, message: "In-app message presented.")
                     presentedCallback?(inAppMessageView)
                 } catch {
+                    Exponea.logger.log(.error, message: "Unable to present in-app message \(error)")
                     presentedCallback?(nil)
                 }
             }
@@ -128,6 +132,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
     func createImage(imageData: Data, maxDimensionInPixels: Int) -> UIImage? {
         let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let imageSource = CGImageSourceCreateWithData(imageData as CFData, imageSourceOptions) else {
+            Exponea.logger.log(.error, message: "Unable create image for in-app message - image source failed")
             return nil
         }
         let downsampleOptions = [
@@ -137,6 +142,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
             kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
         ] as CFDictionary
         guard let downsampledCGImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) else {
+            Exponea.logger.log(.error, message: "Unable create image for in-app message - downsampling failed")
             return nil
         }
         return UIImage(cgImage: downsampledCGImage)
