@@ -1,4 +1,15 @@
 ## Release Notes
+## Release Notes for 2.6.2
+#### May 01, 2020
+* Features
+  * Switching projects in `anonymize()` method. If you need to switch projects, you can use `anonymize()` method to create a new customer and start fresh tracking into a new project. Please see [ANONYMIZE.md](./ANONYMIZE.md) for more information.
+  * Retrieve the cookie of the current customer used for tracking by calling `Exponea.shared.customerCookie`.
+  * Improved logging for in-app messages explaining why each message should/shouldn’t be displayed.
+* Bug Fixes
+  * Fixed: Tracking to multiple projects. It now requires both project token and authorization token. Please see [CONFIG.md](./CONFIG.md) for more information.
+  * Removed: Legacy banners implementation that wasn’t working properly.
+
+
 
 ## Release Notes for 2.6.1
 #### March 24, 2020
