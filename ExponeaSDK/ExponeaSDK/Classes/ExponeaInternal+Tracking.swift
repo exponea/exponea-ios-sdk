@@ -165,22 +165,19 @@ extension ExponeaInternal {
     private func trackLastCampaignEvent(_ lastEvent: Data?) {
         if let lastEvent = lastEvent,
             let campaignData = try? JSONDecoder().decode(CampaignData.self, from: lastEvent) {
-            trackCampaignClick(url: campaignData.url, timestamp: nil)
+            trackCampaignData(data: campaignData, timestamp: nil)
         }
     }
 
     // older events will not update session
     private func trackOtherCampaignEvents(_ events: [Data]) {
-        for event in events {
-            guard let campaignData = try? JSONDecoder().decode(CampaignData.self, from: event),
-                  let campaignDataProperties = campaignData.campaignData as? [String: JSONConvertible] else {
-                continue
+        executeSafelyWithDependencies { dependencies in
+            for event in events {
+                guard let campaignData = try? JSONDecoder().decode(CampaignData.self, from: event) else {
+                    continue
+                }
+                try dependencies.trackingManager.track(.campaignClick, with: [.properties(campaignData.trackingData)])
             }
-            trackEvent(
-                properties: campaignDataProperties,
-                timestamp: campaignData.timestamp,
-                eventType: Constants.EventTypes.campaignClick
-            )
         }
     }
 
@@ -194,8 +191,11 @@ extension ExponeaInternal {
     }
 
     public func trackCampaignClick(url: URL, timestamp: Double?) {
-        let data = CampaignData(url: url)
-        Exponea.logger.log(.verbose, message: "Link Open event registred for path : \(url.description)")
+        trackCampaignData(data: CampaignData(url: url), timestamp: timestamp)
+    }
+
+    func trackCampaignData(data: CampaignData, timestamp: Double?) {
+        Exponea.logger.log(.verbose, message: "Tracking campaign data: \(data.description)")
         if !isConfigured {
             saveCampaignData(campaignData: data)
             return
@@ -206,7 +206,7 @@ extension ExponeaInternal {
                 throw ExponeaError.authorizationInsufficient
             }
             // Do the actual tracking
-            try dependencies.trackingManager.track(.campaignClick, with: [data.campaignDataProperties])
+            try dependencies.trackingManager.track(.campaignClick, with: [.properties(data.trackingData)])
             if dependencies.configuration.automaticSessionTracking {
                 // Campaign click should result in new session, unless there is an active session
                 dependencies.trackingManager.ensureAutomaticSessionStarted()
@@ -216,7 +216,7 @@ extension ExponeaInternal {
                     Exponea.logger.log(.verbose, message: "Amending session start event with campaign data")
                     try dependencies.trackingManager.updateLastPendingEvent(
                         ofType: Constants.EventTypes.sessionStart,
-                        with: data.utmData
+                        with: .properties(data.trackingData)
                     )
                 }
             }

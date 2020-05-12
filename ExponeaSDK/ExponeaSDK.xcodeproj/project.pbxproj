@@ -140,6 +140,7 @@
 		0591907323EC58550037BD88 /* NumberOperatorsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591907223EC58550037BD88 /* NumberOperatorsSpec.swift */; };
 		0591907523EC5C740037BD88 /* EventFilterAttributeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591907423EC5C740037BD88 /* EventFilterAttributeSpec.swift */; };
 		0591907723EC5F5A0037BD88 /* EventFilterConstraintSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591907623EC5F5A0037BD88 /* EventFilterConstraintSpec.swift */; };
+		05A66E99246A8C0100DE7128 /* CampaignData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6BD13522ABA743004487A8 /* CampaignData.swift */; };
 		05A6A3EB23954654008475E7 /* InAppMessageDialogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A6A3EA23954654008475E7 /* InAppMessageDialogView.swift */; };
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
 		05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BD2342413E00D78452 /* NetworkStubbing.swift */; };
@@ -197,7 +198,6 @@
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */; };
 		4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F5F2C22DF98C00069E71D /* MockExponea.swift */; };
-		4C588F8722AAAB3400916EE4 /* CampaignData+Properties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C588F8622AAAB3300916EE4 /* CampaignData+Properties.swift */; };
 		4C6BD13622ABA743004487A8 /* CampaignData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6BD13522ABA743004487A8 /* CampaignData.swift */; };
 		B40E9F5D22FAD25A0085B8A1 /* TokenTrackFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */; };
 		B42DA68922B03F7700BBA225 /* Consent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68822B03F7700BBA225 /* Consent.swift */; };
@@ -555,7 +555,6 @@
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackUniversalLinkSpec.swift; sourceTree = "<group>"; };
 		4C3F5F2C22DF98C00069E71D /* MockExponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExponea.swift; sourceTree = "<group>"; };
-		4C588F8622AAAB3300916EE4 /* CampaignData+Properties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CampaignData+Properties.swift"; sourceTree = "<group>"; };
 		4C6BD13522ABA743004487A8 /* CampaignData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignData.swift; sourceTree = "<group>"; };
 		7F633CE783D735A862037D41 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTrackFrequency.swift; sourceTree = "<group>"; };
@@ -903,10 +902,10 @@
 				058DD9342411319500E5BF91 /* Responses */,
 				058DD8E62411192200E5BF91 /* Networking */,
 				058DD8E22411189E00E5BF91 /* Notifications */,
+				4C6BD13522ABA743004487A8 /* CampaignData.swift */,
 				019F1AC42087666800368FB1 /* DataType.swift */,
 				01EC2DB3207E58080031BFEB /* EventType.swift */,
 				B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */,
-				4C6BD13522ABA743004487A8 /* CampaignData.swift */,
 				058DD93A2411323F00E5BF91 /* TrackingObject.swift */,
 			);
 			path = Models;
@@ -1590,7 +1589,6 @@
 				05B4D64D238FEBCC00F5010F /* InAppMessage */,
 				C0EB5DA020BB57ED00F1031F /* Requests */,
 				C0EB5DA120BB57FB00F1031F /* Responses */,
-				4C588F8622AAAB3300916EE4 /* CampaignData+Properties.swift */,
 				C07E420E20CA8AF700920809 /* DateFilter.swift */,
 				F0CA58F5207F612200C89A7F /* DeviceProperties.swift */,
 				C0F2407320BDA42600CAF7CE /* ExportFormat.swift */,
@@ -2038,6 +2036,7 @@
 				058DD92F2411310700E5BF91 /* HTTPMethod.swift in Sources */,
 				C0ED33C121A6FB6B003649C3 /* ExponeaNotificationService.swift in Sources */,
 				058DD93C2411324900E5BF91 /* TrackingObject.swift in Sources */,
+				05A66E99246A8C0100DE7128 /* CampaignData.swift in Sources */,
 				05B97D2E2417C97300FE9309 /* JSONConvertible.swift in Sources */,
 				058DD8E3241118DB00E5BF91 /* Configuration.swift in Sources */,
 				058DD8EC241119EC00E5BF91 /* Exponea.swift in Sources */,
@@ -2101,7 +2100,6 @@
 				05BF1C7623A10F1800FDC101 /* RecommendationRequest.swift in Sources */,
 				0591906623EC1D190037BD88 /* NumberOperators.swift in Sources */,
 				C0F2406C20BC50A000CAF7CE /* ExponeaInternal+Fetching.swift in Sources */,
-				4C588F8722AAAB3400916EE4 /* CampaignData+Properties.swift in Sources */,
 				0567723B237462FB0082167C /* UIApplication+UIApplicationDelegating.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
 				05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */,
