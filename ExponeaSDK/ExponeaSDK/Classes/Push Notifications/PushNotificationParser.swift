@@ -11,6 +11,7 @@ import UserNotifications
 
 struct PushNotificationParser {
     struct PushOpenedData: Equatable {
+        let campaignData: CampaignData
         let actionType: ExponeaNotificationActionType
         let actionValue: String?
         let eventType: EventType
@@ -21,7 +22,8 @@ struct PushNotificationParser {
             lhs: PushNotificationParser.PushOpenedData,
             rhs: PushNotificationParser.PushOpenedData
         ) -> Bool {
-            guard lhs.actionType == rhs.actionType &&
+            guard lhs.campaignData == rhs.campaignData &&
+                  lhs.actionType == rhs.actionType &&
                   lhs.actionValue == rhs.actionValue &&
                   lhs.eventData == rhs.eventData else {
                 return false
@@ -110,6 +112,7 @@ struct PushNotificationParser {
         eventData.append(.properties(properties))
 
         return PushOpenedData(
+            campaignData: notificationData.campaignData,
             actionType: action,
             actionValue: actionValue,
             eventType: eventType,

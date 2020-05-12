@@ -172,9 +172,9 @@ extension ExponeaInternal {
     // older events will not update session
     private func trackOtherCampaignEvents(_ events: [Data]) {
         executeSafelyWithDependencies { dependencies in
-            for event in events {
+            try events.forEach { event in
                 guard let campaignData = try? JSONDecoder().decode(CampaignData.self, from: event) else {
-                    continue
+                    return
                 }
                 var properties = campaignData.trackingData
                 properties["platform"] = .string("ios")

@@ -38,24 +38,24 @@ public struct CampaignData {
 
     init(url: URL) {
         self.url = url.absoluteString
-        self.timestamp = Date().timeIntervalSince1970
+        timestamp = Date().timeIntervalSince1970
         guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
               let params = components.queryItems else {
             Exponea.logger.log(.warning, message: "Unable to parse universal link parameters.")
-            self.source = nil
-            self.campaign = nil
-            self.content = nil
-            self.medium = nil
-            self.term = nil
-            self.payload = nil
+            source = nil
+            campaign = nil
+            content = nil
+            medium = nil
+            term = nil
+            payload = nil
             return
         }
-        self.source = params.first {$0.name == "utm_source"}?.value
-        self.campaign = params.first {$0.name == "utm_campaign"}?.value
-        self.content = params.first {$0.name == "utm_content"}?.value
-        self.medium = params.first {$0.name == "utm_medium"}?.value
-        self.term = params.first {$0.name == "utm_term"}?.value
-        self.payload = params.first {$0.name == "xnpe_cmp"}?.value
+        source = params.first { $0.name == "utm_source" }?.value
+        campaign = params.first { $0.name == "utm_campaign" }?.value
+        content = params.first { $0.name == "utm_content" }?.value
+        medium = params.first { $0.name == "utm_medium" }?.value
+        term = params.first { $0.name == "utm_term" }?.value
+        payload = params.first { $0.name == "xnpe_cmp" }?.value
     }
 
     var trackingData: [String: JSONValue] {
@@ -85,14 +85,14 @@ extension CampaignData: Codable {
 
     public init(from decoder: Decoder) throws {
         let data = try decoder.container(keyedBy: CodingKeys.self)
-        self.url = try? data.decode(String.self, forKey: .url)
-        self.source = try? data.decode(String.self, forKey: .source)
-        self.campaign = try? data.decode(String.self, forKey: .campaign)
-        self.content = try? data.decode(String.self, forKey: .content)
-        self.medium = try? data.decode(String.self, forKey: .medium)
-        self.term = try? data.decode(String.self, forKey: .term)
-        self.payload = try? data.decode(String.self, forKey: .payload)
-        self.timestamp = Date().timeIntervalSince1970
+        url = try? data.decode(String.self, forKey: .url)
+        source = try? data.decode(String.self, forKey: .source)
+        campaign = try? data.decode(String.self, forKey: .campaign)
+        content = try? data.decode(String.self, forKey: .content)
+        medium = try? data.decode(String.self, forKey: .medium)
+        term = try? data.decode(String.self, forKey: .term)
+        payload = try? data.decode(String.self, forKey: .payload)
+        timestamp = Date().timeIntervalSince1970
     }
 }
 

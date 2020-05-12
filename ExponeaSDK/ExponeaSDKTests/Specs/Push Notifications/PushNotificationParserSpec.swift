@@ -32,6 +32,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredBasicNotification,
                 actionIdentifier: nil,
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
@@ -49,6 +50,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredBasicNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
@@ -66,6 +68,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredDeeplinkNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .deeplink,
                     actionValue: "some_url",
                     eventType: .pushOpened,
@@ -83,6 +86,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredBrowserNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .browser,
                     actionValue: "http://google.com",
                     eventType: .pushOpened,
@@ -100,6 +104,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
@@ -117,6 +122,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_0",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
@@ -134,6 +140,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_1",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .deeplink,
                     actionValue: "app://deeplink",
                     eventType: .pushOpened,
@@ -151,6 +158,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_2",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .browser,
                     actionValue: "http://google.com",
                     eventType: .pushOpened,
@@ -168,6 +176,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredExtraDataNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
@@ -196,6 +205,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomEventTypeNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .customEvent,
@@ -218,6 +228,11 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredProductionNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    campaignData: CampaignData(
+                        source: "exponea",
+                        campaign: "Testing mobile push",
+                        medium: "mobile_push_notification"
+                    ),
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,

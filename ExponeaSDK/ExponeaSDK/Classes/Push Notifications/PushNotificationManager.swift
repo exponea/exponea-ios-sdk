@@ -75,6 +75,9 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
         }
 
+        // save campaign to be added to session start
+        Exponea.shared.trackCampaignData(data: pushOpenedData.campaignData, timestamp: nil)
+
         // Notify the delegate
         delegate?.pushNotificationOpened(
             with: pushOpenedData.actionType,
