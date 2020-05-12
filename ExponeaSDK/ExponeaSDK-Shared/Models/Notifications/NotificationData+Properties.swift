@@ -25,7 +25,7 @@ extension NotificationData {
         if let language = language { properties["language"] = .string(language)}
         if let recipient = recipient { properties["recipient"] = .string(recipient)}
         if let subject = subject { properties["subject"] = .string(subject)}
-
+        campaignData.trackingData.forEach { (key, value) in properties[key] = value }
         return properties
     }
 }

@@ -14,7 +14,8 @@ import Nimble
 class NotificationDataSpec: QuickSpec {
     struct TestCase {
         let name: String
-        let data: [String: Any]
+        let attributes: [String: Any]
+        let campaignData: [String: Any]
         let expectedNotificationData: NotificationData
         let expectedProperties: [String: JSONValue]
     }
@@ -24,37 +25,46 @@ class NotificationDataSpec: QuickSpec {
         let testCases = [
             TestCase(
                 name: "empty data",
-                data: [:],
+                attributes: [:],
+                campaignData: [:],
                 expectedNotificationData: NotificationData(),
                 expectedProperties: ["platform": .string("ios")]
             ),
             TestCase(
                 name: "with extra fields",
-                data: ["event_type": "some event type", "some_field": "some value"]  as [String: Any],
+                attributes: ["event_type": "some event type", "some_field": "some value"]  as [String: Any],
+                campaignData: [:],
                 expectedNotificationData: NotificationData(eventType: "some event type"),
                 expectedProperties: ["platform": .string("ios")]
             ),
             TestCase(
                 name: "and ignore incorrect data types",
-                data: ["event_type": 12345, "actionId": "some action id", "timestamp": "invalid"],
+                attributes: ["event_type": 12345, "actionId": "some action id", "timestamp": "invalid"],
+                campaignData: [:],
                 expectedNotificationData: NotificationData(),
                 expectedProperties: ["platform": .string("ios")]
             ),
             TestCase(
                 name: "with few properties",
-                data: ["event_type": "some event type", "actionId": 123, "platform": "ios", "language": "en"],
+                attributes: ["event_type": "some event type", "actionId": 123, "platform": "ios", "language": "en"],
+                campaignData: ["utm_source": "some source"],
                 expectedNotificationData: NotificationData(
-                    eventType: "some event type", actionId: 123, platform: "ios", language: "en"
+                    eventType: "some event type",
+                    actionId: 123,
+                    platform: "ios",
+                    language: "en",
+                    campaignData: CampaignData(source: "some source")
                 ),
                 expectedProperties: [
                     "action_id": .int(123),
                     "platform": .string("ios"),
-                    "language": .string("en")
+                    "language": .string("en"),
+                    "utm_source": .string("some source")
                 ]
             ),
             TestCase(
                 name: "with all properties",
-                data: [
+                attributes: [
                     "event_type": "mock event type",
                     "campaign_id": "mock campaign id",
                     "campaign_name": "mock campaign name",
@@ -67,6 +77,14 @@ class NotificationDataSpec: QuickSpec {
                     "recipient": "mock recipient",
                     "subject": "mock title"
                 ],
+                campaignData: [
+                    "utm_source": "mock source",
+                    "utm_campaign": "mock campaign",
+                    "utm_content": "mock content",
+                    "utm_medium": "mock medium",
+                    "utm_term": "mock term",
+                    "xnpe_cmp": "mock whatever this is"
+                ],
                 expectedNotificationData: NotificationData(
                     eventType: "mock event type",
                     campaignId: "mock campaign id",
@@ -78,7 +96,15 @@ class NotificationDataSpec: QuickSpec {
                     platform: "mock platform",
                     language: "mock language",
                     recipient: "mock recipient",
-                    subject: "mock title"
+                    subject: "mock title",
+                    campaignData: CampaignData(
+                        source: "mock source",
+                        campaign: "mock campaign",
+                        content: "mock content",
+                        medium: "mock medium",
+                        term: "mock term",
+                        payload: "mock whatever this is"
+                    )
                 ),
                 expectedProperties: [
                     "campaign_id": .string("mock campaign id"),
@@ -90,20 +116,32 @@ class NotificationDataSpec: QuickSpec {
                     "platform": .string("mock platform"),
                     "language": .string("mock language"),
                     "recipient": .string("mock recipient"),
-                    "subject": .string("mock title")
+                    "subject": .string("mock title"),
+                    "utm_source": .string("mock source"),
+                    "utm_campaign": .string("mock campaign"),
+                    "utm_content": .string("mock content"),
+                    "utm_medium": .string("mock medium"),
+                    "utm_term": .string("mock term"),
+                    "xnpe_cmp": .string("mock whatever this is")
                 ]
             )
         ]
 
         testCases.forEach { testCase in
             it("should deserialize \(testCase.name)") {
-                let deserialized = NotificationData.deserialize(from: testCase.data)
+                let deserialized = NotificationData.deserialize(
+                    attributes: testCase.attributes,
+                    campaignData: testCase.campaignData
+                )
                 expect(deserialized).toNot(beNil())
                 checkFieldsExceptTimestamp(expected: testCase.expectedNotificationData, actual: deserialized!)
             }
 
             it("should serialize \(testCase.name)") {
-                let deserialized = NotificationData.deserialize(from: testCase.data)
+                let deserialized = NotificationData.deserialize(
+                    attributes: testCase.attributes,
+                    campaignData: testCase.campaignData
+                )
                 expect(deserialized).toNot(beNil())
                 checkFieldsExceptTimestamp(expected: testCase.expectedNotificationData, actual: deserialized!)
                 let serialized = deserialized?.serialize()
@@ -115,7 +153,10 @@ class NotificationDataSpec: QuickSpec {
             }
 
             it("should generate properties \(testCase.name)") {
-                let deserialized = NotificationData.deserialize(from: testCase.data)
+                let deserialized = NotificationData.deserialize(
+                    attributes: testCase.attributes,
+                    campaignData: testCase.campaignData
+                )
                 expect(deserialized).toNot(beNil())
                 expect(deserialized?.properties).to(equal(testCase.expectedProperties))
             }
@@ -133,7 +174,7 @@ class NotificationDataSpec: QuickSpec {
             expect(actual.language).to(expected.language == nil ? beNil() : equal(expected.language))
             expect(actual.recipient).to(expected.recipient == nil ? beNil() : equal(expected.recipient))
             expect(actual.subject).to(expected.subject == nil ? beNil() : equal(expected.subject))
+            expect(actual.campaignData).to(equal(expected.campaignData))
         }
-
     }
 }

@@ -235,7 +235,10 @@ class PushNotificationParserSpec: QuickSpec {
                             "action_type": .string("mobile notification"),
                             "campaign_name": .string("Wassil's push"),
                             "language": .string(""),
-                            "campaign_policy": .string("")
+                            "campaign_policy": .string(""),
+                            "utm_source": .string("exponea"),
+                            "utm_campaign": .string("Testing mobile push"),
+                            "utm_medium": .string("mobile_push_notification")
                         ])
                     ],
                     extraData: [

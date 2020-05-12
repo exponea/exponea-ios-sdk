@@ -52,9 +52,10 @@ struct PushNotificationParser {
             "cta": .string("notification"),
             "url": .string("app")
         ]
-        let attributes = userInfo["attributes"] as? [String: Any] ?? [:]
-        let notificationData = NotificationData.deserialize(from: attributes) ?? NotificationData()
-
+        let notificationData = NotificationData.deserialize(
+            attributes: userInfo["attributes"] as? [String: Any] ?? [:],
+            campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
+        ) ?? NotificationData()
         properties.merge(notificationData.properties) { (current, _) in current }
         if let customEventType = notificationData.eventType,
            !customEventType.isEmpty,

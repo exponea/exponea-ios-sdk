@@ -348,7 +348,10 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "status": JSONValue.string("clicked"),
                             "action_name": JSONValue.string("Unnamed mobile push"),
                             "cta": JSONValue.string("Action 3 title"),
-                            "url": JSONValue.string("http://google.com?search=something")
+                            "url": JSONValue.string("http://google.com?search=something"),
+                            "utm_source": JSONValue.string("exponea"),
+                            "utm_campaign": JSONValue.string("Testing mobile push"),
+                            "utm_medium": JSONValue.string("mobile_push_notification")
                         ])]
                     ),
                     expectedBrowserLinkOpened: URL(string: "http://google.com?search=something"),

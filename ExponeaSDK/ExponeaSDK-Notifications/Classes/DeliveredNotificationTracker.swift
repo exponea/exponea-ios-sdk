@@ -22,8 +22,10 @@ final class DeliveredNotificationTracker {
         guard let customerIds = EventTrackingObject.loadCustomerIdsFromUserDefaults(appGroup: appGroup) else {
             throw DeliveredNotificationTrackerError.customerIdsNotFound
         }
-        let attributes = userInfo["attributes"] as? [String: Any] ?? [:]
-        let notification = NotificationData.deserialize(from: attributes) ?? NotificationData()
+        let notification = NotificationData.deserialize(
+            attributes: userInfo["attributes"] as? [String: Any] ?? [:],
+            campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
+        ) ?? NotificationData()
 
         repository = ServerRepository(configuration: configuration)
 

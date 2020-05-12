@@ -131,8 +131,10 @@ public class ExponeaNotificationService {
               let userInfo = request?.content.userInfo else {
             return
         }
-        let attributes = userInfo["attributes"] as? [String: Any] ?? [:]
-        let notification = NotificationData.deserialize(from: attributes) ?? NotificationData()
+        let notification = NotificationData.deserialize(
+            attributes: userInfo["attributes"] as? [String: Any] ?? [:],
+            campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
+        ) ?? NotificationData()
 
         if let serialized = notification.serialize() {
             var delivered = userDefaults.array(forKey: Constants.General.deliveredPushUserDefaultsKey) ?? []

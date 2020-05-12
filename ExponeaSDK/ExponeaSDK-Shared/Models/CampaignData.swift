@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CampaignData: Codable {
+public struct CampaignData {
     let source: String?
     let campaign: String?
     let content: String?
@@ -17,6 +17,24 @@ public struct CampaignData: Codable {
     let payload: String?
     let timestamp: TimeInterval
     let url: String?
+
+    public init(
+        source: String? = nil,
+        campaign: String? = nil,
+        content: String? = nil,
+        medium: String? = nil,
+        term: String? = nil,
+        payload: String? = nil
+    ) {
+        self.url = nil
+        self.timestamp = Date().timeIntervalSince1970
+        self.source = source
+        self.campaign = campaign
+        self.content = content
+        self.medium = medium
+        self.term = term
+        self.payload = payload
+    }
 
     init(url: URL) {
         self.url = url.absoluteString
@@ -42,7 +60,6 @@ public struct CampaignData: Codable {
 
     var trackingData: [String: JSONValue] {
         var data: [String: JSONValue] = [:]
-        data["platform"] = .string("iOS")
         if let url = url { data["url"] = .string(url) }
         if let source = source { data["utm_source"] = .string(source) }
         if let campaign = campaign { data["utm_campaign"] = .string(campaign) }
@@ -51,6 +68,44 @@ public struct CampaignData: Codable {
         if let term = term { data["utm_term"] = .string(term) }
         if let payload = payload { data["xnpe_cmp"] = .string(payload) }
         return data
+    }
+}
+
+extension CampaignData: Codable {
+    // since we use snake case conversion, these need to be camelCase
+    enum CodingKeys: String, CodingKey {
+        case url = "url"
+        case source = "utmSource"
+        case campaign = "utmCampaign"
+        case content = "utmContent"
+        case medium = "utmMedium"
+        case term = "utmTerm"
+        case payload = "xnpeCmp"
+    }
+
+    public init(from decoder: Decoder) throws {
+        let data = try decoder.container(keyedBy: CodingKeys.self)
+        self.url = try? data.decode(String.self, forKey: .url)
+        self.source = try? data.decode(String.self, forKey: .source)
+        self.campaign = try? data.decode(String.self, forKey: .campaign)
+        self.content = try? data.decode(String.self, forKey: .content)
+        self.medium = try? data.decode(String.self, forKey: .medium)
+        self.term = try? data.decode(String.self, forKey: .term)
+        self.payload = try? data.decode(String.self, forKey: .payload)
+        self.timestamp = Date().timeIntervalSince1970
+    }
+}
+
+extension CampaignData: Equatable {
+    // compare everything except timestamp
+    public static func == (lhs: CampaignData, rhs: CampaignData) -> Bool {
+        return lhs.url == rhs.url
+            && lhs.source == rhs.source
+            && lhs.campaign == rhs.campaign
+            && lhs.content == rhs.content
+            && lhs.medium == rhs.medium
+            && lhs.term == rhs.term
+            && lhs.payload == rhs.payload
     }
 }
 

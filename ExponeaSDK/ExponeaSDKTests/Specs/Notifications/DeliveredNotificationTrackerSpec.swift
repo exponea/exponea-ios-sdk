@@ -32,7 +32,8 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                     platform: "mock platform",
                     language: "mock language",
                     recipient: "mock recipient",
-                    subject: "mock title"
+                    subject: "mock title",
+                    campaignData: CampaignData(source: "mock source", campaign: "mock campaign")
                 )
                 expect(
                     DeliveredNotificationTracker.generateTrackingObjects(
@@ -58,7 +59,9 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                                 "campaign_id": .string("mock campaign id"),
                                 "action_type": .string("mock action type"),
                                 "campaign_policy": .string("mock campaign policy"),
-                                "action_name": .string("mock action name")
+                                "action_name": .string("mock action name"),
+                                "utm_source": .string("mock source"),
+                                "utm_campaign": .string("mock campaign")
                             ])
                         ]
                     )

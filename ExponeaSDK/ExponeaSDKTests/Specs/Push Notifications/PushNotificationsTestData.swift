@@ -117,9 +117,11 @@ struct PushNotificationsTestData {
 
     let deliveredProductionNotification = """
         {
-          "url_params" : [
-
-          ],
+          "url_params" : {
+            "utm_campaign":"Testing mobile push",
+            "utm_medium":"mobile_push_notification",
+            "utm_source":"exponea"
+          },
           "attributes" : {
             "subject" : "Notification title",
             "action_name" : "Unnamed mobile push",

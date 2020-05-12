@@ -21,6 +21,7 @@ public struct NotificationData: Codable {
     let recipient: String?
     let subject: String?
     let timestamp: Date
+    let campaignData: CampaignData
 
     public init(
         eventType: String? = nil,
@@ -34,7 +35,8 @@ public struct NotificationData: Codable {
         language: String? = nil,
         recipient: String? = nil,
         subject: String? = nil,
-        timestamp: Date = Date()
+        timestamp: Date = Date(),
+        campaignData: CampaignData = CampaignData()
     ) {
         self.eventType = eventType
         self.campaignId = campaignId
@@ -48,6 +50,7 @@ public struct NotificationData: Codable {
         self.recipient = recipient
         self.subject = subject
         self.timestamp = timestamp
+        self.campaignData = campaignData
     }
 
     public init(from decoder: Decoder) throws {
@@ -64,10 +67,16 @@ public struct NotificationData: Codable {
         recipient = try? container.decode(String.self, forKey: .recipient)
         subject = try? container.decode(String.self, forKey: .subject)
         timestamp = (try? container.decode(Date.self, forKey: .timestamp)) ?? Date()
+        campaignData = (try? container.decode(CampaignData.self, forKey: .campaignData)) ?? CampaignData()
     }
 
-    public static func deserialize(from dictionary: [String: Any]) -> NotificationData? {
-        guard let data = try? JSONSerialization.data(withJSONObject: dictionary, options: []) else {
+    public static func deserialize(
+        attributes: [String: Any],
+        campaignData: [String: Any]
+    ) -> NotificationData? {
+        var allData = attributes
+        allData["campaign_data"] = campaignData
+        guard let data = try? JSONSerialization.data(withJSONObject: allData, options: []) else {
             return nil
         }
         return deserialize(from: data)

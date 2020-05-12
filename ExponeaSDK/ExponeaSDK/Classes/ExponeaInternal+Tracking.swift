@@ -176,7 +176,9 @@ extension ExponeaInternal {
                 guard let campaignData = try? JSONDecoder().decode(CampaignData.self, from: event) else {
                     continue
                 }
-                try dependencies.trackingManager.track(.campaignClick, with: [.properties(campaignData.trackingData)])
+                var properties = campaignData.trackingData
+                properties["platform"] = .string("ios")
+                try dependencies.trackingManager.track(.campaignClick, with: [.properties(properties)])
             }
         }
     }
@@ -206,7 +208,9 @@ extension ExponeaInternal {
                 throw ExponeaError.authorizationInsufficient
             }
             // Do the actual tracking
-            try dependencies.trackingManager.track(.campaignClick, with: [.properties(data.trackingData)])
+            var properties = data.trackingData
+            properties["platform"] = .string("ios")
+            try dependencies.trackingManager.track(.campaignClick, with: [.properties(properties)])
             if dependencies.configuration.automaticSessionTracking {
                 // Campaign click should result in new session, unless there is an active session
                 dependencies.trackingManager.ensureAutomaticSessionStarted()
