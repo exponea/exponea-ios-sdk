@@ -10,17 +10,17 @@ import Foundation
 
 public struct Consent: Codable {
     /// Name of the consent category.
-    let id: String
+    public let id: String
     /// If the user has legitimate interest.
-    let legitimateInterest: Bool
+    public let legitimateInterest: Bool
     /// The sources of this consent.
-    let sources: ConsentSources
+    public let sources: ConsentSources
     /// Contains the translations for the consent.
     ///
     /// Keys of this dictionary are the short ISO language codes (eg. "en", "cz", "sk"...) and
     /// the values are dictionaries containing the translation key as the dictionary key
     /// and translation value as the dictionary value.
-    let translations: [String: [String: String]]
+    public let translations: [String: [String: String]]
 }
 
 private extension Consent {

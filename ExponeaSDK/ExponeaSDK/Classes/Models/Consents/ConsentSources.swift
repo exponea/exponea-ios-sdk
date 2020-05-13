@@ -11,17 +11,17 @@ import Foundation
 /// Used for identifying the sources of the consent.
 public struct ConsentSources: Codable {
     /// Manually created from the web application.
-    let isCreatedFromCRM: Bool
+    public let isCreatedFromCRM: Bool
     /// Imported from the importing wizard.
-    let isImported: Bool
+    public let isImported: Bool
     /// Tracked from the consent page.
-    let isFromConsentPage: Bool
+    public let isFromConsentPage: Bool
     /// API which uses basic authentication.
-    let privateAPI: Bool
+    public let privateAPI: Bool
     /// API which only uses public token for authentication.
-    let publicAPI: Bool
+    public let publicAPI: Bool
     /// Tracked from the scenario from event node.
-    let isTrackedFromScenario: Bool
+    public let isTrackedFromScenario: Bool
 }
 
 private extension ConsentSources {
