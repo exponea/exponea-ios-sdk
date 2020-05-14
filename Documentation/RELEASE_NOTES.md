@@ -1,4 +1,9 @@
 ## Release Notes
+## Release Notes for 2.6.3
+#### May 14, 2020
+* Bug Fixes
+  * Fixed: Properties of ConsentSources and ConsentProperties now have `public` access level.
+
 ## Release Notes for 2.6.2
 #### May 01, 2020
 * Features
@@ -8,8 +13,6 @@
 * Bug Fixes
   * Fixed: Tracking to multiple projects. It now requires both project token and authorization token. Please see [CONFIG.md](./CONFIG.md) for more information.
   * Removed: Legacy banners implementation that wasn’t working properly.
-
-
 
 ## Release Notes for 2.6.1
 #### March 24, 2020
