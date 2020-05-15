@@ -55,8 +55,12 @@ public class ExponeaNotificationContentService {
     }
 
     private func createImageView(on view: UIView, with imagePath: String) {
-        let image = UIImage(contentsOfFile: imagePath)
-        let imageView = UIImageView(image: image)
+        let url = URL(fileURLWithPath: imagePath)
+        guard let data = try? Data(contentsOf: url) else {
+            Exponea.logger.log(.warning, message: "Unable to load image contents \(imagePath)")
+            return
+        }
+        let imageView = UIImageView(image: UIImage.gif(data: data))
 
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
