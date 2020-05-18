@@ -15,7 +15,7 @@ extension UIResponder {
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         // Get the swizzle
-        let selector = PushSelectorMapping.handlerReceive.original
+        let selector = PushSelectorMapping.applicationReceive.original
         guard let originalMethod = class_getInstanceMethod(type(of: self), selector),
             let swizzle = Swizzler.swizzles[originalMethod] else {
                 return
@@ -23,31 +23,8 @@ extension UIResponder {
 
         // Perform the original implementation first
         let curriedImplementation = unsafeBitCast(swizzle.originalMethod,
-                                                  to: PushSelectorMapping.Signatures.handlerReceive)
+                                                  to: PushSelectorMapping.Signatures.applicationReceive)
         curriedImplementation(self, selector, application, userInfo as NSDictionary, completionHandler)
-
-        // Now call our own implementations
-        for (_, block) in swizzle.blocks {
-            block(application as AnyObject?, userInfo as AnyObject?, nil)
-        }
-    }
-
-    @objc func exponeaApplication(
-        _ application: UIApplication,
-        newDidReceiveRemoteNotification
-        userInfo: [AnyHashable: Any]
-    ) {
-        // Get the swizzle
-        let selector = PushSelectorMapping.deprecatedReceive.original
-        guard let originalMethod = class_getInstanceMethod(type(of: self), selector),
-            let swizzle = Swizzler.swizzles[originalMethod] else {
-                return
-        }
-
-        // Perform the original implementation first
-        let curriedImplementation = unsafeBitCast(swizzle.originalMethod,
-                                                  to: PushSelectorMapping.Signatures.deprecatedReceive)
-        curriedImplementation(self, selector, application, userInfo as NSDictionary)
 
         // Now call our own implementations
         for (_, block) in swizzle.blocks {

@@ -96,9 +96,8 @@ final class PushNotificationSwizzler {
     /// it calls `notificationsDelegateChanged(_:)`.
     /// 2. Checks if we there is already an existing `UNUserNotificationCenter` delegate,
     /// if so, calls `swizzleUserNotificationsDidReceive(on:)` and exits.
-    /// 3. If step 2. fails, it continues to check if the host AppDelegate implements either one of the supported
-    /// didReceiveNotification methods. If so, swizzles the one that's implemented while preferring the variant
-    /// with fetch handler as that is what Apple recommends.
+    /// 3. If step 2. fails, it continues to check if the host AppDelegate implements didReceiveNotification method.
+    /// If so, swizzles it with fetch handler as that is what Apple recommends.
     /// 4. If step 3 fails, it creates a dummy object `PushNotificationReceiver` that implements the
     /// `UNUserNotificationCenterDelegate` protocol, sets it as the delegate for `UNUserNotificationCenter` and lastly
     /// swizzles the implementation with the custom one in change observer.
@@ -124,16 +123,13 @@ final class PushNotificationSwizzler {
             return
         }
 
-        // Check if UIAppDelegate notification receive functions are implemented
-        if class_getInstanceMethod(appDelegateClass, PushSelectorMapping.handlerReceive.original) != nil {
+        // Check if UIAppDelegate notification receive function is implemented
+        if class_getInstanceMethod(appDelegateClass, PushSelectorMapping.applicationReceive.original) != nil {
             // Check for UIAppDelegate's did receive remote notification with fetch completion handler (preferred)
-            swizzleMapping = PushSelectorMapping.handlerReceive
-        } else if class_getInstanceMethod(appDelegateClass, PushSelectorMapping.deprecatedReceive.original) != nil {
-            // Check for UIAppDelegate's deprecated receive remote notification
-            swizzleMapping = PushSelectorMapping.deprecatedReceive
+            swizzleMapping = PushSelectorMapping.applicationReceive
         }
 
-        // If user is overriding either of UIAppDelegete receive functions, swizzle it
+        // If user is overriding UIAppDelegete receive function, swizzle it
         if let mapping = swizzleMapping {
             // Do the swizzling
             let token = UUID().uuidString
@@ -179,8 +175,8 @@ final class PushNotificationSwizzler {
         let token = UUID().uuidString
         pushOpenedSwizzleToken = token
         // Swizzle the notification delegate notification received function
-        Swizzler.swizzleSelector(PushSelectorMapping.newReceive.original,
-                                 with: PushSelectorMapping.newReceive.swizzled,
+        Swizzler.swizzleSelector(PushSelectorMapping.centerDelegateReceive.original,
+                                 with: PushSelectorMapping.centerDelegateReceive.swizzled,
                                  for: delegateClass,
                                  name: "NotificationOpened",
                                  block: { [weak self] (_, userInfoObject, actionIdentifier) in

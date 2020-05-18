@@ -17,16 +17,12 @@ internal enum PushSelectorMapping {
             UIApplicationDelegate.application(_:didRegisterForRemoteNotificationsWithDeviceToken:)
         )
 
-        static let newReceive = NSSelectorFromString(
+        static let centerDelegateReceive = NSSelectorFromString(
             "userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:"
         )
 
-        static let handlerReceive = NSSelectorFromString(
+        static let applicationReceive = NSSelectorFromString(
             "application:didReceiveRemoteNotification:fetchCompletionHandler:"
-        )
-
-        static let deprecatedReceive = NSSelectorFromString(
-            "application:didReceiveRemoteNotification:"
         )
     }
 
@@ -35,33 +31,29 @@ internal enum PushSelectorMapping {
             UIResponder.exponeaApplicationSwizzle(_:didRegisterPushToken:)
         )
 
-        static let newReceive = #selector(
+        static let centerDelegateReceive = #selector(
             NSObject.exponeaUserNotificationCenter(_:newDidReceive:withCompletionHandler:)
         )
 
-        static let handlerReceive = #selector(
+        static let applicationReceive = #selector(
             UIResponder.exponeaApplication(_:newDidReceiveRemoteNotification:fetchCompletionHandler:)
-        )
-
-        static let deprecatedReceive = #selector(
-            UIResponder.exponeaApplication(_:newDidReceiveRemoteNotification:)
         )
     }
 
     internal enum Signatures {
         static let registration = (@convention(c) (
             AnyObject, Selector, UIApplication, Data) -> Void).self
-        static let newReceive = (@convention(c) (
+        static let centerDelegateReceive = (@convention(c) (
             AnyObject, Selector, UNUserNotificationCenter, UNNotificationResponse, @escaping () -> Void) -> Void).self
-        static let handlerReceive = (@convention(c)
+        static let applicationReceive = (@convention(c)
             (AnyObject, Selector, UIApplication, NSDictionary, @escaping (UIBackgroundFetchResult) -> Void)
             -> Void).self
-        static let deprecatedReceive = (@convention(c)
-            (AnyObject, Selector, UIApplication, NSDictionary) -> Void).self
     }
 
-    internal static let registration: Mapping = (Original.registration, Swizzled.registration)
-    internal static let newReceive: Mapping = (Original.newReceive, Swizzled.newReceive)
-    internal static let handlerReceive: Mapping = (Original.handlerReceive, Swizzled.handlerReceive)
-    internal static let deprecatedReceive: Mapping = (Original.deprecatedReceive, Swizzled.deprecatedReceive)
+    internal static let registration: Mapping
+        = (Original.registration, Swizzled.registration)
+    internal static let centerDelegateReceive: Mapping
+        = (Original.centerDelegateReceive, Swizzled.centerDelegateReceive)
+    internal static let applicationReceive: Mapping
+        = (Original.applicationReceive, Swizzled.applicationReceive)
 }

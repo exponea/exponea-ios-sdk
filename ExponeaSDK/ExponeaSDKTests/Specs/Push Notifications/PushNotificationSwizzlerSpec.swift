@@ -35,13 +35,6 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
         }
     }
 
-    class AppDelegateWithDeprecatedReceive: UIResponder, UIApplicationDelegate {
-        var receiveCalls: [[AnyHashable: Any]] = []
-        func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
-            receiveCalls.append(userInfo)
-        }
-    }
-
     class EmptyCenterDelegate: NSObject, UNUserNotificationCenterDelegate {}
 
     class CenterDelegate: NSObject, UNUserNotificationCenterDelegate {
@@ -84,12 +77,12 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
     }
 
     // This simulates system calling notification opened
-    // First try notification center delegate, then try open push with handler, then try just open push
+    // First try notification center delegate, then try open push with UIApplication handler
     func openNotification(
         uiApplication: UIApplicationDelegating,
         notificationCenter: BasicUNUserNotificationCenterDelegating
     ) {
-        let notificationDelegateSelector = PushSelectorMapping.Original.newReceive
+        let notificationDelegateSelector = PushSelectorMapping.Original.centerDelegateReceive
         if let notificationDelegate = notificationCenter.delegate,
            class_getInstanceMethod(type(of: notificationDelegate), notificationDelegateSelector) != nil {
             notificationCenter.delegate?.userNotificationCenter?(
@@ -104,21 +97,11 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
         }
         let appPrefferedSelector =
             #selector(UIApplicationDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:))
-        let appDeprecatedSelector =
-            NSSelectorFromString(
-                "application:didReceiveRemoteNotification:" // using string because of deprecation warning
-            )
         if class_getInstanceMethod(type(of: appDelegate), appPrefferedSelector) != nil {
             appDelegate.application?(
                 UIApplication.shared,
                 didReceiveRemoteNotification: [:],
                 fetchCompletionHandler: {_ in }
-            )
-        } else if class_getInstanceMethod(type(of: appDelegate), appDeprecatedSelector) != nil {
-            appDelegate.perform( // because of deprecation warning
-                appDeprecatedSelector,
-                with: UIApplication.shared,
-                with: [:]
             )
         }
     }
@@ -178,16 +161,6 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
                     setup(appDelegate: EmptyAppDelegate())
                     openNotification()
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
-                }
-            }
-
-            context("UI application delegate deprecated handler defined") {
-                it("should call handle push, call original method") {
-                    let appDelegate = AppDelegateWithDeprecatedReceive()
-                    setup(appDelegate: appDelegate)
-                    openNotification()
-                    expect(manager.handlePushOpenedCalls.count).to(equal(1))
-                    expect(appDelegate.receiveCalls.count).to(equal(1))
                 }
             }
 

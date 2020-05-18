@@ -15,7 +15,7 @@ extension NSObject {
         newDidReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        let selector = PushSelectorMapping.newReceive.original
+        let selector = PushSelectorMapping.centerDelegateReceive.original
 
         guard let originalMethod = class_getInstanceMethod(type(of: self), selector),
             let swizzle = Swizzler.swizzles[originalMethod] else {
@@ -23,7 +23,7 @@ extension NSObject {
         }
 
         let curriedImplementation = unsafeBitCast(swizzle.originalMethod,
-                                                  to: PushSelectorMapping.Signatures.newReceive)
+                                                  to: PushSelectorMapping.Signatures.centerDelegateReceive)
         curriedImplementation(self, selector, center, response, completionHandler)
 
         for (_, block) in swizzle.blocks {
