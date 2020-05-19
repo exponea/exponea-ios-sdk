@@ -178,7 +178,10 @@ extension ExponeaInternal {
                 }
                 var properties = campaignData.trackingData
                 properties["platform"] = .string("ios")
-                try dependencies.trackingManager.track(.campaignClick, with: [.properties(properties)])
+                // url and payload is required for campaigns, but missing in notifications
+                if campaignData.url != nil && campaignData.payload != nil {
+                    try dependencies.trackingManager.track(.campaignClick, with: [.properties(properties)])
+                }
             }
         }
     }
@@ -210,7 +213,10 @@ extension ExponeaInternal {
             // Do the actual tracking
             var properties = data.trackingData
             properties["platform"] = .string("ios")
-            try dependencies.trackingManager.track(.campaignClick, with: [.properties(properties)])
+            // url and payload is required for campaigns, but missing in notifications
+            if data.url != nil && data.payload != nil {
+                try dependencies.trackingManager.track(.campaignClick, with: [.properties(properties)])
+            }
             if dependencies.configuration.automaticSessionTracking {
                 // Campaign click should result in new session, unless there is an active session
                 dependencies.trackingManager.ensureAutomaticSessionStarted()
