@@ -32,6 +32,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredBasicNotification,
                 actionIdentifier: nil,
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
@@ -50,6 +51,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredBasicNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
@@ -68,6 +70,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredDeeplinkNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .deeplink,
                     actionValue: "some_url",
@@ -86,6 +89,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredBrowserNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .browser,
                     actionValue: "http://google.com",
@@ -104,6 +108,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
@@ -122,6 +127,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_0",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
@@ -140,6 +146,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_1",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .deeplink,
                     actionValue: "app://deeplink",
@@ -158,6 +165,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_2",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .browser,
                     actionValue: "http://google.com",
@@ -176,6 +184,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredExtraDataNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
@@ -205,6 +214,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredCustomEventTypeNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
                     actionValue: nil,
@@ -228,6 +238,7 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredProductionNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
                 expected: PushNotificationParser.PushOpenedData(
+                    silent: false,
                     campaignData: CampaignData(
                         source: "exponea",
                         campaign: "Testing mobile push",
@@ -270,6 +281,25 @@ class PushNotificationParserSpec: QuickSpec {
                         "action_type": "mobile notification",
                         "campaign_name": "Wassil's push"
                     ]
+                )
+            ),
+            TestCase(
+                name: "silent action",
+                userInfoJson: PushNotificationsTestData().deliveredSilentNotification,
+                actionIdentifier: nil,
+                expected: PushNotificationParser.PushOpenedData(
+                    silent: true,
+                    campaignData: CampaignData(),
+                    actionType: .openApp,
+                    actionValue: nil,
+                    eventType: .pushOpened,
+                    eventData: [.properties([
+                        "status": .string("delivered"),
+                        "platform": .string("ios"),
+                        "cta": .string("notification"),
+                        "url": .string("app")
+                    ])],
+                    extraData: ["silent_test": "value"]
                 )
             )
         ]

@@ -77,32 +77,36 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
     }
 
     // This simulates system calling notification opened
-    // First try notification center delegate, then try open push with UIApplication handler
+    // When app is opened use notification center delegate, otherwise app delegate
     func openNotification(
+        appOpened: Bool,
         uiApplication: UIApplicationDelegating,
         notificationCenter: BasicUNUserNotificationCenterDelegating
     ) {
-        let notificationDelegateSelector = PushSelectorMapping.Original.centerDelegateReceive
-        if let notificationDelegate = notificationCenter.delegate,
-           class_getInstanceMethod(type(of: notificationDelegate), notificationDelegateSelector) != nil {
-            notificationCenter.delegate?.userNotificationCenter?(
-                UNUserNotificationCenter.current(),
-                didReceive: mock_notification_response([:]),
-                withCompletionHandler: {}
-            )
-            return
-        }
-        guard let appDelegate = uiApplication.delegate else {
-            fatalError("There has to be UIApplication delegate")
-        }
-        let appPrefferedSelector =
-            #selector(UIApplicationDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:))
-        if class_getInstanceMethod(type(of: appDelegate), appPrefferedSelector) != nil {
-            appDelegate.application?(
-                UIApplication.shared,
-                didReceiveRemoteNotification: [:],
-                fetchCompletionHandler: {_ in }
-            )
+        if !appOpened {
+            let notificationDelegateSelector = PushSelectorMapping.Original.centerDelegateReceive
+            if let notificationDelegate = notificationCenter.delegate,
+               class_getInstanceMethod(type(of: notificationDelegate), notificationDelegateSelector) != nil {
+                notificationCenter.delegate?.userNotificationCenter?(
+                    UNUserNotificationCenter.current(),
+                    didReceive: mock_notification_response([:]),
+                    withCompletionHandler: {}
+                )
+                return
+            }
+        } else {
+            guard let appDelegate = uiApplication.delegate else {
+                return
+            }
+            let appPrefferedSelector =
+                #selector(UIApplicationDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:))
+            if class_getInstanceMethod(type(of: appDelegate), appPrefferedSelector) != nil {
+                appDelegate.application?(
+                    UIApplication.shared,
+                    didReceiveRemoteNotification: [:],
+                    fetchCompletionHandler: {_ in }
+                )
+            }
         }
     }
 
@@ -126,8 +130,8 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
             swizzler.addAutomaticPushTracking()
         }
 
-        func openNotification() {
-            self.openNotification(uiApplication: mockApplication, notificationCenter: mockCenter)
+        func openNotification(appOpened: Bool) {
+            self.openNotification(appOpened: appOpened, uiApplication: mockApplication, notificationCenter: mockCenter)
         }
 
         describe("token registration swizzling") {
@@ -157,9 +161,14 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
 
         describe("push received swizzling") {
             context("no push receive in host app") {
-                it("should call handle push") {
+                it("should call handle push when app is opened") {
                     setup(appDelegate: EmptyAppDelegate())
-                    openNotification()
+                    openNotification(appOpened: true)
+                    expect(manager.handlePushOpenedCalls.count).to(equal(1))
+                }
+                it("should call handle push when app is closed") {
+                    setup(appDelegate: EmptyAppDelegate())
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                 }
             }
@@ -168,7 +177,7 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
                 it("should call handle push, call original method") {
                     let appDelegate = AppDelegateWithReceive()
                     setup(appDelegate: appDelegate)
-                    openNotification()
+                    openNotification(appOpened: true)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                     expect(appDelegate.receiveCalls.count).to(equal(1))
                 }
@@ -177,22 +186,22 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
             context("Notification center empty delegate") {
                 it("should call handle push when added before") {
                     setup(appDelegate: EmptyAppDelegate(), centerDelegate: EmptyCenterDelegate())
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                 }
                 it("should call handle push when added after") {
                     setup(appDelegate: EmptyAppDelegate(), centerDelegate: nil)
                     mockCenter.delegate = EmptyCenterDelegate()
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                 }
                 it("should call handle push when changed to nil") {
                     setup(appDelegate: EmptyAppDelegate(), centerDelegate: nil)
                     mockCenter.delegate = EmptyCenterDelegate()
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                     mockCenter.delegate = nil
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(2))
                 }
             }
@@ -201,7 +210,7 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
                 it("should call handle push, call original method when added before") {
                     let centerDelegate = CenterDelegate()
                     setup(appDelegate: EmptyAppDelegate(), centerDelegate: centerDelegate)
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                     expect(centerDelegate.receiveCalls.count).to(equal(1))
                 }
@@ -209,7 +218,7 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
                     setup(appDelegate: EmptyAppDelegate(), centerDelegate: nil)
                     let centerDelegate = CenterDelegate()
                     mockCenter.delegate = centerDelegate
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                     expect(centerDelegate.receiveCalls.count).to(equal(1))
                 }
@@ -217,15 +226,15 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
                     setup(appDelegate: EmptyAppDelegate(), centerDelegate: nil)
                     let centerDelegate = CenterDelegate()
                     mockCenter.delegate = centerDelegate
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                     expect(centerDelegate.receiveCalls.count).to(equal(1))
                     mockCenter.delegate = nil
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(2))
                     expect(centerDelegate.receiveCalls.count).to(equal(1))
                     mockCenter.delegate = nil
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(3))
                     expect(centerDelegate.receiveCalls.count).to(equal(1))
                 }
@@ -235,12 +244,12 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
                 it("should call handle push") {
                     let delegate = CenterDelegate()
                     setup(appDelegate: EmptyAppDelegate(), centerDelegate: delegate)
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                     expect(delegate.receiveCalls.count).to(equal(1))
                     let otherDelegate = OtherCenterDelegate()
                     mockCenter.delegate = otherDelegate
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(2))
                     expect(delegate.receiveCalls.count).to(equal(1))
                     expect(otherDelegate.receiveCalls.count).to(equal(1))
@@ -251,12 +260,12 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
                 it("should call handle push") {
                     let delegate = CenterDelegate()
                     setup(appDelegate: EmptyAppDelegate(), centerDelegate: delegate)
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(1))
                     expect(delegate.receiveCalls.count).to(equal(1))
                     let wrappingDelegate = WrappingCenterDelegate(original: mockCenter.delegate!)
                     mockCenter.delegate = wrappingDelegate
-                    openNotification()
+                    openNotification(appOpened: false)
                     expect(manager.handlePushOpenedCalls.count).to(equal(2))
                     expect(delegate.receiveCalls.count).to(equal(2))
                     expect(wrappingDelegate.receiveCalls.count).to(equal(1))

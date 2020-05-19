@@ -11,6 +11,7 @@ import UserNotifications
 
 struct PushNotificationParser {
     struct PushOpenedData: Equatable {
+        let silent: Bool
         let campaignData: CampaignData
         let actionType: ExponeaNotificationActionType
         let actionValue: String?
@@ -22,7 +23,8 @@ struct PushNotificationParser {
             lhs: PushNotificationParser.PushOpenedData,
             rhs: PushNotificationParser.PushOpenedData
         ) -> Bool {
-            guard lhs.campaignData == rhs.campaignData &&
+            guard lhs.silent == rhs.silent &&
+                  lhs.campaignData == rhs.campaignData &&
                   lhs.actionType == rhs.actionType &&
                   lhs.actionValue == rhs.actionValue &&
                   lhs.eventData == rhs.eventData else {
@@ -47,10 +49,11 @@ struct PushNotificationParser {
             return nil
         }
 
+        let silent = userInfo["silent"] as? String == "true"
         var eventData: [DataType] = []
-        var eventType = EventType.pushOpened
+        var eventType = silent ? EventType.pushDelivered : EventType.pushOpened
         var properties: [String: JSONValue] = [
-            "status": .string("clicked"),
+            "status": .string(silent ? "delivered" : "clicked"),
             "cta": .string("notification"),
             "url": .string("app")
         ]
@@ -112,6 +115,7 @@ struct PushNotificationParser {
         eventData.append(.properties(properties))
 
         return PushOpenedData(
+            silent: silent,
             campaignData: notificationData.campaignData,
             actionType: action,
             actionValue: actionValue,

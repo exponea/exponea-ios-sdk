@@ -10,8 +10,18 @@ import Foundation
 import UserNotifications
 
 public protocol PushNotificationManagerDelegate: class {
-    func pushNotificationOpened(with action: ExponeaNotificationActionType,
-                                value: String?, extraData: [AnyHashable: Any]?)
+    func pushNotificationOpened(
+        with action: ExponeaNotificationActionType,
+        value: String?,
+        extraData: [AnyHashable: Any]?
+    )
+
+    func silentPushNotificationReceived(extraData: [AnyHashable: Any]?)
+}
+
+public extension PushNotificationManagerDelegate {
+    // default implementation is empty for compatibility
+    func silentPushNotificationReceived(extraData: [AnyHashable: Any]?) {}
 }
 
 class PushNotificationManager: NSObject, PushNotificationManagerType {
@@ -46,6 +56,14 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         pushNotificationSwizzler.addAutomaticPushTracking()
         checkForDeliveredPushMessages()
         verifyPushStatusAndTrackPushToken()
+
+        // We need to register for silent push notifications, but let's only do it when visible pushes are allowed
+        // so we don't track push token to exponea without permission to show push notifications
+        UNAuthorizationStatusProvider.current.getAuthorizationStatus { status in
+            if case .authorized = status {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
     }
 
     deinit {
@@ -68,36 +86,39 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             return
         }
 
-        // Track the event
         do {
             try trackingManager?.track(pushOpenedData.eventType, with: pushOpenedData.eventData)
         } catch {
             Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
         }
 
-        // save campaign to be added to session start
-        Exponea.shared.trackCampaignData(data: pushOpenedData.campaignData, timestamp: nil)
+        if pushOpenedData.silent {
+            delegate?.silentPushNotificationReceived(extraData: pushOpenedData.extraData)
+        } else {
+            // save campaign to be added to session start
+            Exponea.shared.trackCampaignData(data: pushOpenedData.campaignData, timestamp: nil)
 
-        // Notify the delegate
-        delegate?.pushNotificationOpened(
-            with: pushOpenedData.actionType,
-            value: pushOpenedData.actionValue,
-            extraData: pushOpenedData.extraData
-        )
+            // Notify the delegate
+            delegate?.pushNotificationOpened(
+                with: pushOpenedData.actionType,
+                value: pushOpenedData.actionValue,
+                extraData: pushOpenedData.extraData
+            )
 
-        switch pushOpenedData.actionType {
-        case .none, .openApp:
-            // No need to do anything, app was opened automatically
-            break
+            switch pushOpenedData.actionType {
+            case .none, .openApp:
+                // No need to do anything, app was opened automatically
+                break
 
-        case .browser:
-            if let value = pushOpenedData.actionValue {
-                urlOpener.openBrowserLink(value)
-            }
+            case .browser:
+                if let value = pushOpenedData.actionValue {
+                    urlOpener.openBrowserLink(value)
+                }
 
-        case .deeplink:
-            if let value = pushOpenedData.actionValue {
-                urlOpener.openDeeplink(value)
+            case .deeplink:
+                if let value = pushOpenedData.actionValue {
+                    urlOpener.openDeeplink(value)
+                }
             }
         }
     }

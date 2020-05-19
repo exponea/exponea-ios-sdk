@@ -162,4 +162,13 @@ struct PushNotificationsTestData {
           "title" : "Notification title"
         }
     """
+
+    let deliveredSilentNotification = """
+        {
+            "title": "Silent push",
+            "action": "app",
+            "silent": "true",
+            "attributes": { "silent_test": "value" }
+        }
+    """
 }
