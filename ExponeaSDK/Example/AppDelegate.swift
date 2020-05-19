@@ -96,7 +96,15 @@ extension AppDelegate: PushNotificationManagerDelegate {
     ) {
         Exponea.logger.log(
             .verbose,
-            message: "Action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))"
+            message: "Alert push received, " +
+                "action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))"
+        )
+    }
+
+    func silentPushNotificationReceived(extraData: [AnyHashable: Any]?) {
+        Exponea.logger.log(
+            .verbose,
+            message: "Silent push received, extraData \(String(describing: extraData))"
         )
     }
 }
