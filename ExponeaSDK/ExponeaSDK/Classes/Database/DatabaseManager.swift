@@ -281,11 +281,16 @@ extension DatabaseManager: DatabaseManagerType {
                     // Add the customer properties to the customer entity
                     processProperties(properties, into: trackCustomer)
 
-                case .pushNotificationToken(let token):
-                    let item = KeyValueItem(context: context)
-                    item.key = "apple_push_notification_id"
-                    item.value = (token ?? "") as NSString
-                    trackCustomer.addToProperties(item)
+                case .pushNotificationToken(let token, let authorized):
+                    let tokenItem = KeyValueItem(context: context)
+                    tokenItem.key = "apple_push_notification_id"
+                    tokenItem.value = (token ?? "") as NSString
+                    trackCustomer.addToProperties(tokenItem)
+
+                    let authorizatedItem = KeyValueItem(context: context)
+                    authorizatedItem.key = "apple_push_notification_authorized"
+                    authorizatedItem.value = authorized as NSObject
+                    trackCustomer.addToProperties(authorizatedItem)
 
                     // Update push token on customer
                     trackCustomer.customer = fetchCurrentCustomerAndUpdate(pushToken: token)

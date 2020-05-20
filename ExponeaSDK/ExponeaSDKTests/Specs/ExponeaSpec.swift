@@ -418,19 +418,28 @@ class ExponeaSpec: QuickSpec {
                     expect(customerUpdates[0].customerIds["cookie"])
                         .to(equal(JSONValue.string(firstCustomer.uuid.uuidString)))
                     expect(customerUpdates[0].dataTypes)
-                        .to(equal([.properties(["apple_push_notification_id": .string("token")])]))
+                        .to(equal([.properties([
+                            "apple_push_notification_authorized": .bool(true),
+                            "apple_push_notification_id": .string("token")
+                        ])]))
                     expect(customerUpdates[0].projectToken).to(equal("mock-token"))
 
                     expect(customerUpdates[1].customerIds["cookie"])
                         .to(equal(JSONValue.string(firstCustomer.uuid.uuidString)))
                     expect(customerUpdates[1].dataTypes)
-                        .to(equal([.properties(["apple_push_notification_id": .string("")])]))
+                        .to(equal([.properties([
+                            "apple_push_notification_authorized": .bool(false),
+                            "apple_push_notification_id": .string("")
+                        ])]))
                     expect(customerUpdates[1].projectToken).to(equal("mock-token"))
 
                     expect(customerUpdates[2].customerIds["cookie"])
                         .to(equal(JSONValue.string(secondCustomer.uuid.uuidString)))
                     expect(customerUpdates[2].dataTypes)
-                        .to(equal([.properties(["apple_push_notification_id": .string("token")])]))
+                        .to(equal([.properties([
+                            "apple_push_notification_authorized": .bool(true),
+                            "apple_push_notification_id": .string("token")
+                        ])]))
                     expect(customerUpdates[2].projectToken).to(equal("other-mock-token"))
                 }
             }

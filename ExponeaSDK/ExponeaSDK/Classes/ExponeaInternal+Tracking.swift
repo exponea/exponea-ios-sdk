@@ -99,10 +99,13 @@ extension ExponeaInternal {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            let data: [DataType] = [.pushNotificationToken(token)]
-
-            // Do the actual tracking
-            try dependencies.trackingManager.track(.identifyCustomer, with: data)
+            UNAuthorizationStatusProvider.current.isAuthorized { authorized in
+                let data: [DataType] = [.pushNotificationToken(token: token, authorized: authorized)]
+                // Do the actual tracking
+                self.executeSafely {
+                    try dependencies.trackingManager.track(.identifyCustomer, with: data)
+                }
+            }
         }
     }
 

@@ -35,26 +35,34 @@ public extension Exponea {
         let appGroup: String?
         weak var delegate: PushNotificationManagerDelegate?
         let tokenTrackFrequency: TokenTrackFrequency
+        let requirePushAuthorization: Bool
 
         private init(
             enabled: Bool,
             appGroup: String? = nil,
             delegate: PushNotificationManagerDelegate? = nil,
-            tokenTrackFrequency: TokenTrackFrequency = .onTokenChange
+            tokenTrackFrequency: TokenTrackFrequency = .onTokenChange,
+            requirePushAuthorization: Bool = true
         ) {
             self.enabled = enabled
             self.appGroup = appGroup
             self.delegate = delegate
             self.tokenTrackFrequency = tokenTrackFrequency
+            self.requirePushAuthorization = requirePushAuthorization
         }
 
         public static func enabled(
             appGroup: String,
             delegate: PushNotificationManagerDelegate? = nil,
+            requirePushAuthorization: Bool = true,
             tokenTrackFrequency: TokenTrackFrequency = .onTokenChange
         ) -> AutomaticPushNotificationTracking {
             return AutomaticPushNotificationTracking(
-                enabled: true, appGroup: appGroup, delegate: delegate, tokenTrackFrequency: tokenTrackFrequency
+                enabled: true,
+                appGroup: appGroup,
+                delegate: delegate,
+                tokenTrackFrequency: tokenTrackFrequency,
+                requirePushAuthorization: requirePushAuthorization
             )
         }
 
@@ -108,6 +116,7 @@ public extension ExponeaInternal {
                 sessionTimeout: automaticSessionTracking.timeout,
                 automaticSessionTracking: automaticSessionTracking.enabled,
                 automaticPushNotificationTracking: automaticPushNotificationTracking.enabled,
+                requirePushAuthorization: automaticPushNotificationTracking.requirePushAuthorization,
                 tokenTrackFrequency: automaticPushNotificationTracking.tokenTrackFrequency,
                 appGroup: automaticPushNotificationTracking.appGroup,
                 flushEventMaxRetries: flushingSetup.maxRetries

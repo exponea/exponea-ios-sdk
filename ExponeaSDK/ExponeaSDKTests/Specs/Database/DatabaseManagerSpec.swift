@@ -33,14 +33,14 @@ class DatabaseManagerSpec: QuickSpec {
                     .timestamp(100),
                     .customerIds(["registered": .string("myemail")]),
                     .properties(["customprop": .string("customval")]),
-                    .pushNotificationToken("pushtoken")
+                    .pushNotificationToken(token: "pushtoken", authorized: true)
                 ]
 
                 let eventData: [DataType] = [
                     .timestamp(100),
                     .properties(["customprop": .string("customval")]),
                     .eventType("myevent"),
-                    .pushNotificationToken("tokenthatisgoingtobeignored")
+                    .pushNotificationToken(token: "tokenthatisgoingtobeignored", authorized: true)
                 ]
 
                 describe("customer handling") {
@@ -101,10 +101,11 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(db.currentCustomer.ids["registered"]).to(equal("myemail".jsonValue))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
-                    expect(props.count).to(equal(2))
+                    expect(props.count).to(equal(3))
 
                     expect(props["customprop"] as? String).to(equal("customval"))
                     expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
+                    expect(props["apple_push_notification_authorized"] as? Bool).to(equal(true))
 
                     expect(object.timestamp).to(equal(100))
 
@@ -195,13 +196,13 @@ class DatabaseManagerSpec: QuickSpec {
                 let customerData: [DataType] = [
                     .customerIds(["registered": .string("myemail")]),
                     .properties(["customprop": .string("customval")]),
-                    .pushNotificationToken("pushtoken")
+                    .pushNotificationToken(token: "pushtoken", authorized: true)
                 ]
 
                 let eventData: [DataType] = [
                     .properties(["customprop": .string("customval")]),
                     .eventType("myevent"),
-                    .pushNotificationToken("tokenthatisgoingtobeignored")
+                    .pushNotificationToken(token: "tokenthatisgoingtobeignored", authorized: true)
                 ]
 
                 // Create on main queue
@@ -245,10 +246,11 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(db.currentCustomer.ids["registered"]).to(equal("myemail".jsonValue))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
-                    expect(props.count).to(equal(2))
+                    expect(props.count).to(equal(3))
 
                     expect(props["customprop"] as? String).to(equal("customval"))
                     expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
+                    expect(props["apple_push_notification_authorized"] as? Bool).to(equal(true))
 
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
 
@@ -317,13 +319,13 @@ class DatabaseManagerSpec: QuickSpec {
                 let customerData: [DataType] = [
                     .customerIds(["registered": .string("myemail")]),
                     .properties(["customprop": .string("customval")]),
-                    .pushNotificationToken("pushtoken")
+                    .pushNotificationToken(token: "pushtoken", authorized: true)
                 ]
 
                 let eventData: [DataType] = [
                     .properties(["customprop": .string("customval")]),
                     .eventType("myevent"),
-                    .pushNotificationToken("tokenthatisgoingtobeignored")
+                    .pushNotificationToken(token: "tokenthatisgoingtobeignored", authorized: true)
                 ]
 
                 it("should not crash when tracking event", closure: {

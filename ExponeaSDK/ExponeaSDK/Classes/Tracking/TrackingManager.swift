@@ -101,6 +101,7 @@ class TrackingManager {
         if repository.configuration.automaticPushNotificationTracking {
             notificationsManager = PushNotificationManager(
                 trackingManager: self,
+                requirePushAuthorization: repository.configuration.requirePushAuthorization,
                 appGroup: repository.configuration.appGroup,
                 tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
                 currentPushToken: database.currentCustomer.pushToken,
@@ -401,7 +402,7 @@ extension TrackingManager: InAppMessageTrackingDelegate {
 extension TrackingManager {
     public func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) throws {
         let pushToken = customerPushToken
-        try track(EventType.registerPushToken, with: [.pushNotificationToken(nil)])
+        try track(EventType.registerPushToken, with: [.pushNotificationToken(token: nil, authorized: false)])
         sessionManager.clear()
         inAppMessagesManager.anonymize()
 
@@ -411,7 +412,14 @@ extension TrackingManager {
         repository.configuration.projectMapping = projectMapping
 
         database.makeNewCustomer()
-        try track(EventType.registerPushToken, with: [.pushNotificationToken(pushToken)])
+        UNAuthorizationStatusProvider.current.isAuthorized { authorized in
+            Exponea.shared.executeSafely {
+                try self.track(
+                    EventType.registerPushToken,
+                    with: [.pushNotificationToken(token: pushToken, authorized: authorized)]
+                )
+            }
+        }
         initialSetup()
     }
 }

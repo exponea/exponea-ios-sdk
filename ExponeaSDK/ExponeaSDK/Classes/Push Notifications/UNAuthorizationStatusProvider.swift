@@ -14,13 +14,13 @@ class UNAuthorizationStatusProvider {
 }
 
 protocol UNAuthorizationStatusProviding {
-    func getAuthorizationStatus(completion: @escaping (UNAuthorizationStatus) -> Void)
+    func isAuthorized(completion: @escaping (Bool) -> Void)
 }
 
 extension UNUserNotificationCenter: UNAuthorizationStatusProviding {
-    func getAuthorizationStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
+    func isAuthorized(completion: @escaping (Bool) -> Void) {
         getNotificationSettings { settings in
-            completion(settings.authorizationStatus)
+            completion(settings.authorizationStatus.rawValue == UNAuthorizationStatus.authorized.rawValue)
         }
     }
 }

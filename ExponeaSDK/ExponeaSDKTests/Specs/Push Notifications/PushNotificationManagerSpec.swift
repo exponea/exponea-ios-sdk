@@ -71,12 +71,14 @@ final class PushNotificationManagerSpec: QuickSpec {
         var urlOpener: MockUrlOpener!
 
         func createPushManager(
+            requirePushAuthorization: Bool,
             currentToken: String?,
             tokenTrackFrequency: ExponeaSDK.TokenTrackFrequency,
             lastTokenTrackDate: Date = Date()
         ) {
             pushManager = PushNotificationManager(
                 trackingManager: trackingManager,
+                requirePushAuthorization: requirePushAuthorization,
                 appGroup: "mock-app-group",
                 tokenTrackFrequency: tokenTrackFrequency,
                 currentPushToken: currentToken,
@@ -89,7 +91,12 @@ final class PushNotificationManagerSpec: QuickSpec {
             UserDefaults.standard.removePersistentDomain(forName: "mock-app-group")
             trackingManager = MockTrackingManager()
             urlOpener = MockUrlOpener()
-            createPushManager(currentToken: "mock-push-token", tokenTrackFrequency: .daily)
+            UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .authorized)
+            createPushManager(
+                requirePushAuthorization: true,
+                currentToken: "mock-push-token",
+                tokenTrackFrequency: .daily
+            )
         }
 
         describe("tracking stored delivered push notifications") {
@@ -396,20 +403,45 @@ final class PushNotificationManagerSpec: QuickSpec {
 
         describe("tracking push token") {
             let mockTokenData = "mock_token_data".data(using: .utf8)! as AnyObject
-            it("should track push token after registration") {
+            it("should track push token if authorized") {
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .authorized)
                 pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
                         type: .registerPushToken,
-                        data: [.pushNotificationToken("6D6F636B5F746F6B656E5F64617461")]
+                        data: [.pushNotificationToken(token: "6D6F636B5F746F6B656E5F64617461", authorized: true)]
+                    )
+                ]))
+            }
+
+            it("should not track push token if not authorized") {
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
+                pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
+                expect(trackingManager.trackedEvents).to(beEmpty())
+            }
+
+            it("should track push token if not authorized but authorization is not required") {
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
+                createPushManager(
+                    requirePushAuthorization: false,
+                    currentToken: "mock-token",
+                    tokenTrackFrequency: .onTokenChange,
+                    lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 + 10)
+                )
+                pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .registerPushToken,
+                        data: [.pushNotificationToken(token: "6D6F636B5F746F6B656E5F64617461", authorized: false)]
                     )
                 ]))
             }
 
             it("should not track token on app foreground in 'daily' frequency within one day") {
                 createPushManager(
+                    requirePushAuthorization: true,
                     currentToken: "mock-token",
-                    tokenTrackFrequency: .daily,
+                    tokenTrackFrequency: .onTokenChange,
                     lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 + 10)
                 )
                 expect(trackingManager.trackedEvents).to(beEmpty())
@@ -417,6 +449,7 @@ final class PushNotificationManagerSpec: QuickSpec {
 
             it("should track token on app foreground in 'daily' frequency after one day") {
                 createPushManager(
+                    requirePushAuthorization: true,
                     currentToken: "mock-token",
                     tokenTrackFrequency: .daily,
                     lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 - 10)
@@ -424,13 +457,14 @@ final class PushNotificationManagerSpec: QuickSpec {
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
                         type: .registerPushToken,
-                        data: [.pushNotificationToken("mock-token")]
+                        data: [.pushNotificationToken(token: "mock-token", authorized: true)]
                     )
                 ]))
             }
 
             it("should track token on app foreground in 'everyLaunch' frequency") {
                 createPushManager(
+                    requirePushAuthorization: true,
                     currentToken: "mock-token",
                     tokenTrackFrequency: .everyLaunch,
                     lastTokenTrackDate: Date(timeIntervalSince1970: 1)
@@ -438,14 +472,15 @@ final class PushNotificationManagerSpec: QuickSpec {
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
                         type: .registerPushToken,
-                        data: [.pushNotificationToken("mock-token")]
+                        data: [.pushNotificationToken(token: "mock-token", authorized: true)]
                     )
                 ]))
             }
 
-            it("should track nil as token if not authorized") {
+            it("should clear token if not authorized and authorization required") {
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
                 createPushManager(
+                    requirePushAuthorization: true,
                     currentToken: "mock-token",
                     tokenTrackFrequency: .daily,
                     lastTokenTrackDate: Date(timeIntervalSince1970: 1)
@@ -453,7 +488,23 @@ final class PushNotificationManagerSpec: QuickSpec {
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
                         type: .registerPushToken,
-                        data: [.pushNotificationToken(nil)]
+                        data: [.pushNotificationToken(token: nil, authorized: false)]
+                    )
+                ]))
+            }
+
+            it("should track token if not authorized and authorization not required") {
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
+                createPushManager(
+                    requirePushAuthorization: false,
+                    currentToken: "mock-token",
+                    tokenTrackFrequency: .daily,
+                    lastTokenTrackDate: Date(timeIntervalSince1970: 1)
+                )
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .registerPushToken,
+                        data: [.pushNotificationToken(token: "mock-token", authorized: false)]
                     )
                 ]))
             }

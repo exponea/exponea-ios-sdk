@@ -23,6 +23,12 @@ public struct Configuration: Codable, Equatable {
     /// listen to updates for tokens or push settings.
     public internal(set) var automaticPushNotificationTracking: Bool = true
 
+    /// If true, push notification registration and push token tracking is only done if the device is authorized
+    /// to receive push notifications.
+    /// Disabling is useful for silent push notifications that don't require authorization.
+    /// In that case, registration and token tracking is done at app start automatically.
+    public internal(set) var requirePushAuthorization: Bool = true
+
     /// If automatic push notification tracking is enabled, this can be used to determine how often
     /// should the push notification token be sent to Exponea.
     public internal(set) var tokenTrackFrequency: TokenTrackFrequency = .onTokenChange
@@ -43,6 +49,7 @@ public struct Configuration: Codable, Equatable {
         case sessionTimeout
         case automaticSessionTracking
         case automaticPushNotificationTracking
+        case requirePushAuthorization
         case tokenTrackFrequency
         case appGroup
         case flushEventMaxRetries
@@ -92,6 +99,7 @@ public struct Configuration: Codable, Equatable {
         sessionTimeout: Double,
         automaticSessionTracking: Bool = true,
         automaticPushNotificationTracking: Bool,
+        requirePushAuthorization: Bool = true,
         tokenTrackFrequency: TokenTrackFrequency,
         appGroup: String?,
         flushEventMaxRetries: Int
@@ -104,6 +112,7 @@ public struct Configuration: Codable, Equatable {
         self.sessionTimeout = sessionTimeout
         self.automaticSessionTracking = automaticSessionTracking
         self.automaticPushNotificationTracking = automaticPushNotificationTracking
+        self.requirePushAuthorization = requirePushAuthorization
         self.tokenTrackFrequency = tokenTrackFrequency
         self.appGroup = appGroup
         self.flushEventMaxRetries = flushEventMaxRetries
@@ -188,6 +197,12 @@ public struct Configuration: Codable, Equatable {
             self.automaticPushNotificationTracking = automaticPushNotificationTracking
         }
 
+        // Requiring push authorization
+        if let requirePushAuthorization = try container.decodeIfPresent(
+            Bool.self, forKey: .requirePushAuthorization) {
+            self.requirePushAuthorization = requirePushAuthorization
+        }
+
         // Token track frequency
         if let tokenTrackFrequency = try container.decodeIfPresent(
             TokenTrackFrequency.self, forKey: .tokenTrackFrequency) {
@@ -232,6 +247,7 @@ public struct Configuration: Codable, Equatable {
         try container.encode(sessionTimeout, forKey: .sessionTimeout)
         try container.encode(automaticSessionTracking, forKey: .automaticSessionTracking)
         try container.encode(automaticPushNotificationTracking, forKey: .automaticPushNotificationTracking)
+        try container.encode(requirePushAuthorization, forKey: .requirePushAuthorization)
         try container.encode(tokenTrackFrequency, forKey: .tokenTrackFrequency)
         try container.encode(appGroup, forKey: .appGroup)
         try container.encode(flushEventMaxRetries, forKey: .flushEventMaxRetries)
@@ -246,7 +262,8 @@ public struct Configuration: Codable, Equatable {
             lhs.defaultProperties?.mapValues { $0.jsonValue} == rhs.defaultProperties?.mapValues { $0.jsonValue} &&
             lhs.sessionTimeout == rhs.sessionTimeout &&
             lhs.automaticSessionTracking == rhs.automaticSessionTracking &&
-            lhs.automaticSessionTracking == rhs.automaticSessionTracking &&
+            lhs.automaticPushNotificationTracking == rhs.automaticPushNotificationTracking &&
+            lhs.requirePushAuthorization == rhs.requirePushAuthorization &&
             lhs.tokenTrackFrequency == rhs.tokenTrackFrequency &&
             lhs.appGroup == rhs.appGroup &&
             lhs.flushEventMaxRetries == rhs.flushEventMaxRetries
@@ -287,6 +304,7 @@ extension Configuration: CustomStringConvertible {
         Session Timeout: \(sessionTimeout)
         Automatic Session Tracking: \(automaticSessionTracking)
         Automatic Push Notification Tracking: \(automaticPushNotificationTracking)
+        Require Push Authorization: \(requirePushAuthorization)
         Token Track Frequency: \(tokenTrackFrequency)
         Flush Event Max Retries: \(flushEventMaxRetries)
         App Group: \(appGroup ?? "not configured")

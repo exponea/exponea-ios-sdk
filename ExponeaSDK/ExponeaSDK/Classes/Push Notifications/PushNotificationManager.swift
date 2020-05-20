@@ -28,6 +28,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     /// The tracking manager used to track push events
     internal weak var trackingManager: TrackingManagerType?
 
+    private let requirePushAuthorization: Bool
     private let appGroup: String? // used for sharing data across extensions, fx. for push delivered tracking
     private let tokenTrackFrequency: TokenTrackFrequency
     private let urlOpener: UrlOpenerType
@@ -40,6 +41,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     let decoder: JSONDecoder = JSONDecoder.snakeCase
 
     init(trackingManager: TrackingManagerType,
+         requirePushAuthorization: Bool,
          appGroup: String?,
          tokenTrackFrequency: TokenTrackFrequency,
          currentPushToken: String?,
@@ -51,6 +53,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         self.currentPushToken = currentPushToken
         self.lastTokenTrackDate = lastTokenTrackDate ?? .distantPast
         self.urlOpener = urlOpener
+        self.requirePushAuthorization = requirePushAuthorization
         super.init()
 
         pushNotificationSwizzler.addAutomaticPushTracking()
@@ -58,11 +61,14 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         verifyPushStatusAndTrackPushToken()
 
         // We need to register for silent push notifications, but let's only do it when visible pushes are allowed
-        // so we don't track push token to exponea without permission to show push notifications
-        UNAuthorizationStatusProvider.current.getAuthorizationStatus { status in
-            if case .authorized = status {
-                UIApplication.shared.registerForRemoteNotifications()
+        // so we don't track push token to exponea without permission to show
+        // push notifications unless enabled by developer in configuration
+        if requirePushAuthorization {
+            UNAuthorizationStatusProvider.current.isAuthorized { authorized in
+                if authorized { UIApplication.shared.registerForRemoteNotifications() }
             }
+        } else {
+            UIApplication.shared.registerForRemoteNotifications()
         }
     }
 
@@ -133,8 +139,12 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         guard let tokenData = dataObject as? Data else {
             return
         }
-        currentPushToken = tokenData.tokenString
-        trackCurrentPushToken()
+        UNAuthorizationStatusProvider.current.isAuthorized { authorized in
+            if !self.requirePushAuthorization || authorized {
+                self.currentPushToken = tokenData.tokenString
+                self.trackCurrentPushToken(isAuthorized: authorized)
+            }
+        }
     }
 
     internal func checkForDeliveredPushMessages() {
@@ -194,40 +204,42 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     }
 
     func verifyPushStatusAndTrackPushToken() {
-        UNAuthorizationStatusProvider.current.getAuthorizationStatus { status in
-            if case .authorized = status {
-                self.checkForPushTokenFrequency()
-            } else {
-                let hadToken = self.currentPushToken != nil
-                self.currentPushToken = nil
-                if hadToken {
-                    self.trackCurrentPushToken()
+        UNAuthorizationStatusProvider.current.isAuthorized { authorized in
+            if self.requirePushAuthorization && !authorized {
+                if self.currentPushToken != nil {
+                    self.currentPushToken = nil
+                    self.trackCurrentPushToken(isAuthorized: authorized)
                 }
+            } else {
+                self.checkForPushTokenFrequency(isAuthorized: authorized)
             }
         }
     }
 
-    private func trackCurrentPushToken() {
+    private func trackCurrentPushToken(isAuthorized authorized: Bool) {
         do {
-            try trackingManager?.track(.registerPushToken, with: [.pushNotificationToken(currentPushToken)])
+            try trackingManager?.track(
+                .registerPushToken,
+                with: [.pushNotificationToken(token: currentPushToken, authorized: authorized)]
+            )
         } catch {
             Exponea.logger.log(.error, message: "Error tracking current push token. \(error.localizedDescription)")
         }
     }
 
-    private func checkForPushTokenFrequency() {
+    private func checkForPushTokenFrequency(isAuthorized authorized: Bool) {
         switch tokenTrackFrequency {
         case .everyLaunch:
             // Track push token
             lastTokenTrackDate = .init()
-            trackCurrentPushToken()
+            trackCurrentPushToken(isAuthorized: authorized)
 
         case .daily:
             // Compare last track dates, if equal or more than a day, track
             let now = Date()
             if abs(lastTokenTrackDate.timeIntervalSince(now)) >= 60 * 60 * 24 {
                 lastTokenTrackDate = now
-                trackCurrentPushToken()
+                trackCurrentPushToken(isAuthorized: authorized)
             }
 
         case .onTokenChange:

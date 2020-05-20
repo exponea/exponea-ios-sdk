@@ -15,7 +15,7 @@ class MockUNAuthorizationStatusProviding: UNAuthorizationStatusProviding {
         self.status = status
     }
 
-    func getAuthorizationStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
-        completion(status)
+    func isAuthorized(completion: @escaping (Bool) -> Void) {
+        completion(status.rawValue == UNAuthorizationStatus.authorized.rawValue)
     }
 }

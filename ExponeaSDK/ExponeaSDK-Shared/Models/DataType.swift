@@ -28,8 +28,9 @@ enum DataType: Equatable {
     /// For some tracked events you can also provide an event type
     case eventType(String)
 
+    /// Token and authorization status for that token
     /// If nil, it will delete the existing push notification token if any.
-    case pushNotificationToken(String?)
+    case pushNotificationToken(token: String?, authorized: Bool)
 }
 
 extension Array where Iterator.Element == DataType {
