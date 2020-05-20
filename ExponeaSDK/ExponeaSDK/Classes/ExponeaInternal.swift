@@ -108,7 +108,7 @@ public class ExponeaInternal: ExponeaType {
     /// push tracking is enabled, otherwise will never get called.
     public var pushNotificationsDelegate: PushNotificationManagerDelegate? {
         get {
-            return trackingManager?.notificationsManager?.delegate
+            return trackingManager?.notificationsManager.delegate
         }
         set {
             guard let notificationsManager = trackingManager?.notificationsManager else {

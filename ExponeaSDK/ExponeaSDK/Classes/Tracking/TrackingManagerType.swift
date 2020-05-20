@@ -21,8 +21,7 @@ protocol TrackingManagerType: class {
     var customerPushToken: String? { get }
 
     /// The manager responsible for handling notification callbacks.
-    /// Only useful if automatic push tracking is enabled.
-    var notificationsManager: PushNotificationManagerType? { get }
+    var notificationsManager: PushNotificationManagerType { get }
 
     /// Main function used to track events to Exponea.
     ///

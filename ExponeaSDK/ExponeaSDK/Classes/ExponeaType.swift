@@ -124,6 +124,14 @@ public protocol ExponeaType: class {
     /// Tracks the push notification clicked event to Exponea API.
     func trackPushOpened(with userInfo: [AnyHashable: Any])
 
+    /// Handles push notification opened - user action for alert notifications, delivery into app for silent pushes.
+    /// This method will parse the data, track it and perform actions if needed.
+    func handlePushNotificationOpened(response: UNNotificationResponse)
+
+    /// Handles push notification opened - user action for alert notifications, delivery into app for silent pushes.
+    /// This method will parse the data, track it and perform actions if needed.
+    func handlePushNotificationOpened(userInfo: [AnyHashable: Any], actionIdentifier: String?)
+
     // MARK: - Sessions -
 
     /// Tracks the start of the user session.

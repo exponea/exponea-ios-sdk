@@ -33,6 +33,10 @@ public class ExponeaNotificationService {
     }
 
     public func process(request: UNNotificationRequest, contentHandler: @escaping (UNNotificationContent) -> Void) {
+        guard Exponea.isExponeaNotification(userInfo: request.content.userInfo) else {
+            Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
+            return
+        }
         self.request = request
         self.contentHandler = contentHandler
 

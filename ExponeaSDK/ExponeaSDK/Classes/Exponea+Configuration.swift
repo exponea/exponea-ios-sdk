@@ -69,6 +69,45 @@ public extension Exponea {
         public static let disabled = AutomaticPushNotificationTracking(enabled: false)
     }
 
+    struct PushNotificationTracking {
+        let isEnabled: Bool
+        let appGroup: String?
+        weak var delegate: PushNotificationManagerDelegate?
+        let tokenTrackFrequency: TokenTrackFrequency
+        let requirePushAuthorization: Bool
+
+        private init(
+            enabled: Bool,
+            appGroup: String? = nil,
+            delegate: PushNotificationManagerDelegate? = nil,
+            tokenTrackFrequency: TokenTrackFrequency = .onTokenChange,
+            requirePushAuthorization: Bool = true
+        ) {
+            self.isEnabled = enabled
+            self.appGroup = appGroup
+            self.delegate = delegate
+            self.tokenTrackFrequency = tokenTrackFrequency
+            self.requirePushAuthorization = requirePushAuthorization
+        }
+
+        public static func enabled(
+            appGroup: String,
+            delegate: PushNotificationManagerDelegate? = nil,
+            requirePushAuthorization: Bool = true,
+            tokenTrackFrequency: TokenTrackFrequency = .onTokenChange
+        ) -> PushNotificationTracking {
+            return PushNotificationTracking(
+                enabled: true,
+                appGroup: appGroup,
+                delegate: delegate,
+                tokenTrackFrequency: tokenTrackFrequency,
+                requirePushAuthorization: requirePushAuthorization
+            )
+        }
+
+        public static let disabled = PushNotificationTracking(enabled: false)
+    }
+
     struct AutomaticSessionTracking {
         let enabled: Bool
         let timeout: Double
@@ -99,6 +138,8 @@ public extension Exponea {
 }
 
 public extension ExponeaInternal {
+    // swiftlint:disable:next line_length
+    @available(*, deprecated, message: "Automatic push notification tracking is deprecated. Find more information in the documentation. https://github.com/exponea/exponea-ios-sdk/blob/develop/Documentation/PUSH.md")
     func configure(
         _ projectSettings: Exponea.ProjectSettings,
         automaticPushNotificationTracking: Exponea.AutomaticPushNotificationTracking,
@@ -123,6 +164,36 @@ public extension ExponeaInternal {
             )
             self.configuration = configuration
             pushNotificationsDelegate = automaticPushNotificationTracking.delegate
+            flushingMode = flushingSetup.mode
+        } catch {
+            Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
+        }
+    }
+
+    func configure(
+        _ projectSettings: Exponea.ProjectSettings,
+        pushNotificationTracking: Exponea.PushNotificationTracking,
+        automaticSessionTracking: Exponea.AutomaticSessionTracking = .enabled(),
+        defaultProperties: [String: JSONConvertible]? = nil,
+        flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default
+    ) {
+        do {
+            let configuration = try Configuration(
+                projectToken: projectSettings.projectToken,
+                projectMapping: projectSettings.projectMapping,
+                authorization: projectSettings.authorization,
+                baseUrl: projectSettings.baseUrl,
+                defaultProperties: defaultProperties,
+                sessionTimeout: automaticSessionTracking.timeout,
+                automaticSessionTracking: automaticSessionTracking.enabled,
+                automaticPushNotificationTracking: false,
+                requirePushAuthorization: pushNotificationTracking.requirePushAuthorization,
+                tokenTrackFrequency: pushNotificationTracking.tokenTrackFrequency,
+                appGroup: pushNotificationTracking.appGroup,
+                flushEventMaxRetries: flushingSetup.maxRetries
+            )
+            self.configuration = configuration
+            pushNotificationsDelegate = pushNotificationTracking.delegate
             flushingMode = flushingSetup.mode
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")

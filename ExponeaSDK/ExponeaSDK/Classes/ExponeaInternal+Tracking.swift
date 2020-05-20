@@ -236,6 +236,39 @@ extension ExponeaInternal {
         }
     }
 
+    /// Handles push notification opened - user action for alert notifications, delivery into app for silent pushes.
+    /// This method will parse the data, track it and perform actions if needed.
+    public func handlePushNotificationOpened(response: UNNotificationResponse) {
+        handlePushNotificationOpened(
+            userInfo: response.notification.request.content.userInfo,
+            actionIdentifier: response.actionIdentifier
+        )
+    }
+
+    /// Handles push notification opened - user action for alert notifications, delivery into app for silent pushes.
+    /// This method will parse the data, track it and perform actions if needed.
+    public func handlePushNotificationOpened(userInfo: [AnyHashable: Any], actionIdentifier: String? = nil) {
+        guard Exponea.isExponeaNotification(userInfo: userInfo) else {
+            Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
+            return
+        }
+        executeSafelyWithDependencies { dependencies in
+            dependencies.trackingManager.notificationsManager.handlePushOpened(
+                userInfoObject: userInfo as AnyObject?,
+                actionIdentifier: actionIdentifier
+            )
+        }
+    }
+
+    /// Handles push notification token registration - compared to trackPushToken respects requirePushAuthorization
+    public func handlePushNotificationToken(deviceToken: Data) {
+        executeSafelyWithDependencies { dependencies in
+            dependencies.trackingManager.notificationsManager.handlePushTokenRegistered(
+                dataObject: deviceToken as AnyObject?
+            )
+        }
+    }
+
     // MARK: Flushing
     /// This method can be used to manually flush all available data to Exponea.
     public func flushData() {

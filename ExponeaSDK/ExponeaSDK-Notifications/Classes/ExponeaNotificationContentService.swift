@@ -25,6 +25,10 @@ public class ExponeaNotificationContentService {
     public func didReceive(_ notification: UNNotification,
                            context: NSExtensionContext?,
                            viewController: UIViewController) {
+        guard Exponea.isExponeaNotification(userInfo: notification.request.content.userInfo) else {
+            Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
+            return
+        }
         createActions(notification: notification, context: context)
         // Add image if any
         if let first = notification.request.content.attachments.first,

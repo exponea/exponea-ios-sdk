@@ -34,13 +34,14 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     private let urlOpener: UrlOpenerType
     private var currentPushToken: String?
     private var lastTokenTrackDate: Date
-    lazy var pushNotificationSwizzler = PushNotificationSwizzler(self)
+    private var pushNotificationSwizzler: PushNotificationSwizzler?
 
     internal weak var delegate: PushNotificationManagerDelegate?
 
     let decoder: JSONDecoder = JSONDecoder.snakeCase
 
     init(trackingManager: TrackingManagerType,
+         swizzlingEnabled: Bool,
          requirePushAuthorization: Bool,
          appGroup: String?,
          tokenTrackFrequency: TokenTrackFrequency,
@@ -56,7 +57,10 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         self.requirePushAuthorization = requirePushAuthorization
         super.init()
 
-        pushNotificationSwizzler.addAutomaticPushTracking()
+        if swizzlingEnabled {
+            pushNotificationSwizzler = PushNotificationSwizzler(self)
+            pushNotificationSwizzler?.addAutomaticPushTracking()
+        }
         checkForDeliveredPushMessages()
         verifyPushStatusAndTrackPushToken()
 
@@ -73,7 +77,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
     }
 
     deinit {
-        pushNotificationSwizzler.removeAutomaticPushTracking()
+        pushNotificationSwizzler?.removeAutomaticPushTracking()
     }
 
     // MARK: - Actions -

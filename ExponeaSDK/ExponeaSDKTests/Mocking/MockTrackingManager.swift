@@ -22,7 +22,16 @@ internal class MockTrackingManager: TrackingManagerType {
 
     var customerPushToken: String?
 
-    var notificationsManager: PushNotificationManagerType?
+    lazy var notificationsManager: PushNotificationManagerType = PushNotificationManager(
+        trackingManager: self,
+        swizzlingEnabled: false,
+        requirePushAuthorization: true,
+        appGroup: "mock-app-group",
+        tokenTrackFrequency: .onTokenChange,
+        currentPushToken: nil,
+        lastTokenTrackDate: Date(),
+        urlOpener: MockUrlOpener()
+    )
 
     var hasActiveSession: Bool = false
 

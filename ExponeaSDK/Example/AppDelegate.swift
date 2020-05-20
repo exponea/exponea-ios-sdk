@@ -11,7 +11,7 @@ import ExponeaSDK
 import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: ExponeaAppDelegate {
 
     static let memoryLogger = MemoryLogger()
     var window: UIWindow?
@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             ], intentIdentifiers: [], options: [])
 
         UNUserNotificationCenter.current().setNotificationCategories([category1, category2])
-
+        UNUserNotificationCenter.current().delegate = self
         return true
     }
 

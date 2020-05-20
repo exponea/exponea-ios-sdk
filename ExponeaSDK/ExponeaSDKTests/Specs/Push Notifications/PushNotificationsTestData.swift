@@ -15,6 +15,7 @@ struct PushNotificationsTestData {
             "alert" : "Test push notification title",
             "mutable-content" : 1
           },
+          "source": "xnpe_platform",
           "message" : "test push notification message",
           "action" : "app",
           "legacy_ios_category" : null,
@@ -27,6 +28,7 @@ struct PushNotificationsTestData {
           "title" : "Test push notification title",
           "message" : "test push notification message",
           "action" : "deeplink",
+          "source": "xnpe_platform",
           "aps" : {
             "alert" : "Test push notification title",
             "mutable-content" : 1
@@ -41,6 +43,7 @@ struct PushNotificationsTestData {
           "message" : "test push notification message",
           "title" : "Test push notification title",
           "legacy_ios_category" : null,
+          "source": "xnpe_platform",
           "aps" : {
             "alert" : "Test push notification title",
             "mutable-content" : 1
@@ -74,6 +77,7 @@ struct PushNotificationsTestData {
             "alert" : "Test push notification title",
             "mutable-content" : 1
           },
+          "source": "xnpe_platform",
           "action" : "app",
           "title" : "Test push notification title"
         }
@@ -85,6 +89,7 @@ struct PushNotificationsTestData {
             "alert" : "Test push notification title",
             "mutable-content" : 1
           },
+          "source": "xnpe_platform",
           "attributes" : {
             "campaign_id" : "some campaign id",
             "campaign_name" : "some campaign name",
@@ -105,6 +110,7 @@ struct PushNotificationsTestData {
             "alert" : "Test push notification title",
             "mutable-content" : 1
           },
+          "source": "xnpe_platform",
           "message" : "test push notification message",
           "action" : "app",
           "legacy_ios_category" : null,
@@ -136,6 +142,7 @@ struct PushNotificationsTestData {
             "action_type" : "mobile notification",
             "campaign_name" : "Wassil's push"
           },
+          "source": "xnpe_platform",
           "action" : "app",
           "legacy_ios_category" : null,
           "message" : "Notification text",
@@ -165,6 +172,7 @@ struct PushNotificationsTestData {
 
     let deliveredSilentNotification = """
         {
+            "source": "xnpe_platform",
             "title": "Silent push",
             "action": "app",
             "silent": 1,

@@ -78,6 +78,7 @@ final class PushNotificationManagerSpec: QuickSpec {
         ) {
             pushManager = PushNotificationManager(
                 trackingManager: trackingManager,
+                swizzlingEnabled: true,
                 requirePushAuthorization: requirePushAuthorization,
                 appGroup: "mock-app-group",
                 tokenTrackFrequency: tokenTrackFrequency,

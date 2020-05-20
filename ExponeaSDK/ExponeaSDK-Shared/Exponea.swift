@@ -11,4 +11,8 @@ import Foundation
 public class Exponea {
     /// A logger used to log all messages from the SDK.
     public static var logger: Logger = Logger()
+
+    public static func isExponeaNotification(userInfo: [AnyHashable: Any]) -> Bool {
+        return userInfo["source"] as? String == "xnpe_platform"
+    }
 }

@@ -29,13 +29,25 @@ class TrackingManager {
         return database.currentCustomer.pushToken
     }
 
-    /// The manager for automatic push registration and delivery tracking
-    internal var notificationsManager: PushNotificationManagerType?
+    /// The manager for push registration and delivery tracking
+    lazy var notificationsManager: PushNotificationManagerType = PushNotificationManager(
+        trackingManager: self,
+        swizzlingEnabled: repository.configuration.automaticPushNotificationTracking,
+        requirePushAuthorization: repository.configuration.requirePushAuthorization,
+        appGroup: repository.configuration.appGroup,
+        tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
+        currentPushToken: database.currentCustomer.pushToken,
+        lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
+        urlOpener: UrlOpener()
+    )
 
     /// Manager responsible for loading and displaying in-app messages
-    internal var inAppMessagesManager: InAppMessagesManagerType
+    private lazy var inAppMessagesManager: InAppMessagesManagerType = InAppMessagesManager(
+        repository: repository,
+        displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults)
+    )
 
-    internal var flushingManager: FlushingManagerType
+    private var flushingManager: FlushingManagerType
 
     // Manager for  session tracking
     private lazy var sessionManager: SessionManagerType = SessionManager(
@@ -45,10 +57,10 @@ class TrackingManager {
     )
 
     /// User defaults used to store basic data and flags.
-    internal let userDefaults: UserDefaults
+    private let userDefaults: UserDefaults
 
     // Background task, if there is any - used to track sessions and flush data.
-    internal var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid {
+    private var backgroundTask: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid {
         didSet {
             if backgroundTask == UIBackgroundTaskIdentifier.invalid && backgroundWorkItem != nil {
                 Exponea.logger.log(.verbose, message: "Background task ended, stopping background work item.")
@@ -58,7 +70,7 @@ class TrackingManager {
         }
     }
 
-    internal var backgroundWorkItem: DispatchWorkItem? {
+    private var backgroundWorkItem: DispatchWorkItem? {
         didSet {
             // Stop background taks if work item is done
             if backgroundWorkItem == nil && backgroundTask != UIBackgroundTaskIdentifier.invalid {
@@ -81,11 +93,6 @@ class TrackingManager {
 
         self.flushingManager = flushingManager
 
-        self.inAppMessagesManager = InAppMessagesManager(
-            repository: repository,
-            displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults)
-        )
-
         // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(applicationDidBecomeActive),
@@ -96,19 +103,6 @@ class TrackingManager {
                                                selector: #selector(applicationDidEnterBackground),
                                                name: UIApplication.didEnterBackgroundNotification,
                                                object: nil)
-
-        /// Add the observers when the automatic push notification tracking is true.
-        if repository.configuration.automaticPushNotificationTracking {
-            notificationsManager = PushNotificationManager(
-                trackingManager: self,
-                requirePushAuthorization: repository.configuration.requirePushAuthorization,
-                appGroup: repository.configuration.appGroup,
-                tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
-                currentPushToken: database.currentCustomer.pushToken,
-                lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
-                urlOpener: UrlOpener()
-            )
-        }
 
         initialSetup()
     }
@@ -297,7 +291,7 @@ extension TrackingManager {
         }
 
         // Let the notification manager know the app has becom active
-        notificationsManager?.applicationDidBecomeActive()
+        notificationsManager.applicationDidBecomeActive()
         flushingManager.applicationDidBecomeActive()
         sessionManager.applicationDidBecomeActive()
     }
