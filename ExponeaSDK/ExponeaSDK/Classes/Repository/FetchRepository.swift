@@ -20,8 +20,8 @@ protocol FetchRepository {
     func fetchRecommendation<T: RecommendationUserData>(
         request: RecommendationRequest,
         for customerIds: [String: JSONValue],
-        completion: @escaping (Result<RecommendationResponse<T>>
-    ) -> Void)
+        completion: @escaping (Result<RecommendationResponse<T>>) -> Void
+    )
 
     /// Fetch the list of your existing consent categories.
     ///

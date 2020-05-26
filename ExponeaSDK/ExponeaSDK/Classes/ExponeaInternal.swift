@@ -143,6 +143,17 @@ public class ExponeaInternal: ExponeaType {
     /// Once ExponeaSDK runs into a NSException, all further calls will be disabled
     internal var nsExceptionRaised: Bool = false
 
+    internal var pushNotificationSelfCheck: PushNotificationSelfCheck?
+
+    /**
+    * To help developers with integration, we can automatically check push notification setup
+    * when application is started in debug mode.
+    * When integrating push notifications(or when testing), we
+    * advise you to turn this feature on before initializing the SDK.
+    * Self-check only runs in debug mode and does not do anything in release builds.
+    */
+    public var checkPushSetup: Bool = false
+
     // MARK: - Init -
 
     /// The initialiser is internal, so that only the singleton can exist when used in production.

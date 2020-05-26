@@ -12,6 +12,7 @@ public enum ExponeaNotificationActionType: String, Codable {
     case openApp = "app"
     case browser = "browser"
     case deeplink = "deeplink"
+    case selfCheck = "self-check"
     case none = ""
 
     var identifier: String {

@@ -38,6 +38,8 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     internal weak var delegate: PushNotificationManagerDelegate?
 
+    var didReceiveSelfPushCheck: Bool = false
+
     let decoder: JSONDecoder = JSONDecoder.snakeCase
 
     init(trackingManager: TrackingManagerType,
@@ -96,6 +98,11 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             return
         }
 
+        if case .selfCheck = pushOpenedData.actionType {
+            didReceiveSelfPushCheck = true
+            return
+        }
+
         do {
             try trackingManager?.track(pushOpenedData.eventType, with: pushOpenedData.eventData)
         } catch {
@@ -116,7 +123,7 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
             )
 
             switch pushOpenedData.actionType {
-            case .none, .openApp:
+            case .none, .openApp, .selfCheck:
                 // No need to do anything, app was opened automatically
                 break
 

@@ -24,4 +24,5 @@ internal class MockFlushingManager: FlushingManagerType {
 
     func applicationDidEnterBackground() {}
 
+    func hasPendingData() -> Bool { return false }
 }

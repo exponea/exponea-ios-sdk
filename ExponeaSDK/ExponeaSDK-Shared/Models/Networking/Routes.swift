@@ -16,6 +16,7 @@ enum Routes {
     case campaignClick
     case consents
     case inAppMessages
+    case pushSelfCheck
 
     var method: HTTPMethod {
         switch self {

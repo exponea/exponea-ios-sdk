@@ -9,6 +9,8 @@
 @testable import ExponeaSDK
 
 final class MockPushNotificationManager: PushNotificationManagerType {
+    var didReceiveSelfPushCheck = false
+
     weak var delegate: PushNotificationManagerDelegate?
 
     var handlePushOpenedCalls: [(userInfoObject: AnyObject?, actionIdentifier: String?)] = []

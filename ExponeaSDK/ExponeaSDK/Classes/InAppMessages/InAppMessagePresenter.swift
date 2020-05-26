@@ -50,7 +50,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     }
                 }
 
-                guard let viewController = self.getTopViewController() else {
+                guard let viewController = InAppMessagePresenter.getTopViewController(window: self.window) else {
                     Exponea.logger.log(.error, message: "Unable to present in-app message - no view controller")
                     presentedCallback?(nil)
                     return
@@ -155,8 +155,8 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         ))
     }
 
-    func getTopViewController() -> UIViewController? {
-        let window = self.window ?? UIApplication.shared.keyWindow
+    static func getTopViewController(window: UIWindow? = nil) -> UIViewController? {
+        let window = window ?? UIApplication.shared.keyWindow
         if var topController = window?.rootViewController {
             while let presentedViewController = topController.presentedViewController,
                   !presentedViewController.isBeingDismissed {

@@ -37,6 +37,9 @@
 		052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */; };
 		052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */; };
 		05324BF023D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05324BEF23D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift */; };
+		053CA1FA247D4944003B699C /* PushSelfCheckRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053CA1F9247D4944003B699C /* PushSelfCheckRequest.swift */; };
+		053CA1FE247D4A0F003B699C /* SelfCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053CA1FD247D4A0F003B699C /* SelfCheckRepository.swift */; };
+		053CA200247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053CA1FF247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift */; };
 		053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053E12CA23A26098009CEF03 /* Recommendation.swift */; };
 		053E12CD23A26187009CEF03 /* RecommendationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053E12CC23A26187009CEF03 /* RecommendationOptions.swift */; };
 		053E12CF23A264AD009CEF03 /* ServerRepositoryFetchRecommendationsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053E12CE23A264AD009CEF03 /* ServerRepositoryFetchRecommendationsSpec.swift */; };
@@ -175,6 +178,7 @@
 		05D2D39A23DEE60200E3E79A /* InAppMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D2D39923DEE60200E3E79A /* InAppMessageView.swift */; };
 		05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D2D39B23DEF1E300E3E79A /* InAppMessageAlertView.swift */; };
 		05D2D3A023DF07E800E3E79A /* InAppMessageAlertViewSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D2D39F23DF07E800E3E79A /* InAppMessageAlertViewSpec.swift */; };
+		05D4A800247D252D00864DC1 /* PushNotificationSelfCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D4A7FF247D252D00864DC1 /* PushNotificationSelfCheck.swift */; };
 		05D9F62E2387EE6600C47509 /* Exponea+ConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */; };
 		05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05E1A3802359B3A500E5EDDE /* .swiftlint.yml */; };
 		05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E81631247555DD00AA28E3 /* ExponeaAppDelegate.swift */; };
@@ -426,6 +430,9 @@
 		052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerErrorSpec.swift; sourceTree = "<group>"; };
 		052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
 		05324BEF23D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSAppCenterTelemetryUploadSpec.swift; sourceTree = "<group>"; };
+		053CA1F9247D4944003B699C /* PushSelfCheckRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSelfCheckRequest.swift; sourceTree = "<group>"; };
+		053CA1FD247D4A0F003B699C /* SelfCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfCheckRepository.swift; sourceTree = "<group>"; };
+		053CA1FF247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerRepository+SelfCheckRepository.swift"; sourceTree = "<group>"; };
 		053E12CA23A26098009CEF03 /* Recommendation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recommendation.swift; sourceTree = "<group>"; };
 		053E12CC23A26187009CEF03 /* RecommendationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationOptions.swift; sourceTree = "<group>"; };
 		053E12CE23A264AD009CEF03 /* ServerRepositoryFetchRecommendationsSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepositoryFetchRecommendationsSpec.swift; sourceTree = "<group>"; };
@@ -534,6 +541,7 @@
 		05D2D39923DEE60200E3E79A /* InAppMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageView.swift; sourceTree = "<group>"; };
 		05D2D39B23DEF1E300E3E79A /* InAppMessageAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageAlertView.swift; sourceTree = "<group>"; };
 		05D2D39F23DF07E800E3E79A /* InAppMessageAlertViewSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageAlertViewSpec.swift; sourceTree = "<group>"; };
+		05D4A7FF247D252D00864DC1 /* PushNotificationSelfCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationSelfCheck.swift; sourceTree = "<group>"; };
 		05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+ConfigurationSpec.swift"; sourceTree = "<group>"; };
 		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		05E81631247555DD00AA28E3 /* ExponeaAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaAppDelegate.swift; sourceTree = "<group>"; };
@@ -1355,6 +1363,7 @@
 				0567723A237462FB0082167C /* UIApplication+UIApplicationDelegating.swift */,
 				0567723C237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift */,
 				052979772419224500A90526 /* UNAuthorizationStatusProvider.swift */,
+				05D4A7FF247D252D00864DC1 /* PushNotificationSelfCheck.swift */,
 			);
 			path = "Push Notifications";
 			sourceTree = "<group>";
@@ -1364,6 +1373,7 @@
 			children = (
 				05B4D649238FE9DC00F5010F /* InAppMessagesRequest.swift */,
 				05BF1C7523A10F1800FDC101 /* RecommendationRequest.swift */,
+				053CA1F9247D4944003B699C /* PushSelfCheckRequest.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -1638,6 +1648,8 @@
 				F0E757EA207CFA9700FE8C21 /* RepositoryType.swift */,
 				058DD92424112F5600E5BF91 /* FetchRepository.swift */,
 				058DD92824112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift */,
+				053CA1FD247D4A0F003B699C /* SelfCheckRepository.swift */,
+				053CA1FF247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -2103,10 +2115,12 @@
 				C0EB5D9320B811F900F1031F /* PushNotificationManager.swift in Sources */,
 				05EB8B6C2344F4D700AAC98B /* Configuration+Validation.swift in Sources */,
 				C02C562921C9B71D0087A990 /* ExponeaNotificationAction.swift in Sources */,
+				05D4A800247D252D00864DC1 /* PushNotificationSelfCheck.swift in Sources */,
 				F0E757E5207CFA5300FE8C21 /* RequestFactory.swift in Sources */,
 				054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */,
 				05B4D64F238FEC1000F5010F /* InAppMessage.swift in Sources */,
 				C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */,
+				053CA1FA247D4944003B699C /* PushSelfCheckRequest.swift in Sources */,
 				05FD178F2403C4CC003A799B /* BuildConfiguration.swift in Sources */,
 				05BF1C7623A10F1800FDC101 /* RecommendationRequest.swift in Sources */,
 				0591906623EC1D190037BD88 /* NumberOperators.swift in Sources */,
@@ -2155,6 +2169,7 @@
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
 				05CDD83B23911A1400C7291A /* InAppMessagesCacheType.swift in Sources */,
 				C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */,
+				053CA1FE247D4A0F003B699C /* SelfCheckRepository.swift in Sources */,
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
@@ -2200,6 +2215,7 @@
 				05714B73243758FA00E62206 /* ExponeaProject.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
 				05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */,
+				053CA200247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
 				052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */,
 				0570E76B246EBE7400E92ACF /* UIImage+Gif.swift in Sources */,

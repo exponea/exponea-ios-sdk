@@ -71,13 +71,13 @@ final class InAppMessagePresenterSpec: QuickSpec {
 
         describe("getting top view controller") {
             it("should return nil without window") {
-                expect(InAppMessagePresenter().getTopViewController()).to(beNil())
+                expect(InAppMessagePresenter.getTopViewController(window: nil)).to(beNil())
             }
 
             it("should return root view controller") {
                 let window = UIWindow()
                 window.rootViewController = UIViewController()
-                expect(InAppMessagePresenter(window: window).getTopViewController())
+                expect(InAppMessagePresenter.getTopViewController(window: window))
                     .to(equal(window.rootViewController))
             }
         }

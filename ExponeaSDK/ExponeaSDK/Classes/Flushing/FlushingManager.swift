@@ -229,4 +229,11 @@ class FlushingManager: FlushingManagerType {
             )
         }
     }
+
+    func hasPendingData() -> Bool {
+        guard !isFlushingData else { return true }
+        let events = (try? database.fetchTrackEvent()) ?? []
+        let customers = (try? database.fetchTrackCustomer()) ?? []
+        return !events.isEmpty || !customers.isEmpty
+    }
 }

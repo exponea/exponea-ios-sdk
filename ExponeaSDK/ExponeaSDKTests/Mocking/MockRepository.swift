@@ -58,4 +58,12 @@ final class MockRepository: RepositoryType {
     ) {
         completion(fetchInAppMessagesResult)
     }
+
+    func requestSelfCheckPush(
+        for customerIds: [String: JSONValue],
+        pushToken: String,
+        completion: @escaping (EmptyResult<RepositoryError>) -> Void
+    ) {
+        completion(EmptyResult.success)
+    }
 }

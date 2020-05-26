@@ -19,6 +19,9 @@ protocol FlushingManagerType {
     func applicationDidBecomeActive()
 
     func applicationDidEnterBackground()
+
+    /// Returns true if event database contains data that needs to be flushed to exponea servers
+    func hasPendingData() -> Bool
 }
 
 /// Result of flushing operation

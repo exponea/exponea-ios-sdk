@@ -54,6 +54,8 @@ class AuthenticationViewController: UIViewController {
             auth = .token(text)
         }
 
+        performSegue(withIdentifier: "showMain", sender: nil)
+
         Exponea.shared.configure(
             Exponea.ProjectSettings(
                 projectToken: token,
@@ -69,8 +71,6 @@ class AuthenticationViewController: UIViewController {
                 "Property02": 123
             ]
         )
-
-        performSegue(withIdentifier: "showMain", sender: nil)
     }
 
     @objc func tokenUpdated() {

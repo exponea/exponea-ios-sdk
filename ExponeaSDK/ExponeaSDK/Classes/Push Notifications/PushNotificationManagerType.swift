@@ -11,4 +11,6 @@ protocol PushNotificationManagerType: class {
     func applicationDidBecomeActive()
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?)
     func handlePushTokenRegistered(dataObject: AnyObject?)
+
+    var didReceiveSelfPushCheck: Bool { get }
 }

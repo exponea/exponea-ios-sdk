@@ -178,6 +178,11 @@ public extension ExponeaInternal {
         flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default
     ) {
         do {
+            var willRunSelfCheck = false
+            inDebugBuild {
+                willRunSelfCheck = checkPushSetup && pushNotificationTracking.isEnabled
+            }
+
             let configuration = try Configuration(
                 projectToken: projectSettings.projectToken,
                 projectMapping: projectSettings.projectMapping,
@@ -187,7 +192,7 @@ public extension ExponeaInternal {
                 sessionTimeout: automaticSessionTracking.timeout,
                 automaticSessionTracking: automaticSessionTracking.enabled,
                 automaticPushNotificationTracking: false,
-                requirePushAuthorization: pushNotificationTracking.requirePushAuthorization,
+                requirePushAuthorization: pushNotificationTracking.requirePushAuthorization && !willRunSelfCheck,
                 tokenTrackFrequency: pushNotificationTracking.tokenTrackFrequency,
                 appGroup: pushNotificationTracking.appGroup,
                 flushEventMaxRetries: flushingSetup.maxRetries
@@ -195,6 +200,17 @@ public extension ExponeaInternal {
             self.configuration = configuration
             pushNotificationsDelegate = pushNotificationTracking.delegate
             flushingMode = flushingSetup.mode
+
+            if willRunSelfCheck {
+                executeSafelyWithDependencies { dependencies in
+                    pushNotificationSelfCheck = PushNotificationSelfCheck(
+                        trackingManager: dependencies.trackingManager,
+                        flushingManager: dependencies.flushingManager,
+                        repository: dependencies.repository
+                    )
+                    pushNotificationSelfCheck?.start()
+                }
+            }
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }

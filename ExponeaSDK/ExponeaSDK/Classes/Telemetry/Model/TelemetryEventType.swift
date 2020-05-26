@@ -13,4 +13,5 @@ enum TelemetryEventType: String {
     case fetchRecommendation
     case fetchConsents
     case showInAppMessage
+    case selfCheck
 }

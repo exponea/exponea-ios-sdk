@@ -103,7 +103,7 @@ struct PushNotificationParser {
         }
 
         switch action {
-        case .none, .openApp:
+        case .none, .openApp, .selfCheck:
             break
 
         case .browser, .deeplink:
