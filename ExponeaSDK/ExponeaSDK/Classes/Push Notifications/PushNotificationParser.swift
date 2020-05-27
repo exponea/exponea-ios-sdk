@@ -49,7 +49,7 @@ struct PushNotificationParser {
             return nil
         }
 
-        let silent = userInfo["silent"] as? String == "true"
+        let silent = userInfo["silent"] as? Int == 1
         var eventData: [DataType] = []
         var eventType = silent ? EventType.pushDelivered : EventType.pushOpened
         var properties: [String: JSONValue] = [

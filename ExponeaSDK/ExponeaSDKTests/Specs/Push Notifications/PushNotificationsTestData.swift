@@ -167,7 +167,7 @@ struct PushNotificationsTestData {
         {
             "title": "Silent push",
             "action": "app",
-            "silent": "true",
+            "silent": 1,
             "attributes": { "silent_test": "value" }
         }
     """
