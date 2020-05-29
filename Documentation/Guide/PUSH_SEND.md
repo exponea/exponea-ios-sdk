@@ -1,4 +1,4 @@
-# Sending & Handling Push notifications
+# Sending Push notifications
 
 
 ## Payload constructing
@@ -42,39 +42,14 @@ use **Actions->Others** and choose **Mobile Push Notifications** in pop-up menu
 
 ![](pics/send8.png)
 
-
-## Payload handling
-
-Exponea will automatically handle interactions you've provided in **Payload Builder**
-You need only to provide valid URL for browser interaction and a URI for **Deep link** like so:
-
-![](pics/send9.png)
-
-### Deep link Handling
-
-Exponea SDK notifications can handle the deeplink automatically, however if you wish to be notified of user's actions, then you need to implement a `PushNotificationsDelegate` in your application.
-
-```swift
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-	func application(_ application: UIApplication,
-	                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-	     // Auth Exponea
-        Exponea.shared.configure(plistName: "Exponea.plist")
-        
-        // Set notification delegate (needs to be done after configuring)
-        Exponea.shared.pushNotificationsDelegate = UIApplication.shared.delegate as? AppDelegate
-	}
-}
-
-extension AppDelegate: PushNotificationManagerDelegate {
-    func pushNotificationOpened(with action: ExponeaNotificationActionType, 
-                                value: String?, 
-                                extraData: [AnyHashable : Any]?) {
-        print("Action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData)")
-    }
-}
+## Sending a test push notification
+First you'll need to identify your test user with email address. Run the following code in your app:
+``` swift
+Exponea.shared.identifyCustomer(
+    customerIds: nil,
+    properties: ["email": "test@test.com"],
+    timestamp: nil
+)
 ```
 
-> ⚠️ **IMPORTANT**  
-> You can only set the `pushNotificationsDelegate` after you have configured Exponea, never before.
+Then select the user by email in the notification builder preview, select iOS platform and click **Test push notification** button. The push notification should arrive to your device shortly. Keep in mind push notifications only work on a real device, not on Simulator.
