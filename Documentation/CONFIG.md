@@ -9,9 +9,9 @@ You can configure the SDK providing a configuration file with configuration vari
 
 #### authorization
 
-* Two options: `none` and `.token(token)`.
-* Some features require specific authorization to be set, if it is not, they will fail gracefully and print an error.
-* For more information on how to get authorization tokens, please click [here](https://developers.exponea.com/reference#access-keys).
+* Options are `.none` or `.token(token)`.
+* Token is an Exponea **public** key. [Configuration guide](./Guide/CONFIGURATION.md) shows where to find it in the Exponea web app.
+* For more information, please see [Exponea API documentation](https://docs.exponea.com/reference#access-keys)
 
 #### baseUrl
 
