@@ -10,6 +10,8 @@ import Foundation
 
 /// Protocol of what types of events are available in the Exponea SDK.
 public protocol ExponeaType: class {
+    /// Configuration status of the SDK
+    var isConfigured: Bool {get}
     /// Configurarion object.
     var configuration: Configuration? { get }
     /// Cookie of the current customer. Nil before the SDK is configured
@@ -20,7 +22,29 @@ public protocol ExponeaType: class {
     /// push tracking is enabled, otherwise will never get called.
     var pushNotificationsDelegate: PushNotificationManagerDelegate? { get set }
 
+    /// Any NSException inside Exponea SDK will be logged and swallowed if flag is enabled, otherwise
+    /// the exception will be rethrown.
+    /// Safemode is enabled for release builds and disabled for debug builds.
+    /// You can set the value to override this behavior for e.g. unit testing.
+    /// We advice strongly against disabling this for production builds.
+    var safeModeEnabled: Bool { get set }
+
+    /// To help developers with integration, we can automatically check push notification setup
+    /// when application is started in debug mode.
+    /// When integrating push notifications(or when testing), we
+    /// advise you to turn this feature on before initializing the SDK.
+    /// Self-check only runs in debug mode and does not do anything in release builds.
+    var checkPushSetup: Bool { get set }
     // MARK: - Configure -
+
+    /// Configure the SDK setting configuration properties split into areas of functionality
+    func configure(
+        _ projectSettings: Exponea.ProjectSettings,
+        pushNotificationTracking: Exponea.PushNotificationTracking,
+        automaticSessionTracking: Exponea.AutomaticSessionTracking,
+        defaultProperties: [String: JSONConvertible]?,
+        flushingSetup: Exponea.FlushingSetup
+    )
 
     /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
     ///
@@ -108,6 +132,9 @@ public protocol ExponeaType: class {
     /// This method can be used to manually flush all available data to Exponea.
     func flushData()
 
+    /// This method can be used to manually flush all available data to Exponea.
+    func flushData(completion: ((FlushResult) -> Void)?)
+
     // MARK: - Push -
 
     /// Tracks the push notification token to Exponea API with struct.
@@ -120,6 +147,9 @@ public protocol ExponeaType: class {
     /// - Parameter token: String containing the push notification token.
     ///                    If nil, it will delete existing push token.
     func trackPushToken(_ token: String?)
+
+    /// Handles push notification token registration - compared to trackPushToken respects requirePushAuthorization
+    func handlePushNotificationToken(deviceToken: Data)
 
     /// Tracks the push notification clicked event to Exponea API.
     func trackPushOpened(with userInfo: [AnyHashable: Any])
@@ -160,4 +190,15 @@ public protocol ExponeaType: class {
     /// - Parameter completion: A closure executed upon request completion containing the result
     ///                         which has either the returned data or error.
     func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void)
+
+    // MARK: - Anonymize -
+
+    /// Anonymizes the user and starts tracking as if the app was just installed.
+    /// All customer identification (including cookie) will be permanently deleted.
+    func anonymize()
+
+    /// Anonymizes the user and starts tracking as if the app was just installed.
+    /// All customer identification (including cookie) will be permanently deleted.
+    /// Switches tracking into provided exponeaProject
+    func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?)
 }
