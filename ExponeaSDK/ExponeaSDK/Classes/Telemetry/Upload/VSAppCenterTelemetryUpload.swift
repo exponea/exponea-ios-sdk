@@ -10,10 +10,18 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     let defaultUploadURL = "https://in.appcenter.ms/logs?Api-Version=1.0.0"
     let debugAppSecret = "7172e098-ec8e-4d1b-9f9e-3e5107d8b22a"
     let releaseAppSecret = "4d80509d-4d1c-4d50-b472-ce8f5c650708"
+    let debugReactNativeAppSecret = "956e15f2-52e9-4026-83e9-177edcca7bcb"
+    let releaseReactNativeAppSecret = "a39df2ba-a3d2-4bb7-a44f-f0a7fe9c1718"
     var appSecret: String {
-        var secret = releaseAppSecret
-        inDebugBuild { secret = debugAppSecret }
-        return secret
+        if isReactNativeSDK() {
+            var secret = releaseReactNativeAppSecret
+            inDebugBuild { secret = debugReactNativeAppSecret }
+            return secret
+        } else {
+            var secret = releaseAppSecret
+            inDebugBuild { secret = debugAppSecret }
+            return secret
+        }
     }
 
     let session: URLSession
