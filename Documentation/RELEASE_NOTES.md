@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.6.4
+#### June 30, 2020
+* Features
+  * Internal features required for Exponea React Native SDK. Developers using Swift/Objective C can ignore this release completely.
+
+
 ## Release Notes for 2.6.3
 #### May 14, 2020
 * Bug Fixes
