@@ -1,4 +1,14 @@
 ## Release Notes
+## Release Notes for 2.7.0
+#### July 20, 2020
+* Features
+  * **DEPRECATION NOTICE**: Automatic push notifications are now deprecated. Please check the [Push notification](./PUSH.md) documentation to see new setup instructions. In most cases, just extending `ExponeaAppDelegate` should be enough. The reason for this change is to remove method swizzling that causes issues when multiple SDKs that handle push notifications are integrated into one application. This way you're more in control of the push notification flow.
+  * Silent push notifications support. You're now able to send background updates to your application and respond to them by implementing `silentPushNotificationReceived` method on `PushNotificationManagerDelegate`. Delivery of silent push notifications is tracked to Exponea backend.
+  * SDK now supports animated GIFs in push notifications. We advice to keep the images small, official attachment size limit is 10MB, but there is no guarantee.
+  * When the application is started from a push notification, resulting session will contain UTM parameters.
+  * Updated push notifications documentation and self-check mechanism to make notifications integration easier.
+
+
 ## Release Notes for 2.6.4
 #### June 30, 2020
 * Features
