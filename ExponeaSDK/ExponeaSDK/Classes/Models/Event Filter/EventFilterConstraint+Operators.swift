@@ -54,14 +54,14 @@ extension StringConstraint {
     static func isIn(_ list: [String]) -> StringConstraint {
         return StringConstraint(
             filterOperator: InOperator.self,
-            operands: list.map { EventFilterOperand(value: $0 )}
+            operands: list.map { EventFilterOperand(value: $0 ) }
         )
     }
 
     static func notIn(_ list: [String]) -> StringConstraint {
         return StringConstraint(
             filterOperator: NotInOperator.self,
-            operands: list.map { EventFilterOperand(value: $0 )}
+            operands: list.map { EventFilterOperand(value: $0 ) }
         )
     }
 

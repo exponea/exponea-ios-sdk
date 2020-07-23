@@ -122,7 +122,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         exponea.processSavedCampaignData()
                         var trackEvents: [TrackEventProxy] = []
                         expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
-                        expect {trackEvents.filter({ $0.eventType == "campaign_click"}).count }.to(equal(1))
+                        expect { trackEvents.filter({ $0.eventType == "campaign_click" }).count }.to(equal(1))
                     }
                 }
             }

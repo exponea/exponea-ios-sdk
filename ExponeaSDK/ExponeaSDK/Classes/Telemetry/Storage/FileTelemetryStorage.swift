@@ -73,6 +73,6 @@ class FileTelemetryStorage: TelemetryStorage {
                 }
             }
         }
-        return crashLogs.sorted(by: {$0.timestamp < $1.timestamp})
+        return crashLogs.sorted(by: { $0.timestamp < $1.timestamp })
     }
 }

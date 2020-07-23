@@ -259,7 +259,7 @@ public struct Configuration: Codable, Equatable {
             lhs.projectToken == rhs.projectToken &&
             lhs.authorization == rhs.authorization &&
             lhs.baseUrl == rhs.baseUrl &&
-            lhs.defaultProperties?.mapValues { $0.jsonValue} == rhs.defaultProperties?.mapValues { $0.jsonValue} &&
+            lhs.defaultProperties?.mapValues { $0.jsonValue } == rhs.defaultProperties?.mapValues { $0.jsonValue } &&
             lhs.sessionTimeout == rhs.sessionTimeout &&
             lhs.automaticSessionTracking == rhs.automaticSessionTracking &&
             lhs.automaticPushNotificationTracking == rhs.automaticPushNotificationTracking &&

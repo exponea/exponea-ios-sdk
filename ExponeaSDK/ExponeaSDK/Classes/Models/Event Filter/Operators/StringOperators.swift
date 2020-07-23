@@ -44,7 +44,7 @@ struct InOperator: EventFilterOperator {
         attribute: EventFilterAttribute,
         operands: [EventFilterOperand]
     ) -> Bool {
-        return operands.first(where: { $0.value == attribute.getValue(in: event)}) != nil
+        return operands.first(where: { $0.value == attribute.getValue(in: event) }) != nil
     }
 }
 
@@ -58,7 +58,7 @@ struct NotInOperator: EventFilterOperator {
         operands: [EventFilterOperand]
     ) -> Bool {
         guard let value = attribute.getValue(in: event) else { return false }
-        return operands.first(where: { $0.value == value}) == nil
+        return operands.first(where: { $0.value == value }) == nil
     }
 }
 

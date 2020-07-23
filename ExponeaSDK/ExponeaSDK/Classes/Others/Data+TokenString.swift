@@ -10,6 +10,6 @@ import Foundation
 
 extension Data {
     var tokenString: String {
-        return reduce("", {$0 + String(format: "%02X", $1)})
+        return reduce("", { $0 + String(format: "%02X", $1) })
     }
 }

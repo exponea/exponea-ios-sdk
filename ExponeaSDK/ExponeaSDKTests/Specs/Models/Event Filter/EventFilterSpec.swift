@@ -190,10 +190,10 @@ final class EventFilterSpec: QuickSpec {
                         "event_type":"banner",
                         "filter":[
                             {
-                                "attribute":{ "type":"\(attributeType)", "property":"os_version"},
+                                "attribute":{ "type":"\(attributeType)", "property":"os_version" },
                                 "constraint":{
                                     "operator":"\(filterOperator)",
-                                    "operands":[{"type":"constant","value":"10"}],
+                                    "operands":[{ "type":"constant","value":"10" }],
                                     "type":"\(constraintType)"
                                 }
                             }

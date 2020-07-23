@@ -104,7 +104,7 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
                 appDelegate.application?(
                     UIApplication.shared,
                     didReceiveRemoteNotification: [:],
-                    fetchCompletionHandler: {_ in }
+                    fetchCompletionHandler: { _ in }
                 )
             }
         }

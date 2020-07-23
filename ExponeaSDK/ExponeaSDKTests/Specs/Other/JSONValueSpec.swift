@@ -353,6 +353,7 @@ class JSONValueSpec: QuickSpec {
                     let value = TestClass(value: JSONValue.bool(true))
                     let data = try! encoder.encode(value)
                     let encoded = String(data: data, encoding: .utf8)
+                    // swiftlint:disable:next open_brace_spacing close_brace_spacing
                     expect(encoded).to(equal("{\"value\":true}"))
                 })
 
@@ -360,6 +361,7 @@ class JSONValueSpec: QuickSpec {
                     let value = TestClass(value: JSONValue.int(1234))
                     let data = try! encoder.encode(value)
                     let encoded = String(data: data, encoding: .utf8)
+                    // swiftlint:disable:next open_brace_spacing close_brace_spacing
                     expect(encoded).to(equal("{\"value\":1234}"))
                 })
 
@@ -367,6 +369,7 @@ class JSONValueSpec: QuickSpec {
                     let value = TestClass(value: JSONValue.double(1234.56))
                     let data = try! encoder.encode(value)
                     let encoded = String(data: data, encoding: .utf8)
+                    // swiftlint:disable:next open_brace_spacing close_brace_spacing
                     expect(encoded).to(equal("{\"value\":1234.5599999999999}"))
                 })
 
@@ -374,6 +377,7 @@ class JSONValueSpec: QuickSpec {
                     let value = TestClass(value: JSONValue.string("test"))
                     let data = try! encoder.encode(value)
                     let encoded = String(data: data, encoding: .utf8)
+                    // swiftlint:disable:next open_brace_spacing close_brace_spacing
                     expect(encoded).to(equal("{\"value\":\"test\"}"))
                 })
 
@@ -381,6 +385,7 @@ class JSONValueSpec: QuickSpec {
                     let value = TestClass(value: JSONValue.array([.string("test"), .int(1234)]))
                     let data = try! encoder.encode(value)
                     let encoded = String(data: data, encoding: .utf8)
+                    // swiftlint:disable:next open_brace_spacing close_brace_spacing
                     expect(encoded).to(equal("{\"value\":[\"test\",1234]}"))
                 })
 
@@ -391,6 +396,7 @@ class JSONValueSpec: QuickSpec {
                     let encoded = String(data: data, encoding: .utf8)
                     expect(encoded).to(contain("\"key\":1234"))
                     expect(encoded).to(contain("\"other\":\"string\""))
+                    // swiftlint:disable:next open_brace_spacing close_brace_spacing
                     expect(encoded).to(contain("{\"value\":{"))
                 })
             })

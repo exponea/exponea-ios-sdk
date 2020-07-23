@@ -97,7 +97,7 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
         request.addValue(appSecret, forHTTPHeaderField: "App-Secret")
         request.addValue(installId, forHTTPHeaderField: "Install-ID")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        let task = self.session.uploadTask(with: request, from: payload) {data, response, error in
+        let task = self.session.uploadTask(with: request, from: payload) { data, response, error in
             if (response as? HTTPURLResponse)?.statusCode == 200 {
                 completionHandler(true)
             } else {

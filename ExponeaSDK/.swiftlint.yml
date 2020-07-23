@@ -12,6 +12,18 @@ disabled_rules:
 opt_in_rules:
     - force_unwrapping
 
+custom_rules:
+    open_brace_spacing:
+        name: "Opening brace should be followed by space or newline"
+        regex: '(\{[^\s^\}])'
+        message: "Opening brace should be followed by space or newline"
+        severity: warning
+    close_brace_spacing:
+        name: "Closing brace should be followed by space or newline"
+        regex: '([^\s^\{]\})'
+        message: "Closing brace should be followed by space or newline"
+        severity: warning
+
 identifier_name:
     excluded:
         - id

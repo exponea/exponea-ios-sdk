@@ -185,7 +185,7 @@ class DatabaseManagerSpec: QuickSpec {
                             try db.updateEvent(withId: sampleEvent.databaseObjectProxy.objectID, withData: updateData)
                         }.toNot(raiseException())
                         let updatedEvent = fetchSampleEvent()
-                        expect { updatedEvent.dataTypes.properties.count}.to(equal(2))
+                        expect { updatedEvent.dataTypes.properties.count }.to(equal(2))
                         expect { updatedEvent.dataTypes.properties["customprop"] as? String }.to(equal("customval"))
                         expect {
                             updatedEvent.dataTypes.properties["newcustomprop"] as? String
@@ -199,7 +199,7 @@ class DatabaseManagerSpec: QuickSpec {
                             try db.updateEvent(withId: sampleEvent.databaseObjectProxy.objectID, withData: updateData)
                         }.toNot(raiseException())
                         let updatedEvent = fetchSampleEvent()
-                        expect { updatedEvent.dataTypes.properties.count}.to(equal(1))
+                        expect { updatedEvent.dataTypes.properties.count }.to(equal(1))
                         expect { updatedEvent.dataTypes.properties["customprop"] as? String }.to(equal("newcustomval"))
                     })
 

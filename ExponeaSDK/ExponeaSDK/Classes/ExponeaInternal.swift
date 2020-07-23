@@ -265,7 +265,7 @@ internal extension ExponeaInternal {
     }
 
     func executeSafelyWithDependencies(_ closure: (ExponeaInternal.Dependencies) throws -> Void) {
-        executeSafelyWithDependencies({ dep, _ in try closure(dep) }, completion: {_ in } as CompletionHandler<Any>)
+        executeSafelyWithDependencies({ dep, _ in try closure(dep) }, completion: { _ in } as CompletionHandler<Any>)
     }
 
     func executeSafely(_ closure: () throws -> Void) {

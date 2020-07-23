@@ -118,7 +118,7 @@ extension DatabaseManager {
         return context.performAndWait {
             do {
                 let customers: [Customer] = try context.fetch(Customer.fetchRequest())
-                return customers.map { CustomerThreadSafe($0)}
+                return customers.map { CustomerThreadSafe($0) }
             } catch {
                 Exponea.logger.log(.warning, message: "Error while fetching all customers. \(error)")
                 return []
@@ -343,7 +343,7 @@ extension DatabaseManager: DatabaseManagerType {
     func fetchTrackCustomer() throws -> [TrackCustomerProxy] {
         return try context.performAndWait {
             let trackCustomerEvents: [TrackCustomer] = try context.fetch(TrackCustomer.fetchRequest())
-            return trackCustomerEvents.map {TrackCustomerProxy($0)}
+            return trackCustomerEvents.map { TrackCustomerProxy($0) }
         }
     }
 
@@ -359,7 +359,7 @@ extension DatabaseManager: DatabaseManagerType {
     func fetchTrackEvent() throws -> [TrackEventProxy] {
         return try context.performAndWait {
             let trackEvents: [TrackEvent] = try context.fetch(TrackEvent.fetchRequest())
-            return trackEvents.map {TrackEventProxy($0)}
+            return trackEvents.map { TrackEventProxy($0) }
         }
     }
 

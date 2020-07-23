@@ -31,9 +31,11 @@ final class EventFilterAttributeSpec: QuickSpec {
                 expect(PropertyAttribute("value").getValue(in: event)).to(equal("value"))
             }
 
+            // swiftlint:disable open_brace_spacing close_brace_spacing
             let serialized = """
             {"type":"property","property":"value"}
             """
+            // swiftlint:enable open_brace_spacing close_brace_spacing
             it("should serialize") {
                 let encoded = try! JSONEncoder().encode(EventFilterAttributeCoder(PropertyAttribute("value")))
                 expect(String(data: encoded, encoding: .utf8)).to(equal(serialized))
@@ -57,9 +59,11 @@ final class EventFilterAttributeSpec: QuickSpec {
                 expect(TimestampAttribute().getValue(in: eventWithTimestamp)).to(equal("1234.0"))
             }
 
+            // swiftlint:disable open_brace_spacing close_brace_spacing
             let serialized = """
             {"type":"timestamp"}
             """
+            // swiftlint:enable open_brace_spacing close_brace_spacing
             it("should serialize") {
                 let encoded = try! JSONEncoder().encode(EventFilterAttributeCoder(TimestampAttribute()))
                 expect(String(data: encoded, encoding: .utf8)).to(equal(serialized))

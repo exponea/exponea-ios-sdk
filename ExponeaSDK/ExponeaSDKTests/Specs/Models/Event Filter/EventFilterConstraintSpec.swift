@@ -15,6 +15,7 @@ import Nimble
 final class EventFilterConstraintSpec: QuickSpec {
     override func spec() {
         describe("serialization") {
+            // swiftlint:enable:next open_brace_spacing close_brace_spacing
             let testCases: [(EventFilterConstraint, String)] = [
                 // string
                 (
@@ -182,6 +183,7 @@ final class EventFilterConstraintSpec: QuickSpec {
                     """
                 )
             ]
+            // swiftlint:enable open_brace_spacing close_brace_spacing
             testCases.forEach { testCase in
                 let testCaseName = "\(testCase.0.type) constraint with \(testCase.0.filterOperator.name) operator"
 

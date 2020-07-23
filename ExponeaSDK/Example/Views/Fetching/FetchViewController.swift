@@ -32,7 +32,7 @@ class FetchViewController: UIViewController {
         let fetchAction = UIAlertAction(title: "Fetch", style: .default, handler: { _ -> Void in
             let idField = alertController.textFields?[0] as UITextField?
             let options = RecommendationOptions(id: idField?.text ?? "", fillWithRandom: false)
-            Exponea.shared.fetchRecommendation(with: options) {(result: Result<MyRecommendationResponse>) in
+            Exponea.shared.fetchRecommendation(with: options) { (result: Result<MyRecommendationResponse>) in
                 switch result {
                 case .success(let recommendation):
                     DispatchQueue.main.async {

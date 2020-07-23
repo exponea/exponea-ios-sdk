@@ -17,7 +17,7 @@ final class SwizzleSpec: QuickSpec {
             let testClass = type(of: SwizzleTestClass())
             let selector = #selector(SwizzleTestClass.getResult)
             let swizzle = Swizzle(
-                block: {_, _, _ in },
+                block: { _, _, _ in },
                 name: "test swizzle",
                 aClass: testClass,
                 selector: selector,

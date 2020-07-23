@@ -25,8 +25,8 @@ extension SessionManagerType {
     func applicationDidEnterBackground() { applicationDidEnterBackground(at: Date().timeIntervalSince1970) }
     func doSessionTimeoutBackgroundWork() { doSessionTimeoutBackgroundWork(at: Date().timeIntervalSince1970) }
     func ensureSessionStarted() { ensureSessionStarted(at: Date().timeIntervalSince1970) }
-    func manualSessionStart() { manualSessionStart(at: Date().timeIntervalSince1970)}
-    func manualSessionEnd() { manualSessionEnd(at: Date().timeIntervalSince1970)}
+    func manualSessionStart() { manualSessionStart(at: Date().timeIntervalSince1970) }
+    func manualSessionEnd() { manualSessionEnd(at: Date().timeIntervalSince1970) }
 }
 
 protocol SessionTrackingDelegate: class {

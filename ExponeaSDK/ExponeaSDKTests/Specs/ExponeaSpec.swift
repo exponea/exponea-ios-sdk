@@ -187,7 +187,7 @@ class ExponeaSpec: QuickSpec {
             context("executing with dependencies") {
                 it("should complete with .failure when exponea is not configured") {
                     let exponea = ExponeaInternal()
-                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
                         completion(Result.success("success!"))
                     }
                     waitUntil { done in
@@ -209,7 +209,7 @@ class ExponeaSpec: QuickSpec {
                 it("should complete with .success when exponea is configured") {
                     let exponea = ExponeaInternal()
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
                         completion(Result.success("success!"))
                     }
                     waitUntil { done in
@@ -231,7 +231,7 @@ class ExponeaSpec: QuickSpec {
                     enum MyError: Error {
                         case someError(message: String)
                     }
-                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
                         throw MyError.someError(message: "something went wrong")
                     }
                     waitUntil { done in
@@ -255,7 +255,7 @@ class ExponeaSpec: QuickSpec {
                     let exponea = ExponeaInternal()
                     exponea.safeModeEnabled = true
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
                         NSException(
                             name: NSExceptionName(rawValue: "mock exception name"),
                             reason: "mock reason",
@@ -283,7 +283,7 @@ class ExponeaSpec: QuickSpec {
                     let exponea = ExponeaInternal()
                     exponea.safeModeEnabled = true
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
                         NSException(
                             name: NSExceptionName(rawValue: "mock exception name"),
                             reason: "mock reason",
@@ -293,7 +293,7 @@ class ExponeaSpec: QuickSpec {
                     waitUntil { done in
                         exponea.executeSafelyWithDependencies(task) { _ in done() }
                     }
-                    let nextTask: ExponeaInternal.DependencyTask<String> = {_, completion in
+                    let nextTask: ExponeaInternal.DependencyTask<String> = { _, completion in
                         completion(Result.success("success!"))
                     }
                     waitUntil { done in
@@ -318,7 +318,7 @@ class ExponeaSpec: QuickSpec {
                     let exponea = ExponeaInternal()
                     exponea.safeModeEnabled = false
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: ExponeaInternal.DependencyTask<String> = {_, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
                         NSException(
                             name: NSExceptionName(rawValue: "mock exception name"),
                             reason: "mock reason",

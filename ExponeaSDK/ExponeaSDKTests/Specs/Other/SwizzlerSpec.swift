@@ -25,7 +25,7 @@ final class SwizzlerSpec: QuickSpec {
                 with: #selector(SwizzleTestClass.getOtherResult),
                 for: SwizzleTestClass.self,
                 name: "test swizzle",
-                block: {_, _, _ in }
+                block: { _, _, _ in }
             )
 
             expect(SwizzleTestClass().getResult()).to(equal("other result"))
@@ -43,7 +43,7 @@ final class SwizzlerSpec: QuickSpec {
                 with: #selector(SwizzleTestClass.getOtherResult),
                 for: SwizzleTestClass.self,
                 name: "test swizzle",
-                block: {_, _, _ in }
+                block: { _, _, _ in }
             )
             let swizzle = Swizzler.getSwizzle(for:
                 class_getInstanceMethod(SwizzleTestClass.self, #selector(SwizzleTestClass.getResult))!

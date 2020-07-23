@@ -95,7 +95,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             messages.removeAll { $0 == pending.1 }
             showPendingInAppMessage(pickedMessage: pending)
         }
-        messages.forEach { message in preloadImage(for: message)}
+        messages.forEach { message in preloadImage(for: message) }
         preloaded = true
         showPendingInAppMessage(pickedMessage: nil)
         completion?()

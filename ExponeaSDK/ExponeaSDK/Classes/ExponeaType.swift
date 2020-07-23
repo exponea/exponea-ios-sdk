@@ -11,7 +11,7 @@ import Foundation
 /// Protocol of what types of events are available in the Exponea SDK.
 public protocol ExponeaType: class {
     /// Configuration status of the SDK
-    var isConfigured: Bool {get}
+    var isConfigured: Bool { get }
     /// Configurarion object.
     var configuration: Configuration? { get }
     /// Cookie of the current customer. Nil before the SDK is configured

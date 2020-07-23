@@ -58,7 +58,7 @@ class FlushingManagerSpec: QuickSpec {
                     for _ in 0..<10 {
                         group.enter()
                         DispatchQueue.global(qos: .background).async {
-                            flushingManager.flushData(completion: {_ in group.leave() })
+                            flushingManager.flushData(completion: { _ in group.leave() })
                         }
                     }
                     group.notify(queue: .main, execute: done)

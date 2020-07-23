@@ -34,7 +34,7 @@ final class MockInAppMessagesCache: InAppMessagesCacheType {
     }
 
     func hasImageData(at imageUrl: String) -> Bool {
-        return images.contains { $0.key == imageUrl}
+        return images.contains { $0.key == imageUrl }
     }
 
     func saveImageData(at imageUrl: String, data: Data) {
