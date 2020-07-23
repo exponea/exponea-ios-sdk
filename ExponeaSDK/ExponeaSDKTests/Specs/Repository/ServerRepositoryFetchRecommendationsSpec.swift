@@ -79,7 +79,7 @@ final class ServerRepositoryFetchRecommendationsSpec: QuickSpec {
             waitUntil { done in
                 ServerRepository(configuration: configuration).fetchRecommendation(
                     request: request,
-                    for: ["cookie": .string("mock cookie")],
+                    for: ["cookie": "mock cookie"],
                     completion: { (result: Result<RecommendationResponse<MyRecommendationData>>) in
                         expect(result.value?.value).to(equal(
                             [

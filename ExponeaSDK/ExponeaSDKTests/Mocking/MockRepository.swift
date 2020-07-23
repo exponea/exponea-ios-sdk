@@ -34,7 +34,7 @@ final class MockRepository: RepositoryType {
 
     func fetchRecommendation<T>(
         request: RecommendationRequest,
-        for customerIds: [String: JSONValue],
+        for customerIds: [String: String],
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void
     ) where T: RecommendationUserData {
         fatalError("Only implemented for EmptyRecommendationData")
@@ -42,7 +42,7 @@ final class MockRepository: RepositoryType {
 
     func fetchRecommendation(
         request: RecommendationRequest,
-        for customerIds: [String: JSONValue],
+        for customerIds: [String: String],
         completion: @escaping (Result<RecommendationResponse<EmptyRecommendationData>>) -> Void
     ) {
         completion(fetchRecommendationResult)
@@ -53,14 +53,14 @@ final class MockRepository: RepositoryType {
     }
 
     func fetchInAppMessages(
-        for customerIds: [String: JSONValue],
+        for customerIds: [String: String],
         completion: @escaping (Result<InAppMessagesResponse>) -> Void
     ) {
         completion(fetchInAppMessagesResult)
     }
 
     func requestSelfCheckPush(
-        for customerIds: [String: JSONValue],
+        for customerIds: [String: String],
         pushToken: String,
         completion: @escaping (EmptyResult<RepositoryError>) -> Void
     ) {

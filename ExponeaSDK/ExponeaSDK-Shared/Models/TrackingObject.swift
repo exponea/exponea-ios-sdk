@@ -10,21 +10,21 @@ import Foundation
 
 protocol TrackingObject {
     var exponeaProject: ExponeaProject { get }
-    var customerIds: [String: JSONValue] { get }
+    var customerIds: [String: String] { get }
     var dataTypes: [DataType] { get }
     var timestamp: Double { get }
 }
 
 final class EventTrackingObject: TrackingObject, Equatable {
     public let exponeaProject: ExponeaProject
-    public let customerIds: [String: JSONValue]
+    public let customerIds: [String: String]
     public let eventType: String?
     public let timestamp: Double
     public let dataTypes: [DataType]
 
     public init(
         exponeaProject: ExponeaProject,
-        customerIds: [String: JSONValue],
+        customerIds: [String: String],
         eventType: String?,
         timestamp: Double,
         dataTypes: [DataType]
@@ -47,13 +47,13 @@ final class EventTrackingObject: TrackingObject, Equatable {
 
 final class CustomerTrackingObject: TrackingObject {
     public let exponeaProject: ExponeaProject
-    public let customerIds: [String: JSONValue]
+    public let customerIds: [String: String]
     public let timestamp: Double
     public let dataTypes: [DataType]
 
     public init(
         exponeaProject: ExponeaProject,
-        customerIds: [String: JSONValue],
+        customerIds: [String: String],
         timestamp: Double,
         dataTypes: [DataType]
     ) {
@@ -65,11 +65,11 @@ final class CustomerTrackingObject: TrackingObject {
 }
 
 extension TrackingObject {
-    static func loadCustomerIdsFromUserDefaults(appGroup: String) -> [String: JSONValue]? {
+    static func loadCustomerIdsFromUserDefaults(appGroup: String) -> [String: String]? {
         guard let userDefaults = UserDefaults(suiteName: appGroup),
               let data = userDefaults.data(forKey: Constants.General.lastKnownCustomerIds) else {
             return nil
         }
-        return try? JSONDecoder().decode([String: JSONValue].self, from: data)
+        return try? JSONDecoder().decode([String: String].self, from: data)
     }
 }

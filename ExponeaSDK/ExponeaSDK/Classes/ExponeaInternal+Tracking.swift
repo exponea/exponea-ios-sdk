@@ -57,7 +57,7 @@ extension ExponeaInternal {
     ///     - customerId: Specify your customer with external id, for example an email address.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
-    public func identifyCustomer(customerIds: [String: JSONConvertible]?,
+    public func identifyCustomer(customerIds: [String: String]?,
                                  properties: [String: JSONConvertible],
                                  timestamp: Double?) {
         executeSafelyWithDependencies { dependencies in
@@ -73,8 +73,7 @@ extension ExponeaInternal {
                     You should never set cookie ID directly on a customer. Ignoring.
                     """)
                 }
-
-                data.append(.customerIds(ids.mapValues({ $0.jsonValue })))
+                data.append(.customerIds(ids))
             }
 
             try dependencies.trackingManager.track(.identifyCustomer, with: data)

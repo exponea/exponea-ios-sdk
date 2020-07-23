@@ -116,7 +116,7 @@ extension DatabaseManager {
         }
     }
 
-    private func fetchCurrentCustomerAndUpdate(with ids: [String: JSONValue]) -> Customer {
+    private func fetchCurrentCustomerAndUpdate(with ids: [String: String]) -> Customer {
         return context.performAndWait {
             let customer = self.currentCustomerManagedObject
 
@@ -128,20 +128,20 @@ extension DatabaseManager {
                     return existing.key == id.key
                 }) as? KeyValueItem {
                     // Update value, since it has changed
-                    item.value = id.value.objectValue
+                    item.value = NSString(string: id.value)
                     Exponea.logger.log(.verbose, message: """
-                        Updating value of existing customerId (\(id.key)) with value: \(id.value.jsonConvertible).
+                        Updating value of existing customerId (\(id.key)) with value: \(id.value).
                         """)
                 } else {
                     // Create item and insert it
                     let item = KeyValueItem(context: context)
                     item.key = id.key
-                    item.value = id.value.objectValue
+                    item.value = NSString(string: id.value)
                     context.insert(item)
                     customer.addToCustomIds(item)
 
                     Exponea.logger.log(.verbose, message: """
-                        Creating new customerId (\(id.key)) with value: \(id.value.jsonConvertible).
+                        Creating new customerId (\(id.key)) with value: \(id.value).
                         """)
                 }
             }

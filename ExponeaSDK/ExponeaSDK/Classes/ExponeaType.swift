@@ -124,7 +124,7 @@ public protocol ExponeaType: class {
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
     func identifyCustomer(
-        customerIds: [String: JSONConvertible]?,
+        customerIds: [String: String]?,
         properties: [String: JSONConvertible],
         timestamp: Double?
     )

@@ -16,7 +16,7 @@ class TrackingManager {
     let device: DeviceProperties
 
     /// The identifiers of the the current customer.
-    var customerIds: [String: JSONValue] {
+    var customerIds: [String: String] {
         return database.currentCustomer.ids
     }
 

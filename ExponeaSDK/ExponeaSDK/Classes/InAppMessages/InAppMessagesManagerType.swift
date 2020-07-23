@@ -9,19 +9,19 @@
 import Foundation
 
 protocol InAppMessagesManagerType {
-    func preload(for customerIds: [String: JSONValue], completion: (() -> Void)?)
+    func preload(for customerIds: [String: String], completion: (() -> Void)?)
     func getInAppMessage(for event: [DataType], requireImage: Bool) -> InAppMessage?
     func showInAppMessage(
         for event: [DataType],
         trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)?
     )
-    func sessionDidStart(at date: Date, for customerIds: [String: JSONValue], completion: (() -> Void)?)
+    func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?)
     func anonymize()
 }
 
 extension InAppMessagesManagerType {
-    func preload(for customerIds: [String: JSONValue]) {
+    func preload(for customerIds: [String: String]) {
         preload(for: customerIds, completion: nil)
     }
 

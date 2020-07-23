@@ -16,7 +16,7 @@ import Foundation
 /// - eventType
 enum DataType: Equatable {
     /// Identifier of your customer, can be anything from an email to UUIDs.
-    case customerIds([String: JSONValue])
+    case customerIds([String: String])
 
     /// Custom properties that you would like to add to the tracking event,
     /// these can include any relevant information for you.

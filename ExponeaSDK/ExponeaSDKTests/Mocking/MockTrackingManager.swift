@@ -18,7 +18,7 @@ internal class MockTrackingManager: TrackingManagerType {
 
     var customerCookie: String = "mock-cookie"
 
-    var customerIds: [String: JSONValue] = [:]
+    var customerIds: [String: String] = [:]
 
     var customerPushToken: String?
 

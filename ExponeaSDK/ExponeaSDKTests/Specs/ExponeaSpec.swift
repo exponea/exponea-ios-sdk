@@ -364,13 +364,13 @@ class ExponeaSpec: QuickSpec {
             context("anonymizing") {
                 func checkEvent(event: TrackEventProxy, eventType: String, projectToken: String, userId: UUID) {
                     expect(event.eventType).to(equal(eventType))
-                    expect(event.customerIds["cookie"]).to(equal(JSONValue.string(userId.uuidString)))
+                    expect(event.customerIds["cookie"]).to(equal(userId.uuidString))
                     expect(event.projectToken).to(equal(projectToken))
                 }
 
                 func checkCustomer(event: TrackEventProxy, eventType: String, projectToken: String, userId: UUID) {
                     expect(event.eventType).to(equal(eventType))
-                    expect(event.customerIds["cookie"]).to(equal(JSONValue.string(userId.uuidString)))
+                    expect(event.customerIds["cookie"]).to(equal(userId.uuidString))
                     expect(event.projectToken).to(equal(projectToken))
                 }
 
@@ -400,25 +400,24 @@ class ExponeaSpec: QuickSpec {
                     let events = try! database.fetchTrackEvent()
                     expect(events.count).to(equal(4))
                     expect(events[0].eventType).to(equal("installation"))
-                    expect(events[0].customerIds["cookie"]).to(equal(JSONValue.string(firstCustomer.uuid.uuidString)))
+                    expect(events[0].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(events[0].projectToken).to(equal("mock-token"))
 
                     expect(events[1].eventType).to(equal("test"))
-                    expect(events[1].customerIds["cookie"]).to(equal(JSONValue.string(firstCustomer.uuid.uuidString)))
+                    expect(events[1].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(events[1].projectToken).to(equal("mock-token"))
 
                     expect(events[2].eventType).to(equal("installation"))
-                    expect(events[2].customerIds["cookie"]).to(equal(JSONValue.string(secondCustomer.uuid.uuidString)))
+                    expect(events[2].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
                     expect(events[2].projectToken).to(equal("other-mock-token"))
 
                     expect(events[3].eventType).to(equal("session_start"))
-                    expect(events[3].customerIds["cookie"]).to(equal(JSONValue.string(secondCustomer.uuid.uuidString)))
+                    expect(events[3].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
                     expect(events[3].projectToken).to(equal("other-mock-token"))
 
                     let customerUpdates = try! database.fetchTrackCustomer()
                     expect(customerUpdates.count).to(equal(3))
-                    expect(customerUpdates[0].customerIds["cookie"])
-                        .to(equal(JSONValue.string(firstCustomer.uuid.uuidString)))
+                    expect(customerUpdates[0].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(customerUpdates[0].dataTypes)
                         .to(equal([.properties([
                             "apple_push_notification_authorized": .bool(true),
@@ -426,8 +425,7 @@ class ExponeaSpec: QuickSpec {
                         ])]))
                     expect(customerUpdates[0].projectToken).to(equal("mock-token"))
 
-                    expect(customerUpdates[1].customerIds["cookie"])
-                        .to(equal(JSONValue.string(firstCustomer.uuid.uuidString)))
+                    expect(customerUpdates[1].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(customerUpdates[1].dataTypes)
                         .to(equal([.properties([
                             "apple_push_notification_authorized": .bool(false),
@@ -435,8 +433,7 @@ class ExponeaSpec: QuickSpec {
                         ])]))
                     expect(customerUpdates[1].projectToken).to(equal("mock-token"))
 
-                    expect(customerUpdates[2].customerIds["cookie"])
-                        .to(equal(JSONValue.string(secondCustomer.uuid.uuidString)))
+                    expect(customerUpdates[2].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
                     expect(customerUpdates[2].dataTypes)
                         .to(equal([.properties([
                             "apple_push_notification_authorized": .bool(true),

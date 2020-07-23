@@ -10,7 +10,7 @@ import Foundation
 
 extension ServerRepository: SelfCheckRepository {
     func requestSelfCheckPush(
-        for customerIds: [String: JSONValue],
+        for customerIds: [String: String],
         pushToken: String,
         completion: @escaping (EmptyResult<RepositoryError>) -> Void
     ) {

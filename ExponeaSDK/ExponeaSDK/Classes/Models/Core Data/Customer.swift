@@ -26,9 +26,9 @@ class Customer: NSManagedObjectWithContext {
     @NSManaged public var trackCustomer: NSSet?
     @NSManaged public var trackEvent: NSSet?
 
-    var ids: [String: JSONValue] {
-        let ids: [String: JSONValue]? = managedObjectContext?.performAndWait {
-            var data: [String: JSONValue] = ["cookie": .string(uuid.uuidString)]
+    var ids: [String: String] {
+        let ids: [String: String]? = managedObjectContext?.performAndWait {
+            var data: [String: String] = ["cookie": uuid.uuidString]
 
             // Convert all properties to key value items.
             if let properties = customIds as? Set<KeyValueItem> {
@@ -41,7 +41,11 @@ class Customer: NSManagedObjectWithContext {
                         return
                     }
 
-                    data[key] = DatabaseManager.processObject(object)
+                    guard let string = object as? NSString else {
+                        Exponea.logger.log(.error, message: "Customer id is not NSString: \(object).")
+                        return
+                    }
+                    data[key] = string as String
                 })
             }
             return data
@@ -142,7 +146,7 @@ class CustomerThreadSafe {
     public let uuid: UUID
     public let pushToken: String?
     public let lastTokenTrackDate: Date?
-    public let ids: [String: JSONValue]
+    public let ids: [String: String]
 
     init(_ customer: Customer) {
         managedObjectID = customer.objectID

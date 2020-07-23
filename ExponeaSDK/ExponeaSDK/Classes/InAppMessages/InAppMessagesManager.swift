@@ -44,7 +44,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         self.urlOpener = urlOpener
     }
 
-    func sessionDidStart(at date: Date, for customerIds: [String: JSONValue], completion: (() -> Void)?) {
+    func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?) {
         sessionStartDate = date
         let refreshTime = cache.getInAppMessagesTimestamp() + InAppMessagesManager.refreshCacheAfter
         if refreshTime < date.timeIntervalSince1970 {
@@ -59,7 +59,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         displayStatusStore.clear()
     }
 
-    func preload(for customerIds: [String: JSONValue], completion: (() -> Void)?) {
+    func preload(for customerIds: [String: String], completion: (() -> Void)?) {
         preloaded = false
         DispatchQueue.global(qos: .background).async {
             self.repository.fetchInAppMessages(for: customerIds) { result in

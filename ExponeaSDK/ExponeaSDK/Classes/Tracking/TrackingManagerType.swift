@@ -12,7 +12,7 @@ import Foundation
 protocol TrackingManagerType: class {
 
     /// The identifiers of the the current customer.
-    var customerIds: [String: JSONValue] { get }
+    var customerIds: [String: String] { get }
 
     /// Cookie of the current customer.
     var customerCookie: String { get }

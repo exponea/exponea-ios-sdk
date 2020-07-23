@@ -89,7 +89,7 @@ final class TrackEventProxy: FlushableObject {
     let projectToken: String?
     let authorization: Authorization
 
-    let customerIds: [String: JSONValue]
+    let customerIds: [String: String]
 
     let eventType: String?
     let timestamp: TimeInterval

@@ -63,7 +63,7 @@ final class DeliveredNotificationTracker {
 
     static func generateTrackingObjects(
         configuration: Configuration,
-        customerIds: [String: JSONValue],
+        customerIds: [String: String],
         notification: NotificationData
     ) -> [EventTrackingObject] {
         var properties = configuration.defaultProperties?.mapValues { $0.jsonValue } ?? [:]

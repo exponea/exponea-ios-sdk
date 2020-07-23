@@ -11,7 +11,7 @@ import Foundation
 extension ServerRepository: FetchRepository {
     func fetchRecommendation<T: RecommendationUserData>(
         request: RecommendationRequest,
-        for customerIds: [String: JSONValue],
+        for customerIds: [String: String],
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void
     ) {
         let router = RequestFactory(exponeaProject: configuration.mainProject, route: .customerAttributes)
@@ -52,7 +52,7 @@ extension ServerRepository: FetchRepository {
     }
 
     func fetchInAppMessages(
-        for customerIds: [String: JSONValue],
+        for customerIds: [String: String],
         completion: @escaping (Result<InAppMessagesResponse>) -> Void
     ) {
         let router = RequestFactory(exponeaProject: configuration.mainProject, route: .inAppMessages)

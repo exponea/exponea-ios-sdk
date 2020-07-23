@@ -19,7 +19,7 @@ protocol FetchRepository {
     ///   - completion: Object containing the request result.
     func fetchRecommendation<T: RecommendationUserData>(
         request: RecommendationRequest,
-        for customerIds: [String: JSONValue],
+        for customerIds: [String: String],
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void
     )
 
@@ -30,7 +30,7 @@ protocol FetchRepository {
     func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void)
 
     func fetchInAppMessages(
-        for customerIds: [String: JSONValue],
+        for customerIds: [String: String],
         completion: @escaping (Result<InAppMessagesResponse>) -> Void
     )
 }

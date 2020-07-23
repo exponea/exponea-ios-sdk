@@ -12,7 +12,7 @@ import Foundation
 /// Depending on what king of tracking, you can use a combination of properties.
 struct TrackingParameters {
     /// Customer identification.
-    var customerIds: [String: JSONValue]
+    var customerIds: [String: String]
     /// Object with customer properties.
     var properties: [String: JSONValue]
     /// Timestamp should always be UNIX timestamp format
@@ -20,7 +20,7 @@ struct TrackingParameters {
     /// Name of the tracking event.
     var eventType: String?
 
-    init(customerIds: [String: JSONValue],
+    init(customerIds: [String: String],
          properties: [String: JSONValue],
          timestamp: Double? = nil,
          eventType: String? = nil
@@ -37,7 +37,7 @@ extension TrackingParameters: RequestParametersType {
         var parameters: [String: JSONValue] = [:]
 
         /// Preparing customers_ids params
-        parameters["customer_ids"] = .dictionary(customerIds)
+        parameters["customer_ids"] = .dictionary(customerIds.mapValues { $0.jsonValue })
 
         if eventType == Constants.EventTypes.campaignClick {
             parameters["url"] = properties["url"]

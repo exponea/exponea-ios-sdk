@@ -31,7 +31,7 @@ class DatabaseManagerSpec: QuickSpec {
             describe("when properly instantiated", {
                 let customerData: [DataType] = [
                     .timestamp(100),
-                    .customerIds(["registered": .string("myemail")]),
+                    .customerIds(["registered": "myemail"]),
                     .properties(["customprop": .string("customval")]),
                     .pushNotificationToken(token: "pushtoken", authorized: true)
                 ]
@@ -79,13 +79,13 @@ class DatabaseManagerSpec: QuickSpec {
                     it("should not delete old customers with events assigned") {
                         let firstUUID = db.currentCustomer.uuid
                         try! db.identifyCustomer(
-                            with: [.customerIds(["email": .string("a@b.com")])],
+                            with: [.customerIds(["email": "a@b.com"])],
                             into: ExponeaProject(projectToken: "mock", authorization: .none)
                         )
                         db.makeNewCustomer()
                         expect(db.customers.count).to(equal(2))
                         let identify = try! db.fetchTrackCustomer()[0]
-                        expect(identify.customerIds["cookie"]).to(equal(JSONValue.string(firstUUID.uuidString)))
+                        expect(identify.customerIds["cookie"]).to(equal(firstUUID.uuidString))
                         try! db.delete(identify.databaseObjectProxy)
                         _ = db.currentCustomer
                         expect(db.customers.count).to(equal(1))
@@ -98,7 +98,7 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(objects.count).to(equal(1))
 
                     let object = objects[0]
-                    expect(db.currentCustomer.ids["registered"]).to(equal("myemail".jsonValue))
+                    expect(db.currentCustomer.ids["registered"]).to(equal("myemail"))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
                     expect(props.count).to(equal(3))
@@ -208,7 +208,7 @@ class DatabaseManagerSpec: QuickSpec {
 
             describe("when accessed from a background thread", {
                 let customerData: [DataType] = [
-                    .customerIds(["registered": .string("myemail")]),
+                    .customerIds(["registered": "myemail"]),
                     .properties(["customprop": .string("customval")]),
                     .pushNotificationToken(token: "pushtoken", authorized: true)
                 ]
@@ -257,7 +257,7 @@ class DatabaseManagerSpec: QuickSpec {
                     }
 
                     let object = objects[0]
-                    expect(db.currentCustomer.ids["registered"]).to(equal("myemail".jsonValue))
+                    expect(db.currentCustomer.ids["registered"]).to(equal("myemail"))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
                     expect(props.count).to(equal(3))
@@ -331,7 +331,7 @@ class DatabaseManagerSpec: QuickSpec {
 
             describe("when stressed", {
                 let customerData: [DataType] = [
-                    .customerIds(["registered": .string("myemail")]),
+                    .customerIds(["registered": "myemail"]),
                     .properties(["customprop": .string("customval")]),
                     .pushNotificationToken(token: "pushtoken", authorized: true)
                 ]

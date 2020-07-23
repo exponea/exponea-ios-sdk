@@ -76,7 +76,7 @@ final class TrackCustomerProxy: FlushableObject {
     let projectToken: String?
     let authorization: Authorization
 
-    let customerIds: [String: JSONValue]
+    let customerIds: [String: String]
 
     let timestamp: TimeInterval
     let dataTypes: [DataType]

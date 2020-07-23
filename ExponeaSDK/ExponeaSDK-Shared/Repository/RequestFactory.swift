@@ -39,7 +39,7 @@ struct RequestFactory {
 extension RequestFactory {
     func prepareRequest(
         parameters: RequestParametersType? = nil,
-        customerIds: [String: JSONValue]? = nil
+        customerIds: [String: String]? = nil
     ) -> URLRequest {
         var request = URLRequest(url: URL(string: path)!)
 
@@ -64,7 +64,7 @@ extension RequestFactory {
 
             // Add customer ids if separate
             if let customerIds = customerIds {
-                params["customer_ids"] = customerIds.mapValues({ $0.jsonConvertible })
+                params["customer_ids"] = customerIds
             }
 
             do {

@@ -17,8 +17,8 @@ struct MockData {
 
     let projectToken = "TokenForUnitTest"
 
-    let customerIds: [String: JSONValue] = {
-        return ["registered": .string("marian.galik@exponea.com")]
+    let customerIds: [String: String] = {
+        return ["registered": "marian.galik@exponea.com"]
     }()
 
     let properties: [String: JSONValue] = {
