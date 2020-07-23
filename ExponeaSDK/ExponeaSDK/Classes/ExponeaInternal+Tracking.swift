@@ -307,6 +307,7 @@ extension ExponeaInternal {
                 exponeaProject: exponeaProject,
                 projectMapping: projectMapping
             )
+            telemetryManager?.report(eventWithType: .anonymize, properties: [:])
         }
     }
 }

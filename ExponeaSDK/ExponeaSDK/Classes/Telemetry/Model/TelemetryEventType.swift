@@ -14,4 +14,5 @@ enum TelemetryEventType: String {
     case fetchConsents
     case showInAppMessage
     case selfCheck
+    case anonymize
 }
