@@ -178,6 +178,10 @@ public class ExponeaInternal: ExponeaType {
                     )
                     telemetryManager?.start()
                     telemetryManager?.report(initEventWithConfiguration: configuration)
+                    let eventCount = try database.countTrackCustomer() + (try database.countTrackEvent())
+                    telemetryManager?.report(
+                        eventWithType: .eventCount,
+                        properties: ["count": String(describing: eventCount)])
                 }
 
                 let repository = ServerRepository(configuration: configuration)

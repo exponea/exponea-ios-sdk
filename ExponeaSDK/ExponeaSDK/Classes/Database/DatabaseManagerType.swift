@@ -19,7 +19,9 @@ protocol DatabaseManagerType: class {
     func updateEvent(withId id: NSManagedObjectID, withData data: DataType) throws
 
     func fetchTrackCustomer() throws -> [TrackCustomerProxy]
+    func countTrackCustomer() throws -> Int
     func fetchTrackEvent() throws -> [TrackEventProxy]
+    func countTrackEvent() throws -> Int
 
     func addRetry(_ object: DatabaseObjectProxy) throws
 

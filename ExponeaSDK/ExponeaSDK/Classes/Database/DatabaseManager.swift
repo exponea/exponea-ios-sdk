@@ -347,6 +347,12 @@ extension DatabaseManager: DatabaseManagerType {
         }
     }
 
+    func countTrackCustomer() throws -> Int {
+        return try context.performAndWait {
+            try context.count(for: TrackCustomer.fetchRequest())
+        }
+    }
+
     /// Fetch all Tracking Events from CoreData
     ///
     /// - Returns: An array of tracking events, if any are stored in the database.
@@ -354,6 +360,12 @@ extension DatabaseManager: DatabaseManagerType {
         return try context.performAndWait {
             let trackEvents: [TrackEvent] = try context.fetch(TrackEvent.fetchRequest())
             return trackEvents.map {TrackEventProxy($0)}
+        }
+    }
+
+    func countTrackEvent() throws -> Int {
+        return try context.performAndWait {
+            try context.count(for: TrackEvent.fetchRequest())
         }
     }
 

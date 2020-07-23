@@ -114,6 +114,14 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(objects).to(beEmpty())
                 })
 
+                it("should count customer identifications") {
+                    expect(try? db.countTrackCustomer()).to(equal(0))
+                    expect { try db.identifyCustomer(with: customerData, into: myProject) }.toNot(raiseException())
+                    expect(try? db.countTrackCustomer()).to(equal(1))
+                    expect { try db.identifyCustomer(with: customerData, into: myProject) }.toNot(raiseException())
+                    expect(try? db.countTrackCustomer()).to(equal(2))
+                }
+
                 it("should track, fetch and delete an event", closure: {
                     var objects: [TrackEventProxy] = []
                     expect { try db.trackEvent(with: eventData, into: myProject) }.toNot(raiseException())
@@ -143,6 +151,14 @@ class DatabaseManagerSpec: QuickSpec {
                         .to(equal([123, "abc", false].jsonValue))
                     expect(object.dataTypes.properties["dictionary"]??.jsonValue)
                         .to(equal(["int": 123, "string": "abc", "bool": true].jsonValue))
+                }
+
+                it("should count events") {
+                    expect(try? db.countTrackEvent()).to(equal(0))
+                    expect { try db.trackEvent(with: eventData, into: myProject) }.toNot(raiseException())
+                    expect(try? db.countTrackEvent()).to(equal(1))
+                    expect { try db.trackEvent(with: eventData, into: myProject) }.toNot(raiseException())
+                    expect(try? db.countTrackEvent()).to(equal(2))
                 }
 
                 describe("update", {
