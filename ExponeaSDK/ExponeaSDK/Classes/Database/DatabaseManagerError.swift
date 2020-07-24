@@ -18,6 +18,7 @@ import Foundation
 public enum DatabaseManagerError: LocalizedError {
     case unableToCreatePersistentContainer
     case unableToLoadPeristentStore(String)
+    case notEnoughDiskSpace(String)
     case objectDoesNotExist
     case wrongObjectType
     case saveCustomerFailed(String)
@@ -30,6 +31,9 @@ public enum DatabaseManagerError: LocalizedError {
 
         case .unableToLoadPeristentStore(let details):
             return "Unable to load persistent store for database: \(details)"
+
+        case .notEnoughDiskSpace(let details):
+            return "Not enough disk space: \(details)"
 
         case .objectDoesNotExist:
             return "Object does not exist."

@@ -12,7 +12,6 @@ import CoreData
 /// The Database Manager class is responsible for persist the data using CoreData Framework.
 /// Persisted data will be used to interact with the Exponea API.
 class DatabaseManager {
-
     internal let persistentContainer: NSPersistentContainer
     private let context: NSManagedObjectContext
 
@@ -49,6 +48,20 @@ class DatabaseManager {
 }
 
 extension DatabaseManager {
+    /**
+     We'll wrap context saving to catch common errors and handle them in one place.
+     In case of a full disk, there is nothing we can do, so just log error.
+     */
+    private func saveContext(_ context: NSManagedObjectContext) throws {
+        do {
+            try context.save()
+        } catch let diskError as NSError // SQLITE code 13 means full disk http://www.sqlite.org/c3ref/c_abort.html
+                where diskError.domain == NSSQLiteErrorDomain && diskError.code == 13 {
+            let error = DatabaseManagerError.notEnoughDiskSpace(diskError.localizedDescription)
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+    }
+
     public var currentCustomer: CustomerThreadSafe {
         return context.performAndWait {
             return CustomerThreadSafe(currentCustomerManagedObject)
@@ -83,7 +96,7 @@ extension DatabaseManager {
             context.insert(customer)
 
             do {
-                try context.save()
+                try saveContext(context)
                 Exponea.logger.log(.verbose, message: "New customer created with UUID: \(customer.uuid)")
             } catch let saveError as NSError {
                 let error = DatabaseManagerError.saveCustomerFailed(saveError.localizedDescription)
@@ -146,7 +159,7 @@ extension DatabaseManager {
             do {
                 // We don't know if anything changed
                 if context.hasChanges {
-                    try context.save()
+                    try saveContext(context)
                 }
             } catch {
                 let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription)
@@ -168,7 +181,7 @@ extension DatabaseManager {
             do {
                 // We don't know if anything changed
                 if context.hasChanges {
-                    try context.save()
+                    try saveContext(context)
                 }
             } catch {
                 let error = DatabaseManagerError.saveCustomerFailed(error.localizedDescription)
@@ -200,7 +213,7 @@ extension DatabaseManager: DatabaseManagerType {
                 return
             }
             Exponea.logger.log(.verbose, message: "going to modify event with id \(event.objectID)")
-            try context.save()
+            try saveContext(context)
         }
     }
 
@@ -244,7 +257,7 @@ extension DatabaseManager: DatabaseManagerType {
             )
 
             // Save the customer properties into CoreData
-            try context.save()
+            try saveContext(context)
         }
     }
 
@@ -298,7 +311,7 @@ extension DatabaseManager: DatabaseManagerType {
             }
 
             // Save the customer properties into CoreData
-            try context.save()
+            try saveContext(context)
         }
     }
 
@@ -353,7 +366,7 @@ extension DatabaseManager: DatabaseManagerType {
                 throw DatabaseManagerError.objectDoesNotExist
             }
             databaseObject.retries = NSNumber(value: databaseObjectProxy.retries + 1)
-            try context.save()
+            try saveContext(context)
         }
     }
 
@@ -367,7 +380,7 @@ extension DatabaseManager: DatabaseManagerType {
                 return
             }
             context.delete(object)
-            try context.save()
+            try saveContext(context)
         }
     }
 }

@@ -50,7 +50,7 @@ final class TelemetryManagerSpec: QuickSpec {
             expect(self.upload.uploadedCrashLogs[0].isFatal).to(equal(false))
             expect(self.upload.uploadedCrashLogs[0].errorData.type).to(equal("DatabaseManagerError"))
             expect(self.upload.uploadedCrashLogs[0].errorData.message)
-                .to(equal("ExponeaSDK.DatabaseManagerError:4 Object does not exist."))
+                .to(equal("ExponeaSDK.DatabaseManagerError:5 Object does not exist."))
             expect(self.upload.uploadedCrashLogs[0].errorData.stackTrace).to(equal(["something", "something else"]))
         }
 
