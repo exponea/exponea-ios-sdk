@@ -14,11 +14,7 @@ import CoreData
 class DatabaseManager {
 
     internal let persistentContainer: NSPersistentContainer
-
-    /// Managed Context for Core Data
-    private var context: NSManagedObjectContext {
-        return persistentContainer.viewContext
-    }
+    private let context: NSManagedObjectContext
 
     internal init(persistentStoreDescriptions: [NSPersistentStoreDescription]? = nil) throws {
         let bundle = Bundle(for: DatabaseManager.self)
@@ -40,10 +36,10 @@ class DatabaseManager {
             throw DatabaseManagerError.unableToLoadPeristentStore(error.localizedDescription)
         }
 
-        container.viewContext.automaticallyMergesChangesFromParent = true
-
         // Set the container
         persistentContainer = container
+        context = persistentContainer.newBackgroundContext()
+        context.automaticallyMergesChangesFromParent = true
 
         // Initialise customer
         _ = currentCustomer
