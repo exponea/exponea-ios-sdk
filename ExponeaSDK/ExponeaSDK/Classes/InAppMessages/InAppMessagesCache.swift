@@ -15,7 +15,7 @@ final class InAppMessagesCache: InAppMessagesCacheType {
     private let fileManager: FileManager = FileManager()
 
     private func getCacheDirectoryURL() -> URL? {
-        guard let documentsDir = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+        guard let documentsDir = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first else {
             return nil
         }
         let dir = documentsDir.appendingPathComponent(InAppMessagesCache.inAppMessagesFolder, isDirectory: true)
