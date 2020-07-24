@@ -40,6 +40,7 @@ class DatabaseManager {
         persistentContainer = container
         context = persistentContainer.newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
+        context.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
 
         // Initialise customer
         _ = currentCustomer
