@@ -24,7 +24,7 @@ public extension PushNotificationManagerDelegate {
     func silentPushNotificationReceived(extraData: [AnyHashable: Any]?) {}
 }
 
-class PushNotificationManager: NSObject, PushNotificationManagerType {
+final class PushNotificationManager: NSObject, PushNotificationManagerType {
     /// The tracking manager used to track push events
     internal weak var trackingManager: TrackingManagerType?
 
@@ -71,10 +71,16 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         // push notifications unless enabled by developer in configuration
         if requirePushAuthorization {
             UNAuthorizationStatusProvider.current.isAuthorized { authorized in
-                if authorized { UIApplication.shared.registerForRemoteNotifications() }
+                if authorized {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                }
             }
         } else {
-            UIApplication.shared.registerForRemoteNotifications()
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
         }
     }
 
