@@ -45,7 +45,9 @@ struct SampleInAppMessage {
             "enabled": false,
             "from_date": 1570744800,
             "to_date": null
-        }
+        },
+        "load_delay": 1000,
+        "close_timeout": 2000
     }
     """
 
@@ -55,7 +57,9 @@ struct SampleInAppMessage {
         trigger: EventFilter? = nil,
         frequency: InAppMessageFrequency? = nil,
         imageUrl: String? = nil,
-        priority: Int? = nil
+        priority: Int? = nil,
+        delayMS: Int? = nil,
+        timeoutMS: Int? = nil
     ) -> InAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
@@ -93,7 +97,9 @@ struct SampleInAppMessage {
                 startDate: Date(timeIntervalSince1970: 1570744800),
                 endDate: nil
             ),
-            priority: priority
+            priority: priority,
+            delayMS: delayMS,
+            timeoutMS: timeoutMS
         )
     }
 }

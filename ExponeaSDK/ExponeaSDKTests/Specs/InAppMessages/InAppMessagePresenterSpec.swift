@@ -93,6 +93,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                         InAppMessagePresenter(window: window).presentInAppMessage(
                             messageType: messageType,
                             payload: payload,
+                            delay: 0,
+                            timeout: nil,
                             imageData: lenaImageData,
                             actionCallback: { _ in },
                             dismissCallback: {},
@@ -108,6 +110,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                         InAppMessagePresenter().presentInAppMessage(
                             messageType: messageType,
                             payload: payload,
+                            delay: 0,
+                            timeout: nil,
                             imageData: lenaImageData,
                             actionCallback: { _ in },
                             dismissCallback: {},
@@ -125,6 +129,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                         InAppMessagePresenter().presentInAppMessage(
                             messageType: messageType,
                             payload: payload,
+                            delay: 0,
+                            timeout: nil,
                             imageData: "something".data(using: .utf8)!,
                             actionCallback: { _ in },
                             dismissCallback: {},
@@ -143,6 +149,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                         presenter.presentInAppMessage(
                             messageType: messageType,
                             payload: payload,
+                            delay: 0,
+                            timeout: nil,
                             imageData: lenaImageData,
                             actionCallback: { _ in },
                             dismissCallback: {},

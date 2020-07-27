@@ -76,13 +76,16 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         swipeGesture.direction = displayOnBottom ? .down : .up
         addGestureRecognizer(swipeGesture)
 
-        animateIn {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self] in
-                self?.animateOut {
-                    self?.removeFromSuperview()
-                    self?.dismissCallback()
-                }
-            }
+        animateIn()
+    }
+
+    func dismiss() {
+        guard superview != nil else {
+            return
+        }
+        animateOut {
+            self.removeFromSuperview()
+            self.dismissCallback()
         }
     }
 

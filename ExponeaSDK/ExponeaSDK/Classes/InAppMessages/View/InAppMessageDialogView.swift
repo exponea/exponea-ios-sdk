@@ -69,6 +69,14 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         viewController.present(self, animated: true)
     }
 
+    func dismiss() {
+        guard presentingViewController != nil else {
+            return
+        }
+        dismissCallback()
+        dismiss(animated: true)
+    }
+
     override func loadView() {
         view = UIView(frame: UIScreen.main.bounds)
         view.backgroundColor = UIColor.black.withAlphaComponent(0.6)

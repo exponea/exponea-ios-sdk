@@ -220,6 +220,8 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         self.presenter.presentInAppMessage(
             messageType: message.messageType,
             payload: message.payload,
+            delay: message.delay,
+            timeout: message.timeout,
             imageData: imageData,
             actionCallback: { button in
                 self.displayStatusStore.didInteract(with: message, at: Date())

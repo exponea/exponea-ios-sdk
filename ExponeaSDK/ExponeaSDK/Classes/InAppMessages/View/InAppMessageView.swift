@@ -13,4 +13,5 @@ protocol InAppMessageView {
     var dismissCallback: (() -> Void) { get }
 
     func present(in viewController: UIViewController, window: UIWindow?) throws
+    func dismiss()
 }

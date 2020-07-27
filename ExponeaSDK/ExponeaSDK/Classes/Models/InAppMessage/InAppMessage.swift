@@ -21,6 +21,10 @@ struct InAppMessage: Codable, Equatable {
     public let trigger: EventFilter
     public let dateFilter: DateFilter
     public let priority: Int?
+    public let delayMS: Int?
+    public var delay: TimeInterval { return Double(delayMS ?? 0) / 1000.0 }
+    public let timeoutMS: Int?
+    public var timeout: TimeInterval? { return timeoutMS != nil ? Double(timeoutMS ?? 0 ) / 1000 : nil }
 
     enum CodingKeys: String, CodingKey {
         case id = "id"
@@ -33,6 +37,8 @@ struct InAppMessage: Codable, Equatable {
         case trigger
         case dateFilter = "date_filter"
         case priority = "load_priority"
+        case delayMS = "load_delay"
+        case timeoutMS = "close_timeout"
     }
 
     func applyDateFilter(date: Date) -> Bool {

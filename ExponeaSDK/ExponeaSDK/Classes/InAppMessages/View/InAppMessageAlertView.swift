@@ -50,4 +50,12 @@ final class InAppMessageAlertView: InAppMessageView {
     func present(in viewController: UIViewController, window: UIWindow?) {
         viewController.present(alertController, animated: true)
     }
+
+    func dismiss() {
+        guard alertController.presentingViewController != nil else {
+            return
+        }
+        dismissCallback()
+        alertController.dismiss(animated: true)
+    }
 }

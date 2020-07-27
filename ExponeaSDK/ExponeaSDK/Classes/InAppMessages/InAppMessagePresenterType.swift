@@ -10,6 +10,8 @@ protocol InAppMessagePresenterType {
     func presentInAppMessage(
         messageType: InAppMessageType,
         payload: InAppMessagePayload,
+        delay: TimeInterval,
+        timeout: TimeInterval?,
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
         dismissCallback: @escaping () -> Void,

@@ -23,19 +23,24 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
     func presentInAppMessage(
         messageType: InAppMessageType,
         payload: InAppMessagePayload,
+        delay: TimeInterval,
+        timeout: TimeInterval?,
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
         dismissCallback: @escaping () -> Void,
         presentedCallback: ((InAppMessageView?) -> Void)? = nil
     ) {
-        guard !presenting else {
-            Exponea.logger.log(.verbose, message: "Already presenting in-app message.")
-            presentedCallback?(nil)
-            return
-        }
-        Exponea.logger.log(.verbose, message: "Will attempt to present in-app message on main thread.")
-        DispatchQueue.main.async {
+        Exponea.logger.log(
+            .verbose,
+            message: "Will attempt to present in-app message on main thread with delay \(delay)."
+        )
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             Exponea.shared.executeSafely {
+                guard !self.presenting else {
+                    Exponea.logger.log(.verbose, message: "Already presenting in-app message.")
+                    presentedCallback?(nil)
+                    return
+                }
                 var image: UIImage?
                 if let imageData = imageData {
                     if let createdImage = self.createImage(
@@ -76,11 +81,25 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     )
                     self.presenting = true
                     Exponea.logger.log(.error, message: "In-app message presented.")
+                    self.setMessageTimeout(inAppMessageView: inAppMessageView, timeout: timeout)
                     presentedCallback?(inAppMessageView)
                 } catch {
                     Exponea.logger.log(.error, message: "Unable to present in-app message \(error)")
                     presentedCallback?(nil)
                 }
+            }
+        }
+    }
+
+    func setMessageTimeout(inAppMessageView: InAppMessageView, timeout: TimeInterval?) {
+        var messageTimeout = timeout
+        if inAppMessageView is InAppMessageSlideInView {
+            // slide-in has default 4 second timeout
+            messageTimeout = messageTimeout ?? 4
+        }
+        if let messageTimeout = messageTimeout {
+            DispatchQueue.main.asyncAfter(deadline: .now() + messageTimeout) {
+                inAppMessageView.dismiss()
             }
         }
     }

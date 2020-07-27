@@ -18,7 +18,7 @@ class InAppMessageSpec: QuickSpec {
             jsonDecoder.dateDecodingStrategy = .secondsSince1970
             expect(
                 try? jsonDecoder.decode(InAppMessage.self, from: SampleInAppMessage.samplePayload.data(using: .utf8)!)
-            ).to(equal(SampleInAppMessage.getSampleInAppMessage()))
+            ).to(equal(SampleInAppMessage.getSampleInAppMessage(delayMS: 1000, timeoutMS: 2000)))
         }
     }
 }
