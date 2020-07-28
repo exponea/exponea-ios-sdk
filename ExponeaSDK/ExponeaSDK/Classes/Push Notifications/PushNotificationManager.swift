@@ -71,7 +71,9 @@ class PushNotificationManager: NSObject, PushNotificationManagerType {
         // push notifications unless enabled by developer in configuration
         if requirePushAuthorization {
             UNAuthorizationStatusProvider.current.isAuthorized { authorized in
-                if authorized { UIApplication.shared.registerForRemoteNotifications() }
+                if authorized {
+                    DispatchQueue.main.async { UIApplication.shared.registerForRemoteNotifications() }
+                }
             }
         } else {
             UIApplication.shared.registerForRemoteNotifications()
