@@ -60,6 +60,7 @@ Then you can start using all the other features:
 * [Push Notifications](./Documentation/PUSH.md)
 * [Fetch Data](./Documentation/FETCH.md)
 * [Anonymize](./Documentation/ANONYMIZE.md)
+* [In-app messages](./Documentation/IN_APP_MESSAGES.md)
 
 ## 🔗 Useful links
 
