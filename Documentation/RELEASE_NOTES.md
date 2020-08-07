@@ -1,4 +1,19 @@
 ## Release Notes
+## Release Notes for 2.8.0
+#### August 07, 2020
+* Features
+  * Support for new in-app message delay and timeout fields soon to be available in Exponea web app.
+  * Troubleshooting guide for [In-app messages](IN_APP_MESSAGES.md).
+  * **BREAKING CHANGE**: tracking of event properties with array and object type has been overhauled, supporting nesting. The API has changed slightly, but should not affect most developers, since array/object property type is rarely used.
+  * Swift 5 added to list of supported swift versions in podspec.
+* Bug Fixes
+  * Fixed: Push notification registration is now always performed on the main thread.
+  * **BREAKING CHANGE**: Only strings are now allowed for customer ids. Exponea would ignore all other types, so this change should not break any functionality, possibly just clean up non-functioning code.
+  * Fixed: In-app messages are now stored in Caches directory instead of Documents where users can see them.
+  * Fixed: Core Data is now accessed from background thread instead of main thread to prevent blocking the application execution.
+  * Fixed: Merge policy has been set on Core Data preventing occasional issues when reporting events.
+
+
 ## Release Notes for 2.7.0
 #### July 20, 2020
 * Features
