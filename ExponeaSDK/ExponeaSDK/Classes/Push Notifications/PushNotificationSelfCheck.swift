@@ -19,7 +19,7 @@ final class PushNotificationSelfCheck {
         "Receive self-check push"
     ]
 
-    private let timeout = 3.0
+    private let timeout = 5.0
 
     private let trackingManager: TrackingManagerType
     private let flushingManager: FlushingManagerType
