@@ -119,6 +119,21 @@ public class ExponeaInternal: ExponeaType {
         }
     }
 
+    /// Default properties to be tracked with all events.
+    /// Provide default properties when calling Exponea.shared.configure, they're exposed here for run-time changing.
+    public var defaultProperties: [String: JSONConvertible]? {
+        get {
+            return repository?.configuration.defaultProperties
+        }
+        set {
+            guard let repository = repository else {
+                Exponea.logger.log(.warning, message: "Cannot set default properties before Exponea is configured.")
+                return
+            }
+            repository.configuration.defaultProperties = newValue
+        }
+    }
+
     /// Any NSException inside Exponea SDK will be logged and swallowed if flag is enabled, otherwise
     /// the exception will be rethrown.
     /// Safemode is enabled for release builds and disabled for debug builds.
