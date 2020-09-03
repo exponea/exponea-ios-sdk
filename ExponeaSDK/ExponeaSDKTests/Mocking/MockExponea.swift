@@ -30,13 +30,23 @@ final class MockExponeaImplementation: ExponeaInternal {
             let repository = ServerRepository(configuration: configuration)
             self.repository = repository
 
-            self.flushingManager = try! FlushingManager(database: database, repository: repository)
+            self.flushingManager = try! FlushingManager(
+                database: database,
+                repository: repository,
+                customerIdentifiedHandler: {}
+            )
+
+            self.inAppMessagesManager = InAppMessagesManager(
+               repository: repository,
+               displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults)
+            )
 
             // Finally, configuring tracking manager
             self.trackingManager = try! TrackingManager(
                 repository: repository,
                 database: database,
                 flushingManager: flushingManager!,
+                inAppMessagesManager: inAppMessagesManager!,
                 userDefaults: userDefaults
             )
             processSavedCampaignData()

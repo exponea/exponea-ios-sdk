@@ -17,6 +17,8 @@ class FlushingManager: FlushingManagerType {
     /// Used for periodic data flushing.
     private var flushingTimer: Timer?
 
+    private let customerIdentifiedHandler: () -> Void
+
     public var flushingMode: FlushingMode = .immediate {
         didSet {
             Exponea.logger.log(.verbose, message: "Flushing mode updated to: \(flushingMode).")
@@ -33,9 +35,14 @@ class FlushingManager: FlushingManagerType {
         }
     }
 
-    init(database: DatabaseManagerType, repository: RepositoryType) throws {
+    init(
+        database: DatabaseManagerType,
+        repository: RepositoryType,
+        customerIdentifiedHandler: @escaping () -> Void
+     ) throws {
         self.database = database
         self.repository = repository
+        self.customerIdentifiedHandler = customerIdentifiedHandler
 
         // Start reachability
         guard let reachability = ExponeaReachability(hostname: repository.configuration.hostname) else {
@@ -167,6 +174,14 @@ class FlushingManager: FlushingManagerType {
                 message: "Successfully uploaded tracking object: \(flushableObject.databaseObjectProxy.objectID)."
             )
             do {
+                let trackingObject = flushableObject.getTrackingObject(
+                    defaultBaseUrl: repository.configuration.baseUrl,
+                    defaultProjectToken: repository.configuration.projectToken,
+                    defaultAuthorization: repository.configuration.authorization
+                )
+                if trackingObject is CustomerTrackingObject {
+                    customerIdentifiedHandler()
+                }
                 try database.delete(flushableObject.databaseObjectProxy)
             } catch {
                 Exponea.logger.log(

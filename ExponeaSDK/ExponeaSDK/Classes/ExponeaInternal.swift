@@ -65,6 +65,9 @@ public class ExponeaInternal: ExponeaType {
     /// The manager responsible for flushing data to Exponea servers.
     internal var flushingManager: FlushingManagerType?
 
+    /// The manager responsible for preloading and showing in-app messages.
+    internal var inAppMessagesManager: InAppMessagesManagerType?
+
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
 
@@ -189,14 +192,27 @@ public class ExponeaInternal: ExponeaType {
 
                 let flushingManager = try FlushingManager(
                     database: database,
-                    repository: repository
+                    repository: repository,
+                    customerIdentifiedHandler: { [weak self] in
+                        // reload in-app messages once customer identification is flushed - user may have been merged
+                        guard let inAppMessagesManager = self?.inAppMessagesManager,
+                              let trackingManager = self?.trackingManager else { return }
+                        inAppMessagesManager.preload(for: trackingManager.customerIds)
+                    }
                 )
                 self.flushingManager = flushingManager
+
+                let inAppMessagesManager = InAppMessagesManager(
+                   repository: repository,
+                   displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults)
+                )
+                self.inAppMessagesManager = inAppMessagesManager
 
                 let trackingManager = try TrackingManager(
                     repository: repository,
                     database: database,
                     flushingManager: flushingManager,
+                    inAppMessagesManager: inAppMessagesManager,
                     userDefaults: userDefaults
                 )
 

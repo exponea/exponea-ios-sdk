@@ -34,7 +34,11 @@ class FlushingManagerSpec: QuickSpec {
                 repository = ServerRepository(configuration: configuration)
                 database = try! MockDatabaseManager()
 
-                flushingManager = try! FlushingManager(database: database, repository: repository)
+                flushingManager = try! FlushingManager(
+                    database: database,
+                    repository: repository,
+                    customerIdentifiedHandler: {}
+                )
 
                 eventData = [.properties(MockData().properties)]
             }

@@ -42,10 +42,7 @@ class TrackingManager {
     )
 
     /// Manager responsible for loading and displaying in-app messages
-    private lazy var inAppMessagesManager: InAppMessagesManagerType = InAppMessagesManager(
-        repository: repository,
-        displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults)
-    )
+    private var inAppMessagesManager: InAppMessagesManagerType
 
     private var flushingManager: FlushingManagerType
 
@@ -85,6 +82,7 @@ class TrackingManager {
          database: DatabaseManagerType,
          device: DeviceProperties = DeviceProperties(),
          flushingManager: FlushingManagerType,
+         inAppMessagesManager: InAppMessagesManagerType,
          userDefaults: UserDefaults) throws {
         self.repository = repository
         self.database = database
@@ -92,6 +90,7 @@ class TrackingManager {
         self.userDefaults = userDefaults
 
         self.flushingManager = flushingManager
+        self.inAppMessagesManager = inAppMessagesManager
 
         // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
         NotificationCenter.default.addObserver(self,

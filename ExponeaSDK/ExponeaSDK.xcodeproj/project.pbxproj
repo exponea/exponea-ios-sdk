@@ -179,6 +179,7 @@
 		05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D2D39B23DEF1E300E3E79A /* InAppMessageAlertView.swift */; };
 		05D2D3A023DF07E800E3E79A /* InAppMessageAlertViewSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D2D39F23DF07E800E3E79A /* InAppMessageAlertViewSpec.swift */; };
 		05D4A800247D252D00864DC1 /* PushNotificationSelfCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D4A7FF247D252D00864DC1 /* PushNotificationSelfCheck.swift */; };
+		05D95C44250100B5001DA2DA /* MockInAppMessagesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D95C43250100B5001DA2DA /* MockInAppMessagesManager.swift */; };
 		05D9F62E2387EE6600C47509 /* Exponea+ConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */; };
 		05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05E1A3802359B3A500E5EDDE /* .swiftlint.yml */; };
 		05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E81631247555DD00AA28E3 /* ExponeaAppDelegate.swift */; };
@@ -542,6 +543,7 @@
 		05D2D39B23DEF1E300E3E79A /* InAppMessageAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageAlertView.swift; sourceTree = "<group>"; };
 		05D2D39F23DF07E800E3E79A /* InAppMessageAlertViewSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageAlertViewSpec.swift; sourceTree = "<group>"; };
 		05D4A7FF247D252D00864DC1 /* PushNotificationSelfCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationSelfCheck.swift; sourceTree = "<group>"; };
+		05D95C43250100B5001DA2DA /* MockInAppMessagesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessagesManager.swift; sourceTree = "<group>"; };
 		05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+ConfigurationSpec.swift"; sourceTree = "<group>"; };
 		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		05E81631247555DD00AA28E3 /* ExponeaAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaAppDelegate.swift; sourceTree = "<group>"; };
@@ -1594,6 +1596,7 @@
 				057D476A23C885D800AEE902 /* MockUrlOpener.swift */,
 				05297979241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift */,
 				05FBB15C244709C500BDF234 /* DatabaseManager+Clear.swift */,
+				05D95C43250100B5001DA2DA /* MockInAppMessagesManager.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
@@ -2299,6 +2302,7 @@
 				05BB22B2236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift in Sources */,
 				057F44852399301A0070DF30 /* UIColor+FromHexStringSpec.swift in Sources */,
 				0567723F237464990082167C /* PushNotificationDelegateObserverSpec.swift in Sources */,
+				05D95C44250100B5001DA2DA /* MockInAppMessagesManager.swift in Sources */,
 				057F44872399322D0070DF30 /* InAppMessageDialogViewSpec.swift in Sources */,
 				05FBB15D244709C500BDF234 /* DatabaseManager+Clear.swift in Sources */,
 				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,

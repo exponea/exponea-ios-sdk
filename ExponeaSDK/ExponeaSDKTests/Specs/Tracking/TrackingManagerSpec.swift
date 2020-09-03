@@ -44,6 +44,7 @@ class TrackingManagerSpec: QuickSpec {
                     repository: repository,
                     database: database,
                     flushingManager: MockFlushingManager(),
+                    inAppMessagesManager: MockInAppMessagesManager(),
                     userDefaults: userDefaults
                 )
             }
