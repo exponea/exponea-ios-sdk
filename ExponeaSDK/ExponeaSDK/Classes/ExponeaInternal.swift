@@ -21,9 +21,8 @@ public class ExponeaInternal: ExponeaType {
 
     /// The configuration object containing all the configuration data necessary for Exponea SDK to work.
     ///
-    /// The setter of this variable will setup all required tools and managers if the value is not nil,
-    /// otherwise will deactivate everything. This can be useful if you want the user to be able to opt-out of
-    /// Exponea tracking for example in a settings screen of your application.
+    /// The setter of this variable will setup all required tools and managers.
+    /// Exponea can only be configured once.
     public internal(set) var configuration: Configuration? {
         get {
             guard let repository = repository else {
@@ -34,19 +33,14 @@ public class ExponeaInternal: ExponeaType {
         }
 
         set {
-            // If we want to reset Exponea, warn about it and reset everything
             guard let newValue = newValue else {
-                Exponea.logger.log(.warning, message: "Removing Exponea configuration and resetting everything.")
-                trackingManager = nil
-                repository = nil
+                Exponea.logger.log(.error, message: "Configuration cannot be set to nil.")
                 return
             }
 
-            // If we want to re-configure Exponea, warn about it, reset everything and continue setting up with new
-            if configuration != nil {
-                Exponea.logger.log(.warning, message: "Resetting previous Exponea configuration.")
-                trackingManager = nil
-                repository = nil
+            guard configuration == nil || Exponea.isBeingTested else {
+                Exponea.logger.log(.error, message: "Exponea SDK already configured.")
+                return
             }
 
             // Initialise everything
