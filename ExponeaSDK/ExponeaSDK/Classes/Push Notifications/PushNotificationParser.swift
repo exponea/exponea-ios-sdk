@@ -10,37 +10,6 @@ import Foundation
 import UserNotifications
 
 struct PushNotificationParser {
-    struct PushOpenedData: Equatable {
-        let silent: Bool
-        let campaignData: CampaignData
-        let actionType: ExponeaNotificationActionType
-        let actionValue: String?
-        let eventType: EventType
-        let eventData: [DataType]
-        let extraData: [String: Any]?
-
-        static func == (
-            lhs: PushNotificationParser.PushOpenedData,
-            rhs: PushNotificationParser.PushOpenedData
-        ) -> Bool {
-            guard lhs.silent == rhs.silent &&
-                  lhs.campaignData == rhs.campaignData &&
-                  lhs.actionType == rhs.actionType &&
-                  lhs.actionValue == rhs.actionValue &&
-                  lhs.eventData == rhs.eventData else {
-                return false
-            }
-            if lhs.extraData == nil && rhs.extraData == nil {
-                return true
-            }
-            if let lhsExtraData = lhs.extraData, let rhsExtraData = rhs.extraData {
-                return NSDictionary(dictionary: lhsExtraData).isEqual(to: rhsExtraData)
-            } else {
-                return false
-            }
-        }
-    }
-
     static let decoder: JSONDecoder = JSONDecoder.snakeCase
 
     static func parsePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) -> PushOpenedData? {

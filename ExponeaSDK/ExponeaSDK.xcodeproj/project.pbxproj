@@ -160,6 +160,10 @@
 		05B97D212417B2C400FE9309 /* DeliveredNotificationTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D202417B2C300FE9309 /* DeliveredNotificationTrackerSpec.swift */; };
 		05B97D2D2417C95200FE9309 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D2C2417C95200FE9309 /* JSONConvertible.swift */; };
 		05B97D2E2417C97300FE9309 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D2C2417C95200FE9309 /* JSONConvertible.swift */; };
+		05BA5804250649F000E10994 /* PushOpenedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BA5803250649F000E10994 /* PushOpenedData.swift */; };
+		05BA580625064E4600E10994 /* PushOpenedDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BA580525064E4600E10994 /* PushOpenedDataSpec.swift */; };
+		05BA58092506549700E10994 /* DataType+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BA58072506542400E10994 /* DataType+Codable.swift */; };
+		05BA580A2506549800E10994 /* DataType+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BA58072506542400E10994 /* DataType+Codable.swift */; };
 		05BB22B2236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB22B1236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift */; };
 		05BB22B3236B1F740098C406 /* ExponeaSDKNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ED33B421A6FB0F003649C3 /* ExponeaSDKNotifications.framework */; };
 		05BB22B5236B2F780098C406 /* PushNotificationManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB22B4236B2F780098C406 /* PushNotificationManagerSpec.swift */; };
@@ -525,6 +529,9 @@
 		05B97D252417B55400FE9309 /* mock_notification_request.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mock_notification_request.m; sourceTree = "<group>"; };
 		05B97D2C2417C95200FE9309 /* JSONConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
 		05B97D302417CD4A00FE9309 /* mock_notification_request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mock_notification_request.h; sourceTree = "<group>"; };
+		05BA5803250649F000E10994 /* PushOpenedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushOpenedData.swift; sourceTree = "<group>"; };
+		05BA580525064E4600E10994 /* PushOpenedDataSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushOpenedDataSpec.swift; sourceTree = "<group>"; };
+		05BA58072506542400E10994 /* DataType+Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataType+Codable.swift"; sourceTree = "<group>"; };
 		05BB22B1236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationServiceSpec.swift; sourceTree = "<group>"; };
 		05BB22B4236B2F780098C406 /* PushNotificationManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerSpec.swift; sourceTree = "<group>"; };
 		05BB22B6236B300F0098C406 /* MockTrackingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTrackingManager.swift; sourceTree = "<group>"; };
@@ -858,6 +865,7 @@
 				05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */,
 				0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */,
 				057D476C23C889BE00AEE902 /* PushNotificationsTestData.swift */,
+				05BA580525064E4600E10994 /* PushOpenedDataSpec.swift */,
 			);
 			path = "Push Notifications";
 			sourceTree = "<group>";
@@ -925,6 +933,7 @@
 				01EC2DB3207E58080031BFEB /* EventType.swift */,
 				B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */,
 				058DD93A2411323F00E5BF91 /* TrackingObject.swift */,
+				05BA58072506542400E10994 /* DataType+Codable.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1366,6 +1375,7 @@
 				0567723C237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift */,
 				052979772419224500A90526 /* UNAuthorizationStatusProvider.swift */,
 				05D4A7FF247D252D00864DC1 /* PushNotificationSelfCheck.swift */,
+				05BA5803250649F000E10994 /* PushOpenedData.swift */,
 			);
 			path = "Push Notifications";
 			sourceTree = "<group>";
@@ -2067,6 +2077,7 @@
 				058DD8E3241118DB00E5BF91 /* Configuration.swift in Sources */,
 				058DD8EC241119EC00E5BF91 /* Exponea.swift in Sources */,
 				058DD92C241130CB00E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */,
+				05BA58092506549700E10994 /* DataType+Codable.swift in Sources */,
 				C02C562221C9B01D0087A990 /* ExponeaNotificationActionType.swift in Sources */,
 				05880530241663D8001AAE8A /* Configuration+UserDefaults.swift in Sources */,
 				058DD8E5241118FD00E5BF91 /* EventType.swift in Sources */,
@@ -2131,6 +2142,7 @@
 				0567723B237462FB0082167C /* UIApplication+UIApplicationDelegating.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
 				05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */,
+				05BA5804250649F000E10994 /* PushOpenedData.swift in Sources */,
 				F029BF25208A08F800342498 /* Result.swift in Sources */,
 				05CDD8392391193E00C7291A /* InAppMessagesCache.swift in Sources */,
 				019F1AC52087666900368FB1 /* DataType.swift in Sources */,
@@ -2242,6 +2254,7 @@
 				C0EB5D8E20B710A900F1031F /* Data+TokenString.swift in Sources */,
 				C030AF4A216F4910004413F0 /* PushNotificationManager+UIResponder.swift in Sources */,
 				F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */,
+				05BA580A2506549800E10994 /* DataType+Codable.swift in Sources */,
 				C0F2407420BDA42600CAF7CE /* ExportFormat.swift in Sources */,
 				0591906823EC1D2C0037BD88 /* BooleanOperators.swift in Sources */,
 				05735EA323A3975100DA0FA9 /* FlushingManagerType.swift in Sources */,
@@ -2298,6 +2311,7 @@
 				C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */,
 				F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */,
 				0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */,
+				05BA580625064E4600E10994 /* PushOpenedDataSpec.swift in Sources */,
 				0566424E2373198B00CCDB98 /* SwizzleTestClass.swift in Sources */,
 				05BB22B2236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift in Sources */,
 				057F44852399301A0070DF30 /* UIColor+FromHexStringSpec.swift in Sources */,

@@ -64,6 +64,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             pushNotificationSwizzler?.addAutomaticPushTracking()
         }
         checkForDeliveredPushMessages()
+        processStoredPushOpens()
         verifyPushStatusAndTrackPushToken()
 
         // We need to register for silent push notifications, but let's only do it when visible pushes are allowed
@@ -103,7 +104,10 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         ) else {
             return
         }
+        handlePushOpenedUnsafe(pushOpenedData: pushOpenedData)
+    }
 
+    func handlePushOpenedUnsafe(pushOpenedData: PushOpenedData) {
         if case .selfCheck = pushOpenedData.actionType {
             didReceiveSelfPushCheck = true
             return
@@ -162,6 +166,44 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                 self.trackCurrentPushToken(isAuthorized: authorized)
             }
         }
+    }
+
+    static func storePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) {
+        guard let userDefaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite),
+              let pushOpenedData = PushNotificationParser.parsePushOpened(
+                  userInfoObject: userInfoObject,
+                  actionIdentifier: actionIdentifier
+              ) else {
+            return
+        }
+        if let serialized = pushOpenedData.serialize() {
+            var opened = userDefaults.array(forKey: Constants.General.openedPushUserDefaultsKey) ?? []
+            opened.append(serialized)
+            userDefaults.set(opened, forKey: Constants.General.openedPushUserDefaultsKey)
+        }
+    }
+
+    func processStoredPushOpens() {
+        let userDefaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite)
+        guard let array = userDefaults?.array(forKey: Constants.General.openedPushUserDefaultsKey) else {
+            Exponea.logger.log(.verbose, message: "No opened push to track present in shared app group.")
+            return
+        }
+
+        guard let dataArray = array as? [Data] else {
+            Exponea.logger.log(.warning, message: "Opened push data present in shared group but incorrect type.")
+            return
+        }
+
+        for data in dataArray {
+            guard let pushOpenedData = PushOpenedData.deserialize(from: data) else {
+                Exponea.logger.log(.warning, message: "Cannot deserialize stored opened push data.")
+                continue
+            }
+            Exponea.logger.log(.verbose, message: "Handling saved opened push notification.")
+            handlePushOpenedUnsafe(pushOpenedData: pushOpenedData)
+        }
+        userDefaults?.removeObject(forKey: Constants.General.openedPushUserDefaultsKey)
     }
 
     internal func checkForDeliveredPushMessages() {
@@ -269,6 +311,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 extension PushNotificationManager {
     func applicationDidBecomeActive() {
         checkForDeliveredPushMessages()
+        // we don't have to check for opened pushes here, Exponea SDK was initialized so it will be tracked directly
         verifyPushStatusAndTrackPushToken()
     }
 }

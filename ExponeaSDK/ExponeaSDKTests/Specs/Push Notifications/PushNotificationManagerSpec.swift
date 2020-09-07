@@ -510,5 +510,64 @@ final class PushNotificationManagerSpec: QuickSpec {
                 ]))
             }
         }
+
+        describe("saving opened push for later") {
+            func parseUserInfo(_ string: String) -> AnyObject {
+                return try! JSONSerialization.jsonObject(
+                    with: string.data(using: .utf8)!, options: []
+                ) as AnyObject
+            }
+
+            it("should save opened push for later") {
+                PushNotificationManager.storePushOpened(
+                    userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredProductionNotification),
+                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier"
+                )
+                PushNotificationManager.storePushOpened(
+                    userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredSilentNotification),
+                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier"
+                )
+
+                let optionalDataArray = UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
+                    .array(forKey: ExponeaSDK.Constants.General.openedPushUserDefaultsKey) as? [Data]
+                guard let dataArray = optionalDataArray else {
+                    XCTFail("Unable to parse data")
+                    return
+                }
+
+                expect(dataArray.count).to(equal(2))
+                expect(PushOpenedData.deserialize(from: dataArray[0]))
+                    .to(equal(PushNotificationsTestData().openedProductionNotificationData))
+                expect(PushOpenedData.deserialize(from: dataArray[1]))
+                    .to(equal(PushNotificationsTestData().openedSilentNotificationData))
+
+                UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
+                    .removeObject(forKey: ExponeaSDK.Constants.General.openedPushUserDefaultsKey)
+            }
+
+            it("should process previously saved push notifications") {
+                PushNotificationManager.storePushOpened(
+                    userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredProductionNotification),
+                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier"
+                )
+                PushNotificationManager.storePushOpened(
+                    userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredSilentNotification),
+                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier"
+                )
+                createPushManager(
+                    requirePushAuthorization: false,
+                    currentToken: "mock-token",
+                    tokenTrackFrequency: .onTokenChange,
+                    lastTokenTrackDate: Date(timeIntervalSince1970: 1)
+                )
+                expect(
+                    UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
+                        .array(forKey: ExponeaSDK.Constants.General.openedPushUserDefaultsKey)
+                ).to(beNil())
+                expect(trackingManager.trackedEvents.count).to(equal(2))
+                expect(trackingManager.trackedEvents[0].type).to(equal(ExponeaSDK.EventType.pushOpened))
+                expect(trackingManager.trackedEvents[1].type).to(equal(ExponeaSDK.EventType.pushDelivered))
+            }
+        }
     }
 }

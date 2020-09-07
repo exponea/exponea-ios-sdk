@@ -81,6 +81,36 @@ class DataTypeSpec: QuickSpec {
                     expect(data.properties["prop4"] as? String).to(equal("prop4 value"))
                 }
             }
+
+            describe("serialization") {
+                let testCases: [(DataType, String)] = [
+                    // swiftlint:disable open_brace_spacing close_brace_spacing
+                    (.customerIds(["cookie": "some cookie"]), "{\"customerIds\":{\"cookie\":\"some cookie\"}}"),
+                    (.properties(["prop": .string("value")]), "{\"properties\":{\"prop\":\"value\"}}"),
+                    (.timestamp(12345), "{\"timestamp\":12345}"),
+                    (.timestamp(nil), "{\"timestamp\":null}"),
+                    (.eventType("eventType"), "{\"eventType\":\"eventType\"}"),
+                    (
+                        .pushNotificationToken(token: "token", authorized: true),
+                        "{\"pushNotificationToken\":{\"token\":\"token\",\"authorized\":true}}"
+                    ),
+                    (
+                        .pushNotificationToken(token: nil, authorized: false),
+                        "{\"pushNotificationToken\":{\"authorized\":false}}"
+                    )
+                    // swiftlint:enable open_brace_spacing close_brace_spacing
+                ]
+                testCases.forEach { testCase in
+                    it("should serialize \(testCase.1)") {
+                        let encoded = try! JSONEncoder().encode(testCase.0)
+                        expect(String(data: encoded, encoding: .utf8)).to(equal(testCase.1))
+                    }
+                    it("should deserialize \(testCase.1)") {
+                        let data = testCase.1.data(using: .utf8)!
+                        expect(try! JSONDecoder().decode(DataType.self, from: data)).to(equal(testCase.0))
+                    }
+                }
+            }
         }
     }
 }

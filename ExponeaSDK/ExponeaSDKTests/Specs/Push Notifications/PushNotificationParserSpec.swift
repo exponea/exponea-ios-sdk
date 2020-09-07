@@ -16,7 +16,7 @@ class PushNotificationParserSpec: QuickSpec {
         let name: String
         let userInfoJson: String?
         let actionIdentifier: String?
-        let expected: PushNotificationParser.PushOpenedData?
+        let expected: PushOpenedData?
     }
 
     override func spec() {
@@ -31,7 +31,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "empty action",
                 userInfoJson: PushNotificationsTestData().deliveredBasicNotification,
                 actionIdentifier: nil,
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
@@ -50,7 +50,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "basic notification",
                 userInfoJson: PushNotificationsTestData().deliveredBasicNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
@@ -69,7 +69,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "deeplink notification",
                 userInfoJson: PushNotificationsTestData().deliveredDeeplinkNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .deeplink,
@@ -88,7 +88,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "browser notification",
                 userInfoJson: PushNotificationsTestData().deliveredBrowserNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .browser,
@@ -107,7 +107,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "custom action notification when notification action is selected",
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
@@ -126,7 +126,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "custom action notification when first action is selected",
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_0",
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
@@ -145,7 +145,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "custom action notification when second action is selected",
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_1",
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .deeplink,
@@ -164,7 +164,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "custom action notification when third action is selected",
                 userInfoJson: PushNotificationsTestData().deliveredCustomActionsNotification,
                 actionIdentifier: "EXPONEA_ACTION_APP_2",
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .browser,
@@ -183,7 +183,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "extra data notification",
                 userInfoJson: PushNotificationsTestData().deliveredExtraDataNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
@@ -213,7 +213,7 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "custom event type notification",
                 userInfoJson: PushNotificationsTestData().deliveredCustomEventTypeNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                expected: PushNotificationParser.PushOpenedData(
+                expected: PushOpenedData(
                     silent: false,
                     campaignData: CampaignData(),
                     actionType: .openApp,
@@ -237,70 +237,13 @@ class PushNotificationParserSpec: QuickSpec {
                 name: "production notification",
                 userInfoJson: PushNotificationsTestData().deliveredProductionNotification,
                 actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                expected: PushNotificationParser.PushOpenedData(
-                    silent: false,
-                    campaignData: CampaignData(
-                        source: "exponea",
-                        campaign: "Testing mobile push",
-                        medium: "mobile_push_notification"
-                    ),
-                    actionType: .openApp,
-                    actionValue: nil,
-                    eventType: .pushOpened,
-                    eventData: [
-                        .properties([
-                            "status": .string("clicked"),
-                            "cta": .string("notification"),
-                            "url": .string("app"),
-                            "subject": .string("Notification title"),
-                            "action_name": .string("Unnamed mobile push"),
-                            "action_id": .int(2),
-                            "platform": .string("ios"),
-                            "recipient": .string("051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"),
-                            "campaign_id": .string("5db9ab54b073dfb424ccfa6f"),
-                            "action_type": .string("mobile notification"),
-                            "campaign_name": .string("Wassil's push"),
-                            "language": .string(""),
-                            "campaign_policy": .string(""),
-                            "utm_source": .string("exponea"),
-                            "utm_campaign": .string("Testing mobile push"),
-                            "utm_medium": .string("mobile_push_notification")
-                        ])
-                    ],
-                    extraData: [
-                        "subject": "Notification title",
-                        "action_name": "Unnamed mobile push",
-                        "event_type": "campaign",
-                        "action_id": 2,
-                        "platform": "ios",
-                        "some property": "some value",
-                        "language": "",
-                        "recipient": "051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47",
-                        "campaign_policy": "",
-                        "campaign_id": "5db9ab54b073dfb424ccfa6f",
-                        "action_type": "mobile notification",
-                        "campaign_name": "Wassil's push"
-                    ]
-                )
+                expected: PushNotificationsTestData().openedProductionNotificationData
             ),
             TestCase(
                 name: "silent action",
                 userInfoJson: PushNotificationsTestData().deliveredSilentNotification,
                 actionIdentifier: nil,
-                expected: PushNotificationParser.PushOpenedData(
-                    silent: true,
-                    campaignData: CampaignData(),
-                    actionType: .openApp,
-                    actionValue: nil,
-                    eventType: .pushOpened,
-                    eventData: [.properties([
-                        "status": .string("delivered"),
-                        "platform": .string("ios"),
-                        "cta": .string("notification"),
-                        "url": .string("app")
-                    ])],
-                    extraData: ["silent_test": "value"]
-                )
+                expected: PushNotificationsTestData().openedSilentNotificationData
             )
         ]
         testCases.forEach { testCase in

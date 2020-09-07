@@ -85,6 +85,7 @@ public enum Constants {
         static let iTunesStore = "iTunes Store"
         static let userDefaultsSuite = "ExponeaSDK"
         static let deliveredPushUserDefaultsKey = "EXPONEA_DELIVERED_PUSH_TRACKING"
+        static let openedPushUserDefaultsKey = "EXPONEA_OPENED_PUSH_TRACKING"
         static let savedCampaignClickEvent = "EXPONEA_SAVED_CAMPAIGN_CLICK"
         static let inAppMessageDisplayStatusUserDefaultsKey = "EXPONEA_IN_APP_MESSAGE_DISPLAY_STATUS"
         static let lastKnownConfiguration = "EXPONEA_LAST_KNOWN_CONFIGURATION"

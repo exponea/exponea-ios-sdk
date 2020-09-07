@@ -6,7 +6,7 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
-import Foundation
+@testable import ExponeaSDK
 
 struct PushNotificationsTestData {
     let deliveredBasicNotification = """
@@ -170,6 +170,52 @@ struct PushNotificationsTestData {
         }
     """
 
+    let openedProductionNotificationData = PushOpenedData(
+        silent: false,
+        campaignData: CampaignData(
+            source: "exponea",
+            campaign: "Testing mobile push",
+            medium: "mobile_push_notification"
+        ),
+        actionType: .openApp,
+        actionValue: nil,
+        eventType: .pushOpened,
+        eventData: [
+            .properties([
+                "status": .string("clicked"),
+                "cta": .string("notification"),
+                "url": .string("app"),
+                "subject": .string("Notification title"),
+                "action_name": .string("Unnamed mobile push"),
+                "action_id": .int(2),
+                "platform": .string("ios"),
+                "recipient": .string("051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"),
+                "campaign_id": .string("5db9ab54b073dfb424ccfa6f"),
+                "action_type": .string("mobile notification"),
+                "campaign_name": .string("Wassil's push"),
+                "language": .string(""),
+                "campaign_policy": .string(""),
+                "utm_source": .string("exponea"),
+                "utm_campaign": .string("Testing mobile push"),
+                "utm_medium": .string("mobile_push_notification")
+            ])
+        ],
+        extraData: [
+            "subject": "Notification title",
+            "action_name": "Unnamed mobile push",
+            "event_type": "campaign",
+            "action_id": 2,
+            "platform": "ios",
+            "some property": "some value",
+            "language": "",
+            "recipient": "051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47",
+            "campaign_policy": "",
+            "campaign_id": "5db9ab54b073dfb424ccfa6f",
+            "action_type": "mobile notification",
+            "campaign_name": "Wassil's push"
+        ]
+    )
+
     let deliveredSilentNotification = """
         {
             "source": "xnpe_platform",
@@ -179,4 +225,19 @@ struct PushNotificationsTestData {
             "attributes": { "silent_test": "value" }
         }
     """
+
+    let openedSilentNotificationData = PushOpenedData(
+        silent: true,
+        campaignData: CampaignData(),
+        actionType: .openApp,
+        actionValue: nil,
+        eventType: .pushOpened,
+        eventData: [.properties([
+            "status": .string("delivered"),
+            "platform": .string("ios"),
+            "cta": .string("notification"),
+            "url": .string("app")
+        ])],
+        extraData: ["silent_test": "value"]
+    )
 }

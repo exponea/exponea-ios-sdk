@@ -251,6 +251,15 @@ extension ExponeaInternal {
             Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
             return
         }
+        // if the SDK is not configured, we should save the notification for later processing
+        guard isConfigured else {
+            Exponea.logger.log(.verbose, message: "Exponea not configured yet, saving opened push.")
+            PushNotificationManager.storePushOpened(
+                userInfoObject: userInfo as AnyObject?,
+                actionIdentifier: actionIdentifier
+            )
+            return
+        }
         executeSafelyWithDependencies { dependencies in
             dependencies.trackingManager.notificationsManager.handlePushOpened(
                 userInfoObject: userInfo as AnyObject?,
