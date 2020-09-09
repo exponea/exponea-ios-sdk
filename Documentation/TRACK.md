@@ -83,6 +83,10 @@ There are two methods available to track sessions manually.
 
   It's possible to set values in the [ExponeaConfiguration](../Documentation/CONFIG.md) to be sent in every tracking event. Notice that those values will be overwritten if the tracking event has properties with the same key name.
 
+  > Once Exponea is configured, you can also change default properties setting `Exponea.shared.defaultProperties`.
+
+## 🔍 Tracking special events
+
 ### Track Session Start
 
 ``` swift
