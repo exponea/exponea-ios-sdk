@@ -1,4 +1,14 @@
 ## Release Notes
+## Release Notes for 2.9.0
+#### September 09, 2020
+* Features
+  * Default properties that are tracked with every event can be changed at runtime by setting `Exponea.shared.defaultProperties` property.
+  * In-app messages definitions are re-downloaded every time the customer is identified. After customer identification, the set of in-app messages available for the customer may change due to targeting.
+* Bug Fixes
+  * **BREAKING CHANGE:** The SDK can only be configured once. Reconfiguration of the SDK caused some of the handlers to be registered multiple times which then resulted in automatic events to be tracked multiple times. You should be able to change most of the setting on the fly. To change project tokens, you can use `anonymize()` method (see [ANONYMIZE.md](./ANONYMIZE.md))
+  * When a push notification was opened before the SDK was configured(e.g. the app was killed in the background) it was not processed - no event was tracked, action was not resolved. This issue is resolved by saving the “push opening event” until the SDK in configured and tracking/performing action once the SDK is ready.
+
+
 ## Release Notes for 2.8.0
 #### August 07, 2020
 * Features
