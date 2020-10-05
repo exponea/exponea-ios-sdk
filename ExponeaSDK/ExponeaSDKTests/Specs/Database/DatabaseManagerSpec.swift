@@ -364,8 +364,6 @@ class DatabaseManagerSpec: QuickSpec {
                         for _ in 0..<1000 {
                             try db.trackEvent(with: eventData, into: myProject)
                         }
-
-                        return nil
                     }.toNot(raiseException())
 
                     var objects: [TrackEventProxy] = []
@@ -379,8 +377,6 @@ class DatabaseManagerSpec: QuickSpec {
                         for _ in 0..<1000 {
                             try db.identifyCustomer(with: customerData, into: myProject)
                         }
-
-                        return nil
                         }.toNot(raiseException())
 
                     var objects: [TrackCustomerProxy] = []
@@ -392,7 +388,7 @@ class DatabaseManagerSpec: QuickSpec {
                     db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
                     var objects: [TrackEventProxy] = []
 
-                    waitUntil(timeout: 6.0, action: { (allDone) in
+                    waitUntil(timeout: .seconds(6), action: { (allDone) in
                         var doneCount = 0
                         func done() {
                             doneCount += 1

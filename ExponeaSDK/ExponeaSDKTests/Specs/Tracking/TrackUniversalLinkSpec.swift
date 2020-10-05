@@ -33,7 +33,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                     withStatusCode: 200,
                     withRequestHook: { request in lastRequest = request }
                 )
-                waitUntil(timeout: 3) { done in
+                waitUntil(timeout: .seconds(3)) { done in
                     let event = EventTrackingObject(
                         exponeaProject: ExponeaProject(
                             baseUrl: "https://my-url.com",

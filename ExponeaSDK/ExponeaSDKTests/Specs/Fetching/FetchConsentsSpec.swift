@@ -30,7 +30,7 @@ class FetchConsentsSpec: QuickSpec {
                     withResponseData: MockData().consentsResponse
                 )
 
-                waitUntil(timeout: 3) { done in
+                waitUntil(timeout: .seconds(3)) { done in
                     repo.fetchConsents { (result) in
                         it("should not fail") {
                             expect(result.error).to(beNil())

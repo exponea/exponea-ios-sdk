@@ -360,7 +360,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "utm_source": JSONValue.string("exponea"),
                             "utm_campaign": JSONValue.string("Testing mobile push"),
                             "utm_medium": JSONValue.string("mobile_push_notification")
-                        ])]
+                        ] as [String: ExponeaSDK.JSONValue])] // without swift fails with typechecking took too long
                     ),
                     expectedBrowserLinkOpened: URL(string: "http://google.com?search=something"),
                     expectedDeeplinkOpened: nil
