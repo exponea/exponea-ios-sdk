@@ -151,6 +151,7 @@
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
 		05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BD2342413E00D78452 /* NetworkStubbing.swift */; };
 		05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05AA63CA2343805C00D78452 /* .swiftlint.yml */; };
+		05AF25F0252B2A49006E28B7 /* get-consents2.json in Resources */ = {isa = PBXBuildFile; fileRef = 05AF25EF252B2A49006E28B7 /* get-consents2.json */; };
 		05B4D64A238FE9DC00F5010F /* InAppMessagesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B4D649238FE9DC00F5010F /* InAppMessagesRequest.swift */; };
 		05B4D64C238FEB9200F5010F /* InAppMessagesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B4D64B238FEB9200F5010F /* InAppMessagesResponse.swift */; };
 		05B4D64F238FEC1000F5010F /* InAppMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B4D64E238FEC1000F5010F /* InAppMessage.swift */; };
@@ -519,6 +520,7 @@
 		05AA63BB2342362B00D78452 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
 		05AA63BD2342413E00D78452 /* NetworkStubbing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStubbing.swift; sourceTree = "<group>"; };
 		05AA63CA2343805C00D78452 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .swiftlint.yml; sourceTree = "<group>"; };
+		05AF25EF252B2A49006E28B7 /* get-consents2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "get-consents2.json"; sourceTree = "<group>"; };
 		05B4D649238FE9DC00F5010F /* InAppMessagesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesRequest.swift; sourceTree = "<group>"; };
 		05B4D64B238FEB9200F5010F /* InAppMessagesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagesResponse.swift; sourceTree = "<group>"; };
 		05B4D64E238FEC1000F5010F /* InAppMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessage.swift; sourceTree = "<group>"; };
@@ -1562,6 +1564,7 @@
 			isa = PBXGroup;
 			children = (
 				B42DA69122B05A0100BBA225 /* get-consents.json */,
+				05AF25EF252B2A49006E28B7 /* get-consents2.json */,
 			);
 			path = json;
 			sourceTree = "<group>";
@@ -1971,6 +1974,7 @@
 				05AA63CB2343805C00D78452 /* .swiftlint.yml in Resources */,
 				F0E757F5207D032500FE8C21 /* ExponeaConfig.plist in Resources */,
 				01764BC62087775800D0D673 /* config_valid.plist in Resources */,
+				05AF25F0252B2A49006E28B7 /* get-consents2.json in Resources */,
 				01764BC82087794000D0D673 /* config_valid2.plist in Resources */,
 				B42DA69222B05A0100BBA225 /* get-consents.json in Resources */,
 				057F4495239960650070DF30 /* mountain.png in Resources */,

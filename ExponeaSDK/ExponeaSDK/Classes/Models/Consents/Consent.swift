@@ -20,7 +20,7 @@ public struct Consent: Codable {
     /// Keys of this dictionary are the short ISO language codes (eg. "en", "cz", "sk"...) and
     /// the values are dictionaries containing the translation key as the dictionary key
     /// and translation value as the dictionary value.
-    public let translations: [String: [String: String]]
+    public let translations: [String: [String: String?]]
 }
 
 private extension Consent {

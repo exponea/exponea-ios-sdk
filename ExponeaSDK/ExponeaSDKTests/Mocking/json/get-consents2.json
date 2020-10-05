@@ -1,0 +1,24 @@
+{
+  "results":[
+    {
+      "id":"other",
+      "legitimate_interest":false,
+      "sources":{
+        "crm":true,
+        "import":true,
+        "list_unsubscribe":true,
+        "page":true,
+        "private_api":true,
+        "public_api":true,
+        "scenario":true
+      },
+      "translations":{
+        "":{
+          "description":null,
+          "name":"Other"
+        }
+      }
+    }
+  ],
+  "success":true
+}

@@ -48,6 +48,7 @@ struct MockData {
     }()
 
     let consentsResponse = retrieveDataFromFile(with: "get-consents", fileType: "json")
+    let consentsResponse2 = retrieveDataFromFile(with: "get-consents2", fileType: "json")
 
     static func retrieveDataFromFile(with fileName: String, fileType: String) -> Data {
         guard
