@@ -109,11 +109,11 @@ struct VSAppCenterAPIStackFrame: Codable {
 }
 
 struct VSAppCenterAPIBinary: Codable {
-    let id: String = UUID().uuidString
-    let startAddress: String = "placeholder_startAddress"
-    let endAddress: String = "placeholder_endAddress"
-    let name: String = "placeholder_name"
-    let path: String = "placeholder_path"
+    var id: String = UUID().uuidString
+    var startAddress: String = "placeholder_startAddress"
+    var endAddress: String = "placeholder_endAddress"
+    var name: String = "placeholder_name"
+    var path: String = "placeholder_path"
 }
 
 struct VSAppCenterAPIDevice: Codable {

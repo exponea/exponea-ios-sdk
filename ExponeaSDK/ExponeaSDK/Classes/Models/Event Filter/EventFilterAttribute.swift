@@ -57,7 +57,7 @@ struct EventFilterAttributeCoder: Codable, Equatable {
 }
 
 struct TimestampAttribute: EventFilterAttribute, Codable, Equatable {
-    let type: String = "timestamp"
+    var type: String = "timestamp"
 
     func isSet(in event: EventFilterEvent) -> Bool {
         return event.timestamp != nil
@@ -72,7 +72,7 @@ struct TimestampAttribute: EventFilterAttribute, Codable, Equatable {
 }
 
 struct PropertyAttribute: EventFilterAttribute, Codable, Equatable {
-    let type: String = "property"
+    var type: String = "property"
     let property: String
 
     init(_ property: String) {

@@ -18,6 +18,6 @@ protocol EventFilterOperator: Encodable {
 }
 
 struct EventFilterOperand: Codable, Equatable {
-    let type: String = "constant"
+    var type: String = "constant"
     let value: String
 }
