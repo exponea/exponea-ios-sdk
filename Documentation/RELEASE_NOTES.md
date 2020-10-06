@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.9.1
+#### October 06, 2020
+* Bug Fixes
+  * Fixed: Xcode 12 compatibility. Test run was broken, new warnings appeared. Good times.
+  * Fixed: Consents fetching issue - consents with null translations caused the request to fail. Translation values are now optional.
+
 ## Release Notes for 2.9.0
 #### September 09, 2020
 * Features
