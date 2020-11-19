@@ -5,6 +5,9 @@
       location = "group:ExponeaSDK/ExponeaSDK.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:ExponeaSDK/../.swiftlint.yml">
+   </FileRef>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>

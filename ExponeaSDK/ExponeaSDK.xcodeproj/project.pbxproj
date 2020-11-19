@@ -554,7 +554,7 @@
 		05D4A7FF247D252D00864DC1 /* PushNotificationSelfCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationSelfCheck.swift; sourceTree = "<group>"; };
 		05D95C43250100B5001DA2DA /* MockInAppMessagesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessagesManager.swift; sourceTree = "<group>"; };
 		05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Exponea+ConfigurationSpec.swift"; sourceTree = "<group>"; };
-		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		05E1A3802359B3A500E5EDDE /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; name = .swiftlint.yml; path = ../.swiftlint.yml; sourceTree = "<group>"; };
 		05E81631247555DD00AA28E3 /* ExponeaAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaAppDelegate.swift; sourceTree = "<group>"; };
 		05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Configuration+Validation.swift"; sourceTree = "<group>"; };
 		05F3EFCC237E9260006E83F4 /* TelemetryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryManager.swift; sourceTree = "<group>"; };
@@ -2001,7 +2001,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which ../Pods/SwiftLint/swiftlint >/dev/null; then\ncd ..\n./Pods/SwiftLint/swiftlint lint --reporter xcode --config ExponeaSDK/.swiftlint.yml\nelse\necho \"warning: SwiftLint not installed run `pod install`\"\nfi\n";
+			shellScript = "if which ../Pods/SwiftLint/swiftlint >/dev/null; then\ncd ..\n./Pods/SwiftLint/swiftlint lint --reporter xcode\nelse\necho \"warning: SwiftLint not installed run `pod install`\"\nfi\n";
 		};
 		66B6C7F3C0CC28444D9F6CED /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

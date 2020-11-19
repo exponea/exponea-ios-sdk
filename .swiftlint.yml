@@ -8,6 +8,7 @@ disabled_rules:
     - notification_center_detachment
     - type_body_length
     - force_unwrapping
+    - inclusive_language
 
 opt_in_rules:
     - force_unwrapping

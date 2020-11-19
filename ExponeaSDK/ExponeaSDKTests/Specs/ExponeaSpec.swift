@@ -231,7 +231,7 @@ class ExponeaSpec: QuickSpec {
                     enum MyError: Error {
                         case someError(message: String)
                     }
-                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, _ in
                         throw MyError.someError(message: "something went wrong")
                     }
                     waitUntil { done in
@@ -255,7 +255,7 @@ class ExponeaSpec: QuickSpec {
                     let exponea = ExponeaInternal()
                     exponea.safeModeEnabled = true
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, _ in
                         NSException(
                             name: NSExceptionName(rawValue: "mock exception name"),
                             reason: "mock reason",
@@ -283,7 +283,7 @@ class ExponeaSpec: QuickSpec {
                     let exponea = ExponeaInternal()
                     exponea.safeModeEnabled = true
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, _ in
                         NSException(
                             name: NSExceptionName(rawValue: "mock exception name"),
                             reason: "mock reason",
@@ -318,7 +318,7 @@ class ExponeaSpec: QuickSpec {
                     let exponea = ExponeaInternal()
                     exponea.safeModeEnabled = false
                     exponea.configure(plistName: "ExponeaConfig")
-                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
+                    let task: ExponeaInternal.DependencyTask<String> = { _, _ in
                         NSException(
                             name: NSExceptionName(rawValue: "mock exception name"),
                             reason: "mock reason",
