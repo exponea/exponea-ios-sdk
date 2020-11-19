@@ -12,10 +12,16 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     let releaseAppSecret = "4d80509d-4d1c-4d50-b472-ce8f5c650708"
     let debugReactNativeAppSecret = "956e15f2-52e9-4026-83e9-177edcca7bcb"
     let releaseReactNativeAppSecret = "a39df2ba-a3d2-4bb7-a44f-f0a7fe9c1718"
+    let debugCapacitorAppSecret = "823e90ad-bc19-438c-bf8a-1f76e0e3a5d0"
+    let releaseCapacitorAppSecret = "e8e38b52-a50f-4c9b-bdc1-65730ef868a0"
     var appSecret: String {
         if isReactNativeSDK() {
             var secret = releaseReactNativeAppSecret
             inDebugBuild { secret = debugReactNativeAppSecret }
+            return secret
+        } else if isCapacitorSDK() {
+            var secret = releaseCapacitorAppSecret
+            inDebugBuild { secret = debugCapacitorAppSecret }
             return secret
         } else {
             var secret = releaseAppSecret

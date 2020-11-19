@@ -31,3 +31,8 @@ func isReactNativeSDK() -> Bool {
     // Our react native SDK contains a protocol IsExponeaReactNativeSDK. We only use it for this purpose.
     return NSProtocolFromString("IsExponeaReactNativeSDK") != nil
 }
+
+func isCapacitorSDK() -> Bool {
+    // Our Capacitor SDK contains a protocol IsExponeaCapacitorSDK. We only use it for this purpose.
+    return NSProtocolFromString("IsExponeaCapacitorSDK") != nil
+}
