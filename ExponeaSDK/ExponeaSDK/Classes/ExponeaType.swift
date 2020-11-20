@@ -35,6 +35,11 @@ public protocol ExponeaType: class {
     /// advise you to turn this feature on before initializing the SDK.
     /// Self-check only runs in debug mode and does not do anything in release builds.
     var checkPushSetup: Bool { get set }
+
+    /// Default properties to be tracked with all events.
+    /// Provide default properties when calling Exponea.shared.configure, they're exposed here for run-time changing.
+    var defaultProperties: [String: JSONConvertible]? { get set }
+
     // MARK: - Configure -
 
     /// Configure the SDK setting configuration properties split into areas of functionality
