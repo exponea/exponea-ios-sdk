@@ -1,4 +1,13 @@
 ## Release Notes
+## Release Notes for 2.9.3
+#### November 20, 2020
+* Features
+  * Updated swiftlint to 0.41.0
+  * Documentation improvements
+* Bug Fixes
+  * Fixed: Carthage build for XCode 12
+
+
 ## Release Notes for 2.9.2
 #### October 07, 2020
 * Bug Fixes
