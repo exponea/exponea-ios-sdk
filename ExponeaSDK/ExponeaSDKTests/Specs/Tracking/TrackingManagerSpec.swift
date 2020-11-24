@@ -169,11 +169,10 @@ class TrackingManagerSpec: QuickSpec {
                 }
             }
             context("InAppMessageTrackingDelegate") {
-                it("should track in-app message event") {
+                it("should track click in-app message event") {
                     trackingManager.track(
-                        message: SampleInAppMessage.getSampleInAppMessage(),
-                        action: "mock-action",
-                        interaction: true
+                        .click(buttonLabel: "mock-text"),
+                        for: SampleInAppMessage.getSampleInAppMessage()
                     )
                     let trackEvents = try! trackingManager.database.fetchTrackEvent()
                     expect(trackEvents.count).to(equal(1))
@@ -182,8 +181,28 @@ class TrackingManagerSpec: QuickSpec {
                     expect(event.dataTypes.properties["banner_id"] as? String).to(equal("5dd86f44511946ea55132f29"))
                     expect(event.dataTypes.properties["banner_name"] as? String)
                         .to(equal("Test serving in-app message"))
-                    expect(event.dataTypes.properties["action"] as? String).to(equal("mock-action"))
+                    expect(event.dataTypes.properties["action"] as? String).to(equal("click"))
+                    expect(event.dataTypes.properties["text"] as? String).to(equal("mock-text"))
                     expect(event.dataTypes.properties["interaction"] as? Bool).to(equal(true))
+                    expect(event.dataTypes.properties["variant_id"] as? Int).to(equal(0))
+                    expect(event.dataTypes.properties["variant_name"] as? String).to(equal("Variant A"))
+                }
+
+                it("should track close in-app message event") {
+                    trackingManager.track(
+                        .close,
+                        for: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                    let trackEvents = try! trackingManager.database.fetchTrackEvent()
+                    expect(trackEvents.count).to(equal(1))
+                    let event = trackEvents[0]
+                    expect(event.eventType).to(equal(Constants.EventTypes.banner))
+                    expect(event.dataTypes.properties["banner_id"] as? String).to(equal("5dd86f44511946ea55132f29"))
+                    expect(event.dataTypes.properties["banner_name"] as? String)
+                        .to(equal("Test serving in-app message"))
+                    expect(event.dataTypes.properties["action"] as? String).to(equal("close"))
+                    expect(event.dataTypes.properties["text"] as? String).to(beNil())
+                    expect(event.dataTypes.properties["interaction"] as? Bool).to(equal(false))
                     expect(event.dataTypes.properties["variant_id"] as? Int).to(equal(0))
                     expect(event.dataTypes.properties["variant_name"] as? String).to(equal("Variant A"))
                 }

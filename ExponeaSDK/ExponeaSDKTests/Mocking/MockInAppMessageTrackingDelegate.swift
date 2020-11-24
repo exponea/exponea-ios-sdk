@@ -10,13 +10,12 @@
 
 class MockInAppMessageTrackingDelegate: InAppMessageTrackingDelegate {
     struct CallData: Equatable {
+        let event: InAppMessageEvent
         let message: InAppMessage
-        let action: String
-        let interaction: Bool
     }
     public var calls: [CallData] = []
 
-    func track(message: InAppMessage, action: String, interaction: Bool) {
-        calls.append(CallData(message: message, action: action, interaction: interaction))
+    public func track(_ event: InAppMessageEvent, for message: InAppMessage) {
+        calls.append(CallData(event: event, message: message))
     }
 }

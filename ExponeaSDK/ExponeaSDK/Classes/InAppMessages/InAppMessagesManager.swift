@@ -225,16 +225,16 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             imageData: imageData,
             actionCallback: { button in
                 self.displayStatusStore.didInteract(with: message, at: Date())
-                trackingDelegate?.track(message: message, action: "click", interaction: true)
+                trackingDelegate?.track(.click(buttonLabel: button.buttonText ?? ""), for: message)
                 self.processInAppMessageAction(button: button)
             },
             dismissCallback: {
-                trackingDelegate?.track(message: message, action: "close", interaction: false)
+                trackingDelegate?.track(.close, for: message)
             },
             presentedCallback: { presented in
                 if presented != nil {
                     self.displayStatusStore.didDisplay(message, at: Date())
-                    trackingDelegate?.track(message: message, action: "show", interaction: false)
+                    trackingDelegate?.track(.show, for: message)
                     Exponea.shared.telemetryManager?.report(
                         eventWithType: .showInAppMessage,
                         properties: ["messageType": message.rawMessageType]

@@ -330,9 +330,8 @@ class InAppMessagesManagerSpec: QuickSpec {
                 ) { _ in done() } }
                 expect(delegate.calls).to(equal([
                     MockInAppMessageTrackingDelegate.CallData(
-                        message: SampleInAppMessage.getSampleInAppMessage(),
-                        action: "show",
-                        interaction: false
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
                     )
                 ]))
             }
@@ -345,14 +344,12 @@ class InAppMessagesManagerSpec: QuickSpec {
                 presenter.presentedMessages[0].dismissCallback()
                 expect(delegate.calls).to(equal([
                     MockInAppMessageTrackingDelegate.CallData(
-                        message: SampleInAppMessage.getSampleInAppMessage(),
-                        action: "show",
-                        interaction: false
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
                     ),
                     MockInAppMessageTrackingDelegate.CallData(
-                        message: SampleInAppMessage.getSampleInAppMessage(),
-                        action: "close",
-                        interaction: false
+                        event: .close,
+                        message: SampleInAppMessage.getSampleInAppMessage()
                     )
                 ]))
             }
@@ -367,14 +364,12 @@ class InAppMessagesManagerSpec: QuickSpec {
                 )
                 expect(delegate.calls).to(equal([
                     MockInAppMessageTrackingDelegate.CallData(
-                        message: SampleInAppMessage.getSampleInAppMessage(),
-                        action: "show",
-                        interaction: false
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
                     ),
                     MockInAppMessageTrackingDelegate.CallData(
-                        message: SampleInAppMessage.getSampleInAppMessage(),
-                        action: "click",
-                        interaction: true
+                        event: .click(buttonLabel: "Action"),
+                        message: SampleInAppMessage.getSampleInAppMessage()
                     )
                 ]))
             }

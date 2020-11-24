@@ -365,23 +365,27 @@ extension TrackingManager {
 // MARK: - In-app messages -
 
 extension TrackingManager: InAppMessageTrackingDelegate {
-    public func track(message: InAppMessage, action: String, interaction: Bool) {
+    public func track(_ event: InAppMessageEvent, for message: InAppMessage) {
         do {
+            var eventData: [String: JSONValue] = [
+                "action": .string(event.action),
+                "banner_id": .string(message.id),
+                "banner_name": .string(message.name),
+                "banner_type": .string(message.rawMessageType),
+                "interaction": .bool(event.isInteraction),
+                "os": .string("iOS"),
+                "type": .string("in-app message"),
+                "variant_id": .int(message.variantId),
+                "variant_name": .string(message.variantName)
+            ]
+            if case .click(let text) = event {
+                eventData["text"] = .string(text)
+            }
             try track(
                 .banner,
                 with: [
                     .properties(device.properties),
-                    .properties([
-                        "action": .string(action),
-                        "banner_id": .string(message.id),
-                        "banner_name": .string(message.name),
-                        "banner_type": .string(message.rawMessageType),
-                        "interaction": .bool(interaction),
-                        "os": .string("iOS"),
-                        "type": .string("in-app message"),
-                        "variant_id": .int(message.variantId),
-                        "variant_name": .string(message.variantName)
-                    ])
+                    .properties(eventData)
                 ]
             )
         } catch {
