@@ -252,7 +252,7 @@ class DatabaseManagerSpec: QuickSpec {
                     var objects: [TrackCustomerProxy] = []
                     var expectedTimestamp: Double = 1
 
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(3)) { done in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
                             expectedTimestamp = Date().timeIntervalSince1970
@@ -263,7 +263,7 @@ class DatabaseManagerSpec: QuickSpec {
                         }
                     }
 
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(3)) { done in
                         DispatchQueue.global(qos: .default).async {
                             expect(Thread.isMainThread).to(beFalse())
                             expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
@@ -282,7 +282,7 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
                     expect(props["apple_push_notification_authorized"] as? Bool).to(equal(true))
 
-                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
+                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.5))
 
                     waitUntil { done in
                         DispatchQueue.global(qos: .background).async {

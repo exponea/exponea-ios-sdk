@@ -45,7 +45,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil { done in manager.preload(for: [:]) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
         }
 
@@ -91,11 +91,11 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil { done in manager.preload(for: [:]) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage(id: "new-id")])
             )
-            waitUntil { done in manager.preload(for: [:]) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage(id: "new-id")]))
         }
 
@@ -392,7 +392,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 semaphore.signal()
             }
             expect(presenter.presentedMessages.count).to(equal(0))
-            waitUntil { done in manager.preload(for: [:], completion: done) }
+            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:], completion: done) }
             _ = semaphore.wait(timeout: .now() + 1)
             expect(presenter.presentedMessages.count).to(equal(1))
         }

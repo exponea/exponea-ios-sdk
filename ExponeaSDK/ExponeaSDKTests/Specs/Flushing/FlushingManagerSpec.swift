@@ -57,7 +57,7 @@ class FlushingManagerSpec: QuickSpec {
                     withRequestHook: { _ in networkRequests += 1 }
                 )
 
-                waitUntil { done in
+                waitUntil(timeout: .seconds(3)) { done in
                     let group = DispatchGroup()
                     for _ in 0..<10 {
                         group.enter()
