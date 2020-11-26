@@ -38,12 +38,12 @@ final class TelemetryManager {
     func report(eventWithType type: TelemetryEventType, properties: [String: String]) {
         let appInfo = TelemetryUtility.appInfo
         var allProperties = [
-            "sdkVersion": TelemetryUtility.sdkVersion,
+            "sdkVersion": Exponea.version,
             "appName": appInfo.appName,
             "appVersion": appInfo.appVersion,
             "appNameVersion": "\(appInfo.appName) - \(appInfo.appVersion)",
             "appNameVersionSdkVersion":
-                "\(appInfo.appName) - \(appInfo.appVersion) - SDK \(TelemetryUtility.sdkVersion)"
+                "\(appInfo.appName) - \(appInfo.appVersion) - SDK \(Exponea.version)"
         ]
         allProperties.merge(properties, uniquingKeysWith: { first, _ in return first })
         upload.upload(eventWithName: type.rawValue, properties: allProperties) { result in

@@ -168,8 +168,7 @@ public class ExponeaInternal: ExponeaType {
 
     /// The initialiser is internal, so that only the singleton can exist when used in production.
     internal init() {
-        let version = Bundle(for: Exponea.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-        Exponea.logger.logMessage("⚙️ Starting ExponeaSDK, version \(version).")
+        Exponea.logger.logMessage("⚙️ Starting ExponeaSDK, version \(Exponea.version).")
     }
 
     deinit {

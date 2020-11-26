@@ -21,13 +21,6 @@ struct DeviceProperties {
     /// SDK Name
     public var sdk: String = Constants.DeviceInfo.sdk
 
-    /// SDK Versioning
-    public var sdkVersion: String = {
-        let bundle = Bundle(for: ExponeaSDK.Exponea.self)
-        let version = bundle.infoDictionary?["CFBundleShortVersionString"] as? String
-        return version ?? "Unknown version"
-    }()
-
     /// Device model
     public var deviceModel: String = UIDevice.current.model
 
@@ -49,7 +42,7 @@ struct DeviceProperties {
         data["platform"] = .string(osName)
         data["os_version"] = .string(osVersion)
         data["sdk"] = .string(sdk)
-        data["sdk_version"] = .string(sdkVersion)
+        data["sdk_version"] = .string(Exponea.version)
         data["device_model"] = .string(deviceModel)
         data["device_type"] = .string(deviceType)
         data["app_version"] = .string(appVersion)

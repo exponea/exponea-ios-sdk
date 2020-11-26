@@ -179,7 +179,7 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
             appVersion: "\(appInfo.appName)-\(appInfo.appVersion)",
             appBuild: appInfo.appBuild,
             sdkName: "ExponeaSDK.ios",
-            sdkVersion: TelemetryUtility.sdkVersion,
+            sdkVersion: Exponea.version,
             osName: UIDevice.current.systemName,
             osVersion: UIDevice.current.systemVersion,
             model: UIDevice.current.model,

@@ -67,8 +67,4 @@ final class TelemetryUtility {
             appBuild: getPlistValue(key: "CFBundleVersion")
         )
     }
-
-    static var sdkVersion: String {
-        return getPlistValue(bundle: Bundle(for: ExponeaSDK.Exponea.self), key: "CFBundleShortVersionString")
-    }
 }
