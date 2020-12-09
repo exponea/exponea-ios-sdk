@@ -13,7 +13,9 @@ import CoreData
 class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<TrackCustomer> {
-        return NSFetchRequest<TrackCustomer>(entityName: "TrackCustomer")
+        let request = NSFetchRequest<TrackCustomer>(entityName: "TrackCustomer")
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(TrackCustomer.timestamp), ascending: true)]
+        return request
     }
 
     @NSManaged public var baseUrl: String?

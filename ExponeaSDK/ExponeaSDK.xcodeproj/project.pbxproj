@@ -146,6 +146,7 @@
 		0591907323EC58550037BD88 /* NumberOperatorsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591907223EC58550037BD88 /* NumberOperatorsSpec.swift */; };
 		0591907523EC5C740037BD88 /* EventFilterAttributeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591907423EC5C740037BD88 /* EventFilterAttributeSpec.swift */; };
 		0591907723EC5F5A0037BD88 /* EventFilterConstraintSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0591907623EC5F5A0037BD88 /* EventFilterConstraintSpec.swift */; };
+		059A7A6C2581128100A53BAF /* InputStream+readFully.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059A7A6B2581128100A53BAF /* InputStream+readFully.swift */; };
 		05A66E99246A8C0100DE7128 /* CampaignData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6BD13522ABA743004487A8 /* CampaignData.swift */; };
 		05A6A3EB23954654008475E7 /* InAppMessageDialogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A6A3EA23954654008475E7 /* InAppMessageDialogView.swift */; };
 		05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA63BB2342362B00D78452 /* ServerRepository.swift */; };
@@ -512,6 +513,7 @@
 		0591907223EC58550037BD88 /* NumberOperatorsSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOperatorsSpec.swift; sourceTree = "<group>"; };
 		0591907423EC5C740037BD88 /* EventFilterAttributeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterAttributeSpec.swift; sourceTree = "<group>"; };
 		0591907623EC5F5A0037BD88 /* EventFilterConstraintSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFilterConstraintSpec.swift; sourceTree = "<group>"; };
+		059A7A6B2581128100A53BAF /* InputStream+readFully.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InputStream+readFully.swift"; sourceTree = "<group>"; };
 		05A6A3EA23954654008475E7 /* InAppMessageDialogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDialogView.swift; sourceTree = "<group>"; };
 		05A7BB4E243B0DBE00680B2E /* DatabaseModel v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v5.xcdatamodel"; sourceTree = "<group>"; };
 		05A931ED2375A4EE00D45200 /* mock_notification_response.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mock_notification_response.h; sourceTree = "<group>"; };
@@ -1610,6 +1612,7 @@
 				05297979241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift */,
 				05FBB15C244709C500BDF234 /* DatabaseManager+Clear.swift */,
 				05D95C43250100B5001DA2DA /* MockInAppMessagesManager.swift */,
+				059A7A6B2581128100A53BAF /* InputStream+readFully.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
@@ -2324,6 +2327,7 @@
 				057F44872399322D0070DF30 /* InAppMessageDialogViewSpec.swift in Sources */,
 				05FBB15D244709C500BDF234 /* DatabaseManager+Clear.swift in Sources */,
 				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,
+				059A7A6C2581128100A53BAF /* InputStream+readFully.swift in Sources */,
 				C084D0EB2181C5EA005C0CA8 /* MockUserNotificationCenter.swift in Sources */,
 				F04BEA9021119C1500591950 /* AuthorizationSpec.swift in Sources */,
 				05735EA923A3B53600DA0FA9 /* MockFlushingManager.swift in Sources */,

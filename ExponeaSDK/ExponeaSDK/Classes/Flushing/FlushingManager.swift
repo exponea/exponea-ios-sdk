@@ -124,7 +124,7 @@ class FlushingManager: FlushingManagerType {
                 return
             }
 
-            flushTrackingObjects((customers + events).reversed()) { result in
+            flushTrackingObjects(customers + events) { result in
                 self.isFlushingData = false
                 completion?(result)
             }

@@ -106,6 +106,52 @@ class FlushingManagerSpec: QuickSpec {
                     expect { try database.fetchTrackEvent().count }.to(equal(1))
                 }
             }
+            context("flushing order") {
+                func checkFlushOrder() {
+                    waitUntil { done in
+                        var id = 1
+                        NetworkStubbing.stubNetwork(
+                            forProjectToken: configuration.projectToken,
+                            withStatusCode: 200,
+                            withDelay: 0,
+                            withResponseData: nil,
+                            withRequestHook: { request in
+                                let payload = try! JSONSerialization.jsonObject(
+                                    with: request.httpBodyStream!.readFully(),
+                                    options: []
+                                ) as? NSDictionary ?? NSDictionary()
+                                let properties = payload["properties"] as? NSDictionary
+                                expect(properties?["id"] as? Int).to(equal(id))
+                                id += 1
+                                if id == 6 {
+                                    done()
+                                }
+                            }
+                        )
+                        flushingManager.flushData()
+                    }
+                }
+
+                it("should flush customer updates in correct order") {
+                    for id in 1...5 {
+                        try! database.identifyCustomer(
+                            with: [.properties(["id": .int(id)])],
+                            into: configuration.mainProject
+                        )
+                    }
+                    checkFlushOrder()
+                }
+
+                it("should flush events in correct order") {
+                    for id in 1...5 {
+                        try! database.trackEvent(
+                            with: [.properties(["id": .int(id)])],
+                            into: configuration.mainProject
+                        )
+                    }
+                    checkFlushOrder()
+                }
+            }
         }
     }
 }
