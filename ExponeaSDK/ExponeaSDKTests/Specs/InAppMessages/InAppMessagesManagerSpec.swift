@@ -67,7 +67,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil { done in manager.preload(for: [:]) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [])
@@ -81,7 +81,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil { done in manager.preload(for: [:]) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
             repository.fetchInAppMessagesResult = Result.failure(ExponeaError.unknownError(""))
             waitUntil { done in manager.preload(for: [:]) { done() } }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))

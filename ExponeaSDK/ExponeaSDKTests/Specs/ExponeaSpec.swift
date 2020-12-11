@@ -86,7 +86,7 @@ class ExponeaSpec: QuickSpec {
                         projectToken: "0aef3a96-3804-11e8-b710-141877340e97",
                         authorization: .token("")
                     ),
-                    automaticPushNotificationTracking: .disabled
+                    pushNotificationTracking: .disabled
                 )
 
                 it("Should return the correct project token") {
@@ -383,7 +383,7 @@ class ExponeaSpec: QuickSpec {
                     Exponea.shared = exponea
                     Exponea.shared.configure(
                         Exponea.ProjectSettings(projectToken: "mock-token", authorization: .token("mock-token")),
-                        automaticPushNotificationTracking: .disabled,
+                        pushNotificationTracking: .disabled,
                         flushingSetup: Exponea.FlushingSetup(mode: .manual)
                     )
                     Exponea.shared.trackPushToken("token")

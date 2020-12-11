@@ -366,11 +366,11 @@ class JSONValueSpec: QuickSpec {
                 })
 
                 it("should encode Double", closure: {
-                    let value = TestClass(value: JSONValue.double(1234.56))
+                    let value = TestClass(value: JSONValue.double(1234.5))
                     let data = try! encoder.encode(value)
                     let encoded = String(data: data, encoding: .utf8)
                     // swiftlint:disable:next open_brace_spacing close_brace_spacing
-                    expect(encoded).to(equal("{\"value\":1234.5599999999999}"))
+                    expect(encoded).to(equal("{\"value\":1234.5}"))
                 })
 
                 it("should encode String", closure: {

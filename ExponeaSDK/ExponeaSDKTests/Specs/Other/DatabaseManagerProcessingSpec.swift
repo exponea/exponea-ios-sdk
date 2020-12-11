@@ -19,25 +19,25 @@ class DatabaseManagerProcessingSpec: QuickSpec {
                 it("should work for strings", closure: {
                     let string = NSString(string: "mystring")
                     let output = DatabaseManager.transformPrimitiveType(string)
-                    expect(output).to(equal(.string("mystring")))
+                    expect(output) == .string("mystring")
                 })
 
                 it("should work for bool", closure: {
                     let number = NSNumber(value: true)
                     let output = DatabaseManager.transformPrimitiveType(number)
-                    expect(output).to(equal(.bool(true)))
+                    expect(output) == .bool(true)
                 })
 
                 it("should work for int", closure: {
                     let number = NSNumber(value: 1234)
                     let output = DatabaseManager.transformPrimitiveType(number)
-                    expect(output).to(equal(.int(1234)))
+                    expect(output) == .int(1234)
                 })
 
                 it("should work for double", closure: {
                     let number = NSNumber(value: 1234.56)
                     let output = DatabaseManager.transformPrimitiveType(number)
-                    expect(output).to(equal(.double(1234.56)))
+                    expect(output) == .double(1234.56)
                 })
 
                 it("should not work for unsupported type", closure: {
@@ -153,7 +153,7 @@ class DatabaseManagerProcessingSpec: QuickSpec {
                 it("should handle dictionaries", closure: {
                     let dictionary = NSDictionary(dictionary: ["key": "value"])
                     let output = DatabaseManager.processObject(dictionary)
-                    expect(output).to(equal(.dictionary(["key": .string("value")])))
+                    expect(output) == .dictionary(["key": .string("value")])
                 })
 
                 it("should handle arrays", closure: {
@@ -166,7 +166,7 @@ class DatabaseManagerProcessingSpec: QuickSpec {
                 it("should handle primitive types", closure: {
                     let number = NSNumber(value: 1234.56)
                     let output = DatabaseManager.processObject(number)
-                    expect(output).to(equal(.double(1234.56)))
+                    expect(output) == .double(1234.56)
                 })
 
                 it("should not parse unsupported types", closure: {

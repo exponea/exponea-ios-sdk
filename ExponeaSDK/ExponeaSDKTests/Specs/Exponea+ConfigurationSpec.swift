@@ -27,7 +27,7 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                         projectToken: "mock-project-token",
                         authorization: .none
                     ),
-                    automaticPushNotificationTracking: .disabled
+                    pushNotificationTracking: .disabled
                 )
                 expect(exponea.configuration!.projectMapping).to(beNil())
                 expect(exponea.configuration!.projectToken).to(equal("mock-project-token"))
@@ -63,9 +63,10 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                             ]
                         ]
                     ),
-                    automaticPushNotificationTracking: .enabled(
+                    pushNotificationTracking: .enabled(
                         appGroup: "mock-app-group",
                         delegate: self,
+                        requirePushAuthorization: false,
                         tokenTrackFrequency: .onTokenChange
                     ),
                     automaticSessionTracking: .enabled(timeout: 12345),
@@ -88,7 +89,8 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                 expect(exponea.configuration!.defaultProperties?["mock-prop-2"] as? Int).to(equal(123))
                 expect(exponea.configuration!.sessionTimeout).to(equal(12345))
                 expect(exponea.configuration!.automaticSessionTracking).to(equal(true))
-                expect(exponea.configuration!.automaticPushNotificationTracking).to(equal(true))
+                expect(exponea.configuration!.automaticPushNotificationTracking).to(equal(false))
+                expect(exponea.configuration!.requirePushAuthorization).to(equal(false))
                 expect(exponea.configuration!.tokenTrackFrequency).to(equal(.onTokenChange))
                 expect(exponea.configuration!.appGroup).to(equal("mock-app-group"))
                 expect(exponea.configuration!.flushEventMaxRetries).to(equal(123))

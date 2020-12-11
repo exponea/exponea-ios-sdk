@@ -13,7 +13,6 @@ import Quick
 
 final class PushNotificationDelegateObserverSpec: QuickSpec {
     class EmptyDelegate: NSObject, UNUserNotificationCenterDelegate {}
-
     private var calls: [NSKeyValueObservedChange<UNUserNotificationCenterDelegate?>] = []
     private func notificationsDelegateChanged(_ change: NSKeyValueObservedChange<UNUserNotificationCenterDelegate?>) {
         calls.append(change)
@@ -31,7 +30,7 @@ final class PushNotificationDelegateObserverSpec: QuickSpec {
             expect(observer.observation).notTo(beNil())
             expect(self.calls).to(beEmpty())
             observable.delegate = EmptyDelegate()
-            expect(self.calls[0].oldValue!).to(beNil())
+            expect(self.calls[0].oldValue as? UNUserNotificationCenterDelegate).to(beNil())
             expect(self.calls[0].newValue).notTo(beNil())
         }
         it("should observe delegate change to nil") {
@@ -45,7 +44,7 @@ final class PushNotificationDelegateObserverSpec: QuickSpec {
             expect(self.calls).to(beEmpty())
             observable.delegate = nil
             expect(self.calls[0].oldValue).notTo(beNil())
-            expect(self.calls[0].newValue!).to(beNil())
+            expect(self.calls[0].newValue as? UNUserNotificationCenterDelegate).to(beNil())
         }
         it("should observe delegate change to other instance") {
             let observable = BasicUNUserNotificationCenterDelegating()

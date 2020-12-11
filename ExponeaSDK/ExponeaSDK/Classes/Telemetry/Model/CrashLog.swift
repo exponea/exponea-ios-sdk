@@ -64,7 +64,7 @@ final class CrashLog: Codable, Equatable {
         return lhs.id == rhs.id
             && lhs.isFatal == rhs.isFatal
             && lhs.errorData == rhs.errorData
-            && lhs.timestamp == rhs.timestamp
-            && lhs.launchTimestamp == rhs.launchTimestamp
+            && abs(lhs.timestamp - rhs.timestamp) < 0.0001 // swift has rounding issues
+            && abs(lhs.launchTimestamp - rhs.launchTimestamp) < 0.0001
     }
 }

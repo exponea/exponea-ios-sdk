@@ -197,7 +197,8 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
 
             beforeEach {
                 let defaults = UserDefaults(suiteName: "mock-app-group")!
-                defaults.dictionaryRepresentation().keys.forEach { defaults.removeObject(forKey: $0) }
+                defaults.removeObject(forKey: Constants.General.lastKnownConfiguration)
+                defaults.removeObject(forKey: Constants.General.lastKnownCustomerIds)
             }
 
             it("should throw without configuration in UserDefaults") {

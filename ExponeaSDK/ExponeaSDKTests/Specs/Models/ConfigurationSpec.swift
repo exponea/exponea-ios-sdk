@@ -202,7 +202,8 @@ class ConfigurationSpec: QuickSpec {
             let appGroup = "appgroup"
             beforeEach {
                 let defaults = UserDefaults(suiteName: appGroup)!
-                defaults.dictionaryRepresentation().keys.forEach { defaults.removeObject(forKey: $0) }
+                defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+                defaults.removeObject(forKey: Constants.General.lastKnownConfiguration)
             }
 
             it("load nil if there is no nothing stored in user defaults") {
