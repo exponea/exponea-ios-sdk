@@ -17,8 +17,11 @@ class AppDelegate: ExponeaAppDelegate {
     var window: UIWindow?
     var alertWindow: UIWindow?
 
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        super.application(application, didFinishLaunchingWithOptions: launchOptions)
         Exponea.logger = AppDelegate.memoryLogger
         Exponea.logger.logLevel = .verbose
 
@@ -39,7 +42,7 @@ class AppDelegate: ExponeaAppDelegate {
             ], intentIdentifiers: [], options: [])
 
         UNUserNotificationCenter.current().setNotificationCategories([category1, category2])
-        UNUserNotificationCenter.current().delegate = self
+
         return true
     }
 

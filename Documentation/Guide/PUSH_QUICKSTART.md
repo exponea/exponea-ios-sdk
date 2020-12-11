@@ -44,23 +44,26 @@ To enable push notifications, configure the SDK with `pushNotificationTracking: 
 
 ## 3. Application delegate methods
 Application needs so to be able to respond to push notification related events.
-You will need to setup 3 delegate methods:
+You will need to setup 4 delegate methods:
 - `application:didRegisterForRemoteNotificationsWithDeviceToken:` will be called when your application registers for push notifications.
 - `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)` will be called for silent push notifications and alert push notifications when your app is opened.
 - `userNotificationCenter(_:didReceive:withCompletionHandler:)` will be called when user opens alert push notification.
+- `application:didFinishLaunchingWithOptions` will be called with launch options containing a notification when push notification was opened while app wasn't running.
 
 Exponea SDK contains `ExponeaAppDelegate` that contains implementation of these methods. Easiest way to integrate is make your `AppDelegate` extend `ExponeaAppDelegate`. If you don't want to/cannot use `ExponeaAppDelegate`, check implementation of those methods and call respective Exponea methods.
-
-You have to call `UNUserNotificationCenter.current().delegate = self` to register last delegate method to Notification Center. Ideally, do so in `application:didFinishLaunchingWithOptions:`.
 
 ``` swift
 @UIApplicationMain
 class AppDelegate: ExponeaAppDelegate {
-    func application(
+    override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        UNUserNotificationCenter.current().delegate = self
+        // don't forget to call the super method!!
+        super.application(
+            application,
+            didFinishLaunchingWithOptions: launchOptions
+        )
         Exponea.shared.checkPushSetup = true
         Exponea.shared.configure(...)
     }

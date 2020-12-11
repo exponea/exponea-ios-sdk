@@ -20,15 +20,15 @@ import ExponeaSDK
 import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: ExponeaAppDelegate {
 
     var window: UIWindow?
     
-    func application(
+    override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        Exponea.shared.pushNotificationsDelegate = self
+        super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 }
 
