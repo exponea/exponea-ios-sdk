@@ -99,8 +99,12 @@ extension AppDelegate: PushNotificationManagerDelegate {
     ) {
         Exponea.logger.log(
             .verbose,
-            message: "Alert push received, " +
+            message: "Alert push opened, " +
                 "action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))"
+        )
+        showAlert(
+            "Push notification opened",
+            "action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))"
         )
     }
 
@@ -108,6 +112,10 @@ extension AppDelegate: PushNotificationManagerDelegate {
         Exponea.logger.log(
             .verbose,
             message: "Silent push received, extraData \(String(describing: extraData))"
+        )
+        showAlert(
+            "Silent push received",
+            "extraData \(String(describing: extraData))"
         )
     }
 }

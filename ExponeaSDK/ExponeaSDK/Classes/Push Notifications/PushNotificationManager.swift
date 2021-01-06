@@ -36,7 +36,32 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     private var lastTokenTrackDate: Date
     private var pushNotificationSwizzler: PushNotificationSwizzler?
 
-    internal weak var delegate: PushNotificationManagerDelegate?
+    // some push notification can be received before the delegate is set, we'll store them and call delegate once set
+    internal var pendingOpenedPushes: [PushOpenedData] = []
+    private weak var delegateValue: PushNotificationManagerDelegate?
+    internal var delegate: PushNotificationManagerDelegate? {
+        get {
+            return delegateValue
+        }
+        set {
+            delegateValue = newValue
+            guard let delegateValue = delegateValue else {
+                return
+            }
+            pendingOpenedPushes.forEach {
+                if $0.silent {
+                    delegateValue.silentPushNotificationReceived(extraData: $0.extraData)
+                } else {
+                    delegateValue.pushNotificationOpened(
+                        with: $0.actionType,
+                        value: $0.actionValue,
+                        extraData: $0.extraData
+                    )
+                }
+            }
+            pendingOpenedPushes = []
+        }
+    }
 
     var didReceiveSelfPushCheck: Bool = false
 
@@ -120,17 +145,25 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         }
 
         if pushOpenedData.silent {
-            delegate?.silentPushNotificationReceived(extraData: pushOpenedData.extraData)
+            if let delegate = delegate {
+                delegate.silentPushNotificationReceived(extraData: pushOpenedData.extraData)
+            } else {
+                pendingOpenedPushes.append(pushOpenedData)
+            }
         } else {
             // save campaign to be added to session start
             Exponea.shared.trackCampaignData(data: pushOpenedData.campaignData, timestamp: nil)
 
             // Notify the delegate
-            delegate?.pushNotificationOpened(
-                with: pushOpenedData.actionType,
-                value: pushOpenedData.actionValue,
-                extraData: pushOpenedData.extraData
-            )
+            if let delegate = delegate {
+                delegate.pushNotificationOpened(
+                    with: pushOpenedData.actionType,
+                    value: pushOpenedData.actionValue,
+                    extraData: pushOpenedData.extraData
+                )
+            } else {
+                pendingOpenedPushes.append(pushOpenedData)
+            }
 
             switch pushOpenedData.actionType {
             case .none, .openApp, .selfCheck:
@@ -186,7 +219,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     func processStoredPushOpens() {
         let userDefaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite)
         guard let array = userDefaults?.array(forKey: Constants.General.openedPushUserDefaultsKey) else {
-            Exponea.logger.log(.verbose, message: "No opened push to track present in shared app group.")
+            Exponea.logger.log(.verbose, message: "No opened push to track present in UserDefaults.")
             return
         }
 
