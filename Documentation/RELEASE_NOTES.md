@@ -1,4 +1,19 @@
 ## Release Notes
+## Release Notes for 2.10.0
+#### January 07, 2021
+* Features
+  * SDK will now hold opened push notifications until `pushNotificationsDelegate` is set.
+  * In-app message clicked event now contains property `text` with label of the button that was interacted with.
+  * XCode 12.2 and Swift 5.3.1 compatibility.
+* Bug Fixes
+  * **BREAKING CHANGE:**
+  The SDK now processes notification open events that start the application. Before, the app had to running and minimized for the notification to be processed.
+  To respond to notifications that start the application, the SDK needs to run some processing in `application:didFinishLaunchingWithOptions`.
+  `ExponeaAppDelegate` now implements this method where it processes the notification and sets notification center delegate. Your `AppDelegate application:didFinishLaunchingWithOptions` now requires a `override` keyword and a **call to super** `super.application(application, didFinishLaunchingWithOptions: launchOptions)`. Calling `Exponea.shared.pushNotificationsDelegate = self` is no longer required. See [push notifications documentation](./Guide/PUSH_QUICKSTART.md) for more details.
+  * Fixed: Events are now sorted based on timestamp before uploading to Exponea servers.
+
+
+
 ## Release Notes for 2.9.3
 #### November 20, 2020
 * Features
