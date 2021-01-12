@@ -9,11 +9,11 @@
 import Foundation
 
 /// Path route with projectId
-struct RequestFactory {
+public struct RequestFactory {
     let exponeaProject: ExponeaProject
     let route: Routes
 
-    init(exponeaProject: ExponeaProject, route: Routes) {
+    public init(exponeaProject: ExponeaProject, route: Routes) {
         self.exponeaProject = exponeaProject
         self.route = route
     }
@@ -36,7 +36,7 @@ struct RequestFactory {
     }
 }
 
-extension RequestFactory {
+public extension RequestFactory {
     func prepareRequest(
         parameters: RequestParametersType? = nil,
         customerIds: [String: String]? = nil

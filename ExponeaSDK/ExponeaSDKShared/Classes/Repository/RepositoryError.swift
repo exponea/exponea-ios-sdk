@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol ErrorInitialisable: Error {
+public protocol ErrorInitialisable: Error {
     static func create(from error: Error) -> Self
 }
 
@@ -16,7 +16,7 @@ protocol ErrorInitialisable: Error {
 ///
 /// - missingData: Holds any missing data while trying to call the Expone API.
 /// - invalidResponse: Holds any invalid response when calling the Exponea API.
-enum RepositoryError: LocalizedError, ErrorInitialisable {
+public enum RepositoryError: LocalizedError, ErrorInitialisable {
     case notAuthorized(ErrorResponse?)
     case missingData(String)
     case serverError(MultipleErrorResponse?)
@@ -47,7 +47,7 @@ enum RepositoryError: LocalizedError, ErrorInitialisable {
         }
     }
 
-    static func create(from error: Error) -> RepositoryError {
+    public static func create(from error: Error) -> RepositoryError {
         if let error = error as? RepositoryError {
             return error
         } else {

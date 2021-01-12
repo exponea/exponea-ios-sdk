@@ -9,7 +9,7 @@
 import Foundation
 
 extension ServerRepository: TrackingRepository {
-    func trackObject(
+    public func trackObject(
         _ trackingObject: TrackingObject,
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     ) {

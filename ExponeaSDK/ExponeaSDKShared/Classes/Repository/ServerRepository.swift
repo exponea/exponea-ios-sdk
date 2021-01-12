@@ -9,18 +9,18 @@
 import Foundation
 
 /// The Server Repository class is responsible to manage all the requests for the Exponea API.
-final class ServerRepository {
+public final class ServerRepository {
 
-    public internal(set) var configuration: Configuration
-    internal let session = URLSession(configuration: .default)
+    public var configuration: Configuration
+    public let session = URLSession(configuration: .default)
 
     // Initialize the configuration for all HTTP requests
-    init(configuration: Configuration) {
+    public init(configuration: Configuration) {
         self.configuration = configuration
     }
 
     // Gets and cancels all tasks
-    func cancelRequests() {
+    public func cancelRequests() {
         session.getAllTasks { (tasks) in
             for task in tasks {
                 task.cancel()

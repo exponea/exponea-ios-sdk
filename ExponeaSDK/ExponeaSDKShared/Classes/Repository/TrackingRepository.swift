@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol TrackingRepository {
+public protocol TrackingRepository {
     func trackObject(
         _ object: TrackingObject,
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
