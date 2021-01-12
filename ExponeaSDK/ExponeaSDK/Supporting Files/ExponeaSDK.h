@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "objc_tryCatch.h"
-#import "ExponeaSDKShared/ExponeaSDKShared.h"
 
 //! Project version number for ExponeaSDK.
 FOUNDATION_EXPORT double ExponeaSDKVersionNumber;

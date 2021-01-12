@@ -9,6 +9,7 @@ import Nimble
 import Quick
 
 @testable import ExponeaSDKNotifications
+@testable import ExponeaSDKShared
 
 final class DeliveredNotificationTrackerSpec: QuickSpec {
     override func spec() {

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ExponeaSDKShared
 
 final class DeliveredNotificationTracker {
     private let events: [EventTrackingObject]

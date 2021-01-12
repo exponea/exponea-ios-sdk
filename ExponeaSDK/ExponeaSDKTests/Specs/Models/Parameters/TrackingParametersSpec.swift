@@ -10,7 +10,7 @@ import Foundation
 import Quick
 import Nimble
 
-@testable import ExponeaSDK
+@testable import ExponeaSDKShared
 
 class TrackingParametersSpec: QuickSpec {
     override func spec() {

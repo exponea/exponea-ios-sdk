@@ -8,6 +8,7 @@
 
 import Foundation
 import UserNotifications
+import ExponeaSDKShared
 
 public class ExponeaNotificationService {
 

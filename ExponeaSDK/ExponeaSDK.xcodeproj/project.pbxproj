@@ -88,6 +88,7 @@
 		0561832F25ADB1BD001E30A3 /* TokenTrackFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */; };
 		0561833025ADB1BD001E30A3 /* DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019F1AC42087666800368FB1 /* DataType.swift */; };
 		0561833125ADB1BD001E30A3 /* TrackingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD93A2411323F00E5BF91 /* TrackingObject.swift */; };
+		0564D14225ADE46300FDCAE5 /* ExponeaSharedExports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0564D14125ADE46300FDCAE5 /* ExponeaSharedExports.swift */; };
 		0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */; };
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
 		0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */; };
@@ -435,6 +436,7 @@
 		0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ExponeaSDKShared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0561829925AD959C001E30A3 /* ExponeaSDKShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExponeaSDKShared.h; sourceTree = "<group>"; };
 		0561829A25AD959C001E30A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0564D14125ADE46300FDCAE5 /* ExponeaSharedExports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSharedExports.swift; sourceTree = "<group>"; };
 		0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypeSpec.swift; sourceTree = "<group>"; };
 		05664249237309C300CCDB98 /* SwizzleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleSpec.swift; sourceTree = "<group>"; };
 		0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzlerSpec.swift; sourceTree = "<group>"; };
@@ -1704,6 +1706,7 @@
 				05D0E5552386C63800413AE2 /* Exponea+Configuration.swift */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 				05E81631247555DD00AA28E3 /* ExponeaAppDelegate.swift */,
+				0564D14125ADE46300FDCAE5 /* ExponeaSharedExports.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -2223,6 +2226,7 @@
 				05F3EFDA237E9415006E83F4 /* ErrorData.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
 				05880538241682F8001AAE8A /* ExponeaInternal.swift in Sources */,
+				0564D14225ADE46300FDCAE5 /* ExponeaSharedExports.swift in Sources */,
 				05F3EFCF237E926B006E83F4 /* CrashManager.swift in Sources */,
 				05C289332428A1480021220C /* SessionManagerType.swift in Sources */,
 				05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */,

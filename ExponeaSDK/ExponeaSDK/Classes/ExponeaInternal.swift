@@ -8,8 +8,6 @@
 
 import Foundation
 
-public typealias Constants = ExponeaSDKShared.Constants
-
 extension Exponea {
     /// Shared instance of ExponeaSDK.
     public internal(set) static var shared = ExponeaInternal()
