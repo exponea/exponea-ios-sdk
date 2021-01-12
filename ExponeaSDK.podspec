@@ -79,7 +79,7 @@ Pod::Spec.new do |s|
 
   s.source_files  = [
     "ExponeaSDK/ExponeaSDK/**/*.swift",
-    "ExponeaSDK/ExponeaSDK-Shared/**/*.swift",
+    "ExponeaSDK/ExponeaSDKShared/**/*.swift",
     "ExponeaSDK/ExponeaSDK/Supporting Files/objc_tryCatch.h",
     "ExponeaSDK/ExponeaSDK/Supporting Files/objc_tryCatch.m",
   ]

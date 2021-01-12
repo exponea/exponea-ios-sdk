@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
 import ExponeaSDKShared
+#endif
 
 final class DeliveredNotificationTracker {
     private let events: [EventTrackingObject]

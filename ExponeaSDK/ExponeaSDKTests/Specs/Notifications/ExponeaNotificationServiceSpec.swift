@@ -35,7 +35,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
                 let delivered = self.getRecordedNotifications()!
                 expect(delivered.count).to(equal(1))
-                let savedNotificationData = ExponeaSDK.NotificationData.deserialize(from: delivered[0])
+                let savedNotificationData = NotificationData.deserialize(from: delivered[0])
                 expect(savedNotificationData?.campaignName).to(equal("mock campaign name"))
             }
 
@@ -62,13 +62,13 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
                 let delivered = self.getRecordedNotifications()!
                 expect(delivered.count).to(equal(3))
-                expect(ExponeaSDK.NotificationData.deserialize(from: delivered[0])?.campaignName).to(
+                expect(NotificationData.deserialize(from: delivered[0])?.campaignName).to(
                     equal("mock campaign name")
                 )
-                expect(ExponeaSDK.NotificationData.deserialize(from: delivered[1])?.campaignName).to(
+                expect(NotificationData.deserialize(from: delivered[1])?.campaignName).to(
                     equal("second mock campaign name")
                 )
-                expect(ExponeaSDK.NotificationData.deserialize(from: delivered[2])?.campaignName).to(
+                expect(NotificationData.deserialize(from: delivered[2])?.campaignName).to(
                     equal("third mock campaign name")
                 )
             }
@@ -103,7 +103,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             }
 
             it("should not save notification for later when tracking succeeds") {
-                try! ExponeaSDK.Configuration(
+                try! Configuration(
                     projectToken: "mock-project-token",
                     projectMapping: nil,
                     authorization: ExponeaSDK.Authorization.token("mock-token"),
@@ -115,7 +115,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
                     let data = try? JSONEncoder().encode(["uuid": ExponeaSDK.JSONValue.string("mock-uuid")]) else {
                     return
                 }
-                userDefaults.set(data, forKey: ExponeaSDK.Constants.General.lastKnownCustomerIds)
+                userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 200)
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 waitUntil { done in

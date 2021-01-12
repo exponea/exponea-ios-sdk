@@ -77,7 +77,7 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files    = ["ExponeaSDK/ExponeaSDK-Notifications/**/*.swift", "ExponeaSDK/ExponeaSDK-Shared/**/*.swift"]
+  s.source_files    = ["ExponeaSDK/ExponeaSDK-Notifications/**/*.swift", "ExponeaSDK/ExponeaSDKShared/**/*.swift"]
   s.exclude_files   = "ExponeaSDK/ExponeaSDK/**/*"
   s.weak_frameworks = "UserNotifications"
 

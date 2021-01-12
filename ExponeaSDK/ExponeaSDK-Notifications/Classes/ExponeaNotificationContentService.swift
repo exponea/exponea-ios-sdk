@@ -9,7 +9,9 @@
 import Foundation
 import UserNotifications
 import UserNotificationsUI
+#if !COCOAPODS
 import ExponeaSDKShared
+#endif
 
 public class ExponeaNotificationContentService {
 
