@@ -1,6 +1,6 @@
 //
 //  Exponea.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Panaxeo on 05/03/2020.
 //  Copyright © 2020 Exponea. All rights reserved.

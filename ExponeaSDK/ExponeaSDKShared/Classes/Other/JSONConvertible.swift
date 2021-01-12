@@ -1,6 +1,6 @@
 //
 //  JSONConvertible.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Dominik Hadl on 23/05/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
@@ -60,7 +60,7 @@ public indirect enum JSONValue {
     case dictionary([String: JSONValue])
     case array([JSONValue])
 
-    static func convert(_ dictionary: [String: Any]) -> [String: JSONValue] {
+    public static func convert(_ dictionary: [String: Any]) -> [String: JSONValue] {
         var result: [String: JSONValue] = [:]
         for (key, value) in dictionary {
             // swiftlint:disable force_cast
@@ -80,7 +80,7 @@ public indirect enum JSONValue {
         return result
     }
 
-    static func convert(_ array: [Any]) -> [JSONValue] {
+    public static func convert(_ array: [Any]) -> [JSONValue] {
         var result: [JSONValue] = []
         for value in array {
             switch value {
@@ -101,7 +101,7 @@ public indirect enum JSONValue {
     }
 }
 
-extension JSONValue {
+public extension JSONValue {
     var rawValue: Any {
         switch self {
         case .string(let string): return string
@@ -177,7 +177,7 @@ extension JSONValue: Codable, Equatable {
     }
 }
 
-extension JSONValue {
+public extension JSONValue {
     var objectValue: NSObject {
         switch self {
         case .bool(let bool): return NSNumber(value: bool)

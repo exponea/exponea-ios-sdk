@@ -78,7 +78,7 @@ extension RequestFactory {
 
         // Log request if necessary
         if Exponea.logger.logLevel == .verbose {
-            Exponea.logger.log(.verbose, message: "Created request: \n\(request.description)")
+            Exponea.logger.log(.verbose, message: "Created request: \n\(request.describe)")
         }
 
         return request

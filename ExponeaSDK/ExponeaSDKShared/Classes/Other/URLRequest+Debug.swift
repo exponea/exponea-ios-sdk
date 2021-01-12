@@ -1,6 +1,6 @@
 //
 //  URLRequest+Debug.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Dominik Hadl on 12/07/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
@@ -8,8 +8,8 @@
 
 import Foundation
 
-extension URLRequest {
-    var description: String {
+public extension URLRequest {
+    var describe: String {
         var requestLog = "[Request]\n"
 
         guard let urlString = url?.absoluteString else {

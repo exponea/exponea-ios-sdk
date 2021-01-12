@@ -1,6 +1,6 @@
 //
 //  URLResponse+Debug.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Dominik Hadl on 12/07/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension URLResponse {
+public extension URLResponse {
     func description(with data: Data?, error: Error?) -> String {
         var responseLog = "[Response]\n"
 

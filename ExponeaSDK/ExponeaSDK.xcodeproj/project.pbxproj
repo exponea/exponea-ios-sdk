@@ -46,8 +46,6 @@
 		053EC59F23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */; };
 		05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05457FAD241BCFF30067226F /* TelemetryEventType.swift */; };
 		054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */; };
-		0551A0AC241A81FE009A5A5E /* JSON+SnakeCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */; };
-		0551A0AD241A838B009A5A5E /* JSON+SnakeCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */; };
 		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */; };
 		055EAD242417CE3100E2F364 /* mock_notification_request.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B97D302417CD4A00FE9309 /* mock_notification_request.h */; };
@@ -61,6 +59,11 @@
 		056182E825AD9E05001E30A3 /* Exponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD8EA2411199D00E5BF91 /* Exponea.swift */; };
 		056182EF25AD9E22001E30A3 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639E207E14D9005FD174 /* LogLevel.swift */; };
 		056182FC25AD9E25001E30A3 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639B207E11BF005FD174 /* Logger.swift */; };
+		0561830F25AD9EEB001E30A3 /* URLRequest+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */; };
+		0561831025AD9EEB001E30A3 /* JSON+SnakeCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */; };
+		0561831125AD9EEB001E30A3 /* URLResponse+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */; };
+		0561831225AD9EEB001E30A3 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D2C2417C95200FE9309 /* JSONConvertible.swift */; };
+		0561831325AD9EEB001E30A3 /* UIImage+Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0570E76A246EBE7400E92ACF /* UIImage+Gif.swift */; };
 		0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */; };
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
 		0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */; };
@@ -72,8 +75,6 @@
 		0567724123746B9B0082167C /* PushNotificationSwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567724023746B9B0082167C /* PushNotificationSwizzlerSpec.swift */; };
 		0567724323746DDC0082167C /* MockPushNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0567724223746DDC0082167C /* MockPushNotificationManager.swift */; };
 		056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056772442374703B0082167C /* PushNotificationManagerType.swift */; };
-		0570E76B246EBE7400E92ACF /* UIImage+Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0570E76A246EBE7400E92ACF /* UIImage+Gif.swift */; };
-		0570E76C246EBFBC00E92ACF /* UIImage+Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0570E76A246EBE7400E92ACF /* UIImage+Gif.swift */; };
 		05714B73243758FA00E62206 /* ExponeaProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05714B72243758FA00E62206 /* ExponeaProject.swift */; };
 		05714B742437592200E62206 /* ExponeaProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05714B72243758FA00E62206 /* ExponeaProject.swift */; };
 		05735EA123A3950800DA0FA9 /* FlushingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05735EA023A3950800DA0FA9 /* FlushingManager.swift */; };
@@ -125,8 +126,6 @@
 		058DD9332411315F00E5BF91 /* RepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0753E8F20A43D3900A779FF /* RepositoryError.swift */; };
 		058DD935241131AC00E5BF91 /* MultipleErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */; };
 		058DD936241131BD00E5BF91 /* RequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */; };
-		058DD9382411320300E5BF91 /* URLResponse+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */; };
-		058DD9392411320600E5BF91 /* URLRequest+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */; };
 		058DD93B2411323F00E5BF91 /* TrackingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD93A2411323F00E5BF91 /* TrackingObject.swift */; };
 		058DD93C2411324900E5BF91 /* TrackingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD93A2411323F00E5BF91 /* TrackingObject.swift */; };
 		058DD93D241132B200E5BF91 /* DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019F1AC42087666800368FB1 /* DataType.swift */; };
@@ -159,8 +158,6 @@
 		05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B4D657238FF6DC00F5010F /* InAppMessageSpec.swift */; };
 		05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */; };
 		05B97D212417B2C400FE9309 /* DeliveredNotificationTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D202417B2C300FE9309 /* DeliveredNotificationTrackerSpec.swift */; };
-		05B97D2D2417C95200FE9309 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D2C2417C95200FE9309 /* JSONConvertible.swift */; };
-		05B97D2E2417C97300FE9309 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D2C2417C95200FE9309 /* JSONConvertible.swift */; };
 		05BA5804250649F000E10994 /* PushOpenedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BA5803250649F000E10994 /* PushOpenedData.swift */; };
 		05BA580625064E4600E10994 /* PushOpenedDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BA580525064E4600E10994 /* PushOpenedDataSpec.swift */; };
 		05BA58092506549700E10994 /* DataType+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BA58072506542400E10994 /* DataType+Codable.swift */; };
@@ -232,8 +229,6 @@
 		C030AF4A216F4910004413F0 /* PushNotificationManager+UIResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C030AF49216F4910004413F0 /* PushNotificationManager+UIResponder.swift */; };
 		C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = C030AF4B216F96F3004413F0 /* PushNotificationManager+NSObject.swift */; };
 		C030AF4E216FA154004413F0 /* PushNotificationDelegateObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C030AF4D216FA154004413F0 /* PushNotificationDelegateObserver.swift */; };
-		C0329E5F20F76EB00051F5DF /* URLRequest+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */; };
-		C0329E6120F76EBF0051F5DF /* URLResponse+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */; };
 		C03B23D421AAF34000360EE6 /* beep.wav in Resources */ = {isa = PBXBuildFile; fileRef = C03B23D321AAF34000360EE6 /* beep.wav */; };
 		C03B23D821AAFDBB00360EE6 /* ExponeaNotificationActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03B23D721AAFDBB00360EE6 /* ExponeaNotificationActionType.swift */; };
 		C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */; };
@@ -899,6 +894,7 @@
 		056182A525AD95B3001E30A3 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				058DD937241131F400E5BF91 /* Other */,
 				0191639D207E14C9005FD174 /* Logging */,
 				F0E757DF207CF99E00FE8C21 /* Constants.swift */,
 				C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */,
@@ -1281,7 +1277,6 @@
 		C0249EBD2212D15500D4F5D8 /* ExponeaSDK-Shared */ = {
 			isa = PBXGroup;
 			children = (
-				058DD937241131F400E5BF91 /* Other */,
 				058DD92A241130A900E5BF91 /* Repository */,
 				058DD8E12411189300E5BF91 /* Models */,
 				F0E757EF207D027300FE8C21 /* Configuration.swift */,
@@ -2137,8 +2132,13 @@
 				056182FC25AD9E25001E30A3 /* Logger.swift in Sources */,
 				056182AD25AD97E4001E30A3 /* Constants.swift in Sources */,
 				056182E825AD9E05001E30A3 /* Exponea.swift in Sources */,
+				0561830F25AD9EEB001E30A3 /* URLRequest+Debug.swift in Sources */,
+				0561831225AD9EEB001E30A3 /* JSONConvertible.swift in Sources */,
 				056182E725AD9E05001E30A3 /* ExponeaError.swift in Sources */,
 				056182EF25AD9E22001E30A3 /* LogLevel.swift in Sources */,
+				0561831125AD9EEB001E30A3 /* URLResponse+Debug.swift in Sources */,
+				0561831325AD9EEB001E30A3 /* UIImage+Gif.swift in Sources */,
+				0561831025AD9EEB001E30A3 /* JSON+SnakeCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2164,13 +2164,10 @@
 			files = (
 				0588053424166E43001AAE8A /* DeliveredNotificationTracker.swift in Sources */,
 				058DD92B241130C900E5BF91 /* ServerRepository.swift in Sources */,
-				058DD9392411320600E5BF91 /* URLRequest+Debug.swift in Sources */,
-				0570E76C246EBFBC00E92ACF /* UIImage+Gif.swift in Sources */,
 				058DD92F2411310700E5BF91 /* HTTPMethod.swift in Sources */,
 				C0ED33C121A6FB6B003649C3 /* ExponeaNotificationService.swift in Sources */,
 				058DD93C2411324900E5BF91 /* TrackingObject.swift in Sources */,
 				05A66E99246A8C0100DE7128 /* CampaignData.swift in Sources */,
-				05B97D2E2417C97300FE9309 /* JSONConvertible.swift in Sources */,
 				058DD8E3241118DB00E5BF91 /* Configuration.swift in Sources */,
 				058DD92C241130CB00E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */,
 				05BA58092506549700E10994 /* DataType+Codable.swift in Sources */,
@@ -2183,7 +2180,6 @@
 				058DD9302411310700E5BF91 /* Result.swift in Sources */,
 				C09C33CD221C19B300715603 /* NotificationData.swift in Sources */,
 				058DD8E82411194900E5BF91 /* TokenTrackFrequency.swift in Sources */,
-				058DD9382411320300E5BF91 /* URLResponse+Debug.swift in Sources */,
 				058DD936241131BD00E5BF91 /* RequestFactory.swift in Sources */,
 				C02C562A21C9B71D0087A990 /* ExponeaNotificationAction.swift in Sources */,
 				058DD9332411315F00E5BF91 /* RepositoryError.swift in Sources */,
@@ -2195,7 +2191,6 @@
 				058DD92D241130CD00E5BF91 /* TrackingRepository.swift in Sources */,
 				058DD93D241132B200E5BF91 /* DataType.swift in Sources */,
 				058DD8E72411193200E5BF91 /* Authorization.swift in Sources */,
-				0551A0AD241A838B009A5A5E /* JSON+SnakeCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2285,7 +2280,6 @@
 				05114E69234747BC00201EE6 /* objc_tryCatch.m in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */,
-				05B97D2D2417C95200FE9309 /* JSONConvertible.swift in Sources */,
 				05F3EFE62382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift in Sources */,
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				05835C9224124830002F4571 /* Configuration+UserDefaults.swift in Sources */,
@@ -2295,7 +2289,6 @@
 				05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */,
 				C0F7A59D21AE921300BA392F /* NotificationData.swift in Sources */,
 				C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */,
-				C0329E5F20F76EB00051F5DF /* URLRequest+Debug.swift in Sources */,
 				C0EB5D8C20B70D5000F1031F /* Swizzler.swift in Sources */,
 				05B4D64A238FE9DC00F5010F /* InAppMessagesRequest.swift in Sources */,
 				C0D9B07B20A3B2410066FB1E /* TrackingManagerError.swift in Sources */,
@@ -2303,7 +2296,6 @@
 				4C6BD13622ABA743004487A8 /* CampaignData.swift in Sources */,
 				05CDD837239114F700C7291A /* InAppMessagesManagerType.swift in Sources */,
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
-				C0329E6120F76EBF0051F5DF /* URLResponse+Debug.swift in Sources */,
 				053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */,
 				057D476723C87F0B00AEE902 /* UrlOpenerType.swift in Sources */,
 				05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */,
@@ -2322,12 +2314,10 @@
 				053CA200247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
 				052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */,
-				0570E76B246EBE7400E92ACF /* UIImage+Gif.swift in Sources */,
 				0591906223EC1CEC0037BD88 /* GenericOperators.swift in Sources */,
 				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
-				0551A0AC241A81FE009A5A5E /* JSON+SnakeCase.swift in Sources */,
 				058DD92324112F2D00E5BF91 /* TrackingRepository.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				0567723D237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift in Sources */,
