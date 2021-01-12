@@ -57,6 +57,8 @@
 		055EAD262417CE9D00E2F364 /* mock_notification_response.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931ED2375A4EE00D45200 /* mock_notification_response.h */; };
 		055EAD272417CF3C00E2F364 /* mock_notification_response.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A931EE2375A50100D45200 /* mock_notification_response.m */; };
 		055EAD282417CF4700E2F364 /* mock_notification_request.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D252417B55400FE9309 /* mock_notification_request.m */; };
+		0561829B25AD959C001E30A3 /* ExponeaSDKShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 0561829925AD959C001E30A3 /* ExponeaSDKShared.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		056182AD25AD97E4001E30A3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */; };
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
 		0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */; };
@@ -252,7 +254,6 @@
 		C08D53DB21B9474E00EA2C13 /* ExampleNotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C08D53CD21B9474E00EA2C13 /* ExampleNotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6496212D83E600DCAC06 /* DatabaseManagerSpec.swift */; };
 		C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A6498212D871600DCAC06 /* NSManagedObjectContext+Perform.swift */; };
-		C09C33C7221C08C300715603 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		C09C33CB221C097100715603 /* NotificationData+Properties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09C33CA221C097100715603 /* NotificationData+Properties.swift */; };
 		C09C33CD221C19B300715603 /* NotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F7A59C21AE921300BA392F /* NotificationData.swift */; };
 		C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9520EAC16800C5F744 /* KeyValueItem.swift */; };
@@ -310,7 +311,6 @@
 		F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE60FF21107D3A0082ABD8 /* TrackingParametersSpec.swift */; };
 		F0BE6105211080F30082ABD8 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BE6104211080F30082ABD8 /* MockData.swift */; };
 		F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CA58F5207F612200C89A7F /* DeviceProperties.swift */; };
-		F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		F0E757E5207CFA5300FE8C21 /* RequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E4207CFA5300FE8C21 /* RequestFactory.swift */; };
 		F0E757E9207CFA7A00FE8C21 /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757E8207CFA7A00FE8C21 /* ServerRepository.swift */; };
 		F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757EA207CFA9700FE8C21 /* RepositoryType.swift */; };
@@ -320,6 +320,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		056182C025AD98CF001E30A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F021E850206CF10200788ABC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0561829625AD959C001E30A3;
+			remoteInfo = ExponeaSDKShared;
+		};
 		05B97D382417CDFD00FE9309 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F021E850206CF10200788ABC /* Project object */;
@@ -451,6 +458,9 @@
 		0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSON+SnakeCase.swift"; sourceTree = "<group>"; };
 		05583E9A23603BA900F7084E /* PushNotificationParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParser.swift; sourceTree = "<group>"; };
 		05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationParserSpec.swift; sourceTree = "<group>"; };
+		0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ExponeaSDKShared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0561829925AD959C001E30A3 /* ExponeaSDKShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExponeaSDKShared.h; sourceTree = "<group>"; };
+		0561829A25AD959C001E30A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypeSpec.swift; sourceTree = "<group>"; };
 		05664249237309C300CCDB98 /* SwizzleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleSpec.swift; sourceTree = "<group>"; };
 		0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzlerSpec.swift; sourceTree = "<group>"; };
@@ -697,6 +707,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0561829425AD959C001E30A3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C08D53CA21B9474E00EA2C13 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -872,6 +889,32 @@
 				05BA580525064E4600E10994 /* PushOpenedDataSpec.swift */,
 			);
 			path = "Push Notifications";
+			sourceTree = "<group>";
+		};
+		0561829825AD959C001E30A3 /* ExponeaSDKShared */ = {
+			isa = PBXGroup;
+			children = (
+				056182A525AD95B3001E30A3 /* Classes */,
+				056182A625AD95BA001E30A3 /* Supporting Files */,
+			);
+			path = ExponeaSDKShared;
+			sourceTree = "<group>";
+		};
+		056182A525AD95B3001E30A3 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				F0E757DF207CF99E00FE8C21 /* Constants.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		056182A625AD95BA001E30A3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0561829925AD959C001E30A3 /* ExponeaSDKShared.h */,
+				0561829A25AD959C001E30A3 /* Info.plist */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		05735EA423A397F700DA0FA9 /* Flushing */ = {
@@ -1243,7 +1286,6 @@
 				058DD92A241130A900E5BF91 /* Repository */,
 				0191639D207E14C9005FD174 /* Logging */,
 				058DD8E12411189300E5BF91 /* Models */,
-				F0E757DF207CF99E00FE8C21 /* Constants.swift */,
 				F0E757EF207D027300FE8C21 /* Configuration.swift */,
 				05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */,
 				05835C9124124830002F4571 /* Configuration+UserDefaults.swift */,
@@ -1486,6 +1528,7 @@
 				C0ED33A421A6FA31003649C3 /* ExampleNotificationService */,
 				F021E85B206CF10200788ABC /* ExponeaSDK */,
 				C0ED33B521A6FB10003649C3 /* ExponeaSDK-Notifications */,
+				0561829825AD959C001E30A3 /* ExponeaSDKShared */,
 				C0249EBD2212D15500D4F5D8 /* ExponeaSDK-Shared */,
 				F021E866206CF10200788ABC /* ExponeaSDKTests */,
 				A3613BD1E2C1D4616B6A9767 /* Frameworks */,
@@ -1506,6 +1549,7 @@
 				C0ED33A321A6FA31003649C3 /* ExampleNotificationService.appex */,
 				C0ED33B421A6FB0F003649C3 /* ExponeaSDKNotifications.framework */,
 				C08D53CD21B9474E00EA2C13 /* ExampleNotificationContent.appex */,
+				0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1700,6 +1744,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		0561829225AD959C001E30A3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0561829B25AD959C001E30A3 /* ExponeaSDKShared.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		05B97D3A2417CE0D00FE9309 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1730,6 +1782,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0561829625AD959C001E30A3 /* ExponeaSDKShared */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0561829E25AD959C001E30A3 /* Build configuration list for PBXNativeTarget "ExponeaSDKShared" */;
+			buildPhases = (
+				0561829225AD959C001E30A3 /* Headers */,
+				0561829325AD959C001E30A3 /* Sources */,
+				0561829425AD959C001E30A3 /* Frameworks */,
+				0561829525AD959C001E30A3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ExponeaSDKShared;
+			productName = ExponeaSDKShared;
+			productReference = 0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		C08D53CC21B9474E00EA2C13 /* ExampleNotificationContent */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C08D53DC21B9474E00EA2C13 /* Build configuration list for PBXNativeTarget "ExampleNotificationContent" */;
@@ -1820,6 +1890,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				056182C125AD98CF001E30A3 /* PBXTargetDependency */,
 			);
 			name = ExponeaSDK;
 			productName = ExponeaSDK;
@@ -1858,6 +1929,10 @@
 				LastUpgradeCheck = 1030;
 				ORGANIZATIONNAME = Exponea;
 				TargetAttributes = {
+					0561829625AD959C001E30A3 = {
+						CreatedOnToolsVersion = 12.2;
+						ProvisioningStyle = Automatic;
+					};
 					C08D53CC21B9474E00EA2C13 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1020;
@@ -1921,6 +1996,7 @@
 			targets = (
 				F021E858206CF10200788ABC /* ExponeaSDK */,
 				C0ED33B321A6FB0F003649C3 /* ExponeaSDKNotifications */,
+				0561829625AD959C001E30A3 /* ExponeaSDKShared */,
 				F021E861206CF10200788ABC /* ExponeaSDKTests */,
 				C0F6C4DF2098A1AB00834E21 /* Example */,
 				C0ED33A221A6FA31003649C3 /* ExampleNotificationService */,
@@ -1930,6 +2006,13 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0561829525AD959C001E30A3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C08D53CB21B9474E00EA2C13 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2051,6 +2134,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0561829325AD959C001E30A3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				056182AD25AD97E4001E30A3 /* Constants.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C08D53C921B9474E00EA2C13 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2074,7 +2165,6 @@
 				0588053424166E43001AAE8A /* DeliveredNotificationTracker.swift in Sources */,
 				058DD92B241130C900E5BF91 /* ServerRepository.swift in Sources */,
 				058DD9392411320600E5BF91 /* URLRequest+Debug.swift in Sources */,
-				C09C33C7221C08C300715603 /* Constants.swift in Sources */,
 				0570E76C246EBFBC00E92ACF /* UIImage+Gif.swift in Sources */,
 				058DD92F2411310700E5BF91 /* HTTPMethod.swift in Sources */,
 				C0ED33C121A6FB6B003649C3 /* ExponeaNotificationService.swift in Sources */,
@@ -2244,7 +2334,6 @@
 				0591906223EC1CEC0037BD88 /* GenericOperators.swift in Sources */,
 				C01E19EA20C02A4D00DF64F9 /* MultipleErrorResponse.swift in Sources */,
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
-				F0E757E0207CF99E00FE8C21 /* Constants.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
 				0551A0AC241A81FE009A5A5E /* JSON+SnakeCase.swift in Sources */,
 				058DD92324112F2D00E5BF91 /* TrackingRepository.swift in Sources */,
@@ -2372,6 +2461,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		056182C125AD98CF001E30A3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0561829625AD959C001E30A3 /* ExponeaSDKShared */;
+			targetProxy = 056182C025AD98CF001E30A3 /* PBXContainerItemProxy */;
+		};
 		05B97D392417CDFD00FE9309 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0ED33B321A6FB0F003649C3 /* ExponeaSDKNotifications */;
@@ -2436,6 +2530,57 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0561829C25AD959C001E30A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = V7YKQU4HQV;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "ExponeaSDKShared/Supporting Files/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKShared;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0561829D25AD959C001E30A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = V7YKQU4HQV;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "ExponeaSDKShared/Supporting Files/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKShared;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		C08D53DD21B9474E00EA2C13 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2846,6 +2991,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0561829E25AD959C001E30A3 /* Build configuration list for PBXNativeTarget "ExponeaSDKShared" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0561829C25AD959C001E30A3 /* Debug */,
+				0561829D25AD959C001E30A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C08D53DC21B9474E00EA2C13 /* Build configuration list for PBXNativeTarget "ExampleNotificationContent" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

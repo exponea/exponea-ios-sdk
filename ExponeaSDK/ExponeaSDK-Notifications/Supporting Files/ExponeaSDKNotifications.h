@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ExponeaSDKShared/ExponeaSDKShared.h"
 
 //! Project version number for ExponeaSDK_Notifications.
 FOUNDATION_EXPORT double ExponeaSDKNotificationsVersionNumber;
