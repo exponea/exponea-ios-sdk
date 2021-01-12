@@ -32,7 +32,7 @@ public struct RecommendationOptions: RequestParametersType {
         self.catalogAttributesWhitelist = catalogAttributesWhitelist
     }
 
-    var parameters: [String: JSONValue] {
+    public var parameters: [String: JSONValue] {
         var data: [String: JSONValue] = [
             "type": .string("recommendation"),
             "id": .string(id),

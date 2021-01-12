@@ -1,6 +1,6 @@
 //
 //  CampaignData.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Panaxeo on 08/06/2019.
 //  Copyright © 2019 Exponea. All rights reserved.
@@ -9,14 +9,14 @@
 import Foundation
 
 public struct CampaignData {
-    let source: String?
-    let campaign: String?
-    let content: String?
-    let medium: String?
-    let term: String?
-    let payload: String?
-    let timestamp: TimeInterval
-    let url: String?
+    public let source: String?
+    public let campaign: String?
+    public let content: String?
+    public let medium: String?
+    public let term: String?
+    public let payload: String?
+    public let timestamp: TimeInterval
+    public let url: String?
 
     public init(
         source: String? = nil,
@@ -36,7 +36,7 @@ public struct CampaignData {
         self.payload = payload
     }
 
-    init(url: URL) {
+    public init(url: URL) {
         self.url = url.absoluteString
         timestamp = Date().timeIntervalSince1970
         guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
@@ -58,7 +58,7 @@ public struct CampaignData {
         payload = params.first { $0.name == "xnpe_cmp" }?.value
     }
 
-    var trackingData: [String: JSONValue] {
+    public var trackingData: [String: JSONValue] {
         var data: [String: JSONValue] = [:]
         if let url = url { data["url"] = .string(url) }
         if let source = source { data["utm_source"] = .string(source) }

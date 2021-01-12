@@ -1,6 +1,6 @@
 //
 //  TrackingParameters.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Dominik Hádl on 24/04/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
@@ -10,7 +10,7 @@ import Foundation
 
 /// A Group of parameters used to track any kind of event.
 /// Depending on what king of tracking, you can use a combination of properties.
-struct TrackingParameters {
+public struct TrackingParameters {
     /// Customer identification.
     var customerIds: [String: String]
     /// Object with customer properties.
@@ -20,11 +20,12 @@ struct TrackingParameters {
     /// Name of the tracking event.
     var eventType: String?
 
-    init(customerIds: [String: String],
-         properties: [String: JSONValue],
-         timestamp: Double? = nil,
-         eventType: String? = nil
-        ) {
+    public init(
+        customerIds: [String: String],
+        properties: [String: JSONValue],
+        timestamp: Double? = nil,
+        eventType: String? = nil
+    ) {
         self.customerIds = customerIds
         self.properties = properties
         self.timestamp = timestamp
@@ -33,7 +34,7 @@ struct TrackingParameters {
 }
 
 extension TrackingParameters: RequestParametersType {
-    var parameters: [String: JSONValue] {
+    public var parameters: [String: JSONValue] {
         var parameters: [String: JSONValue] = [:]
 
         /// Preparing customers_ids params

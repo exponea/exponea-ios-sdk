@@ -103,7 +103,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             }
 
             it("should not save notification for later when tracking succeeds") {
-                try! Configuration(
+                try! ExponeaSDK.Configuration(
                     projectToken: "mock-project-token",
                     projectMapping: nil,
                     authorization: ExponeaSDK.Authorization.token("mock-token"),

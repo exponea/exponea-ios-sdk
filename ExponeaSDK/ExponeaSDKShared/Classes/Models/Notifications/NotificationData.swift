@@ -1,6 +1,6 @@
 //
 //  NotificationData.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Dominik Hadl on 28/11/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
@@ -9,19 +9,19 @@
 import Foundation
 
 public struct NotificationData: Codable {
-    let eventType: String?
-    let campaignId: String?
-    let campaignName: String?
-    let actionId: Int?
-    let actionName: String?
-    let actionType: String?
-    let campaignPolicy: String?
-    let platform: String?
-    let language: String?
-    let recipient: String?
-    let subject: String?
-    let timestamp: Date
-    let campaignData: CampaignData
+    public let eventType: String?
+    public let campaignId: String?
+    public let campaignName: String?
+    public let actionId: Int?
+    public let actionName: String?
+    public let actionType: String?
+    public let campaignPolicy: String?
+    public let platform: String?
+    public let language: String?
+    public let recipient: String?
+    public let subject: String?
+    public let timestamp: Date
+    public let campaignData: CampaignData
 
     public init(
         eventType: String? = nil,

@@ -1,6 +1,6 @@
 //
 //  TrackingObject.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Panaxeo on 05/03/2020.
 //  Copyright © 2020 Exponea. All rights reserved.
@@ -8,14 +8,14 @@
 
 import Foundation
 
-protocol TrackingObject {
+public protocol TrackingObject {
     var exponeaProject: ExponeaProject { get }
     var customerIds: [String: String] { get }
     var dataTypes: [DataType] { get }
     var timestamp: Double { get }
 }
 
-final class EventTrackingObject: TrackingObject, Equatable {
+public final class EventTrackingObject: TrackingObject, Equatable {
     public let exponeaProject: ExponeaProject
     public let customerIds: [String: String]
     public let eventType: String?
@@ -36,7 +36,7 @@ final class EventTrackingObject: TrackingObject, Equatable {
         self.dataTypes = dataTypes
     }
 
-    static func == (lhs: EventTrackingObject, rhs: EventTrackingObject) -> Bool {
+    public static func == (lhs: EventTrackingObject, rhs: EventTrackingObject) -> Bool {
         return lhs.exponeaProject == rhs.exponeaProject
             && lhs.customerIds == rhs.customerIds
             && lhs.eventType == rhs.eventType
@@ -45,7 +45,7 @@ final class EventTrackingObject: TrackingObject, Equatable {
     }
 }
 
-final class CustomerTrackingObject: TrackingObject {
+public final class CustomerTrackingObject: TrackingObject {
     public let exponeaProject: ExponeaProject
     public let customerIds: [String: String]
     public let timestamp: Double
@@ -64,7 +64,7 @@ final class CustomerTrackingObject: TrackingObject {
     }
 }
 
-extension TrackingObject {
+public extension TrackingObject {
     static func loadCustomerIdsFromUserDefaults(appGroup: String) -> [String: String]? {
         guard let userDefaults = UserDefaults(suiteName: appGroup),
               let data = userDefaults.data(forKey: Constants.General.lastKnownCustomerIds) else {

@@ -1,15 +1,15 @@
 //
 //  ExponeaProject.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Panaxeo on 03/04/2020.
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
 public struct ExponeaProject: Equatable, Codable {
-    let baseUrl: String
-    let projectToken: String
-    let authorization: Authorization
+    public let baseUrl: String
+    public let projectToken: String
+    public let authorization: Authorization
 
     public init(baseUrl: String = Constants.Repository.baseUrl, projectToken: String, authorization: Authorization) {
         self.baseUrl = baseUrl

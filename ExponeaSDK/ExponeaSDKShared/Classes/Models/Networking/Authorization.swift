@@ -1,6 +1,6 @@
 //
 //  Authorization.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Dominik Hadl on 10/05/2018.
 //  Copyright © 2018 Exponea. All rights reserved.

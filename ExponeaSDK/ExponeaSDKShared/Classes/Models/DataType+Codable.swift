@@ -1,6 +1,6 @@
 //
 //  DataType+Codable.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Panaxeo on 07/09/2020.
 //  Copyright © 2020 Exponea. All rights reserved.
@@ -20,7 +20,7 @@ extension DataType: Codable {
         var authorized: Bool
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         var result: DataType?
         if let value = try? container.decode([String: String].self, forKey: .customerIds) {
@@ -29,7 +29,10 @@ extension DataType: Codable {
         if let value = try? container.decode([String: JSONValue].self, forKey: .properties) {
             result = .properties(value)
         }
-        if let value = try? container.decode(Double?.self, forKey: .timestamp) {
+        if case .some = try? container.decodeNil(forKey: .timestamp) {
+            result = .timestamp(nil)
+        }
+        if let value = try? container.decode(Double.self, forKey: .timestamp) {
             result = .timestamp(value)
         }
         if let value = try? container.decode(String.self, forKey: .eventType) {
@@ -50,7 +53,7 @@ extension DataType: Codable {
         self = initialized
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .customerIds(let value):

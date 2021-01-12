@@ -1,6 +1,6 @@
 //
 //  TokenTrackFrequency.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Dominik Hádl on 07/08/2019.
 //  Copyright © 2019 Exponea. All rights reserved.

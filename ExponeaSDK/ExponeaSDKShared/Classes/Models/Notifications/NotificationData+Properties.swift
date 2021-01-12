@@ -1,6 +1,6 @@
 //
 //  NotificationData+Properties.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Dominik Hadl on 19/02/2019.
 //  Copyright © 2019 Exponea. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension NotificationData {
+public extension NotificationData {
     var properties: [String: JSONValue] {
         var properties: [String: JSONValue] = [:]
         if let campaignId = campaignId { properties["campaign_id"] = .string(campaignId) }

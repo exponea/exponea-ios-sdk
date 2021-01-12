@@ -1,6 +1,6 @@
 //
 //  Routes.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Ricardo Tokashiki on 20/04/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
@@ -9,7 +9,7 @@
 import Foundation
 
 /// Identification of endpoints for Exponea API
-enum Routes {
+public enum Routes {
     case identifyCustomer
     case customEvent
     case customerAttributes
@@ -18,7 +18,7 @@ enum Routes {
     case inAppMessages
     case pushSelfCheck
 
-    var method: HTTPMethod {
+    public var method: HTTPMethod {
         switch self {
         case .consents: return .get
         default: return .post

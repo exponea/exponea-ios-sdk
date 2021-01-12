@@ -1,6 +1,6 @@
 //
 //  DataType.swift
-//  ExponeaSDK
+//  ExponeaSDKShared
 //
 //  Created by Dominik Hádl on 18/04/2018.
 //  Copyright © 2018 Exponea. All rights reserved.
@@ -14,7 +14,7 @@ import Foundation
 /// - properties
 /// - timestamp
 /// - eventType
-enum DataType: Equatable {
+public enum DataType: Equatable {
     /// Identifier of your customer, can be anything from an email to UUIDs.
     case customerIds([String: String])
 
@@ -34,17 +34,17 @@ enum DataType: Equatable {
 }
 
 extension Array where Iterator.Element == DataType {
-    var eventTypes: [String] {
+    public var eventTypes: [String] {
         return compactMap { if case .eventType(let eventType) = $0 { return eventType } else { return nil } }
     }
 
-    var latestTimestamp: Double? {
+    public var latestTimestamp: Double? {
         return compactMap {
             if case .timestamp(let timestamp) = $0 { return timestamp } else { return nil }
         }.sorted().last
     }
 
-    var properties: [String: JSONConvertible?] {
+    public var properties: [String: JSONConvertible?] {
         var properties: [String: JSONConvertible?] = [:]
         forEach {
             if case .properties(let props) = $0 {
@@ -54,7 +54,7 @@ extension Array where Iterator.Element == DataType {
         return properties
     }
 
-    func addProperties(_ properties: [String: JSONConvertible]?) -> [DataType] {
+    public func addProperties(_ properties: [String: JSONConvertible]?) -> [DataType] {
         guard let jsonProperties = properties?.mapValues({ $0.jsonValue }) else {
             return self
         }
