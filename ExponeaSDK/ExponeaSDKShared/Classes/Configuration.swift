@@ -15,7 +15,7 @@ public struct Configuration: Codable, Equatable {
     public internal(set) var projectToken: String
     public internal(set) var authorization: Authorization = .none
     public internal(set) var baseUrl: String = Constants.Repository.baseUrl
-    public internal(set) var defaultProperties: [String: JSONConvertible]?
+    public var defaultProperties: [String: JSONConvertible]?
     public internal(set) var sessionTimeout: Double = Constants.Session.defaultTimeout
     public internal(set) var automaticSessionTracking: Bool = true
 
@@ -55,10 +55,6 @@ public struct Configuration: Codable, Equatable {
         case flushEventMaxRetries
     }
 
-    init(projectToken: String) {
-        self.projectToken = projectToken
-    }
-
     /// Creates the configuration object with the provided properties.
     ///
     /// - Parameters:
@@ -90,7 +86,7 @@ public struct Configuration: Codable, Equatable {
         try self.validate()
     }
 
-    init(
+    public init(
         projectToken: String,
         projectMapping: [EventType: [ExponeaProject]]?,
         authorization: Authorization = .none,
@@ -271,7 +267,7 @@ public struct Configuration: Codable, Equatable {
 }
 
 extension Configuration {
-    func projects(for eventType: EventType) -> [ExponeaProject] {
+    public func projects(for eventType: EventType) -> [ExponeaProject] {
         var projects: [ExponeaProject] = [mainProject]
         if let mapping = projectMapping, let mappedTokens = mapping[eventType] {
             projects.append(contentsOf: mappedTokens)
@@ -279,7 +275,7 @@ extension Configuration {
         return projects
     }
 
-    var mainProject: ExponeaProject {
+    public var mainProject: ExponeaProject {
         ExponeaProject(baseUrl: baseUrl, projectToken: projectToken, authorization: authorization)
     }
 }

@@ -12,6 +12,7 @@ import Mockingjay
 import Quick
 
 @testable import ExponeaSDK
+@testable import ExponeaSDKShared
 
 class FlushingManagerSpec: QuickSpec {
     override func spec() {

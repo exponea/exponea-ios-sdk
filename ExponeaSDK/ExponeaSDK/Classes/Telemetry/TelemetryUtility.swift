@@ -23,7 +23,13 @@ final class TelemetryUtility {
     }
 
     static func formatConfigurationForTracking(_ config: Configuration) -> [String: String] {
-        let defaultConfig = Configuration(projectToken: "")
+        guard let defaultConfig = try? Configuration(
+            projectToken: "placeholder",
+            authorization: .none,
+            baseUrl: Constants.Repository.baseUrl
+        ) else {
+            return [:]
+        }
         return [
             "projectToken":
                 config.projectToken.isEmpty == false ? "[REDACTED]" : "",

@@ -91,7 +91,13 @@ final class TelemetryManagerSpec: QuickSpec {
         }
 
         it("should report init event") {
-            self.manager.report(initEventWithConfiguration: Configuration(projectToken: "token"))
+            self.manager.report(
+                initEventWithConfiguration: try! Configuration(
+                    projectToken: "token",
+                    authorization: .none,
+                    baseUrl: Constants.Repository.baseUrl
+                )
+            )
             expect(self.upload.uploadedEvents.count).to(equal(1))
             expect(self.upload.uploadedEvents[0].name).to(equal("init"))
         }

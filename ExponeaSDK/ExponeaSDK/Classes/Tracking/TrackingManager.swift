@@ -403,10 +403,7 @@ extension TrackingManager {
         sessionManager.clear()
         inAppMessagesManager.anonymize()
 
-        repository.configuration.baseUrl = exponeaProject.baseUrl
-        repository.configuration.projectToken = exponeaProject.projectToken
-        repository.configuration.authorization = exponeaProject.authorization
-        repository.configuration.projectMapping = projectMapping
+        repository.configuration.switchProjects(mainProject: exponeaProject, projectMapping: projectMapping)
 
         database.makeNewCustomer()
         UNAuthorizationStatusProvider.current.isAuthorized { authorized in

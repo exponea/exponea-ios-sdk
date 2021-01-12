@@ -11,6 +11,7 @@ import Quick
 import Nimble
 
 @testable import ExponeaSDK
+@testable import ExponeaSDKShared
 
 class ExponeaSpec: QuickSpec {
 

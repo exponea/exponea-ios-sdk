@@ -43,7 +43,15 @@ final class TelemetryUtilitySpec: QuickSpec {
         }
         describe("formatting configuration for tracking") {
             it("should format default configuration") {
-                expect(TelemetryUtility.formatConfigurationForTracking(Configuration(projectToken: "token"))).to(
+                expect(
+                    TelemetryUtility.formatConfigurationForTracking(
+                        try! Configuration(
+                            projectToken: "token",
+                            authorization: .none,
+                            baseUrl: Constants.Repository.baseUrl
+                        )
+                    )
+                ).to(
                     equal([
                         "defaultProperties": "",
                         "automaticPushNotificationTracking": "true",

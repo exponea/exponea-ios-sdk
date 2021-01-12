@@ -9,7 +9,7 @@
 import Foundation
 
 extension Configuration {
-    static func loadFromUserDefaults(appGroup: String) -> Configuration? {
+    public static func loadFromUserDefaults(appGroup: String) -> Configuration? {
         guard let userDefaults = UserDefaults(suiteName: appGroup),
               let data = userDefaults.data(forKey: Constants.General.lastKnownConfiguration) else {
             return nil
@@ -17,7 +17,7 @@ extension Configuration {
         return try? JSONDecoder().decode(Configuration.self, from: data)
     }
 
-    func saveToUserDefaults() {
+    public func saveToUserDefaults() {
         guard let userDefaults = UserDefaults(suiteName: appGroup),
               let data = try? JSONEncoder().encode(self) else {
             return

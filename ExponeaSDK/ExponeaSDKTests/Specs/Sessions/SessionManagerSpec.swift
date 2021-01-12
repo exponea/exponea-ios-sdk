@@ -10,6 +10,7 @@ import Nimble
 import Quick
 
 @testable import ExponeaSDK
+@testable import ExponeaSDKShared
 
 class SessionManagerSpec: QuickSpec {
     class MockSessionTrackingDelegate: SessionTrackingDelegate {
