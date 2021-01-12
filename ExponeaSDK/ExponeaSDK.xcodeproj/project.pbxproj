@@ -10,8 +10,6 @@
 		01764BC42087742100D0D673 /* ConfigurationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01764BC32087742100D0D673 /* ConfigurationSpec.swift */; };
 		01764BC62087775800D0D673 /* config_valid.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01764BC52087775800D0D673 /* config_valid.plist */; };
 		01764BC82087794000D0D673 /* config_valid2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01764BC72087793F00D0D673 /* config_valid2.plist */; };
-		0191639C207E11BF005FD174 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639B207E11BF005FD174 /* Logger.swift */; };
-		0191639F207E14D9005FD174 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639E207E14D9005FD174 /* LogLevel.swift */; };
 		019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019163A2207E15FB005FD174 /* LoggerSpec.swift */; };
 		019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019163A4207E1904005FD174 /* LogLevelSpec.swift */; };
 		019F1AC52087666900368FB1 /* DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019F1AC42087666800368FB1 /* DataType.swift */; };
@@ -59,6 +57,10 @@
 		055EAD282417CF4700E2F364 /* mock_notification_request.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D252417B55400FE9309 /* mock_notification_request.m */; };
 		0561829B25AD959C001E30A3 /* ExponeaSDKShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 0561829925AD959C001E30A3 /* ExponeaSDKShared.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		056182AD25AD97E4001E30A3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
+		056182E725AD9E05001E30A3 /* ExponeaError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */; };
+		056182E825AD9E05001E30A3 /* Exponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD8EA2411199D00E5BF91 /* Exponea.swift */; };
+		056182EF25AD9E22001E30A3 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639E207E14D9005FD174 /* LogLevel.swift */; };
+		056182FC25AD9E25001E30A3 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639B207E11BF005FD174 /* Logger.swift */; };
 		0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */; };
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
 		0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */; };
@@ -108,11 +110,6 @@
 		058DD8E5241118FD00E5BF91 /* EventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB3207E58080031BFEB /* EventType.swift */; };
 		058DD8E72411193200E5BF91 /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B08020A3C0D50066FB1E /* Authorization.swift */; };
 		058DD8E82411194900E5BF91 /* TokenTrackFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */; };
-		058DD8EB2411199D00E5BF91 /* Exponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD8EA2411199D00E5BF91 /* Exponea.swift */; };
-		058DD8EC241119EC00E5BF91 /* Exponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD8EA2411199D00E5BF91 /* Exponea.swift */; };
-		058DD8ED24111A2400E5BF91 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639E207E14D9005FD174 /* LogLevel.swift */; };
-		058DD8EE24111A2600E5BF91 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191639B207E11BF005FD174 /* Logger.swift */; };
-		058DD8EF24111A5000E5BF91 /* ExponeaError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */; };
 		058DD92324112F2D00E5BF91 /* TrackingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92224112F2D00E5BF91 /* TrackingRepository.swift */; };
 		058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92424112F5600E5BF91 /* FetchRepository.swift */; };
 		058DD92724112F8100E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD92624112F8100E5BF91 /* ServerRepository+TrackingRepository.swift */; };
@@ -262,7 +259,6 @@
 		C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DE9D20EAC16900C5F744 /* TrackEvent.swift */; };
 		C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A6DEAD20EAC32700C5F744 /* DatabaseManager+DataType.swift */; };
 		C0D9B07B20A3B2410066FB1E /* TrackingManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */; };
-		C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */; };
 		C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07E20A3B8070066FB1E /* DatabaseManagerError.swift */; };
 		C0D9B08120A3C0D50066FB1E /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B08020A3C0D50066FB1E /* Authorization.swift */; };
 		C0EB5D8C20B70D5000F1031F /* Swizzler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D8B20B70D5000F1031F /* Swizzler.swift */; };
@@ -903,7 +899,10 @@
 		056182A525AD95B3001E30A3 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				0191639D207E14C9005FD174 /* Logging */,
 				F0E757DF207CF99E00FE8C21 /* Constants.swift */,
+				C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */,
+				058DD8EA2411199D00E5BF91 /* Exponea.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -1284,13 +1283,10 @@
 			children = (
 				058DD937241131F400E5BF91 /* Other */,
 				058DD92A241130A900E5BF91 /* Repository */,
-				0191639D207E14C9005FD174 /* Logging */,
 				058DD8E12411189300E5BF91 /* Models */,
 				F0E757EF207D027300FE8C21 /* Configuration.swift */,
 				05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */,
 				05835C9124124830002F4571 /* Configuration+UserDefaults.swift */,
-				C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */,
-				058DD8EA2411199D00E5BF91 /* Exponea.swift */,
 			);
 			path = "ExponeaSDK-Shared";
 			sourceTree = "<group>";
@@ -2138,7 +2134,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				056182FC25AD9E25001E30A3 /* Logger.swift in Sources */,
 				056182AD25AD97E4001E30A3 /* Constants.swift in Sources */,
+				056182E825AD9E05001E30A3 /* Exponea.swift in Sources */,
+				056182E725AD9E05001E30A3 /* ExponeaError.swift in Sources */,
+				056182EF25AD9E22001E30A3 /* LogLevel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2172,7 +2172,6 @@
 				05A66E99246A8C0100DE7128 /* CampaignData.swift in Sources */,
 				05B97D2E2417C97300FE9309 /* JSONConvertible.swift in Sources */,
 				058DD8E3241118DB00E5BF91 /* Configuration.swift in Sources */,
-				058DD8EC241119EC00E5BF91 /* Exponea.swift in Sources */,
 				058DD92C241130CB00E5BF91 /* ServerRepository+TrackingRepository.swift in Sources */,
 				05BA58092506549700E10994 /* DataType+Codable.swift in Sources */,
 				C02C562221C9B01D0087A990 /* ExponeaNotificationActionType.swift in Sources */,
@@ -2182,14 +2181,11 @@
 				C02C562321C9B4640087A990 /* ExponeaNotificationContentService.swift in Sources */,
 				058DD9322411315400E5BF91 /* TrackingParameters.swift in Sources */,
 				058DD9302411310700E5BF91 /* Result.swift in Sources */,
-				058DD8EF24111A5000E5BF91 /* ExponeaError.swift in Sources */,
 				C09C33CD221C19B300715603 /* NotificationData.swift in Sources */,
 				058DD8E82411194900E5BF91 /* TokenTrackFrequency.swift in Sources */,
-				058DD8EE24111A2600E5BF91 /* Logger.swift in Sources */,
 				058DD9382411320300E5BF91 /* URLResponse+Debug.swift in Sources */,
 				058DD936241131BD00E5BF91 /* RequestFactory.swift in Sources */,
 				C02C562A21C9B71D0087A990 /* ExponeaNotificationAction.swift in Sources */,
-				058DD8ED24111A2400E5BF91 /* LogLevel.swift in Sources */,
 				058DD9332411315F00E5BF91 /* RepositoryError.swift in Sources */,
 				058DD9312411315100E5BF91 /* RequestParametersType.swift in Sources */,
 				058DD8E4241118DE00E5BF91 /* Configuration+Validation.swift in Sources */,
@@ -2230,7 +2226,6 @@
 				F0E757E5207CFA5300FE8C21 /* RequestFactory.swift in Sources */,
 				054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */,
 				05B4D64F238FEC1000F5010F /* InAppMessage.swift in Sources */,
-				C0D9B07D20A3B24A0066FB1E /* ExponeaError.swift in Sources */,
 				053CA1FA247D4944003B699C /* PushSelfCheckRequest.swift in Sources */,
 				05FD178F2403C4CC003A799B /* BuildConfiguration.swift in Sources */,
 				05BF1C7623A10F1800FDC101 /* RecommendationRequest.swift in Sources */,
@@ -2286,9 +2281,7 @@
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
 				F0E757E9207CFA7A00FE8C21 /* ServerRepository.swift in Sources */,
-				0191639F207E14D9005FD174 /* LogLevel.swift in Sources */,
 				C0753E9020A43D3900A779FF /* RepositoryError.swift in Sources */,
-				0191639C207E11BF005FD174 /* Logger.swift in Sources */,
 				05114E69234747BC00201EE6 /* objc_tryCatch.m in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */,
@@ -2300,7 +2293,6 @@
 				C0A6DEA520EAC16900C5F744 /* TrackCustomer.swift in Sources */,
 				05B4D651238FEF3900F5010F /* InAppMessagePayload.swift in Sources */,
 				05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */,
-				058DD8EB2411199D00E5BF91 /* Exponea.swift in Sources */,
 				C0F7A59D21AE921300BA392F /* NotificationData.swift in Sources */,
 				C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */,
 				C0329E5F20F76EB00051F5DF /* URLRequest+Debug.swift in Sources */,

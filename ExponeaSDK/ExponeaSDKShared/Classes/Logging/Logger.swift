@@ -68,13 +68,13 @@ open class Logger {
         print(message)
     }
 
-    func addLogHook(_ hook: @escaping (String) -> Void) -> String {
+    public func addLogHook(_ hook: @escaping (String) -> Void) -> String {
         let id = UUID().uuidString
         logHooks[id] = hook
         return id
     }
 
-    func removeLogHook(with id: String) {
+    public func removeLogHook(with id: String) {
         logHooks.removeValue(forKey: id)
     }
 
@@ -82,7 +82,7 @@ open class Logger {
     ///
     /// - Parameter filePath: The file path for the source file.
     /// - Returns: If a file path is valid, returns source file name, otherwise returns provided file path.
-    internal func sourceFile(from filePath: String) -> String {
+    public func sourceFile(from filePath: String) -> String {
         let components = filePath.components(separatedBy: "/")
         return components.last!
     }
