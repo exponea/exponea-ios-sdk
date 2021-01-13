@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// enum with constants used through the SDK
 public enum Constants {

@@ -6,6 +6,8 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
+import Foundation
+
 extension Configuration {
     enum ConfigurationValidationError: LocalizedError {
         case baseUrlInvalid

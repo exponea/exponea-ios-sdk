@@ -5,10 +5,7 @@
 //  Created by Panaxeo on 12/01/2021.
 //  Copyright © 2021 Exponea. All rights reserved.
 //
-
-
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 
 //! Project version number for ExponeaSDKShared.
 FOUNDATION_EXPORT double ExponeaSDKSharedVersionNumber;
