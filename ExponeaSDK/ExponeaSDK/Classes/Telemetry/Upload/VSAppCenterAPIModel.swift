@@ -6,6 +6,8 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
+import Foundation
+
 /**
  * This file contains models for Visual Studio App Center Logs API
  * It's only partial model, all required properties and only useful optional ones

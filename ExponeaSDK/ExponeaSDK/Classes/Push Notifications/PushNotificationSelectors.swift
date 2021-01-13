@@ -8,6 +8,7 @@
 
 import Foundation
 import UserNotifications
+import UIKit
 
 internal enum PushSelectorMapping {
     internal typealias Mapping = (original: Selector, swizzled: Selector)

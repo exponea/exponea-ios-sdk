@@ -8,6 +8,7 @@
 
 import Foundation
 import UserNotifications
+import UIKit
 
 /**
  In order to unit test swizzling of methods related to receiving push notification,

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UserNotifications
 
 extension ExponeaInternal {
     /// Adds new events to a customer. All events will be stored into coredata

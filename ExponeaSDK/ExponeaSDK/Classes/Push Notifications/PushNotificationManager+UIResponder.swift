@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension UIResponder {
     @objc func exponeaApplication(

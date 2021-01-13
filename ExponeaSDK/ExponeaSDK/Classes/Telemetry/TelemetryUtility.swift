@@ -6,6 +6,8 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
+import Foundation
+
 final class TelemetryUtility {
     static let telemetryInstallId = "EXPONEA_TELEMETRY_INSTALL_ID"
 

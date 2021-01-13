@@ -6,6 +6,8 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
+import Foundation
+
 final class SessionManager: SessionManagerType {
     private let userDefaults: UserDefaults
     private let isAutomatic: Bool

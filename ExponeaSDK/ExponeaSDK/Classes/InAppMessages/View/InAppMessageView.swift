@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 protocol InAppMessageView {
     var actionCallback: ((InAppMessagePayloadButton) -> Void) { get }

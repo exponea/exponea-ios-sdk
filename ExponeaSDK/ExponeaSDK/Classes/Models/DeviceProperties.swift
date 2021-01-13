@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// Basic information about the device
 struct DeviceProperties {

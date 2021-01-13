@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UserNotifications
 
 /// Protocol of what types of events are available in the Exponea SDK.
 public protocol ExponeaType: class {

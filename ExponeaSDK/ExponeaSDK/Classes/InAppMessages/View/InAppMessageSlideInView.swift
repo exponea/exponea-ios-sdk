@@ -6,6 +6,7 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
+import Foundation
 import UIKit
 
 final class InAppMessageSlideInView: UIView, InAppMessageView {

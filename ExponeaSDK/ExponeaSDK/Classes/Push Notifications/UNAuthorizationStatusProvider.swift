@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UserNotifications
 
 class UNAuthorizationStatusProvider {
     // we need to be able to override this in unit tests

@@ -6,6 +6,8 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
+import Foundation
+
 protocol SessionManagerType {
     func applicationDidBecomeActive(at timestamp: TimeInterval)
     func applicationDidEnterBackground(at timestamp: TimeInterval)

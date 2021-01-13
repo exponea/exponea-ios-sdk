@@ -6,6 +6,9 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
+import Foundation
+import UIKit
+
 @objc protocol UIApplicationDelegating {
     var delegate: UIApplicationDelegate? { get set }
 }

@@ -7,6 +7,7 @@
 //
 
 import ObjectiveC
+import Foundation
 
 internal class Swizzler {
     internal typealias SwizzleBlock = (

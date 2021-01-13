@@ -6,6 +6,8 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
+import UIKit
+
 final class InAppMessageAlertView: InAppMessageView {
     let alertController: UIAlertController
     let actionCallback: ((InAppMessagePayloadButton) -> Void)

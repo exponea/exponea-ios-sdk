@@ -6,6 +6,8 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
+import UIKit
+
 final class InAppMessagePresenter: InAppMessagePresenterType {
     enum InAppMessagePresenterError: Error {
         case unableToCreateView

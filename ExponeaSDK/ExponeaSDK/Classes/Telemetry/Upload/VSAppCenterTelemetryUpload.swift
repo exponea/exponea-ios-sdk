@@ -6,6 +6,8 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
+import UIKit
+
 final class VSAppCenterTelemetryUpload: TelemetryUpload {
     let defaultUploadURL = "https://in.appcenter.ms/logs?Api-Version=1.0.0"
     let debugAppSecret = "7172e098-ec8e-4d1b-9f9e-3e5107d8b22a"

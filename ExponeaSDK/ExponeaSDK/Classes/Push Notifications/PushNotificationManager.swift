@@ -8,6 +8,7 @@
 
 import Foundation
 import UserNotifications
+import UIKit
 
 public protocol PushNotificationManagerDelegate: class {
     func pushNotificationOpened(

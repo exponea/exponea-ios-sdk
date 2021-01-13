@@ -6,6 +6,8 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
+import UIKit
+
 extension UIColor {
     convenience init?(fromHexString optionalStringColor: String?) {
         guard let stringColor = optionalStringColor else {

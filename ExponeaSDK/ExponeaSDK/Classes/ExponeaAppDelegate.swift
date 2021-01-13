@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 open class ExponeaAppDelegate: NSObject, UNUserNotificationCenterDelegate, UIApplicationDelegate {
     /// When the application is started by opening a push notification we need to get if from launch options.

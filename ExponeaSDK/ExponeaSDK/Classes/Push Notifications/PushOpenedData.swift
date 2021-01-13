@@ -6,6 +6,8 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
+import Foundation
+
 struct PushOpenedData {
     let silent: Bool
     let campaignData: CampaignData

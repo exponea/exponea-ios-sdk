@@ -6,6 +6,8 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
+import Foundation
+
 class FlushingManager: FlushingManagerType {
     private let database: DatabaseManagerType
     private let repository: RepositoryType
