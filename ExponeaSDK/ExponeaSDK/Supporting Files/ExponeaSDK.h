@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "objc_tryCatch.h"
 
 //! Project version number for ExponeaSDK.
 FOUNDATION_EXPORT double ExponeaSDKVersionNumber;

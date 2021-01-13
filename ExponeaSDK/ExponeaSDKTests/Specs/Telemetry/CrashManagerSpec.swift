@@ -7,6 +7,7 @@
 //
 import Quick
 import Nimble
+import ExponeaSDKObjC
 
 @testable import ExponeaSDK
 

@@ -8,6 +8,7 @@
 import Quick
 import Nimble
 import Mockingjay
+import ExponeaSDKObjC
 
 @testable import ExponeaSDK
 

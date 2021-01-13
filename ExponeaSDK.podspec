@@ -80,8 +80,8 @@ Pod::Spec.new do |s|
   s.source_files  = [
     "ExponeaSDK/ExponeaSDK/**/*.swift",
     "ExponeaSDK/ExponeaSDKShared/**/*.swift",
-    "ExponeaSDK/ExponeaSDK/Supporting Files/objc_tryCatch.h",
-    "ExponeaSDK/ExponeaSDK/Supporting Files/objc_tryCatch.m",
+    "ExponeaSDK/ExponeaSDKObjC/objc_tryCatch.h",
+    "ExponeaSDK/ExponeaSDKObjC/objc_tryCatch.m",
   ]
   s.exclude_files = "ExponeaSDK/ExponeaSDK-Notifications/**/*"
   s.resources = ["ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld"]

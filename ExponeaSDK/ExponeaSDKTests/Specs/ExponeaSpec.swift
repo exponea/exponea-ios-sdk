@@ -9,6 +9,7 @@
 import XCTest
 import Quick
 import Nimble
+import ExponeaSDKObjC
 
 @testable import ExponeaSDK
 @testable import ExponeaSDKShared

@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import ExponeaSDKObjC
+#endif
 
 extension Exponea {
     /// Shared instance of ExponeaSDK.

@@ -23,8 +23,6 @@
 		050961002321566000D59C01 /* TrackingManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050960FF2321566000D59C01 /* TrackingManagerSpec.swift */; };
 		0509610223216C7D00D59C01 /* TrackingManagerUpdate.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0509610123216C7D00D59C01 /* TrackingManagerUpdate.plist */; };
 		050961062322552300D59C01 /* MockLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050961052322552300D59C01 /* MockLogger.swift */; };
-		05114E69234747BC00201EE6 /* objc_tryCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 05114E68234747BC00201EE6 /* objc_tryCatch.m */; };
-		05114E6B2347483F00201EE6 /* objc_tryCatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 05114E6A234747DE00201EE6 /* objc_tryCatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0515975A23E44D8000DF8691 /* InAppMessagePresenterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0515975923E44D8000DF8691 /* InAppMessagePresenterSpec.swift */; };
 		05297974241919BF00A90526 /* ExponeaSDKQuickConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05297973241919BF00A90526 /* ExponeaSDKQuickConfiguration.swift */; };
 		052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052979772419224500A90526 /* UNAuthorizationStatusProvider.swift */; };
@@ -88,6 +86,9 @@
 		0561832F25ADB1BD001E30A3 /* TokenTrackFrequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */; };
 		0561833025ADB1BD001E30A3 /* DataType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 019F1AC42087666800368FB1 /* DataType.swift */; };
 		0561833125ADB1BD001E30A3 /* TrackingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058DD93A2411323F00E5BF91 /* TrackingObject.swift */; };
+		0563751025AF030A00AB68DA /* ExponeaSDKObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 0563750E25AF030A00AB68DA /* ExponeaSDKObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0563751B25AF032900AB68DA /* objc_tryCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 05114E68234747BC00201EE6 /* objc_tryCatch.m */; };
+		0563752325AF032E00AB68DA /* objc_tryCatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 05114E6A234747DE00201EE6 /* objc_tryCatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0564D14225ADE46300FDCAE5 /* ExponeaSharedExports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0564D14125ADE46300FDCAE5 /* ExponeaSharedExports.swift */; };
 		0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */; };
 		0566424A237309C300CCDB98 /* SwizzleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05664249237309C300CCDB98 /* SwizzleSpec.swift */; };
@@ -301,6 +302,20 @@
 			remoteGlobalIDString = 0561829625AD959C001E30A3;
 			remoteInfo = ExponeaSDKShared;
 		};
+		0563753925AF035700AB68DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F021E850206CF10200788ABC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0563750B25AF030A00AB68DA;
+			remoteInfo = ExponeaSDKObjC;
+		};
+		0563754F25AF03CA00AB68DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F021E850206CF10200788ABC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0563750B25AF030A00AB68DA;
+			remoteInfo = ExponeaSDKObjC;
+		};
 		05B97D382417CDFD00FE9309 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F021E850206CF10200788ABC /* Project object */;
@@ -436,6 +451,9 @@
 		0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ExponeaSDKShared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0561829925AD959C001E30A3 /* ExponeaSDKShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExponeaSDKShared.h; sourceTree = "<group>"; };
 		0561829A25AD959C001E30A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0563750C25AF030A00AB68DA /* ExponeaSDKObjC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ExponeaSDKObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0563750E25AF030A00AB68DA /* ExponeaSDKObjC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExponeaSDKObjC.h; sourceTree = "<group>"; };
+		0563750F25AF030A00AB68DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0564D14125ADE46300FDCAE5 /* ExponeaSharedExports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSharedExports.swift; sourceTree = "<group>"; };
 		0565CE0423F4216C0003FEA6 /* DataTypeSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypeSpec.swift; sourceTree = "<group>"; };
 		05664249237309C300CCDB98 /* SwizzleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwizzleSpec.swift; sourceTree = "<group>"; };
@@ -690,6 +708,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0563750925AF030A00AB68DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C08D53CA21B9474E00EA2C13 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -901,6 +926,17 @@
 				0561829A25AD959C001E30A3 /* Info.plist */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0563750D25AF030A00AB68DA /* ExponeaSDKObjC */ = {
+			isa = PBXGroup;
+			children = (
+				05114E6A234747DE00201EE6 /* objc_tryCatch.h */,
+				05114E68234747BC00201EE6 /* objc_tryCatch.m */,
+				0563750E25AF030A00AB68DA /* ExponeaSDKObjC.h */,
+				0563750F25AF030A00AB68DA /* Info.plist */,
+			);
+			path = ExponeaSDKObjC;
 			sourceTree = "<group>";
 		};
 		05735EA423A397F700DA0FA9 /* Flushing */ = {
@@ -1499,6 +1535,7 @@
 				F021E85B206CF10200788ABC /* ExponeaSDK */,
 				C0ED33B521A6FB10003649C3 /* ExponeaSDK-Notifications */,
 				0561829825AD959C001E30A3 /* ExponeaSDKShared */,
+				0563750D25AF030A00AB68DA /* ExponeaSDKObjC */,
 				F021E866206CF10200788ABC /* ExponeaSDKTests */,
 				A3613BD1E2C1D4616B6A9767 /* Frameworks */,
 				BA562F8AA107D3AB3132C40D /* Pods */,
@@ -1519,6 +1556,7 @@
 				C0ED33B421A6FB0F003649C3 /* ExponeaSDKNotifications.framework */,
 				C08D53CD21B9474E00EA2C13 /* ExampleNotificationContent.appex */,
 				0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */,
+				0563750C25AF030A00AB68DA /* ExponeaSDKObjC.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1549,8 +1587,6 @@
 			children = (
 				F021E85C206CF10200788ABC /* ExponeaSDK.h */,
 				F021E85D206CF10200788ABC /* Info.plist */,
-				05114E6A234747DE00201EE6 /* objc_tryCatch.h */,
-				05114E68234747BC00201EE6 /* objc_tryCatch.m */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -1722,6 +1758,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0563750725AF030A00AB68DA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0563752325AF032E00AB68DA /* objc_tryCatch.h in Headers */,
+				0563751025AF030A00AB68DA /* ExponeaSDKObjC.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		05B97D3A2417CE0D00FE9309 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1744,7 +1789,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05114E6B2347483F00201EE6 /* objc_tryCatch.h in Headers */,
 				F021E86A206CF10200788ABC /* ExponeaSDK.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1768,6 +1812,24 @@
 			name = ExponeaSDKShared;
 			productName = ExponeaSDKShared;
 			productReference = 0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		0563750B25AF030A00AB68DA /* ExponeaSDKObjC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0563751325AF030A00AB68DA /* Build configuration list for PBXNativeTarget "ExponeaSDKObjC" */;
+			buildPhases = (
+				0563750725AF030A00AB68DA /* Headers */,
+				0563750825AF030A00AB68DA /* Sources */,
+				0563750925AF030A00AB68DA /* Frameworks */,
+				0563750A25AF030A00AB68DA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ExponeaSDKObjC;
+			productName = ExponeaSDKObjC;
+			productReference = 0563750C25AF030A00AB68DA /* ExponeaSDKObjC.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		C08D53CC21B9474E00EA2C13 /* ExampleNotificationContent */ = {
@@ -1862,6 +1924,7 @@
 			);
 			dependencies = (
 				056182C125AD98CF001E30A3 /* PBXTargetDependency */,
+				0563753A25AF035700AB68DA /* PBXTargetDependency */,
 			);
 			name = ExponeaSDK;
 			productName = ExponeaSDK;
@@ -1884,6 +1947,7 @@
 			dependencies = (
 				05B97D392417CDFD00FE9309 /* PBXTargetDependency */,
 				C0861C0220F919CF00C57997 /* PBXTargetDependency */,
+				0563755025AF03CA00AB68DA /* PBXTargetDependency */,
 			);
 			name = ExponeaSDKTests;
 			productName = ExponeaSDKTests;
@@ -1901,6 +1965,10 @@
 				ORGANIZATIONNAME = Exponea;
 				TargetAttributes = {
 					0561829625AD959C001E30A3 = {
+						CreatedOnToolsVersion = 12.2;
+						ProvisioningStyle = Automatic;
+					};
+					0563750B25AF030A00AB68DA = {
 						CreatedOnToolsVersion = 12.2;
 						ProvisioningStyle = Automatic;
 					};
@@ -1968,6 +2036,7 @@
 				F021E858206CF10200788ABC /* ExponeaSDK */,
 				C0ED33B321A6FB0F003649C3 /* ExponeaSDKNotifications */,
 				0561829625AD959C001E30A3 /* ExponeaSDKShared */,
+				0563750B25AF030A00AB68DA /* ExponeaSDKObjC */,
 				F021E861206CF10200788ABC /* ExponeaSDKTests */,
 				C0F6C4DF2098A1AB00834E21 /* Example */,
 				C0ED33A221A6FA31003649C3 /* ExampleNotificationService */,
@@ -1978,6 +2047,13 @@
 
 /* Begin PBXResourcesBuildPhase section */
 		0561829525AD959C001E30A3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0563750A25AF030A00AB68DA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2149,6 +2225,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0563750825AF030A00AB68DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0563751B25AF032900AB68DA /* objc_tryCatch.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C08D53C921B9474E00EA2C13 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2247,7 +2331,6 @@
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
-				05114E69234747BC00201EE6 /* objc_tryCatch.m in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */,
 				05F3EFE62382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift in Sources */,
@@ -2409,6 +2492,16 @@
 			target = 0561829625AD959C001E30A3 /* ExponeaSDKShared */;
 			targetProxy = 0561835625ADB50E001E30A3 /* PBXContainerItemProxy */;
 		};
+		0563753A25AF035700AB68DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0563750B25AF030A00AB68DA /* ExponeaSDKObjC */;
+			targetProxy = 0563753925AF035700AB68DA /* PBXContainerItemProxy */;
+		};
+		0563755025AF03CA00AB68DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0563750B25AF030A00AB68DA /* ExponeaSDKObjC */;
+			targetProxy = 0563754F25AF03CA00AB68DA /* PBXContainerItemProxy */;
+		};
 		05B97D392417CDFD00FE9309 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0ED33B321A6FB0F003649C3 /* ExponeaSDKNotifications */;
@@ -2520,6 +2613,53 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		0563751125AF030A00AB68DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = V7YKQU4HQV;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = ExponeaSDKObjC/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKObjC;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0563751225AF030A00AB68DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = V7YKQU4HQV;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = ExponeaSDKObjC/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKObjC;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -2939,6 +3079,15 @@
 			buildConfigurations = (
 				0561829C25AD959C001E30A3 /* Debug */,
 				0561829D25AD959C001E30A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0563751325AF030A00AB68DA /* Build configuration list for PBXNativeTarget "ExponeaSDKObjC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0563751125AF030A00AB68DA /* Debug */,
+				0563751225AF030A00AB68DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
