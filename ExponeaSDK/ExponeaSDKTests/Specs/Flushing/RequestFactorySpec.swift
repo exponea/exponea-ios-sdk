@@ -14,7 +14,7 @@ import Quick
 @testable import ExponeaSDK
 @testable import ExponeaSDKShared
 
-class RequestFactorySpec: QuickSpec {
+final class RequestFactorySpec: QuickSpec {
     override func spec() {
         describe("RequestFactory") {
             var database: MockDatabaseManager!
