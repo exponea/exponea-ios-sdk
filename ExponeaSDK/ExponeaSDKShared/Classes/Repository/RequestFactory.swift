@@ -19,7 +19,7 @@ public struct RequestFactory {
     }
 
     public var path: String {
-        let baseUrl = exponeaProject.baseUrl
+        let baseUrl = exponeaProject.baseUrl.last == "/" ? String(exponeaProject.baseUrl.dropLast()) : exponeaProject.baseUrl
         let projectToken = exponeaProject.projectToken
         switch self.route {
         case .identifyCustomer: return baseUrl + "/track/v2/projects/\(projectToken)/customers"

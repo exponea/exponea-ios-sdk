@@ -270,6 +270,7 @@
 		C0F6C4E82098A1AB00834E21 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4E62098A1AB00834E21 /* Main.storyboard */; };
 		C0F6C4EA2098A1AC00834E21 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4E92098A1AC00834E21 /* Assets.xcassets */; };
 		C0F6C4ED2098A1AC00834E21 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */; };
+		CC06F95125FA037800F38D93 /* RequestFactorySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC06F95025FA037800F38D93 /* RequestFactorySpec.swift */; };
 		D20134EC7D150032774DF78D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */; };
 		F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */; };
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
@@ -675,6 +676,7 @@
 		C0F6C4EC2098A1AC00834E21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C0F6C4EE2098A1AC00834E21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C0F7A59C21AE921300BA392F /* NotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationData.swift; sourceTree = "<group>"; };
+		CC06F95025FA037800F38D93 /* RequestFactorySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestFactorySpec.swift; sourceTree = "<group>"; };
 		E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePropertiesSpec.swift; sourceTree = "<group>"; };
 		F021E859206CF10200788ABC /* ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -956,6 +958,7 @@
 			isa = PBXGroup;
 			children = (
 				05735EA623A3B3B700DA0FA9 /* FlushingManagerSpec.swift */,
+				CC06F95025FA037800F38D93 /* RequestFactorySpec.swift */,
 			);
 			path = Flushing;
 			sourceTree = "<group>";
@@ -2448,6 +2451,7 @@
 				050961062322552300D59C01 /* MockLogger.swift in Sources */,
 				C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */,
 				0591907523EC5C740037BD88 /* EventFilterAttributeSpec.swift in Sources */,
+				CC06F95125FA037800F38D93 /* RequestFactorySpec.swift in Sources */,
 				05D9F62E2387EE6600C47509 /* Exponea+ConfigurationSpec.swift in Sources */,
 				0591906F23EC4E8C0037BD88 /* GenericOperatorsSpec.swift in Sources */,
 				052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */,
