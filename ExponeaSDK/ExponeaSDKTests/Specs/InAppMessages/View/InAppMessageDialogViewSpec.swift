@@ -25,15 +25,15 @@ final class InAppMessageDialogViewSpec: QuickSpec {
         fullscreenSettings.forEach { fullscreen in
             it("should setup \(fullscreen ? "fullscreen" : "modal") dialog with payload") {
                 let dialog: InAppMessageDialogView = InAppMessageDialogView(
-                    payload: payload,
+                    payload: payload!,
                     image: image,
                     actionCallback: { _ in },
                     dismissCallback: {},
                     fullscreen: fullscreen
                 )
                 dialog.beginAppearanceTransition(true, animated: false)
-                expect(dialog.bodyTextView.text).to(equal(payload.bodyText))
-                expect(dialog.titleTextView.text).to(equal(payload.title))
+                expect(dialog.bodyTextView.text).to(equal(payload?.bodyText))
+                expect(dialog.titleTextView.text).to(equal(payload?.title))
             }
         }
     }

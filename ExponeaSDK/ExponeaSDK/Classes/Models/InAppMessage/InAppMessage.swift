@@ -11,11 +11,11 @@ import Foundation
 struct InAppMessage: Codable, Equatable {
     public let id: String
     public let name: String
-    public let rawMessageType: String
+    public let rawMessageType: String = InAppMessageType.modal.rawValue
     public var messageType: InAppMessageType { return InAppMessageType(rawValue: rawMessageType) ?? .alert }
     public let rawFrequency: String
     public var frequency: InAppMessageFrequency? { return InAppMessageFrequency(rawValue: rawFrequency) }
-    public let payload: InAppMessagePayload
+    public let payload: InAppMessagePayload?
     public let variantId: Int
     public let variantName: String
     public let trigger: EventFilter

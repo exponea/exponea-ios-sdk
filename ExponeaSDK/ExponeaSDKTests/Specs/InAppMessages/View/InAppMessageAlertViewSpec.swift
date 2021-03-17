@@ -17,14 +17,14 @@ final class InAppMessageAlertViewSpec: QuickSpec {
 
         it("should setup dialog with payload") {
             let alertController = try! InAppMessageAlertView(
-                payload: payload,
+                payload: payload!,
                 actionCallback: { _ in },
                 dismissCallback: {}
             ).alertController
-            expect(alertController.title).to(equal(payload.title))
-            expect(alertController.message).to(equal(payload.bodyText))
+            expect(alertController.title).to(equal(payload?.title))
+            expect(alertController.message).to(equal(payload?.bodyText))
             expect(alertController.actions.count).to(equal(2))
-            expect(alertController.actions[0].title).to(equal(payload.buttons?[0].buttonText))
+            expect(alertController.actions[0].title).to(equal(payload?.buttons?[0].buttonText))
             expect(alertController.actions[0].style).to(equal(.default))
             expect(alertController.actions[1].title).to(equal("Cancel"))
             expect(alertController.actions[1].style).to(equal(.cancel))

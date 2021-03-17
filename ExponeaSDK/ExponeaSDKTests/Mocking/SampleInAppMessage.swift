@@ -64,7 +64,6 @@ struct SampleInAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
             name: "Test serving in-app message",
-            rawMessageType: "modal",
             rawFrequency: frequency?.rawValue ?? "unknown",
             payload: InAppMessagePayload(
                 imageUrl: imageUrl ?? "https://i.ytimg.com/vi/t4nM1FoUqYs/maxresdefault.jpg",
@@ -100,6 +99,30 @@ struct SampleInAppMessage {
             priority: priority,
             delayMS: delayMS,
             timeoutMS: timeoutMS
+        )
+    }
+
+    static func getSampleInAppMessage(
+        payload: InAppMessagePayload?,
+        variantName: String,
+        variantId: Int
+    ) -> InAppMessage {
+        return InAppMessage(
+            id: "5dd86f44511946ea55132f29",
+            name: "Test serving in-app message",
+            rawFrequency: "unknown",
+            payload: payload,
+            variantId: variantId,
+            variantName: variantName,
+            trigger: EventFilter(eventType: "session_start", filter: []),
+            dateFilter: DateFilter(
+                enabled: false,
+                startDate: Date(timeIntervalSince1970: 1570744800),
+                endDate: nil
+            ),
+            priority: nil,
+            delayMS: nil,
+            timeoutMS: nil
         )
     }
 }

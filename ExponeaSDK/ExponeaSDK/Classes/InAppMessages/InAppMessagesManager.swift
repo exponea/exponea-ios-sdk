@@ -70,14 +70,14 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                     return
                 }
                 self.cache.saveInAppMessages(inAppMessages: response.data)
-                self.cache.deleteImages(except: response.data.compactMap { $0.payload.imageUrl })
+                self.cache.deleteImages(except: response.data.compactMap { $0.payload?.imageUrl })
                 self.preloadImages(inAppMessages: response.data, completion: completion)
             }
         }
     }
 
     @discardableResult private func preloadImage(for message: InAppMessage) -> Bool {
-        guard let imageUrlString = message.payload.imageUrl, !imageUrlString.isEmpty else {
+        guard let imageUrlString = message.payload?.imageUrl, !imageUrlString.isEmpty else {
             return true // there is no image, call preload successful
         }
         if let imageUrl = URL(string: imageUrlString),
@@ -123,7 +123,24 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             guard let trackingDelegate = pending.0.trackingDelegate else {
                 return
             }
-            self.showInAppMessage(pending.1, trackingDelegate: trackingDelegate, callback: pending.0.callback)
+            self.handleInAppMessage(pending.1, trackingDelegate: trackingDelegate, callback: pending.0.callback)
+        }
+    }
+
+    private func handleInAppMessage(
+        _ message: InAppMessage,
+        trackingDelegate: InAppMessageTrackingDelegate?,
+        callback: ((InAppMessageView?) -> Void)?
+    ) {
+        if message.payload == nil && message.variantId == -1 {
+            Exponea.logger.log(
+                .verbose,
+                message: "Only logging in-app message for control group '\(message.name)'"
+            )
+            self.trackInAppMessage(message, trackingDelegate: trackingDelegate)
+            callback?(nil)
+        } else {
+            self.showInAppMessage(message, trackingDelegate: trackingDelegate, callback: callback)
         }
     }
 
@@ -135,7 +152,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             "\(messages.count) messages available: \(messages.map { $0.name })."
         )
         messages = messages.filter {
-            let imageUrl = $0.payload.imageUrl ?? ""
+            let imageUrl = $0.payload?.imageUrl ?? ""
             return (!requireImage || (imageUrl.isEmpty || self.cache.hasImageData(at: imageUrl)))
                 && $0.applyDateFilter(date: Date())
                 && $0.applyEventFilter(event: event)
@@ -165,7 +182,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     }
 
     private func getImageData(for message: InAppMessage) -> Data? {
-        guard let imageUrl = message.payload.imageUrl else {
+        guard let imageUrl = message.payload?.imageUrl else {
             return nil
         }
         return cache.getImageData(at: imageUrl)
@@ -198,7 +215,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 callback?(nil)
                 return
             }
-            self.showInAppMessage(message, trackingDelegate: trackingDelegate, callback: callback)
+            self.handleInAppMessage(message, trackingDelegate: trackingDelegate, callback: callback)
         }
     }
 
@@ -207,9 +224,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)? = nil
     ) {
+        guard message.payload != nil else {
+            Exponea.logger.log(.verbose, message: "Not showing message with empty payload '\(message.name)'")
+            return
+        }
         Exponea.logger.log(.verbose, message: "Attempting to show in-app message '\(message.name)'")
         var imageData: Data?
-        if !(message.payload.imageUrl ?? "").isEmpty {
+        if !(message.payload?.imageUrl ?? "").isEmpty {
             guard let createdImageData = self.getImageData(for: message) else {
                 callback?(nil)
                 return
@@ -219,7 +240,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
         self.presenter.presentInAppMessage(
             messageType: message.messageType,
-            payload: message.payload,
+            payload: message.payload!,
             delay: message.delay,
             timeout: message.timeout,
             imageData: imageData,
@@ -233,15 +254,22 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             },
             presentedCallback: { presented in
                 if presented != nil {
-                    self.displayStatusStore.didDisplay(message, at: Date())
-                    trackingDelegate?.track(.show, for: message)
-                    Exponea.shared.telemetryManager?.report(
-                        eventWithType: .showInAppMessage,
-                        properties: ["messageType": message.rawMessageType]
-                    )
+                    self.trackInAppMessage(message, trackingDelegate: trackingDelegate)
                 }
                 callback?(presented)
             }
+        )
+    }
+
+    private func trackInAppMessage(
+        _ message: InAppMessage,
+        trackingDelegate: InAppMessageTrackingDelegate?
+    ) {
+        displayStatusStore.didDisplay(message, at: Date())
+        trackingDelegate?.track(.show, for: message)
+        Exponea.shared.telemetryManager?.report(
+            eventWithType: .showInAppMessage,
+            properties: ["messageType": message.rawMessageType]
         )
     }
 

@@ -110,7 +110,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         it("should get in-app messages from cache if image is needed and precached") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
-                at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
+                at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
             expect(manager.getInAppMessage(for: [.eventType("session_start")]))
@@ -134,7 +134,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                         inAppMessages: [SampleInAppMessage.getSampleInAppMessage(dateFilter: dateFilter)]
                     )
                     cache.saveImageData(
-                        at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
+                        at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
@@ -159,7 +159,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                         inAppMessages: [SampleInAppMessage.getSampleInAppMessage(trigger: trigger)]
                     )
                     cache.saveImageData(
-                        at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
+                        at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
@@ -200,7 +200,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 let createMessage = { (frequency: InAppMessageFrequency) in
                     let message = SampleInAppMessage.getSampleInAppMessage(frequency: frequency)
                     cache.saveInAppMessages(inAppMessages: [message])
-                    cache.saveImageData(at: message.payload.imageUrl!, data: "mock data".data(using: .utf8)!)
+                    cache.saveImageData(at: message.payload!.imageUrl!, data: "mock data".data(using: .utf8)!)
                 }
                 it("should apply always filter") {
                     createMessage(.always)
@@ -219,7 +219,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     waitUntil { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
                     presenter.presentedMessages[0].actionCallback(
-                        SampleInAppMessage.getSampleInAppMessage().payload.buttons![0]
+                        SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                     )
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
                 }
@@ -237,7 +237,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 let runTest = { (allMessages: [InAppMessage], expectedMessages: [InAppMessage]) -> Void in
                     cache.saveInAppMessages(inAppMessages: allMessages)
                     allMessages.forEach {
-                        cache.saveImageData(at: $0.payload.imageUrl!, data: "mock data".data(using: .utf8)!)
+                        cache.saveImageData(at: $0.payload!.imageUrl!, data: "mock data".data(using: .utf8)!)
                     }
                     expect(
                         manager.getInAppMessages(for: [.eventType("session_start")], requireImage: true)
@@ -284,7 +284,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             waitUntil { done in manager.preload(for: [:], completion: done) }
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
-                at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
+                at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
             waitUntil { done in
@@ -313,7 +313,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 delegate = MockInAppMessageTrackingDelegate()
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
-                    at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
+                    at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
                     data: "mock data".data(using: .utf8)!
                 )
             }
@@ -364,7 +364,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackingDelegate: delegate
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
-                    SampleInAppMessage.getSampleInAppMessage().payload.buttons![0]
+                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
                 expect(delegate.calls).to(equal([
                     MockInAppMessageTrackingDelegate.CallData(
@@ -382,7 +382,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         it("should show in-app message after preload is complete") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
-                at: SampleInAppMessage.getSampleInAppMessage().payload.imageUrl!,
+                at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
             let delegate = MockInAppMessageTrackingDelegate()
@@ -394,6 +394,27 @@ class InAppMessagesManagerSpec: QuickSpec {
             waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:], completion: done) }
             _ = semaphore.wait(timeout: .now() + 1)
             expect(presenter.presentedMessages.count).to(equal(1))
+        }
+
+        it("should track control group message without showing it") {
+            waitUntil { done in manager.preload(for: [:], completion: done) }
+            let delegate = MockInAppMessageTrackingDelegate()
+            let message = SampleInAppMessage.getSampleInAppMessage(
+                payload: nil,
+                variantName: "Control group",
+                variantId: -1)
+            cache.saveInAppMessages(inAppMessages: [message])
+            waitUntil { done in manager.showInAppMessage(
+                for: [.eventType("session_start")],
+                trackingDelegate: delegate
+            ) { _ in done() } }
+            expect(delegate.calls).to(equal([
+                MockInAppMessageTrackingDelegate.CallData(
+                    event: .show,
+                    message: message
+                )
+            ]))
+            expect(presenter.presentedMessages.count).to(equal(0))
         }
     }
 }

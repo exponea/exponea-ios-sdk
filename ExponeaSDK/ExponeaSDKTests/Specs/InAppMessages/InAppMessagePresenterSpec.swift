@@ -83,7 +83,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
         }
 
         describe("presenting in-app message view") {
-            let payload = SampleInAppMessage.getSampleInAppMessage().payload
+            let payload = SampleInAppMessage.getSampleInAppMessage().payload!
 
             InAppMessageType.allCases.forEach { messageType in
                 it("should present dialog with existing UI") {
