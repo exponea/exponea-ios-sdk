@@ -257,7 +257,8 @@ extension ExponeaInternal {
             Exponea.logger.log(.verbose, message: "Exponea not configured yet, saving opened push.")
             PushNotificationManager.storePushOpened(
                 userInfoObject: userInfo as AnyObject?,
-                actionIdentifier: actionIdentifier
+                actionIdentifier: actionIdentifier,
+                timestamp: Date().timeIntervalSince1970
             )
             return
         }

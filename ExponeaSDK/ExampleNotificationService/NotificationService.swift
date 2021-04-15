@@ -17,7 +17,21 @@ class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        exponeaService.process(request: request, contentHandler: contentHandler)
+        guard let content = (request.content.mutableCopy() as? UNMutableNotificationContent) else {
+            return
+        }
+
+        //temporary modify notification data
+        var new = [String: Any]()
+        new["sent_timestamp"] = 1618472942.259
+        new["type"] = "push"
+        var attributes = [String: Any]()
+        attributes["attributes"] = new
+        content.userInfo.merge(attributes) { (_, new) in new }
+
+        let updatedRequest = UNNotificationRequest(identifier: request.identifier, content: content, trigger: request.trigger)
+
+        exponeaService.process(request: updatedRequest, contentHandler: contentHandler)
     }
 
     // Called just before the extension will be terminated by the system.

@@ -25,6 +25,8 @@ public extension NotificationData {
         if let language = language { properties["language"] = .string(language) }
         if let recipient = recipient { properties["recipient"] = .string(recipient) }
         if let subject = subject { properties["subject"] = .string(subject) }
+        if let sentTimestamp = sentTimestamp { properties["sent_timestamp"] = .double(sentTimestamp) }
+        if let type = type { properties["type"] = .string(type) }
         campaignData.trackingData.forEach { (key, value) in properties[key] = value }
         return properties
     }

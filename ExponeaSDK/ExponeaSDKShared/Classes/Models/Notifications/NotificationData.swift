@@ -20,7 +20,9 @@ public struct NotificationData: Codable {
     public let language: String?
     public let recipient: String?
     public let subject: String?
-    public let timestamp: Date
+    public var timestamp: Double
+    public let sentTimestamp: Double?
+    public let type: String?
     public let campaignData: CampaignData
 
     public init(
@@ -35,7 +37,9 @@ public struct NotificationData: Codable {
         language: String? = nil,
         recipient: String? = nil,
         subject: String? = nil,
-        timestamp: Date = Date(),
+        timestamp: Double = Date().timeIntervalSince1970,
+        sentTimestamp: Double? = nil,
+        type: String? = nil,
         campaignData: CampaignData = CampaignData()
     ) {
         self.eventType = eventType
@@ -50,6 +54,8 @@ public struct NotificationData: Codable {
         self.recipient = recipient
         self.subject = subject
         self.timestamp = timestamp
+        self.sentTimestamp = sentTimestamp
+        self.type = type
         self.campaignData = campaignData
     }
 
@@ -66,7 +72,9 @@ public struct NotificationData: Codable {
         language = try? container.decode(String.self, forKey: .language)
         recipient = try? container.decode(String.self, forKey: .recipient)
         subject = try? container.decode(String.self, forKey: .subject)
-        timestamp = (try? container.decode(Date.self, forKey: .timestamp)) ?? Date()
+        timestamp = (try? container.decode(Double.self, forKey: .timestamp)) ?? Date().timeIntervalSince1970
+        sentTimestamp = try? container.decode(Double.self, forKey: .sentTimestamp)
+        type = try? container.decode(String.self, forKey: .type)
         campaignData = (try? container.decode(CampaignData.self, forKey: .campaignData)) ?? CampaignData()
     }
 

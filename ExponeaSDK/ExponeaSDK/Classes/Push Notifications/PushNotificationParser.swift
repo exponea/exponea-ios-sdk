@@ -12,7 +12,9 @@ import UserNotifications
 struct PushNotificationParser {
     static let decoder: JSONDecoder = JSONDecoder.snakeCase
 
-    static func parsePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) -> PushOpenedData? {
+    static func parsePushOpened(userInfoObject: AnyObject?,
+                                actionIdentifier: String?,
+                                timestamp: Double) -> PushOpenedData? {
         guard let userInfo = userInfoObject as? [String: Any] else {
             Exponea.logger.log(.error, message: "Failed to convert push payload.")
             return nil
@@ -82,6 +84,10 @@ struct PushNotificationParser {
         }
 
         eventData.append(.properties(properties))
+        let currentTimestamp = timestamp
+        let deliveredTimestamp = userInfo["delivered_timestamp"] as? Double ?? 0
+        let openedTimestamp = currentTimestamp <= deliveredTimestamp ? deliveredTimestamp + 1 : currentTimestamp
+        eventData.append(.timestamp(openedTimestamp))
 
         return PushOpenedData(
             silent: silent,

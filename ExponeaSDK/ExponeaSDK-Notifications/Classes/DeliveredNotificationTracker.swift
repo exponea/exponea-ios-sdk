@@ -16,27 +16,18 @@ final class DeliveredNotificationTracker {
     private let events: [EventTrackingObject]
     private let repository: ServerRepository
 
-    init(appGroup: String, request: UNNotificationRequest) throws {
-        guard let userInfo = (request.content.mutableCopy() as? UNMutableNotificationContent)?.userInfo else {
-            throw DeliveredNotificationTrackerError.unableToGetUserInfo
-        }
+    init(appGroup: String, notificationData: NotificationData) throws {
         guard let configuration = Configuration.loadFromUserDefaults(appGroup: appGroup) else {
             throw DeliveredNotificationTrackerError.configurationNotFound
         }
         guard let customerIds = EventTrackingObject.loadCustomerIdsFromUserDefaults(appGroup: appGroup) else {
             throw DeliveredNotificationTrackerError.customerIdsNotFound
         }
-        let notification = NotificationData.deserialize(
-            attributes: userInfo["attributes"] as? [String: Any] ?? [:],
-            campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
-        ) ?? NotificationData()
-
         repository = ServerRepository(configuration: configuration)
-
         events = DeliveredNotificationTracker.generateTrackingObjects(
             configuration: configuration,
             customerIds: customerIds,
-            notification: notification
+            notification: notificationData
         )
     }
 
@@ -81,7 +72,7 @@ final class DeliveredNotificationTracker {
                 exponeaProject: project,
                 customerIds: customerIds,
                 eventType: notification.eventType ?? Constants.EventTypes.pushDelivered,
-                timestamp: notification.timestamp.timeIntervalSince1970,
+                timestamp: notification.timestamp,
                 dataTypes: [.properties(properties)]
             )
         }

@@ -119,14 +119,19 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) {
         Exponea.shared.executeSafely {
-            handlePushOpenedUnsafe(userInfoObject: userInfoObject, actionIdentifier: actionIdentifier)
+            handlePushOpenedUnsafe(userInfoObject: userInfoObject,
+                                   actionIdentifier: actionIdentifier,
+                                   timestamp: Date().timeIntervalSince1970)
         }
     }
 
-    func handlePushOpenedUnsafe(userInfoObject: AnyObject?, actionIdentifier: String?) {
+    func handlePushOpenedUnsafe(userInfoObject: AnyObject?,
+                                actionIdentifier: String?,
+                                timestamp: Double) {
         guard let pushOpenedData = PushNotificationParser.parsePushOpened(
             userInfoObject: userInfoObject,
-            actionIdentifier: actionIdentifier
+            actionIdentifier: actionIdentifier,
+            timestamp: timestamp
         ) else {
             return
         }
@@ -202,11 +207,14 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         }
     }
 
-    static func storePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) {
+    static func storePushOpened(userInfoObject: AnyObject?,
+                                actionIdentifier: String?,
+                                timestamp: Double) {
         guard let userDefaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite),
               let pushOpenedData = PushNotificationParser.parsePushOpened(
                   userInfoObject: userInfoObject,
-                  actionIdentifier: actionIdentifier
+                  actionIdentifier: actionIdentifier,
+                  timestamp: timestamp
               ) else {
             return
         }
@@ -278,13 +286,13 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                         with: [
                             .eventType(customEventType),
                             .properties(properties),
-                            .timestamp(notification.timestamp.timeIntervalSince1970)
+                            .timestamp(notification.timestamp)
                         ]
                     )
                 } else {
                     try trackingManager?.track(
                         .pushDelivered,
-                        with: [.properties(properties), .timestamp(notification.timestamp.timeIntervalSince1970)]
+                        with: [.properties(properties), .timestamp(notification.timestamp)]
                     )
                 }
             } catch {

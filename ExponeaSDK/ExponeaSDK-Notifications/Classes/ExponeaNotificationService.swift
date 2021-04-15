@@ -43,8 +43,8 @@ public class ExponeaNotificationService {
         self.request = request
         self.contentHandler = contentHandler
 
-        trackDeliveredNotification()
-        createContent()
+        let deliveredTimestamp = trackDeliveredNotification()
+        createContent(deliveredTimestamp: deliveredTimestamp)
     }
 
     public func serviceExtensionTimeWillExpire() {
@@ -53,7 +53,13 @@ public class ExponeaNotificationService {
 
         // we failed to track notification
         if !notificationTracked {
-            saveNotificationForLaterTracking(request: request)
+            if let userInfo = (request?.content.mutableCopy() as? UNMutableNotificationContent)?.userInfo {
+            let notification = NotificationData.deserialize(
+                attributes: userInfo["attributes"] as? [String: Any] ?? [:],
+                campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
+            ) ?? NotificationData()
+            saveNotificationForLaterTracking(notification: notification)
+            }
         }
 
         // Try to call content handler with current content
@@ -62,9 +68,15 @@ public class ExponeaNotificationService {
         }
     }
 
-    internal func createContent() {
+    internal func createContent(deliveredTimestamp: Double?) {
         // Create a mutable content and make sure it works
         bestAttemptContent = (request?.content.mutableCopy() as? UNMutableNotificationContent)
+
+        if deliveredTimestamp != nil {
+            var additionalInfo = [String: Any]()
+            additionalInfo["delivered_timestamp"] = deliveredTimestamp
+            bestAttemptContent?.userInfo.merge(additionalInfo) { (_, new) in new }
+        }
 
         if let content = bestAttemptContent {
             bestAttemptContent?.title = content.userInfo["title"] as? String ?? "NO TITLE"
@@ -97,29 +109,50 @@ public class ExponeaNotificationService {
         contentCreated = true
     }
 
-    func trackDeliveredNotification() {
-        guard let appGroup = appGroup, let request = request else {
+    func trackDeliveredNotification() -> Double? {
+        guard let appGroup = appGroup,
+              let request = request
+        else {
             notificationTracked = true
-            return
+            return nil
         }
+        var notification: NotificationData?
         do {
-            try DeliveredNotificationTracker(appGroup: appGroup, request: request)
+            guard let userInfo = (request.content.mutableCopy() as? UNMutableNotificationContent)?.userInfo else {
+                throw DeliveredNotificationTrackerError.unableToGetUserInfo
+            }
+
+            var notificationData = NotificationData.deserialize(
+                attributes: userInfo["attributes"] as? [String: Any] ?? [:],
+                campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
+            ) ?? NotificationData()
+
+            let timestamp = notificationData.timestamp
+            let sentTimestamp = notificationData.sentTimestamp ?? 0
+            let deliveredTimestamp = timestamp <= sentTimestamp ? sentTimestamp + 1 : timestamp
+
+            notificationData.timestamp = deliveredTimestamp
+
+            notification = notificationData
+            try DeliveredNotificationTracker(appGroup: appGroup, notificationData: notificationData)
                 .track(
                     onSuccess: {
                         self.notificationTracked = true
                     },
                     onFailure: {
-                        self.saveNotificationForLaterTracking(request: request)
+                        self.saveNotificationForLaterTracking(notification: notificationData)
                         self.notificationTracked = true
                     }
                 )
+            return deliveredTimestamp
         } catch {
             Exponea.logger.log(
                 .error,
                 message: "Failed to track delivered push notification: \(error.localizedDescription)"
             )
-            self.saveNotificationForLaterTracking(request: request)
+            self.saveNotificationForLaterTracking(notification: notification)
             self.notificationTracked = true
+            return notification?.timestamp
         }
     }
 
@@ -132,18 +165,14 @@ public class ExponeaNotificationService {
         }
     }
 
-    func saveNotificationForLaterTracking(request: UNNotificationRequest?) {
+    func saveNotificationForLaterTracking(notification: NotificationData?) {
         guard let appGroup = appGroup,
               let userDefaults = UserDefaults(suiteName: appGroup),
-              let userInfo = request?.content.userInfo else {
+              let notificationData = notification else {
             return
         }
-        let notification = NotificationData.deserialize(
-            attributes: userInfo["attributes"] as? [String: Any] ?? [:],
-            campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
-        ) ?? NotificationData()
 
-        if let serialized = notification.serialize() {
+        if let serialized = notificationData.serialize() {
             var delivered = userDefaults.array(forKey: Constants.General.deliveredPushUserDefaultsKey) ?? []
             delivered.append(serialized)
             userDefaults.set(delivered, forKey: Constants.General.deliveredPushUserDefaultsKey)
