@@ -153,6 +153,71 @@ class FlushingManagerSpec: QuickSpec {
                     checkFlushOrder()
                 }
             }
+
+            it("should track age for events") {
+                let eventData: [DataType] = [
+                    .timestamp(Date().timeIntervalSince1970 - 1),
+                    .properties(["customprop": .string("customval")]),
+                    .eventType(Constants.EventTypes.sessionStart),
+                    .pushNotificationToken(token: "tokenthatisgoingtobeignored", authorized: true)
+                ]
+                try! database.trackEvent(
+                    with: eventData,
+                    into: configuration.mainProject
+                )
+                waitUntil { done in
+                    NetworkStubbing.stubNetwork(
+                        forProjectToken: configuration.projectToken,
+                        withStatusCode: 200,
+                        withDelay: 0,
+                        withResponseData: nil,
+                        withRequestHook: { request in
+                            let payload = try! JSONSerialization.jsonObject(
+                                with: request.httpBodyStream!.readFully(),
+                                options: []
+                            ) as? NSDictionary ?? NSDictionary()
+                            expect(payload["age"] as? Double).notTo(beNil())
+                            expect(payload["timestamp"] as? Double).to(beNil())
+                            expect(payload["age"] as? Double).to(beGreaterThan(0))
+                            done()
+                        }
+                    )
+                    flushingManager.flushData()
+                }
+            }
+
+            it("should track timestamp for push events") {
+                let timestamp = Date().timeIntervalSince1970
+                let eventData: [DataType] = [
+                    .timestamp(timestamp),
+                    .properties(["customprop": .string("customval")]),
+                    .eventType(Constants.EventTypes.pushOpen),
+                    .pushNotificationToken(token: "tokenthatisgoingtobeignored", authorized: true)
+                ]
+                try! database.trackEvent(
+                    with: eventData,
+                    into: configuration.mainProject
+                )
+                waitUntil { done in
+                    NetworkStubbing.stubNetwork(
+                        forProjectToken: configuration.projectToken,
+                        withStatusCode: 200,
+                        withDelay: 0,
+                        withResponseData: nil,
+                        withRequestHook: { request in
+                            let payload = try! JSONSerialization.jsonObject(
+                                with: request.httpBodyStream!.readFully(),
+                                options: []
+                            ) as? NSDictionary ?? NSDictionary()
+                            expect(payload["age"] as? Double).to(beNil())
+                            expect(payload["timestamp"] as? Double).notTo(beNil())
+                            expect(payload["timestamp"] as? Double).to(equal(timestamp))
+                            done()
+                        }
+                    )
+                    flushingManager.flushData()
+                }
+            }
         }
     }
 }
