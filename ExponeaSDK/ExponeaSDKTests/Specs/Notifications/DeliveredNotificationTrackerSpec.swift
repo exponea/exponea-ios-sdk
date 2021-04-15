@@ -47,7 +47,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         exponeaProject: configuration.mainProject,
                         customerIds: ["cookie": "mock-cookie"],
                         eventType: "campaign",
-                        timestamp: notificationData.timestamp.timeIntervalSince1970,
+                        timestamp: notificationData.timestamp,
                         dataTypes: [
                             .properties([
                                 "action_id": .int(1234),
@@ -90,7 +90,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         exponeaProject: configuration.mainProject,
                         customerIds: ["cookie": "mock-cookie"],
                         eventType: "campaign",
-                        timestamp: notificationData.timestamp.timeIntervalSince1970,
+                        timestamp: notificationData.timestamp,
                         dataTypes: [
                             .properties([
                                 "status": .string("delivered"),
@@ -125,7 +125,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         exponeaProject: configuration.mainProject,
                         customerIds: ["cookie": "mock-cookie"],
                         eventType: "custom-event-type",
-                        timestamp: notificationData.timestamp.timeIntervalSince1970,
+                        timestamp: notificationData.timestamp,
                         dataTypes: [
                             .properties([
                                 "status": .string("delivered"),
@@ -166,7 +166,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         exponeaProject: configuration.mainProject,
                         customerIds: ["cookie": "mock-cookie"],
                         eventType: "campaign",
-                        timestamp: notificationData.timestamp.timeIntervalSince1970,
+                        timestamp: notificationData.timestamp,
                         dataTypes: [
                             .properties([
                                 "status": .string("delivered"),
@@ -182,7 +182,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         ),
                         customerIds: ["cookie": "mock-cookie"],
                         eventType: "campaign",
-                        timestamp: notificationData.timestamp.timeIntervalSince1970,
+                        timestamp: notificationData.timestamp,
                         dataTypes: [
                             .properties([
                                 "status": .string("delivered"),
@@ -206,7 +206,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                 expect {
                     try DeliveredNotificationTracker(
                         appGroup: "mock-app-group",
-                        request: mock_notification_request([:])
+                        notificationData: NotificationData()
                     )
                 }.to(throwError(DeliveredNotificationTrackerError.configurationNotFound))
             }
@@ -216,7 +216,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                 expect {
                     try DeliveredNotificationTracker(
                         appGroup: "mock-app-group",
-                        request: mock_notification_request([:])
+                        notificationData: NotificationData()
                     )
                 }.to(throwError(DeliveredNotificationTrackerError.customerIdsNotFound))
             }
@@ -227,7 +227,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                 do {
                     _ = try DeliveredNotificationTracker(
                         appGroup: "mock-app-group",
-                        request: mock_notification_request([:])
+                        notificationData: NotificationData()
                     )
                 } catch {
                     XCTFail("init should not throw error")
@@ -241,7 +241,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                 self.saveCustomerIds()
                 let tracker = try! DeliveredNotificationTracker(
                     appGroup: "mock-app-group",
-                    request: mock_notification_request([:])
+                    notificationData: NotificationData()
                 )
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 200)
                 waitUntil { done in
@@ -262,7 +262,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                 self.saveCustomerIds()
                 let tracker = try! DeliveredNotificationTracker(
                     appGroup: "mock-app-group",
-                    request: mock_notification_request([:])
+                    notificationData: NotificationData()
                 )
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 400)
                 waitUntil { done in

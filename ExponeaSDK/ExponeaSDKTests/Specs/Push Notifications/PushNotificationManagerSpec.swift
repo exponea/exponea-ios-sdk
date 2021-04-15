@@ -16,7 +16,7 @@ final class PushNotificationManagerSpec: QuickSpec {
     struct TrackDeliveredTestCase {
         let name: String
         let userInfo: [String: Any]
-        let expectedTrackedEvent: (Date) -> MockTrackingManager.TrackedEvent
+        let expectedTrackedEvent: (Double) -> MockTrackingManager.TrackedEvent
     }
 
     struct NotificationOpenedTestCase {
@@ -27,6 +27,14 @@ final class PushNotificationManagerSpec: QuickSpec {
         let expectedTrackedEvent: MockTrackingManager.TrackedEvent?
         let expectedBrowserLinkOpened: URL?
         let expectedDeeplinkOpened: URL?
+    }
+
+    struct NotificationEventsOrderTestCase {
+        let name: String
+        let actionIdentifier: String?
+        let sentTimestamp: Double?
+        let deliveredTimestamp: Double
+        let openedTimestamp: Double
     }
 
     private class VerifingPushNotificationManagerDelegate: PushNotificationManagerDelegate {
@@ -126,7 +134,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             type: .pushDelivered,
                             data: [
                                 .properties(["status": .string("delivered"), "platform": .string("ios")]),
-                                .timestamp($0.timeIntervalSince1970)
+                                .timestamp($0)
                             ]
                         )
                     }
@@ -139,7 +147,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             type: .pushDelivered,
                             data: [
                                 .properties(["status": .string("delivered"), "platform": .string("ios")]),
-                                .timestamp($0.timeIntervalSince1970)
+                                .timestamp($0)
                             ]
                         )
                     }
@@ -161,7 +169,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     "platform": .string("mock platform"),
                                     "action_id": .int(123)
                                 ]),
-                                .timestamp($0.timeIntervalSince1970)
+                                .timestamp($0)
                             ]
                         )
                     }
@@ -175,7 +183,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             data: [
                                 .eventType("custom push delivered"),
                                 .properties(["status": .string("delivered"), "platform": .string("ios")]),
-                                .timestamp($0.timeIntervalSince1970)
+                                .timestamp($0)
                             ]
                         )
                     }
@@ -214,7 +222,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     "language": .string(""),
                                     "campaign_policy": .string("")
                                 ]),
-                                .timestamp($0.timeIntervalSince1970)
+                                .timestamp($0)
                             ]
                         )
                     }
@@ -223,7 +231,11 @@ final class PushNotificationManagerSpec: QuickSpec {
             testCases.forEach { testCase in
                 it("should track notification with \(testCase.name)") {
                     let service = ExponeaNotificationService(appGroup: "mock-app-group")
-                    service.saveNotificationForLaterTracking(request: mock_notification_request(testCase.userInfo))
+                    let notificationData = NotificationData.deserialize(
+                        attributes: testCase.userInfo["attributes"] as? [String: Any] ?? [:],
+                        campaignData: testCase.userInfo["url_params"] as? [String: Any] ?? [:]
+                    ) ?? NotificationData()
+                    service.saveNotificationForLaterTracking(notification: notificationData)
                     let storedNotification = getFirstStoredNotification()!
                     pushManager.checkForDeliveredPushMessages()
                     expect(trackingManager.trackedEvents.count).to(equal(1))
@@ -257,7 +269,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
                             "status": JSONValue.string("clicked")
-                        ])]
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)]
                     ),
                     expectedBrowserLinkOpened: nil,
                     expectedDeeplinkOpened: nil
@@ -278,7 +291,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
                             "status": JSONValue.string("clicked")
-                        ])]
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)]
                     ),
                     expectedBrowserLinkOpened: nil,
                     expectedDeeplinkOpened: nil
@@ -295,7 +309,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
                             "status": JSONValue.string("clicked")
-                        ])]
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)]
                     ),
                     expectedBrowserLinkOpened: URL(string: "http://google.com"),
                     expectedDeeplinkOpened: nil
@@ -312,7 +327,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
                             "status": JSONValue.string("clicked")
-                        ])]
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)]
                     ),
                     expectedBrowserLinkOpened: nil,
                     expectedDeeplinkOpened: URL(string: "some_url")
@@ -360,7 +376,61 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "utm_source": JSONValue.string("exponea"),
                             "utm_campaign": JSONValue.string("Testing mobile push"),
                             "utm_medium": JSONValue.string("mobile_push_notification")
-                        ] as [String: ExponeaSDK.JSONValue])] // without swift fails with typechecking took too long
+                        ] as [String: ExponeaSDK.JSONValue]), // without swift fails with typechecking took too long
+                        .timestamp(PushNotificationsTestData.timestamp)]
+                    ),
+                    expectedBrowserLinkOpened: URL(string: "http://google.com?search=something"),
+                    expectedDeeplinkOpened: nil
+                ),
+                NotificationOpenedTestCase(
+                    name: "production notification with sent_timestamp and type",
+                    userInfoJson: PushNotificationsTestData().notificationWithSentTimestampAndType,
+                    actionIdentifier: "EXPONEA_ACTION_APP_2",
+                    delegate: VerifingPushNotificationManagerDelegate(
+                        action: ExponeaSDK.ExponeaNotificationActionType.browser,
+                        value: "http://google.com?search=something",
+                        extraData: [
+                            "campaign_id": "5db9ab54b073dfb424ccfa6f",
+                            "action_id": 2,
+                            "platform": "ios",
+                            "some property": "some value",
+                            "event_type": "campaign",
+                            "language": "",
+                            "subject": "Notification title",
+                            "recipient": "051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47",
+                            "campaign_policy": "",
+                            "campaign_name": "Wassil's push",
+                            "action_name": "Unnamed mobile push",
+                            "action_type": "mobile notification",
+                            "sent_timestamp": PushNotificationsTestData.timestamp,
+                            "type": "push"
+                        ]
+                    ),
+                    expectedTrackedEvent: MockTrackingManager.TrackedEvent(
+                        type: EventType.pushOpened,
+                        data: [.properties([
+                            "action_id": JSONValue.int(2),
+                            "subject": JSONValue.string("Notification title"),
+                            "campaign_name": JSONValue.string("Wassil\'s push"),
+                            "campaign_id": JSONValue.string("5db9ab54b073dfb424ccfa6f"),
+                            "campaign_policy": JSONValue.string(""),
+                            "action_type": JSONValue.string("mobile notification"),
+                            "platform": JSONValue.string("ios"),
+                            "language": JSONValue.string(""),
+                            "recipient": JSONValue.string(
+                                "051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"
+                            ),
+                            "status": JSONValue.string("clicked"),
+                            "action_name": JSONValue.string("Unnamed mobile push"),
+                            "cta": JSONValue.string("Action 3 title"),
+                            "url": JSONValue.string("http://google.com?search=something"),
+                            "utm_source": JSONValue.string("exponea"),
+                            "utm_campaign": JSONValue.string("Testing mobile push"),
+                            "utm_medium": JSONValue.string("mobile_push_notification"),
+                            "sent_timestamp": JSONValue.double(PushNotificationsTestData.timestamp),
+                            "type": JSONValue.string("push")
+                        ] as [String: ExponeaSDK.JSONValue]), // without swift fails with typechecking took too long
+                        .timestamp(PushNotificationsTestData.timestamp)]
                     ),
                     expectedBrowserLinkOpened: URL(string: "http://google.com?search=something"),
                     expectedDeeplinkOpened: nil
@@ -376,7 +446,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                     pushManager.delegate = testCase.delegate
                     pushManager.handlePushOpenedUnsafe(
                         userInfoObject: userInfo,
-                        actionIdentifier: testCase.actionIdentifier
+                        actionIdentifier: testCase.actionIdentifier,
+                        timestamp: PushNotificationsTestData.timestamp
                     )
                     if testCase.expectedTrackedEvent != nil {
                         expect(trackingManager.trackedEvents.count).to(equal(1))
@@ -521,11 +592,13 @@ final class PushNotificationManagerSpec: QuickSpec {
             it("should save opened push for later") {
                 PushNotificationManager.storePushOpened(
                     userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredProductionNotification),
-                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier"
+                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
+                    timestamp: PushNotificationsTestData.timestamp
                 )
                 PushNotificationManager.storePushOpened(
                     userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredSilentNotification),
-                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier"
+                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
+                    timestamp: PushNotificationsTestData.timestamp
                 )
 
                 let optionalDataArray = UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
@@ -548,11 +621,13 @@ final class PushNotificationManagerSpec: QuickSpec {
             it("should process previously saved push notifications") {
                 PushNotificationManager.storePushOpened(
                     userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredProductionNotification),
-                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier"
+                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
+                    timestamp: PushNotificationsTestData.timestamp
                 )
                 PushNotificationManager.storePushOpened(
                     userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredSilentNotification),
-                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier"
+                    actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
+                    timestamp: PushNotificationsTestData.timestamp
                 )
                 createPushManager(
                     requirePushAuthorization: false,
@@ -567,6 +642,196 @@ final class PushNotificationManagerSpec: QuickSpec {
                 expect(trackingManager.trackedEvents.count).to(equal(2))
                 expect(trackingManager.trackedEvents[0].type).to(equal(ExponeaSDK.EventType.pushOpened))
                 expect(trackingManager.trackedEvents[1].type).to(equal(ExponeaSDK.EventType.pushDelivered))
+            }
+        }
+
+        describe("tracking push events in correct order") {
+            func getDelegate() -> VerifingPushNotificationManagerDelegate {
+                return VerifingPushNotificationManagerDelegate(
+                    action: ExponeaSDK.ExponeaNotificationActionType.browser,
+                    value: "http://google.com?search=something",
+                    extraData: [
+                        "campaign_id": "5db9ab54b073dfb424ccfa6f",
+                        "action_id": 2,
+                        "platform": "ios",
+                        "some property": "some value",
+                        "event_type": "campaign",
+                        "subject": "Notification title",
+                        "recipient": "051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47",
+                        "campaign_name": "My push",
+                        "action_name": "Unnamed mobile push",
+                        "action_type": "mobile notification",
+                        "sent_timestamp": PushNotificationsTestData.timestamp,
+                        "type": "push"
+                    ]
+                )
+            }
+
+            func getNotificationRequest(sentTimestamp: Double?, deliveredTimestamp: Double) -> UNNotificationRequest {
+                let content = UNNotificationContent().mutableCopy() as? UNMutableNotificationContent
+
+                var userInfo = [String: Any]()
+                var attributes = [String: Any]()
+                var urlParams = [String: Any]()
+
+                urlParams["utm_campaign"] = "Testing mobile push"
+                urlParams["utm_medium"] = "mobile_push_notification"
+                urlParams["utm_source"] = "exponea"
+
+                attributes["subject"] = "Notification title"
+                attributes["action_name"] = "Unnamed mobile push"
+                attributes["event_type"] = "campaign"
+                attributes["action_id"] = 2
+                attributes["action_type"] = "mobile notification"
+                attributes["recipient"] = "051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"
+                attributes["campaign_id"] = "5db9ab54b073dfb424ccfa6f"
+                attributes["campaign_name"] = "My push"
+                attributes["some property"] = "some value"
+                attributes["platform"] = "ios"
+                if sentTimestamp != nil {
+                    attributes["sent_timestamp"] = sentTimestamp
+                    attributes["type"] = "push"
+                }
+                attributes["timestamp"] = deliveredTimestamp
+                userInfo["attributes"] = attributes
+                userInfo["url_params"] = urlParams
+                userInfo["source"] = "xnpe_platform"
+
+                content?.userInfo = userInfo
+                return UNNotificationRequest(identifier: "notification",
+                                             content: content!,
+                                             trigger: nil)
+            }
+
+            func saveConfiguration() {
+                try! Configuration(
+                    projectToken: "mock-project-token",
+                    projectMapping: nil,
+                    authorization: .token("mock-token"),
+                    baseUrl: nil,
+                    appGroup: "mock-app-group",
+                    defaultProperties: nil
+                ).saveToUserDefaults()
+            }
+
+            func saveCustomerIds() {
+                guard let userDefaults = UserDefaults(suiteName: "mock-app-group"),
+                    let data = try? JSONEncoder().encode(["uuid": JSONValue.string("mock-uuid")]) else {
+                    return
+                }
+                userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
+            }
+            let testCases: [NotificationEventsOrderTestCase] = [
+                NotificationEventsOrderTestCase(
+                    name: "sent -> delivered -> opened",
+                    actionIdentifier: "EXPONEA_ACTION_APP_2",
+                    sentTimestamp: PushNotificationsTestData.timestamp,
+                    deliveredTimestamp: PushNotificationsTestData.timestamp + 4,
+                    openedTimestamp: PushNotificationsTestData.timestamp + 8
+                ),
+                NotificationEventsOrderTestCase(
+                    name: "sent -> opened -> delivered",
+                    actionIdentifier: "EXPONEA_ACTION_APP_2",
+                    sentTimestamp: PushNotificationsTestData.timestamp,
+                    deliveredTimestamp: PushNotificationsTestData.timestamp + 8,
+                    openedTimestamp: PushNotificationsTestData.timestamp + 4
+                ),
+                NotificationEventsOrderTestCase(
+                    name: "delivered -> sent -> opened",
+                    actionIdentifier: "EXPONEA_ACTION_APP_2",
+                    sentTimestamp: PushNotificationsTestData.timestamp + 4,
+                    deliveredTimestamp: PushNotificationsTestData.timestamp,
+                    openedTimestamp: PushNotificationsTestData.timestamp + 8
+                ),
+                NotificationEventsOrderTestCase(
+                    name: "delivered -> opened -> sent",
+                    actionIdentifier: "EXPONEA_ACTION_APP_2",
+                    sentTimestamp: PushNotificationsTestData.timestamp + 8,
+                    deliveredTimestamp: PushNotificationsTestData.timestamp,
+                    openedTimestamp: PushNotificationsTestData.timestamp + 4
+                ),
+                NotificationEventsOrderTestCase(
+                    name: "opened -> sent -> delivered",
+                    actionIdentifier: "EXPONEA_ACTION_APP_2",
+                    sentTimestamp: PushNotificationsTestData.timestamp + 4,
+                    deliveredTimestamp: PushNotificationsTestData.timestamp + 8,
+                    openedTimestamp: PushNotificationsTestData.timestamp
+                ),
+                NotificationEventsOrderTestCase(
+                    name: "opened -> delivered -> sent",
+                    actionIdentifier: "EXPONEA_ACTION_APP_2",
+                    sentTimestamp: PushNotificationsTestData.timestamp + 8,
+                    deliveredTimestamp: PushNotificationsTestData.timestamp + 4,
+                    openedTimestamp: PushNotificationsTestData.timestamp
+                ),
+                NotificationEventsOrderTestCase(
+                    name: "opened -> delivered when sent is missing",
+                    actionIdentifier: "EXPONEA_ACTION_APP_2",
+                    sentTimestamp: nil,
+                    deliveredTimestamp: PushNotificationsTestData.timestamp + 4,
+                    openedTimestamp: PushNotificationsTestData.timestamp
+                )
+                ,
+                NotificationEventsOrderTestCase(
+                    name: "delivered -> opened when sent is missing",
+                    actionIdentifier: "EXPONEA_ACTION_APP_2",
+                    sentTimestamp: nil,
+                    deliveredTimestamp: PushNotificationsTestData.timestamp,
+                    openedTimestamp: PushNotificationsTestData.timestamp + 4
+                )
+            ]
+
+            testCases.forEach { testCase in
+                it("should track push events in correct order when \(testCase.name)") {
+                    saveConfiguration()
+                    saveCustomerIds()
+
+                    let request = getNotificationRequest(
+                        sentTimestamp: testCase.sentTimestamp,
+                        deliveredTimestamp: testCase.deliveredTimestamp)
+
+                    let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                    var actualDeliveredTimestamp: Double?
+
+                    waitUntil { done in
+                        NetworkStubbing.stubNetwork(
+                            forProjectToken: "mock-project-token",
+                            withStatusCode: 200,
+                            withDelay: 0,
+                            withResponseData: nil,
+                            withRequestHook: { request in
+                                let payload = try! JSONSerialization.jsonObject(
+                                    with: request.httpBodyStream!.readFully(),
+                                    options: []
+                                ) as? NSDictionary ?? NSDictionary()
+                                let properties = payload["properties"] as? NSDictionary
+                                let status = properties?["status"] as? String
+                                expect(status).to(equal("delivered"))
+                                actualDeliveredTimestamp = payload["timestamp"] as? Double
+                                NetworkStubbing.unstubNetwork()
+                                done()
+                        })
+                        service.process(request: request) { _ in
+                        }
+                    }
+
+                    pushManager.delegate = getDelegate()
+                    pushManager.handlePushOpenedUnsafe(
+                        userInfoObject: service.bestAttemptContent?.userInfo as AnyObject,
+                        actionIdentifier: testCase.actionIdentifier,
+                        timestamp: testCase.openedTimestamp
+                    )
+
+                    expect(trackingManager.trackedEvents.count).to(equal(1))
+                    let actualOpenedTimestamp = trackingManager.trackedEvents[0].data?.latestTimestamp
+
+                    expect(actualDeliveredTimestamp).notTo(beNil())
+                    expect(actualOpenedTimestamp).notTo(beNil())
+                    if testCase.sentTimestamp != nil {
+                        expect(testCase.sentTimestamp).to(beLessThan(actualDeliveredTimestamp))
+                    }
+                    expect(actualDeliveredTimestamp).to(beLessThan(actualOpenedTimestamp))
+                }
             }
         }
     }

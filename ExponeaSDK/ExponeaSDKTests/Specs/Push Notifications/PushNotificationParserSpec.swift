@@ -37,12 +37,14 @@ class PushNotificationParserSpec: QuickSpec {
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
-                    eventData: [.properties([
-                        "status": .string("clicked"),
-                        "platform": .string("ios"),
-                        "cta": .string("notification"),
-                        "url": .string("app")
-                    ])],
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("notification"),
+                            "url": .string("app")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: nil
                 )
             ),
@@ -56,12 +58,14 @@ class PushNotificationParserSpec: QuickSpec {
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
-                    eventData: [.properties([
-                        "status": .string("clicked"),
-                        "platform": .string("ios"),
-                        "cta": .string("notification"),
-                        "url": .string("app")
-                    ])],
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("notification"),
+                            "url": .string("app")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: nil
                 )
             ),
@@ -75,12 +79,14 @@ class PushNotificationParserSpec: QuickSpec {
                     actionType: .deeplink,
                     actionValue: "some_url",
                     eventType: .pushOpened,
-                    eventData: [.properties([
-                        "status": .string("clicked"),
-                        "platform": .string("ios"),
-                        "cta": .string("notification"),
-                        "url": .string("some_url")
-                    ])],
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("notification"),
+                            "url": .string("some_url")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: nil
                 )
             ),
@@ -94,12 +100,14 @@ class PushNotificationParserSpec: QuickSpec {
                     actionType: .browser,
                     actionValue: "http://google.com",
                     eventType: .pushOpened,
-                    eventData: [.properties([
-                        "status": .string("clicked"),
-                        "platform": .string("ios"),
-                        "cta": .string("notification"),
-                        "url": .string("http://google.com")
-                    ])],
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("notification"),
+                            "url": .string("http://google.com")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: nil
                 )
             ),
@@ -113,12 +121,14 @@ class PushNotificationParserSpec: QuickSpec {
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
-                    eventData: [.properties([
-                        "status": .string("clicked"),
-                        "platform": .string("ios"),
-                        "cta": .string("notification"),
-                        "url": .string("app")
-                    ])],
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("notification"),
+                            "url": .string("app")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: nil
                 )
             ),
@@ -132,12 +142,14 @@ class PushNotificationParserSpec: QuickSpec {
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
-                    eventData: [.properties([
-                        "status": .string("clicked"),
-                        "platform": .string("ios"),
-                        "cta": .string("Action 1 title"),
-                        "url": .string("app")
-                    ])],
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("Action 1 title"),
+                            "url": .string("app")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: nil
                 )
             ),
@@ -151,12 +163,14 @@ class PushNotificationParserSpec: QuickSpec {
                     actionType: .deeplink,
                     actionValue: "app://deeplink",
                     eventType: .pushOpened,
-                    eventData: [.properties([
-                        "status": .string("clicked"),
-                        "platform": .string("ios"),
-                        "cta": .string("Action 2 title"),
-                        "url": .string("app://deeplink")
-                    ])],
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("Action 2 title"),
+                            "url": .string("app://deeplink")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: nil
                 )
             ),
@@ -170,12 +184,14 @@ class PushNotificationParserSpec: QuickSpec {
                     actionType: .browser,
                     actionValue: "http://google.com",
                     eventType: .pushOpened,
-                    eventData: [.properties([
-                        "status": .string("clicked"),
-                        "platform": .string("ios"),
-                        "cta": .string("Action 3 title"),
-                        "url": .string("http://google.com")
-                    ])],
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("Action 3 title"),
+                            "url": .string("http://google.com")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: nil
                 )
             ),
@@ -189,7 +205,8 @@ class PushNotificationParserSpec: QuickSpec {
                     actionType: .openApp,
                     actionValue: nil,
                     eventType: .pushOpened,
-                    eventData: [.properties(
+                    eventData: [
+                        .properties(
                         [
                             "status": .string("clicked"),
                             "platform": .string("ios"),
@@ -198,8 +215,8 @@ class PushNotificationParserSpec: QuickSpec {
                             "campaign_id": .string("some campaign id"),
                             "campaign_name": .string("some campaign name"),
                             "action_id": .int(123)
-                        ]
-                    )],
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: [
                         "campaign_id": "some campaign id",
                         "campaign_name": "some campaign name",
@@ -226,7 +243,8 @@ class PushNotificationParserSpec: QuickSpec {
                             "platform": .string("ios"),
                             "cta": .string("notification"),
                             "url": .string("app")
-                        ])
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)
                     ],
                     extraData: [
                         "event_type": "custom push opened"
@@ -254,7 +272,8 @@ class PushNotificationParserSpec: QuickSpec {
                     ) as AnyObject : nil
                 let parsedData = PushNotificationParser.parsePushOpened(
                     userInfoObject: userInfo,
-                    actionIdentifier: testCase.actionIdentifier
+                    actionIdentifier: testCase.actionIdentifier,
+                    timestamp: PushNotificationsTestData.timestamp
                 )
                 if testCase.expected == nil {
                     expect(parsedData).to(beNil())

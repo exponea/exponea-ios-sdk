@@ -30,7 +30,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             it("should record notification into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 service.saveNotificationForLaterTracking(
-                    request: mock_notification_request(["attributes": ["campaign_name": "mock campaign name"]])
+                    notification: NotificationData(campaignName: "mock campaign name")
                 )
 
                 let delivered = self.getRecordedNotifications()!
@@ -42,7 +42,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             it("should record notification without tracking info into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 service.saveNotificationForLaterTracking(
-                    request: mock_notification_request(["something": "some value"])
+                    notification: NotificationData()
                 )
                 let delivered = self.getRecordedNotifications()!
                 expect(delivered.count).to(equal(1))
@@ -51,13 +51,13 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             it("should record multiple notifications into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 service.saveNotificationForLaterTracking(
-                    request: mock_notification_request(["attributes": ["campaign_name": "mock campaign name"]])
+                    notification: NotificationData(campaignName: "mock campaign name")
                 )
                 service.saveNotificationForLaterTracking(
-                    request: mock_notification_request(["attributes": ["campaign_name": "second mock campaign name"]])
+                    notification: NotificationData(campaignName: "second mock campaign name")
                 )
                 service.saveNotificationForLaterTracking(
-                    request: mock_notification_request(["attributes": ["campaign_name": "third mock campaign name"]])
+                    notification: NotificationData(campaignName: "third mock campaign name")
                 )
 
                 let delivered = self.getRecordedNotifications()!
