@@ -813,14 +813,13 @@ final class PushNotificationManagerSpec: QuickSpec {
                         })
                         service.process(request: request) { _ in
                         }
+                        pushManager.delegate = getDelegate()
+                        pushManager.handlePushOpenedUnsafe(
+                            userInfoObject: service.bestAttemptContent?.userInfo as AnyObject,
+                            actionIdentifier: testCase.actionIdentifier,
+                            timestamp: testCase.openedTimestamp
+                        )
                     }
-
-                    pushManager.delegate = getDelegate()
-                    pushManager.handlePushOpenedUnsafe(
-                        userInfoObject: service.bestAttemptContent?.userInfo as AnyObject,
-                        actionIdentifier: testCase.actionIdentifier,
-                        timestamp: testCase.openedTimestamp
-                    )
 
                     expect(trackingManager.trackedEvents.count).to(equal(1))
                     let actualOpenedTimestamp = trackingManager.trackedEvents[0].data?.latestTimestamp
