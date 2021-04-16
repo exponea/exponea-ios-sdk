@@ -235,7 +235,12 @@ extension DatabaseManager: DatabaseManagerType {
             trackEvent.customer = currentCustomerManagedObject
 
             // Always specify a timestamp
-            trackEvent.timestamp = data.latestTimestamp ?? Date().timeIntervalSince1970
+            if trackEvent.eventType == Constants.EventTypes.pushOpen
+                || trackEvent.eventType == Constants.EventTypes.pushDelivered {
+                trackEvent.timestamp = data.latestTimestamp ?? Date().timeIntervalSince1970
+            } else {
+                trackEvent.timestamp = Date().timeIntervalSince1970
+            }
             trackEvent.baseUrl = project.baseUrl
             trackEvent.projectToken = project.projectToken
             trackEvent.authorizationString = project.authorization.encode()

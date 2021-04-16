@@ -43,8 +43,11 @@ public class ExponeaNotificationService {
         self.request = request
         self.contentHandler = contentHandler
 
-        let deliveredTimestamp = trackDeliveredNotification()
-        createContent(deliveredTimestamp: deliveredTimestamp)
+        if let notificationData = prepareNotificationData(request: request),
+           let appGroup = appGroup {
+            trackDeliveredNotification(appGroup: appGroup, notificationData: notificationData)
+            createContent(deliveredTimestamp: notificationData.timestamp)
+        }
     }
 
     public func serviceExtensionTimeWillExpire() {
@@ -109,31 +112,8 @@ public class ExponeaNotificationService {
         contentCreated = true
     }
 
-    func trackDeliveredNotification() -> Double? {
-        guard let appGroup = appGroup,
-              let request = request
-        else {
-            notificationTracked = true
-            return nil
-        }
-        var notification: NotificationData?
+    func trackDeliveredNotification(appGroup: String, notificationData: NotificationData) {
         do {
-            guard let userInfo = (request.content.mutableCopy() as? UNMutableNotificationContent)?.userInfo else {
-                throw DeliveredNotificationTrackerError.unableToGetUserInfo
-            }
-
-            var notificationData = NotificationData.deserialize(
-                attributes: userInfo["attributes"] as? [String: Any] ?? [:],
-                campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
-            ) ?? NotificationData()
-
-            let timestamp = notificationData.timestamp
-            let sentTimestamp = notificationData.sentTimestamp ?? 0
-            let deliveredTimestamp = timestamp <= sentTimestamp ? sentTimestamp + 1 : timestamp
-
-            notificationData.timestamp = deliveredTimestamp
-
-            notification = notificationData
             try DeliveredNotificationTracker(appGroup: appGroup, notificationData: notificationData)
                 .track(
                     onSuccess: {
@@ -144,16 +124,38 @@ public class ExponeaNotificationService {
                         self.notificationTracked = true
                     }
                 )
-            return deliveredTimestamp
         } catch {
             Exponea.logger.log(
                 .error,
                 message: "Failed to track delivered push notification: \(error.localizedDescription)"
             )
-            self.saveNotificationForLaterTracking(notification: notification)
+            self.saveNotificationForLaterTracking(notification: notificationData)
             self.notificationTracked = true
-            return notification?.timestamp
         }
+    }
+
+    func prepareNotificationData(request: UNNotificationRequest) -> NotificationData? {
+        guard let userInfo = (request.content.mutableCopy() as? UNMutableNotificationContent)?.userInfo else {
+            Exponea.logger.log(
+                .error,
+                message: "Failed to prepare data for delivered push notification:" +
+                    " Unable to get user info object from notification."
+            )
+            self.notificationTracked = true
+            return nil
+        }
+
+        var notificationData = NotificationData.deserialize(
+            attributes: userInfo["attributes"] as? [String: Any] ?? [:],
+            campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
+        ) ?? NotificationData()
+
+        let timestamp = notificationData.timestamp
+        let sentTimestamp = notificationData.sentTimestamp ?? 0
+        let deliveredTimestamp = timestamp <= sentTimestamp ? sentTimestamp + 1 : timestamp
+
+        notificationData.timestamp = deliveredTimestamp
+        return notificationData
     }
 
     func checkDone() {
