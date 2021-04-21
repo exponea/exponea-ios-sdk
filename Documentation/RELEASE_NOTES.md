@@ -1,4 +1,14 @@
 ## Release Notes
+## Release Notes for 2.11.0
+#### April 21, 2021
+* Features
+  * Added Swift Package Manager support.
+  * Push notification events are now chronologically synced (event with status `sent` occurs before event with status `delivered`)
+* Bug Fixes
+  * Fixed: Configuration of base URL works with and without the trailing slash [Issue #24](https://github.com/exponea/exponea-ios-sdk/issues/24).
+  * Fixed: In-app message with A/B testing now correctly handles the control group.
+
+
 ## Release Notes for 2.10.0
 #### January 07, 2021
 * Features
