@@ -39,8 +39,17 @@ class AuthenticationViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        tokenField.attributedPlaceholder = makePlaceholderText(text: tokenField.placeholder)
+        authField.attributedPlaceholder = makePlaceholderText(text: authField.placeholder)
+        urlField.attributedPlaceholder = makePlaceholderText(text: urlField.placeholder)
         tokenUpdated()
+    }
+
+    private func makePlaceholderText(text: String?) -> NSAttributedString {
+        return NSAttributedString(
+            string: text ?? "",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
+        )
     }
 
     @IBAction func startPressed() {
