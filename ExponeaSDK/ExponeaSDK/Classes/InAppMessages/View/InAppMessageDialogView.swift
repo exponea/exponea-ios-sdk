@@ -350,6 +350,6 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
 // recognizes touches outside of the dialog
 extension InAppMessageDialogView: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        return touch.view?.isDescendant(of: self.backgroundView) == false
+        return touch.view?.isDescendant(of: self.view) == false
     }
 }
