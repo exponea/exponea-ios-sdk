@@ -107,7 +107,7 @@ public struct Configuration: Codable, Equatable {
         self.defaultProperties = defaultProperties
         self.sessionTimeout = sessionTimeout
         self.automaticSessionTracking = automaticSessionTracking
-        self.automaticPushNotificationTracking = automaticPushNotificationTracking
+        self.automaticPushNotificationTracking = true
         self.requirePushAuthorization = requirePushAuthorization
         self.tokenTrackFrequency = tokenTrackFrequency
         self.appGroup = appGroup

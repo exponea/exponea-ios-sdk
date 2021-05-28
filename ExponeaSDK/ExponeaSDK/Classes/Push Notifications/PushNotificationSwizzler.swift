@@ -51,8 +51,10 @@ final class PushNotificationSwizzler {
     }
 
     func addAutomaticPushTracking() {
-        swizzleTokenRegistrationTracking()
-        swizzleNotificationReceived()
+        DispatchQueue.main.async {
+            swizzleTokenRegistrationTracking()
+            swizzleNotificationReceived()
+        }
     }
 
     func removeAutomaticPushTracking() {
