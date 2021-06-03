@@ -1,5 +1,8 @@
 ## 🔍 Tracking
-Exponea SDK allows you to track events that occur while using the app and add properties of your customer. When SDK is first initialized we generate a cookie for the customer that will be used for all the tracking. You can retrieve that cookie using `Exponea.shared.customerCookie`.
+Exponea SDK allows you to track events that occur while using the app and add properties of your customer. 
+Please, read [Apple User Privacy and Data Use](https://docs.exponea.com/docs/apple-user-privacy-and-data-use) and [iOS 14.5 privacy policy and Exponea iOS SDK](https://docs.exponea.com/docs/ios-145-privacy-policy-and-exponea-ios-sdk) before using tracking capability. 
+
+When SDK is first initialized we generate a cookie for the customer that will be used for all the tracking. You can retrieve that cookie using `Exponea.shared.customerCookie`.
 
 > If you need to reset the tracking and start fresh with a new user, you can use [Anonymize](./ANONYMIZE.md) functionality.
 
