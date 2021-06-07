@@ -15,7 +15,7 @@ target 'ExponeaSDKTests' do
 
     # Pods for testing
     pod 'Quick'
-    pod 'Nimble', '~>9.0.0'
+    pod 'Nimble', '~>9.2.0'
     pod 'SwiftLint'
     pod 'Mockingjay'
   # end
