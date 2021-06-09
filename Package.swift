@@ -23,22 +23,29 @@ let package = Package(
         .target(
             name: "ExponeaSDK",
             dependencies: ["ExponeaSDKShared", "ExponeaSDKObjC"],
-            path: "ExponeaSDK/ExponeaSDK"),
+            path: "ExponeaSDK/ExponeaSDK",
+            exclude: ["Supporting Files/Info.plist"]
+        ),
         // Notification extension library
         .target(
             name: "ExponeaSDK-Notifications",
             dependencies: ["ExponeaSDKShared"],
-            path: "ExponeaSDK/ExponeaSDK-Notifications"),
+            path: "ExponeaSDK/ExponeaSDK-Notifications",
+            exclude: ["Supporting Files/Info.plist"]
+        ),
         // Code shared between ExponeaSDK and ExponeaSDK-Notifications
         .target(
             name: "ExponeaSDKShared",
             dependencies: [],
-            path: "ExponeaSDK/ExponeaSDKShared"),
+            path: "ExponeaSDK/ExponeaSDKShared",
+            exclude: ["Supporting Files/Info.plist"]
+        ),
         // ObjC code required by main library
         .target(
             name: "ExponeaSDKObjC",
             dependencies: [],
             path: "ExponeaSDK/ExponeaSDKObjC",
+            exclude: ["Info.plist"],
             publicHeadersPath: ".")
     ]
 )
