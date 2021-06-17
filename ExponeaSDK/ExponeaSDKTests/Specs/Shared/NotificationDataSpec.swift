@@ -34,25 +34,26 @@ class NotificationDataSpec: QuickSpec {
                 name: "with extra fields",
                 attributes: ["event_type": "some event type", "some_field": "some value"]  as [String: Any],
                 campaignData: [:],
-                expectedNotificationData: NotificationData(eventType: "some event type"),
-                expectedProperties: ["platform": .string("ios")]
-            ),
-            TestCase(
-                name: "and ignore incorrect data types",
-                attributes: ["event_type": 12345, "actionId": "some action id", "timestamp": "invalid"],
-                campaignData: [:],
-                expectedNotificationData: NotificationData(),
-                expectedProperties: ["platform": .string("ios")]
+                expectedNotificationData:
+                    NotificationData(
+                        attributes: [
+                            "event_type": .string("some event type"),
+                            "some_field": .string("some value")
+                        ]
+                    ),
+                expectedProperties: ["platform": .string("ios"), "some_field": .string("some value")]
             ),
             TestCase(
                 name: "with few properties",
-                attributes: ["event_type": "some event type", "actionId": 123, "platform": "ios", "language": "en"],
+                attributes: ["event_type": "some event type", "action_id": 123, "platform": "ios", "language": "en"],
                 campaignData: ["utm_source": "some source"],
                 expectedNotificationData: NotificationData(
-                    eventType: "some event type",
-                    actionId: 123,
-                    platform: "ios",
-                    language: "en",
+                    attributes: [
+                        "event_type": .string("some event type"),
+                        "action_id": .int(123),
+                        "platform": .string("ios"),
+                        "language": .string("en")
+                    ],
                     campaignData: CampaignData(source: "some source")
                 ),
                 expectedProperties: [
@@ -86,17 +87,18 @@ class NotificationDataSpec: QuickSpec {
                     "xnpe_cmp": "mock whatever this is"
                 ],
                 expectedNotificationData: NotificationData(
-                    eventType: "mock event type",
-                    campaignId: "mock campaign id",
-                    campaignName: "mock campaign name",
-                    actionId: 1234,
-                    actionName: "mock action name",
-                    actionType: "mock action type",
-                    campaignPolicy: "mock campaign policy",
-                    platform: "mock platform",
-                    language: "mock language",
-                    recipient: "mock recipient",
-                    subject: "mock title",
+                    attributes: [
+                        "event_type": .string("mock event type"),
+                        "campaign_id": .string("mock campaign id"),
+                        "campaign_name": .string("mock campaign name"),
+                        "action_id": .int(1234),
+                        "action_name": .string("mock action name"),
+                        "action_type": .string("mock action type"),
+                        "campaign_policy": .string("mock campaign policy"),
+                        "platform": .string("mock platform"),
+                        "language": .string("mock language"),
+                        "recipient": .string("mock recipient"),
+                        "subject": .string("mock title")],
                     campaignData: CampaignData(
                         source: "mock source",
                         campaign: "mock campaign",
@@ -123,6 +125,69 @@ class NotificationDataSpec: QuickSpec {
                     "utm_medium": .string("mock medium"),
                     "utm_term": .string("mock term"),
                     "xnpe_cmp": .string("mock whatever this is")
+                ]
+            ),
+            TestCase(
+                name: "with nested properties",
+                attributes: [
+                    "first_level_attribute": "some value",
+                    "array_attribute": ["a", "r", "r", "a", "y"],
+                    "dictionary_attribute": [
+                        "second_level_attribute": "second level value",
+                        "number_attribute": 43436,
+                        "nested_array": [1, 2, 3],
+                        "nested_dictionary": ["key1": "value1", "key2": 3524.545]
+                    ]
+                ],
+                campaignData: [
+                    "utm_source": "mock source",
+                    "utm_campaign": "mock campaign",
+                    "utm_content": "mock content",
+                    "utm_medium": "mock medium",
+                    "utm_term": "mock term",
+                    "xnpe_cmp": "mock whatever this is"
+                ],
+                expectedNotificationData: NotificationData(
+                    attributes: [
+                        "first_level_attribute": .string("some value"),
+                        "array_attribute": .array([.string("a"),
+                                                   .string("r"),
+                                                   .string("r"),
+                                                   .string("a"),
+                                                   .string("y")
+                        ]),
+                        "dictionary_attribute": .dictionary([
+                            "second_level_attribute": .string("second level value"),
+                            "number_attribute": .int(43436),
+                            "nested_array": .array([.int(1), .int(2), .int(3)]),
+                            "nested_dictionary": .dictionary(["key1": .string("value1"), "key2": .double(3524.545)])
+                        ])
+                    ],
+                    campaignData: CampaignData(
+                        source: "mock source",
+                        campaign: "mock campaign",
+                        content: "mock content",
+                        medium: "mock medium",
+                        term: "mock term",
+                        payload: "mock whatever this is"
+                    )
+                ),
+                expectedProperties: [
+                    "first_level_attribute": .string("some value"),
+                    "array_attribute": .array([.string("a"), .string("r"), .string("r"), .string("a"), .string("y")]),
+                    "dictionary_attribute": .dictionary([
+                        "second_level_attribute": .string("second level value"),
+                        "number_attribute": .int(43436),
+                        "nested_array": .array([.int(1), .int(2), .int(3)]),
+                        "nested_dictionary": .dictionary(["key1": .string("value1"), "key2": .double(3524.545)])
+                    ]),
+                    "utm_source": .string("mock source"),
+                    "utm_campaign": .string("mock campaign"),
+                    "utm_content": .string("mock content"),
+                    "utm_medium": .string("mock medium"),
+                    "utm_term": .string("mock term"),
+                    "xnpe_cmp": .string("mock whatever this is"),
+                    "platform": .string("ios")
                 ]
             )
         ]
@@ -163,17 +228,7 @@ class NotificationDataSpec: QuickSpec {
         }
 
         func checkFieldsExceptTimestamp(expected: NotificationData, actual: NotificationData) {
-            expect(actual.eventType).to(expected.eventType == nil ? beNil() : equal(expected.eventType))
-            expect(actual.campaignId).to(expected.campaignId == nil ? beNil() : equal(expected.campaignId))
-            expect(actual.campaignName).to(expected.campaignName == nil ? beNil() : equal(expected.campaignName))
-            expect(actual.actionId).to(expected.actionId == nil ? beNil() : equal(expected.actionId))
-            expect(actual.actionName).to(expected.actionName == nil ? beNil() : equal(expected.actionName))
-            expect(actual.actionType).to(expected.actionType == nil ? beNil() : equal(expected.actionType))
-            expect(actual.campaignPolicy).to(expected.campaignPolicy == nil ? beNil() : equal(expected.campaignPolicy))
-            expect(actual.platform).to(expected.platform == nil ? beNil() : equal(expected.platform))
-            expect(actual.language).to(expected.language == nil ? beNil() : equal(expected.language))
-            expect(actual.recipient).to(expected.recipient == nil ? beNil() : equal(expected.recipient))
-            expect(actual.subject).to(expected.subject == nil ? beNil() : equal(expected.subject))
+            expect(actual.attributes).to(equal(expected.attributes))
             expect(actual.campaignData).to(equal(expected.campaignData))
         }
     }

@@ -214,7 +214,9 @@ class PushNotificationParserSpec: QuickSpec {
                             "url": .string("app"),
                             "campaign_id": .string("some campaign id"),
                             "campaign_name": .string("some campaign name"),
-                            "action_id": .int(123)
+                            "action_id": .int(123),
+                            "something_else": .string("some other value"),
+                            "something": .string("some value")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp)],
                     extraData: [
@@ -262,6 +264,88 @@ class PushNotificationParserSpec: QuickSpec {
                 userInfoJson: PushNotificationsTestData().deliveredSilentNotification,
                 actionIdentifier: nil,
                 expected: PushNotificationsTestData().openedSilentNotificationData
+            ),
+            TestCase(
+                name: "nested attributes notification",
+                userInfoJson: PushNotificationsTestData().notificationWithNestedAttributes,
+                actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
+                expected: PushOpenedData(
+                    silent: false,
+                    campaignData: CampaignData(),
+                    actionType: .openApp,
+                    actionValue: nil,
+                    eventType: .pushOpened,
+                    eventData: [
+                        .properties([
+                            "first_level_attribute": .string("some value"),
+                            "array_attribute": .array([.string("a"),
+                                                       .string("r"),
+                                                       .string("r"),
+                                                       .string("a"),
+                                                       .string("y")]),
+                            "dictionary_attribute": .dictionary([
+                                "second_level_attribute": .string("second level value"),
+                                "number_attribute": .int(43436),
+                                "nested_array": .array([.int(1), .int(2), .int(3)]),
+                                "nested_dictionary": .dictionary(["key1": .string("value1"), "key2": .double(3524.545)])
+                            ]),
+                            "product_list": .array([
+                                .dictionary([
+                                "item_id": .string("1234"),
+                                "item_quantity": .int(3)
+                            ]), .dictionary([
+                                "item_id": .string("2345"),
+                                "item_quantity": .int(2)
+                            ]), .dictionary([
+                                "item_id": .string("6789"),
+                                "item_quantity": .int(1)
+                            ])]),
+                            "product_ids": .array([.string("1234"), .string("2345"), .string("6789")]),
+                            "push_content": .dictionary([
+                                "title": .string("Hey!"),
+                                "actions": .array([
+                                    .dictionary([
+                                        "title": .string("Action 1 title"),
+                                        "action": .string("app")
+                                ])]),
+                                "message": .string("We have a great deal for you today, don't miss it!")
+                            ]),
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": JSONValue.string("notification"),
+                            "url": JSONValue.string("app")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
+                    extraData: [
+                        "first_level_attribute": "some value",
+                        "array_attribute": ["a", "r", "r", "a", "y"],
+                        "dictionary_attribute": [
+                            "second_level_attribute": "second level value",
+                            "number_attribute": 43436,
+                            "nested_array": [1, 2, 3],
+                            "nested_dictionary": ["key1": "value1", "key2": 3524.545]
+                        ],
+                        "product_list": [[
+                            "item_id": "1234",
+                            "item_quantity": 3
+                        ], [
+                            "item_id": "2345",
+                            "item_quantity": 2
+                        ], [
+                            "item_id": "6789",
+                            "item_quantity": 1
+                        ]],
+                        "product_ids": ["1234", "2345", "6789"],
+                        "push_content": [
+                            "title": "Hey!",
+                            "actions": [[
+                                "title": "Action 1 title",
+                                "action": "app"
+                            ]],
+                            "message": "We have a great deal for you today, don't miss it!"
+                        ]
+                    ]
+                )
             )
         ]
         testCases.forEach { testCase in

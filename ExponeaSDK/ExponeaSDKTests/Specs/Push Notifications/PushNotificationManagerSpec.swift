@@ -214,6 +214,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     "action_name": .string("Unnamed mobile push"),
                                     "action_id": .int(2),
                                     "platform": .string("ios"),
+                                    "some property": .string("some value"),
                                     "recipient":
                                         .string("051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"),
                                     "campaign_id": .string("5db9ab54b073dfb424ccfa6f"),
@@ -365,6 +366,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "campaign_policy": JSONValue.string(""),
                             "action_type": JSONValue.string("mobile notification"),
                             "platform": JSONValue.string("ios"),
+                            "some property": JSONValue.string("some value"),
                             "language": JSONValue.string(""),
                             "recipient": JSONValue.string(
                                 "051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"
@@ -416,6 +418,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "campaign_policy": JSONValue.string(""),
                             "action_type": JSONValue.string("mobile notification"),
                             "platform": JSONValue.string("ios"),
+                            "some property": JSONValue.string("some value"),
                             "language": JSONValue.string(""),
                             "recipient": JSONValue.string(
                                 "051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"

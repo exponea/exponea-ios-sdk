@@ -24,16 +24,16 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                     defaultProperties: nil
                 )
                 let notificationData = NotificationData(
-                    campaignId: "mock campaign id",
-                    campaignName: "mock campaign name",
-                    actionId: 1234,
-                    actionName: "mock action name",
-                    actionType: "mock action type",
-                    campaignPolicy: "mock campaign policy",
-                    platform: "mock platform",
-                    language: "mock language",
-                    recipient: "mock recipient",
-                    subject: "mock title",
+                    attributes: ["campaign_id": .string("mock campaign id"),
+                    "campaign_name": .string("mock campaign name"),
+                    "action_id": .int(1234),
+                    "action_name": .string("mock action name"),
+                    "action_type": .string("mock action type"),
+                    "campaign_policy": .string("mock campaign policy"),
+                    "platform": .string("mock platform"),
+                    "language": .string("mock language"),
+                    "recipient": .string("mock recipient"),
+                    "subject": .string("mock title")],
                     campaignData: CampaignData(source: "mock source", campaign: "mock campaign")
                 )
                 expect(
@@ -112,7 +112,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                     defaultProperties: nil
                 )
                 let notificationData = NotificationData(
-                    eventType: "custom-event-type"
+                    attributes: ["event_type": .string("custom-event-type")]
                 )
                 expect(
                     DeliveredNotificationTracker.generateTrackingObjects(

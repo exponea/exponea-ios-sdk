@@ -30,7 +30,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             it("should record notification into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 service.saveNotificationForLaterTracking(
-                    notification: NotificationData(campaignName: "mock campaign name")
+                    notification: NotificationData( attributes: ["campaign_name": .string("mock campaign name")])
                 )
 
                 let delivered = self.getRecordedNotifications()!
@@ -51,13 +51,13 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             it("should record multiple notifications into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 service.saveNotificationForLaterTracking(
-                    notification: NotificationData(campaignName: "mock campaign name")
+                    notification: NotificationData( attributes: ["campaign_name": .string("mock campaign name")])
                 )
                 service.saveNotificationForLaterTracking(
-                    notification: NotificationData(campaignName: "second mock campaign name")
+                    notification: NotificationData( attributes: ["campaign_name": .string("second mock campaign name")])
                 )
                 service.saveNotificationForLaterTracking(
-                    notification: NotificationData(campaignName: "third mock campaign name")
+                    notification: NotificationData( attributes: ["campaign_name": .string("third mock campaign name")])
                 )
 
                 let delivered = self.getRecordedNotifications()!

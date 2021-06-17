@@ -6,14 +6,14 @@ PODS:
     - URITemplate (~> 2.0)
   - Mockingjay/XCTest (2.0.1):
     - Mockingjay/Core
-  - Nimble (9.0.0)
+  - Nimble (9.2.0)
   - Quick (3.0.0)
   - SwiftLint (0.41.0)
   - URITemplate (2.0.3)
 
 DEPENDENCIES:
   - Mockingjay
-  - Nimble (~> 9.0.0)
+  - Nimble (~> 9.2.0)
   - Quick
   - SwiftLint
 
@@ -27,11 +27,11 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Mockingjay: 11a621880d2887f1775bdcf824341eb68f218450
-  Nimble: 3b4ec3fd40f1dc178058e0981107721c615643d8
+  Nimble: 4f4a345c80b503b3ea13606a4f98405974ee4d0b
   Quick: 6d9559f40647bc4d510103842ef2fdd882d753e2
   SwiftLint: c585ebd615d9520d7fbdbe151f527977b0534f1e
   URITemplate: ace0c4c46dcf8afe6e89b4060621852886b15c3b
 
-PODFILE CHECKSUM: 7e15bc5c10682528ce40eadbc80394455b8b3146
+PODFILE CHECKSUM: 2977604bfdee3fb011afd142591be4c1dd3247db
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1

@@ -222,6 +222,52 @@ struct PushNotificationsTestData {
         }
     """
 
+    let notificationWithNestedAttributes = """
+         {
+             "attributes": {
+                 "first_level_attribute": "some value",
+                 "array_attribute": ["a", "r", "r", "a", "y"],
+                 "dictionary_attribute": {
+                     "second_level_attribute": "second level value",
+                     "number_attribute": 43436,
+                     "nested_array": [1, 2, 3],
+                     "nested_dictionary": {
+                         "key1": "value1",
+                         "key2": 3524.545
+                     }
+                 },
+                 "product_list": [{
+                     "item_id": "1234",
+                     "item_quantity": 3
+                 }, {
+                     "item_id": "2345",
+                     "item_quantity": 2
+                 }, {
+                     "item_id": "6789",
+                     "item_quantity": 1
+                 }],
+                 "product_ids": ["1234", "2345", "6789"],
+                 "push_content": {
+                     "title": "Hey!",
+                     "actions": [{
+                         "title": "Action 1 title",
+                         "action": "app"
+                     }],
+                     "message": "We have a great deal for you today, don't miss it!"
+                 }
+             },
+             "source": "xnpe_platform",
+             "action": "app",
+             "legacy_ios_category": null,
+             "message": "Notification text",
+             "aps": {
+                 "alert": "Notification title",
+                 "mutable-content": 1
+             },
+             "title": "Notification title"
+         }
+    """
+
     let openedProductionNotificationData = PushOpenedData(
         silent: false,
         campaignData: CampaignData(
@@ -241,6 +287,7 @@ struct PushNotificationsTestData {
                 "action_name": .string("Unnamed mobile push"),
                 "action_id": .int(2),
                 "platform": .string("ios"),
+                "some property": .string("some value"),
                 "recipient": .string("051AADC3AFC4B4B2AB8492ED6A152BBE485D29F9FC2A59E34C68EC5853F47A47"),
                 "campaign_id": .string("5db9ab54b073dfb424ccfa6f"),
                 "action_type": .string("mobile notification"),
@@ -289,7 +336,8 @@ struct PushNotificationsTestData {
             "status": .string("delivered"),
             "platform": .string("ios"),
             "cta": .string("notification"),
-            "url": .string("app")
+            "url": .string("app"),
+            "silent_test": .string("value")
         ]),
         .timestamp(timestamp)],
         extraData: ["silent_test": "value"]
