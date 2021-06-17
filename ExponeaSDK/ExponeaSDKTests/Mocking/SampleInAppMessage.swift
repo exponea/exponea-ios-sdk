@@ -64,6 +64,7 @@ struct SampleInAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
             name: "Test serving in-app message",
+            rawMessageType: "modal",
             rawFrequency: frequency?.rawValue ?? "unknown",
             payload: InAppMessagePayload(
                 imageUrl: imageUrl ?? "https://i.ytimg.com/vi/t4nM1FoUqYs/maxresdefault.jpg",
@@ -110,6 +111,7 @@ struct SampleInAppMessage {
         return InAppMessage(
             id: "5dd86f44511946ea55132f29",
             name: "Test serving in-app message",
+            rawMessageType: "modal",
             rawFrequency: "unknown",
             payload: payload,
             variantId: variantId,

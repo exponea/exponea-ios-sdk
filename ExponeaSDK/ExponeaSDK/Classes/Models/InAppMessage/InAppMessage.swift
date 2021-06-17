@@ -11,7 +11,7 @@ import Foundation
 struct InAppMessage: Codable, Equatable {
     public let id: String
     public let name: String
-    public let rawMessageType: String = InAppMessageType.modal.rawValue
+    public let rawMessageType: String
     public var messageType: InAppMessageType { return InAppMessageType(rawValue: rawMessageType) ?? .alert }
     public let rawFrequency: String
     public var frequency: InAppMessageFrequency? { return InAppMessageFrequency(rawValue: rawFrequency) }
