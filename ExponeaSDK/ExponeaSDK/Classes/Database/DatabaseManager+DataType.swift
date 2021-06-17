@@ -31,7 +31,9 @@ extension DatabaseManager {
                 continue
             }
 
-            if let nested = object as? NSArray {
+            if let nested = object as? NSDictionary {
+                valueArray.append(processDictionary(nested))
+            } else if let nested = object as? NSArray {
                 valueArray.append(processArray(nested))
             } else if let primitiveType = transformPrimitiveType(object) {
                 valueArray.append(primitiveType)
