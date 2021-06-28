@@ -16,20 +16,24 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     let releaseReactNativeAppSecret = "a39df2ba-a3d2-4bb7-a44f-f0a7fe9c1718"
     let debugCapacitorAppSecret = "823e90ad-bc19-438c-bf8a-1f76e0e3a5d0"
     let releaseCapacitorAppSecret = "e8e38b52-a50f-4c9b-bdc1-65730ef868a0"
+    let debugFlutterAppSecret = "2b709e42-5b7f-4996-a64d-d8c19d6d3b6f"
+    let releaseFlutterAppSecret = "eba32cd0-fe8f-43fc-8a1e-bbb69d45bbcc"
     var appSecret: String {
+        var secret: String
         if isReactNativeSDK() {
-            var secret = releaseReactNativeAppSecret
+           secret = releaseReactNativeAppSecret
             inDebugBuild { secret = debugReactNativeAppSecret }
-            return secret
         } else if isCapacitorSDK() {
-            var secret = releaseCapacitorAppSecret
+            secret = releaseCapacitorAppSecret
             inDebugBuild { secret = debugCapacitorAppSecret }
-            return secret
+        } else if isFlutterSDK() {
+            secret = releaseFlutterAppSecret
+            inDebugBuild { secret = debugFlutterAppSecret }
         } else {
-            var secret = releaseAppSecret
+            secret = releaseAppSecret
             inDebugBuild { secret = debugAppSecret }
-            return secret
         }
+        return secret
     }
 
     let session: URLSession

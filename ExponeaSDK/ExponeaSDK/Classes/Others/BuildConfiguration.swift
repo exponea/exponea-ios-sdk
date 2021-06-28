@@ -36,3 +36,8 @@ func isCapacitorSDK() -> Bool {
     // Our Capacitor SDK contains a protocol IsExponeaCapacitorSDK. We only use it for this purpose.
     return NSProtocolFromString("IsExponeaCapacitorSDK") != nil
 }
+
+func isFlutterSDK() -> Bool {
+    // Our flutter SDK contains a protocol IsExponeaFlutterSDK. We only use it for this purpose.
+    return NSProtocolFromString("IsExponeaFlutterSDK") != nil
+}
