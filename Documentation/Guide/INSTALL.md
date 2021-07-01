@@ -6,9 +6,10 @@ There are two ways of installing Exponea SDK for iOS.
 
 1. Open `Cartfile` file located in your project folder
 2. Add ExponeaSDK dependency  
-`github "exponea/exponea-ios-sdk`
+`github "exponea/exponea-ios-sdk"`
 3. Run the Carthage update command  
-`carthage update exponea-ios-sdk`
+`carthage update exponea-ios-sdk --use-xcframeworks`
+4. On your application targets’ General settings tab, in the Frameworks, Libraries, and Embedded Content section, drag and drop every XCFramework from the Carthage/Build folder on disk.
 
 ### CocoaPods
 
