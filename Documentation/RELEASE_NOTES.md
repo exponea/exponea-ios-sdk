@@ -1,4 +1,18 @@
 ## Release Notes
+## Release Notes for 2.11.1
+#### July 06, 2021
+* Features
+  * The device model property now contains a complete device model name, not only info whether it's iPad or iPhone.
+  * Flexible event attributes in mobile push notifications. Custom tracking attributes added into push notification payload are automatically included in the events as properties.
+  * Documentation improvements.
+
+* Bug Fixes
+  * Fixed: Duplicate tracking of in-app messages close event on X button tap.
+  * Fixed: Frameworks not found, when installing via Carthage.
+  * Fixed: An in-app message always shown as a modal, regardless of the configuration.
+  * Fixed: Event property of list type containing objects not getting tracked.
+
+
 ## Release Notes for 2.11.0
 #### April 21, 2021
 * Features
