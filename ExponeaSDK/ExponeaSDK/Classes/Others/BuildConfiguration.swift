@@ -41,3 +41,8 @@ func isFlutterSDK() -> Bool {
     // Our flutter SDK contains a protocol IsExponeaFlutterSDK. We only use it for this purpose.
     return NSProtocolFromString("IsExponeaFlutterSDK") != nil
 }
+
+func isXamarinSDK() -> Bool {
+    // Our Xamarin SDK contains a protocol IsExponeaFlutterSDK. We only use it for this purpose.
+    return NSProtocolFromString("IsExponeaXamarinSDK") != nil
+}
