@@ -82,23 +82,29 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         }
         if let imageUrl = URL(string: imageUrlString),
            let data = try? Data(contentsOf: imageUrl) {
-            self.cache.saveImageData(at: imageUrlString, data: data)
+            if !self.cache.hasImageData(at: imageUrlString) {
+                self.cache.saveImageData(at: imageUrlString, data: data)
+            }
             return true
         }
         return false
     }
 
-    private func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
-        var messages = inAppMessages
-        // if there is a pending message that we should display, preload image for it first and show, then preload rest
-        if let pending = pickPendingMessage(requireImageLoaded: false), preloadImage(for: pending.1) {
-            messages.removeAll { $0 == pending.1 }
-            showPendingInAppMessage(pickedMessage: pending)
+    internal func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
+        DispatchQueue.global(qos: .background).async {
+            var messages = inAppMessages
+            // if there is a pending message that we should display,
+            // preload image for it first and show, then preload rest
+            if let pending = self.pickPendingMessage(requireImageLoaded: false),
+               self.preloadImage(for: pending.1) {
+                messages.removeAll { $0 == pending.1 }
+                self.showPendingInAppMessage(pickedMessage: pending)
+            }
+            messages.forEach { message in self.preloadImage(for: message) }
+            self.preloaded = true
+            self.showPendingInAppMessage(pickedMessage: nil)
+            completion?()
         }
-        messages.forEach { message in preloadImage(for: message) }
-        preloaded = true
-        showPendingInAppMessage(pickedMessage: nil)
-        completion?()
     }
 
     private func pickPendingMessage(requireImageLoaded: Bool) -> (InAppMessageShowRequest, InAppMessage)? {
@@ -246,7 +252,10 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             imageData: imageData,
             actionCallback: { button in
                 self.displayStatusStore.didInteract(with: message, at: Date())
-                trackingDelegate?.track(.click(buttonLabel: button.buttonText ?? ""), for: message)
+                trackingDelegate?.track(
+                    .click(buttonLabel: button.buttonText ?? "", url: button.buttonLink ?? "" ),
+                    for: message
+                )
                 self.processInAppMessageAction(button: button)
             },
             dismissCallback: {

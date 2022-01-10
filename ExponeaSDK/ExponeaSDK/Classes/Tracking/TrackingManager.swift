@@ -379,8 +379,9 @@ extension TrackingManager: InAppMessageTrackingDelegate {
                 "variant_id": .int(message.variantId),
                 "variant_name": .string(message.variantName)
             ]
-            if case .click(let text) = event {
+            if case .click(let text, let url) = event {
                 eventData["text"] = .string(text)
+                eventData["link"] = .string(url)
             }
             try track(
                 .banner,

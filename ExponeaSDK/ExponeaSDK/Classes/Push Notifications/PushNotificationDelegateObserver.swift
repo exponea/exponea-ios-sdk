@@ -24,7 +24,7 @@ class PushNotificationDelegateObserver: NSObject {
                 return // if they are both nil, do nothing
             }
             guard let old = change.oldValue, let new = change.newValue else {
-                callback(change) //one of them is nil, it changed
+                callback(change) // one of them is nil, it changed
                 return
             }
             if old !== new {

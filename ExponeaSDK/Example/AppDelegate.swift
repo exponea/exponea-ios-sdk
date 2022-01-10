@@ -55,7 +55,7 @@ class AppDelegate: ExponeaAppDelegate {
             let incomingURL = userActivity.webpageURL
             else { return false }
         Exponea.shared.trackCampaignClick(url: incomingURL, timestamp: nil)
-        return incomingURL.host == "panaxeo.com"
+        return incomingURL.host == "old.panaxeo.com"
     }
 
     func application(

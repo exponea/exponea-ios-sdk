@@ -372,7 +372,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                         message: SampleInAppMessage.getSampleInAppMessage()
                     ),
                     MockInAppMessageTrackingDelegate.CallData(
-                        event: .click(buttonLabel: "Action"),
+                        event: .click(buttonLabel: "Action", url: "https://someaddress.com"),
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
                 ]))
@@ -415,6 +415,34 @@ class InAppMessagesManagerSpec: QuickSpec {
                 )
             ]))
             expect(presenter.presentedMessages.count).to(equal(0))
+        }
+
+        it("should not download same image multiple times") {
+            let message = SampleInAppMessage.getSampleInAppMessage()
+            expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(false))
+            expect(cache.getImageDownloadCount()).to(equal(0))
+            waitUntil { done in manager.preloadImages(inAppMessages: [message], completion: done) }
+            expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(true))
+            expect(cache.getImageDownloadCount()).to(equal(1))
+            waitUntil { done in manager.preloadImages(inAppMessages: [message], completion: done) }
+            expect(cache.getImageDownloadCount()).to(equal(1))
+        }
+
+        it("should download image with different URL") {
+            let message = SampleInAppMessage.getSampleInAppMessage()
+            expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(false))
+            expect(cache.getImageDownloadCount()).to(equal(0))
+            waitUntil { done in manager.preloadImages(inAppMessages: [message], completion: done) }
+            expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(true))
+            expect(cache.getImageDownloadCount()).to(equal(1))
+
+            let messageWithDifferentUrl = SampleInAppMessage.getSampleInAppMessage(
+                imageUrl: "https://storage.googleapis.com/exp-app-storage/" +
+                "f02807dc-6b57-11e9-8cc8-0a580a203636/media/original/8a32cbd6-43a1-11ec-8188-8a3224482d07"
+            )
+            waitUntil { done in manager.preloadImages(inAppMessages: [messageWithDifferentUrl], completion: done) }
+            expect(cache.hasImageData(at: (messageWithDifferentUrl.payload?.imageUrl)!)).to(equal(true))
+            expect(cache.getImageDownloadCount()).to(equal(2))
         }
     }
 }

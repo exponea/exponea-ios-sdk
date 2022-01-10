@@ -17,6 +17,6 @@ target 'ExponeaSDKTests' do
     pod 'Quick'
     pod 'Nimble', '~>9.2.0'
     pod 'SwiftLint'
-    pod 'Mockingjay'
+    pod 'Mockingjay', :git => 'https://github.com/kylef/Mockingjay.git', :branch => 'master'
   # end
 end

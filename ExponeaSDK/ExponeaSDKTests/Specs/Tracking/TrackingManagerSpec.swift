@@ -172,7 +172,7 @@ class TrackingManagerSpec: QuickSpec {
             context("InAppMessageTrackingDelegate") {
                 it("should track click in-app message event") {
                     trackingManager.track(
-                        .click(buttonLabel: "mock-text"),
+                        .click(buttonLabel: "mock-text", url: "mock-url"),
                         for: SampleInAppMessage.getSampleInAppMessage()
                     )
                     let trackEvents = try! trackingManager.database.fetchTrackEvent()

@@ -78,16 +78,17 @@ final class TelemetryManagerSpec: QuickSpec {
             )
             expect(self.upload.uploadedEvents.count).to(equal(1))
             expect(self.upload.uploadedEvents[0].name).to(equal("fetchRecommendation"))
-            expect(self.upload.uploadedEvents[0].properties)
-                .to(equal([
-                    "appVersion": "",
-                    "appName": "com.apple.dt.xctest.tool",
-                    "sdkVersion": Exponea.version,
-                    "appNameVersionSdkVersion": "com.apple.dt.xctest.tool -  - SDK \(Exponea.version)",
-                    "appNameVersion": "com.apple.dt.xctest.tool - ",
-                    "property": "value",
-                    "other_property": "other_value"
-                ]))
+            let appVersion = self.upload.uploadedEvents[0].properties["appVersion"] ?? ""
+            expect(appVersion).notTo(beNil())
+            expect(self.upload.uploadedEvents[0].properties["appName"]).to(equal("com.apple.dt.xctest.tool"))
+            expect(self.upload.uploadedEvents[0].properties["sdkVersion"]).to(equal(Exponea.version))
+            expect(self.upload.uploadedEvents[0].properties["appNameVersionSdkVersion"])
+                .to(equal("com.apple.dt.xctest.tool - \(appVersion) - SDK \(Exponea.version)"))
+            expect(self.upload.uploadedEvents[0].properties["appNameVersion"])
+                .to(equal("com.apple.dt.xctest.tool - \(appVersion)"))
+            expect(self.upload.uploadedEvents[0].properties["property"]).to(equal("value"))
+            expect(self.upload.uploadedEvents[0].properties["other_property"]).to(equal("other_value"))
+            expect(self.upload.uploadedEvents[0].properties.count).to(equal(7))
         }
 
         it("should report init event") {

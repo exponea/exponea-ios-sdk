@@ -11,7 +11,7 @@ import Foundation
 enum InAppMessageEvent: Equatable {
     case close
     case show
-    case click(buttonLabel: String)
+    case click(buttonLabel: String, url: String)
 
     var action: String {
         switch self {

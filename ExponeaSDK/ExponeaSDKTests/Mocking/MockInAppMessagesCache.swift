@@ -12,6 +12,7 @@ final class MockInAppMessagesCache: InAppMessagesCacheType {
     private var messages: [InAppMessage] = []
     private var images: [String: Data] = [:]
     private var timestamp: TimeInterval = 0
+    private var saveImageDataCallCounter = 0
 
     func saveInAppMessages(inAppMessages: [InAppMessage]) {
         self.messages = inAppMessages
@@ -39,6 +40,7 @@ final class MockInAppMessagesCache: InAppMessagesCacheType {
 
     func saveImageData(at imageUrl: String, data: Data) {
         images[imageUrl] = data
+        saveImageDataCallCounter += 1
     }
 
     func getImageData(at imageUrl: String) -> Data? {
@@ -48,5 +50,9 @@ final class MockInAppMessagesCache: InAppMessagesCacheType {
     func clear() {
         images = [:]
         messages = []
+    }
+
+    func getImageDownloadCount() -> Int {
+        return saveImageDataCallCounter
     }
 }

@@ -9,7 +9,7 @@
 import Foundation
 import ExponeaSDK
 
-protocol MemoryLoggerDelegate: class {
+protocol MemoryLoggerDelegate: AnyObject {
     func logUpdated()
 }
 
