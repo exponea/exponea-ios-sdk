@@ -275,6 +275,8 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         actionButtonsStackView.axis = .horizontal
         actionButtonsStackView.alignment = .center
         actionButtonsStackView.spacing = 20
+        actionButtonsStackView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        actionButtonsStackView.isLayoutMarginsRelativeArrangement = true
         contentsStackView.addArrangedSubview(actionButtonsStackView)
 
         if !buttons.isEmpty {
@@ -290,13 +292,14 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
             return
         }
         actionButton.translatesAutoresizingMaskIntoConstraints = false
-        actionButton.titleLabel?.translatesAutoresizingMaskIntoConstraints = false
         actionButton.layer.cornerRadius = 5
-        actionButton.contentEdgeInsets = UIEdgeInsets(top: 15, left: 30, bottom: 15, right: 30)
         actionButton.titleLabel?.font = .boldSystemFont(ofSize: 15)
+        actionButton.titleLabel?.lineBreakMode = .byTruncatingTail
         actionButton.setTitle(payload.buttonText, for: .normal)
         actionButton.setTitleColor(UIColor(fromHexString: payload.buttonTextColor), for: .normal)
         actionButton.backgroundColor = UIColor(fromHexString: payload.buttonBackgroundColor)
+        actionButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+
         actionButton.payload = payload
         switch payload.buttonType {
         case .cancel:
@@ -304,9 +307,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         case .deeplink:
             actionButton.addTarget(self, action: #selector(actionButtonAction), for: .touchUpInside)
         }
-
         actionButtonsStackView.addArrangedSubview(actionButton)
-
         NSLayoutConstraint.activate([
             actionButton.heightAnchor.constraint(equalToConstant: 50),
             actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),

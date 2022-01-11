@@ -69,9 +69,11 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                     completion?()
                     return
                 }
-                self.cache.saveInAppMessages(inAppMessages: response.data)
-                self.cache.deleteImages(except: response.data.compactMap { $0.payload?.imageUrl })
-                self.preloadImages(inAppMessages: response.data, completion: completion)
+                DispatchQueue.global(qos: .background).async {
+                    self.cache.saveInAppMessages(inAppMessages: response.data)
+                    self.cache.deleteImages(except: response.data.compactMap { $0.payload?.imageUrl })
+                    self.preloadImages(inAppMessages: response.data, completion: completion)
+                }
             }
         }
     }
@@ -80,18 +82,20 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         guard let imageUrlString = message.payload?.imageUrl, !imageUrlString.isEmpty else {
             return true // there is no image, call preload successful
         }
-        if let imageUrl = URL(string: imageUrlString),
-           let data = try? Data(contentsOf: imageUrl) {
+        if let imageUrl = URL(string: imageUrlString) {
             if !self.cache.hasImageData(at: imageUrlString) {
-                self.cache.saveImageData(at: imageUrlString, data: data)
+                if let data = try? Data(contentsOf: imageUrl) {
+                    self.cache.saveImageData(at: imageUrlString, data: data)
+                    return true
+                }
+            } else {
+                return true
             }
-            return true
         }
         return false
     }
 
     internal func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
-        DispatchQueue.global(qos: .background).async {
             var messages = inAppMessages
             // if there is a pending message that we should display,
             // preload image for it first and show, then preload rest
@@ -104,7 +108,6 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             self.preloaded = true
             self.showPendingInAppMessage(pickedMessage: nil)
             completion?()
-        }
     }
 
     private func pickPendingMessage(requireImageLoaded: Bool) -> (InAppMessageShowRequest, InAppMessage)? {

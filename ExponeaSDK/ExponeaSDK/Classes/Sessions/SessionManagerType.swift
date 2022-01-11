@@ -31,7 +31,7 @@ extension SessionManagerType {
     func manualSessionEnd() { manualSessionEnd(at: Date().timeIntervalSince1970) }
 }
 
-protocol SessionTrackingDelegate: class {
+protocol SessionTrackingDelegate: AnyObject {
     func trackSessionStart(at timestamp: TimeInterval)
     func trackSessionEnd(at timestamp: TimeInterval, withDuration duration: TimeInterval)
 }

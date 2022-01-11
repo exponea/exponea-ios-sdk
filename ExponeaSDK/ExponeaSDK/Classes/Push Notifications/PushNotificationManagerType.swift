@@ -6,7 +6,7 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-protocol PushNotificationManagerType: class {
+protocol PushNotificationManagerType: AnyObject {
     var delegate: PushNotificationManagerDelegate? { get set }
     func applicationDidBecomeActive()
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?)

@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-protocol HasKeyValueProperties: class {
+protocol HasKeyValueProperties: AnyObject {
     var properties: NSSet? { get }
 
     func addToProperties(_ value: KeyValueItem)

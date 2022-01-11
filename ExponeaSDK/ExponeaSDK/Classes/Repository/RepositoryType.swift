@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol RepositoryType: class, TrackingRepository, FetchRepository, SelfCheckRepository {
+protocol RepositoryType: AnyObject, TrackingRepository, FetchRepository, SelfCheckRepository {
     var configuration: Configuration { get set }
 
     /// Cancels all requests that are currently underway.

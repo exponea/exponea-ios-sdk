@@ -30,6 +30,6 @@ enum InAppMessageEvent: Equatable {
     }
 }
 
-protocol InAppMessageTrackingDelegate: class {
+protocol InAppMessageTrackingDelegate: AnyObject {
     func track(_ event: InAppMessageEvent, for message: InAppMessage)
 }

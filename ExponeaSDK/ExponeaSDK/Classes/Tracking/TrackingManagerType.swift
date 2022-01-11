@@ -9,7 +9,7 @@
 import Foundation
 
 /// Class of type `TrackingManagerType` is responsible for all event and customer tracking.
-protocol TrackingManagerType: class {
+protocol TrackingManagerType: AnyObject {
 
     /// The identifiers of the the current customer.
     var customerIds: [String: String] { get }

@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 /// Protocol to manage Tracking events
-protocol DatabaseManagerType: class {
+protocol DatabaseManagerType: AnyObject {
     var currentCustomer: CustomerThreadSafe { get }
     var customers: [CustomerThreadSafe] { get }
 

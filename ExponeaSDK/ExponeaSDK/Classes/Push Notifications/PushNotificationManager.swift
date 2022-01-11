@@ -10,7 +10,7 @@ import Foundation
 import UserNotifications
 import UIKit
 
-public protocol PushNotificationManagerDelegate: class {
+public protocol PushNotificationManagerDelegate: AnyObject {
     func pushNotificationOpened(
         with action: ExponeaNotificationActionType,
         value: String?,

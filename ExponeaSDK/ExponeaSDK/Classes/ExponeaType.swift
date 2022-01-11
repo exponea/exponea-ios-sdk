@@ -10,7 +10,7 @@ import Foundation
 import UserNotifications
 
 /// Protocol of what types of events are available in the Exponea SDK.
-public protocol ExponeaType: class {
+public protocol ExponeaType: AnyObject {
     /// Configuration status of the SDK
     var isConfigured: Bool { get }
     /// Configurarion object.
