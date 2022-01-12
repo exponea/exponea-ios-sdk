@@ -54,7 +54,7 @@ final class ServerRepositorySpec: QuickSpec {
                         repo.fetchConsents { _ in done() }
                         repo.cancelRequests()
                     }
-                    expect(networkTask.state).to(equal(URLSessionTask.State.running))
+                    expect(networkTask.state.rawValue).to(equal(URLSessionTask.State.running.rawValue))
                     networkTask.cancel()
                 }
             }
