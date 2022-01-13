@@ -1,4 +1,16 @@
 ## Release Notes
+## Release Notes for 2.11.2
+#### January 13, 2022
+* Features
+  * Tracking button URL as link attribute for banner click event [Issue #31](https://github.com/exponea/exponea-ios-sdk/issues/31)
+* Bug Fixes
+  * Fixed: ExponeaSDKObjC and ExponeaSDKShared frameworks are no longer embedded [Issue #33](https://github.com/exponea/exponea-ios-sdk/issues/33)
+  * Fixed: UI blocking when fetching in-app messages
+  * Fixed: Caching in-app message images
+  * Fixed: Padding and text truncating differences in In-app message buttons on web preview and in the app
+  * Fixed: Warnings appearing with XCode12 and above [Issue #35](https://github.com/exponea/exponea-ios-sdk/issues/35)
+
+
 ## Release Notes for 2.11.1
 #### July 06, 2021
 * Features
