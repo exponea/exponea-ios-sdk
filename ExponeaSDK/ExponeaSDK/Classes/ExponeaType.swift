@@ -23,6 +23,9 @@ public protocol ExponeaType: AnyObject {
     /// push tracking is enabled, otherwise will never get called.
     var pushNotificationsDelegate: PushNotificationManagerDelegate? { get set }
 
+    /// The delegate that gets callbacks about in app message actions.
+    var inAppMessagesDelegate: InAppMessageActionDelegate { get set }
+
     /// Any NSException inside Exponea SDK will be logged and swallowed if flag is enabled, otherwise
     /// the exception will be rethrown.
     /// Safemode is enabled for release builds and disabled for debug builds.

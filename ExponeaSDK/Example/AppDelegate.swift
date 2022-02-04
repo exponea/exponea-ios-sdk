@@ -119,3 +119,28 @@ extension AppDelegate: PushNotificationManagerDelegate {
         )
     }
 }
+
+class InAppDelegate: InAppMessageActionDelegate {
+    let overrideDefaultBehavior: Bool
+    let trackActions: Bool
+
+    init(
+        overrideDefaultBehavior: Bool,
+        trackActions: Bool
+    ) {
+        self.overrideDefaultBehavior = overrideDefaultBehavior
+        self.trackActions = trackActions
+    }
+
+    func inAppMessageAction(with messageId: String, button: InAppMessageButton?, interaction: Bool) {
+        Exponea.logger.log(
+            .verbose,
+            message: "In app action performed, messageId: \(messageId),"
+            + " interaction: \(interaction), button: \(String(describing: button))"
+        )
+        (UIApplication.shared.delegate as? AppDelegate)?.showAlert(
+            "In app action performed",
+            "messageId: \(messageId), interaction: \(interaction), button: \(String(describing: button))"
+        )
+    }
+}

@@ -24,24 +24,35 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private let cache: InAppMessagesCacheType
     private let presenter: InAppMessagePresenterType
     private let displayStatusStore: InAppMessageDisplayStatusStore
-    private let urlOpener: UrlOpener
+    private let urlOpener: UrlOpenerType
     private var sessionStartDate: Date = Date()
 
     private var preloaded = false
     private var pendingShowRequests: [InAppMessageShowRequest] = []
+    private var delegateValue: InAppMessageActionDelegate = DefaultInAppDelegate()
+    internal var delegate: InAppMessageActionDelegate {
+        get {
+            return delegateValue
+        }
+        set {
+            delegateValue = newValue
+        }
+    }
 
     init(
         repository: RepositoryType,
         cache: InAppMessagesCacheType = InAppMessagesCache(),
         displayStatusStore: InAppMessageDisplayStatusStore,
         presenter: InAppMessagePresenterType = InAppMessagePresenter(),
-        urlOpener: UrlOpener = UrlOpener()
+        urlOpener: UrlOpenerType = UrlOpener(),
+        delegate: InAppMessageActionDelegate
     ) {
         self.repository = repository
         self.cache = cache
         self.presenter = presenter
         self.displayStatusStore = displayStatusStore
         self.urlOpener = urlOpener
+        self.delegate = delegate
     }
 
     func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?) {
@@ -255,14 +266,28 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             imageData: imageData,
             actionCallback: { button in
                 self.displayStatusStore.didInteract(with: message, at: Date())
-                trackingDelegate?.track(
-                    .click(buttonLabel: button.buttonText ?? "", url: button.buttonLink ?? "" ),
-                    for: message
-                )
-                self.processInAppMessageAction(button: button)
+
+                    if self.delegate.trackActions {
+                        trackingDelegate?.track(
+                            .click(buttonLabel: button.buttonText ?? "", url: button.buttonLink ?? "" ),
+                            for: message
+                        )
+                    }
+                    self.delegate.inAppMessageAction(
+                        with: message.id,
+                        button: InAppMessageButton(text: button.buttonText, url: button.buttonLink),
+                        interaction: true
+                    )
+
+                    if !self.delegate.overrideDefaultBehavior {
+                        self.processInAppMessageAction(button: button)
+                    }
             },
             dismissCallback: {
-                trackingDelegate?.track(.close, for: message)
+                    if self.delegate.trackActions {
+                        trackingDelegate?.track(.close, for: message)
+                    }
+                    self.delegate.inAppMessageAction(with: message.id, button: nil, interaction: false)
             },
             presentedCallback: { presented in
                 if presented != nil {
@@ -300,4 +325,28 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             )
         }
     }
+}
+
+public protocol InAppMessageActionDelegate: AnyObject {
+
+    var overrideDefaultBehavior: Bool { get }
+    var trackActions: Bool { get }
+
+    func inAppMessageAction(
+        with messageId: String,
+        button: InAppMessageButton?,
+        interaction: Bool
+    )
+}
+
+public struct InAppMessageButton {
+    public let text: String?
+    public let url: String?
+}
+
+public class DefaultInAppDelegate: InAppMessageActionDelegate {
+    public let overrideDefaultBehavior = false
+    public let trackActions = true
+
+    public func inAppMessageAction(with messageId: String, button: InAppMessageButton?, interaction: Bool) {}
 }

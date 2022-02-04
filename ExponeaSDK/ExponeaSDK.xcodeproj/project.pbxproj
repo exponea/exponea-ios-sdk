@@ -273,6 +273,7 @@
 		CC06F95125FA037800F38D93 /* RequestFactorySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC06F95025FA037800F38D93 /* RequestFactorySpec.swift */; };
 		CC126F99268DB574001F43E1 /* ExponeaSDKObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0563750C25AF030A00AB68DA /* ExponeaSDKObjC.framework */; };
 		CC126F9C268DB578001F43E1 /* ExponeaSDKShared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */; };
+		CC80290527ABF04F00187887 /* InAppMessageDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC80290427ABF04F00187887 /* InAppMessageDelegate.swift */; };
 		D20134EC7D150032774DF78D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */; };
 		F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */; };
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
@@ -679,6 +680,7 @@
 		C0F6C4EE2098A1AC00834E21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C0F7A59C21AE921300BA392F /* NotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationData.swift; sourceTree = "<group>"; };
 		CC06F95025FA037800F38D93 /* RequestFactorySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestFactorySpec.swift; sourceTree = "<group>"; };
+		CC80290427ABF04F00187887 /* InAppMessageDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDelegate.swift; sourceTree = "<group>"; };
 		E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePropertiesSpec.swift; sourceTree = "<group>"; };
 		F021E859206CF10200788ABC /* ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1673,6 +1675,7 @@
 				05FBB15C244709C500BDF234 /* DatabaseManager+Clear.swift */,
 				05D95C43250100B5001DA2DA /* MockInAppMessagesManager.swift */,
 				059A7A6B2581128100A53BAF /* InputStream+readFully.swift */,
+				CC80290427ABF04F00187887 /* InAppMessageDelegate.swift */,
 			);
 			path = Mocking;
 			sourceTree = "<group>";
@@ -2436,6 +2439,7 @@
 				019163A5207E1904005FD174 /* LogLevelSpec.swift in Sources */,
 				05297974241919BF00A90526 /* ExponeaSDKQuickConfiguration.swift in Sources */,
 				05FB1BB7236AE9220089C529 /* NotificationDataSpec.swift in Sources */,
+				CC80290527ABF04F00187887 /* InAppMessageDelegate.swift in Sources */,
 				C05BF44B2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift in Sources */,
 				F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */,
 				0566424C237318CF00CCDB98 /* SwizzlerSpec.swift in Sources */,

@@ -24,6 +24,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         var manager: InAppMessagesManager!
         var presenter: MockInAppMessagePresenter!
         var displayStore: InAppMessageDisplayStatusStore!
+        var urlOpener: MockUrlOpener!
 
         beforeEach {
             cache = MockInAppMessagesCache()
@@ -33,11 +34,14 @@ class InAppMessagesManagerSpec: QuickSpec {
             )
             presenter = MockInAppMessagePresenter()
             displayStore = InAppMessageDisplayStatusStore(userDefaults: MockUserDefaults())
+            urlOpener = MockUrlOpener()
             manager = InAppMessagesManager(
                 repository: repository,
                 cache: cache,
                 displayStatusStore: displayStore,
-                presenter: presenter
+                presenter: presenter,
+                urlOpener: urlOpener,
+                delegate: DefaultInAppDelegate()
             )
         }
 
@@ -376,6 +380,123 @@ class InAppMessagesManagerSpec: QuickSpec {
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
                 ]))
+            }
+
+            it("should not track dismiss event when delegate is setup without tracking") {
+                let inAppDelegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: false)
+                manager.delegate = inAppDelegate
+                waitUntil { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")],
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                presenter.presentedMessages[0].dismissCallback()
+                expect(delegate.calls).to(equal([
+                    MockInAppMessageTrackingDelegate.CallData(
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
+            }
+
+            it("should track dismiss event when delegate is setup with tracking") {
+                let inAppDelegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: true)
+                manager.delegate = inAppDelegate
+                waitUntil { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")],
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                presenter.presentedMessages[0].dismissCallback()
+                expect(delegate.calls).to(equal([
+                    MockInAppMessageTrackingDelegate.CallData(
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    ),
+                    MockInAppMessageTrackingDelegate.CallData(
+                        event: .close,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
+            }
+
+            it("should not track action event when delegate is setup without tracking") {
+                let inAppDelegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: false)
+                manager.delegate = inAppDelegate
+                waitUntil { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")],
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                presenter.presentedMessages[0].actionCallback(
+                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                )
+                expect(delegate.calls).to(equal([
+                    MockInAppMessageTrackingDelegate.CallData(
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
+            }
+
+            it("should track action event when delegate is setup with tracking") {
+                let inAppDelegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: true)
+                manager.delegate = inAppDelegate
+                waitUntil { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")],
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                presenter.presentedMessages[0].actionCallback(
+                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                )
+                expect(delegate.calls).to(equal([
+                    MockInAppMessageTrackingDelegate.CallData(
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    ),
+                    MockInAppMessageTrackingDelegate.CallData(
+                        event: .click(buttonLabel: "Action", url: "https://someaddress.com"),
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
+            }
+        }
+
+        context("default action performing") {
+            var delegate: MockInAppMessageTrackingDelegate!
+            beforeEach {
+                waitUntil { done in manager.preload(for: [:], completion: done) }
+                delegate = MockInAppMessageTrackingDelegate()
+                cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
+                cache.saveImageData(
+                    at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
+                    data: "mock data".data(using: .utf8)!
+                )
+            }
+
+            it("should call default action when override is turned off in delegate ") {
+                manager.delegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: true)
+                waitUntil { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")],
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                presenter.presentedMessages[0].actionCallback(
+                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                )
+                expect(urlOpener.openedDeeplinks.count).to(equal(1))
+            }
+
+            it("should not call default action when override is turned on in delegate ") {
+                manager.delegate = InAppMessageDelegate(overrideDefaultBehavior: true, trackActions: true)
+                waitUntil { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")],
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                presenter.presentedMessages[0].actionCallback(
+                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                )
+                expect(urlOpener.openedDeeplinks.count).to(equal(0))
             }
         }
 

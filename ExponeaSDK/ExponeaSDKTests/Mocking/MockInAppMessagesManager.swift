@@ -9,6 +9,7 @@
 @testable import ExponeaSDK
 
 final class MockInAppMessagesManager: InAppMessagesManagerType {
+
     func showInAppMessage(
         for event: [DataType],
         trackingDelegate: InAppMessageTrackingDelegate?,
@@ -22,4 +23,14 @@ final class MockInAppMessagesManager: InAppMessagesManagerType {
     func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?) {}
 
     func anonymize() {}
+
+    private var delegateValue: InAppMessageActionDelegate = DefaultInAppDelegate()
+    internal var delegate: InAppMessageActionDelegate {
+        get {
+            return delegateValue
+        }
+        set {
+            delegateValue = newValue
+        }
+    }
 }

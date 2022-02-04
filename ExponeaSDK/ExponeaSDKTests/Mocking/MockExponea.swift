@@ -38,7 +38,8 @@ final class MockExponeaImplementation: ExponeaInternal {
 
             self.inAppMessagesManager = InAppMessagesManager(
                repository: repository,
-               displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults)
+               displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
+               delegate: DefaultInAppDelegate()
             )
 
             // Finally, configuring tracking manager

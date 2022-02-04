@@ -122,6 +122,23 @@ public class ExponeaInternal: ExponeaType {
         }
     }
 
+    /// The delegate that gets callbacks about in app message actions.
+    public var inAppMessagesDelegate: InAppMessageActionDelegate {
+        get {
+            return inAppMessagesManager?.delegate ?? DefaultInAppDelegate()
+        }
+        set {
+            guard var inAppMessagesManager = inAppMessagesManager else {
+                Exponea.logger.log(
+                    .warning,
+                    message: "Cannot set in app messages delegate. " + Constants.ErrorMessages.sdkNotConfigured
+                )
+                return
+            }
+            inAppMessagesManager.delegate = newValue
+        }
+    }
+
     /// Default properties to be tracked with all events.
     /// Provide default properties when calling Exponea.shared.configure, they're exposed here for run-time changing.
     public var defaultProperties: [String: JSONConvertible]? {
@@ -215,7 +232,8 @@ public class ExponeaInternal: ExponeaType {
 
                 let inAppMessagesManager = InAppMessagesManager(
                    repository: repository,
-                   displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults)
+                   displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
+                   delegate: inAppMessagesDelegate
                 )
                 self.inAppMessagesManager = inAppMessagesManager
 

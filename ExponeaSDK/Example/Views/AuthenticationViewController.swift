@@ -65,6 +65,7 @@ class AuthenticationViewController: UIViewController {
 
         performSegue(withIdentifier: "showMain", sender: nil)
 
+        Exponea.shared.checkPushSetup = true
         Exponea.shared.configure(
             Exponea.ProjectSettings(
                 projectToken: token,
@@ -80,6 +81,8 @@ class AuthenticationViewController: UIViewController {
                 "Property02": 123
             ]
         )
+        //Uncomment if you want to test in-app message delegate
+        //Exponea.shared.inAppMessagesDelegate = InAppDelegate(overrideDefaultBehavior: true, trackActions: false)
     }
 
     @objc func tokenUpdated() {
