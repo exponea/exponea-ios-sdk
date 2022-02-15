@@ -215,4 +215,17 @@ public extension ExponeaInternal {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
     }
+
+    @available(*, deprecated)
+    func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
+        guard let repository = repository else {
+            Exponea.logger.log(
+                .warning, message: "Cannot set automaticSessionTracking before Exponea is configured."
+            )
+            return
+        }
+        repository.configuration.automaticSessionTracking = automaticSessionTracking.enabled
+        repository.configuration.sessionTimeout = automaticSessionTracking.timeout
+        trackingManager?.setAutomaticSessionTracking(automaticSessionTracking: automaticSessionTracking)
+    }
 }

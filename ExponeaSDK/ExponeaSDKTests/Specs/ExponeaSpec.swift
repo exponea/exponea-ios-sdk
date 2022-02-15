@@ -155,6 +155,21 @@ class ExponeaSpec: QuickSpec {
                 }
             }
 
+            context("Setting automaticSessionTracking after configuration") {
+                let exponea = ExponeaInternal()
+                Exponea.shared = exponea
+                Exponea.shared.configure(plistName: "ExponeaConfig")
+
+                expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
+                exponea.setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking.disabled)
+                expect(exponea.configuration?.automaticSessionTracking).to(equal(false))
+                exponea.setAutomaticSessionTracking(
+                    automaticSessionTracking: Exponea.AutomaticSessionTracking.enabled(timeout: 30.0)
+                )
+                expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
+                expect(exponea.configuration?.sessionTimeout).to(equal(30))
+            }
+
             context("Setting pushNotificationsDelegate") {
                 var logger: MockLogger!
                 beforeEach {

@@ -243,7 +243,17 @@ extension TrackingManager: TrackingManagerType {
     }
 
     func manualSessionEnd() {
-        sessionManager.manualSessionStart()
+        sessionManager.manualSessionEnd()
+    }
+
+    func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
+        repository.configuration.automaticSessionTracking = automaticSessionTracking.enabled
+        repository.configuration.sessionTimeout = automaticSessionTracking.timeout
+        sessionManager = SessionManager(
+            configuration: repository.configuration,
+            userDefaults: userDefaults,
+            trackingDelegate: self
+        )
     }
 }
 

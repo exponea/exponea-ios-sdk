@@ -72,4 +72,8 @@ internal class MockTrackingManager: TrackingManagerType {
     func manualSessionEnd() {
         fatalError("Not implemented")
     }
+
+    func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
+        fatalError("Not implemented")
+    }
 }

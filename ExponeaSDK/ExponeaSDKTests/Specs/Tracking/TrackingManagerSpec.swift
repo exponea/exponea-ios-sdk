@@ -208,6 +208,28 @@ class TrackingManagerSpec: QuickSpec {
                     expect(event.dataTypes.properties["variant_name"] as? String).to(equal("Variant A"))
                 }
             }
+            context("SessionTracking") {
+                it("should track manual session start event") {
+                    trackingManager.manualSessionStart()
+                    let trackEvents = try! trackingManager.database.fetchTrackEvent()
+                    expect(trackEvents.count).to(equal(1))
+                    let event = trackEvents[0]
+                    if trackEvents.count == 1 {
+                        expect(event.eventType).to(equal(Constants.EventTypes.sessionStart))
+                    }
+                }
+
+                it("should track manual session end event") {
+                    trackingManager.manualSessionStart()
+                    trackingManager.manualSessionEnd()
+                    let trackEvents = try! trackingManager.database.fetchTrackEvent()
+                    expect(trackEvents.count).to(equal(2))
+                    if trackEvents.count == 2 {
+                        expect(trackEvents[0].eventType).to(equal(Constants.EventTypes.sessionStart))
+                        expect(trackEvents[1].eventType).to(equal(Constants.EventTypes.sessionEnd))
+                    }
+                }
+            }
         }
     }
 }

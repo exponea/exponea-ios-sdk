@@ -16,8 +16,8 @@ public struct Configuration: Codable, Equatable {
     public internal(set) var authorization: Authorization = .none
     public internal(set) var baseUrl: String = Constants.Repository.baseUrl
     public var defaultProperties: [String: JSONConvertible]?
-    public internal(set) var sessionTimeout: Double = Constants.Session.defaultTimeout
-    public internal(set) var automaticSessionTracking: Bool = true
+    public var sessionTimeout: Double = Constants.Session.defaultTimeout
+    public var automaticSessionTracking: Bool = true
 
     /// If enabled, will swizzle default push notifications methods and functions and automatically
     /// listen to updates for tokens or push settings.

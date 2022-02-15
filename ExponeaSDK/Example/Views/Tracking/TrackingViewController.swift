@@ -12,6 +12,19 @@ import UserNotifications
 
 class TrackingViewController: UIViewController {
 
+    @IBOutlet weak var automaticSessionTrackingSwitch: UISwitch!
+    @IBOutlet weak var sessionStartButton: UIButton!
+    @IBOutlet weak var sessionEndButton: UIButton!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        if let config = Exponea.shared.configuration {
+            automaticSessionTrackingSwitch.setOn(config.automaticSessionTracking, animated: true)
+            sessionStartButton.isEnabled = !config.automaticSessionTracking
+            sessionEndButton.isEnabled = !config.automaticSessionTracking
+        }
+    }
+
     @IBAction func paymentPressed(_ sender: Any) {
         Exponea.shared.trackPayment(properties: ["value": "99", "custom_info": "sample payment"], timestamp: nil)
     }
@@ -35,4 +48,20 @@ class TrackingViewController: UIViewController {
         }
     }
 
+    @IBAction func automaticSessionTrackingChanged(_ sender: UISwitch) {
+        let automaticSessionTracking = sender.isOn ?
+        Exponea.AutomaticSessionTracking.enabled() : Exponea.AutomaticSessionTracking.disabled
+        Exponea.shared.setAutomaticSessionTracking(automaticSessionTracking: automaticSessionTracking)
+        if let config = Exponea.shared.configuration {
+            sessionStartButton.isEnabled = !config.automaticSessionTracking
+            sessionEndButton.isEnabled = !config.automaticSessionTracking
+        }
+    }
+    @IBAction func sessionStartPressed(_ sender: UIButton) {
+        Exponea.shared.trackSessionStart()
+    }
+
+    @IBAction func sessionEndPressed(_ sender: UIButton) {
+        Exponea.shared.trackSessionEnd()
+    }
 }
