@@ -461,6 +461,34 @@ class InAppMessagesManagerSpec: QuickSpec {
                 ]))
                 expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
             }
+
+            it("should track action event when track is called in delegate action callback") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: false,
+                    trackClickInActionCallback: true,
+                    inAppMessageManager: manager,
+                    inAppMessageTrackingDelegate: delegate)
+                manager.delegate = inAppDelegate
+                waitUntil { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")],
+                    trackingDelegate: delegate
+                ) { _ in done() } }
+                presenter.presentedMessages[0].actionCallback(
+                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                )
+                expect(delegate.calls).to(equal([
+                    MockInAppMessageTrackingDelegate.CallData(
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    ),
+                    MockInAppMessageTrackingDelegate.CallData(
+                        event: .click(buttonLabel: "Action", url: "https://someaddress.com"),
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
+            }
         }
 
         context("default action performing") {

@@ -33,4 +33,15 @@ final class MockInAppMessagesManager: InAppMessagesManagerType {
             delegateValue = newValue
         }
     }
+    func trackInAppMessageClick(
+        _ message: InAppMessage,
+        trackingDelegate: InAppMessageTrackingDelegate?,
+        buttonText: String?,
+        buttonLink: String?
+    ) {}
+
+    func trackInAppMessageClose(
+        _ message: InAppMessage,
+        trackingDelegate: InAppMessageTrackingDelegate?
+    ) {}
 }

@@ -6,7 +6,7 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
-protocol EventFilterOperator: Encodable {
+public protocol EventFilterOperator: Encodable {
     static var name: String { get }
     static var operandCount: Int { get }
 
@@ -17,7 +17,7 @@ protocol EventFilterOperator: Encodable {
     ) -> Bool
 }
 
-struct EventFilterOperand: Codable, Equatable {
+public struct EventFilterOperand: Codable, Equatable {
     var type: String = "constant"
     let value: String
 }

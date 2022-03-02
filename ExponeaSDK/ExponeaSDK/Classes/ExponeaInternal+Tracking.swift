@@ -320,4 +320,32 @@ extension ExponeaInternal {
             telemetryManager?.report(eventWithType: .anonymize, properties: [:])
         }
     }
+
+    /// Track in-app message banner click event
+    public func trackInAppMessageClick(
+        message: InAppMessage,
+        buttonText: String?,
+        buttonLink: String?) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingManager.trackInAppMessageClick(
+                message: message,
+                buttonText: buttonText,
+                buttonLink: buttonLink
+            )
+        }
+    }
+
+    /// Track in-app message banner close event
+    public func trackInAppMessageClose(
+        message: InAppMessage) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingManager.trackInAppMessageClose(message: message)
+        }
+    }
 }

@@ -132,15 +132,21 @@ class InAppDelegate: InAppMessageActionDelegate {
         self.trackActions = trackActions
     }
 
-    func inAppMessageAction(with messageId: String, button: InAppMessageButton?, interaction: Bool) {
+    func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
         Exponea.logger.log(
             .verbose,
-            message: "In app action performed, messageId: \(messageId),"
+            message: "In app action performed, messageId: \(message.id),"
             + " interaction: \(interaction), button: \(String(describing: button))"
         )
         (UIApplication.shared.delegate as? AppDelegate)?.showAlert(
             "In app action performed",
-            "messageId: \(messageId), interaction: \(interaction), button: \(String(describing: button))"
+            "messageId: \(message.id), interaction: \(interaction), button: \(String(describing: button))"
         )
+
+        if interaction {
+            Exponea.shared.trackInAppMessageClick(message: message, buttonText: button?.text, buttonLink: button?.url)
+        } else {
+            Exponea.shared.trackInAppMessageClose(message: message)
+        }
     }
 }

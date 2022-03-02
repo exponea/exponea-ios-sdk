@@ -8,13 +8,13 @@
 
 import Foundation
 
-struct EventFilterEvent {
+public struct EventFilterEvent {
     let eventType: String
     let properties: [String: Any?]
     let timestamp: Double?
 }
 
-enum EventFilterError: LocalizedError {
+public enum EventFilterError: LocalizedError {
     case encodingError(message: String)
     case decodingError(message: String)
     case incorrectOperandCount(filterOperator: EventFilterOperator.Type, count: Int)
@@ -32,7 +32,7 @@ enum EventFilterError: LocalizedError {
     }
 }
 
-struct EventFilter: Codable, Equatable {
+public struct EventFilter: Codable, Equatable {
     internal static let anyOperatorCount: Int = -1
 
     let eventType: String

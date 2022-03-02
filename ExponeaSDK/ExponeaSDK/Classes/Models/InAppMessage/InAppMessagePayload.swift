@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct InAppMessagePayload: Codable, Equatable {
+public struct InAppMessagePayload: Codable, Equatable {
     public let imageUrl: String?
     public let title: String?
     public let titleTextColor: String?
@@ -40,7 +40,7 @@ struct InAppMessagePayload: Codable, Equatable {
     }
 }
 
-struct InAppMessagePayloadButton: Codable, Equatable {
+public struct InAppMessagePayloadButton: Codable, Equatable {
     public let buttonText: String?
     public let rawButtonType: String?
     public var buttonType: InAppMessageButtonType {
@@ -59,7 +59,7 @@ struct InAppMessagePayloadButton: Codable, Equatable {
     }
 }
 
-enum InAppMessageButtonType: String {
+public enum InAppMessageButtonType: String {
     case cancel
     case deeplink = "deep-link"
 }

@@ -218,6 +218,23 @@ extension TrackingManager: TrackingManagerType {
         }
     }
 
+    open func trackInAppMessageClick(
+        message: InAppMessage,
+        buttonText: String?,
+        buttonLink: String?) {
+            self.inAppMessagesManager.trackInAppMessageClick(
+                message,
+                trackingDelegate: self,
+                buttonText: buttonText,
+                buttonLink: buttonLink)
+        }
+
+    open func trackInAppMessageClose(message: InAppMessage) {
+            self.inAppMessagesManager.trackInAppMessageClose(
+                message,
+                trackingDelegate: self)
+        }
+
     func getEventTypeString(type: EventType) -> String? {
         switch type {
         case .identifyCustomer: return nil

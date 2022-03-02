@@ -19,6 +19,16 @@ protocol InAppMessagesManagerType {
     func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?)
     func anonymize()
     var delegate: InAppMessageActionDelegate { get set }
+    func trackInAppMessageClick(
+        _ message: InAppMessage,
+        trackingDelegate: InAppMessageTrackingDelegate?,
+        buttonText: String?,
+        buttonLink: String?
+    )
+    func trackInAppMessageClose(
+        _ message: InAppMessage,
+        trackingDelegate: InAppMessageTrackingDelegate?
+    )
 }
 
 extension InAppMessagesManagerType {

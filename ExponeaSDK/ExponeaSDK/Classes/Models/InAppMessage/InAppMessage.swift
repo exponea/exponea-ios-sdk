@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct InAppMessage: Codable, Equatable {
+public struct InAppMessage: Codable, Equatable {
     public let id: String
     public let name: String
     public let rawMessageType: String
@@ -111,7 +111,7 @@ struct InAppMessage: Codable, Equatable {
     }
 }
 
-struct InAppMessageTrigger: Codable, Equatable {
+public struct InAppMessageTrigger: Codable, Equatable {
     public let type: String?
     public let eventType: String?
 
@@ -121,14 +121,14 @@ struct InAppMessageTrigger: Codable, Equatable {
     }
 }
 
-enum InAppMessageFrequency: String {
+public enum InAppMessageFrequency: String {
     case always = "always"
     case onlyOnce = "only_once"
     case oncePerVisit = "once_per_visit"
     case untilVisitorInteracts = "until_visitor_interacts"
 }
 
-enum InAppMessageType: String, CaseIterable {
+public enum InAppMessageType: String, CaseIterable {
     case modal
     case alert
     case fullscreen

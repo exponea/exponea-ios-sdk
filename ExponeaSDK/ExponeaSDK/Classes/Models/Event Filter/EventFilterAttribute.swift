@@ -6,7 +6,7 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
-protocol EventFilterAttribute: Codable {
+public protocol EventFilterAttribute: Codable {
     var type: String { get }
     func isSet(in event: EventFilterEvent) -> Bool
     func getValue(in event: EventFilterEvent) -> String?

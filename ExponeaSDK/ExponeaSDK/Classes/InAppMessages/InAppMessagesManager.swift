@@ -268,13 +268,14 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 self.displayStatusStore.didInteract(with: message, at: Date())
 
                     if self.delegate.trackActions {
-                        trackingDelegate?.track(
-                            .click(buttonLabel: button.buttonText ?? "", url: button.buttonLink ?? "" ),
-                            for: message
-                        )
+                        self.trackInAppMessageClick(
+                            message,
+                            trackingDelegate: trackingDelegate,
+                            buttonText: button.buttonText,
+                            buttonLink: button.buttonLink)
                     }
                     self.delegate.inAppMessageAction(
-                        with: message.id,
+                        with: message,
                         button: InAppMessageButton(text: button.buttonText, url: button.buttonLink),
                         interaction: true
                     )
@@ -285,9 +286,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             },
             dismissCallback: {
                     if self.delegate.trackActions {
-                        trackingDelegate?.track(.close, for: message)
+                        self.trackInAppMessageClose(message, trackingDelegate: trackingDelegate)
                     }
-                    self.delegate.inAppMessageAction(with: message.id, button: nil, interaction: false)
+                    self.delegate.inAppMessageAction(with: message, button: nil, interaction: false)
             },
             presentedCallback: { presented in
                 if presented != nil {
@@ -308,6 +309,25 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             eventWithType: .showInAppMessage,
             properties: ["messageType": message.rawMessageType]
         )
+    }
+
+    func trackInAppMessageClick(
+        _ message: InAppMessage,
+        trackingDelegate: InAppMessageTrackingDelegate?,
+        buttonText: String?,
+        buttonLink: String?
+    ) {
+        trackingDelegate?.track(
+            .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),
+            for: message
+        )
+    }
+
+    func trackInAppMessageClose(
+        _ message: InAppMessage,
+        trackingDelegate: InAppMessageTrackingDelegate?
+    ) {
+        trackingDelegate?.track(.close, for: message)
     }
 
     private func processInAppMessageAction(button: InAppMessagePayloadButton) {
@@ -333,7 +353,7 @@ public protocol InAppMessageActionDelegate: AnyObject {
     var trackActions: Bool { get }
 
     func inAppMessageAction(
-        with messageId: String,
+        with message: InAppMessage,
         button: InAppMessageButton?,
         interaction: Bool
     )
@@ -348,5 +368,5 @@ public class DefaultInAppDelegate: InAppMessageActionDelegate {
     public let overrideDefaultBehavior = false
     public let trackActions = true
 
-    public func inAppMessageAction(with messageId: String, button: InAppMessageButton?, interaction: Bool) {}
+    public func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {}
 }
