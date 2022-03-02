@@ -13,6 +13,12 @@ public struct DateFilter: Codable, Equatable {
     public let startDate: Date?
     public let endDate: Date?
 
+    public init(enabled: Bool, startDate: Date?, endDate: Date?) {
+        self.enabled = enabled
+        self.startDate = startDate
+        self.endDate = endDate
+    }
+
     enum CodingKeys: String, CodingKey {
         case enabled, startDate = "from_date", endDate = "to_date"
     }

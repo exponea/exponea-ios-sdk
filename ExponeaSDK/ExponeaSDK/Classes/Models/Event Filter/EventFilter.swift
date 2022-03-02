@@ -35,8 +35,13 @@ public enum EventFilterError: LocalizedError {
 public struct EventFilter: Codable, Equatable {
     internal static let anyOperatorCount: Int = -1
 
-    let eventType: String
+    public let eventType: String
     let filter: [EventPropertyFilter]
+
+    public init(eventType: String, filter: [EventPropertyFilter]) {
+        self.eventType = eventType
+        self.filter = filter
+    }
 
     func passes(event: EventFilterEvent) throws -> Bool {
         guard event.eventType == eventType else {
@@ -51,7 +56,7 @@ public struct EventFilter: Codable, Equatable {
     }
 }
 
-struct EventPropertyFilter: Equatable {
+public struct EventPropertyFilter: Equatable {
     let attribute: EventFilterAttribute
     let constraint: EventFilterConstraint
 
@@ -72,20 +77,20 @@ struct EventPropertyFilter: Equatable {
         return try constraint.passes(event: event, attribute: attribute)
     }
 
-    static func == (lhs: EventPropertyFilter, rhs: EventPropertyFilter) -> Bool {
+    public static func == (lhs: EventPropertyFilter, rhs: EventPropertyFilter) -> Bool {
         return EventFilterAttributeCoder(lhs.attribute) == EventFilterAttributeCoder(rhs.attribute)
             && EventFilterConstraintCoder(lhs.constraint) == EventFilterConstraintCoder(rhs.constraint)
     }
 }
 
 extension EventPropertyFilter: Codable {
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let data = try decoder.container(keyedBy: CodingKeys.self)
         attribute = try data.decode(EventFilterAttributeCoder.self, forKey: .attribute).attribute
         constraint = try data.decode(EventFilterConstraintCoder.self, forKey: .constraint).constraint
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(EventFilterAttributeCoder(attribute), forKey: .attribute)
         try container.encode(EventFilterConstraintCoder(constraint), forKey: .constraint)

@@ -26,6 +26,34 @@ public struct InAppMessage: Codable, Equatable {
     public let timeoutMS: Int?
     public var timeout: TimeInterval? { return timeoutMS != nil ? Double(timeoutMS ?? 0 ) / 1000 : nil }
 
+    public init(
+        id: String,
+        name: String,
+        rawMessageType: String,
+        rawFrequency: String,
+        payload: InAppMessagePayload? = nil,
+        variantId: Int,
+        variantName: String,
+        trigger: EventFilter,
+        dateFilter: DateFilter,
+        priority: Int? = nil,
+        delayMS: Int? = nil,
+        timeoutMS: Int? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.rawMessageType = rawMessageType
+        self.rawFrequency = rawFrequency
+        self.variantId = variantId
+        self.variantName = variantName
+        self.trigger = trigger
+        self.dateFilter = dateFilter
+        self.priority = priority
+        self.delayMS = delayMS
+        self.timeoutMS = timeoutMS
+        self.payload = payload
+    }
+
     enum CodingKeys: String, CodingKey {
         case id = "id"
         case name

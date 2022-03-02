@@ -210,4 +210,14 @@ public protocol ExponeaType: AnyObject {
     /// All customer identification (including cookie) will be permanently deleted.
     /// Switches tracking into provided exponeaProject
     func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?)
+
+    func trackInAppMessageClick(
+        message: InAppMessage,
+        buttonText: String?,
+        buttonLink: String?
+    )
+
+    func trackInAppMessageClose(
+        message: InAppMessage
+    )
 }
