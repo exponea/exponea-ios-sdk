@@ -1,4 +1,9 @@
 ## Release Notes
+## Release Notes for 2.11.3
+#### March 03, 2022
+* Features
+  * Delegate for reacting on in-app message action clicks - check [In-app messages documentation](./IN_APP_MESSAGES.md) 
+
 ## Release Notes for 2.11.2
 #### January 13, 2022
 * Features
