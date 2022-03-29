@@ -21,7 +21,14 @@ protocol UNAuthorizationStatusProviding {
 extension UNUserNotificationCenter: UNAuthorizationStatusProviding {
     func isAuthorized(completion: @escaping (Bool) -> Void) {
         getNotificationSettings { settings in
-            completion(settings.authorizationStatus.rawValue == UNAuthorizationStatus.authorized.rawValue)
+            if #available(iOS 12.0, *) {
+                completion(
+                    settings.authorizationStatus.rawValue == UNAuthorizationStatus.authorized.rawValue
+                    || settings.authorizationStatus.rawValue == UNAuthorizationStatus.provisional.rawValue
+                )
+            } else {
+                completion(settings.authorizationStatus.rawValue == UNAuthorizationStatus.authorized.rawValue)
+            }
         }
     }
 }
