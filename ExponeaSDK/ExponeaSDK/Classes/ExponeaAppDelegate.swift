@@ -18,11 +18,6 @@ open class ExponeaAppDelegate: NSObject, UNUserNotificationCenterDelegate, UIApp
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        // process push notification from launch options - when app is not running while push is received
-        if let launchOptions = launchOptions,
-           let userInfo = launchOptions[UIApplication.LaunchOptionsKey.remoteNotification] as? [AnyHashable: Any] {
-            Exponea.shared.handlePushNotificationOpened(userInfo: userInfo)
-        }
         UNUserNotificationCenter.current().delegate = self
         return true
     }
