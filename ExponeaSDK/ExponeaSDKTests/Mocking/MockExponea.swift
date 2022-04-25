@@ -10,6 +10,11 @@
 
 import CoreData
 
+// This protocol is used queried using reflection by native iOS SDK to see if SDK is called from SDK tests
+@objc(IsExponeaSDKTest)
+protocol IsExponeaSDKTest {
+}
+
 final class MockExponeaImplementation: ExponeaInternal {
     private var database: DatabaseManager!
 

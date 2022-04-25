@@ -10,6 +10,11 @@ import UIKit
 import ExponeaSDK
 import UserNotifications
 
+// This protocol is used queried using reflection by native iOS SDK to see if SDK is used by our example app
+@objc(IsExponeaExampleApp)
+protocol IsExponeaExampleApp {
+}
+
 @UIApplicationMain
 class AppDelegate: ExponeaAppDelegate {
 

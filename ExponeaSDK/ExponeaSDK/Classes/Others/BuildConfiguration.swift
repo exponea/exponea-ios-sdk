@@ -46,3 +46,11 @@ func isXamarinSDK() -> Bool {
     // Our Xamarin SDK contains a protocol IsExponeaFlutterSDK. We only use it for this purpose.
     return NSProtocolFromString("IsExponeaXamarinSDK") != nil
 }
+
+func isCalledFromExampleApp() -> Bool {
+    return NSProtocolFromString("IsExponeaExampleApp") != nil
+}
+
+func isCalledFromSDKTests() -> Bool {
+    return NSProtocolFromString("IsExponeaSDKTest") != nil
+}

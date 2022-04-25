@@ -12,29 +12,26 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     let defaultUploadURL = "https://in.appcenter.ms/logs?Api-Version=1.0.0"
     let debugAppSecret = "7172e098-ec8e-4d1b-9f9e-3e5107d8b22a"
     let releaseAppSecret = "4d80509d-4d1c-4d50-b472-ce8f5c650708"
-    let debugReactNativeAppSecret = "956e15f2-52e9-4026-83e9-177edcca7bcb"
     let releaseReactNativeAppSecret = "a39df2ba-a3d2-4bb7-a44f-f0a7fe9c1718"
-    let debugCapacitorAppSecret = "823e90ad-bc19-438c-bf8a-1f76e0e3a5d0"
     let releaseCapacitorAppSecret = "e8e38b52-a50f-4c9b-bdc1-65730ef868a0"
-    let debugFlutterAppSecret = "2b709e42-5b7f-4996-a64d-d8c19d6d3b6f"
     let releaseFlutterAppSecret = "eba32cd0-fe8f-43fc-8a1e-bbb69d45bbcc"
     let releaseXamarinAppSecret = "bdab471a-b950-40ac-937b-ab9e5dbf49f9"
     var appSecret: String {
         var secret: String
+        if isCalledFromExampleApp() || isCalledFromSDKTests() {
+            secret = debugAppSecret
+            return secret
+        }
         if isReactNativeSDK() {
            secret = releaseReactNativeAppSecret
-            inDebugBuild { secret = debugReactNativeAppSecret }
         } else if isCapacitorSDK() {
             secret = releaseCapacitorAppSecret
-            inDebugBuild { secret = debugCapacitorAppSecret }
         } else if isFlutterSDK() {
             secret = releaseFlutterAppSecret
-            inDebugBuild { secret = debugFlutterAppSecret }
         } else if isXamarinSDK() {
             secret = releaseXamarinAppSecret
         } else {
             secret = releaseAppSecret
-            inDebugBuild { secret = debugAppSecret }
         }
         return secret
     }
