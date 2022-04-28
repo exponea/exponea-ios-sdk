@@ -28,7 +28,7 @@ typealias MyRecommendationResponse = RecommendationResponse<MyRecommendation>
 
 // Preparing the data.
 let recommendationOptions = RecommendationOptions(
-    id =  "592ff585fb60094e02bfaf6a",
+    id =  "<recommendation_id>",
     fillWithRandom = true,
     size = 10
 )
