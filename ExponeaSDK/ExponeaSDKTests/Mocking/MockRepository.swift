@@ -66,4 +66,10 @@ final class MockRepository: RepositoryType {
     ) {
         completion(EmptyResult.success)
     }
+
+    func requestLastSDKVersion(
+        completion: @escaping (Result<String>) -> Void
+    ) {
+        completion(.success("1.0.0"))
+    }
 }

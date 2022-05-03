@@ -249,6 +249,10 @@ public class ExponeaInternal: ExponeaType {
                 processSavedCampaignData()
 
                 configuration.saveToUserDefaults()
+
+                inDebugBuild {
+                    VersionChecker(repository: repository).warnIfNotLatestSDKVersion()
+                }
             } catch {
                 telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
                 // Failing gracefully, if setup failed

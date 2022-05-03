@@ -81,8 +81,8 @@ class AuthenticationViewController: UIViewController {
                 "Property02": 123
             ]
         )
-        //Uncomment if you want to test in-app message delegate
-        //Exponea.shared.inAppMessagesDelegate = InAppDelegate(overrideDefaultBehavior: true, trackActions: false)
+        // Uncomment if you want to test in-app message delegate
+        // Exponea.shared.inAppMessagesDelegate = InAppDelegate(overrideDefaultBehavior: true, trackActions: false)
     }
 
     @objc func tokenUpdated() {

@@ -60,3 +60,8 @@ Carthage/
 fastlane/report.xml
 fastlane/screenshots
 *.DS_Store
+
+# AppCode ignore
+.idea
+.idea/
+.idea/*

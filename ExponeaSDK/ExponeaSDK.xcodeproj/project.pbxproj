@@ -271,9 +271,14 @@
 		C0F6C4EA2098A1AC00834E21 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4E92098A1AC00834E21 /* Assets.xcassets */; };
 		C0F6C4ED2098A1AC00834E21 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */; };
 		CC06F95125FA037800F38D93 /* RequestFactorySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC06F95025FA037800F38D93 /* RequestFactorySpec.swift */; };
+		CC0C484D281935BC003E8BF8 /* ExponeaVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0C484C281935BC003E8BF8 /* ExponeaVersion.swift */; };
 		CC126F99268DB574001F43E1 /* ExponeaSDKObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0563750C25AF030A00AB68DA /* ExponeaSDKObjC.framework */; };
 		CC126F9C268DB578001F43E1 /* ExponeaSDKShared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */; };
 		CC80290527ABF04F00187887 /* InAppMessageDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC80290427ABF04F00187887 /* InAppMessageDelegate.swift */; };
+		CCB87B7828169C6C005DFB8E /* VersionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB87B7728169C6C005DFB8E /* VersionChecker.swift */; };
+		CCB87B7A28169F4B005DFB8E /* VersionCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB87B7928169F4B005DFB8E /* VersionCheckRepository.swift */; };
+		CCB87B7C28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB87B7B28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift */; };
+		CCB87B7E2816A6A6005DFB8E /* GitHubReleaseResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB87B7D2816A6A6005DFB8E /* GitHubReleaseResponse.swift */; };
 		D20134EC7D150032774DF78D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 080033AD83490110B7A029BD /* Pods_ExponeaSDKTests.framework */; };
 		F01ADE622084D58600E20662 /* DevicePropertiesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */; };
 		F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; };
@@ -687,7 +692,12 @@
 		C0F6C4EE2098A1AC00834E21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C0F7A59C21AE921300BA392F /* NotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationData.swift; sourceTree = "<group>"; };
 		CC06F95025FA037800F38D93 /* RequestFactorySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestFactorySpec.swift; sourceTree = "<group>"; };
+		CC0C484C281935BC003E8BF8 /* ExponeaVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaVersion.swift; sourceTree = "<group>"; };
 		CC80290427ABF04F00187887 /* InAppMessageDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDelegate.swift; sourceTree = "<group>"; };
+		CCB87B7728169C6C005DFB8E /* VersionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionChecker.swift; sourceTree = "<group>"; };
+		CCB87B7928169F4B005DFB8E /* VersionCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionCheckRepository.swift; sourceTree = "<group>"; };
+		CCB87B7B28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ServerRepository+VersionCheckRepository.swift"; sourceTree = "<group>"; };
+		CCB87B7D2816A6A6005DFB8E /* GitHubReleaseResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubReleaseResponse.swift; sourceTree = "<group>"; };
 		E60F84DD39D938AAB043ED11 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePropertiesSpec.swift; sourceTree = "<group>"; };
 		F021E859206CF10200788ABC /* ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1468,6 +1478,7 @@
 				B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */,
 				05B4D64B238FEB9200F5010F /* InAppMessagesResponse.swift */,
 				05BF1C7923A1139B00FDC101 /* RecommendationResponse.swift */,
+				CCB87B7D2816A6A6005DFB8E /* GitHubReleaseResponse.swift */,
 			);
 			path = Responses;
 			sourceTree = "<group>";
@@ -1727,6 +1738,8 @@
 				C0EB5D8B20B70D5000F1031F /* Swizzler.swift */,
 				0580BBC6239698E60058323D /* UIColor+FromHexString.swift */,
 				05FD178E2403C4CC003A799B /* BuildConfiguration.swift */,
+				CCB87B7728169C6C005DFB8E /* VersionChecker.swift */,
+				CC0C484C281935BC003E8BF8 /* ExponeaVersion.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -1739,6 +1752,8 @@
 				058DD92824112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift */,
 				053CA1FD247D4A0F003B699C /* SelfCheckRepository.swift */,
 				053CA1FF247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift */,
+				CCB87B7928169F4B005DFB8E /* VersionCheckRepository.swift */,
+				CCB87B7B28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift */,
 			);
 			path = Repository;
 			sourceTree = "<group>";
@@ -2352,7 +2367,10 @@
 				053CA1FE247D4A0F003B699C /* SelfCheckRepository.swift in Sources */,
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
+				CCB87B7C28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
+				CCB87B7828169C6C005DFB8E /* VersionChecker.swift in Sources */,
+				CC0C484D281935BC003E8BF8 /* ExponeaVersion.swift in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */,
 				05F3EFE62382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift in Sources */,
@@ -2370,6 +2388,7 @@
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
 				053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */,
 				057D476723C87F0B00AEE902 /* UrlOpenerType.swift in Sources */,
+				CCB87B7E2816A6A6005DFB8E /* GitHubReleaseResponse.swift in Sources */,
 				05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */,
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				057E367523E0503F00DDD6C1 /* InAppMessageSlideInView.swift in Sources */,
@@ -2379,6 +2398,7 @@
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
 				05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */,
 				053CA200247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift in Sources */,
+				CCB87B7A28169F4B005DFB8E /* VersionCheckRepository.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
 				052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */,
 				0591906223EC1CEC0037BD88 /* GenericOperators.swift in Sources */,

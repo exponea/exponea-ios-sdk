@@ -54,3 +54,15 @@ func isCalledFromExampleApp() -> Bool {
 func isCalledFromSDKTests() -> Bool {
     return NSProtocolFromString("IsExponeaSDKTest") != nil
 }
+
+func getReactNativeSDKVersion() -> String? {
+    return (NSClassFromString("ExponeaRNVersion") as? ExponeaVersion.Type)?.getVersion()
+}
+
+func getFlutterSDKVersion() -> String? {
+    return (NSClassFromString("ExponeaFlutterVersion") as? ExponeaVersion.Type)?.getVersion()
+}
+
+func getXamarinSDKVersion() -> String? {
+    return (NSClassFromString("ExponeaXamarinVersion") as? ExponeaVersion.Type)?.getVersion()
+}
