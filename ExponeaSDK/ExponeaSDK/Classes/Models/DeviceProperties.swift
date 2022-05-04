@@ -69,6 +69,7 @@ public extension UIDevice {
 
         func mapToDevice(identifier: String) -> String {
             switch identifier {
+            // source of truth: https://www.theiphonewiki.com/wiki/List_of_iPhones
             case "iPhone1,1":                                       return "iPhone"
             case "iPhone1,2":                                       return "iPhone 3G"
             case "iPhone2,1":                                       return "iPhone 3GS"
@@ -98,6 +99,12 @@ public extension UIDevice {
             case "iPhone13,2":                                      return "iPhone 12"
             case "iPhone13,3":                                      return "iPhone 12 Pro"
             case "iPhone13,4":                                      return "iPhone 12 Pro Max"
+            case "iPhone14,4":                                      return "iPhone 13 mini"
+            case "iPhone14,5":                                      return "iPhone 13"
+            case "iPhone14,2":                                      return "iPhone 13 Pro"
+            case "iPhone14,3":                                      return "iPhone 13 Pro Max"
+            case "iPhone14,6":                                      return "iPhone SE (3rd generation)"
+            // source of truth: https://www.theiphonewiki.com/wiki/List_of_iPads
             case "iPad1,1":                                         return "iPad"
             case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":        return "iPad (2nd generation)"
             case "iPad3,1", "iPad3,2", "iPad3,3":                   return "iPad (3rd generation)"
@@ -106,15 +113,21 @@ public extension UIDevice {
             case "iPad7,5", "iPad7,6":                              return "iPad (6th generation)"
             case "iPad7,11", "iPad7,12":                            return "iPad (7th generation)"
             case "iPad11,6", "iPad11,7":                            return "iPad (8th generation)"
+            case "iPad12,1", "iPad12,2":                            return "iPad (9th generation)"
+            // source of truth: https://www.theiphonewiki.com/wiki/List_of_iPad_Airs
             case "iPad4,1", "iPad4,2", "iPad4,3":                   return "iPad Air"
             case "iPad5,3", "iPad5,4":                              return "iPad Air (2nd generation)"
             case "iPad11,3", "iPad11,4":                            return "iPad Air (3rd generation)"
             case "iPad13,1", "iPad13,2":                            return "iPad Air (4th generation)"
+            case "iPad13,16", "iPad13,17":                          return "iPad Air (5th generation)"
+            // source of truth: https://www.theiphonewiki.com/wiki/List_of_iPad_minis
             case "iPad2,5", "iPad2,6", "iPad2,7":                   return "iPad mini"
             case "iPad4,4", "iPad4,5", "iPad4,6":                   return "iPad mini (2nd generation)"
             case "iPad4,7", "iPad4,8", "iPad4,9":                   return "iPad mini (3rd generation)"
             case "iPad5,1", "iPad5,2":                              return "iPad mini (4th generation)"
             case "iPad11,1", "iPad11,2":                            return "iPad mini (5th generation)"
+            case "iPad14,1", "iPad14,2":                            return "iPad mini (6th generation)"
+            // source of truth: https://www.theiphonewiki.com/wiki/List_of_iPad_Pros
             case "iPad6,3", "iPad6,4":                              return "iPad Pro (9.7-inch)"
             case "iPad7,3", "iPad7,4":                              return "iPad Pro (10.5-inch)"
             case "iPad8,1", "iPad8,2", "iPad8,3", "iPad8,4":        return "iPad Pro (11-inch)"
@@ -125,6 +138,7 @@ public extension UIDevice {
             case "iPad8,5", "iPad8,6", "iPad8,7", "iPad8,8":        return "iPad Pro (12.9-inch) (3rd generation)"
             case "iPad8,11", "iPad8,12":                            return "iPad Pro (12.9-inch) (4th generation)"
             case "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11":  return "iPad Pro (12.9-inch) (5th generation)"
+            // simulator
             case "i386", "x86_64":                                  return getSimulatorModelName(identifier: identifier)
             default:                                                return UIDevice.current.model
             }
