@@ -13,6 +13,10 @@ Update your app’s App Delegate to respond to the universal link.
 
 When iOS opens your app as the result of a universal link, your app receives an `NSUserActivity` object with an `activityType` value of `NSUserActivityTypeBrowsingWeb`. The activity object’s `webpageURL` property contains the URL that needs to be passed on to the Exponea SDK’s `.trackCampaignClick()` method.  
 
+Universal Link parameters are automatically tracked in `session_start` events when new session is started. If your app starts a new session, campaign parameters (`utm_source`, `utm_campaign`, `utm_content`, `utm_medium`, `utm_term` and `xnpe_cmp`) are sent within the session parameters to enable you to attribute the new session to Universal Link click.
+
+> **NOTE:** If an existing session is resumed by clicking on an Universal Link, the resumed session is **NOT** attributed to the Universal Link click, the Universal Link click parameters are not tracked in the `session_start` event. Session behaviour is determined by the setup of the 'automaticSessionTracking' and 'sessionTimeout' parameters described in [ExponeaConfiguration](./CONFIG.md). Please consider this for manual session handling or when you test the Universal Link tracking during the development.
+
 #### 💻 Example
 
 ```swift
