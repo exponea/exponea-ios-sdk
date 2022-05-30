@@ -1,4 +1,17 @@
 ## Release Notes
+## Release Notes for 2.11.4
+#### May 30, 2022
+* Features
+  * Shows a warn log for developer if old SDK version is used
+  * Documentation note for Universal Links data tracking with new vs resumed session
+  * List of human-readable model names are updated to latest models
+  * Documentation update for recommendation_id to match Android SDK example
+  * Provisional push notifications support for iOS 12+
+* Bug Fixes
+  * Fixed: Track internal development and tests to special internal app center project
+  * Fixed: Duplicated push open action track is not called on app cold start 
+
+
 ## Release Notes for 2.11.3
 #### March 03, 2022
 * Features
