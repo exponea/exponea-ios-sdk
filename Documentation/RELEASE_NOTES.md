@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.12.0
+#### August 09, 2022
+* Features
+  * Added a support of HTML InApp messages
+
+
 ## Release Notes for 2.11.4
 #### May 30, 2022
 * Features
