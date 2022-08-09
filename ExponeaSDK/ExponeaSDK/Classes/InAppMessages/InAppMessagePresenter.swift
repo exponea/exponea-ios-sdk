@@ -24,7 +24,8 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
 
     func presentInAppMessage(
         messageType: InAppMessageType,
-        payload: InAppMessagePayload,
+        payload: InAppMessagePayload?,
+        payloadHtml: String?,
         delay: TimeInterval,
         timeout: TimeInterval?,
         imageData: Data?,
@@ -67,6 +68,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     let inAppMessageView = try self.createInAppMessageView(
                         messageType: messageType,
                         payload: payload,
+                        payloadHtml: payloadHtml,
                         image: image,
                         actionCallback: { button in
                             self.presenting = false
@@ -108,7 +110,8 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
 
     func createInAppMessageView(
         messageType: InAppMessageType,
-        payload: InAppMessagePayload,
+        payload: InAppMessagePayload?,
+        payloadHtml: String?,
         image: UIImage?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
         dismissCallback: @escaping () -> Void
@@ -116,7 +119,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         switch messageType {
         case .alert:
             return try InAppMessageAlertView(
-                payload: payload,
+                payload: payload!,
                 actionCallback: actionCallback,
                 dismissCallback: dismissCallback
             )
@@ -130,7 +133,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 fullscreen = true
             }
             return InAppMessageDialogView(
-                payload: payload,
+                payload: payload!,
                 image: image,
                 actionCallback: actionCallback,
                 dismissCallback: dismissCallback,
@@ -142,10 +145,16 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 throw InAppMessagePresenterError.unableToCreateView
             }
             return InAppMessageSlideInView(
-                payload: payload,
+                payload: payload!,
                 image: image,
                 actionCallback: actionCallback,
                 dismissCallback: dismissCallback
+            )
+        case .freeform:
+            return InAppMessageWebView(
+                    payload: payloadHtml!,
+                    actionCallback: actionCallback,
+                    dismissCallback: dismissCallback
             )
         }
     }

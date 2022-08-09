@@ -11,7 +11,7 @@ import UserNotifications
 import UIKit
 
 internal enum PushSelectorMapping {
-    internal typealias Mapping = (original: Selector, swizzled: Selector)
+    internal typealias Mapping = (original: ObjectiveC.Selector, swizzled: ObjectiveC.Selector)
 
     internal enum Original {
         static let registration = #selector(
@@ -43,11 +43,11 @@ internal enum PushSelectorMapping {
 
     internal enum Signatures {
         static let registration = (@convention(c) (
-            AnyObject, Selector, UIApplication, Data) -> Void).self
+            AnyObject, ObjectiveC.Selector, UIApplication, Data) -> Void).self
         static let centerDelegateReceive = (@convention(c) (
-            AnyObject, Selector, UNUserNotificationCenter, UNNotificationResponse, @escaping () -> Void) -> Void).self
+            AnyObject, ObjectiveC.Selector, UNUserNotificationCenter, UNNotificationResponse, @escaping () -> Void) -> Void).self
         static let applicationReceive = (@convention(c)
-            (AnyObject, Selector, UIApplication, NSDictionary, @escaping (UIBackgroundFetchResult) -> Void)
+            (AnyObject, ObjectiveC.Selector, UIApplication, NSDictionary, @escaping (UIBackgroundFetchResult) -> Void)
             -> Void).self
     }
 

@@ -90,20 +90,53 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     }
 
     @discardableResult private func preloadImage(for message: InAppMessage) -> Bool {
-        guard let imageUrlString = message.payload?.imageUrl, !imageUrlString.isEmpty else {
+        var imageUrlStrings: [String] = []
+        if (message.isHtml && message.payloadHtml != nil) {
+            imageUrlStrings.append(contentsOf: HtmlNormalizer(message.payloadHtml!).collectImages() ?? [])
+        } else if (message.payload?.imageUrl?.isEmpty == false) {
+            imageUrlStrings.append(message.payload!.imageUrl!)
+        }
+        if (imageUrlStrings.isEmpty) {
             return true // there is no image, call preload successful
         }
-        if let imageUrl = URL(string: imageUrlString) {
-            if !self.cache.hasImageData(at: imageUrlString) {
-                if let data = try? Data(contentsOf: imageUrl) {
-                    self.cache.saveImageData(at: imageUrlString, data: data)
-                    return true
-                }
-            } else {
-                return true
+        for imageUrlString in imageUrlStrings {
+            if (cache.hasImageData(at: imageUrlString)) {
+                continue
             }
+            let imageData: Data? = tryDownloadImage(imageUrlString)
+            guard imageData != nil else {
+                return false
+            }
+            cache.saveImageData(at: imageUrlString, data: imageData!)
+            return false
         }
-        return false
+        return true
+    }
+
+    private func tryDownloadImage(_ imageSource: String?) -> Data? {
+        guard imageSource != nil,
+              let imageUrl = URL(string: imageSource!)
+                else {
+            Exponea.logger.log(.error, message: "Image cannot be downloaded \(imageSource ?? "<is nil>")")
+            return nil
+        }
+        let semaphore = DispatchSemaphore(value: 0)
+        var imageData: Data?
+        let dataTask = URLSession.shared.dataTask(with: imageUrl) { data, response, error in {
+            imageData = data
+            semaphore.signal()
+        }() }
+        dataTask.resume()
+        let awaitResult = semaphore.wait(timeout: .now() + 10.0)
+        switch (awaitResult) {
+        case .success:
+            // Nothing to do, let check imageData
+            break
+        case .timedOut:
+            Exponea.logger.log(.warning, message: "Image \(imageSource!) may be too large or slow connection - aborting")
+            dataTask.cancel()
+        }
+        return imageData
     }
 
     internal func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
@@ -152,7 +185,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)?
     ) {
-        if message.payload == nil && message.variantId == -1 {
+        if !message.hasPayload() && message.variantId == -1 {
             Exponea.logger.log(
                 .verbose,
                 message: "Only logging in-app message for control group '\(message.name)'"
@@ -244,7 +277,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)? = nil
     ) {
-        guard message.payload != nil else {
+        guard message.hasPayload() else {
             Exponea.logger.log(.verbose, message: "Not showing message with empty payload '\(message.name)'")
             return
         }
@@ -260,7 +293,8 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
         self.presenter.presentInAppMessage(
             messageType: message.messageType,
-            payload: message.payload!,
+            payload: message.payload,
+            payloadHtml: message.payloadHtml,
             delay: message.delay,
             timeout: message.timeout,
             imageData: imageData,
@@ -307,7 +341,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         trackingDelegate?.track(.show, for: message)
         Exponea.shared.telemetryManager?.report(
             eventWithType: .showInAppMessage,
-            properties: ["messageType": message.rawMessageType]
+            properties: ["messageType": message.rawMessageType ?? "null"]
         )
     }
 

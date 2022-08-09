@@ -35,7 +35,7 @@ internal class Swizzler {
         swizzles[method] = swizzle
     }
 
-    class func swizzleSelector(_ originalSelector: Selector, with newSelector: Selector, for aClass: AnyClass,
+    class func swizzleSelector(_ originalSelector: ObjectiveC.Selector, with newSelector: ObjectiveC.Selector, for aClass: AnyClass,
                                name: String, block: @escaping SwizzleBlock, addingMethodIfNecessary: Bool = false) {
 
         guard let swizzledMethod = class_getInstanceMethod(aClass, newSelector) else {
@@ -88,7 +88,7 @@ internal class Swizzler {
         Exponea.logger.log(.verbose, message: "Adding a swizzle: \(swizzle!.description)")
     }
 
-    class func addMethod(to aClass: AnyClass, with selector: Selector, implementation: IMP) -> Method? {
+    class func addMethod(to aClass: AnyClass, with selector: ObjectiveC.Selector, implementation: IMP) -> Method? {
         if let method = class_getInstanceMethod(aClass, selector) {
             return method
         }
@@ -105,7 +105,7 @@ internal class Swizzler {
         return class_getInstanceMethod(aClass, selector)!
     }
 
-    class func unswizzleSelector(_ selector: Selector, aClass: AnyClass, name: String? = nil) {
+    class func unswizzleSelector(_ selector: ObjectiveC.Selector, aClass: AnyClass, name: String? = nil) {
         if let method = class_getInstanceMethod(aClass, selector),
             let swizzle = getSwizzle(for: method) {
             if let name = name {

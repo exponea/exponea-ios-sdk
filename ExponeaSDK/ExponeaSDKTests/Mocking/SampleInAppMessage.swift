@@ -47,7 +47,9 @@ struct SampleInAppMessage {
             "to_date": null
         },
         "load_delay": 1000,
-        "close_timeout": 2000
+        "close_timeout": 2000,
+        "payload_html": "<html></html>",
+        "is_html": false
     }
     """
 
@@ -99,7 +101,9 @@ struct SampleInAppMessage {
             ),
             priority: priority,
             delayMS: delayMS,
-            timeoutMS: timeoutMS
+            timeoutMS: timeoutMS,
+            payloadHtml: "<html></html>",
+            isHtml: false
         )
     }
 
@@ -124,7 +128,9 @@ struct SampleInAppMessage {
             ),
             priority: nil,
             delayMS: nil,
-            timeoutMS: nil
+            timeoutMS: nil,
+            payloadHtml: "<html></html>",
+            isHtml: false
         )
     }
 }

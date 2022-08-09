@@ -9,7 +9,7 @@
 import Foundation
 import UserNotifications
 import UserNotificationsUI
-#if !COCOAPODS
+#if canImport(ExponeaSDKShared)
 import ExponeaSDKShared
 #endif
 

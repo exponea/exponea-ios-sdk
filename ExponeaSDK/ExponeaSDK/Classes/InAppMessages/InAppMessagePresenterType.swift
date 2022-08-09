@@ -11,7 +11,8 @@ import Foundation
 protocol InAppMessagePresenterType {
     func presentInAppMessage(
         messageType: InAppMessageType,
-        payload: InAppMessagePayload,
+        payload: InAppMessagePayload?,
+        payloadHtml: String?,
         delay: TimeInterval,
         timeout: TimeInterval?,
         imageData: Data?,

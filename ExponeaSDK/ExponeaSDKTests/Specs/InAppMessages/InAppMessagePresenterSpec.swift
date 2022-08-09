@@ -83,8 +83,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
         }
 
         describe("presenting in-app message view") {
-            let payload = SampleInAppMessage.getSampleInAppMessage().payload!
-
+            let message = SampleInAppMessage.getSampleInAppMessage()
+            // TODO: here
             InAppMessageType.allCases.forEach { messageType in
                 it("should present dialog with existing UI") {
                     let window = UIWindow()
@@ -92,7 +92,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                     waitUntil { done in
                         InAppMessagePresenter(window: window).presentInAppMessage(
                             messageType: messageType,
-                            payload: payload,
+                            payload: message.payload,
+                            payloadHtml: message.payloadHtml,
                             delay: 0,
                             timeout: nil,
                             imageData: lenaImageData,
@@ -109,7 +110,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                     waitUntil { done in
                         InAppMessagePresenter().presentInAppMessage(
                             messageType: messageType,
-                            payload: payload,
+                            payload: message.payload,
+                            payloadHtml: message.payloadHtml,
                             delay: 0,
                             timeout: nil,
                             imageData: lenaImageData,
@@ -128,7 +130,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                     waitUntil { done in
                         InAppMessagePresenter().presentInAppMessage(
                             messageType: messageType,
-                            payload: payload,
+                            payload: message.payload,
+                            payloadHtml: message.payloadHtml,
                             delay: 0,
                             timeout: nil,
                             imageData: "something".data(using: .utf8)!,
@@ -148,7 +151,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                     let present = { callback in
                         presenter.presentInAppMessage(
                             messageType: messageType,
-                            payload: payload,
+                            payload: message.payload,
+                            payloadHtml: message.payloadHtml,
                             delay: 0,
                             timeout: nil,
                             imageData: lenaImageData,
@@ -184,7 +188,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             done()
                         })
                     }
-                    presentedDialog?.actionCallback(payload.buttons![0])
+                    presentedDialog?.actionCallback(message.payload!.buttons![0])
                     waitUntil { done in
                         present({ presented in
                             expect(presented).notTo(beNil())

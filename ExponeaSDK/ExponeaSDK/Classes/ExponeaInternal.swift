@@ -7,7 +7,7 @@
 //
 
 import Foundation
-#if !COCOAPODS
+#if canImport(ExponeaSDKObjC)
 import ExponeaSDKObjC
 #endif
 

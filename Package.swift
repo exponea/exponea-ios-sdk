@@ -17,6 +17,7 @@ let package = Package(
         )
     ],
     dependencies: [
+        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.4.3")
     ],
     targets: [
         // Main library
@@ -36,7 +37,7 @@ let package = Package(
         // Code shared between ExponeaSDK and ExponeaSDK-Notifications
         .target(
             name: "ExponeaSDKShared",
-            dependencies: [],
+            dependencies: ["SwiftSoup"],
             path: "ExponeaSDK/ExponeaSDKShared",
             exclude: ["Supporting Files/Info.plist"]
         ),

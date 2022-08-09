@@ -11,11 +11,21 @@ import Foundation
 public struct InAppMessage: Codable, Equatable {
     public let id: String
     public let name: String
-    public let rawMessageType: String
-    public var messageType: InAppMessageType { return InAppMessageType(rawValue: rawMessageType) ?? .alert }
+    public let rawMessageType: String?
+    public var messageType: InAppMessageType {
+        if (isHtml) {
+            return .freeform
+        }
+        if (rawMessageType == nil) {
+            return .alert
+        }
+        return InAppMessageType(rawValue: rawMessageType!) ?? .alert
+    }
     public let rawFrequency: String
     public var frequency: InAppMessageFrequency? { return InAppMessageFrequency(rawValue: rawFrequency) }
     public let payload: InAppMessagePayload?
+    public let payloadHtml: String?
+    public let isHtml: Bool
     public let variantId: Int
     public let variantName: String
     public let trigger: EventFilter
@@ -38,7 +48,9 @@ public struct InAppMessage: Codable, Equatable {
         dateFilter: DateFilter,
         priority: Int? = nil,
         delayMS: Int? = nil,
-        timeoutMS: Int? = nil
+        timeoutMS: Int? = nil,
+        payloadHtml: String?,
+        isHtml: Bool?
     ) {
         self.id = id
         self.name = name
@@ -52,6 +64,8 @@ public struct InAppMessage: Codable, Equatable {
         self.delayMS = delayMS
         self.timeoutMS = timeoutMS
         self.payload = payload
+        self.payloadHtml = payloadHtml
+        self.isHtml = isHtml ?? false
     }
 
     enum CodingKeys: String, CodingKey {
@@ -67,6 +81,8 @@ public struct InAppMessage: Codable, Equatable {
         case priority = "load_priority"
         case delayMS = "load_delay"
         case timeoutMS = "close_timeout"
+        case payloadHtml = "payload_html"
+        case isHtml = "is_html"
     }
 
     func applyDateFilter(date: Date) -> Bool {
@@ -137,6 +153,10 @@ public struct InAppMessage: Codable, Equatable {
             return true
         }
     }
+
+    func hasPayload() -> Bool {
+        payload != nil || (isHtml && payloadHtml != nil)
+    }
 }
 
 public struct InAppMessageTrigger: Codable, Equatable {
@@ -161,4 +181,5 @@ public enum InAppMessageType: String, CaseIterable {
     case alert
     case fullscreen
     case slideIn = "slide_in"
+    case freeform
 }

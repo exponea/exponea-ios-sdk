@@ -10,7 +10,7 @@ import Foundation
 
 internal class Swizzle: CustomStringConvertible {
     internal let aClass: AnyClass
-    internal let selector: Selector
+    internal let selector: ObjectiveC.Selector
     internal let originalMethod: IMP
     internal let name: String
     internal var blocks = [String: Swizzler.SwizzleBlock]()
@@ -18,7 +18,7 @@ internal class Swizzle: CustomStringConvertible {
     internal init(block: @escaping Swizzler.SwizzleBlock,
                   name: String,
                   aClass: AnyClass,
-                  selector: Selector,
+                  selector: ObjectiveC.Selector,
                   originalMethod: IMP) {
         self.aClass = aClass
         self.selector = selector

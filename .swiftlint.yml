@@ -9,6 +9,11 @@ disabled_rules:
     - type_body_length
     - force_unwrapping
     - inclusive_language
+    - line_length
+    - force_cast
+    - identifier_name
+    - force_try
+    - type_name
 
 opt_in_rules:
     - force_unwrapping

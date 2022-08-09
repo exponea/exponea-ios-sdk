@@ -11,7 +11,8 @@
 class MockInAppMessagePresenter: InAppMessagePresenterType {
     struct PresentedMessageData {
         let messageType: InAppMessageType
-        let payload: InAppMessagePayload
+        let payload: InAppMessagePayload?
+        let payloadHtml: String?
         let imageData: Data?
         let actionCallback: (InAppMessagePayloadButton) -> Void
         let dismissCallback: () -> Void
@@ -23,7 +24,8 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
     public var presentResult: Bool = true
     func presentInAppMessage(
         messageType: InAppMessageType,
-        payload: InAppMessagePayload,
+        payload: InAppMessagePayload?,
+        payloadHtml: String?,
         delay: TimeInterval,
         timeout: TimeInterval?,
         imageData: Data?,
@@ -36,6 +38,7 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
                 PresentedMessageData(
                     messageType: messageType,
                     payload: payload,
+                    payloadHtml: payloadHtml,
                     imageData: imageData,
                     actionCallback: actionCallback,
                     dismissCallback: dismissCallback,
@@ -45,7 +48,7 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
             DispatchQueue.main.async {
                 presentedCallback?(
                     InAppMessageDialogView(
-                        payload: payload,
+                        payload: payload!,
                         image: UIImage(),
                         actionCallback: actionCallback,
                         dismissCallback: dismissCallback,

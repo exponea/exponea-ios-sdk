@@ -57,7 +57,7 @@ In-app messages are triggered when an event is tracked based on conditions setup
 ### In-app images caching
 To reduce the number of API calls and fetching time of in-app messages, SDK is caching the images displayed in messages. Therefore, once the SDK downloads the image, an image with the same URL may not be downloaded again, and will not change, since it was already cached. For this reason, we recommend always using different URLs for different images.
 
-
+> Image downloads are limited to 10 seconds per image. If the in-app message contains a large image that cannot be downloaded within this time limit, the in-app message will not be displayed. For an HTML in-app message that contains multiple images, this restriction still applies per image, but failure of any image download will prevent this HTML in-app message from being displayed.
 
 ### Custom in-app message actions
 If you want to override default SDK behavior, when in-app message action is performed (button is clicked, message is closed), or you want to add your code to be performed along with code executed by the SDK, you can set up `inAppMessagesDelegate` on Exponea instance. You will first need to create your own implementation of `InAppMessageActionDelegate`

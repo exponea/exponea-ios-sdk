@@ -10,7 +10,7 @@
  When using Cocoapods, we'll just include all files from ExponeaSDKShared.
  When using Carthage/SPM, we'll depend on module/framework ExponeaSDKShared.
  */
-#if !COCOAPODS
+#if canImport(ExponeaSDKShared)
 import ExponeaSDKShared
 
 /**

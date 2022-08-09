@@ -16,11 +16,12 @@ class DatabaseManager {
     private let context: NSManagedObjectContext
 
     internal init(persistentStoreDescriptions: [NSPersistentStoreDescription]? = nil) throws {
-        #if SWIFT_PACKAGE
-        let bundle = Bundle.module
-        #else
+//        #if SWIFT_PACKAGE
+//        let bundle = Bundle.module
+//        #else
+//
+//        #endif
         let bundle = Bundle(for: DatabaseManager.self)
-        #endif
 
         guard let container = NSPersistentContainer(name: "DatabaseModel", bundle: bundle) else {
             throw DatabaseManagerError.unableToCreatePersistentContainer
