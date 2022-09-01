@@ -1,4 +1,11 @@
 ## Release Notes
+## Release Notes for 2.12.1
+#### September 01, 2022
+* Bug Fixes
+  * Fixed: License established to MIT
+  * Fixed: Warn log for developer for old SDK usage has been fixed for compatibility with SDK wrappers
+
+
 ## Release Notes for 2.12.0
 #### August 09, 2022
 * Features
