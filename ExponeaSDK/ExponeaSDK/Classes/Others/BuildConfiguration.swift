@@ -56,13 +56,31 @@ func isCalledFromSDKTests() -> Bool {
 }
 
 func getReactNativeSDKVersion() -> String? {
-    return (NSClassFromString("ExponeaRNVersion") as? ExponeaVersion.Type)?.getVersion()
+    getVersionFromClass("ExponeaRNVersion")
 }
 
 func getFlutterSDKVersion() -> String? {
-    return (NSClassFromString("ExponeaFlutterVersion") as? ExponeaVersion.Type)?.getVersion()
+    getVersionFromClass("ExponeaFlutterVersion")
 }
 
 func getXamarinSDKVersion() -> String? {
-    return (NSClassFromString("ExponeaXamarinVersion") as? ExponeaVersion.Type)?.getVersion()
+    getVersionFromClass("ExponeaXamarinVersion")
+}
+
+private func getVersionFromClass(_ className: String) -> String? {
+    guard let foundClass = NSClassFromString(className) else {
+        Exponea.logger.log(.error, message: "Missing '\(className)' class")
+        return nil
+    }
+    guard let asNSObjectClass = foundClass as? NSObject.Type else {
+        Exponea.logger.log(.error, message: "Class '\(className)' does not conform to NSObject")
+        return nil
+    }
+    guard let asProviderClass = asNSObjectClass as? ExponeaVersionProvider.Type else {
+        Exponea.logger.log(.error, message: "Class '\(className)' does not conform to ExponeaVersionProvider")
+        return nil
+    }
+    let providerInstance = asProviderClass.init()
+    Exponea.logger.log(.verbose, message: "Version provider \(className) has been found")
+    return providerInstance.getVersion()
 }

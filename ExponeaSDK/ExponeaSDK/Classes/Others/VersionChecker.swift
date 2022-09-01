@@ -9,6 +9,11 @@
 
 import Foundation
 
+public protocol ExponeaVersionProvider {
+    init()
+    func getVersion() -> String
+}
+
 internal class VersionChecker {
     internal let repository: ServerRepository
     internal init(repository: ServerRepository) {

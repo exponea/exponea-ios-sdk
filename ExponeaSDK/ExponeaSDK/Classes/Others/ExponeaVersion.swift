@@ -9,9 +9,8 @@
 
 import Foundation
 
-@objc(ExponeaVersion)
-open class ExponeaVersion: NSObject {
-    class func getVersion() -> String {
-        return Exponea.version
+final class ExponeaVersion: ExponeaVersionProvider {
+    func getVersion() -> String {
+        Exponea.version as String
     }
 }
