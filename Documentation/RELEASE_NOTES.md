@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.12.2
+#### September 06, 2022
+* Bug Fixes
+  * Fixed: DatabaseManager init with Bundle creation for Swift Package Manager usage
+
+
 ## Release Notes for 2.12.1
 #### September 01, 2022
 * Bug Fixes
