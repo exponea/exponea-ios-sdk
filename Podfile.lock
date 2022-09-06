@@ -9,7 +9,6 @@ PODS:
   - Nimble (9.2.1)
   - Quick (5.0.1)
   - SwiftLint (0.47.1)
-  - SwiftSoup (2.4.3)
   - URITemplate (3.0.1)
 
 DEPENDENCIES:
@@ -17,14 +16,12 @@ DEPENDENCIES:
   - Nimble (~> 9.2.0)
   - Quick
   - SwiftLint
-  - SwiftSoup (= 2.4.3)
 
 SPEC REPOS:
   trunk:
     - Nimble
     - Quick
     - SwiftLint
-    - SwiftSoup
     - URITemplate
 
 EXTERNAL SOURCES:
@@ -42,9 +39,8 @@ SPEC CHECKSUMS:
   Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 749aa754fd1e7d984f2000fe051e18a3a9809179
   SwiftLint: f80f1be7fa96d30e0aa68e58d45d4ea1ccaac519
-  SwiftSoup: 3384f2e618cfc1b3cbc7852c16692fe8de13fb8f
   URITemplate: 5f5a79f3e384884102c4e6b3325d159c20a8035a
 
-PODFILE CHECKSUM: db4bd76c8872e01911b5d41c8ad201fecb5a8622
+PODFILE CHECKSUM: 28a690491214c7b453ecfe6e506f78e065566119
 
 COCOAPODS: 1.11.3
