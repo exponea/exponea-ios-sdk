@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.12.3
+#### September 20, 2022
+* Bug Fixes
+  * Fixed: Webview configuration setup compatible with swift5.7
+
+
 ## Release Notes for 2.12.2
 #### September 06, 2022
 * Bug Fixes
