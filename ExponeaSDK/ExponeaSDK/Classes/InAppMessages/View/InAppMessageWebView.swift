@@ -88,9 +88,17 @@ final class InAppMessageWebView: UIView, InAppMessageView, WKNavigationDelegate 
         let preferences = WKPreferences()
         preferences.javaScriptCanOpenWindowsAutomatically = false
         preferences.javaScriptEnabled = false
+        // In Xcode 14 (Swift 5.7) is `preferences.isElementFullscreenEnabled` available in iOS 15.4 and above,
+        // while in older versions it was available in 15.0 and above, therefore we need to check for Swift version
+        #if swift(>=5.7)
+        if #available(iOS 15.4, *) {
+            preferences.isElementFullscreenEnabled = false
+        }
+        #else
         if #available(iOS 15.0, *) {
             preferences.isElementFullscreenEnabled = false
         }
+        #endif
         let configuration = WKWebViewConfiguration()
         configuration.preferences = preferences
         configuration.allowsAirPlayForMediaPlayback = false
