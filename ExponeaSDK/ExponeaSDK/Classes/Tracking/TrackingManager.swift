@@ -8,6 +8,9 @@
 
 import Foundation
 import UIKit
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 /// The Tracking Manager class is responsible to manage the automatic tracking events when
 /// it's enable and persist the data according to each event type.
@@ -15,6 +18,7 @@ class TrackingManager {
     let database: DatabaseManagerType
     let repository: RepositoryType
     let device: DeviceProperties
+    let onEventCallback: ([DataType]) -> Void
 
     /// The identifiers of the the current customer.
     var customerIds: [String: String] {
@@ -32,6 +36,7 @@ class TrackingManager {
 
     /// The manager for push registration and delivery tracking
     lazy var notificationsManager: PushNotificationManagerType = PushNotificationManager(
+        trackingConsentManager: Exponea.shared.trackingConsentManager!,
         trackingManager: self,
         swizzlingEnabled: repository.configuration.automaticPushNotificationTracking,
         requirePushAuthorization: repository.configuration.requirePushAuthorization,
@@ -41,9 +46,6 @@ class TrackingManager {
         lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
         urlOpener: UrlOpener()
     )
-
-    /// Manager responsible for loading and displaying in-app messages
-    private var inAppMessagesManager: InAppMessagesManagerType
 
     private var flushingManager: FlushingManagerType
 
@@ -83,15 +85,16 @@ class TrackingManager {
          database: DatabaseManagerType,
          device: DeviceProperties = DeviceProperties(),
          flushingManager: FlushingManagerType,
-         inAppMessagesManager: InAppMessagesManagerType,
-         userDefaults: UserDefaults) throws {
+         userDefaults: UserDefaults,
+         onEventCallback: @escaping ([DataType]) -> Void
+    ) throws {
         self.repository = repository
         self.database = database
         self.device = device
         self.userDefaults = userDefaults
 
         self.flushingManager = flushingManager
-        self.inAppMessagesManager = inAppMessagesManager
+        self.onEventCallback = onEventCallback
 
         // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
         NotificationCenter.default.addObserver(self,
@@ -120,8 +123,6 @@ class TrackingManager {
         }
 
         self.sessionManager.applicationDidBecomeActive()
-
-        inAppMessagesManager.preload(for: customerIds)
     }
 
     /// Installation event is fired only once for the whole lifetime of the app on one
@@ -140,7 +141,9 @@ class TrackingManager {
         do {
             // Get depdencies and track install event
             try track(.install, with: [.properties(device.properties),
-                                       .timestamp(Date().timeIntervalSince1970)])
+                                       .timestamp(Date().timeIntervalSince1970),
+                                       .customerIds(customerIds)
+            ])
 
             /// Set the value to true if event was executed successfully
             userDefaults.set(true, forKey: key)
@@ -153,6 +156,7 @@ class TrackingManager {
 // MARK: -
 
 extension TrackingManager: TrackingManagerType {
+    
     public func hasPendingEvent(ofType type: String, withMaxAge maxAge: Double) throws -> Bool {
         let events = try database.fetchTrackEvent()
             .filter({ $0.eventType == type && $0.timestamp + maxAge >= Date().timeIntervalSince1970 })
@@ -175,7 +179,7 @@ extension TrackingManager: TrackingManagerType {
         }
     }
 
-    open func track(_ type: EventType, with data: [DataType]?) throws {
+    public func track(_ type: EventType, with data: [DataType]?) throws {
         /// Get token mapping or fail if no token provided.
         let projects = repository.configuration.projects(for: type)
         if projects.isEmpty {
@@ -208,7 +212,7 @@ extension TrackingManager: TrackingManagerType {
                  .campaignClick,
                  .banner:
                 try database.trackEvent(with: payload, into: project)
-                self.inAppMessagesManager.showInAppMessage(for: payload, trackingDelegate: self)
+                self.onEventCallback(payload)
             }
         }
 
@@ -218,22 +222,27 @@ extension TrackingManager: TrackingManagerType {
         }
     }
 
+    open func trackInAppMessageShown(message: InAppMessage) {
+        self.track(.show, for: message)
+    }
+
     open func trackInAppMessageClick(
         message: InAppMessage,
         buttonText: String?,
         buttonLink: String?) {
-            self.inAppMessagesManager.trackInAppMessageClick(
-                message,
-                trackingDelegate: self,
-                buttonText: buttonText,
-                buttonLink: buttonLink)
+            self.track(
+                .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),
+                for: message
+            )
         }
 
     open func trackInAppMessageClose(message: InAppMessage) {
-            self.inAppMessagesManager.trackInAppMessageClose(
-                message,
-                trackingDelegate: self)
-        }
+        self.track(.close, for: message)
+    }
+
+    open func trackInAppMessageError(message: InAppMessage, error: String) {
+        self.track(.error(message: error), for: message)
+    }
 
     func getEventTypeString(type: EventType) -> String? {
         switch type {
@@ -278,13 +287,16 @@ extension TrackingManager: TrackingManagerType {
 
 extension TrackingManager: SessionTrackingDelegate {
     func trackSessionStart(at timestamp: TimeInterval) {
-        inAppMessagesManager.sessionDidStart(
-            at: Date(timeIntervalSince1970: timestamp),
-            for: customerIds,
-            completion: nil
-        )
         do {
-            try track(.sessionStart, with: [.properties(device.properties), .timestamp(timestamp)])
+            try track(
+                .sessionStart,
+                with: [
+                    .eventType(EventType.sessionStart.rawValue),
+                    .customerIds(customerIds),
+                    .properties(device.properties),
+                    .timestamp(timestamp)
+                ]
+            )
         } catch {
             Exponea.logger.log(.error, message: "Session start tracking error: \(error.localizedDescription)")
         }
@@ -409,6 +421,15 @@ extension TrackingManager: InAppMessageTrackingDelegate {
             if case .click(let text, let url) = event {
                 eventData["text"] = .string(text)
                 eventData["link"] = .string(url)
+                if (GdprTracking.isTrackForced(url)) {
+                    eventData["tracking_forced"] = .bool(true)
+                }
+            }
+            if case .error(let errorMessage) = event {
+                eventData["error"] = .string(errorMessage)
+            }
+            if (message.consentCategoryTracking != nil) {
+                eventData["consent_category_tracking"] = .string(message.consentCategoryTracking!)
             }
             try track(
                 .banner,
@@ -430,7 +451,6 @@ extension TrackingManager {
         let pushToken = customerPushToken
         try track(EventType.registerPushToken, with: [.pushNotificationToken(token: nil, authorized: false)])
         sessionManager.clear()
-        inAppMessagesManager.anonymize()
 
         repository.configuration.switchProjects(mainProject: exponeaProject, projectMapping: projectMapping)
 

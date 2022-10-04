@@ -207,7 +207,12 @@
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */; };
 		4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F5F2C22DF98C00069E71D /* MockExponea.swift */; };
+		55130C4928DDC81600B4FE77 /* TrackingConsentManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4828DDC81600B4FE77 /* TrackingConsentManagerType.swift */; };
+		55130C4B28DDCA6800B4FE77 /* TrackingConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4A28DDCA6800B4FE77 /* TrackingConsentManager.swift */; };
+		55130C4F28E3C50D00B4FE77 /* GdprTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4E28E3C50D00B4FE77 /* GdprTrackingSpec.swift */; };
+		55130C5128E425D600B4FE77 /* TrackConsentManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */; };
 		5527979B28D8B6FA002B2B77 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5527979A28D8B6FA002B2B77 /* SwiftSoup */; };
+		5527979D28D98C15002B2B77 /* GdprTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5527979C28D98C15002B2B77 /* GdprTracking.swift */; };
 		792F2F886D9F14542DF0E97D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64D92FEFD20D8844C3C3BF9 /* Pods_ExponeaSDKTests.framework */; };
 		7F41714B094CAC0DA9B38776 /* HtmlNormalizerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */; };
 		7F417221332DEC81DB050230 /* HtmlNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */; };
@@ -619,6 +624,11 @@
 		4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackUniversalLinkSpec.swift; sourceTree = "<group>"; };
 		4C3F5F2C22DF98C00069E71D /* MockExponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExponea.swift; sourceTree = "<group>"; };
 		4C6BD13522ABA743004487A8 /* CampaignData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignData.swift; sourceTree = "<group>"; };
+		55130C4828DDC81600B4FE77 /* TrackingConsentManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingConsentManagerType.swift; sourceTree = "<group>"; };
+		55130C4A28DDCA6800B4FE77 /* TrackingConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingConsentManager.swift; sourceTree = "<group>"; };
+		55130C4E28E3C50D00B4FE77 /* GdprTrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTrackingSpec.swift; sourceTree = "<group>"; };
+		55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackConsentManagerSpec.swift; sourceTree = "<group>"; };
+		5527979C28D98C15002B2B77 /* GdprTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTracking.swift; sourceTree = "<group>"; };
 		552BE09128A1772C00E245B3 /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = SwiftSoup.xcframework; sourceTree = "<group>"; };
 		554BDE1728D87BCC00C4EC9C /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftSoup.xcframework; path = ../Carthage/Build/SwiftSoup.xcframework; sourceTree = "<group>"; };
 		7F417D6738618D5F30397815 /* InAppMessageWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageWebView.swift; sourceTree = "<group>"; };
@@ -890,6 +900,8 @@
 				01EC2DB1207E55CB0031BFEB /* TrackingManager.swift */,
 				C0D9B07A20A3B2410066FB1E /* TrackingManagerError.swift */,
 				01EC2DB5207E5F600031BFEB /* TrackingManagerType.swift */,
+				55130C4828DDC81600B4FE77 /* TrackingConsentManagerType.swift */,
+				55130C4A28DDCA6800B4FE77 /* TrackingConsentManager.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -1103,6 +1115,7 @@
 				05B97D2C2417C95200FE9309 /* JSONConvertible.swift */,
 				0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */,
 				0570E76A246EBE7400E92ACF /* UIImage+Gif.swift */,
+				5527979C28D98C15002B2B77 /* GdprTracking.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -1359,6 +1372,7 @@
 				0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */,
 				057F44842399301A0070DF30 /* UIColor+FromHexStringSpec.swift */,
 				7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */,
+				55130C4E28E3C50D00B4FE77 /* GdprTrackingSpec.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -1740,6 +1754,7 @@
 			children = (
 				4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */,
 				050960FF2321566000D59C01 /* TrackingManagerSpec.swift */,
+				55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -2280,6 +2295,7 @@
 				053BC76825ADD27F007D70D4 /* Configuration+Anonymize.swift in Sources */,
 				053BC79D25ADDDCB007D70D4 /* ServerRepository.swift in Sources */,
 				056182EF25AD9E22001E30A3 /* LogLevel.swift in Sources */,
+				5527979D28D98C15002B2B77 /* GdprTracking.swift in Sources */,
 				0561832D25ADB1BD001E30A3 /* Authorization.swift in Sources */,
 				0561831125AD9EEB001E30A3 /* URLResponse+Debug.swift in Sources */,
 				0561831325AD9EEB001E30A3 /* UIImage+Gif.swift in Sources */,
@@ -2367,6 +2383,7 @@
 				057F448F23995DC20070DF30 /* InAppMessagePresenterType.swift in Sources */,
 				053E12CD23A26187009CEF03 /* RecommendationOptions.swift in Sources */,
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
+				55130C4928DDC81600B4FE77 /* TrackingConsentManagerType.swift in Sources */,
 				C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */,
 				05F3EFF12382C757006E83F4 /* VSAppCenterAPIModel.swift in Sources */,
 				23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */,
@@ -2440,6 +2457,7 @@
 				0591905F23EC1AE50037BD88 /* EventFilterOperator.swift in Sources */,
 				B4AF83BB22C6108200061350 /* String+URLValidation.swift in Sources */,
 				05D0E5562386C63800413AE2 /* Exponea+Configuration.swift in Sources */,
+				55130C4B28DDCA6800B4FE77 /* TrackingConsentManager.swift in Sources */,
 				058DD93F24113F2100E5BF91 /* FlushableObject.swift in Sources */,
 				C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */,
 				C030AF4E216FA154004413F0 /* PushNotificationDelegateObserver.swift in Sources */,
@@ -2479,6 +2497,7 @@
 				05C289362428DDAA0021220C /* SessionManagerSpec.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
 				050961002321566000D59C01 /* TrackingManagerSpec.swift in Sources */,
+				55130C4F28E3C50D00B4FE77 /* GdprTrackingSpec.swift in Sources */,
 				05F3EFEF2382C192006E83F4 /* TelemetryUtilitySpec.swift in Sources */,
 				4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */,
 				057D476D23C889BE00AEE902 /* PushNotificationsTestData.swift in Sources */,
@@ -2509,6 +2528,7 @@
 				05BB22B2236B1E0C0098C406 /* ExponeaNotificationServiceSpec.swift in Sources */,
 				057F44852399301A0070DF30 /* UIColor+FromHexStringSpec.swift in Sources */,
 				0567723F237464990082167C /* PushNotificationDelegateObserverSpec.swift in Sources */,
+				55130C5128E425D600B4FE77 /* TrackConsentManagerSpec.swift in Sources */,
 				05D95C44250100B5001DA2DA /* MockInAppMessagesManager.swift in Sources */,
 				057F44872399322D0070DF30 /* InAppMessageDialogViewSpec.swift in Sources */,
 				05FBB15D244709C500BDF234 /* DatabaseManager+Clear.swift in Sources */,

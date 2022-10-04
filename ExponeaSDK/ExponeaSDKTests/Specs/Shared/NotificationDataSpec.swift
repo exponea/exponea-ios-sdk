@@ -196,7 +196,9 @@ class NotificationDataSpec: QuickSpec {
             it("should deserialize \(testCase.name)") {
                 let deserialized = NotificationData.deserialize(
                     attributes: testCase.attributes,
-                    campaignData: testCase.campaignData
+                    campaignData: testCase.campaignData,
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: GdprTracking.readTrackingConsentFlag(nil)
                 )
                 expect(deserialized).toNot(beNil())
                 checkFieldsExceptTimestamp(expected: testCase.expectedNotificationData, actual: deserialized!)

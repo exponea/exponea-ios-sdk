@@ -9,10 +9,8 @@
 @testable import ExponeaSDK
 
 final class MockInAppMessagesManager: InAppMessagesManagerType {
-
     func showInAppMessage(
         for event: [DataType],
-        trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)?
     ) {}
 
@@ -35,13 +33,13 @@ final class MockInAppMessagesManager: InAppMessagesManagerType {
     }
     func trackInAppMessageClick(
         _ message: InAppMessage,
-        trackingDelegate: InAppMessageTrackingDelegate?,
         buttonText: String?,
         buttonLink: String?
     ) {}
 
     func trackInAppMessageClose(
-        _ message: InAppMessage,
-        trackingDelegate: InAppMessageTrackingDelegate?
+        _ message: InAppMessage
     ) {}
+
+    func onEventOccurred(for event: [ExponeaSDK.DataType]) {}
 }

@@ -99,7 +99,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             imageData: lenaImageData,
                             actionCallback: { _ in },
                             dismissCallback: {},
-                            presentedCallback: { presented in
+                            presentedCallback: { presented, error in
                                 expect(presented).notTo(beNil())
                                 done()
                         })
@@ -117,7 +117,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             imageData: lenaImageData,
                             actionCallback: { _ in },
                             dismissCallback: {},
-                            presentedCallback: { presented in
+                            presentedCallback: { presented, error in
                                 expect(presented).to(beNil())
                                 done()
                         })
@@ -137,7 +137,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             imageData: "something".data(using: .utf8)!,
                             actionCallback: { _ in },
                             dismissCallback: {},
-                            presentedCallback: { presented in
+                            presentedCallback: { presented, error in
                                 expect(presented).to(beNil())
                                 done()
                         })
@@ -162,35 +162,35 @@ final class InAppMessagePresenterSpec: QuickSpec {
                     }
                     var presentedDialog: InAppMessageView?
                     waitUntil { done in
-                        present({ presented in
+                        present({ presented, error in
                             expect(presented).notTo(beNil())
                             presentedDialog = presented
                             done()
                         })
                     }
                     waitUntil { done in
-                        present({ presented in
+                        present({ presented, error in
                             expect(presented).to(beNil())
                             done()
                         })
                     }
                     presentedDialog?.dismissCallback()
                     waitUntil { done in
-                        present({ presented in
+                        present({ presented, error in
                             expect(presented).notTo(beNil())
                             presentedDialog = presented
                             done()
                         })
                     }
                     waitUntil { done in
-                        present({ presented in
+                        present({ presented, error in
                             expect(presented).to(beNil())
                             done()
                         })
                     }
                     presentedDialog?.actionCallback(message.payload!.buttons![0])
                     waitUntil { done in
-                        present({ presented in
+                        present({ presented, error in
                             expect(presented).notTo(beNil())
                             done()
                         })

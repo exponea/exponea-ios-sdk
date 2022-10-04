@@ -18,6 +18,6 @@ protocol InAppMessagePresenterType {
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
         dismissCallback: @escaping () -> Void,
-        presentedCallback: ((InAppMessageView?) -> Void)?
+        presentedCallback: ((InAppMessageView?, String?) -> Void)?
     )
 }

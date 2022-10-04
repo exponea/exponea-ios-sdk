@@ -59,6 +59,9 @@ public class ExponeaInternal: ExponeaType {
     /// The manager responsible for tracking data and sessions.
     internal var trackingManager: TrackingManagerType?
 
+    /// The manager wraps and applies GDPR consent for tracking data.
+    internal var trackingConsentManager: TrackingConsentManagerType?
+
     /// The manager responsible for flushing data to Exponea servers.
     internal var flushingManager: FlushingManagerType?
 
@@ -229,23 +232,32 @@ public class ExponeaInternal: ExponeaType {
                     }
                 )
                 self.flushingManager = flushingManager
-
-                let inAppMessagesManager = InAppMessagesManager(
-                   repository: repository,
-                   displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
-                   delegate: inAppMessagesDelegate
-                )
-                self.inAppMessagesManager = inAppMessagesManager
-
+                
                 let trackingManager = try TrackingManager(
                     repository: repository,
                     database: database,
                     flushingManager: flushingManager,
-                    inAppMessagesManager: inAppMessagesManager,
-                    userDefaults: userDefaults
+                    userDefaults: userDefaults,
+                    onEventCallback: { event in
+                        self.inAppMessagesManager?.onEventOccurred(for: event)
+                    }
                 )
 
                 self.trackingManager = trackingManager
+                
+                let trackingConsentManager = TrackingConsentManager(
+                    trackingManager: trackingManager
+                )
+                self.trackingConsentManager = trackingConsentManager
+
+                let inAppMessagesManager = InAppMessagesManager(
+                   repository: repository,
+                   displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
+                   delegate: inAppMessagesDelegate,
+                   trackingConsentManager: trackingConsentManager
+                )
+                self.inAppMessagesManager = inAppMessagesManager
+
                 processSavedCampaignData()
 
                 configuration.saveToUserDefaults()
@@ -281,7 +293,9 @@ internal extension ExponeaInternal {
         configuration: Configuration,
         repository: RepositoryType,
         trackingManager: TrackingManagerType,
-        flushingManager: FlushingManagerType
+        flushingManager: FlushingManagerType,
+        trackingConsentManager: TrackingConsentManagerType,
+        inAppMessagesManager: InAppMessagesManagerType
     )
 
     typealias CompletionHandler<T> = ((Result<T>) -> Void)
@@ -295,10 +309,12 @@ internal extension ExponeaInternal {
         guard let configuration = configuration,
             let repository = repository,
             let trackingManager = trackingManager,
-            let flushingManager = flushingManager else {
+            let flushingManager = flushingManager,
+            let trackingConsentManager = trackingConsentManager,
+            let inAppMessagesManager = inAppMessagesManager else {
                 throw ExponeaError.notConfigured
         }
-        return (configuration, repository, trackingManager, flushingManager)
+        return (configuration, repository, trackingManager, flushingManager, trackingConsentManager, inAppMessagesManager)
     }
 
     func executeSafelyWithDependencies<T>(

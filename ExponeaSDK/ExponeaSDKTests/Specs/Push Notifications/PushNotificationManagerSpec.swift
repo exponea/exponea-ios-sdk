@@ -16,7 +16,7 @@ final class PushNotificationManagerSpec: QuickSpec {
     struct TrackDeliveredTestCase {
         let name: String
         let userInfo: [String: Any]
-        let expectedTrackedEvent: (Double) -> MockTrackingManager.TrackedEvent
+        let expectedTrackedEvent: (Double) -> MockTrackingManager.TrackedEvent?
     }
 
     struct NotificationOpenedTestCase {
@@ -75,6 +75,7 @@ final class PushNotificationManagerSpec: QuickSpec {
 
     override func spec() {
         var trackingManager: MockTrackingManager!
+        var trackingConsentManager: TrackingConsentManagerType!
         var pushManager: PushNotificationManager!
         var urlOpener: MockUrlOpener!
 
@@ -85,6 +86,7 @@ final class PushNotificationManagerSpec: QuickSpec {
             lastTokenTrackDate: Date = Date()
         ) {
             pushManager = PushNotificationManager(
+                trackingConsentManager: trackingConsentManager,
                 trackingManager: trackingManager,
                 swizzlingEnabled: true,
                 requirePushAuthorization: requirePushAuthorization,
@@ -98,7 +100,12 @@ final class PushNotificationManagerSpec: QuickSpec {
 
         beforeEach {
             UserDefaults.standard.removePersistentDomain(forName: "mock-app-group")
-            trackingManager = MockTrackingManager()
+            trackingManager = MockTrackingManager(
+                onEventCallback: { event in
+                    
+                }
+            )
+            trackingConsentManager = TrackingConsentManager(trackingManager: trackingManager)
             urlOpener = MockUrlOpener()
             UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .authorized)
             createPushManager(
@@ -134,7 +141,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                             type: .pushDelivered,
                             data: [
                                 .properties(["status": .string("delivered"), "platform": .string("ios")]),
-                                .timestamp($0)
+                                .timestamp($0),
+                                .eventType("campaign")
                             ]
                         )
                     }
@@ -147,7 +155,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                             type: .pushDelivered,
                             data: [
                                 .properties(["status": .string("delivered"), "platform": .string("ios")]),
-                                .timestamp($0)
+                                .timestamp($0),
+                                .eventType("campaign")
                             ]
                         )
                     }
@@ -169,7 +178,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     "platform": .string("mock platform"),
                                     "action_id": .int(123)
                                 ]),
-                                .timestamp($0)
+                                .timestamp($0),
+                                .eventType("campaign")
                             ]
                         )
                     }
@@ -223,7 +233,66 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     "language": .string(""),
                                     "campaign_policy": .string("")
                                 ]),
-                                .timestamp($0)
+                                .timestamp($0),
+                                .eventType("campaign")
+                            ]
+                        )
+                    }
+                ),
+                TrackDeliveredTestCase(
+                    name: "without consent",
+                    userInfo: [
+                        "consent_category_tracking" : nil,
+                        "has_tracking_consent" : false,
+                        "attributes": [
+                            "campaign_id": "mock campaign id",
+                            "platform": "mock platform",
+                            "action_id": 123
+                        ]
+                    ],
+                    expectedTrackedEvent: { _ in
+                        return nil
+                    }
+                ),
+                TrackDeliveredTestCase(
+                    name: "without consent but raw value",
+                    userInfo: [
+                        "consent_category_tracking" : nil,
+                        "has_tracking_consent" : "false",
+                        "attributes": [
+                            "campaign_id": "mock campaign id",
+                            "platform": "mock platform",
+                            "action_id": 123
+                        ]
+                    ],
+                    expectedTrackedEvent: { _ in
+                        return nil
+                    }
+                ),
+                TrackDeliveredTestCase(
+                    name: "with few attributes and consent",
+                    userInfo: [
+                        "consent_category_tracking" : "I give consent",
+                        "has_tracking_consent" : true,
+                        "attributes": [
+                            "campaign_id": "mock campaign id",
+                            "platform": "mock platform",
+                            "action_id": 123
+                        ]
+                    ],
+                    expectedTrackedEvent: {
+                        MockTrackingManager.TrackedEvent(
+                            type: .pushDelivered,
+                            data: [
+                                .properties([
+                                    "status": .string("delivered"),
+                                    "campaign_id": .string("mock campaign id"),
+                                    "platform": .string("mock platform"),
+                                    "action_id": .int(123),
+                                    "consent_category_tracking": .string("I give consent")
+                                ]),
+                                .timestamp($0),
+                                .eventType("campaign")
                             ]
                         )
                     }
@@ -234,15 +303,22 @@ final class PushNotificationManagerSpec: QuickSpec {
                     let service = ExponeaNotificationService(appGroup: "mock-app-group")
                     let notificationData = NotificationData.deserialize(
                         attributes: testCase.userInfo["attributes"] as? [String: Any] ?? [:],
-                        campaignData: testCase.userInfo["url_params"] as? [String: Any] ?? [:]
+                        campaignData: testCase.userInfo["url_params"] as? [String: Any] ?? [:],
+                        consentCategoryTracking: testCase.userInfo["consent_category_tracking"] as? String ?? nil,
+                        hasTrackingConsent: GdprTracking.readTrackingConsentFlag(testCase.userInfo["has_tracking_consent"])
                     ) ?? NotificationData()
                     service.saveNotificationForLaterTracking(notification: notificationData)
                     let storedNotification = getFirstStoredNotification()!
                     pushManager.checkForDeliveredPushMessages()
-                    expect(trackingManager.trackedEvents.count).to(equal(1))
-                    expect(trackingManager.trackedEvents[0]).to(equal(
-                        testCase.expectedTrackedEvent(storedNotification.timestamp)
-                    ))
+                    let expectedTrackeEvent = testCase.expectedTrackedEvent(storedNotification.timestamp)
+                    if (expectedTrackeEvent == nil) {
+                        expect(trackingManager.trackedEvents.count).to(equal(0))
+                    } else {
+                        expect(trackingManager.trackedEvents.count).to(equal(1))
+                        expect(trackingManager.trackedEvents[0]).to(equal(
+                            testCase.expectedTrackedEvent(storedNotification.timestamp)
+                        ))
+                    }
                     expect(getFirstStoredNotification()).to(beNil())
                 }
             }
@@ -269,9 +345,11 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "url": JSONValue.string("app"),
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
-                            "status": JSONValue.string("clicked")
+                            "status": JSONValue.string("clicked"),
+                            "action_type": .string("mobile notification")
                         ]),
-                        .timestamp(PushNotificationsTestData.timestamp)]
+                        .timestamp(PushNotificationsTestData.timestamp),
+                               .eventType("campaign")]
                     ),
                     expectedBrowserLinkOpened: nil,
                     expectedDeeplinkOpened: nil
@@ -291,9 +369,11 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "url": JSONValue.string("app"),
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
-                            "status": JSONValue.string("clicked")
+                            "status": JSONValue.string("clicked"),
+                            "action_type": .string("mobile notification")
                         ]),
-                        .timestamp(PushNotificationsTestData.timestamp)]
+                        .timestamp(PushNotificationsTestData.timestamp),
+                               .eventType("campaign")]
                     ),
                     expectedBrowserLinkOpened: nil,
                     expectedDeeplinkOpened: nil
@@ -309,9 +389,11 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "url": JSONValue.string("http://google.com"),
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
-                            "status": JSONValue.string("clicked")
+                            "status": JSONValue.string("clicked"),
+                            "action_type": .string("mobile notification")
                         ]),
-                        .timestamp(PushNotificationsTestData.timestamp)]
+                        .timestamp(PushNotificationsTestData.timestamp),
+                               .eventType("campaign")]
                     ),
                     expectedBrowserLinkOpened: URL(string: "http://google.com"),
                     expectedDeeplinkOpened: nil
@@ -327,9 +409,11 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "url": JSONValue.string("some_url"),
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
-                            "status": JSONValue.string("clicked")
+                            "status": JSONValue.string("clicked"),
+                            "action_type": .string("mobile notification")
                         ]),
-                        .timestamp(PushNotificationsTestData.timestamp)]
+                        .timestamp(PushNotificationsTestData.timestamp),
+                               .eventType("campaign")]
                     ),
                     expectedBrowserLinkOpened: nil,
                     expectedDeeplinkOpened: URL(string: "some_url")
@@ -379,7 +463,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "utm_campaign": JSONValue.string("Testing mobile push"),
                             "utm_medium": JSONValue.string("mobile_push_notification")
                         ] as [String: ExponeaSDK.JSONValue]), // without swift fails with typechecking took too long
-                        .timestamp(PushNotificationsTestData.timestamp)]
+                        .timestamp(PushNotificationsTestData.timestamp),
+                        .eventType("campaign")]
                     ),
                     expectedBrowserLinkOpened: URL(string: "http://google.com?search=something"),
                     expectedDeeplinkOpened: nil
@@ -433,7 +518,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "sent_timestamp": JSONValue.double(PushNotificationsTestData.timestamp),
                             "type": JSONValue.string("push")
                         ] as [String: ExponeaSDK.JSONValue]), // without swift fails with typechecking took too long
-                        .timestamp(PushNotificationsTestData.timestamp)]
+                        .timestamp(PushNotificationsTestData.timestamp),
+                        .eventType("campaign")]
                     ),
                     expectedBrowserLinkOpened: URL(string: "http://google.com?search=something"),
                     expectedDeeplinkOpened: nil
@@ -450,7 +536,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                     pushManager.handlePushOpenedUnsafe(
                         userInfoObject: userInfo,
                         actionIdentifier: testCase.actionIdentifier,
-                        timestamp: PushNotificationsTestData.timestamp
+                        timestamp: PushNotificationsTestData.timestamp,
+                        considerConsent: true
                     )
                     if testCase.expectedTrackedEvent != nil {
                         expect(trackingManager.trackedEvents.count).to(equal(1))
@@ -596,12 +683,14 @@ final class PushNotificationManagerSpec: QuickSpec {
                 PushNotificationManager.storePushOpened(
                     userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredProductionNotification),
                     actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                    timestamp: PushNotificationsTestData.timestamp
+                    timestamp: PushNotificationsTestData.timestamp,
+                    considerConsent: true
                 )
                 PushNotificationManager.storePushOpened(
                     userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredSilentNotification),
                     actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                    timestamp: PushNotificationsTestData.timestamp
+                    timestamp: PushNotificationsTestData.timestamp,
+                    considerConsent: true
                 )
 
                 let optionalDataArray = UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
@@ -625,12 +714,14 @@ final class PushNotificationManagerSpec: QuickSpec {
                 PushNotificationManager.storePushOpened(
                     userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredProductionNotification),
                     actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                    timestamp: PushNotificationsTestData.timestamp
+                    timestamp: PushNotificationsTestData.timestamp,
+                    considerConsent: true
                 )
                 PushNotificationManager.storePushOpened(
                     userInfoObject: parseUserInfo(PushNotificationsTestData().deliveredSilentNotification),
                     actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
-                    timestamp: PushNotificationsTestData.timestamp
+                    timestamp: PushNotificationsTestData.timestamp,
+                    considerConsent: true
                 )
                 createPushManager(
                     requirePushAuthorization: false,
@@ -820,7 +911,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                         pushManager.handlePushOpenedUnsafe(
                             userInfoObject: service.bestAttemptContent?.userInfo as AnyObject,
                             actionIdentifier: testCase.actionIdentifier,
-                            timestamp: testCase.openedTimestamp
+                            timestamp: testCase.openedTimestamp,
+                            considerConsent: true
                         )
                     }
 

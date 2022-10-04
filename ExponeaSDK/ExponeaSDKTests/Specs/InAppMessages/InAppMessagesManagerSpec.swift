@@ -25,6 +25,8 @@ class InAppMessagesManagerSpec: QuickSpec {
         var presenter: MockInAppMessagePresenter!
         var displayStore: InAppMessageDisplayStatusStore!
         var urlOpener: MockUrlOpener!
+        var trackingConsentManager: TrackingConsentManagerType!
+        var trackingManager: MockTrackingManager!
 
         beforeEach {
             cache = MockInAppMessagesCache()
@@ -35,13 +37,22 @@ class InAppMessagesManagerSpec: QuickSpec {
             presenter = MockInAppMessagePresenter()
             displayStore = InAppMessageDisplayStatusStore(userDefaults: MockUserDefaults())
             urlOpener = MockUrlOpener()
+            trackingManager = MockTrackingManager(
+                onEventCallback: { event in
+                    manager.onEventOccurred(for: event)
+                }
+            )
+            trackingConsentManager = TrackingConsentManager(
+                trackingManager: trackingManager
+            )
             manager = InAppMessagesManager(
                 repository: repository,
                 cache: cache,
                 displayStatusStore: displayStore,
                 presenter: presenter,
                 urlOpener: urlOpener,
-                delegate: DefaultInAppDelegate()
+                delegate: DefaultInAppDelegate(),
+                trackingConsentManager: trackingConsentManager
             )
         }
 
@@ -311,10 +322,9 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         context("tracking events") {
-            var delegate: MockInAppMessageTrackingDelegate!
             beforeEach {
                 waitUntil { done in manager.preload(for: [:], completion: done) }
-                delegate = MockInAppMessageTrackingDelegate()
+                trackingManager.clearCalls()
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
                     at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
@@ -325,19 +335,17 @@ class InAppMessagesManagerSpec: QuickSpec {
             it("should not track anything if no message is shown") {
                 presenter.presentResult = false
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
-                expect(delegate.calls).to(beEmpty())
+                expect(trackingManager.calls).to(beEmpty())
             }
 
             it("should track show event when displaying message") {
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
-                expect(delegate.calls).to(equal([
-                    MockInAppMessageTrackingDelegate.CallData(
+                expect(trackingManager.calls).to(equal([
+                    MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
@@ -346,16 +354,15 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             it("should track dismiss event when closing message") {
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
-                expect(delegate.calls).to(equal([
-                    MockInAppMessageTrackingDelegate.CallData(
+                expect(trackingManager.calls).to(equal([
+                    MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     ),
-                    MockInAppMessageTrackingDelegate.CallData(
+                    MockTrackingManager.CallData(
                         event: .close,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
@@ -364,18 +371,17 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             it("should track action event when action button pressed on message") {
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
-                expect(delegate.calls).to(equal([
-                    MockInAppMessageTrackingDelegate.CallData(
+                expect(trackingManager.calls).to(equal([
+                    MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     ),
-                    MockInAppMessageTrackingDelegate.CallData(
+                    MockTrackingManager.CallData(
                         event: .click(buttonLabel: "Action", url: "https://someaddress.com"),
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
@@ -383,15 +389,18 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should not track dismiss event when delegate is setup without tracking") {
-                let inAppDelegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: false)
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
                 manager.delegate = inAppDelegate
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
-                expect(delegate.calls).to(equal([
-                    MockInAppMessageTrackingDelegate.CallData(
+                expect(trackingManager.calls).to(equal([
+                    MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
@@ -400,19 +409,22 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should track dismiss event when delegate is setup with tracking") {
-                let inAppDelegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: true)
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: true,
+                    trackingConsentManager: trackingConsentManager
+                )
                 manager.delegate = inAppDelegate
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
-                expect(delegate.calls).to(equal([
-                    MockInAppMessageTrackingDelegate.CallData(
+                expect(trackingManager.calls).to(equal([
+                    MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     ),
-                    MockInAppMessageTrackingDelegate.CallData(
+                    MockTrackingManager.CallData(
                         event: .close,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
@@ -421,17 +433,20 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should not track action event when delegate is setup without tracking") {
-                let inAppDelegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: false)
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
                 manager.delegate = inAppDelegate
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
-                expect(delegate.calls).to(equal([
-                    MockInAppMessageTrackingDelegate.CallData(
+                expect(trackingManager.calls).to(equal([
+                    MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
@@ -440,21 +455,24 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should track action event when delegate is setup with tracking") {
-                let inAppDelegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: true)
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: true,
+                    trackingConsentManager: trackingConsentManager
+                )
                 manager.delegate = inAppDelegate
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
-                expect(delegate.calls).to(equal([
-                    MockInAppMessageTrackingDelegate.CallData(
+                expect(trackingManager.calls).to(equal([
+                    MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     ),
-                    MockInAppMessageTrackingDelegate.CallData(
+                    MockTrackingManager.CallData(
                         event: .click(buttonLabel: "Action", url: "https://someaddress.com"),
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
@@ -468,21 +486,21 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackActions: false,
                     trackClickInActionCallback: true,
                     inAppMessageManager: manager,
-                    inAppMessageTrackingDelegate: delegate)
+                    trackingConsentManager: trackingConsentManager
+                )
                 manager.delegate = inAppDelegate
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
-                expect(delegate.calls).to(equal([
-                    MockInAppMessageTrackingDelegate.CallData(
+                expect(trackingManager.calls).to(equal([
+                    MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     ),
-                    MockInAppMessageTrackingDelegate.CallData(
+                    MockTrackingManager.CallData(
                         event: .click(buttonLabel: "Action", url: "https://someaddress.com"),
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
@@ -492,10 +510,8 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         context("default action performing") {
-            var delegate: MockInAppMessageTrackingDelegate!
             beforeEach {
                 waitUntil { done in manager.preload(for: [:], completion: done) }
-                delegate = MockInAppMessageTrackingDelegate()
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
                     at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
@@ -504,11 +520,16 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should call default action when override is turned off in delegate ") {
-                manager.delegate = InAppMessageDelegate(overrideDefaultBehavior: false, trackActions: true)
-                waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
-                ) { _ in done() } }
+                manager.delegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: true,
+                    trackingConsentManager: trackingConsentManager
+                )
+                waitUntil { done in
+                    manager.showInAppMessage(for: [.eventType("session_start")]) { _ in
+                        done()
+                    }
+                }
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
@@ -518,8 +539,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             it("should not call default action when override is turned on in delegate ") {
                 manager.delegate = InAppMessageDelegate(overrideDefaultBehavior: true, trackActions: true)
                 waitUntil { done in manager.showInAppMessage(
-                    for: [.eventType("session_start")],
-                    trackingDelegate: delegate
+                    for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
@@ -536,7 +556,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             )
             let delegate = MockInAppMessageTrackingDelegate()
             let semaphore = DispatchSemaphore(value: 0) // we'll wait for the message to be shown
-            manager.showInAppMessage(for: [.eventType("session_start")], trackingDelegate: delegate) { _ in
+            manager.showInAppMessage(for: [.eventType("session_start")]) { _ in
                 semaphore.signal()
             }
             expect(presenter.presentedMessages.count).to(equal(0))
@@ -547,18 +567,17 @@ class InAppMessagesManagerSpec: QuickSpec {
 
         it("should track control group message without showing it") {
             waitUntil { done in manager.preload(for: [:], completion: done) }
-            let delegate = MockInAppMessageTrackingDelegate()
+            trackingManager.clearCalls()
             let message = SampleInAppMessage.getSampleInAppMessage(
                 payload: nil,
                 variantName: "Control group",
                 variantId: -1)
             cache.saveInAppMessages(inAppMessages: [message])
             waitUntil { done in manager.showInAppMessage(
-                for: [.eventType("session_start")],
-                trackingDelegate: delegate
+                for: [.eventType("session_start")]
             ) { _ in done() } }
-            expect(delegate.calls).to(equal([
-                MockInAppMessageTrackingDelegate.CallData(
+            expect(trackingManager.calls).to(equal([
+                MockTrackingManager.CallData(
                     event: .show,
                     message: message
                 )

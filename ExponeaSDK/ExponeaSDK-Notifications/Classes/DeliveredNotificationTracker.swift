@@ -61,9 +61,16 @@ final class DeliveredNotificationTracker {
         customerIds: [String: String],
         notification: NotificationData
     ) -> [EventTrackingObject] {
+        if (notification.considerConsent && !notification.hasTrackingConsent) {
+            Exponea.logger.log(.verbose, message: "Event for delivered notification is not tracked because consent is not given")
+            return []
+        }
         var properties = configuration.defaultProperties?.mapValues { $0.jsonValue } ?? [:]
         properties = properties.merging(notification.properties, uniquingKeysWith: { (_, new) in new })
         properties["status"] = .string("delivered")
+        if (notification.consentCategoryTracking != nil) {
+            properties["consent_category_tracking"] = .string(notification.consentCategoryTracking!)
+        }
 
         let eventType = notification.eventType != nil ? EventType.customEvent : EventType.pushDelivered
         let projects = configuration.projects(for: eventType)

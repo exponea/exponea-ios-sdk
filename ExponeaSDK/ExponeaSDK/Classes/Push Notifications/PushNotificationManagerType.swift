@@ -10,6 +10,7 @@ protocol PushNotificationManagerType: AnyObject {
     var delegate: PushNotificationManagerDelegate? { get set }
     func applicationDidBecomeActive()
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?)
+    func handlePushOpenedWithoutTrackingConsent(userInfoObject: AnyObject?, actionIdentifier: String?)
     func handlePushTokenRegistered(dataObject: AnyObject?)
 
     var didReceiveSelfPushCheck: Bool { get }

@@ -9,6 +9,7 @@
 @testable import ExponeaSDK
 
 final class MockPushNotificationManager: PushNotificationManagerType {
+
     var didReceiveSelfPushCheck = false
 
     weak var delegate: PushNotificationManagerDelegate?
@@ -26,6 +27,10 @@ final class MockPushNotificationManager: PushNotificationManagerType {
 
     func handlePushTokenRegistered(dataObject: AnyObject?) {
         handlePushTokenRegisteredCalls.append(dataObject)
+    }
+
+    func handlePushOpenedWithoutTrackingConsent(userInfoObject: AnyObject?, actionIdentifier: String?) {
+        handlePushOpenedCalls.append((userInfoObject, actionIdentifier))
     }
 
 }

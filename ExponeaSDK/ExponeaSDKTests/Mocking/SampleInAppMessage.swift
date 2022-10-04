@@ -61,7 +61,9 @@ struct SampleInAppMessage {
         imageUrl: String? = nil,
         priority: Int? = nil,
         delayMS: Int? = nil,
-        timeoutMS: Int? = nil
+        timeoutMS: Int? = nil,
+        hasTrackingConsent: Bool? = nil,
+        consentCategoryTracking: String? = nil
     ) -> InAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
@@ -103,7 +105,9 @@ struct SampleInAppMessage {
             delayMS: delayMS,
             timeoutMS: timeoutMS,
             payloadHtml: "<html></html>",
-            isHtml: false
+            isHtml: false,
+            hasTrackingConsent: hasTrackingConsent,
+            consentCategoryTracking: consentCategoryTracking
         )
     }
 
@@ -130,7 +134,9 @@ struct SampleInAppMessage {
             delayMS: nil,
             timeoutMS: nil,
             payloadHtml: "<html></html>",
-            isHtml: false
+            isHtml: false,
+            hasTrackingConsent: nil,
+            consentCategoryTracking: nil
         )
     }
 }

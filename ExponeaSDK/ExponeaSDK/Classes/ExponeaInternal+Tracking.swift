@@ -110,26 +110,26 @@ extension ExponeaInternal {
     }
 
     /// Tracks the push notification clicked event to Exponea API.
+    /// Event is tracked if one or both conditions met:
+    //     - parameter 'has_tracking_consent' has TRUE value
+    //     - provided action url has TRUE value of query parameter 'xnpe_force_track'
     public func trackPushOpened(with userInfo: [AnyHashable: Any]) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
+            dependencies.trackingConsentManager.trackClickedPush(data: userInfo as AnyObject, mode: .CONSIDER_CONSENT)
+        }
+    }
 
-            guard let payload = userInfo as? [String: Any] else {
-                Exponea.logger.log(.error, message: "Push notification payload contained non-string keys.")
-                return
+    /// Tracks the push notification clicked event to Exponea API.
+    /// Event is tracked even if  notification and action link have not a tracking consent.
+    public func trackPushOpenedWithoutTrackingConsent(with userInfo: [AnyHashable: Any]) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
             }
-
-            var properties = JSONValue.convert(payload)
-            if properties.index(forKey: "action_type") == nil {
-                properties["action_type"] = .string("mobile notification")
-            }
-            properties["status"] = .string("clicked")
-
-            let data: [DataType] = [.timestamp(nil), .properties(properties)]
-            // Do the actual tracking
-            try dependencies.trackingManager.track(.pushOpened, with: data)
+            dependencies.trackingConsentManager.trackClickedPush(data: userInfo as AnyObject, mode: .IGNORE_CONSENT)
         }
     }
 
@@ -247,6 +247,9 @@ extension ExponeaInternal {
 
     /// Handles push notification opened - user action for alert notifications, delivery into app for silent pushes.
     /// This method will parse the data, track it and perform actions if needed.
+    /// Event is tracked if one or both conditions met:
+    //     - parameter 'has_tracking_consent' has TRUE value
+    //     - provided action url has TRUE value of query parameter 'xnpe_force_track'
     public func handlePushNotificationOpened(userInfo: [AnyHashable: Any], actionIdentifier: String? = nil) {
         guard Exponea.isExponeaNotification(userInfo: userInfo) else {
             Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
@@ -258,12 +261,40 @@ extension ExponeaInternal {
             PushNotificationManager.storePushOpened(
                 userInfoObject: userInfo as AnyObject?,
                 actionIdentifier: actionIdentifier,
-                timestamp: Date().timeIntervalSince1970
+                timestamp: Date().timeIntervalSince1970,
+                considerConsent: true
             )
             return
         }
         executeSafelyWithDependencies { dependencies in
             dependencies.trackingManager.notificationsManager.handlePushOpened(
+                userInfoObject: userInfo as AnyObject?,
+                actionIdentifier: actionIdentifier
+            )
+        }
+    }
+
+    /// Handles push notification opened - user action for alert notifications, delivery into app for silent pushes.
+    /// This method will parse the data, track it and perform actions if needed.
+    /// Event is tracked even if Notification and button link have not a tracking consent.
+    public func handlePushNotificationOpenedWithoutTrackingConsent(userInfo: [AnyHashable: Any], actionIdentifier: String? = nil) {
+        guard Exponea.isExponeaNotification(userInfo: userInfo) else {
+            Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
+            return
+        }
+        // if the SDK is not configured, we should save the notification for later processing
+        guard isConfigured else {
+            Exponea.logger.log(.verbose, message: "Exponea not configured yet, saving opened push.")
+            PushNotificationManager.storePushOpened(
+                userInfoObject: userInfo as AnyObject?,
+                actionIdentifier: actionIdentifier,
+                timestamp: Date().timeIntervalSince1970,
+                considerConsent: false
+            )
+            return
+        }
+        executeSafelyWithDependencies { dependencies in
+            dependencies.trackingManager.notificationsManager.handlePushOpenedWithoutTrackingConsent(
                 userInfoObject: userInfo as AnyObject?,
                 actionIdentifier: actionIdentifier
             )
@@ -317,11 +348,15 @@ extension ExponeaInternal {
                 exponeaProject: exponeaProject,
                 projectMapping: projectMapping
             )
+            dependencies.inAppMessagesManager.anonymize()
             telemetryManager?.report(eventWithType: .anonymize, properties: [:])
         }
     }
 
     /// Track in-app message banner click event
+    /// Event is tracked if one or both conditions met:
+    //     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    //     - parameter 'buttonLink' has TRUE value of query parameter 'xnpe_force_track'
     public func trackInAppMessageClick(
         message: InAppMessage,
         buttonText: String?,
@@ -330,10 +365,30 @@ extension ExponeaInternal {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            dependencies.trackingManager.trackInAppMessageClick(
+            dependencies.trackingConsentManager.trackInAppMessageClick(
                 message: message,
                 buttonText: buttonText,
-                buttonLink: buttonLink
+                buttonLink: buttonLink,
+                mode: .CONSIDER_CONSENT
+            )
+        }
+    }
+
+    /// Track in-app message banner click event
+    /// Event is tracked even if InAppMessage and button link have not a tracking consent.
+    public func trackInAppMessageClickWithoutTrackingConsent(
+        message: InAppMessage,
+        buttonText: String?,
+        buttonLink: String?) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackInAppMessageClick(
+                message: message,
+                buttonText: buttonText,
+                buttonLink: buttonLink,
+                mode: .IGNORE_CONSENT
             )
         }
     }
@@ -345,7 +400,18 @@ extension ExponeaInternal {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            dependencies.trackingManager.trackInAppMessageClose(message: message)
+            dependencies.trackingConsentManager.trackInAppMessageClose(message: message, mode: .CONSIDER_CONSENT)
+        }
+    }
+    
+    /// Track in-app message banner close event
+    public func trackInAppMessageCloseClickWithoutTrackingConsent(
+        message: InAppMessage) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackInAppMessageClose(message: message, mode: .IGNORE_CONSENT)
         }
     }
 }

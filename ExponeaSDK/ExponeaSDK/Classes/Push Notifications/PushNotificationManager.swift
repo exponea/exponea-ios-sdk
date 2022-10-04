@@ -28,7 +28,8 @@ public extension PushNotificationManagerDelegate {
 
 final class PushNotificationManager: NSObject, PushNotificationManagerType {
     /// The tracking manager used to track push events
-    internal weak var trackingManager: TrackingManagerType?
+    internal var trackingConsentManager: TrackingConsentManagerType
+    internal var trackingManager: TrackingManagerType
 
     private let requirePushAuthorization: Bool
     private let appGroup: String? // used for sharing data across extensions, fx. for push delivered tracking
@@ -69,15 +70,19 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     let decoder: JSONDecoder = JSONDecoder.snakeCase
 
-    init(trackingManager: TrackingManagerType,
-         swizzlingEnabled: Bool,
-         requirePushAuthorization: Bool,
-         appGroup: String?,
-         tokenTrackFrequency: TokenTrackFrequency,
-         currentPushToken: String?,
-         lastTokenTrackDate: Date?,
-         urlOpener: UrlOpenerType) {
+    init(
+        trackingConsentManager: TrackingConsentManagerType,
+        trackingManager: TrackingManagerType,
+        swizzlingEnabled: Bool,
+        requirePushAuthorization: Bool,
+        appGroup: String?,
+        tokenTrackFrequency: TokenTrackFrequency,
+        currentPushToken: String?,
+        lastTokenTrackDate: Date?,
+        urlOpener: UrlOpenerType
+    ) {
         self.appGroup = appGroup
+        self.trackingConsentManager = trackingConsentManager
         self.trackingManager = trackingManager
         self.tokenTrackFrequency = tokenTrackFrequency
         self.currentPushToken = currentPushToken
@@ -120,19 +125,35 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) {
         Exponea.shared.executeSafely {
-            handlePushOpenedUnsafe(userInfoObject: userInfoObject,
-                                   actionIdentifier: actionIdentifier,
-                                   timestamp: Date().timeIntervalSince1970)
+            handlePushOpenedUnsafe(
+                userInfoObject: userInfoObject,
+                actionIdentifier: actionIdentifier,
+                timestamp: Date().timeIntervalSince1970,
+                considerConsent: true
+            )
+        }
+    }
+
+    func handlePushOpenedWithoutTrackingConsent(userInfoObject: AnyObject?, actionIdentifier: String?) {
+        Exponea.shared.executeSafely {
+            handlePushOpenedUnsafe(
+                userInfoObject: userInfoObject,
+                actionIdentifier: actionIdentifier,
+                timestamp: Date().timeIntervalSince1970,
+                considerConsent: false
+            )
         }
     }
 
     func handlePushOpenedUnsafe(userInfoObject: AnyObject?,
                                 actionIdentifier: String?,
-                                timestamp: Double) {
+                                timestamp: Double,
+                                considerConsent: Bool) {
         guard let pushOpenedData = PushNotificationParser.parsePushOpened(
             userInfoObject: userInfoObject,
             actionIdentifier: actionIdentifier,
-            timestamp: timestamp
+            timestamp: timestamp,
+            considerConsent: considerConsent
         ) else {
             return
         }
@@ -144,13 +165,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             didReceiveSelfPushCheck = true
             return
         }
-
-        do {
-            try trackingManager?.track(pushOpenedData.eventType, with: pushOpenedData.eventData)
-        } catch {
-            Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
-        }
-
+        trackingConsentManager.trackClickedPush(data: pushOpenedData)
         if pushOpenedData.silent {
             if let delegate = delegate {
                 delegate.silentPushNotificationReceived(extraData: pushOpenedData.extraData)
@@ -158,8 +173,15 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                 pendingOpenedPushes.append(pushOpenedData)
             }
         } else {
-            // save campaign to be added to session start
-            Exponea.shared.trackCampaignData(data: pushOpenedData.campaignData, timestamp: nil)
+            if (pushOpenedData.considerConsent &&
+                !pushOpenedData.hasTrackingConsent &&
+                !GdprTracking.isTrackForced(pushOpenedData.actionValue)
+            ) {
+                Exponea.logger.log(.verbose, message: "Campaign data for delivered notification are not tracked because consent is not given")
+            } else {
+                // save campaign to be added to session start
+                Exponea.shared.trackCampaignData(data: pushOpenedData.campaignData, timestamp: nil)
+            }
 
             // Notify the delegate
             if let delegate = delegate {
@@ -210,12 +232,14 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     static func storePushOpened(userInfoObject: AnyObject?,
                                 actionIdentifier: String?,
-                                timestamp: Double) {
+                                timestamp: Double,
+                                considerConsent: Bool) {
         guard let userDefaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite),
               let pushOpenedData = PushNotificationParser.parsePushOpened(
                   userInfoObject: userInfoObject,
                   actionIdentifier: actionIdentifier,
-                  timestamp: timestamp
+                  timestamp: timestamp,
+                  considerConsent: considerConsent
               ) else {
             return
         }
@@ -272,33 +296,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                 Exponea.logger.log(.warning, message: "Cannot deserialize stored delivered push data.")
                 continue
             }
-
-            // Create payload
-            var properties: [String: JSONValue] = notification.properties
-            properties["status"] = .string("delivered")
-
-            // Track the event
-            do {
-                if let customEventType = notification.eventType,
-                   !customEventType.isEmpty,
-                   customEventType != Constants.EventTypes.pushDelivered {
-                    try trackingManager?.track(
-                        .customEvent,
-                        with: [
-                            .eventType(customEventType),
-                            .properties(properties),
-                            .timestamp(notification.timestamp)
-                        ]
-                    )
-                } else {
-                    try trackingManager?.track(
-                        .pushDelivered,
-                        with: [.properties(properties), .timestamp(notification.timestamp)]
-                    )
-                }
-            } catch {
-                Exponea.logger.log(.error, message: "Error tracking push opened: \(error.localizedDescription)")
-            }
+            trackingConsentManager.trackDeliveredPush(data: notification)
         }
 
         // Clear after all is processed
@@ -320,7 +318,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     private func trackCurrentPushToken(isAuthorized authorized: Bool) {
         do {
-            try trackingManager?.track(
+            try trackingManager.track(
                 .registerPushToken,
                 with: [.pushNotificationToken(token: currentPushToken, authorized: authorized)]
             )

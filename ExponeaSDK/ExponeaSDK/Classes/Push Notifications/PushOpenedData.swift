@@ -16,6 +16,9 @@ struct PushOpenedData {
     let eventType: EventType
     let eventData: [DataType]
     let extraData: [String: Any]?
+    let consentCategoryTracking: String?
+    let hasTrackingConsent: Bool
+    let considerConsent: Bool
 }
 
 extension PushOpenedData: Equatable {
@@ -24,10 +27,13 @@ extension PushOpenedData: Equatable {
         rhs: PushOpenedData
     ) -> Bool {
         guard lhs.silent == rhs.silent &&
-              lhs.campaignData == rhs.campaignData &&
-              lhs.actionType == rhs.actionType &&
-              lhs.actionValue == rhs.actionValue &&
-              lhs.eventData == rhs.eventData else {
+                lhs.campaignData == rhs.campaignData &&
+                lhs.actionType == rhs.actionType &&
+                lhs.actionValue == rhs.actionValue &&
+                lhs.eventData == rhs.eventData &&
+                lhs.consentCategoryTracking == rhs.consentCategoryTracking &&
+                lhs.hasTrackingConsent == rhs.hasTrackingConsent &&
+                lhs.considerConsent == rhs.considerConsent else {
             return false
         }
         if lhs.extraData == nil && rhs.extraData == nil {
@@ -50,6 +56,9 @@ extension PushOpenedData: Codable {
         case eventType
         case eventData
         case extraData
+        case consentCategoryTracking
+        case hasTrackingConsent
+        case considerConsent
     }
 
     public init(from decoder: Decoder) throws {
@@ -66,6 +75,9 @@ extension PushOpenedData: Codable {
         } else {
             extraData = nil
         }
+        consentCategoryTracking = try data.decode(String?.self, forKey: .consentCategoryTracking)
+        hasTrackingConsent = try data.decode(Bool.self, forKey: .hasTrackingConsent)
+        considerConsent = try data.decode(Bool.self, forKey: .considerConsent)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -80,6 +92,9 @@ extension PushOpenedData: Codable {
             let serializedExtraData = try JSONSerialization.data(withJSONObject: extraData, options: [])
             try container.encode(String(data: serializedExtraData, encoding: .utf8), forKey: .extraData)
         }
+        try container.encode(consentCategoryTracking, forKey: .consentCategoryTracking)
+        try container.encode(hasTrackingConsent, forKey: .hasTrackingConsent)
+        try container.encode(considerConsent, forKey: .considerConsent)
     }
 
     public static func deserialize(from data: Data) -> PushOpenedData? {

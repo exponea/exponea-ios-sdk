@@ -17,14 +17,14 @@ class AuthenticationViewController: UIViewController {
             tokenField.addTarget(self, action: #selector(tokenUpdated), for: .editingChanged)
 
             // load cached
-            tokenField.text = UserDefaults.standard.string(forKey: "savedToken")
+            tokenField.text = UserDefaults.standard.string(forKey: "savedToken") ?? ""
         }
     }
     @IBOutlet weak var authField: UITextField! {
         didSet {
             authField.delegate = self
             // load cached
-            authField.text = UserDefaults.standard.string(forKey: "savedAuth")
+            authField.text = UserDefaults.standard.string(forKey: "savedAuth") ?? ""
         }
     }
 

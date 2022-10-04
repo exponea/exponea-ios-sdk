@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 final class InAppMessagesManager: InAppMessagesManagerType {
     private static let refreshCacheAfter: TimeInterval = 60 * 30 // refresh on session start if cache is older than this
@@ -14,7 +17,6 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
     struct InAppMessageShowRequest {
         let event: [DataType]
-        weak var trackingDelegate: InAppMessageTrackingDelegate?
         var callback: ((InAppMessageView?) -> Void)?
         let timestamp: TimeInterval
     }
@@ -24,6 +26,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private let cache: InAppMessagesCacheType
     private let presenter: InAppMessagePresenterType
     private let displayStatusStore: InAppMessageDisplayStatusStore
+    private let trackingConsentManager: TrackingConsentManagerType
     private let urlOpener: UrlOpenerType
     private var sessionStartDate: Date = Date()
 
@@ -45,13 +48,15 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         displayStatusStore: InAppMessageDisplayStatusStore,
         presenter: InAppMessagePresenterType = InAppMessagePresenter(),
         urlOpener: UrlOpenerType = UrlOpener(),
-        delegate: InAppMessageActionDelegate
+        delegate: InAppMessageActionDelegate,
+        trackingConsentManager: TrackingConsentManagerType
     ) {
         self.repository = repository
         self.cache = cache
         self.presenter = presenter
         self.displayStatusStore = displayStatusStore
         self.urlOpener = urlOpener
+        self.trackingConsentManager = trackingConsentManager
         self.delegate = delegate
     }
 
@@ -173,16 +178,12 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         }
         pendingShowRequests = []
         DispatchQueue.global(qos: .userInitiated).async {
-            guard let trackingDelegate = pending.0.trackingDelegate else {
-                return
-            }
-            self.handleInAppMessage(pending.1, trackingDelegate: trackingDelegate, callback: pending.0.callback)
+            self.handleInAppMessage(pending.1, callback: pending.0.callback)
         }
     }
 
     private func handleInAppMessage(
         _ message: InAppMessage,
-        trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)?
     ) {
         if !message.hasPayload() && message.variantId == -1 {
@@ -190,10 +191,10 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 .verbose,
                 message: "Only logging in-app message for control group '\(message.name)'"
             )
-            self.trackInAppMessage(message, trackingDelegate: trackingDelegate)
+            self.trackInAppMessage(message)
             callback?(nil)
         } else {
-            self.showInAppMessage(message, trackingDelegate: trackingDelegate, callback: callback)
+            self.showInAppMessage(message, callback: callback)
         }
     }
 
@@ -243,7 +244,6 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
     func showInAppMessage(
         for event: [DataType],
-        trackingDelegate: InAppMessageTrackingDelegate? = nil,
         callback: ((InAppMessageView?) -> Void)? = nil
     ) {
         Exponea.logger.log(
@@ -255,7 +255,6 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             pendingShowRequests.append(
                 InAppMessageShowRequest(
                     event: event,
-                    trackingDelegate: trackingDelegate,
                     callback: callback,
                     timestamp: Date().timeIntervalSince1970
                 )
@@ -268,13 +267,12 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 callback?(nil)
                 return
             }
-            self.handleInAppMessage(message, trackingDelegate: trackingDelegate, callback: callback)
+            self.handleInAppMessage(message, callback: callback)
         }
     }
 
     private func showInAppMessage(
         _ message: InAppMessage,
-        trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)? = nil
     ) {
         guard message.hasPayload() else {
@@ -302,11 +300,12 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 self.displayStatusStore.didInteract(with: message, at: Date())
 
                     if self.delegate.trackActions {
-                        self.trackInAppMessageClick(
-                            message,
-                            trackingDelegate: trackingDelegate,
+                        self.trackingConsentManager.trackInAppMessageClick(
+                            message: message,
                             buttonText: button.buttonText,
-                            buttonLink: button.buttonLink)
+                            buttonLink: button.buttonLink,
+                            mode: .CONSIDER_CONSENT
+                        )
                     }
                     self.delegate.inAppMessageAction(
                         with: message,
@@ -320,13 +319,18 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             },
             dismissCallback: {
                     if self.delegate.trackActions {
-                        self.trackInAppMessageClose(message, trackingDelegate: trackingDelegate)
+                        self.trackingConsentManager.trackInAppMessageClose(
+                            message: message,
+                            mode: .CONSIDER_CONSENT
+                        )
                     }
                     self.delegate.inAppMessageAction(with: message, button: nil, interaction: false)
             },
-            presentedCallback: { presented in
-                if presented != nil {
-                    self.trackInAppMessage(message, trackingDelegate: trackingDelegate)
+            presentedCallback: { presented, error in
+                if (presented == nil && error != nil) {
+                    self.trackingConsentManager.trackInAppMessageError(message: message, error: error!, mode: .CONSIDER_CONSENT)
+                } else if (presented != nil) {
+                    self.trackInAppMessage(message)
                 }
                 callback?(presented)
             }
@@ -334,34 +338,14 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     }
 
     private func trackInAppMessage(
-        _ message: InAppMessage,
-        trackingDelegate: InAppMessageTrackingDelegate?
+        _ message: InAppMessage
     ) {
         displayStatusStore.didDisplay(message, at: Date())
-        trackingDelegate?.track(.show, for: message)
+        trackingConsentManager.trackInAppMessageShown(message: message, mode: .CONSIDER_CONSENT)
         Exponea.shared.telemetryManager?.report(
             eventWithType: .showInAppMessage,
             properties: ["messageType": message.rawMessageType ?? "null"]
         )
-    }
-
-    func trackInAppMessageClick(
-        _ message: InAppMessage,
-        trackingDelegate: InAppMessageTrackingDelegate?,
-        buttonText: String?,
-        buttonLink: String?
-    ) {
-        trackingDelegate?.track(
-            .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),
-            for: message
-        )
-    }
-
-    func trackInAppMessageClose(
-        _ message: InAppMessage,
-        trackingDelegate: InAppMessageTrackingDelegate?
-    ) {
-        trackingDelegate?.track(.close, for: message)
     }
 
     private func processInAppMessageAction(button: InAppMessagePayloadButton) {
@@ -378,6 +362,23 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 """
             )
         }
+    }
+
+    func onEventOccurred(for event: [DataType]) {
+        guard let eventType = EventType(rawValue: event.eventTypes.first ?? "") else {
+            Exponea.logger.log(.error, message: "Unknown event type \(event.eventTypes.first ?? "null")")
+            return
+        }
+        if (eventType == .sessionStart) {
+            self.sessionDidStart(
+                at: Date(timeIntervalSince1970: event.latestTimestamp ?? Date().timeIntervalSince1970),
+                for: event.customerIds,
+                completion: {}
+            )
+        } else if (eventType == .install) {
+            self.preload(for: event.customerIds)
+        }
+        self.showInAppMessage(for: event)
     }
 }
 

@@ -35,6 +35,11 @@ public struct InAppMessage: Codable, Equatable {
     public var delay: TimeInterval { return Double(delayMS ?? 0) / 1000.0 }
     public let timeoutMS: Int?
     public var timeout: TimeInterval? { return timeoutMS != nil ? Double(timeoutMS ?? 0 ) / 1000 : nil }
+    public var rawHasTrackingConsent: Bool?
+    public var hasTrackingConsent: Bool {
+        return rawHasTrackingConsent ?? true
+    }
+    public var consentCategoryTracking: String?
 
     public init(
         id: String,
@@ -50,7 +55,9 @@ public struct InAppMessage: Codable, Equatable {
         delayMS: Int? = nil,
         timeoutMS: Int? = nil,
         payloadHtml: String?,
-        isHtml: Bool?
+        isHtml: Bool?,
+        hasTrackingConsent: Bool?,
+        consentCategoryTracking: String?
     ) {
         self.id = id
         self.name = name
@@ -66,6 +73,8 @@ public struct InAppMessage: Codable, Equatable {
         self.payload = payload
         self.payloadHtml = payloadHtml
         self.isHtml = isHtml ?? false
+        self.rawHasTrackingConsent = hasTrackingConsent
+        self.consentCategoryTracking = consentCategoryTracking
     }
 
     enum CodingKeys: String, CodingKey {
@@ -83,6 +92,8 @@ public struct InAppMessage: Codable, Equatable {
         case timeoutMS = "close_timeout"
         case payloadHtml = "payload_html"
         case isHtml = "is_html"
+        case rawHasTrackingConsent = "has_tracking_consent"
+        case consentCategoryTracking = "consent_category_tracking"
     }
 
     func applyDateFilter(date: Date) -> Bool {

@@ -59,7 +59,9 @@ public class ExponeaNotificationService {
             if let userInfo = (request?.content.mutableCopy() as? UNMutableNotificationContent)?.userInfo {
             let notification = NotificationData.deserialize(
                 attributes: userInfo["attributes"] as? [String: Any] ?? [:],
-                campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
+                campaignData: userInfo["url_params"] as? [String: Any] ?? [:],
+                consentCategoryTracking: userInfo["consent_category_tracking"] as? String ?? nil,
+                hasTrackingConsent: GdprTracking.readTrackingConsentFlag(userInfo["has_tracking_consent"])
             ) ?? NotificationData()
             saveNotificationForLaterTracking(notification: notification)
             }
@@ -147,7 +149,9 @@ public class ExponeaNotificationService {
 
         var notificationData = NotificationData.deserialize(
             attributes: userInfo["attributes"] as? [String: Any] ?? [:],
-            campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
+            campaignData: userInfo["url_params"] as? [String: Any] ?? [:],
+            consentCategoryTracking: userInfo["consent_category_tracking"] as? String ?? nil,
+            hasTrackingConsent: GdprTracking.readTrackingConsentFlag(userInfo["has_tracking_consent"])
         ) ?? NotificationData()
 
         let timestamp = notificationData.timestamp

@@ -8,13 +8,18 @@
 
 import Foundation
 import UserNotifications
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 struct PushNotificationParser {
     static let decoder: JSONDecoder = JSONDecoder.snakeCase
 
     static func parsePushOpened(userInfoObject: AnyObject?,
                                 actionIdentifier: String?,
-                                timestamp: Double) -> PushOpenedData? {
+                                timestamp: Double,
+                                considerConsent: Bool
+    ) -> PushOpenedData? {
         guard let userInfo = userInfoObject as? [String: Any] else {
             Exponea.logger.log(.error, message: "Failed to convert push payload.")
             return nil
@@ -28,9 +33,15 @@ struct PushNotificationParser {
             "cta": .string("notification"),
             "url": .string("app")
         ]
+        if let consentCategoryTracking = userInfo["consent_category_tracking"] as? String {
+            properties["consent_category_tracking"] = .string(consentCategoryTracking)
+        }
         let notificationData = NotificationData.deserialize(
             attributes: userInfo["attributes"] as? [String: Any] ?? [:],
-            campaignData: userInfo["url_params"] as? [String: Any] ?? [:]
+            campaignData: userInfo["url_params"] as? [String: Any] ?? [:],
+            consentCategoryTracking: userInfo["consent_category_tracking"] as? String ?? nil,
+            hasTrackingConsent: GdprTracking.readTrackingConsentFlag(userInfo["has_tracking_consent"]),
+            considerConsent: considerConsent
         ) ?? NotificationData()
         properties.merge(notificationData.properties) { (current, _) in current }
         if let customEventType = notificationData.eventType,
@@ -52,7 +63,8 @@ struct PushNotificationParser {
             // We need to get the right index and fetch the correct action url from payload, if any
             let indexString = identifier.components(separatedBy: "_").last
             if let indexString = indexString, let index = Int(indexString),
-                let actions = userInfo["actions"] as? [[String: String]], actions.count > index {
+               let actions = userInfo["actions"] as? [[String: String]],
+               actions.count > index {
                 let actionDict = actions[index]
                 action = ExponeaNotificationActionType(rawValue: actionDict["action"] ?? "") ?? .none
                 actionValue = actionDict["url"]
@@ -80,6 +92,9 @@ struct PushNotificationParser {
         case .browser, .deeplink:
             if let value = actionValue, URL(string: value) != nil {
                 properties["url"] = .string(value)
+                if (GdprTracking.isTrackForced(value)) {
+                    properties["tracking_forced"] = .bool(true)
+                }
             }
         }
 
@@ -96,7 +111,10 @@ struct PushNotificationParser {
             actionValue: actionValue,
             eventType: eventType,
             eventData: eventData,
-            extraData: userInfo["attributes"] as? [String: Any]
+            extraData: userInfo["attributes"] as? [String: Any],
+            consentCategoryTracking: notificationData.consentCategoryTracking,
+            hasTrackingConsent: notificationData.hasTrackingConsent,
+            considerConsent: notificationData.considerConsent
         )
     }
 }

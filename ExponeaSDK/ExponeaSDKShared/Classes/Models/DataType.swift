@@ -72,4 +72,8 @@ extension Array where Iterator.Element == DataType {
         }
         return updatedData
     }
+
+    public var customerIds: [String : String] {
+        return compactMap { if case .customerIds(let customerIds) = $0 { return customerIds } else { return nil } }.first ?? [:]
+    }
 }

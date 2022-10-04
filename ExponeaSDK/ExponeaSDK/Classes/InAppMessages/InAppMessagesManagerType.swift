@@ -13,22 +13,12 @@ protocol InAppMessagesManagerType {
     func getInAppMessage(for event: [DataType], requireImage: Bool) -> InAppMessage?
     func showInAppMessage(
         for event: [DataType],
-        trackingDelegate: InAppMessageTrackingDelegate?,
         callback: ((InAppMessageView?) -> Void)?
     )
     func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?)
     func anonymize()
     var delegate: InAppMessageActionDelegate { get set }
-    func trackInAppMessageClick(
-        _ message: InAppMessage,
-        trackingDelegate: InAppMessageTrackingDelegate?,
-        buttonText: String?,
-        buttonLink: String?
-    )
-    func trackInAppMessageClose(
-        _ message: InAppMessage,
-        trackingDelegate: InAppMessageTrackingDelegate?
-    )
+    func onEventOccurred(for event: [DataType])
 }
 
 extension InAppMessagesManagerType {
@@ -36,8 +26,8 @@ extension InAppMessagesManagerType {
         preload(for: customerIds, completion: nil)
     }
 
-    func showInAppMessage(for event: [DataType], trackingDelegate: InAppMessageTrackingDelegate?) {
-        showInAppMessage(for: event, trackingDelegate: trackingDelegate, callback: nil)
+    func showInAppMessage(for event: [DataType]) {
+        showInAppMessage(for: event, callback: nil)
     }
 
     func getInAppMessage(for event: [DataType]) -> InAppMessage? {

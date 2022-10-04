@@ -41,19 +41,26 @@ final class MockExponeaImplementation: ExponeaInternal {
                 customerIdentifiedHandler: {}
             )
 
-            self.inAppMessagesManager = InAppMessagesManager(
-               repository: repository,
-               displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
-               delegate: DefaultInAppDelegate()
-            )
-
             // Finally, configuring tracking manager
             self.trackingManager = try! TrackingManager(
                 repository: repository,
                 database: database,
                 flushingManager: flushingManager!,
-                inAppMessagesManager: inAppMessagesManager!,
-                userDefaults: userDefaults
+                userDefaults: userDefaults,
+                onEventCallback: { event in
+                    self.inAppMessagesManager?.onEventOccurred(for: event)
+                }
+            )
+
+            self.trackingConsentManager = try! TrackingConsentManager(
+                trackingManager: self.trackingManager!
+            )
+            
+            self.inAppMessagesManager = InAppMessagesManager(
+               repository: repository,
+               displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
+               delegate: DefaultInAppDelegate(),
+               trackingConsentManager: self.trackingConsentManager!
             )
             processSavedCampaignData()
         } catch {

@@ -16,7 +16,7 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
         let imageData: Data?
         let actionCallback: (InAppMessagePayloadButton) -> Void
         let dismissCallback: () -> Void
-        let presentedCallback: ((InAppMessageView?) -> Void)?
+        let presentedCallback: ((InAppMessageView?, String?) -> Void)?
     }
 
     public var presentedMessages: [PresentedMessageData] = []
@@ -31,7 +31,7 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
         dismissCallback: @escaping () -> Void,
-        presentedCallback: ((InAppMessageView?) -> Void)?
+        presentedCallback: ((InAppMessageView?, String?) -> Void)?
     ) {
         if presentResult {
             presentedMessages.append(
@@ -53,11 +53,12 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
                         actionCallback: actionCallback,
                         dismissCallback: dismissCallback,
                         fullscreen: false
-                    )
+                    ),
+                    nil
                 )
             }
         } else {
-            presentedCallback?(nil)
+            presentedCallback?(nil, nil)
         }
     }
 }

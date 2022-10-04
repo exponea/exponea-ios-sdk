@@ -12,12 +12,14 @@ enum InAppMessageEvent: Equatable {
     case close
     case show
     case click(buttonLabel: String, url: String)
+    case error(message: String)
 
     var action: String {
         switch self {
         case .close: return "close"
         case .show: return "show"
         case .click: return "click"
+        case .error: return "error"
         }
     }
 

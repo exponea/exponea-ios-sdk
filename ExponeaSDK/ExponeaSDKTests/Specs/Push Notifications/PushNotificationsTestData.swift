@@ -313,7 +313,10 @@ struct PushNotificationsTestData {
             "campaign_id": "5db9ab54b073dfb424ccfa6f",
             "action_type": "mobile notification",
             "campaign_name": "Wassil's push"
-        ]
+        ],
+        consentCategoryTracking: nil,
+        hasTrackingConsent: true,
+        considerConsent: true
     )
 
     let deliveredSilentNotification = """
@@ -340,6 +343,49 @@ struct PushNotificationsTestData {
             "silent_test": .string("value")
         ]),
         .timestamp(timestamp)],
-        extraData: ["silent_test": "value"]
+        extraData: ["silent_test": "value"],
+        consentCategoryTracking: nil,
+        hasTrackingConsent: true,
+        considerConsent: true
     )
+
+    public func deliveredNotificationWithConsent(
+        _ hasConsent: String,
+        _ consent: String,
+        _ selectedAction: String = "app",
+        _ browserActionValue: String = "http://google.com"
+    ) -> String {
+        return """
+            {
+                "legacy_ios_category" : null,
+                "actions" : [
+                {
+                  "title" : "Action 1 title",
+                  "action" : "app"
+                },
+                {
+                  "title" : "Action 2 title",
+                  "action" : "deeplink",
+                  "url" : "app://deeplink"
+                },
+                {
+                  "title" : "Action 3 title",
+                  "action" : "browser",
+                  "url" : "\(browserActionValue)"
+                }
+                ],
+                "message" : "test push notification message",
+                "aps" : {
+                "alert" : "Test push notification title",
+                "mutable-content" : 1
+                },
+                "source": "xnpe_platform",
+                "action" : "\(selectedAction)",
+                "title" : "Test push notification title",
+                "has_tracking_consent" : "\(hasConsent)",
+                "consent_category_tracking" : "\(consent)"
+            }
+       """
+    }
+
 }

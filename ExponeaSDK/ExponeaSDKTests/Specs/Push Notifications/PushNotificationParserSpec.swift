@@ -45,7 +45,10 @@ class PushNotificationParserSpec: QuickSpec {
                             "url": .string("app")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp)],
-                    extraData: nil
+                    extraData: nil,
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -66,7 +69,10 @@ class PushNotificationParserSpec: QuickSpec {
                             "url": .string("app")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp)],
-                    extraData: nil
+                    extraData: nil,
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -87,7 +93,10 @@ class PushNotificationParserSpec: QuickSpec {
                             "url": .string("some_url")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp)],
-                    extraData: nil
+                    extraData: nil,
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -108,7 +117,10 @@ class PushNotificationParserSpec: QuickSpec {
                             "url": .string("http://google.com")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp)],
-                    extraData: nil
+                    extraData: nil,
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -129,7 +141,10 @@ class PushNotificationParserSpec: QuickSpec {
                             "url": .string("app")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp)],
-                    extraData: nil
+                    extraData: nil,
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -150,7 +165,10 @@ class PushNotificationParserSpec: QuickSpec {
                             "url": .string("app")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp)],
-                    extraData: nil
+                    extraData: nil,
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -171,7 +189,10 @@ class PushNotificationParserSpec: QuickSpec {
                             "url": .string("app://deeplink")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp)],
-                    extraData: nil
+                    extraData: nil,
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -192,7 +213,10 @@ class PushNotificationParserSpec: QuickSpec {
                             "url": .string("http://google.com")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp)],
-                    extraData: nil
+                    extraData: nil,
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -225,7 +249,10 @@ class PushNotificationParserSpec: QuickSpec {
                         "action_id": 123,
                         "something_else": "some other value",
                         "something": "some value"
-                    ]
+                    ],
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -250,7 +277,10 @@ class PushNotificationParserSpec: QuickSpec {
                     ],
                     extraData: [
                         "event_type": "custom push opened"
-                    ]
+                    ],
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
                 )
             ),
             TestCase(
@@ -344,7 +374,85 @@ class PushNotificationParserSpec: QuickSpec {
                             ]],
                             "message": "We have a great deal for you today, don't miss it!"
                         ]
-                    ]
+                    ],
+                    consentCategoryTracking: nil,
+                    hasTrackingConsent: true,
+                    considerConsent: true
+                )
+            ),
+            TestCase(
+                name: "notification with consent",
+                userInfoJson: PushNotificationsTestData().deliveredNotificationWithConsent("true", "I have consent"),
+                actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
+                expected: PushOpenedData(
+                    silent: false,
+                    campaignData: CampaignData(),
+                    actionType: .openApp,
+                    actionValue: nil,
+                    eventType: .pushOpened,
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("notification"),
+                            "url": .string("app"),
+                            "consent_category_tracking": .string("I have consent")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
+                    extraData: nil,
+                    consentCategoryTracking: "I have consent",
+                    hasTrackingConsent: true,
+                    considerConsent: true
+                )
+            ),
+            TestCase(
+                name: "notification with consent - number",
+                userInfoJson: PushNotificationsTestData().deliveredNotificationWithConsent("1", "I have consent"),
+                actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
+                expected: PushOpenedData(
+                    silent: false,
+                    campaignData: CampaignData(),
+                    actionType: .openApp,
+                    actionValue: nil,
+                    eventType: .pushOpened,
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("notification"),
+                            "url": .string("app"),
+                            "consent_category_tracking": .string("I have consent")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
+                    extraData: nil,
+                    consentCategoryTracking: "I have consent",
+                    hasTrackingConsent: true,
+                    considerConsent: true
+                )
+            ),
+            TestCase(
+                name: "notification without consent",
+                userInfoJson: PushNotificationsTestData().deliveredNotificationWithConsent("false", ""),
+                actionIdentifier: "com.apple.UNNotificationDefaultActionIdentifier",
+                expected: PushOpenedData(
+                    silent: false,
+                    campaignData: CampaignData(),
+                    actionType: .openApp,
+                    actionValue: nil,
+                    eventType: .pushOpened,
+                    eventData: [
+                        .properties([
+                            "status": .string("clicked"),
+                            "platform": .string("ios"),
+                            "cta": .string("notification"),
+                            "url": .string("app"),
+                            "consent_category_tracking": .string("")
+                        ]),
+                        .timestamp(PushNotificationsTestData.timestamp)],
+                    extraData: nil,
+                    consentCategoryTracking: "",
+                    hasTrackingConsent: false,
+                    considerConsent: true
                 )
             )
         ]
@@ -352,12 +460,13 @@ class PushNotificationParserSpec: QuickSpec {
             it("should parse \(testCase.name)") {
                 let userInfo = testCase.userInfoJson != nil
                     ? try! JSONSerialization.jsonObject(
-                        with: testCase.userInfoJson!.data(using: .utf8)!, options: []
+                        with: testCase.userInfoJson!.data(using: String.Encoding.utf8)!, options: []
                     ) as AnyObject : nil
                 let parsedData = PushNotificationParser.parsePushOpened(
                     userInfoObject: userInfo,
                     actionIdentifier: testCase.actionIdentifier,
-                    timestamp: PushNotificationsTestData.timestamp
+                    timestamp: PushNotificationsTestData.timestamp,
+                    considerConsent: true
                 )
                 if testCase.expected == nil {
                     expect(parsedData).to(beNil())

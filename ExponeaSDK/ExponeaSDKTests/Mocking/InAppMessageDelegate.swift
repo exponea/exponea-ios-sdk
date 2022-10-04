@@ -16,31 +16,31 @@ class InAppMessageDelegate: InAppMessageActionDelegate {
     var inAppMessageActionCalled: Bool = false
     var trackClickInActionCallback: Bool = false
     var inAppMessageManager: InAppMessagesManager?
-    weak var inAppMessageTrackingDelegate: InAppMessageTrackingDelegate?
+    var trackingConsentManager: TrackingConsentManagerType?
 
     init(
         overrideDefaultBehavior: Bool,
         trackActions: Bool,
         trackClickInActionCallback: Bool = false,
         inAppMessageManager: InAppMessagesManager? = nil,
-        inAppMessageTrackingDelegate: InAppMessageTrackingDelegate? = nil
+        trackingConsentManager: TrackingConsentManagerType? = nil
     ) {
         self.overrideDefaultBehavior = overrideDefaultBehavior
         self.trackActions = trackActions
         self.trackClickInActionCallback = trackClickInActionCallback
         self.inAppMessageManager = inAppMessageManager
-        self.inAppMessageTrackingDelegate = inAppMessageTrackingDelegate
+        self.trackingConsentManager = trackingConsentManager
     }
 
     func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
         inAppMessageActionCalled = true
         if trackClickInActionCallback {
-            if let manager = inAppMessageManager, let trackingDelegate = inAppMessageTrackingDelegate {
-                manager.trackInAppMessageClick(
-                    message,
-                    trackingDelegate: trackingDelegate,
+            if let trackingConsentManager = trackingConsentManager {
+                trackingConsentManager.trackInAppMessageClick(
+                    message: message,
                     buttonText: button?.text,
-                    buttonLink: button?.url
+                    buttonLink: button?.url,
+                    mode: .CONSIDER_CONSENT
                 )
             }
         }

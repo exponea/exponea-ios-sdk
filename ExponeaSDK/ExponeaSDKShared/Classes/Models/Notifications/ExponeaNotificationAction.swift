@@ -14,6 +14,10 @@ public struct ExponeaNotificationAction: Codable {
     public let action: ExponeaNotificationActionType
     public let url: String?
 
+    public var isTrackingForced: Bool {
+        GdprTracking.isTrackForced(url)
+    }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)

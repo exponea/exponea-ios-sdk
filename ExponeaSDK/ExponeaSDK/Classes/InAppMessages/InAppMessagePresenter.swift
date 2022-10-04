@@ -31,7 +31,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
         dismissCallback: @escaping () -> Void,
-        presentedCallback: ((InAppMessageView?) -> Void)? = nil
+        presentedCallback: ((InAppMessageView?, String?) -> Void)? = nil
     ) {
         Exponea.logger.log(
             .verbose,
@@ -41,7 +41,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
             Exponea.shared.executeSafely {
                 guard !self.presenting else {
                     Exponea.logger.log(.verbose, message: "Already presenting in-app message.")
-                    presentedCallback?(nil)
+                    presentedCallback?(nil, nil)
                     return
                 }
                 var image: UIImage?
@@ -53,14 +53,14 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                         image = createdImage
                     } else {
                         Exponea.logger.log(.error, message: "Unable to create in-app message image")
-                        presentedCallback?(nil)
+                        presentedCallback?(nil, "Unable to create in-app message image")
                         return
                     }
                 }
 
                 guard let viewController = InAppMessagePresenter.getTopViewController(window: self.window) else {
                     Exponea.logger.log(.error, message: "Unable to present in-app message - no view controller")
-                    presentedCallback?(nil)
+                    presentedCallback?(nil, "Unable to present in-app message - no view controller")
                     return
                 }
 
@@ -86,10 +86,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     self.presenting = true
                     Exponea.logger.log(.error, message: "In-app message presented.")
                     self.setMessageTimeout(inAppMessageView: inAppMessageView, timeout: timeout)
-                    presentedCallback?(inAppMessageView)
+                    presentedCallback?(inAppMessageView, nil)
                 } catch {
                     Exponea.logger.log(.error, message: "Unable to present in-app message \(error)")
-                    presentedCallback?(nil)
+                    presentedCallback?(nil, error.localizedDescription)
                 }
             }
         }
