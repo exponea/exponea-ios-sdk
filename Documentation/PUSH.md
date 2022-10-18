@@ -89,6 +89,8 @@ The SDK only handles push notifications coming from Exponea backend. If you use 
 ### Manual tracking
 You can completely disable notification tracking and use methods `Exponea.shared.trackPushToken` and `Exponea.shared.trackPushOpened` to track push notification events. `trackPushOpened` expects the notification has Exponea format. You can always track `campaign` event manually with any payload you need.
 
+> The behaviour of `trackClickedPush` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in [tracking consent documentation](./TRACKING_CONSENT.md).
+
 ## Custom Notification Actions in iOS 11 and lower
 To support the action buttons that can be configured in the Exponea backend on iOS 11 and lower you will need to implement custom notification categories that are used to properly hook up the button actions and titles. ExponeaSDK provides a convenient factory method to simplify creation of such category. 
 
