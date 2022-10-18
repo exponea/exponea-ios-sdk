@@ -41,5 +41,5 @@ final class MockInAppMessagesManager: InAppMessagesManagerType {
         _ message: InAppMessage
     ) {}
 
-    func onEventOccurred(for event: [ExponeaSDK.DataType]) {}
+    func onEventOccurred(of type: EventType, for event: [ExponeaSDK.DataType]) {}
 }

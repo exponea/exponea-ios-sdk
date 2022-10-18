@@ -21,7 +21,7 @@ internal class MockTrackingManager: TrackingManagerType {
         let event: InAppMessageEvent
         let message: InAppMessage
     }
-    public var calls: [CallData] = []
+    public var trackedInappEvents: [CallData] = []
 
     var customerCookie: String = "mock-cookie"
 
@@ -45,10 +45,10 @@ internal class MockTrackingManager: TrackingManagerType {
 
     var flushingMode: FlushingMode = .manual
     
-    let onEventCallback: ([DataType]) -> Void
+    let onEventCallback: (EventType, [DataType]) -> Void
     
     init(
-        onEventCallback: @escaping ([DataType]) -> Void
+        onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) {
         self.onEventCallback = onEventCallback
     }
@@ -59,7 +59,18 @@ internal class MockTrackingManager: TrackingManagerType {
             payload.append(.eventType(stringEventType))
         }
         trackedEvents.append(TrackedEvent(type: type, data: payload))
-        onEventCallback(payload)
+        onEventCallback(type, payload)
+    }
+    
+    func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws {
+        var payload: [DataType] = data ?? []
+        if let stringEventType = getEventTypeString(type: type) {
+            payload.append(.eventType(stringEventType))
+        }
+        if (trackingAllowed) {
+            trackedEvents.append(TrackedEvent(type: type, data: payload))
+        }
+        onEventCallback(type, payload)
     }
 
     func updateLastPendingEvent(ofType type: String, with data: DataType) throws {
@@ -97,27 +108,30 @@ internal class MockTrackingManager: TrackingManagerType {
     func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
         fatalError("Not implemented")
     }
-    func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?) {
+    func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?, trackingAllowed: Bool) {
         track(
             .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),
-            for: message
+            for: message,
+            trackingAllowed: trackingAllowed
         )
     }
 
-    func trackInAppMessageClose(message: InAppMessage) {
-        self.track(.close, for: message)
+    func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool) {
+        self.track(.close, for: message, trackingAllowed: trackingAllowed)
     }
 
-    func trackInAppMessageShown(message: ExponeaSDK.InAppMessage) {
-        self.track(.show, for: message)
+    func trackInAppMessageShown(message: ExponeaSDK.InAppMessage, trackingAllowed: Bool) {
+        self.track(.show, for: message, trackingAllowed: trackingAllowed)
     }
 
-    func trackInAppMessageError(message: ExponeaSDK.InAppMessage, error: String) {
-        self.track(.error(message: error), for: message)
+    func trackInAppMessageError(message: ExponeaSDK.InAppMessage, error: String, trackingAllowed: Bool) {
+        self.track(.error(message: error), for: message, trackingAllowed: trackingAllowed)
     }
     
-    func track(_ event: InAppMessageEvent, for message: InAppMessage) {
-        calls.append(CallData(event: event, message: message))
+    func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool) {
+        if (trackingAllowed) {
+            trackedInappEvents.append(CallData(event: event, message: message))
+        }
         do {
             var eventData: [String: JSONValue] = [
                 "action": .string(event.action),
@@ -143,12 +157,13 @@ internal class MockTrackingManager: TrackingManagerType {
             if (message.consentCategoryTracking != nil) {
                 eventData["consent_category_tracking"] = .string(message.consentCategoryTracking!)
             }
-            try track(
+            try processTrack(
                 .banner,
                 with: [
                     .properties(DeviceProperties().properties),
                     .properties(eventData)
-                ]
+                ],
+                trackingAllowed: trackingAllowed
             )
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
@@ -172,7 +187,7 @@ internal class MockTrackingManager: TrackingManagerType {
     }
     
     func clearCalls() {
-        calls.removeAll()
+        trackedInappEvents.removeAll()
         trackedEvents.removeAll()
     }
 }

@@ -31,10 +31,14 @@ final class TrackConsentManagerSpec: QuickSpec {
     
     override func spec() {
         describe("TrackingManager") {
+            var onEventOccuredCalls: Int = 0
             var trackingManager: MockTrackingManager!
             var trackingConsentManager: TrackingConsentManagerType!
             beforeEach {
-                trackingManager = MockTrackingManager(onEventCallback: { _ in })
+                onEventOccuredCalls = 0
+                trackingManager = MockTrackingManager(onEventCallback: { _, _ in
+                    onEventOccuredCalls += 1
+                })
                 trackingManager.clearCalls()
                 trackingConsentManager = TrackingConsentManager(trackingManager: trackingManager)
             }
@@ -700,15 +704,18 @@ final class TrackConsentManagerSpec: QuickSpec {
                 let testNamePrefix = testCaseConf.expectTrackEvent ? "should" : "shouldn't"
                 it("\(testNamePrefix) track event \(testCaseConf.description)") {
                     testCaseConf.invoke(trackingConsentManager, testCaseConf.consentMode)
+                    expect(onEventOccuredCalls).to(be(1))
+                    if (testCaseConf.expectedInapEventType == nil) {
+                        expect(trackingManager.trackedInappEvents).to(beEmpty())
+                    }
                     if (testCaseConf.expectTrackEvent == false) {
-                        expect(trackingManager.calls).to(beEmpty())
                         expect(trackingManager.trackedEvents).to(beEmpty())
                         return
                     }
                     // Should track so:
                     if let inappType = testCaseConf.expectedInapEventType {
-                        expect(trackingManager.calls.count).to(equal(1))
-                        expect(trackingManager.calls[0].event.action).to(equal(inappType.action))
+                        expect(trackingManager.trackedInappEvents.count).to(equal(1))
+                        expect(trackingManager.trackedInappEvents[0].event.action).to(equal(inappType.action))
                     }
                     expect(trackingManager.trackedEvents.count).to(equal(1))
                     if trackingManager.trackedEvents.count == 0 {

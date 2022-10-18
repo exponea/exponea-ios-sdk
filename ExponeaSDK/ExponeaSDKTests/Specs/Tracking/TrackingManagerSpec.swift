@@ -46,7 +46,7 @@ class TrackingManagerSpec: QuickSpec {
                     database: database,
                     flushingManager: MockFlushingManager(),
                     userDefaults: userDefaults,
-                    onEventCallback: { event in
+                    onEventCallback: { type, event in
                         
                     }
                 )
@@ -175,7 +175,8 @@ class TrackingManagerSpec: QuickSpec {
                 it("should track click in-app message event") {
                     trackingManager.track(
                         .click(buttonLabel: "mock-text", url: "mock-url"),
-                        for: SampleInAppMessage.getSampleInAppMessage()
+                        for: SampleInAppMessage.getSampleInAppMessage(),
+                        trackingAllowed: true
                     )
                     let trackEvents = try! trackingManager.database.fetchTrackEvent()
                     expect(trackEvents.count).to(equal(1))
@@ -194,7 +195,8 @@ class TrackingManagerSpec: QuickSpec {
                 it("should track close in-app message event") {
                     trackingManager.track(
                         .close,
-                        for: SampleInAppMessage.getSampleInAppMessage()
+                        for: SampleInAppMessage.getSampleInAppMessage(),
+                        trackingAllowed: true
                     )
                     let trackEvents = try! trackingManager.database.fetchTrackEvent()
                     expect(trackEvents.count).to(equal(1))

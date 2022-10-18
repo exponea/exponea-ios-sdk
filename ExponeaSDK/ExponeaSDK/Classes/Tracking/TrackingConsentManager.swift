@@ -19,9 +19,10 @@ class TrackingConsentManager : TrackingConsentManagerType {
     }
 
     func trackDeliveredPush(data: NotificationData) {
+        var trackingAllowed = true
         if (data.considerConsent && !data.hasTrackingConsent) {
             Exponea.logger.log(.verbose, message: "Event for delivered notification is not tracked because consent is not given")
-            return
+            trackingAllowed = false
         }
 
         // Create payload
@@ -36,18 +37,20 @@ class TrackingConsentManager : TrackingConsentManagerType {
             if let customEventType = data.eventType,
                !customEventType.isEmpty,
                customEventType != Constants.EventTypes.pushDelivered {
-                try trackingManager.track(
+                try trackingManager.processTrack(
                     .customEvent,
                     with: [
                         .eventType(customEventType),
                         .properties(properties),
                         .timestamp(data.timestamp)
-                    ]
+                    ],
+                    trackingAllowed: trackingAllowed
                 )
             } else {
-                try trackingManager.track(
+                try trackingManager.processTrack(
                     .pushDelivered,
-                    with: [.properties(properties), .timestamp(data.timestamp)]
+                    with: [.properties(properties), .timestamp(data.timestamp)],
+                    trackingAllowed: trackingAllowed
                 )
             }
         } catch {
@@ -70,9 +73,10 @@ class TrackingConsentManager : TrackingConsentManagerType {
     }
 
     func trackClickedPush(data: PushOpenedData) {
+        var trackingAllowed = true
         if (data.considerConsent && !data.hasTrackingConsent && !GdprTracking.isTrackForced(data.actionValue)) {
             Exponea.logger.log(.error, message: "Event for clicked pushnotification is not tracked because consent is not given")
-            return
+            trackingAllowed = false
         }
         var eventData = data.eventData
         if (!eventData.properties.contains(where: { key, _ in key == "action_type"})) {
@@ -82,41 +86,45 @@ class TrackingConsentManager : TrackingConsentManagerType {
             eventData = eventData.addProperties(["tracking_forced": true])
         }
         do {
-            try self.trackingManager.track(data.eventType, with: eventData)
+            try self.trackingManager.processTrack(data.eventType, with: eventData, trackingAllowed: trackingAllowed)
         } catch {
             Exponea.logger.log(.error, message: "Error tracking push clicked: \(error.localizedDescription)")
         }
     }
 
     func trackInAppMessageShown(message: InAppMessage, mode: MODE) {
+        var trackingAllowed = true
         if (mode == .CONSIDER_CONSENT && !message.hasTrackingConsent) {
             Exponea.logger.log(.error, message: "Event for shown inAppMessage is not tracked because consent is not given")
-            return
+            trackingAllowed = false
         }
-        self.trackingManager.trackInAppMessageShown(message: message)
+        self.trackingManager.trackInAppMessageShown(message: message, trackingAllowed: trackingAllowed)
     }
 
     func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?, mode: MODE) {
+        var trackingAllowed = true
         if (mode == .CONSIDER_CONSENT && !message.hasTrackingConsent && !GdprTracking.isTrackForced(buttonLink)) {
             Exponea.logger.log(.error, message: "Event for clicked inAppMessage is not tracked because consent is not given")
-            return
+            trackingAllowed = false
         }
-        self.trackingManager.trackInAppMessageClick(message: message, buttonText: buttonText, buttonLink: buttonLink)
+        self.trackingManager.trackInAppMessageClick(message: message, buttonText: buttonText, buttonLink: buttonLink, trackingAllowed: trackingAllowed)
     }
 
     func trackInAppMessageClose(message: InAppMessage, mode: MODE) {
+        var trackingAllowed = true
         if (mode == .CONSIDER_CONSENT && !message.hasTrackingConsent) {
             Exponea.logger.log(.error, message: "Event for closed inAppMessage is not tracked because consent is not given")
-            return
+            trackingAllowed = false
         }
-        self.trackingManager.trackInAppMessageClose(message: message)
+        self.trackingManager.trackInAppMessageClose(message: message, trackingAllowed: trackingAllowed)
     }
 
     func trackInAppMessageError(message: InAppMessage, error: String, mode: MODE) {
+        var trackingAllowed = true
         if (mode == .CONSIDER_CONSENT && !message.hasTrackingConsent) {
             Exponea.logger.log(.error, message: "Event for error inAppMessage is not tracked because consent is not given")
-            return
+            trackingAllowed = false
         }
-        self.trackingManager.trackInAppMessageError(message: message, error: error)
+        self.trackingManager.trackInAppMessageError(message: message, error: error, trackingAllowed: trackingAllowed)
     }
 }

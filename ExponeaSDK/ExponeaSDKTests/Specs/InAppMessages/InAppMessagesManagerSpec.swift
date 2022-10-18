@@ -38,8 +38,8 @@ class InAppMessagesManagerSpec: QuickSpec {
             displayStore = InAppMessageDisplayStatusStore(userDefaults: MockUserDefaults())
             urlOpener = MockUrlOpener()
             trackingManager = MockTrackingManager(
-                onEventCallback: { event in
-                    manager.onEventOccurred(for: event)
+                onEventCallback: { type, event in
+                    manager.onEventOccurred(of: type, for: event)
                 }
             )
             trackingConsentManager = TrackingConsentManager(
@@ -337,14 +337,14 @@ class InAppMessagesManagerSpec: QuickSpec {
                 waitUntil { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
-                expect(trackingManager.calls).to(beEmpty())
+                expect(trackingManager.trackedInappEvents).to(beEmpty())
             }
 
             it("should track show event when displaying message") {
                 waitUntil { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
-                expect(trackingManager.calls).to(equal([
+                expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
@@ -357,7 +357,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
-                expect(trackingManager.calls).to(equal([
+                expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
@@ -376,7 +376,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
-                expect(trackingManager.calls).to(equal([
+                expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
@@ -399,7 +399,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
-                expect(trackingManager.calls).to(equal([
+                expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
@@ -419,7 +419,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
-                expect(trackingManager.calls).to(equal([
+                expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
@@ -445,7 +445,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
-                expect(trackingManager.calls).to(equal([
+                expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
@@ -467,7 +467,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
-                expect(trackingManager.calls).to(equal([
+                expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
@@ -495,7 +495,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 presenter.presentedMessages[0].actionCallback(
                     SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                 )
-                expect(trackingManager.calls).to(equal([
+                expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
@@ -576,7 +576,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             waitUntil { done in manager.showInAppMessage(
                 for: [.eventType("session_start")]
             ) { _ in done() } }
-            expect(trackingManager.calls).to(equal([
+            expect(trackingManager.trackedInappEvents).to(equal([
                 MockTrackingManager.CallData(
                     event: .show,
                     message: message

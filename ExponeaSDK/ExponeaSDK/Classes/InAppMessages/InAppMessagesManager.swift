@@ -364,18 +364,14 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         }
     }
 
-    func onEventOccurred(for event: [DataType]) {
-        guard let eventType = EventType(rawValue: event.eventTypes.first ?? "") else {
-            Exponea.logger.log(.error, message: "Unknown event type \(event.eventTypes.first ?? "null")")
-            return
-        }
-        if (eventType == .sessionStart) {
+    func onEventOccurred(of type: EventType, for event: [DataType]) {
+        if (type == .sessionStart) {
             self.sessionDidStart(
                 at: Date(timeIntervalSince1970: event.latestTimestamp ?? Date().timeIntervalSince1970),
                 for: event.customerIds,
                 completion: {}
             )
-        } else if (eventType == .install) {
+        } else if (type == .install) {
             self.preload(for: event.customerIds)
         }
         self.showInAppMessage(for: event)

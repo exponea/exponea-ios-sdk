@@ -101,7 +101,7 @@ final class PushNotificationManagerSpec: QuickSpec {
         beforeEach {
             UserDefaults.standard.removePersistentDomain(forName: "mock-app-group")
             trackingManager = MockTrackingManager(
-                onEventCallback: { event in
+                onEventCallback: { type, event in
                     
                 }
             )

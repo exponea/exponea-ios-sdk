@@ -15,7 +15,7 @@ class MockInAppMessageTrackingDelegate: InAppMessageTrackingDelegate {
     }
     public var calls: [CallData] = []
 
-    public func track(_ event: InAppMessageEvent, for message: InAppMessage) {
+    public func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool) {
         calls.append(CallData(event: event, message: message))
     }
 }

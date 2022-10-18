@@ -238,8 +238,8 @@ public class ExponeaInternal: ExponeaType {
                     database: database,
                     flushingManager: flushingManager,
                     userDefaults: userDefaults,
-                    onEventCallback: { event in
-                        self.inAppMessagesManager?.onEventOccurred(for: event)
+                    onEventCallback: { type, event in
+                        self.inAppMessagesManager?.onEventOccurred(of: type, for: event)
                     }
                 )
 

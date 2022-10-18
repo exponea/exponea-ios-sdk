@@ -30,21 +30,24 @@ protocol TrackingManagerType: AnyObject {
     ///   - data: Data associated with this particular event that should be tracked along.
     /// - Throws: An error of type `TrackingManagerError`.
     func track(_ type: EventType, with data: [DataType]?) throws
+    
+    func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws
 
     // Function used to track in-app message banner shown event
-    func trackInAppMessageShown(message: InAppMessage)
+    func trackInAppMessageShown(message: InAppMessage, trackingAllowed: Bool)
 
     // Function used to track in-app message banner click event 
     func trackInAppMessageClick(
         message: InAppMessage,
         buttonText: String?,
-        buttonLink: String?)
+        buttonLink: String?,
+        trackingAllowed: Bool)
 
     // Function used to track in-app message banner close event
-    func trackInAppMessageClose(message: InAppMessage)
+    func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool)
 
     // Function used to track in-app message banner error event
-    func trackInAppMessageError(message: InAppMessage, error: String)
+    func trackInAppMessageError(message: InAppMessage, error: String, trackingAllowed: Bool)
 
     /// Updates last pending(not yet sent to server) event for all project tokens
     /// - type: Type of event you want to update.

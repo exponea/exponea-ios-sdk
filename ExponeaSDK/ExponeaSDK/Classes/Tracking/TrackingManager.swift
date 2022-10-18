@@ -18,7 +18,7 @@ class TrackingManager {
     let database: DatabaseManagerType
     let repository: RepositoryType
     let device: DeviceProperties
-    let onEventCallback: ([DataType]) -> Void
+    let onEventCallback: (EventType, [DataType]) -> Void
 
     /// The identifiers of the the current customer.
     var customerIds: [String: String] {
@@ -86,7 +86,7 @@ class TrackingManager {
          device: DeviceProperties = DeviceProperties(),
          flushingManager: FlushingManagerType,
          userDefaults: UserDefaults,
-         onEventCallback: @escaping ([DataType]) -> Void
+         onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) throws {
         self.repository = repository
         self.database = database
@@ -178,15 +178,27 @@ extension TrackingManager: TrackingManagerType {
             }
         }
     }
-
+    
+    public func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws {
+        try trackInternal(type, with: data, trackingAllowed: trackingAllowed)
+    }
+    
     public func track(_ type: EventType, with data: [DataType]?) throws {
+        try trackInternal(type, with: data, trackingAllowed: true)
+    }
+
+    private func trackInternal(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws {
         /// Get token mapping or fail if no token provided.
         let projects = repository.configuration.projects(for: type)
         if projects.isEmpty {
             throw TrackingManagerError.unknownError("No project tokens provided.")
         }
 
-        Exponea.logger.log(.verbose, message: "Tracking event of type: \(type) with params \(data ?? [])")
+        if (trackingAllowed) {
+            Exponea.logger.log(.verbose, message: "Tracking event of type: \(type) with params \(data ?? [])")
+        } else {
+            Exponea.logger.log(.verbose, message: "Processing event of type: \(type) with params \(data ?? []) with tracking \(trackingAllowed)")
+        }
 
         /// For each project token we have, track the data.
         for project in projects {
@@ -211,8 +223,10 @@ extension TrackingManager: TrackingManagerType {
                  .pushDelivered,
                  .campaignClick,
                  .banner:
-                try database.trackEvent(with: payload, into: project)
-                self.onEventCallback(payload)
+                if (trackingAllowed) {
+                    try database.trackEvent(with: payload, into: project)
+                }
+                self.onEventCallback(type, payload)
             }
         }
 
@@ -222,26 +236,28 @@ extension TrackingManager: TrackingManagerType {
         }
     }
 
-    open func trackInAppMessageShown(message: InAppMessage) {
-        self.track(.show, for: message)
+    open func trackInAppMessageShown(message: InAppMessage, trackingAllowed: Bool) {
+        self.track(.show, for: message, trackingAllowed: trackingAllowed)
     }
 
     open func trackInAppMessageClick(
         message: InAppMessage,
         buttonText: String?,
-        buttonLink: String?) {
+        buttonLink: String?,
+        trackingAllowed: Bool) {
             self.track(
                 .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),
-                for: message
+                for: message,
+                trackingAllowed: trackingAllowed
             )
         }
 
-    open func trackInAppMessageClose(message: InAppMessage) {
-        self.track(.close, for: message)
+    open func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool) {
+        self.track(.close, for: message, trackingAllowed: trackingAllowed)
     }
 
-    open func trackInAppMessageError(message: InAppMessage, error: String) {
-        self.track(.error(message: error), for: message)
+    open func trackInAppMessageError(message: InAppMessage, error: String, trackingAllowed: Bool) {
+        self.track(.error(message: error), for: message, trackingAllowed: trackingAllowed)
     }
 
     func getEventTypeString(type: EventType) -> String? {
@@ -405,7 +421,7 @@ extension TrackingManager {
 // MARK: - In-app messages -
 
 extension TrackingManager: InAppMessageTrackingDelegate {
-    public func track(_ event: InAppMessageEvent, for message: InAppMessage) {
+    public func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool) {
         do {
             var eventData: [String: JSONValue] = [
                 "action": .string(event.action),
@@ -431,12 +447,13 @@ extension TrackingManager: InAppMessageTrackingDelegate {
             if (message.consentCategoryTracking != nil) {
                 eventData["consent_category_tracking"] = .string(message.consentCategoryTracking!)
             }
-            try track(
+            try processTrack(
                 .banner,
                 with: [
                     .properties(device.properties),
                     .properties(eventData)
-                ]
+                ],
+                trackingAllowed: trackingAllowed
             )
         } catch {
             Exponea.logger.log(.error, message: error.localizedDescription)
