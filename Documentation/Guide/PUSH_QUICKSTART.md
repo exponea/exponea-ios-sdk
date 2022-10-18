@@ -160,6 +160,24 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
 }
 ```
 
+### Retrieve Push notification token manually
+
+In some cases, your application may need to retrieve current Push token while running. This step is needed especially in case of `Exponea.shared.anonymize()` method usage. Invoking of `anonymize` method will remove a Push notification token from storage, so it needs to be updated right after `anonymize` or before/after `identifyCustomer`, it depends on your Push notifications usage.
+
+``` swift
+class YourClass {
+    func signOutAndSignIn() {
+        Exponea.shared.anonymize()
+        // anonymize removed Push token, so another identifyCustomer will not be assigned to push notifications
+        Exponea.shared.identifyCustomer(...)
+        Messaging.messaging().token { token, error in
+          if let token = token {
+            Exponea.shared.trackPushToken(token)
+          }
+        }
+    }
+}
+```
 
 #### Checklist:
  - push notification with image and buttons sent from Exponea web app should be properly displayed on your device. Push delivery tracking should work.
