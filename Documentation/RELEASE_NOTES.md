@@ -1,4 +1,13 @@
 ## Release Notes
+## Release Notes for 2.13.0
+#### October 19, 2022
+* Features
+  * Added feature to handle tracking consent according to DSGVO/GDPR
+  * Guiding documentation added for Push notification update after certain circumstances
+* Bug Fixes
+  * Fixed: Webview configuration updated according to newer XCode14
+
+
 ## Release Notes for 2.12.3
 #### September 20, 2022
 * Bug Fixes

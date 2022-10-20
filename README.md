@@ -4,7 +4,7 @@
 
 ![Platform](https://img.shields.io/badge/Platform-iOS-lightgrey.svg?style=flat)
 ![Platform](https://img.shields.io/badge/Swift-4.1-green.svg?style=flat)
-[![License](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Exponea iOS SDK
 
@@ -12,18 +12,17 @@ This library allows you to interact from your application or game with the Expon
 
 It has been written 100% in Swift with ❤️
 
-
 ## 📦 Installation
 
 ### CocoaPods
 
 ```ruby
 # Add this under your main application target
-pod "ExponeaSDK", "~> 2.12.3"
+pod "ExponeaSDK", "~> 2.13.0"
 
 # If you also use rich push notifications,
 # add this line to your notification service extension target.
-pod "ExponeaSDK-Notifications", "~> 2.12.3"
+pod "ExponeaSDK-Notifications", "~> 2.13.0"
 ```
 
 > Read more about rich push notifications support [here](./Documentation/PUSH.md).
@@ -33,7 +32,7 @@ pod "ExponeaSDK-Notifications", "~> 2.12.3"
 > Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks. The latter one is only supposed to be used in a notification service extension if you wish support rich push notifications. Read more about rich push notifications [here](./Documentation/PUSH.md).
 
 ```
-github "exponea/exponea-ios-sdk" ~> 2.12.3
+github "exponea/exponea-ios-sdk" ~> 2.13.0
 ```
 
 ## 📱 Demo Application
