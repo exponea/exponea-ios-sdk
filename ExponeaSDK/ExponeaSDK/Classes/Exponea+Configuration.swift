@@ -145,7 +145,8 @@ public extension ExponeaInternal {
         automaticPushNotificationTracking: Exponea.AutomaticPushNotificationTracking,
         automaticSessionTracking: Exponea.AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
-        flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default
+        flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
+        allowDefaultCustomerProperties: Bool? = nil
     ) {
         do {
             let configuration = try Configuration(
@@ -160,7 +161,8 @@ public extension ExponeaInternal {
                 requirePushAuthorization: automaticPushNotificationTracking.requirePushAuthorization,
                 tokenTrackFrequency: automaticPushNotificationTracking.tokenTrackFrequency,
                 appGroup: automaticPushNotificationTracking.appGroup,
-                flushEventMaxRetries: flushingSetup.maxRetries
+                flushEventMaxRetries: flushingSetup.maxRetries,
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
             )
             self.configuration = configuration
             pushNotificationsDelegate = automaticPushNotificationTracking.delegate
@@ -175,7 +177,8 @@ public extension ExponeaInternal {
         pushNotificationTracking: Exponea.PushNotificationTracking,
         automaticSessionTracking: Exponea.AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
-        flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default
+        flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
+        allowDefaultCustomerProperties: Bool? = nil
     ) {
         do {
             var willRunSelfCheck = false
@@ -195,7 +198,8 @@ public extension ExponeaInternal {
                 requirePushAuthorization: pushNotificationTracking.requirePushAuthorization && !willRunSelfCheck,
                 tokenTrackFrequency: pushNotificationTracking.tokenTrackFrequency,
                 appGroup: pushNotificationTracking.appGroup,
-                flushEventMaxRetries: flushingSetup.maxRetries
+                flushEventMaxRetries: flushingSetup.maxRetries,
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
             )
             self.configuration = configuration
             pushNotificationsDelegate = pushNotificationTracking.delegate

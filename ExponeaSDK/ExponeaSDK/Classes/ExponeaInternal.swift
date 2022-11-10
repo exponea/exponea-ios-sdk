@@ -388,13 +388,18 @@ public extension ExponeaInternal {
                    authorization: Authorization,
                    baseUrl: String? = nil,
                    appGroup: String? = nil,
-                   defaultProperties: [String: JSONConvertible]? = nil) {
+                   defaultProperties: [String: JSONConvertible]? = nil,
+                   allowDefaultCustomerProperties: Bool? = nil
+    ) {
         do {
-            let configuration = try Configuration(projectToken: projectToken,
-                                                  authorization: authorization,
-                                                  baseUrl: baseUrl,
-                                                  appGroup: appGroup,
-                                                  defaultProperties: defaultProperties)
+            let configuration = try Configuration(
+                projectToken: projectToken,
+                authorization: authorization,
+                baseUrl: baseUrl,
+                appGroup: appGroup,
+                defaultProperties: defaultProperties,
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
+            )
             self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
@@ -434,14 +439,19 @@ public extension ExponeaInternal {
                    authorization: Authorization,
                    baseUrl: String? = nil,
                    appGroup: String? = nil,
-                   defaultProperties: [String: JSONConvertible]? = nil) {
+                   defaultProperties: [String: JSONConvertible]? = nil,
+                   allowDefaultCustomerProperties: Bool? = nil
+    ) {
         do {
-            let configuration = try Configuration(projectToken: projectToken,
-                                                  projectMapping: projectMapping,
-                                                  authorization: authorization,
-                                                  baseUrl: baseUrl,
-                                                  appGroup: appGroup,
-                                                  defaultProperties: defaultProperties)
+            let configuration = try Configuration(
+                projectToken: projectToken,
+                projectMapping: projectMapping,
+                authorization: authorization,
+                baseUrl: baseUrl,
+                appGroup: appGroup,
+                defaultProperties: defaultProperties,
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
+            )
             self.configuration = configuration
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")

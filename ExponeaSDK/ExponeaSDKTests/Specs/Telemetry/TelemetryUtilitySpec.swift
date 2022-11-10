@@ -80,7 +80,8 @@ final class TelemetryUtilitySpec: QuickSpec {
                     automaticPushNotificationTracking: false,
                     tokenTrackFrequency: TokenTrackFrequency.daily,
                     appGroup: "mock-app-group",
-                    flushEventMaxRetries: 123
+                    flushEventMaxRetries: 123,
+                    allowDefaultCustomerProperties: true
                 )
                 expect(TelemetryUtility.formatConfigurationForTracking(configuration)).to(
                     equal([

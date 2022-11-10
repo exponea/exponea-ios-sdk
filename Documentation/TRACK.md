@@ -63,6 +63,8 @@ public func identifyCustomer(
 )
 ```
 
+> Tracking event for `identifyCustomer` contains also default properties by default. If you want to disallow it, please set `allowDefaultCustomerProperties` to FALSE. See docs in [Config](CONFIG.md) page
+
 #### 💻 Usage
 
 ``` swift

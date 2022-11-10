@@ -213,6 +213,7 @@
 		55130C5128E425D600B4FE77 /* TrackConsentManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */; };
 		5527979B28D8B6FA002B2B77 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5527979A28D8B6FA002B2B77 /* SwiftSoup */; };
 		5527979D28D98C15002B2B77 /* GdprTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5527979C28D98C15002B2B77 /* GdprTracking.swift */; };
+		55EFD78F29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD78E29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift */; };
 		792F2F886D9F14542DF0E97D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64D92FEFD20D8844C3C3BF9 /* Pods_ExponeaSDKTests.framework */; };
 		7F41714B094CAC0DA9B38776 /* HtmlNormalizerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */; };
 		7F417221332DEC81DB050230 /* HtmlNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */; };
@@ -631,6 +632,7 @@
 		5527979C28D98C15002B2B77 /* GdprTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTracking.swift; sourceTree = "<group>"; };
 		552BE09128A1772C00E245B3 /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = SwiftSoup.xcframework; sourceTree = "<group>"; };
 		554BDE1728D87BCC00C4EC9C /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftSoup.xcframework; path = ../Carthage/Build/SwiftSoup.xcframework; sourceTree = "<group>"; };
+		55EFD78E29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackManager+IdentifyCustomerSpec.swift"; sourceTree = "<group>"; };
 		7F417D6738618D5F30397815 /* InAppMessageWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageWebView.swift; sourceTree = "<group>"; };
 		7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HtmlNormalizer.swift; sourceTree = "<group>"; };
 		7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HtmlNormalizerSpec.swift; sourceTree = "<group>"; };
@@ -1755,6 +1757,7 @@
 				4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */,
 				050960FF2321566000D59C01 /* TrackingManagerSpec.swift */,
 				55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */,
+				55EFD78E29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -2491,6 +2494,7 @@
 				05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */,
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
 				05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */,
+				55EFD78F29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift in Sources */,
 				0529797A241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift in Sources */,
 				057F448323990E320070DF30 /* MockInAppMessagesCache.swift in Sources */,
 				F0BE6105211080F30082ABD8 /* MockData.swift in Sources */,
@@ -2976,7 +2980,7 @@
 				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -260,7 +260,8 @@ class ConfigurationSpec: QuickSpec {
                     automaticPushNotificationTracking: false,
                     tokenTrackFrequency: .daily,
                     appGroup: appGroup,
-                    flushEventMaxRetries: 200
+                    flushEventMaxRetries: 200,
+                    allowDefaultCustomerProperties: true
                 )
                 configuration.saveToUserDefaults()
                 expect(Configuration.loadFromUserDefaults(appGroup: appGroup)).to(equal(configuration))

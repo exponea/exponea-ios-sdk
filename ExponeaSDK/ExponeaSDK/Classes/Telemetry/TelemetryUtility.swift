@@ -28,7 +28,8 @@ final class TelemetryUtility {
         guard let defaultConfig = try? Configuration(
             projectToken: "placeholder",
             authorization: .none,
-            baseUrl: Constants.Repository.baseUrl
+            baseUrl: Constants.Repository.baseUrl,
+            allowDefaultCustomerProperties: true
         ) else {
             return [:]
         }
@@ -55,6 +56,9 @@ final class TelemetryUtility {
             "flushEventMaxRetries":
                 "\(config.flushEventMaxRetries)"
                     + "\(config.flushEventMaxRetries == defaultConfig.flushEventMaxRetries ? " [default]" : "")"
+//            "allowDefaultCustomerProperties":
+//                "\(config.allowDefaultCustomerProperties)"
+//                    + "\(config.allowDefaultCustomerProperties == defaultConfig.allowDefaultCustomerProperties ? " [default]": "")"
         ]
     }
 

@@ -27,6 +27,11 @@ You can configure the SDK providing a configuration file with configuration vari
 * A list of properties to be added to all tracking events
 * Default value `nil`
 
+#### allowDefaultCustomerProperties
+
+* Flag to apply `defaultProperties` list to `identifyCustomer` tracking event
+* Default value `true`
+
 #### automaticSessionTracking
 
 * Flag to control the automatic tracking of `session_start` and `session_end` events.

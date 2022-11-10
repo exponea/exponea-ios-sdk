@@ -39,6 +39,9 @@ public struct Configuration: Codable, Equatable {
 
     /// The maximum amount of retries before a flush event is considered as invalid and deleted from the database.
     public internal(set) var flushEventMaxRetries: Int = Constants.Session.maxRetries
+    
+    /// If true, default properties are applied also for 'identifyCustomer' event.
+    public internal(set) var allowDefaultCustomerProperties: Bool = true
 
     enum CodingKeys: String, CodingKey {
         case projectMapping
@@ -53,6 +56,7 @@ public struct Configuration: Codable, Equatable {
         case tokenTrackFrequency
         case appGroup
         case flushEventMaxRetries
+        case allowDefaultCustomerProperties
     }
 
     /// Creates the configuration object with the provided properties.
@@ -68,7 +72,9 @@ public struct Configuration: Codable, Equatable {
                 authorization: Authorization,
                 baseUrl: String?,
                 appGroup: String? = nil,
-                defaultProperties: [String: JSONConvertible]? = nil) throws {
+                defaultProperties: [String: JSONConvertible]? = nil,
+                allowDefaultCustomerProperties: Bool? = nil
+    ) throws {
         guard let projectToken = projectToken else {
             throw ExponeaError.configurationError("No project token provided.")
         }
@@ -78,6 +84,7 @@ public struct Configuration: Codable, Equatable {
         self.authorization = authorization
         self.appGroup = appGroup
         self.defaultProperties = defaultProperties
+        self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
 
         if let url = baseUrl {
             self.baseUrl = url
@@ -98,7 +105,8 @@ public struct Configuration: Codable, Equatable {
         requirePushAuthorization: Bool = true,
         tokenTrackFrequency: TokenTrackFrequency,
         appGroup: String?,
-        flushEventMaxRetries: Int
+        flushEventMaxRetries: Int,
+        allowDefaultCustomerProperties: Bool?
     ) throws {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
@@ -112,6 +120,7 @@ public struct Configuration: Codable, Equatable {
         self.tokenTrackFrequency = tokenTrackFrequency
         self.appGroup = appGroup
         self.flushEventMaxRetries = flushEventMaxRetries
+        self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
 
         try self.validate()
     }
@@ -226,6 +235,14 @@ public struct Configuration: Codable, Equatable {
             guard !properties.isEmpty else { return }
             self.defaultProperties = properties
         }
+        
+        // Default properties usage for Identify Customer event
+        if let allowDefaultCustomerProperties = try container.decodeIfPresent(
+            Bool.self, forKey: .allowDefaultCustomerProperties) {
+            self.allowDefaultCustomerProperties = allowDefaultCustomerProperties
+        } else {
+            self.allowDefaultCustomerProperties = true
+        }
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -247,6 +264,7 @@ public struct Configuration: Codable, Equatable {
         try container.encode(tokenTrackFrequency, forKey: .tokenTrackFrequency)
         try container.encode(appGroup, forKey: .appGroup)
         try container.encode(flushEventMaxRetries, forKey: .flushEventMaxRetries)
+        try container.encode(allowDefaultCustomerProperties, forKey: .allowDefaultCustomerProperties)
     }
 
     public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
@@ -262,7 +280,8 @@ public struct Configuration: Codable, Equatable {
             lhs.requirePushAuthorization == rhs.requirePushAuthorization &&
             lhs.tokenTrackFrequency == rhs.tokenTrackFrequency &&
             lhs.appGroup == rhs.appGroup &&
-            lhs.flushEventMaxRetries == rhs.flushEventMaxRetries
+            lhs.flushEventMaxRetries == rhs.flushEventMaxRetries &&
+            lhs.allowDefaultCustomerProperties == rhs.allowDefaultCustomerProperties
     }
 }
 
@@ -304,6 +323,7 @@ extension Configuration: CustomStringConvertible {
         Token Track Frequency: \(tokenTrackFrequency)
         Flush Event Max Retries: \(flushEventMaxRetries)
         App Group: \(appGroup ?? "not configured")
+        Default Customer Props allowed: \(allowDefaultCustomerProperties)
         """
 
         return text

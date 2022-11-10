@@ -28,7 +28,8 @@ class TrackingManagerSpec: QuickSpec {
                     projectToken: UUID().uuidString,
                     authorization: .token("mock-token"),
                     baseUrl: "https://google.com", // has to be real url because of reachability
-                    defaultProperties: ["default_prop": "default_value"]
+                    defaultProperties: ["default_prop": "default_value"],
+                    allowDefaultCustomerProperties: true
                 )
                 configuration.automaticSessionTracking = false
                 configuration.flushEventMaxRetries = 5

@@ -206,7 +206,9 @@ extension TrackingManager: TrackingManagerType {
             if let stringEventType = getEventTypeString(type: type) {
                 payload.append(.eventType(stringEventType))
             }
-            payload = payload.addProperties(repository.configuration.defaultProperties)
+            if (canUseDefaultProperties(for: type)) {
+                payload = payload.addProperties(repository.configuration.defaultProperties)
+            }
             switch type {
             case .identifyCustomer,
                  .registerPushToken:
@@ -234,6 +236,10 @@ extension TrackingManager: TrackingManagerType {
         if case .immediate = self.flushingManager.flushingMode {
             self.flushingManager.flushDataWith(delay: Constants.Tracking.immediateFlushDelay)
         }
+    }
+    
+    private func canUseDefaultProperties(for eventType: EventType) -> Bool {
+        return repository.configuration.allowDefaultCustomerProperties || EventType.identifyCustomer != eventType
     }
 
     open func trackInAppMessageShown(message: InAppMessage, trackingAllowed: Bool) {
