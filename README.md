@@ -3,7 +3,7 @@
 </p>
 
 ![Platform](https://img.shields.io/badge/Platform-iOS-lightgrey.svg?style=flat)
-![Platform](https://img.shields.io/badge/Swift-4.1-green.svg?style=flat)
+![Platform](https://img.shields.io/badge/Swift-4.2+-green.svg?style=flat)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Exponea iOS SDK
