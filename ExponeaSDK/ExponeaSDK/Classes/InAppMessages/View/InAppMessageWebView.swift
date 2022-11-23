@@ -74,7 +74,7 @@ final class InAppMessageWebView: UIView, InAppMessageView, WKNavigationDelegate 
 
         DispatchQueue.global(qos: .background).async {
             self.normalizedPayload = HtmlNormalizer(self.payload).normalize()
-            if (self.normalizedPayload!.valid) {
+            if self.normalizedPayload!.valid {
                 DispatchQueue.main.async {
                     self.webView.loadHTMLString(self.normalizedPayload!.html!, baseURL: nil)
                 }
@@ -108,7 +108,7 @@ final class InAppMessageWebView: UIView, InAppMessageView, WKNavigationDelegate 
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> ()) {
         let handled = handleActionClick(navigationAction.request.url)
-        if (handled) {
+        if handled {
             Exponea.logger.log(.verbose, message: "[HTML] Action \(navigationAction.request.url?.absoluteString ?? "Invalid") has been handled")
             decisionHandler(.cancel)
         } else {
@@ -119,16 +119,15 @@ final class InAppMessageWebView: UIView, InAppMessageView, WKNavigationDelegate 
 
     private func handleActionClick(_ url: URL?) -> Bool {
         Exponea.logger.log(.verbose, message: "[HTML] action for \(String(describing: url))")
-        if (isCloseAction(url)) {
+        if isCloseAction(url) {
             dismissCallback()
             dismiss()
             return true
-        } else if (isActionUrl(url)) {
+        } else if isActionUrl(url) {
             actionCallback(toPayloadButton(url!))
-            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
             dismiss()
             return true
-        } else if (isBlankNav(url)) {
+        } else if isBlankNav(url) {
             // on first load
             // nothing to do, not need to continue loading
             return false
@@ -143,9 +142,12 @@ final class InAppMessageWebView: UIView, InAppMessageView, WKNavigationDelegate 
     }
 
     private func isActionUrl(_ url: URL?) -> Bool {
-        !isCloseAction(url) && url?.absoluteString.starts(with: "http") ?? false
+        guard let url = url else {
+            return false
+        }
+        return !isCloseAction(url) && findActionByUrl(url) != nil
     }
-    
+
     private func isCloseAction(_ url: URL?) -> Bool {
         url?.absoluteString == normalizedPayload!.closeActionUrl
     }
@@ -153,20 +155,24 @@ final class InAppMessageWebView: UIView, InAppMessageView, WKNavigationDelegate 
     private func toPayloadButton(_ url: URL) -> InAppMessagePayloadButton {
         InAppMessagePayloadButton(
                 buttonText: findActionByUrl(url)?.buttonText ?? "Unknown",
-                rawButtonType: "deep-link",
+                rawButtonType: detectActionType(url).rawValue,
                 buttonLink: url.absoluteString,
                 buttonTextColor: nil,
                 buttonBackgroundColor: nil
         )
     }
 
-    private func findActionByUrl(_ url: URL) -> ActionInfo? {
-        for each in self.normalizedPayload!.actions {
-            if (areEqualAsURLs(each.actionUrl, url.absoluteString)) {
-                return each
-            }
+    private func detectActionType(_ url: URL) -> InAppMessageButtonType {
+        if url.scheme == "http" || url.scheme == "https" {
+            return .browser
         }
-        return nil
+        return .deeplink
+    }
+
+    private func findActionByUrl(_ url: URL) -> ActionInfo? {
+        return self.normalizedPayload?.actions.first(where: { action in
+            areEqualAsURLs(action.actionUrl, url.absoluteString)
+        })
     }
 
     /**

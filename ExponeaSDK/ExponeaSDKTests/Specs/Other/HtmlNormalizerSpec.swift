@@ -35,6 +35,24 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.closeActionUrl).toNot(beNil())
             expect(result.actions.count).to(equal(2))
         }
+        
+        it ("should find browser action") {
+            let rawHtml = "<html><body>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            expect(result.actions.count).to(equal(1))
+            expect(result.actions[0].actionUrl).to(equal("https://example.com/1"))
+        }
+
+        it ("should find deeplink action") {
+            let rawHtml = "<html><body>" +
+                    "<div data-link='message:%3C3358921718340173851@unknownmsgid%3E'>Action 1</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            expect(result.actions.count).to(equal(1))
+            expect(result.actions[0].actionUrl).to(equal("message:%3C3358921718340173851@unknownmsgid%3E"))
+        }
 
         it ("should find Close and no Action url") {
             let rawHtml = "<html><body>" +

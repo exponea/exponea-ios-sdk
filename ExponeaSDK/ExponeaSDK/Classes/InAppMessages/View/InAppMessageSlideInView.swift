@@ -255,7 +255,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         switch payload.buttonType {
         case .cancel:
             actionButton.addTarget(self, action: #selector(cancelButtonAction), for: .touchUpInside)
-        case .deeplink:
+        case .deeplink, .browser:
             actionButton.addTarget(self, action: #selector(actionButtonAction), for: .touchUpInside)
         }
 

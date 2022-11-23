@@ -359,6 +359,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         if case .deeplink = button.buttonType,
            let buttonLink = button.buttonLink {
             urlOpener.openDeeplink(buttonLink)
+        } else if case .browser = button.buttonType,
+                  let buttonLink = button.buttonLink {
+            urlOpener.openBrowserLink(buttonLink)
         } else {
             Exponea.logger.log(
                 .error,

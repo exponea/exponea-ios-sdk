@@ -12,7 +12,7 @@ public class HtmlNormalizer {
     private let closeButtonAttrDef = "data-actiontype='close'"
     private let closeButtonSelector = "[data-actiontype='close']"
     private let actionButtonAttr = "data-link"
-    private let actionButtonSelector = "[data-link^=http]"
+    private let actionButtonSelector = "[data-link]"
 
     private let hrefAttr = "href"
     private let metaTagSelector = "meta"

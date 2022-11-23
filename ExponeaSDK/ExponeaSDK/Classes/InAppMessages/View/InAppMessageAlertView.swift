@@ -36,7 +36,7 @@ final class InAppMessageAlertView: InAppMessageView {
                 alertController.addAction(
                     UIAlertAction(title: button.buttonText, style: .cancel, handler: { _ in dismissCallback() })
                 )
-            case .deeplink:
+            case .deeplink, .browser:
                 alertController.addAction(
                     UIAlertAction(title: button.buttonText, style: .default, handler: { _ in actionCallback(button) })
                 )
