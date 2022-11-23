@@ -31,6 +31,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private var sessionStartDate: Date = Date()
 
     private var preloaded = false
+    private let pendingRequestsBarrier = DispatchQueue(label: "pendingShowRequests.barrier", attributes: .concurrent)
     private var pendingShowRequests: [InAppMessageShowRequest] = []
     private var delegateValue: InAppMessageActionDelegate = DefaultInAppDelegate()
     internal var delegate: InAppMessageActionDelegate {
@@ -161,11 +162,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
     private func pickPendingMessage(requireImageLoaded: Bool) -> (InAppMessageShowRequest, InAppMessage)? {
         var pendingMessages: [(InAppMessageShowRequest, InAppMessage)] = []
-        pendingShowRequests.filter {
-            $0.timestamp + InAppMessagesManager.maxPendingMessageAge > Date().timeIntervalSince1970
-        }.forEach { request in
-            getInAppMessages(for: request.event, requireImage: requireImageLoaded).forEach { message in
-                pendingMessages.append((request, message))
+        pendingRequestsBarrier.sync(flags: .barrier) {
+            pendingShowRequests.filter {
+                $0.timestamp + InAppMessagesManager.maxPendingMessageAge > Date().timeIntervalSince1970
+            }.forEach { request in
+                getInAppMessages(for: request.event, requireImage: requireImageLoaded).forEach { message in
+                    pendingMessages.append((request, message))
+                }
             }
         }
         let highestPriority = pendingMessages.map { $0.1.priority }.compactMap { $0 }.max() ?? 0
@@ -176,7 +179,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         guard let pending = pickedMessage ?? pickPendingMessage(requireImageLoaded: true) else {
             return
         }
-        pendingShowRequests = []
+        pendingRequestsBarrier.sync(flags: .barrier) {
+            pendingShowRequests = []
+        }
         DispatchQueue.global(qos: .userInitiated).async {
             self.handleInAppMessage(pending.1, callback: pending.0.callback)
         }
@@ -252,13 +257,15 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         )
         guard preloaded else {
             Exponea.logger.log(.verbose, message: "Data not preloaded, saving message for later.")
-            pendingShowRequests.append(
-                InAppMessageShowRequest(
-                    event: event,
-                    callback: callback,
-                    timestamp: Date().timeIntervalSince1970
+            pendingRequestsBarrier.sync(flags: .barrier) {
+                pendingShowRequests.append(
+                    InAppMessageShowRequest(
+                        event: event,
+                        callback: callback,
+                        timestamp: Date().timeIntervalSince1970
+                    )
                 )
-            )
+            }
             return
         }
         DispatchQueue.global(qos: .userInitiated).async {
