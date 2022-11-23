@@ -13,11 +13,18 @@ To be able to send push notifications from Exponea, you will need to create an A
 
 ## Adding APNs key to Exponea
 
-1. Open your Exponea web application and navigate to `Project Settings`.
+1. Open your Exponea web application and navigate to `Data & Assets` > `Integrations` and click `Add new integration`.
 ![](./pics/apns4.png)
 
-2. Go to `Channels` and select `Push notifications`. Scroll down to Apple push notifications and fill in the details. `ES256 Private Key` is the p8 file you downloaded from Apple developer portal. Open it as text file and copy-paste the contents. 
+2. Locate `Apple Push Notification Service`and click `Add integration` 
 ![](./pics/apns5.png)
+
+3. Read and accept Terms & Conditions
+![](./pics/apns6.png)
+
+4. Fill data in form. `ES256 Private Key` is the p8 file you downloaded from Apple developer portal. Open it as text file and copy-paste the contents. Click `Save integration` to finish.
+![](./pics/apns7.png)
+> API mode cannot be changed later. You have to create a new integration in case of different mode.
 
 ## Great job!
 Exponea web application is now set up to send push notifications to your application. Once you finish [push notification setup](./PUSH_QUICKSTART.md), try [sending push notifications](./PUSH_SEND.md).
