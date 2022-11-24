@@ -1,4 +1,15 @@
 ## Release Notes
+## Release Notes for 2.13.1
+#### November 24, 2022
+* Features
+  * Added Configuration flag to be able to disable tracking of default properties along with customer properties
+  * Increased support for iOS SDK 11+
+  * Updated guide documentation for Push notifications service setup
+* Bug Fixes
+  * Fixed: Handling of InApp messages may cause race-condition crash
+  * Fixed: Handling of universal links in HTML InApp messages was not working properly
+
+
 ## Release Notes for 2.13.0
 #### October 19, 2022
 * Features
