@@ -33,6 +33,10 @@ public struct RequestFactory {
             return baseUrl + "/webxp/s/\(projectToken)/inappmessages?v=1"
         case .pushSelfCheck:
             return baseUrl + "/campaigns/send-self-check-notification?project_id=\(projectToken)"
+        case .appInbox:
+            return baseUrl + "/webxp/projects/\(projectToken)/appinbox/fetch"
+        case .appInboxMarkRead:
+            return baseUrl + "/webxp/projects/\(projectToken)/appinbox/markasread"
         }
     }
 }

@@ -50,3 +50,24 @@ Event is normally tracked by calling `Exponea.shared.trackInAppMessageClose`. Th
 * Tracking consent feature is enabled and 'hasTrackingConsent' has 'true' value
 
 If you are using `Exponea.shared.trackInAppMessageClose` method manually and you want to avoid to consider tracking, you may use `Exponea.shared.trackInAppMessageCloseWithoutTrackingConsent` instead. This method will do track event ignoring tracking consent state.
+
+### Event for opened AppInbox Message
+
+Event is normally tracked by calling `Exponea.shared.trackAppInboxOpened`. This method is tracking a delivered event only if:
+
+* Tracking consent feature is disabled
+* Tracking consent feature is enabled and 'hasTrackingConsent' has 'true' value
+
+If you are using `Exponea.shared.trackAppInboxOpened` method manually and you want to avoid to consider tracking, you may use `Exponea.shared.trackAppInboxOpenedWithoutTrackingConsent` instead. This method will do track event ignoring tracking consent state.
+
+### Event for clicked AppInbox Message action
+
+Event is normally tracked by calling `Exponea.shared.trackAppInboxClick`. This method is tracking a clicked event only if:
+
+* Tracking consent feature is disabled
+* Tracking consent feature is enabled and 'hasTrackingConsent' has 'true' value
+* Action URL contains 'xnpe_force_track' with 'true' value independently from 'hasTrackingConsent' value
+
+> Event that is tracked because of `xnpe_force_track` (forced tracking) will contains an additional property `tracking_forced` with value `true`
+
+If you are using `Exponea.shared.trackAppInboxClick` method manually and you want to avoid to consider tracking, you may use `Exponea.shared.trackAppInboxClickWithoutTrackingConsent` instead. This method will do track event ignoring tracking consent state.

@@ -316,7 +316,8 @@ struct PushNotificationsTestData {
         ],
         consentCategoryTracking: nil,
         hasTrackingConsent: true,
-        considerConsent: true
+        considerConsent: true,
+        origin: nil
     )
 
     let deliveredSilentNotification = """
@@ -346,7 +347,8 @@ struct PushNotificationsTestData {
         extraData: ["silent_test": "value"],
         consentCategoryTracking: nil,
         hasTrackingConsent: true,
-        considerConsent: true
+        considerConsent: true,
+        origin: nil
     )
 
     public func deliveredNotificationWithConsent(

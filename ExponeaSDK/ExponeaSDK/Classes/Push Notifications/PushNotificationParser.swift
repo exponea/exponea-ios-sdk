@@ -114,7 +114,8 @@ struct PushNotificationParser {
             extraData: userInfo["attributes"] as? [String: Any],
             consentCategoryTracking: notificationData.consentCategoryTracking,
             hasTrackingConsent: notificationData.hasTrackingConsent,
-            considerConsent: notificationData.considerConsent
+            considerConsent: notificationData.considerConsent,
+            origin: userInfo
         )
     }
 }

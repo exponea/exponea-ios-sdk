@@ -79,6 +79,8 @@ Pod::Spec.new do |s|
 
   s.source_files  = [
     "ExponeaSDK/ExponeaSDK/**/*.swift",
+    "ExponeaSDK/ExponeaSDK/**/*.storyboard",
+    "ExponeaSDK/ExponeaSDK/**/*.xcassets",
     "ExponeaSDK/ExponeaSDKShared/**/*.swift",
     "ExponeaSDK/ExponeaSDKObjC/objc_tryCatch.h",
     "ExponeaSDK/ExponeaSDKObjC/objc_tryCatch.m",

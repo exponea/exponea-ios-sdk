@@ -52,6 +52,7 @@ public enum Constants {
         public static let pushDelivered = "campaign"
         public static let campaignClick = "campaign_click"
         public static let banner = "banner"
+        public static let appInbox = "campaign"
     }
 
     /// Error messages

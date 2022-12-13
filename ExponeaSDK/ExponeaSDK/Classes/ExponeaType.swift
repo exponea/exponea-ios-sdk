@@ -225,4 +225,6 @@ public protocol ExponeaType: AnyObject {
     func trackInAppMessageClose(
         message: InAppMessage
     )
+    
+    var appInboxProvider: AppInboxProvider { get set }
 }

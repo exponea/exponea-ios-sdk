@@ -83,6 +83,7 @@ class AuthenticationViewController: UIViewController {
         )
         // Uncomment if you want to test in-app message delegate
         // Exponea.shared.inAppMessagesDelegate = InAppDelegate(overrideDefaultBehavior: true, trackActions: false)
+        Exponea.shared.appInboxProvider = ExampleAppInboxProvider()
     }
 
     @objc func tokenUpdated() {

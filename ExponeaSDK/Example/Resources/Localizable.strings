@@ -1,0 +1,9 @@
+"exponea.inbox.button" = "Inbox";
+"exponea.inbox.title" = "Example AppInbox";
+"exponea.inbox.loading" = "Loading messages...";
+"exponea.inbox.emptyTitle" = "Empty Inbox";
+"exponea.inbox.emptyMessage" = "You have no messages yet.";
+"exponea.inbox.errorTitle" = "Something went wrong :(";
+"exponea.inbox.errorMessage" = "We could not retrieve your messages.";
+"exponea.inbox.defaultTitle" = "Message";
+"exponea.inbox.mainActionTitle" = "See more";

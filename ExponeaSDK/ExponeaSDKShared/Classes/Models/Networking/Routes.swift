@@ -17,6 +17,8 @@ public enum Routes {
     case consents
     case inAppMessages
     case pushSelfCheck
+    case appInbox
+    case appInboxMarkRead
 
     public var method: HTTPMethod {
         switch self {

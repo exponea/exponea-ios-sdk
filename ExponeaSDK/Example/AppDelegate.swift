@@ -31,6 +31,11 @@ class AppDelegate: ExponeaAppDelegate {
         Exponea.logger.logLevel = .verbose
 
         UITabBar.appearance().tintColor = UIColor(red: 28/255, green: 23/255, blue: 50/255, alpha: 1.0)
+        UINavigationBar.appearance().backgroundColor = UIColor(red: 249/255, green: 249/255, blue: 249/255, alpha: 0.94)
+        UIBarButtonItem.appearance().tintColor = UIColor(red: 248/255, green: 76/255, blue: 172/255, alpha: 1.0)
+        UINavigationBar.appearance().titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor : UIColor(red: 248/255, green: 76/255, blue: 172/255, alpha: 1.0)
+        ]
 
         application.applicationIconBadgeNumber = 0
 

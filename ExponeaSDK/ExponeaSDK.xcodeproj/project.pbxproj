@@ -211,9 +211,29 @@
 		55130C4B28DDCA6800B4FE77 /* TrackingConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4A28DDCA6800B4FE77 /* TrackingConsentManager.swift */; };
 		55130C4F28E3C50D00B4FE77 /* GdprTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4E28E3C50D00B4FE77 /* GdprTrackingSpec.swift */; };
 		55130C5128E425D600B4FE77 /* TrackConsentManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */; };
+		552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */; };
+		552772CB28EDAF3A000ACFD5 /* AppInboxListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */; };
+		552772D128EEF30E000ACFD5 /* AppInboxTemplates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 552772D028EEF30E000ACFD5 /* AppInboxTemplates.storyboard */; };
 		5527979B28D8B6FA002B2B77 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5527979A28D8B6FA002B2B77 /* SwiftSoup */; };
 		5527979D28D98C15002B2B77 /* GdprTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5527979C28D98C15002B2B77 /* GdprTracking.swift */; };
-		55EFD78F29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD78E29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift */; };
+		5567C090290808F600318E68 /* MessageItemContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C08F290808F600318E68 /* MessageItemContent.swift */; };
+		5567C092290809EB00318E68 /* MessageItemAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C091290809EB00318E68 /* MessageItemAction.swift */; };
+		5567C0942909196C00318E68 /* AppInboxResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C0932909196C00318E68 /* AppInboxResponse.swift */; };
+		5567C09629091B8E00318E68 /* AppInboxRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C09529091B8E00318E68 /* AppInboxRequest.swift */; };
+		556DBCBC28F03238009E3154 /* MessageItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556DBCBB28F03238009E3154 /* MessageItemCell.swift */; };
+		55BB0E1A28F4126100D6243A /* MessageItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BB0E1928F4126100D6243A /* MessageItem.swift */; };
+		55BB0E1E28F44EDA00D6243A /* AppInboxDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BB0E1D28F44EDA00D6243A /* AppInboxDetailViewController.swift */; };
+		55DA6EBA290ABD4800B5B285 /* AppInboxManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EB9290ABD4800B5B285 /* AppInboxManagerType.swift */; };
+		55DA6EBC290ABD7500B5B285 /* AppInboxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EBB290ABD7500B5B285 /* AppInboxManager.swift */; };
+		55DA6EBE290AD5E900B5B285 /* AppInboxCacheType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EBD290AD5E900B5B285 /* AppInboxCacheType.swift */; };
+		55DA6EC0290AD65200B5B285 /* AppInboxCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EBF290AD65200B5B285 /* AppInboxCache.swift */; };
+		55DA6EC2290AE44300B5B285 /* AppInboxMarkReadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EC1290AE44300B5B285 /* AppInboxMarkReadRequest.swift */; };
+		55EFD792291A6C26002569FB /* AppInboxCacheSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD791291A6C26002569FB /* AppInboxCacheSpec.swift */; };
+		55EFD794291BCC44002569FB /* appInbox.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55EFD793291BCC44002569FB /* appInbox.xcassets */; };
+		55EFD79B292245A5002569FB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 55EFD79A292245A5002569FB /* Localizable.strings */; };
+		55EFD79F29224FFF002569FB /* AppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD79E29224FFF002569FB /* AppInboxProvider.swift */; };
+		55EFD7A129225060002569FB /* DefaultAppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD7A029225060002569FB /* DefaultAppInboxProvider.swift */; };
+		55EFD7A329225207002569FB /* ExampleAppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD7A229225207002569FB /* ExampleAppInboxProvider.swift */; };
 		792F2F886D9F14542DF0E97D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64D92FEFD20D8844C3C3BF9 /* Pods_ExponeaSDKTests.framework */; };
 		7F41714B094CAC0DA9B38776 /* HtmlNormalizerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */; };
 		7F417221332DEC81DB050230 /* HtmlNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */; };
@@ -629,10 +649,30 @@
 		55130C4A28DDCA6800B4FE77 /* TrackingConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingConsentManager.swift; sourceTree = "<group>"; };
 		55130C4E28E3C50D00B4FE77 /* GdprTrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTrackingSpec.swift; sourceTree = "<group>"; };
 		55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackConsentManagerSpec.swift; sourceTree = "<group>"; };
+		552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ExponeaInternal+AppInbox.swift"; sourceTree = "<group>"; };
+		552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxListViewController.swift; sourceTree = "<group>"; };
+		552772D028EEF30E000ACFD5 /* AppInboxTemplates.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AppInboxTemplates.storyboard; sourceTree = "<group>"; };
 		5527979C28D98C15002B2B77 /* GdprTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTracking.swift; sourceTree = "<group>"; };
 		552BE09128A1772C00E245B3 /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = SwiftSoup.xcframework; sourceTree = "<group>"; };
 		554BDE1728D87BCC00C4EC9C /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftSoup.xcframework; path = ../Carthage/Build/SwiftSoup.xcframework; sourceTree = "<group>"; };
-		55EFD78E29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackManager+IdentifyCustomerSpec.swift"; sourceTree = "<group>"; };
+		5567C08F290808F600318E68 /* MessageItemContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemContent.swift; sourceTree = "<group>"; };
+		5567C091290809EB00318E68 /* MessageItemAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemAction.swift; sourceTree = "<group>"; };
+		5567C0932909196C00318E68 /* AppInboxResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxResponse.swift; sourceTree = "<group>"; };
+		5567C09529091B8E00318E68 /* AppInboxRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxRequest.swift; sourceTree = "<group>"; };
+		556DBCBB28F03238009E3154 /* MessageItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemCell.swift; sourceTree = "<group>"; };
+		55BB0E1928F4126100D6243A /* MessageItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItem.swift; sourceTree = "<group>"; };
+		55BB0E1D28F44EDA00D6243A /* AppInboxDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxDetailViewController.swift; sourceTree = "<group>"; };
+		55DA6EB9290ABD4800B5B285 /* AppInboxManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxManagerType.swift; sourceTree = "<group>"; };
+		55DA6EBB290ABD7500B5B285 /* AppInboxManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxManager.swift; sourceTree = "<group>"; };
+		55DA6EBD290AD5E900B5B285 /* AppInboxCacheType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxCacheType.swift; sourceTree = "<group>"; };
+		55DA6EBF290AD65200B5B285 /* AppInboxCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxCache.swift; sourceTree = "<group>"; };
+		55DA6EC1290AE44300B5B285 /* AppInboxMarkReadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxMarkReadRequest.swift; sourceTree = "<group>"; };
+		55EFD791291A6C26002569FB /* AppInboxCacheSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxCacheSpec.swift; sourceTree = "<group>"; };
+		55EFD793291BCC44002569FB /* appInbox.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = appInbox.xcassets; sourceTree = "<group>"; };
+		55EFD79A292245A5002569FB /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		55EFD79E29224FFF002569FB /* AppInboxProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxProvider.swift; sourceTree = "<group>"; };
+		55EFD7A029225060002569FB /* DefaultAppInboxProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAppInboxProvider.swift; sourceTree = "<group>"; };
+		55EFD7A229225207002569FB /* ExampleAppInboxProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAppInboxProvider.swift; sourceTree = "<group>"; };
 		7F417D6738618D5F30397815 /* InAppMessageWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageWebView.swift; sourceTree = "<group>"; };
 		7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HtmlNormalizer.swift; sourceTree = "<group>"; };
 		7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HtmlNormalizerSpec.swift; sourceTree = "<group>"; };
@@ -873,6 +913,7 @@
 		01EC2DA2207E3D060031BFEB /* Specs */ = {
 			isa = PBXGroup;
 			children = (
+				55EFD790291A6C08002569FB /* AppInbox */,
 				05F3EFDD237E99E4006E83F4 /* Telemetry */,
 				C09A6495212D83D700DCAC06 /* Database */,
 				F067441520878F8C003C0293 /* Fetching */,
@@ -1332,6 +1373,43 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		552772C328ED86E0000ACFD5 /* AppInbox */ = {
+			isa = PBXGroup;
+			children = (
+				552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */,
+				552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */,
+				552772D028EEF30E000ACFD5 /* AppInboxTemplates.storyboard */,
+				556DBCBB28F03238009E3154 /* MessageItemCell.swift */,
+				55BB0E1D28F44EDA00D6243A /* AppInboxDetailViewController.swift */,
+				55DA6EB9290ABD4800B5B285 /* AppInboxManagerType.swift */,
+				55DA6EBB290ABD7500B5B285 /* AppInboxManager.swift */,
+				55DA6EBD290AD5E900B5B285 /* AppInboxCacheType.swift */,
+				55DA6EBF290AD65200B5B285 /* AppInboxCache.swift */,
+				55EFD793291BCC44002569FB /* appInbox.xcassets */,
+				55EFD79E29224FFF002569FB /* AppInboxProvider.swift */,
+				55EFD7A029225060002569FB /* DefaultAppInboxProvider.swift */,
+			);
+			path = AppInbox;
+			sourceTree = "<group>";
+		};
+		55BB0E1828F4123C00D6243A /* MessageInbox */ = {
+			isa = PBXGroup;
+			children = (
+				55BB0E1928F4126100D6243A /* MessageItem.swift */,
+				5567C08F290808F600318E68 /* MessageItemContent.swift */,
+				5567C091290809EB00318E68 /* MessageItemAction.swift */,
+			);
+			path = MessageInbox;
+			sourceTree = "<group>";
+		};
+		55EFD790291A6C08002569FB /* AppInbox */ = {
+			isa = PBXGroup;
+			children = (
+				55EFD791291A6C26002569FB /* AppInboxCacheSpec.swift */,
+			);
+			path = AppInbox;
+			sourceTree = "<group>";
+		};
 		A3613BD1E2C1D4616B6A9767 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1418,6 +1496,7 @@
 				C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */,
 				C0F6C4E62098A1AB00834E21 /* Main.storyboard */,
 				C03B23D321AAF34000360EE6 /* beep.wav */,
+				55EFD79A292245A5002569FB /* Localizable.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1430,6 +1509,7 @@
 				C0EA5FD320CE963100660802 /* Logging */,
 				C0EA5FD020CE961F00660802 /* Tracking */,
 				C0F6C4E42098A1AB00834E21 /* AuthenticationViewController.swift */,
+				55EFD7A229225207002569FB /* ExampleAppInboxProvider.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1503,6 +1583,8 @@
 				05B4D649238FE9DC00F5010F /* InAppMessagesRequest.swift */,
 				05BF1C7523A10F1800FDC101 /* RecommendationRequest.swift */,
 				053CA1F9247D4944003B699C /* PushSelfCheckRequest.swift */,
+				5567C09529091B8E00318E68 /* AppInboxRequest.swift */,
+				55DA6EC1290AE44300B5B285 /* AppInboxMarkReadRequest.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -1514,6 +1596,7 @@
 				05B4D64B238FEB9200F5010F /* InAppMessagesResponse.swift */,
 				05BF1C7923A1139B00FDC101 /* RecommendationResponse.swift */,
 				CCB87B7D2816A6A6005DFB8E /* GitHubReleaseResponse.swift */,
+				5567C0932909196C00318E68 /* AppInboxResponse.swift */,
 			);
 			path = Responses;
 			sourceTree = "<group>";
@@ -1736,6 +1819,7 @@
 		F0C1C1CE207384ED005EB697 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				55BB0E1828F4123C00D6243A /* MessageInbox */,
 				057A4ED023EAC17200C94556 /* Event Filter */,
 				053E12C923A26040009CEF03 /* Recommendation */,
 				B42DA68A22B03FAC00BBA225 /* Consents */,
@@ -1757,7 +1841,6 @@
 				4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */,
 				050960FF2321566000D59C01 /* TrackingManagerSpec.swift */,
 				55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */,
-				55EFD78E29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift */,
 			);
 			path = Tracking;
 			sourceTree = "<group>";
@@ -1799,6 +1882,7 @@
 		F0E757EC207D023A00FE8C21 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				552772C328ED86E0000ACFD5 /* AppInbox */,
 				05F3EFCB237E9237006E83F4 /* Telemetry */,
 				01EC2DB8207E68BF0031BFEB /* Database */,
 				05CDD8332391147E00C7291A /* InAppMessages */,
@@ -2167,6 +2251,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55EFD79B292245A5002569FB /* Localizable.strings in Resources */,
 				C0F6C4ED2098A1AC00834E21 /* LaunchScreen.storyboard in Resources */,
 				C03B23D421AAF34000360EE6 /* beep.wav in Resources */,
 				C0F6C4EA2098A1AC00834E21 /* Assets.xcassets in Resources */,
@@ -2178,6 +2263,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55EFD794291BCC44002569FB /* appInbox.xcassets in Resources */,
+				552772D128EEF30E000ACFD5 /* AppInboxTemplates.storyboard in Resources */,
 				05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2354,6 +2441,7 @@
 				C0F6C4E52098A1AB00834E21 /* AuthenticationViewController.swift in Sources */,
 				C0F2407020BD98EB00CAF7CE /* MemoryLogger.swift in Sources */,
 				C0F6C4E32098A1AB00834E21 /* AppDelegate.swift in Sources */,
+				55EFD7A329225207002569FB /* ExampleAppInboxProvider.swift in Sources */,
 				C0EB5D9B20B8193200F1031F /* FlushingViewController.swift in Sources */,
 				C0F2407220BD9A5500CAF7CE /* LogViewController.swift in Sources */,
 				C0EB5D9720B8190500F1031F /* FetchViewController.swift in Sources */,
@@ -2387,10 +2475,13 @@
 				053E12CD23A26187009CEF03 /* RecommendationOptions.swift in Sources */,
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
 				55130C4928DDC81600B4FE77 /* TrackingConsentManagerType.swift in Sources */,
+				55DA6EC2290AE44300B5B285 /* AppInboxMarkReadRequest.swift in Sources */,
 				C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */,
+				5567C09629091B8E00318E68 /* AppInboxRequest.swift in Sources */,
 				05F3EFF12382C757006E83F4 /* VSAppCenterAPIModel.swift in Sources */,
 				23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */,
 				05F3EFE42382BAB6006E83F4 /* TelemetryUtility.swift in Sources */,
+				55DA6EBC290ABD7500B5B285 /* AppInboxManager.swift in Sources */,
 				05C289312428A13D0021220C /* SessionManager.swift in Sources */,
 				05F3EFD8237E938D006E83F4 /* CrashLog.swift in Sources */,
 				05F3EFDC237E96FA006E83F4 /* FileTelemetryStorage.swift in Sources */,
@@ -2401,8 +2492,10 @@
 				0564D14225ADE46300FDCAE5 /* ExponeaSharedExports.swift in Sources */,
 				05F3EFCF237E926B006E83F4 /* CrashManager.swift in Sources */,
 				05C289332428A1480021220C /* SessionManagerType.swift in Sources */,
+				5567C090290808F600318E68 /* MessageItemContent.swift in Sources */,
 				05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */,
 				C0F2406E20BC511500CAF7CE /* ExponeaInternal+Tracking.swift in Sources */,
+				5567C092290809EB00318E68 /* MessageItemAction.swift in Sources */,
 				05B4D64C238FEB9200F5010F /* InAppMessagesResponse.swift in Sources */,
 				C0A6DEA820EAC16900C5F744 /* Customer.swift in Sources */,
 				B42DA68922B03F7700BBA225 /* Consent.swift in Sources */,
@@ -2412,10 +2505,13 @@
 				056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */,
 				05F3EFCD237E9260006E83F4 /* TelemetryManager.swift in Sources */,
 				C0EB5D9F20BB530000F1031F /* ExponeaType.swift in Sources */,
+				55DA6EBE290AD5E900B5B285 /* AppInboxCacheType.swift in Sources */,
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
 				05CDD83B23911A1400C7291A /* InAppMessagesCacheType.swift in Sources */,
 				C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */,
 				053CA1FE247D4A0F003B699C /* SelfCheckRepository.swift in Sources */,
+				552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */,
+				55DA6EBA290ABD4800B5B285 /* AppInboxManagerType.swift in Sources */,
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				CCB87B7C28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift in Sources */,
@@ -2427,6 +2523,7 @@
 				05F3EFE62382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift in Sources */,
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				B42DA68C22B03FBF00BBA225 /* ConsentSources.swift in Sources */,
+				5567C0942909196C00318E68 /* AppInboxResponse.swift in Sources */,
 				C0A6DEA520EAC16900C5F744 /* TrackCustomer.swift in Sources */,
 				05B4D651238FEF3900F5010F /* InAppMessagePayload.swift in Sources */,
 				05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */,
@@ -2443,12 +2540,14 @@
 				05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */,
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				057E367523E0503F00DDD6C1 /* InAppMessageSlideInView.swift in Sources */,
+				552772CB28EDAF3A000ACFD5 /* AppInboxListViewController.swift in Sources */,
 				05A6A3EB23954654008475E7 /* InAppMessageDialogView.swift in Sources */,
 				0591906A23EC2FAB0037BD88 /* EventFilterConstraint+Operators.swift in Sources */,
 				053EC59923AA32A7004D1C8B /* InAppMessageDisplayStatus.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
 				05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */,
 				053CA200247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift in Sources */,
+				55EFD7A129225060002569FB /* DefaultAppInboxProvider.swift in Sources */,
 				CCB87B7A28169F4B005DFB8E /* VersionCheckRepository.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
 				052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */,
@@ -2456,12 +2555,16 @@
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
+				55DA6EC0290AD65200B5B285 /* AppInboxCache.swift in Sources */,
 				0567723D237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift in Sources */,
 				0591905F23EC1AE50037BD88 /* EventFilterOperator.swift in Sources */,
 				B4AF83BB22C6108200061350 /* String+URLValidation.swift in Sources */,
+				55BB0E1A28F4126100D6243A /* MessageItem.swift in Sources */,
 				05D0E5562386C63800413AE2 /* Exponea+Configuration.swift in Sources */,
 				55130C4B28DDCA6800B4FE77 /* TrackingConsentManager.swift in Sources */,
 				058DD93F24113F2100E5BF91 /* FlushableObject.swift in Sources */,
+				556DBCBC28F03238009E3154 /* MessageItemCell.swift in Sources */,
+				55BB0E1E28F44EDA00D6243A /* AppInboxDetailViewController.swift in Sources */,
 				C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */,
 				C030AF4E216FA154004413F0 /* PushNotificationDelegateObserver.swift in Sources */,
 				05F3EFD5237E92A4006E83F4 /* TelemetryUpload.swift in Sources */,
@@ -2477,6 +2580,7 @@
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
 				0580BBC923969D1F0058323D /* InAppMessagePresenter.swift in Sources */,
 				0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */,
+				55EFD79F29224FFF002569FB /* AppInboxProvider.swift in Sources */,
 				05D2D39A23DEE60200E3E79A /* InAppMessageView.swift in Sources */,
 				C0EB5D9020B7F8A900F1031F /* DispatchQueue+OnceTracker.swift in Sources */,
 				7F41777390316561CE4482DB /* InAppMessageWebView.swift in Sources */,
@@ -2494,11 +2598,11 @@
 				05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */,
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
 				05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */,
-				55EFD78F29192995002569FB /* TrackManager+IdentifyCustomerSpec.swift in Sources */,
 				0529797A241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift in Sources */,
 				057F448323990E320070DF30 /* MockInAppMessagesCache.swift in Sources */,
 				F0BE6105211080F30082ABD8 /* MockData.swift in Sources */,
 				05C289362428DDAA0021220C /* SessionManagerSpec.swift in Sources */,
+				55EFD792291A6C26002569FB /* AppInboxCacheSpec.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,
 				050961002321566000D59C01 /* TrackingManagerSpec.swift in Sources */,
 				55130C4F28E3C50D00B4FE77 /* GdprTrackingSpec.swift in Sources */,
@@ -2803,6 +2907,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationContent/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2816,6 +2921,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2.ExampleNotificationContent";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Exponea iOS SDK Example App Notification Content";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Exponea iOS SDK Example App Notification Content";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2857,6 +2963,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationService/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2870,6 +2977,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2.ExampleNotificationService";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Exponea iOS SDK Example App Notification Service";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Exponea iOS SDK Example App Notification Service";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2979,6 +3087,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2989,6 +3098,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Exponea iOS SDK Example App";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Exponea iOS SDK Example App";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

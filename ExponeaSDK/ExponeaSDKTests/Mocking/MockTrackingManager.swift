@@ -183,6 +183,7 @@ internal class MockTrackingManager: TrackingManagerType {
         case .pushDelivered: return Constants.EventTypes.pushDelivered
         case .campaignClick: return Constants.EventTypes.campaignClick
         case .banner: return Constants.EventTypes.banner
+        case .appInbox: return Constants.EventTypes.appInbox
         }
     }
     

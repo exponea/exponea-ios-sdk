@@ -62,6 +62,12 @@ final class MockExponeaImplementation: ExponeaInternal {
                delegate: DefaultInAppDelegate(),
                trackingConsentManager: self.trackingConsentManager!
             )
+            
+            self.appInboxManager = AppInboxManager(
+                repository: repository,
+                trackingManager: self.trackingManager!
+            )
+            
             processSavedCampaignData()
         } catch {
             // Failing gracefully, if setup failed

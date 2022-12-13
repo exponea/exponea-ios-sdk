@@ -16,6 +16,7 @@ final class MockRepository: RepositoryType {
         = Result.failure(RepositoryError.connectionError)
     var fetchConsentsResult: Result<ConsentsResponse> = Result.failure(RepositoryError.connectionError)
     var fetchInAppMessagesResult: Result<InAppMessagesResponse> = Result.failure(RepositoryError.connectionError)
+    var fetchAppInboxResult: Result<AppInboxResponse> = Result.failure(RepositoryError.connectionError)
 
     init(configuration: Configuration) {
         self.configuration = configuration
@@ -71,5 +72,13 @@ final class MockRepository: RepositoryType {
         completion: @escaping (Result<String>) -> Void
     ) {
         completion(.success("1.0.0"))
+    }
+
+    func fetchAppInbox(for customerIds: [String : String], with syncToken: String?, completion: @escaping (Result<AppInboxResponse>) -> Void) {
+        completion(fetchAppInboxResult)
+    }
+
+    func postReadFlagAppInbox(on messageIds: [String], for customerIds: [String : String], completion: @escaping (EmptyResult<RepositoryError>) -> Void) {
+        completion(.success)
     }
 }

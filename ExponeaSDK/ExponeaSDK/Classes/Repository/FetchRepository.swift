@@ -33,4 +33,16 @@ protocol FetchRepository {
         for customerIds: [String: String],
         completion: @escaping (Result<InAppMessagesResponse>) -> Void
     )
+    
+    func fetchAppInbox(
+        for customerIds: [String: String],
+        with syncToken: String?,
+        completion: @escaping (Result<AppInboxResponse>) -> Void
+    )
+    
+    func postReadFlagAppInbox(
+        on messageIds: [String],
+        for customerIds: [String: String],
+        completion: @escaping (EmptyResult<RepositoryError>) -> Void
+    )
 }

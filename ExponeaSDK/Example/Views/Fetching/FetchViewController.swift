@@ -11,6 +11,17 @@ import ExponeaSDK
 
 class FetchViewController: UIViewController {
 
+    @IBOutlet var buttonsStack: UIStackView!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let button = Exponea.shared.getAppInboxButton()
+        self.buttonsStack.addArrangedSubview(button)
+        let widthConstraint = button.widthAnchor.constraint(equalToConstant: 48)
+        let heightConstraint = button.heightAnchor.constraint(equalToConstant: 48)
+        NSLayoutConstraint.activate([widthConstraint, heightConstraint])
+    }
+
     func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))

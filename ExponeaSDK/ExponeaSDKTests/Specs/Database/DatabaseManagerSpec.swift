@@ -330,7 +330,7 @@ class DatabaseManagerSpec: QuickSpec {
 
                     expect(object.eventType).to(equal("myevent"))
 
-                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.05))
+                    expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 1.0))
 
                     waitUntil(action: { (done) in
                         DispatchQueue.global(qos: .background).async {

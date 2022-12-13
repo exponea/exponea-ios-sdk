@@ -67,6 +67,9 @@ public class ExponeaInternal: ExponeaType {
 
     /// The manager responsible for preloading and showing in-app messages.
     internal var inAppMessagesManager: InAppMessagesManagerType?
+    
+    /// The manager responsible for handling appInbox messages.
+    internal var appInboxManager: AppInboxManagerType?
 
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
@@ -240,6 +243,7 @@ public class ExponeaInternal: ExponeaType {
                     userDefaults: userDefaults,
                     onEventCallback: { type, event in
                         self.inAppMessagesManager?.onEventOccurred(of: type, for: event)
+                        self.appInboxManager?.onEventOccurred(of: type, for: event)
                     }
                 )
 
@@ -249,6 +253,11 @@ public class ExponeaInternal: ExponeaType {
                     trackingManager: trackingManager
                 )
                 self.trackingConsentManager = trackingConsentManager
+                
+                self.appInboxManager = AppInboxManager(
+                    repository: repository,
+                    trackingManager: trackingManager
+                )
 
                 let inAppMessagesManager = InAppMessagesManager(
                    repository: repository,
@@ -282,6 +291,8 @@ public class ExponeaInternal: ExponeaType {
             """)
         }
     }
+
+    public var appInboxProvider: AppInboxProvider = DefaultAppInboxProvider()
 }
 
 // MARK: - Dependencies + Safety wrapper -
@@ -289,14 +300,15 @@ public class ExponeaInternal: ExponeaType {
 internal extension ExponeaInternal {
 
     /// Alias for dependencies required across various internal and public functions of Exponea.
-    typealias Dependencies = (
-        configuration: Configuration,
-        repository: RepositoryType,
-        trackingManager: TrackingManagerType,
-        flushingManager: FlushingManagerType,
-        trackingConsentManager: TrackingConsentManagerType,
-        inAppMessagesManager: InAppMessagesManagerType
-    )
+    struct Dependencies {
+        let configuration: Configuration
+        let repository: RepositoryType
+        let trackingManager: TrackingManagerType
+        let flushingManager: FlushingManagerType
+        let trackingConsentManager: TrackingConsentManagerType
+        let inAppMessagesManager: InAppMessagesManagerType
+        let appInboxManager: AppInboxManagerType
+    }
 
     typealias CompletionHandler<T> = ((Result<T>) -> Void)
     typealias DependencyTask<T> = (ExponeaInternal.Dependencies, @escaping CompletionHandler<T>) throws -> Void
@@ -311,10 +323,20 @@ internal extension ExponeaInternal {
             let trackingManager = trackingManager,
             let flushingManager = flushingManager,
             let trackingConsentManager = trackingConsentManager,
-            let inAppMessagesManager = inAppMessagesManager else {
+            let inAppMessagesManager = inAppMessagesManager,
+            let appInboxManager = appInboxManager else {
+                Exponea.logger.log(.error, message: "Some dependencies are not configured")
                 throw ExponeaError.notConfigured
         }
-        return (configuration, repository, trackingManager, flushingManager, trackingConsentManager, inAppMessagesManager)
+        return Dependencies(
+            configuration: configuration,
+            repository: repository,
+            trackingManager: trackingManager,
+            flushingManager: flushingManager,
+            trackingConsentManager: trackingConsentManager,
+            inAppMessagesManager: inAppMessagesManager,
+            appInboxManager: appInboxManager
+        )
     }
 
     func executeSafelyWithDependencies<T>(

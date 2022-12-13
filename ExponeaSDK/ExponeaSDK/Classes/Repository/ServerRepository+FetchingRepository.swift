@@ -61,4 +61,35 @@ extension ServerRepository: FetchRepository {
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
+    
+    func fetchAppInbox(
+        for customerIds: [String: String],
+        with syncToken: String?,
+        completion: @escaping (Result<AppInboxResponse>) -> Void
+    ) {
+        let router = RequestFactory(exponeaProject: configuration.mainProject, route: .appInbox)
+        let request = router.prepareRequest(
+            parameters: AppInboxRequest(syncToken: syncToken),
+            customerIds: customerIds
+        )
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
+    
+    func postReadFlagAppInbox(
+        on messageIds: [String],
+        for customerIds: [String: String],
+        completion: @escaping (EmptyResult<RepositoryError>) -> Void
+    ) {
+        let router = RequestFactory(exponeaProject: configuration.mainProject, route: .appInboxMarkRead)
+        let request = router.prepareRequest(
+            parameters: AppInboxMarkReadRequest(messageIds: messageIds),
+            customerIds: customerIds
+        )
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
+
 }

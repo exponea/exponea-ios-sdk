@@ -43,12 +43,27 @@ public struct GdprTracking {
             return sourceFlag == 1
         }
         if let sourceFlag = source as? String {
-            switch (sourceFlag.lowercased()) {
-            case "true" : return true
-            case "1" : return true
-            case "false" : return false
-            case "0" : return false
-            default :
+            switch sourceFlag.lowercased() {
+            case "true":
+                return true
+            case "1":
+                return true
+            case "false":
+                return false
+            case "0":
+                return false
+            default:
+                Exponea.logger.log(.error, message: "HasConsentFlag with incompatible value \(sourceFlag)")
+                return false
+            }
+        }
+        if let sourceFlag = source as? JSONValue {
+            switch sourceFlag {
+            case .bool(let boolValue):
+                return readTrackingConsentFlag(boolValue)
+            case .string(let stringValue):
+                return readTrackingConsentFlag(stringValue)
+            default:
                 Exponea.logger.log(.error, message: "HasConsentFlag with incompatible value \(sourceFlag)")
                 return false
             }

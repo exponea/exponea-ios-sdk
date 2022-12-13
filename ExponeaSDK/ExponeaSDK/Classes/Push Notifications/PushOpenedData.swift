@@ -19,6 +19,7 @@ struct PushOpenedData {
     let consentCategoryTracking: String?
     let hasTrackingConsent: Bool
     let considerConsent: Bool
+    let origin: [String: Any]?
 }
 
 extension PushOpenedData: Equatable {
@@ -59,6 +60,7 @@ extension PushOpenedData: Codable {
         case consentCategoryTracking
         case hasTrackingConsent
         case considerConsent
+        case origin
     }
 
     public init(from decoder: Decoder) throws {
@@ -78,6 +80,12 @@ extension PushOpenedData: Codable {
         consentCategoryTracking = try data.decode(String?.self, forKey: .consentCategoryTracking)
         hasTrackingConsent = try data.decode(Bool.self, forKey: .hasTrackingConsent)
         considerConsent = try data.decode(Bool.self, forKey: .considerConsent)
+        if let originString = try? data.decode(String.self, forKey: .origin),
+           let originData = originString.data(using: .utf8) {
+            origin = try JSONSerialization.jsonObject(with: originData, options: []) as? [String: Any]
+        } else {
+            origin = [:]
+        }
     }
 
     func encode(to encoder: Encoder) throws {
@@ -95,6 +103,10 @@ extension PushOpenedData: Codable {
         try container.encode(consentCategoryTracking, forKey: .consentCategoryTracking)
         try container.encode(hasTrackingConsent, forKey: .hasTrackingConsent)
         try container.encode(considerConsent, forKey: .considerConsent)
+        if let origin = origin {
+            let serializedOrigin = try JSONSerialization.data(withJSONObject: origin, options: [])
+            try container.encode(String(data: serializedOrigin, encoding: .utf8), forKey: .origin)
+        }
     }
 
     public static func deserialize(from data: Data) -> PushOpenedData? {

@@ -224,12 +224,13 @@ extension TrackingManager: TrackingManagerType {
                  .pushOpened,
                  .pushDelivered,
                  .campaignClick,
-                 .banner:
+                 .banner,
+                 .appInbox:
                 if (trackingAllowed) {
                     try database.trackEvent(with: payload, into: project)
                 }
-                self.onEventCallback(type, payload)
             }
+            self.onEventCallback(type, payload)
         }
 
         // If we have immediate flushing mode, flush after tracking
@@ -279,6 +280,7 @@ extension TrackingManager: TrackingManagerType {
         case .pushDelivered: return Constants.EventTypes.pushDelivered
         case .campaignClick: return Constants.EventTypes.campaignClick
         case .banner: return Constants.EventTypes.banner
+        case .appInbox: return Constants.EventTypes.appInbox
         }
     }
 

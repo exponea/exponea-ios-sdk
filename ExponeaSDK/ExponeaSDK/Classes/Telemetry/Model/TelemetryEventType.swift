@@ -16,4 +16,5 @@ enum TelemetryEventType: String {
     case selfCheck
     case anonymize
     case eventCount
+    case fetchAppInbox
 }

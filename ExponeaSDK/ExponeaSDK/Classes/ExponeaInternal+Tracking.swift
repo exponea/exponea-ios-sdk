@@ -349,6 +349,7 @@ extension ExponeaInternal {
                 projectMapping: projectMapping
             )
             dependencies.inAppMessagesManager.anonymize()
+            dependencies.appInboxManager.clear()
             telemetryManager?.report(eventWithType: .anonymize, properties: [:])
         }
     }
@@ -412,6 +413,80 @@ extension ExponeaInternal {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppMessageClose(message: message, mode: .IGNORE_CONSENT)
+        }
+    }
+    
+    /// Track AppInbox message detail opened event
+    /// Event is tracked if parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    public func trackAppInboxOpened(message: MessageItem) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackAppInboxOpened(
+                message: message,
+                mode: .CONSIDER_CONSENT
+            )
+        }
+    }
+    
+    /// Marks AppInbox message as read
+    public func markAppInboxAsRead(_ messageId: String, completition: ((Bool) -> Void)?) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.appInboxManager.markMessageAsRead(messageId, completition)
+        }
+    }
+    
+    /// Track AppInbox message detail opened event
+    public func trackAppInboxOpenedWithoutTrackingConsent(message: MessageItem) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackAppInboxOpened(
+                message: message,
+                mode: .IGNORE_CONSENT
+            )
+        }
+    }
+    
+    /// Track AppInbox message click event
+    /// Event is tracked if one or both conditions met:
+    //     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    //     - parameter 'buttonLink' has TRUE value of query parameter 'xnpe_force_track'
+    public func trackAppInboxClick(
+        action: MessageItemAction,
+        message: MessageItem) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackAppInboxClick(
+                message: message,
+                buttonText: action.title,
+                buttonLink: action.url,
+                mode: .CONSIDER_CONSENT
+            )
+        }
+    }
+    
+    /// Track AppInbox message click event
+    public func trackAppInboxClickWithoutTrackingConsent(
+        action: MessageItemAction,
+        message: MessageItem) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackAppInboxClick(
+                message: message,
+                buttonText: action.title,
+                buttonLink: action.url,
+                mode: .IGNORE_CONSENT
+            )
         }
     }
 }

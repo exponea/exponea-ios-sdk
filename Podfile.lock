@@ -8,7 +8,7 @@ PODS:
     - Mockingjay/Core
   - Nimble (9.2.1)
   - Quick (5.0.1)
-  - SwiftLint (0.49.1)
+  - SwiftLint (0.50.1)
   - URITemplate (3.0.1)
 
 DEPENDENCIES:
@@ -38,7 +38,7 @@ SPEC CHECKSUMS:
   Mockingjay: 97656c6f59879923976a0a52ef09da45756cca82
   Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 749aa754fd1e7d984f2000fe051e18a3a9809179
-  SwiftLint: 32ee33ded0636d0905ef6911b2b67bbaeeedafa5
+  SwiftLint: 6b0cf1f4d619808dbc16e4fab064ce6fc79f090b
   URITemplate: 5f5a79f3e384884102c4e6b3325d159c20a8035a
 
 PODFILE CHECKSUM: f9c13b5f3e2411085588140edf374d8316c6c5d5

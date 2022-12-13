@@ -48,7 +48,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredBasicNotification)
                 )
             ),
             TestCase(
@@ -72,7 +73,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: self.deserialize(PushNotificationsTestData().deliveredDeeplinkNotification)
                 )
             ),
             TestCase(
@@ -96,7 +98,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredBrowserNotification)
                 )
             ),
             TestCase(
@@ -120,7 +123,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredCustomActionsNotification)
                 )
             ),
             TestCase(
@@ -144,7 +148,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredCustomActionsNotification)
                 )
             ),
             TestCase(
@@ -168,7 +173,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredCustomActionsNotification)
                 )
             ),
             TestCase(
@@ -192,7 +198,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredCustomActionsNotification)
                 )
             ),
             TestCase(
@@ -216,7 +223,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredExtraDataNotification)
                 )
             ),
             TestCase(
@@ -252,7 +260,8 @@ class PushNotificationParserSpec: QuickSpec {
                     ],
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredCustomEventTypeNotification)
                 )
             ),
             TestCase(
@@ -280,7 +289,8 @@ class PushNotificationParserSpec: QuickSpec {
                     ],
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredProductionNotification)
                 )
             ),
             TestCase(
@@ -354,7 +364,7 @@ class PushNotificationParserSpec: QuickSpec {
                             "number_attribute": 43436,
                             "nested_array": [1, 2, 3],
                             "nested_dictionary": ["key1": "value1", "key2": 3524.545]
-                        ],
+                        ] as [String: Any],
                         "product_list": [[
                             "item_id": "1234",
                             "item_quantity": 3
@@ -377,7 +387,8 @@ class PushNotificationParserSpec: QuickSpec {
                     ],
                     consentCategoryTracking: nil,
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredNotificationWithConsent("true", "I have consent"))
                 )
             ),
             TestCase(
@@ -402,7 +413,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: "I have consent",
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredNotificationWithConsent("1", "I have consent"))
                 )
             ),
             TestCase(
@@ -427,7 +439,8 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: "I have consent",
                     hasTrackingConsent: true,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredNotificationWithConsent("false", ""))
                 )
             ),
             TestCase(
@@ -452,16 +465,14 @@ class PushNotificationParserSpec: QuickSpec {
                     extraData: nil,
                     consentCategoryTracking: "",
                     hasTrackingConsent: false,
-                    considerConsent: true
+                    considerConsent: true,
+                    origin: deserialize(PushNotificationsTestData().deliveredNotificationWithConsent("false", ""))
                 )
             )
         ]
         testCases.forEach { testCase in
             it("should parse \(testCase.name)") {
-                let userInfo = testCase.userInfoJson != nil
-                    ? try! JSONSerialization.jsonObject(
-                        with: testCase.userInfoJson!.data(using: String.Encoding.utf8)!, options: []
-                    ) as AnyObject : nil
+                let userInfo = self.deserialize(testCase.userInfoJson) as? AnyObject
                 let parsedData = PushNotificationParser.parsePushOpened(
                     userInfoObject: userInfo,
                     actionIdentifier: testCase.actionIdentifier,
@@ -475,5 +486,14 @@ class PushNotificationParserSpec: QuickSpec {
                 }
             }
         }
+    }
+    
+    func deserialize(_ source: String?) -> [String: Any]? {
+        if (source == nil) {
+            return nil
+        }
+        return try! JSONSerialization.jsonObject(
+            with: source!.data(using: String.Encoding.utf8)!, options: []
+        ) as! [String : Any]
     }
 }

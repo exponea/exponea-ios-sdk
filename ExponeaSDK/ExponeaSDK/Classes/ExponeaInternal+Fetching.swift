@@ -40,4 +40,23 @@ extension ExponeaInternal {
             telemetryManager?.report(eventWithType: .fetchConsents, properties: [:])
         }, completion: completion)
     }
+
+    public func fetchAppInbox(completion: @escaping (Result<[MessageItem]>) -> Void) {
+        executeSafelyWithDependencies({
+            guard $0.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            $0.appInboxManager.fetchAppInbox(completion: $1)
+            telemetryManager?.report(eventWithType: .fetchAppInbox, properties: [:])
+        }, completion: completion)
+    }
+
+    public func fetchAppInboxItem(_ messageId: String, completion: @escaping (Result<MessageItem>) -> Void) {
+        executeSafelyWithDependencies({
+            guard $0.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            $0.appInboxManager.fetchAppInboxItem(messageId, completion: $1)
+        }, completion: completion)
+    }
 }
