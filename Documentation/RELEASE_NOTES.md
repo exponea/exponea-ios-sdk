@@ -1,4 +1,9 @@
 ## Release Notes
+## Release Notes for 2.14.0
+#### December 15, 2022
+* Features
+  * Added App Inbox feature with PUSH message type support
+
 ## Release Notes for 2.13.1
 #### November 24, 2022
 * Features
