@@ -22,9 +22,10 @@ public protocol ExponeaType: AnyObject {
     /// The delegate that gets callbacks about notification opens and/or actions. Only has effect if automatic
     /// push tracking is enabled, otherwise will never get called.
     var pushNotificationsDelegate: PushNotificationManagerDelegate? { get set }
-
     /// The delegate that gets callbacks about in app message actions.
     var inAppMessagesDelegate: InAppMessageActionDelegate { get set }
+    /// App inbox provider definition
+    var appInboxProvider: AppInboxProvider { get set }
 
     /// Any NSException inside Exponea SDK will be logged and swallowed if flag is enabled, otherwise
     /// the exception will be rethrown.
@@ -176,6 +177,28 @@ public protocol ExponeaType: AnyObject {
     /// This method will parse the data, track it and perform actions if needed.
     func handlePushNotificationOpened(userInfo: [AnyHashable: Any], actionIdentifier: String?)
 
+    /// Tracks the push notification clicked event to Exponea API.
+    /// Event is tracked even if  notification and action link have not a tracking consent.
+    func trackPushOpenedWithoutTrackingConsent(with userInfo: [AnyHashable: Any])
+
+    /// Handles push notification opened - user action for alert notifications, delivery into app for silent pushes.
+    /// This method will parse the data, track it and perform actions if needed.
+    /// Event is tracked even if Notification and button link have not a tracking consent.
+    func handlePushNotificationOpenedWithoutTrackingConsent(userInfo: [AnyHashable: Any], actionIdentifier: String?)
+
+    /// Track in-app message banner click event
+    /// Event is tracked even if InAppMessage and button link have not a tracking consent.
+    func trackInAppMessageClickWithoutTrackingConsent(message: InAppMessage, buttonText: String?, buttonLink: String?)
+
+    /// Track in-app message banner close event
+    func trackInAppMessageCloseClickWithoutTrackingConsent(message: InAppMessage)
+
+    /// Track AppInbox message detail opened event
+    func trackAppInboxOpenedWithoutTrackingConsent(message: MessageItem)
+
+    /// Track AppInbox message click event
+    func trackAppInboxClickWithoutTrackingConsent(action: MessageItemAction, message: MessageItem)
+
     // MARK: - Sessions -
 
     /// Tracks the start of the user session.
@@ -216,15 +239,7 @@ public protocol ExponeaType: AnyObject {
     /// Switches tracking into provided exponeaProject
     func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?)
 
-    func trackInAppMessageClick(
-        message: InAppMessage,
-        buttonText: String?,
-        buttonLink: String?
-    )
+    func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?)
 
-    func trackInAppMessageClose(
-        message: InAppMessage
-    )
-    
-    var appInboxProvider: AppInboxProvider { get set }
+    func trackInAppMessageClose(message: InAppMessage)
 }
