@@ -221,7 +221,6 @@
 		55130C5128E425D600B4FE77 /* TrackConsentManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */; };
 		552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */; };
 		552772CB28EDAF3A000ACFD5 /* AppInboxListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */; };
-		5527979B28D8B6FA002B2B77 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5527979A28D8B6FA002B2B77 /* SwiftSoup */; };
 		5527979D28D98C15002B2B77 /* GdprTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5527979C28D98C15002B2B77 /* GdprTracking.swift */; };
 		55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D482953051E001D95B8 /* AppInboxParser.swift */; };
 		55391D4B295342C7001D95B8 /* AppInboxManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */; };
@@ -249,6 +248,9 @@
 		55EFD7A329225207002569FB /* ExampleAppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD7A229225207002569FB /* ExampleAppInboxProvider.swift */; };
 		55F6A41829891F130029D628 /* ExampleAuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6A41729891F130029D628 /* ExampleAuthProvider.swift */; };
 		55F6A41A29891F710029D628 /* CustomerTokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6A41929891F710029D628 /* CustomerTokenStorage.swift */; };
+		69A6A9CB29B644E9006E0CC4 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69A6A9CA29B644E9006E0CC4 /* SwiftSoup.xcframework */; };
+		69A6A9CE29B64747006E0CC4 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69A6A9CA29B644E9006E0CC4 /* SwiftSoup.xcframework */; };
+		69A6A9CF29B64747006E0CC4 /* SwiftSoup.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 69A6A9CA29B644E9006E0CC4 /* SwiftSoup.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		792F2F886D9F14542DF0E97D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64D92FEFD20D8844C3C3BF9 /* Pods_ExponeaSDKTests.framework */; };
 		7F41714B094CAC0DA9B38776 /* HtmlNormalizerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */; };
 		7F417221332DEC81DB050230 /* HtmlNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */; };
@@ -454,6 +456,7 @@
 			files = (
 				05F33B1B25C16DEF00CFD60A /* ExponeaSDKShared.framework in Embed Frameworks */,
 				05F33B1C25C16DEF00CFD60A /* ExponeaSDKObjC.framework in Embed Frameworks */,
+				69A6A9CF29B64747006E0CC4 /* SwiftSoup.xcframework in Embed Frameworks */,
 				C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */,
 				C0ED33BC21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Embed Frameworks */,
 			);
@@ -675,11 +678,9 @@
 		552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ExponeaInternal+AppInbox.swift"; sourceTree = "<group>"; };
 		552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxListViewController.swift; sourceTree = "<group>"; };
 		5527979C28D98C15002B2B77 /* GdprTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTracking.swift; sourceTree = "<group>"; };
-		552BE09128A1772C00E245B3 /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = SwiftSoup.xcframework; sourceTree = "<group>"; };
 		55391D482953051E001D95B8 /* AppInboxParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxParser.swift; sourceTree = "<group>"; };
 		55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxManagerSpec.swift; sourceTree = "<group>"; };
 		55391D4C295497A7001D95B8 /* AppInboxProviderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxProviderSpec.swift; sourceTree = "<group>"; };
-		554BDE1728D87BCC00C4EC9C /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftSoup.xcframework; path = ../Carthage/Build/SwiftSoup.xcframework; sourceTree = "<group>"; };
 		5567C08F290808F600318E68 /* MessageItemContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemContent.swift; sourceTree = "<group>"; };
 		5567C091290809EB00318E68 /* MessageItemAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemAction.swift; sourceTree = "<group>"; };
 		5567C0932909196C00318E68 /* AppInboxResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxResponse.swift; sourceTree = "<group>"; };
@@ -703,6 +704,7 @@
 		55EFD7A229225207002569FB /* ExampleAppInboxProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAppInboxProvider.swift; sourceTree = "<group>"; };
 		55F6A41729891F130029D628 /* ExampleAuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAuthProvider.swift; sourceTree = "<group>"; };
 		55F6A41929891F710029D628 /* CustomerTokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerTokenStorage.swift; sourceTree = "<group>"; };
+		69A6A9CA29B644E9006E0CC4 /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftSoup.xcframework; path = ../Carthage/Build/SwiftSoup.xcframework; sourceTree = "<group>"; };
 		7F417D6738618D5F30397815 /* InAppMessageWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageWebView.swift; sourceTree = "<group>"; };
 		7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HtmlNormalizer.swift; sourceTree = "<group>"; };
 		7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HtmlNormalizerSpec.swift; sourceTree = "<group>"; };
@@ -871,6 +873,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */,
+				69A6A9CE29B64747006E0CC4 /* SwiftSoup.xcframework in Frameworks */,
 				C0ED33BB21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -879,7 +882,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5527979B28D8B6FA002B2B77 /* SwiftSoup in Frameworks */,
+				69A6A9CB29B644E9006E0CC4 /* SwiftSoup.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1465,8 +1468,7 @@
 		A3613BD1E2C1D4616B6A9767 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				552BE09128A1772C00E245B3 /* SwiftSoup.xcframework */,
-				554BDE1728D87BCC00C4EC9C /* SwiftSoup.xcframework */,
+				69A6A9CA29B644E9006E0CC4 /* SwiftSoup.xcframework */,
 				C08D53CE21B9474E00EA2C13 /* UserNotifications.framework */,
 				C08D53D021B9474E00EA2C13 /* UserNotificationsUI.framework */,
 				486299A97905BE77A09EC216 /* Pods_ExponeaSDK.framework */,
@@ -2148,7 +2150,6 @@
 			);
 			name = ExponeaSDK;
 			packageProductDependencies = (
-				5527979A28D8B6FA002B2B77 /* SwiftSoup */,
 			);
 			productName = ExponeaSDK;
 			productReference = F021E859206CF10200788ABC /* ExponeaSDK.framework */;
@@ -2254,7 +2255,6 @@
 			);
 			mainGroup = F021E84F206CF10200788ABC;
 			packageReferences = (
-				5527979928D8B6FA002B2B77 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			productRefGroup = F021E85A206CF10200788ABC /* Products */;
 			projectDirPath = "";
@@ -3519,25 +3519,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		5527979928D8B6FA002B2B77 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
-			requirement = {
-				kind = exactVersion;
-				version = 2.4.3;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		5527979A28D8B6FA002B2B77 /* SwiftSoup */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5527979928D8B6FA002B2B77 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
-			productName = SwiftSoup;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */ = {
