@@ -340,26 +340,26 @@ internal extension ExponeaInternal {
     }
 
     func executeSafelyWithDependencies<T>(
-        _ closure: DependencyTask<T>,
+        _ closure: @escaping DependencyTask<T>,
         completion: @escaping CompletionHandler<T>
     ) {
         executeSafely({
-                let dependencies = try getDependenciesIfConfigured()
+                let dependencies = try self.getDependenciesIfConfigured()
                 try closure(dependencies, completion)
             },
             errorHandler: { error in completion(.failure(error)) }
         )
     }
 
-    func executeSafelyWithDependencies(_ closure: (ExponeaInternal.Dependencies) throws -> Void) {
+    func executeSafelyWithDependencies(_ closure: @escaping (ExponeaInternal.Dependencies) throws -> Void) {
         executeSafelyWithDependencies({ dep, _ in try closure(dep) }, completion: { _ in } as CompletionHandler<Any>)
     }
 
-    func executeSafely(_ closure: () throws -> Void) {
+    func executeSafely(_ closure: @escaping () throws -> Void) {
         executeSafely(closure, errorHandler: nil)
     }
 
-    func executeSafely(_ closure: () throws -> Void, errorHandler: ((Error) -> Void)?) {
+    func executeSafely(_ closure: @escaping () throws -> Void, errorHandler: ((Error) -> Void)?) {
         if nsExceptionRaised {
             Exponea.logger.log(.error, message: ExponeaError.nsExceptionInconsistency.localizedDescription)
             errorHandler?(ExponeaError.nsExceptionInconsistency)
@@ -367,7 +367,7 @@ internal extension ExponeaInternal {
         }
         let exception = objc_tryCatch {
             do {
-                try closure()
+                try ExpoInitManager.manager.doActionAfterExponeaInit(closure)
             } catch {
                 Exponea.logger.log(.error, message: error.localizedDescription)
                 telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)

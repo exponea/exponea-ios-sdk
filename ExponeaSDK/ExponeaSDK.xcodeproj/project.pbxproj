@@ -205,6 +205,8 @@
 		05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */; };
 		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
+		3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */; };
+		3384EFC629965EEB009A5981 /* Execute+AfterInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */; };
 		4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */; };
 		4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F5F2C22DF98C00069E71D /* MockExponea.swift */; };
 		55130C4928DDC81600B4FE77 /* TrackingConsentManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4828DDC81600B4FE77 /* TrackingConsentManagerType.swift */; };
@@ -641,6 +643,8 @@
 		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpoInitManager.swift; sourceTree = "<group>"; };
+		3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Execute+AfterInit.swift"; sourceTree = "<group>"; };
 		486299A97905BE77A09EC216 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackUniversalLinkSpec.swift; sourceTree = "<group>"; };
 		4C3F5F2C22DF98C00069E71D /* MockExponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExponea.swift; sourceTree = "<group>"; };
@@ -1789,6 +1793,7 @@
 		F0BE610121107E7D0082ABD8 /* Mocking */ = {
 			isa = PBXGroup;
 			children = (
+				3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */,
 				05F3EFE72382BC31006E83F4 /* Telemetry */,
 				F04BEA9F2111EA0200591950 /* json */,
 				F0BE6104211080F30082ABD8 /* MockData.swift */,
@@ -1861,6 +1866,7 @@
 				CCB87B7728169C6C005DFB8E /* VersionChecker.swift */,
 				CC0C484C281935BC003E8BF8 /* ExponeaVersion.swift */,
 				7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */,
+				3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -2513,6 +2519,7 @@
 				552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */,
 				55DA6EBA290ABD4800B5B285 /* AppInboxManagerType.swift in Sources */,
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
+				3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				CCB87B7C28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
@@ -2647,6 +2654,7 @@
 				05735EA923A3B53600DA0FA9 /* MockFlushingManager.swift in Sources */,
 				050961062322552300D59C01 /* MockLogger.swift in Sources */,
 				C028C3A22110980600B03ED4 /* JSONValueSpec.swift in Sources */,
+				3384EFC629965EEB009A5981 /* Execute+AfterInit.swift in Sources */,
 				0591907523EC5C740037BD88 /* EventFilterAttributeSpec.swift in Sources */,
 				CC06F95125FA037800F38D93 /* RequestFactorySpec.swift in Sources */,
 				05D9F62E2387EE6600C47509 /* Exponea+ConfigurationSpec.swift in Sources */,

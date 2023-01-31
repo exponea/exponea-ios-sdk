@@ -332,7 +332,7 @@ extension ExponeaInternal {
     /// All customer identification (including cookie) will be permanently deleted.
     public func anonymize() {
         executeSafelyWithDependencies { dependencies in
-            anonymize(
+            self.anonymize(
                 exponeaProject: dependencies.configuration.mainProject,
                 projectMapping: dependencies.configuration.projectMapping
             )
@@ -350,7 +350,7 @@ extension ExponeaInternal {
             )
             dependencies.inAppMessagesManager.anonymize()
             dependencies.appInboxManager.clear()
-            telemetryManager?.report(eventWithType: .anonymize, properties: [:])
+            self.telemetryManager?.report(eventWithType: .anonymize, properties: [:])
         }
     }
 

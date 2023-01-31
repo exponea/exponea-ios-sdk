@@ -125,7 +125,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?) {
         Exponea.shared.executeSafely {
-            handlePushOpenedUnsafe(
+            self.handlePushOpenedUnsafe(
                 userInfoObject: userInfoObject,
                 actionIdentifier: actionIdentifier,
                 timestamp: Date().timeIntervalSince1970,
@@ -136,7 +136,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     func handlePushOpenedWithoutTrackingConsent(userInfoObject: AnyObject?, actionIdentifier: String?) {
         Exponea.shared.executeSafely {
-            handlePushOpenedUnsafe(
+            self.handlePushOpenedUnsafe(
                 userInfoObject: userInfoObject,
                 actionIdentifier: actionIdentifier,
                 timestamp: Date().timeIntervalSince1970,
@@ -214,7 +214,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     func handlePushTokenRegistered(dataObject: AnyObject?) {
         Exponea.shared.executeSafely {
-            handlePushTokenRegisteredUnsafe(dataObject: dataObject)
+            self.handlePushTokenRegisteredUnsafe(dataObject: dataObject)
         }
     }
 

@@ -342,7 +342,7 @@ extension TrackingManager: SessionTrackingDelegate {
 extension TrackingManager {
     @objc internal func applicationDidBecomeActive() {
         Exponea.shared.executeSafely {
-            applicationDidBecomeActiveUnsafe()
+            self.applicationDidBecomeActiveUnsafe()
         }
     }
 
@@ -361,7 +361,7 @@ extension TrackingManager {
 
     @objc internal func applicationDidEnterBackground() {
         Exponea.shared.executeSafely {
-            applicationDidEnterBackgroundUnsafe()
+            self.applicationDidEnterBackgroundUnsafe()
         }
     }
 

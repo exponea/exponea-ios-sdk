@@ -202,19 +202,19 @@ public extension ExponeaInternal {
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
             )
             self.configuration = configuration
-            pushNotificationsDelegate = pushNotificationTracking.delegate
-            flushingMode = flushingSetup.mode
-
+            self.pushNotificationsDelegate = pushNotificationTracking.delegate
+            self.flushingMode = flushingSetup.mode
             if willRunSelfCheck {
-                executeSafelyWithDependencies { dependencies in
-                    pushNotificationSelfCheck = PushNotificationSelfCheck(
+                self.executeSafelyWithDependencies { dependencies in
+                    self.pushNotificationSelfCheck = PushNotificationSelfCheck(
                         trackingManager: dependencies.trackingManager,
                         flushingManager: dependencies.flushingManager,
                         repository: dependencies.repository
                     )
-                    pushNotificationSelfCheck?.start()
+                    self.pushNotificationSelfCheck?.start()
                 }
             }
+            ExpoInitManager.manager.setStatus(status: .configured)
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }

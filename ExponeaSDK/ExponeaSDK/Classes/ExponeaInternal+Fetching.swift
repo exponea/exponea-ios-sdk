@@ -21,7 +21,7 @@ extension ExponeaInternal {
                 for: $0.trackingManager.customerIds,
                 completion: $1
             )
-            telemetryManager?.report(eventWithType: .fetchRecommendation, properties: [:])
+            self.telemetryManager?.report(eventWithType: .fetchRecommendation, properties: [:])
         }, completion: completion)
     }
 
@@ -37,7 +37,7 @@ extension ExponeaInternal {
 
             $0.repository.fetchConsents(completion: $1)
 
-            telemetryManager?.report(eventWithType: .fetchConsents, properties: [:])
+            self.telemetryManager?.report(eventWithType: .fetchConsents, properties: [:])
         }, completion: completion)
     }
 
@@ -47,7 +47,7 @@ extension ExponeaInternal {
                 throw ExponeaError.authorizationInsufficient
             }
             $0.appInboxManager.fetchAppInbox(completion: $1)
-            telemetryManager?.report(eventWithType: .fetchAppInbox, properties: [:])
+            self.telemetryManager?.report(eventWithType: .fetchAppInbox, properties: [:])
         }, completion: completion)
     }
 
