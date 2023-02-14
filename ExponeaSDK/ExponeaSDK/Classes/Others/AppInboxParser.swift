@@ -19,9 +19,16 @@ final class AppInboxParser {
                 timestamp: 0,
                 considerConsent: true
             )
-            var trackingData: [String: JSONValue]? = /**parsed?.eventData?.properties ??**/ [:]
+            var trackingData: [String: JSONValue] = [:]
+            if let trackingProperties = parsed?.eventData.properties {
+                trackingProperties.forEach { (key: String, value: JSONConvertible?) in
+                    if let value = value {
+                        trackingData.updateValue(value.jsonValue, forKey: key)
+                    }
+                }
+            }
             if let campaingData = parsed?.campaignData.trackingData {
-                trackingData?.merge(campaingData, uniquingKeysWith: { _, new in new })
+                trackingData.merge(campaingData, uniquingKeysWith: { _, new in new })
             }
             let actionsSource = userInfo["actions"] as? [[String: String]]
             let actions: [MessageItemAction]? = actionsSource?.map { actionDict in
@@ -82,9 +89,10 @@ final class AppInboxParser {
                 }
             }
             var trackingData: [String: JSONValue] = [:]
-            let attributes = normalized["attributes"] as? [String: Any] ?? [:]
+            let attributesWithNils = normalized["attributes"] as? [String: Any?] ?? [:]
+            let attributesWithoutNils = attributesWithNils.filter { $0.value != nil }.mapValues { $0! }
             let campaignData = normalized["url_params"] as? CampaignData
-            trackingData.merge(JSONValue.convert(attributes)) { _, new in new }
+            trackingData.merge(JSONValue.convert(attributesWithoutNils)) { _, new in new }
             if let campaignTrackingData = campaignData?.trackingData {
                 trackingData.merge(campaignTrackingData) { _, new in new }
             }
