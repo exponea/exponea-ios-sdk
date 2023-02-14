@@ -396,6 +396,7 @@ extension TrackingManager {
     internal func createBackgroundWorkItem() -> DispatchWorkItem {
         let unsafeWork = { [weak self] in
             guard let `self` = self else { return }
+            guard Exponea.shared.isConfigured else { return }
 
             // If we're cancelled, stop background task
             if self.backgroundWorkItem?.isCancelled ?? false {

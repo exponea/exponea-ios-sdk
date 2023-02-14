@@ -204,10 +204,6 @@ extension ExponeaInternal {
 
     func trackCampaignData(data: CampaignData, timestamp: Double?) {
         Exponea.logger.log(.verbose, message: "Tracking campaign data: \(data.description)")
-        if !isConfigured {
-            saveCampaignData(campaignData: data)
-            return
-        }
         executeSafelyWithDependencies { dependencies in
             // Create initial data
             guard dependencies.configuration.authorization != Authorization.none else {
@@ -255,17 +251,6 @@ extension ExponeaInternal {
             Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
             return
         }
-        // if the SDK is not configured, we should save the notification for later processing
-        guard isConfigured else {
-            Exponea.logger.log(.verbose, message: "Exponea not configured yet, saving opened push.")
-            PushNotificationManager.storePushOpened(
-                userInfoObject: userInfo as AnyObject?,
-                actionIdentifier: actionIdentifier,
-                timestamp: Date().timeIntervalSince1970,
-                considerConsent: true
-            )
-            return
-        }
         executeSafelyWithDependencies { dependencies in
             dependencies.trackingManager.notificationsManager.handlePushOpened(
                 userInfoObject: userInfo as AnyObject?,
@@ -280,17 +265,6 @@ extension ExponeaInternal {
     public func handlePushNotificationOpenedWithoutTrackingConsent(userInfo: [AnyHashable: Any], actionIdentifier: String? = nil) {
         guard Exponea.isExponeaNotification(userInfo: userInfo) else {
             Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
-            return
-        }
-        // if the SDK is not configured, we should save the notification for later processing
-        guard isConfigured else {
-            Exponea.logger.log(.verbose, message: "Exponea not configured yet, saving opened push.")
-            PushNotificationManager.storePushOpened(
-                userInfoObject: userInfo as AnyObject?,
-                actionIdentifier: actionIdentifier,
-                timestamp: Date().timeIntervalSince1970,
-                considerConsent: false
-            )
             return
         }
         executeSafelyWithDependencies { dependencies in
@@ -361,7 +335,8 @@ extension ExponeaInternal {
     public func trackInAppMessageClick(
         message: InAppMessage,
         buttonText: String?,
-        buttonLink: String?) {
+        buttonLink: String?
+    ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
@@ -380,7 +355,8 @@ extension ExponeaInternal {
     public func trackInAppMessageClickWithoutTrackingConsent(
         message: InAppMessage,
         buttonText: String?,
-        buttonLink: String?) {
+        buttonLink: String?
+    ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
@@ -396,7 +372,8 @@ extension ExponeaInternal {
 
     /// Track in-app message banner close event
     public func trackInAppMessageClose(
-        message: InAppMessage) {
+        message: InAppMessage
+    ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
@@ -407,7 +384,8 @@ extension ExponeaInternal {
     
     /// Track in-app message banner close event
     public func trackInAppMessageCloseClickWithoutTrackingConsent(
-        message: InAppMessage) {
+        message: InAppMessage
+    ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
@@ -459,7 +437,8 @@ extension ExponeaInternal {
     //     - parameter 'buttonLink' has TRUE value of query parameter 'xnpe_force_track'
     public func trackAppInboxClick(
         action: MessageItemAction,
-        message: MessageItem) {
+        message: MessageItem
+    ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
@@ -476,7 +455,8 @@ extension ExponeaInternal {
     /// Track AppInbox message click event
     public func trackAppInboxClickWithoutTrackingConsent(
         action: MessageItemAction,
-        message: MessageItem) {
+        message: MessageItem
+    ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient

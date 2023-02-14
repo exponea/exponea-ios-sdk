@@ -161,7 +161,7 @@ final class CrashManagerSpec: QuickSpec {
 
         it("should report logs from multiple threads") {
             let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
-            waitUntil { done in
+            waitUntil(timeout: .seconds(10)) { done in
                 let group = DispatchGroup()
                 for _ in 0..<100 {
                     group.enter()

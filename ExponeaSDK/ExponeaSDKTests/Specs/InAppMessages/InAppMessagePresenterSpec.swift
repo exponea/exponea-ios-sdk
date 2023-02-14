@@ -89,7 +89,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                 it("should present dialog with existing UI") {
                     let window = UIWindow()
                     window.rootViewController = UIViewController()
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         InAppMessagePresenter(window: window).presentInAppMessage(
                             messageType: messageType,
                             payload: message.payload,
@@ -107,7 +107,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                 }
 
                 it("should not present dialog without existing UI") {
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         InAppMessagePresenter().presentInAppMessage(
                             messageType: messageType,
                             payload: message.payload,
@@ -127,7 +127,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                 it("should not present dialog without valid image data") {
                     let window = UIWindow()
                     window.rootViewController = UIViewController()
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         InAppMessagePresenter().presentInAppMessage(
                             messageType: messageType,
                             payload: message.payload,
@@ -161,35 +161,35 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             presentedCallback: callback)
                     }
                     var presentedDialog: InAppMessageView?
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         present({ presented, error in
                             expect(presented).notTo(beNil())
                             presentedDialog = presented
                             done()
                         })
                     }
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         present({ presented, error in
                             expect(presented).to(beNil())
                             done()
                         })
                     }
                     presentedDialog?.dismissCallback()
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         present({ presented, error in
                             expect(presented).notTo(beNil())
                             presentedDialog = presented
                             done()
                         })
                     }
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         present({ presented, error in
                             expect(presented).to(beNil())
                             done()
                         })
                     }
                     presentedDialog?.actionCallback(message.payload!.buttons![0])
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         present({ presented, error in
                             expect(presented).notTo(beNil())
                             done()

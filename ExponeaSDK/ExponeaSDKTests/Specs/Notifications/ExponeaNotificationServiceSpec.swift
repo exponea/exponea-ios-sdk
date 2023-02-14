@@ -82,7 +82,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
             it("should create content") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
-                waitUntil { done in
+                waitUntil(timeout: .seconds(5)) { done in
                     service.process(request: request!) { content in
                         expect(content.title).to(equal("Test push notification title"))
                         expect(content.body).to(equal("test push notification message"))
@@ -93,7 +93,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
             it("should save notification for later when unable to track") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
-                waitUntil { done in
+                waitUntil(timeout: .seconds(5)) { done in
                     service.process(request: request!) { _ in
                         let delivered = self.getRecordedNotifications()!
                         expect(delivered.count).to(equal(1))
@@ -118,7 +118,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
                 userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 200)
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
-                waitUntil { done in
+                waitUntil(timeout: .seconds(5)) { done in
                     service.process(request: request!) { _ in
                         expect(self.getRecordedNotifications()).to(beNil())
                         done()

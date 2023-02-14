@@ -50,7 +50,7 @@ final class ServerRepositorySpec: QuickSpec {
                         with: URL(string: configuration.baseUrl + "/projects/\(configuration.projectToken)")!
                     )
                     networkTask.resume()
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         repo.fetchConsents { _ in done() }
                         repo.cancelRequests()
                     }

@@ -239,7 +239,7 @@ class DatabaseManagerSpec: QuickSpec {
                 db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
 
                 it("should fetch customer", closure: {
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
                             expect(db.currentCustomer).toNot(beNil())
@@ -284,7 +284,7 @@ class DatabaseManagerSpec: QuickSpec {
 
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.5))
 
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
                             expect { try db.delete(object.databaseObjectProxy) }.toNot(raiseException())
@@ -299,7 +299,7 @@ class DatabaseManagerSpec: QuickSpec {
                     var objects: [TrackEventProxy] = []
                     var expectedTimestamp: Double = 1
 
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
                             expectedTimestamp =  Date().timeIntervalSince1970
@@ -307,7 +307,7 @@ class DatabaseManagerSpec: QuickSpec {
                             done()
                         }
                     }
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
                             expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())

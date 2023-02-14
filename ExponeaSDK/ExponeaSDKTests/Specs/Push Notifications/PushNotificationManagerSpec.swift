@@ -887,7 +887,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                     let service = ExponeaNotificationService(appGroup: "mock-app-group")
                     var actualDeliveredTimestamp: Double?
 
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         NetworkStubbing.stubNetwork(
                             forProjectToken: "mock-project-token",
                             withStatusCode: 200,

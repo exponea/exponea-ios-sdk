@@ -18,6 +18,7 @@ protocol ExpoInitManagerType {
     func notifyListenerIfNeeded()
     func doActionAfterExponeaInit(_ action: @escaping EmptyThrowsBlock) rethrows
     func setStatus(status: ExpoInitManager.ExponeaInitType)
+    func clean()
 }
 
 final class ExpoInitManager: ExpoInitManagerType {
@@ -29,13 +30,15 @@ final class ExpoInitManager: ExpoInitManagerType {
     }
 
     // MARK: - Properties
-    static let manager = ExpoInitManager()
     internal var status: ExponeaInitType = .notInitialized
-    internal var isConfigured: Bool { Exponea.shared.isConfigured }
+    internal var isConfigured: Bool { sdkInstance.isConfigured }
     internal var actionBlocks: [EmptyThrowsBlock] = []
+    internal var sdkInstance: ExponeaType
 
     // MARK: - Init
-    private init() {}
+    init(sdk: ExponeaType) {
+        sdkInstance = sdk
+    }
 }
 
 // MARK: - Methods
@@ -51,8 +54,8 @@ extension ExpoInitManager {
 
     internal func notifyListenerIfNeeded() {
         guard isConfigured, status == .configured, !actionBlocks.isEmpty else { return }
-        try? actionBlocks.forEach {
-            try $0()
+        for action in actionBlocks {
+            Exponea.shared.logOnException(action, errorHandler: nil)
         }
         clean()
     }

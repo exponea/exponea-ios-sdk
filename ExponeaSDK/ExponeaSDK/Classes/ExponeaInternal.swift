@@ -190,6 +190,8 @@ public class ExponeaInternal: ExponeaType {
     /// Self-check only runs in debug mode and does not do anything in release builds.
     public var checkPushSetup: Bool = false
 
+    internal lazy var afterInit: ExpoInitManagerType = ExpoInitManager(sdk: self)
+
     // MARK: - Init -
 
     /// The initialiser is internal, so that only the singleton can exist when used in production.
@@ -360,6 +362,12 @@ internal extension ExponeaInternal {
     }
 
     func executeSafely(_ closure: @escaping () throws -> Void, errorHandler: ((Error) -> Void)?) {
+        logOnException({
+            try self.afterInit.doActionAfterExponeaInit(closure)
+        }, errorHandler: errorHandler)
+    }
+    
+    func logOnException(_ closure: @escaping () throws -> Void, errorHandler: ((Error) -> Void)?) {
         if nsExceptionRaised {
             Exponea.logger.log(.error, message: ExponeaError.nsExceptionInconsistency.localizedDescription)
             errorHandler?(ExponeaError.nsExceptionInconsistency)
@@ -367,7 +375,7 @@ internal extension ExponeaInternal {
         }
         let exception = objc_tryCatch {
             do {
-                try ExpoInitManager.manager.doActionAfterExponeaInit(closure)
+                try closure()
             } catch {
                 Exponea.logger.log(.error, message: error.localizedDescription)
                 telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
@@ -423,6 +431,7 @@ public extension ExponeaInternal {
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
             )
             self.configuration = configuration
+            self.afterInit.setStatus(status: .configured)
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
@@ -440,6 +449,7 @@ public extension ExponeaInternal {
         do {
             let configuration = try Configuration(plistName: plistName)
             self.configuration = configuration
+            self.afterInit.setStatus(status: .configured)
         } catch {
             Exponea.logger.log(.error, message: """
                 Can't parse Configuration from file \(plistName): \(error.localizedDescription).
@@ -475,6 +485,7 @@ public extension ExponeaInternal {
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
             )
             self.configuration = configuration
+            self.afterInit.setStatus(status: .configured)
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }

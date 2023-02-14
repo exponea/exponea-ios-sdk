@@ -210,7 +210,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             context("with frequency filter") {
                 beforeEach {
-                    waitUntil { done in manager.preload(for: [:], completion: done) }
+                    waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
                 }
                 let createMessage = { (frequency: InAppMessageFrequency) in
                     let message = SampleInAppMessage.getSampleInAppMessage(frequency: frequency)
@@ -225,13 +225,13 @@ class InAppMessagesManagerSpec: QuickSpec {
                 it("should apply only_once filter") {
                     createMessage(.onlyOnce)
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
-                    waitUntil { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
+                    waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
                 }
                 it("should apply until_visitor_interacts filter") {
                     createMessage(.untilVisitorInteracts)
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
-                    waitUntil { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
+                    waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
                     presenter.presentedMessages[0].actionCallback(
                         SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
@@ -241,7 +241,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 it("should apply once_per_visit filter") {
                     createMessage(.oncePerVisit)
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
-                    waitUntil { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
+                    waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
                     manager.sessionDidStart(at: Date(), for: [:], completion: nil)
                     expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
@@ -296,13 +296,13 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         it("should show dialog") {
-            waitUntil { done in manager.preload(for: [:], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
                 at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
-            waitUntil { done in
+            waitUntil(timeout: .seconds(5)) { done in
                 manager.showInAppMessage(for: [.eventType("session_start")]) { viewController in
                     expect(viewController).notTo(beNil())
                     done()
@@ -311,9 +311,9 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         it("should not show dialog without messages") {
-            waitUntil { done in manager.preload(for: [:], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
             cache.saveInAppMessages(inAppMessages: [])
-            waitUntil { done in
+            waitUntil(timeout: .seconds(5)) { done in
                 manager.showInAppMessage(for: [.eventType("session_start")]) { viewController in
                     expect(viewController).to(beNil())
                     done()
@@ -323,7 +323,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
         context("tracking events") {
             beforeEach {
-                waitUntil { done in manager.preload(for: [:], completion: done) }
+                waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
                 trackingManager.clearCalls()
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
@@ -334,14 +334,14 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             it("should not track anything if no message is shown") {
                 presenter.presentResult = false
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 expect(trackingManager.trackedInappEvents).to(beEmpty())
             }
 
             it("should track show event when displaying message") {
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 expect(trackingManager.trackedInappEvents).to(equal([
@@ -353,7 +353,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should track dismiss event when closing message") {
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
@@ -370,7 +370,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should track action event when action button pressed on message") {
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
@@ -395,7 +395,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackingConsentManager: trackingConsentManager
                 )
                 manager.delegate = inAppDelegate
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
@@ -415,7 +415,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackingConsentManager: trackingConsentManager
                 )
                 manager.delegate = inAppDelegate
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].dismissCallback()
@@ -439,7 +439,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackingConsentManager: trackingConsentManager
                 )
                 manager.delegate = inAppDelegate
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
@@ -461,7 +461,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackingConsentManager: trackingConsentManager
                 )
                 manager.delegate = inAppDelegate
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
@@ -489,7 +489,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackingConsentManager: trackingConsentManager
                 )
                 manager.delegate = inAppDelegate
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
@@ -511,7 +511,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
         context("default action performing") {
             beforeEach {
-                waitUntil { done in manager.preload(for: [:], completion: done) }
+                waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
                     at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
@@ -525,7 +525,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackActions: true,
                     trackingConsentManager: trackingConsentManager
                 )
-                waitUntil { done in
+                waitUntil(timeout: .seconds(5)) { done in
                     manager.showInAppMessage(for: [.eventType("session_start")]) { _ in
                         done()
                     }
@@ -538,7 +538,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             it("should not call default action when override is turned on in delegate ") {
                 manager.delegate = InAppMessageDelegate(overrideDefaultBehavior: true, trackActions: true)
-                waitUntil { done in manager.showInAppMessage(
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
@@ -566,14 +566,14 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         it("should track control group message without showing it") {
-            waitUntil { done in manager.preload(for: [:], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
             trackingManager.clearCalls()
             let message = SampleInAppMessage.getSampleInAppMessage(
                 payload: nil,
                 variantName: "Control group",
                 variantId: -1)
             cache.saveInAppMessages(inAppMessages: [message])
-            waitUntil { done in manager.showInAppMessage(
+            waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                 for: [.eventType("session_start")]
             ) { _ in done() } }
             expect(trackingManager.trackedInappEvents).to(equal([
@@ -589,10 +589,10 @@ class InAppMessagesManagerSpec: QuickSpec {
             let message = SampleInAppMessage.getSampleInAppMessage()
             expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(false))
             expect(cache.getImageDownloadCount()).to(equal(0))
-            waitUntil { done in manager.preloadImages(inAppMessages: [message], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.preloadImages(inAppMessages: [message], completion: done) }
             expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(true))
             expect(cache.getImageDownloadCount()).to(equal(1))
-            waitUntil { done in manager.preloadImages(inAppMessages: [message], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.preloadImages(inAppMessages: [message], completion: done) }
             expect(cache.getImageDownloadCount()).to(equal(1))
         }
 
@@ -600,7 +600,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             let message = SampleInAppMessage.getSampleInAppMessage()
             expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(false))
             expect(cache.getImageDownloadCount()).to(equal(0))
-            waitUntil { done in manager.preloadImages(inAppMessages: [message], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.preloadImages(inAppMessages: [message], completion: done) }
             expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(true))
             expect(cache.getImageDownloadCount()).to(equal(1))
 
@@ -608,7 +608,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 imageUrl: "https://storage.googleapis.com/exp-app-storage/" +
                 "f02807dc-6b57-11e9-8cc8-0a580a203636/media/original/8a32cbd6-43a1-11ec-8188-8a3224482d07"
             )
-            waitUntil { done in manager.preloadImages(inAppMessages: [messageWithDifferentUrl], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.preloadImages(inAppMessages: [messageWithDifferentUrl], completion: done) }
             expect(cache.hasImageData(at: (messageWithDifferentUrl.payload?.imageUrl)!)).to(equal(true))
             expect(cache.getImageDownloadCount()).to(equal(2))
         }

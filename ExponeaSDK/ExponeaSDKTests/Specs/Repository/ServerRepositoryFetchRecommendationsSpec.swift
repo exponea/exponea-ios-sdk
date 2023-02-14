@@ -76,7 +76,7 @@ final class ServerRepositoryFetchRecommendationsSpec: QuickSpec {
                 withStatusCode: 200,
                 withResponseData: self.payload.data(using: .utf8)
             )
-            waitUntil { done in
+            waitUntil(timeout: .seconds(5)) { done in
                 ServerRepository(configuration: configuration).fetchRecommendation(
                     request: request,
                     for: ["cookie": "mock cookie"],

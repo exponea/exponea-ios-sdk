@@ -64,18 +64,6 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.trackSessionStart()).notTo(raiseException())
                     expect(exponea.trackSessionEnd()).notTo(raiseException())
                 }
-                it("Should fail fetching consents") {
-                    waitUntil { done in
-                        exponea.fetchConsents { response in
-                            guard case .failure = response else {
-                                XCTFail("Expected .failure got \(response)")
-                                done()
-                                return
-                            }
-                            done()
-                        }
-                    }
-                }
                 it("Should not crash anonymizing") {
                     expect(exponea.anonymize()).notTo(raiseException())
                 }
@@ -90,7 +78,6 @@ class ExponeaSpec: QuickSpec {
                     ),
                     pushNotificationTracking: .disabled
                 )
-
                 it("Should return the correct project token") {
                     expect(exponea.configuration?.projectToken).to(equal("0aef3a96-3804-11e8-b710-141877340e97"))
                 }
@@ -202,34 +189,13 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("executing with dependencies") {
-                it("should complete with .failure when exponea is not configured") {
-                    let exponea = ExponeaInternal()
-                    let task: ExponeaInternal.DependencyTask<String> = { _, completion in
-                        completion(Result.success("success!"))
-                    }
-                    waitUntil { done in
-                        exponea.executeSafelyWithDependencies(task) { result in
-                            guard case .failure = result else {
-                                XCTFail("Result should be a failure")
-                                done()
-                                return
-                            }
-                            guard let error = result.error as? ExponeaError, case .notConfigured = error else {
-                                XCTFail("Result error should be .notConfigured")
-                                done()
-                                return
-                            }
-                            done()
-                        }
-                    }
-                }
                 it("should complete with .success when exponea is configured") {
                     let exponea = ExponeaInternal()
                     exponea.configure(plistName: "ExponeaConfig")
                     let task: ExponeaInternal.DependencyTask<String> = { _, completion in
                         completion(Result.success("success!"))
                     }
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         exponea.executeSafelyWithDependencies(task) { result in
                             guard case .success(let data) = result else {
                                 XCTFail("Result error should be .success")
@@ -251,7 +217,7 @@ class ExponeaSpec: QuickSpec {
                     let task: ExponeaInternal.DependencyTask<String> = { _, _ in
                         throw MyError.someError(message: "something went wrong")
                     }
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         exponea.executeSafelyWithDependencies(task) { result in
                             guard case .failure = result else {
                                 XCTFail("Result error should be .failure")
@@ -279,7 +245,7 @@ class ExponeaSpec: QuickSpec {
                             userInfo: nil
                         ).raise()
                     }
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         exponea.executeSafelyWithDependencies(task) { result in
                             guard case .failure = result else {
                                 XCTFail("Result error should be .failure")
@@ -307,13 +273,13 @@ class ExponeaSpec: QuickSpec {
                             userInfo: nil
                         ).raise()
                     }
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         exponea.executeSafelyWithDependencies(task) { _ in done() }
                     }
                     let nextTask: ExponeaInternal.DependencyTask<String> = { _, completion in
                         completion(Result.success("success!"))
                     }
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         exponea.executeSafelyWithDependencies(nextTask) { result in
                             guard case .failure = result else {
                                 XCTFail("Result should be a failure")
@@ -342,7 +308,7 @@ class ExponeaSpec: QuickSpec {
                             userInfo: nil
                         ).raise()
                     }
-                    waitUntil { done in
+                    waitUntil(timeout: .seconds(5)) { done in
                         let exception = objc_tryCatch {
                             exponea.executeSafelyWithDependencies(task) { _ in }
                         }

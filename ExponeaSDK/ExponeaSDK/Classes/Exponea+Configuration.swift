@@ -167,6 +167,7 @@ public extension ExponeaInternal {
             self.configuration = configuration
             pushNotificationsDelegate = automaticPushNotificationTracking.delegate
             flushingMode = flushingSetup.mode
+            afterInit.setStatus(status: .configured)
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
@@ -214,7 +215,7 @@ public extension ExponeaInternal {
                     self.pushNotificationSelfCheck?.start()
                 }
             }
-            ExpoInitManager.manager.setStatus(status: .configured)
+            self.afterInit.setStatus(status: .configured)
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }

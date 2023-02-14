@@ -244,7 +244,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                     notificationData: NotificationData()
                 )
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 200)
-                waitUntil { done in
+                waitUntil(timeout: .seconds(5)) { done in
                     tracker.track(
                         onSuccess: {
                             done()
@@ -265,7 +265,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                     notificationData: NotificationData()
                 )
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 400)
-                waitUntil { done in
+                waitUntil(timeout: .seconds(5)) { done in
                     tracker.track(
                         onSuccess: {
                             XCTFail("Tracking should fail")

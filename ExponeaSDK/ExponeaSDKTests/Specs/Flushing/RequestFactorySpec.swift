@@ -57,7 +57,7 @@ final class RequestFactorySpec: QuickSpec {
                         expect { request.url?.absoluteString }.to(match("https://google.com/track"))
                     }
                 )
-                waitUntil { done in
+                waitUntil(timeout: .seconds(5)) { done in
                     flushingManager.flushData(completion: { _ in done() })
                 }
             }
