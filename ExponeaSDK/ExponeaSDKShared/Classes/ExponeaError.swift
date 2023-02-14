@@ -22,6 +22,8 @@ public enum ExponeaError: LocalizedError {
     case nsExceptionRaised(NSException)
     /// After Exponea SDK runs into an NSException, further calls to SDK will fail with this exception.
     case nsExceptionInconsistency
+    /// Unable to finish an async process
+    case stoppedProcess
 
     public var errorDescription: String? {
         switch self {
@@ -48,6 +50,9 @@ public enum ExponeaError: LocalizedError {
 
         case .unknownError(let details):
             return "Unknown error. \(details ?? "")"
+
+        case .stoppedProcess:
+            return "Async process has stopped"
         }
     }
 }

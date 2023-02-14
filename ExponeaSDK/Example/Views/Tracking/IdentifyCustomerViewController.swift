@@ -32,6 +32,12 @@ class IdentifyCustomerViewController: UIViewController {
         keyField1.placeholder = "custom_key_1"
         keyField2.placeholder = "custom_key_2"
         keyField3.placeholder = "custom_key_3"
+
+        if let customerIds = CustomerTokenStorage.shared.customerIds,
+           let registeredValue = customerIds["registered"] {
+            idKeyField.text = "registered"
+            idValueField.text = registeredValue
+        }
     }
 
     @IBAction func hideKeyboard() {
@@ -64,7 +70,7 @@ class IdentifyCustomerViewController: UIViewController {
         if let key3 = keyField3.text, !key3.isEmpty {
             properties[key3] = valueField3.text ?? ""
         }
-
+        CustomerTokenStorage.shared.configure(customerIds: ids)
         Exponea.shared.identifyCustomer(customerIds: ids, properties: properties, timestamp: nil)
         dismiss(animated: true, completion: nil)
     }

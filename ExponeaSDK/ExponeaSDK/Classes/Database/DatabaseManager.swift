@@ -221,7 +221,7 @@ extension DatabaseManager: DatabaseManagerType {
             try saveContext(context)
         }
     }
-
+    
     /// Add any type of event into coredata.
     ///
     /// - Parameter data: See `DataType` for more information. Types specified below are required at minimum.
@@ -230,10 +230,27 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `timestamp`
     ///     - `eventType`
     func trackEvent(with data: [DataType], into project: ExponeaProject) throws {
+        try trackEvent(with: data, into: project, for: nil)
+    }
+
+    /// Add any type of event into coredata.
+    ///
+    /// - Parameter data: See `DataType` for more information. Types specified below are required at minimum.
+    ///     - `customerId`
+    ///     - `properties`
+    ///     - `timestamp`
+    ///     - `eventType`
+    /// - Parameter customerId: An UUID of local Customer database record; currentCustomer is used in case of nil
+    func trackEvent(with data: [DataType], into project: ExponeaProject, for customerId: String?) throws {
         try context.performAndWait {
             let trackEvent = TrackEvent(context: context)
-            trackEvent.customer = currentCustomerManagedObject
-
+            if let customerId = customerId,
+               let customerUuid = UUID(uuidString: customerId),
+               let customer = try context.fetch(Customer.fetchRequest(uuid: customerUuid)).first {
+                trackEvent.customer = customer
+            } else {
+                trackEvent.customer = currentCustomerManagedObject
+            }
             // Always specify a timestamp
             if trackEvent.eventType == Constants.EventTypes.pushOpen
                 || trackEvent.eventType == Constants.EventTypes.pushDelivered {
@@ -354,6 +371,12 @@ extension DatabaseManager: DatabaseManagerType {
         return try context.performAndWait {
             let trackCustomerEvents: [TrackCustomer] = try context.fetch(TrackCustomer.fetchRequest())
             return trackCustomerEvents.map { TrackCustomerProxy($0) }
+        }
+    }
+    
+    func fetchCustomer(_ uuid: UUID) throws -> Customer? {
+        return try context.performAndWait {
+            return try context.fetch(Customer.fetchRequest(uuid: uuid)).first
         }
     }
 

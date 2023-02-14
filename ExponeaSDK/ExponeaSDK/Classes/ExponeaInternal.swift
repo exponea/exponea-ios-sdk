@@ -67,7 +67,7 @@ public class ExponeaInternal: ExponeaType {
 
     /// The manager responsible for preloading and showing in-app messages.
     internal var inAppMessagesManager: InAppMessagesManagerType?
-    
+
     /// The manager responsible for handling appInbox messages.
     internal var appInboxManager: AppInboxManagerType?
 
@@ -237,7 +237,7 @@ public class ExponeaInternal: ExponeaType {
                     }
                 )
                 self.flushingManager = flushingManager
-                
+
                 let trackingManager = try TrackingManager(
                     repository: repository,
                     database: database,
@@ -250,15 +250,16 @@ public class ExponeaInternal: ExponeaType {
                 )
 
                 self.trackingManager = trackingManager
-                
+
                 let trackingConsentManager = TrackingConsentManager(
                     trackingManager: trackingManager
                 )
                 self.trackingConsentManager = trackingConsentManager
-                
+
                 self.appInboxManager = AppInboxManager(
                     repository: repository,
-                    trackingManager: trackingManager
+                    trackingManager: trackingManager,
+                    database: database
                 )
 
                 let inAppMessagesManager = InAppMessagesManager(
@@ -419,7 +420,8 @@ public extension ExponeaInternal {
                    baseUrl: String? = nil,
                    appGroup: String? = nil,
                    defaultProperties: [String: JSONConvertible]? = nil,
-                   allowDefaultCustomerProperties: Bool? = nil
+                   allowDefaultCustomerProperties: Bool? = nil,
+                   advancedAuthEnabled: Bool? = nil
     ) {
         do {
             let configuration = try Configuration(
@@ -428,7 +430,8 @@ public extension ExponeaInternal {
                 baseUrl: baseUrl,
                 appGroup: appGroup,
                 defaultProperties: defaultProperties,
-                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
+                advancedAuthEnabled: advancedAuthEnabled
             )
             self.configuration = configuration
             self.afterInit.setStatus(status: .configured)
@@ -472,7 +475,8 @@ public extension ExponeaInternal {
                    baseUrl: String? = nil,
                    appGroup: String? = nil,
                    defaultProperties: [String: JSONConvertible]? = nil,
-                   allowDefaultCustomerProperties: Bool? = nil
+                   allowDefaultCustomerProperties: Bool? = nil,
+                   advancedAuthEnabled: Bool? = nil
     ) {
         do {
             let configuration = try Configuration(
@@ -482,7 +486,8 @@ public extension ExponeaInternal {
                 baseUrl: baseUrl,
                 appGroup: appGroup,
                 defaultProperties: defaultProperties,
-                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
+                advancedAuthEnabled: advancedAuthEnabled
             )
             self.configuration = configuration
             self.afterInit.setStatus(status: .configured)

@@ -109,7 +109,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             if (cache.hasImageData(at: imageUrlString)) {
                 continue
             }
-            let imageData: Data? = tryDownloadImage(imageUrlString)
+            let imageData: Data? = ImageUtils.tryDownloadImage(imageUrlString)
             guard imageData != nil else {
                 return false
             }
@@ -117,32 +117,6 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             return false
         }
         return true
-    }
-
-    private func tryDownloadImage(_ imageSource: String?) -> Data? {
-        guard imageSource != nil,
-              let imageUrl = URL(string: imageSource!)
-                else {
-            Exponea.logger.log(.error, message: "Image cannot be downloaded \(imageSource ?? "<is nil>")")
-            return nil
-        }
-        let semaphore = DispatchSemaphore(value: 0)
-        var imageData: Data?
-        let dataTask = URLSession.shared.dataTask(with: imageUrl) { data, response, error in {
-            imageData = data
-            semaphore.signal()
-        }() }
-        dataTask.resume()
-        let awaitResult = semaphore.wait(timeout: .now() + 10.0)
-        switch (awaitResult) {
-        case .success:
-            // Nothing to do, let check imageData
-            break
-        case .timedOut:
-            Exponea.logger.log(.warning, message: "Image \(imageSource!) may be too large or slow connection - aborting")
-            dataTask.cancel()
-        }
-        return imageData
     }
 
     internal func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {

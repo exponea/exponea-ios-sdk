@@ -316,7 +316,10 @@ extension ExponeaInternal {
     /// Anonymizes the user and starts tracking as if the app was just installed.
     /// All customer identification (including cookie) will be permanently deleted.
     /// Switches tracking into provided exponeaProject
-    public func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) {
+    public func anonymize(
+        exponeaProject: ExponeaProject,
+        projectMapping: [EventType: [ExponeaProject]]?
+    ) {
         executeSafelyWithDependencies { dependencies in
             try dependencies.trackingManager.anonymize(
                 exponeaProject: exponeaProject,
@@ -381,7 +384,7 @@ extension ExponeaInternal {
             dependencies.trackingConsentManager.trackInAppMessageClose(message: message, mode: .CONSIDER_CONSENT)
         }
     }
-    
+
     /// Track in-app message banner close event
     public func trackInAppMessageCloseClickWithoutTrackingConsent(
         message: InAppMessage
@@ -393,7 +396,7 @@ extension ExponeaInternal {
             dependencies.trackingConsentManager.trackInAppMessageClose(message: message, mode: .IGNORE_CONSENT)
         }
     }
-    
+
     /// Track AppInbox message detail opened event
     /// Event is tracked if parameter 'message' has TRUE value of 'hasTrackingConsent' property
     public func trackAppInboxOpened(message: MessageItem) {
@@ -407,17 +410,17 @@ extension ExponeaInternal {
             )
         }
     }
-    
+
     /// Marks AppInbox message as read
-    public func markAppInboxAsRead(_ messageId: String, completition: ((Bool) -> Void)?) {
+    public func markAppInboxAsRead(_ message: MessageItem, completition: ((Bool) -> Void)?) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            dependencies.appInboxManager.markMessageAsRead(messageId, completition)
+            dependencies.appInboxManager.markMessageAsRead(message, completition)
         }
     }
-    
+
     /// Track AppInbox message detail opened event
     public func trackAppInboxOpenedWithoutTrackingConsent(message: MessageItem) {
         executeSafelyWithDependencies { dependencies in
@@ -430,11 +433,11 @@ extension ExponeaInternal {
             )
         }
     }
-    
+
     /// Track AppInbox message click event
     /// Event is tracked if one or both conditions met:
-    //     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
-    //     - parameter 'buttonLink' has TRUE value of query parameter 'xnpe_force_track'
+    ///     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    ///     - parameter 'buttonLink' has TRUE value of query parameter 'xnpe_force_track'
     public func trackAppInboxClick(
         action: MessageItemAction,
         message: MessageItem
@@ -451,7 +454,7 @@ extension ExponeaInternal {
             )
         }
     }
-    
+
     /// Track AppInbox message click event
     public func trackAppInboxClickWithoutTrackingConsent(
         action: MessageItemAction,

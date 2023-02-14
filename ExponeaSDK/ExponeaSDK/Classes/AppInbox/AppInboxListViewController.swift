@@ -12,8 +12,10 @@ open class AppInboxListViewController: UIViewController, UITableViewDelegate {
 
     @IBOutlet public var tableView: UITableView!
 
-    private var dataSourceDelegate = AppInboxDataSource(of: [])
-
+//    private var dataSourceDelegate = AppInboxDataSource(of: [])
+    
+    var messages: [MessageItem] = []
+    
     open override func viewDidLoad() {
         super.viewDidLoad()
         title = NSLocalizedString(
@@ -41,8 +43,6 @@ open class AppInboxListViewController: UIViewController, UITableViewDelegate {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 100
         tableView.separatorStyle = .none
-        tableView.delegate = self
-        tableView.dataSource = dataSourceDelegate
         showLoading()
         Exponea.shared.fetchAppInbox { result in
             switch result {
@@ -54,7 +54,7 @@ open class AppInboxListViewController: UIViewController, UITableViewDelegate {
                     return
                 }
                 Exponea.logger.log(.verbose, message: "App inbox loaded")
-                self.dataSourceDelegate.onDataUpdate(messages)
+                self.messages = messages
                 self.stopLoading()
                 self.tableView.reloadData()
             case .failure(let error):
@@ -117,12 +117,12 @@ open class AppInboxListViewController: UIViewController, UITableViewDelegate {
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let message = dataSourceDelegate.messages[indexPath.item]
-        Exponea.shared.markAppInboxAsRead(message.id) { marked in
+        let message = messages[indexPath.item]
+        Exponea.shared.markAppInboxAsRead(message) { marked in
             guard marked else {
                 return
             }
-            self.dataSourceDelegate.messages[indexPath.item].read = true
+            self.messages[indexPath.item].read = true
             self.tableView.reloadData()
         }
         let detailView = Exponea.shared.getAppInboxDetailViewController(message.id)
@@ -135,19 +135,11 @@ open class AppInboxListViewController: UIViewController, UITableViewDelegate {
     }
 }
 
-class AppInboxDataSource: NSObject, UITableViewDataSource {
-    var messages: [MessageItem]
-    init(of source: [MessageItem]) {
-        self.messages = source
-    }
-    func onDataUpdate(_ source: [MessageItem]) {
-        messages.removeAll()
-        messages.append(contentsOf: source)
-    }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension AppInboxListViewController: UITableViewDataSource {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count
     }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell_wrapper") as! MessageItemCell
         populateCell(cell, indexPath.row)
         return cell

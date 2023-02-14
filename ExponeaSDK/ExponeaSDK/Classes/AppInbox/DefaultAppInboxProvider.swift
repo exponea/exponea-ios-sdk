@@ -51,12 +51,13 @@ open class DefaultAppInboxProvider: AppInboxProvider {
         let bundle = getFrameworkBundle()
         let detailViewController = UIStoryboard(name: "AppInboxTemplates", bundle: bundle)
             .instantiateViewController(withIdentifier: "detail_view")
-        Exponea.shared.fetchAppInboxItem(messageId) { data in
-            guard let message = data.value else {
+        Exponea.shared.fetchAppInboxItem(messageId) { result in
+            switch result {
+            case .success(let message):
+                (detailViewController as! AppInboxDetailViewController).withData(message)
+            case .failure:
                 Exponea.logger.log(.error, message: "AppInbox message not found for ID \(messageId)")
-                return
             }
-            (detailViewController as! AppInboxDetailViewController).withData(message)
         }
         return detailViewController
     }
@@ -73,7 +74,7 @@ open class DefaultAppInboxProvider: AppInboxProvider {
         naviController.modalPresentationStyle = .formSheet
         topViewController.present(naviController, animated: true)
     }
-    
+
     private func getFrameworkBundle() -> Bundle {
         #if SWIFT_PACKAGE
         let bundle = Bundle.module

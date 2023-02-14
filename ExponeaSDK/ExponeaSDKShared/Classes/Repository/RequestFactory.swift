@@ -58,8 +58,11 @@ public extension RequestFactory {
         // Add authorization if it was provided
         switch exponeaProject.authorization {
         case .none: break
-        case .token(let token):
+        case let .token(token):
             request.addValue("Token \(token)",
+                forHTTPHeaderField: Constants.Repository.headerAuthorization)
+        case let .bearer(token):
+            request.addValue("Bearer \(token)",
                 forHTTPHeaderField: Constants.Repository.headerAuthorization)
         }
 

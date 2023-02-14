@@ -33,6 +33,7 @@ public typealias EventType = ExponeaSDKShared.EventType
 public typealias TokenTrackFrequency = ExponeaSDKShared.TokenTrackFrequency
 public typealias NotificationData = ExponeaSDKShared.NotificationData
 public typealias GdprTracking = ExponeaSDKShared.GdprTracking
+public typealias AuthorizationProviderType = ExponeaSDKShared.AuthorizationProviderType
 
 /*
  Instead of including ExponeaSDKShared in every file and conditionally

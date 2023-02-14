@@ -39,9 +39,15 @@ public struct Configuration: Codable, Equatable {
 
     /// The maximum amount of retries before a flush event is considered as invalid and deleted from the database.
     public internal(set) var flushEventMaxRetries: Int = Constants.Session.maxRetries
-    
+
     /// If true, default properties are applied also for 'identifyCustomer' event.
     public internal(set) var allowDefaultCustomerProperties: Bool = true
+
+    /// If true, advanced authorization is used for communication with BE
+    public var advancedAuthEnabled: Bool = false
+
+    /// Advanced authorization provider instance
+    public internal(set) var customAuthProvider: AuthorizationProviderType?
 
     enum CodingKeys: String, CodingKey {
         case projectMapping
@@ -57,6 +63,7 @@ public struct Configuration: Codable, Equatable {
         case appGroup
         case flushEventMaxRetries
         case allowDefaultCustomerProperties
+        case advancedAuthEnabled
     }
 
     /// Creates the configuration object with the provided properties.
@@ -67,29 +74,32 @@ public struct Configuration: Codable, Equatable {
     ///   - authorization: The authorization you want to use when tracking events.
     ///   - baseUrl: Your API base URL that the SDK will connect to.
     ///   - defaultProperties: Custom properties to be tracked in every event.
+    ///   - advancedAuthEnabled: Flag if advanced authorization used for communication with BE
     public init(projectToken: String?,
                 projectMapping: [EventType: [ExponeaProject]]? = nil,
                 authorization: Authorization,
                 baseUrl: String?,
                 appGroup: String? = nil,
                 defaultProperties: [String: JSONConvertible]? = nil,
-                allowDefaultCustomerProperties: Bool? = nil
+                allowDefaultCustomerProperties: Bool? = nil,
+                advancedAuthEnabled: Bool? = nil
     ) throws {
         guard let projectToken = projectToken else {
             throw ExponeaError.configurationError("No project token provided.")
         }
-
         self.projectToken = projectToken
         self.projectMapping = projectMapping
         self.authorization = authorization
         self.appGroup = appGroup
         self.defaultProperties = defaultProperties
         self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
-
+        self.advancedAuthEnabled = advancedAuthEnabled ?? false
         if let url = baseUrl {
             self.baseUrl = url
         }
-
+        if (self.advancedAuthEnabled) {
+            self.customAuthProvider = try loadCustomAuthProvider()
+        }
         try self.validate()
     }
 
@@ -106,7 +116,8 @@ public struct Configuration: Codable, Equatable {
         tokenTrackFrequency: TokenTrackFrequency,
         appGroup: String?,
         flushEventMaxRetries: Int,
-        allowDefaultCustomerProperties: Bool?
+        allowDefaultCustomerProperties: Bool?,
+        advancedAuthEnabled: Bool?
     ) throws {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
@@ -121,7 +132,10 @@ public struct Configuration: Codable, Equatable {
         self.appGroup = appGroup
         self.flushEventMaxRetries = flushEventMaxRetries
         self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
-
+        self.advancedAuthEnabled = advancedAuthEnabled ?? false
+        if (self.advancedAuthEnabled) {
+            self.customAuthProvider = try loadCustomAuthProvider()
+        }
         try self.validate()
     }
 
@@ -144,7 +158,9 @@ public struct Configuration: Codable, Equatable {
 
             // Decode from plist
             self = try PropertyListDecoder().decode(Configuration.self, from: data)
-
+            if (self.advancedAuthEnabled) {
+                self.customAuthProvider = try loadCustomAuthProvider()
+            }
             try self.validate()
 
             // Stop if we found the file and decoded successfully
@@ -235,7 +251,7 @@ public struct Configuration: Codable, Equatable {
             guard !properties.isEmpty else { return }
             self.defaultProperties = properties
         }
-        
+
         // Default properties usage for Identify Customer event
         if let allowDefaultCustomerProperties = try container.decodeIfPresent(
             Bool.self, forKey: .allowDefaultCustomerProperties) {
@@ -243,6 +259,20 @@ public struct Configuration: Codable, Equatable {
         } else {
             self.allowDefaultCustomerProperties = true
         }
+
+        // Advanced auth token
+        if let advancedAuthEnabled = try container.decodeIfPresent(
+            Bool.self, forKey: .advancedAuthEnabled) {
+            self.advancedAuthEnabled = advancedAuthEnabled
+        } else {
+            self.advancedAuthEnabled = false
+        }
+
+        // Advanced auth provider
+        if self.advancedAuthEnabled {
+            self.customAuthProvider = try loadCustomAuthProvider()
+        }
+        try self.validate()
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -265,6 +295,7 @@ public struct Configuration: Codable, Equatable {
         try container.encode(appGroup, forKey: .appGroup)
         try container.encode(flushEventMaxRetries, forKey: .flushEventMaxRetries)
         try container.encode(allowDefaultCustomerProperties, forKey: .allowDefaultCustomerProperties)
+        try container.encode(advancedAuthEnabled, forKey: .advancedAuthEnabled)
     }
 
     public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
@@ -281,7 +312,8 @@ public struct Configuration: Codable, Equatable {
             lhs.tokenTrackFrequency == rhs.tokenTrackFrequency &&
             lhs.appGroup == rhs.appGroup &&
             lhs.flushEventMaxRetries == rhs.flushEventMaxRetries &&
-            lhs.allowDefaultCustomerProperties == rhs.allowDefaultCustomerProperties
+            lhs.allowDefaultCustomerProperties == rhs.allowDefaultCustomerProperties &&
+            lhs.advancedAuthEnabled == rhs.advancedAuthEnabled
     }
 }
 
@@ -296,6 +328,49 @@ extension Configuration {
 
     public var mainProject: ExponeaProject {
         ExponeaProject(baseUrl: baseUrl, projectToken: projectToken, authorization: authorization)
+    }
+
+    /// Returns ExponeaProject that:
+    /// - contains CustomerID auth token if AuthProvider is registered
+    /// - contains Api auth token otherwise
+    /// !!! Access it in background thread due to possibility of fetching of Customer Token value
+    public var mutualExponeaProject: ExponeaProject {
+        guard let customAuthProvider = self.customAuthProvider else {
+            return mainProject
+        }
+        let authToken = customAuthProvider.getAuthorizationToken()
+        let authorization: Authorization
+        if let authToken = authToken, !authToken.isEmpty {
+            authorization = .bearer(token: authToken)
+        } else {
+            authorization = .none
+        }
+        return ExponeaProject(
+            baseUrl: baseUrl,
+            projectToken: projectToken,
+            authorization: authorization
+        )
+    }
+
+    private func loadCustomAuthProvider() throws -> AuthorizationProviderType? {
+        let className = "ExponeaAuthProvider"
+        guard let foundClass = NSClassFromString(className) else {
+            // valid exit
+            return nil
+        }
+        guard let asNSObjectClass = foundClass as? NSObject.Type else {
+            Exponea.logger.log(.error, message: "Class '\(className)' does not conform to NSObject")
+            throw ConfigurationValidationError.advancedAuthInvalid(
+                "Class '\(className)' does not conform to NSObject"
+            )
+        }
+        guard let asProviderClass = asNSObjectClass as? AuthorizationProviderType.Type else {
+            Exponea.logger.log(.error, message: "Class '\(className)' does not conform to AuthorizationProviderType")
+            throw ConfigurationValidationError.advancedAuthInvalid(
+                "Class '\(className)' does not conform to AuthorizationProviderType"
+            )
+        }
+        return asProviderClass.init()
     }
 }
 
@@ -324,6 +399,7 @@ extension Configuration: CustomStringConvertible {
         Flush Event Max Retries: \(flushEventMaxRetries)
         App Group: \(appGroup ?? "not configured")
         Default Customer Props allowed: \(allowDefaultCustomerProperties)
+        Advanced authorization Enabled: \(advancedAuthEnabled)
         """
 
         return text
@@ -339,4 +415,9 @@ extension Configuration: CustomStringConvertible {
 
         return host
     }
+}
+
+public protocol AuthorizationProviderType {
+    init()
+    func getAuthorizationToken() -> String?
 }

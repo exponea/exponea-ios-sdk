@@ -39,6 +39,11 @@ extension Double: JSONConvertible {
         return .double(self)
     }
 }
+extension NSNull: JSONConvertible {
+    public var jsonValue: JSONValue {
+        return .null("")
+    }
+}
 
 extension Dictionary: JSONConvertible where Key == String, Value == JSONConvertible {
     public var jsonValue: JSONValue {
@@ -59,6 +64,7 @@ public indirect enum JSONValue {
     case double(Double)
     case dictionary([String: JSONValue])
     case array([JSONValue])
+    case null(String)
 
     public static func convert(_ dictionary: [String: Any]) -> [String: JSONValue] {
         var result: [String: JSONValue] = [:]
@@ -110,6 +116,7 @@ public extension JSONValue {
         case .double(let double): return double
         case .dictionary(let dictionary): return dictionary.mapValues { $0.rawValue }
         case .array(let array): return array.map { $0.rawValue }
+        case .null(_): return NSNull()
         }
     }
 
@@ -121,6 +128,7 @@ public extension JSONValue {
         case .double(let double): return double
         case .dictionary(let dictionary): return dictionary.mapValues { $0.jsonConvertible }
         case .array(let array): return array.map { $0.jsonConvertible }
+        case .null(_): return NSNull()
         }
     }
 }
@@ -128,6 +136,11 @@ public extension JSONValue {
 extension JSONValue: Codable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
+        
+        if container.decodeNil() {
+            self = .null("")
+            return
+        }
 
         do {
             self = .dictionary(try container.decode([String: JSONValue].self))
@@ -161,6 +174,7 @@ extension JSONValue: Codable, Equatable {
         case .bool(let bool): try container.encode(bool)
         case .double(let double): try container.encode(double)
         case .dictionary(let dictionary): try container.encode(dictionary)
+        case .null(_): try container.encodeNil()
         }
     }
 
@@ -172,6 +186,7 @@ extension JSONValue: Codable, Equatable {
         case (.string(let string1), .string(let string2)): return string1 == string2
         case (.array(let array1), .array(let array2)): return array1 == array2
         case (.dictionary(let dict1), .dictionary(let dict2)): return dict1 == dict2
+        case (.null(_), .null(_)): return true
         default: return false
         }
     }
@@ -186,6 +201,7 @@ public extension JSONValue {
         case .array(let array): return array.map({ $0.objectValue }) as NSArray
         case .double(let double): return NSNumber(value: double)
         case .dictionary(let dictionary): return dictionary.mapValues({ $0.objectValue }) as NSDictionary
+        case .null(_): return NSNull()
         }
     }
 }

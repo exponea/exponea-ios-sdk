@@ -8,9 +8,11 @@
 
 import Foundation
 import UIKit
+import WebKit
 
-open class AppInboxDetailViewController: UIViewController {
+open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
 
+    @IBOutlet public var pushContainer: UIScrollView!
     @IBOutlet public var messageImage: UIImageView!
     @IBOutlet public var receivedTime: UILabel!
     @IBOutlet public var messageTitle: UILabel!
@@ -21,15 +23,22 @@ open class AppInboxDetailViewController: UIViewController {
     @IBOutlet public var action2: UIButton!
     @IBOutlet public var action3: UIButton!
     @IBOutlet public var action4: UIButton!
+    @IBOutlet public var htmlContainer: WKWebView!
 
     private let SUPPORTED_MESSAGE_ACTION_TYPES: [MessageItemActionType] = [
         .deeplink, .browser
+    ]
+
+    private let SUPPORTED_MESSAGE_TYPES: [String] = [
+        "push", "html"
     ]
 
     private let urlOpener: UrlOpenerType = UrlOpener()
     private var data: MessageItem?
     private var mainAction: MessageItemAction?
     private var shownActions: [MessageItemAction]?
+    private var normalizedPayload: NormalizedResult?
+    private var actionManager: WebActionManager?
 
     open func withData(_ source: MessageItem) {
         self.data = source
@@ -44,15 +53,40 @@ open class AppInboxDetailViewController: UIViewController {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
+        actionManager = WebActionManager(
+            onActionCallback: { [weak self] action in
+                guard let self = self,
+                      let message = self.data else {
+                    Exponea.logger.log(.error, message: "AppInbox action \(action.actionUrl) called but no action or message is provided")
+                    return
+                }
+                self.invokeActionInternally(
+                    MessageItemAction(
+                        action: self.determineActionType(action).rawValue,
+                        title: action.buttonText,
+                        url: action.actionUrl
+                    ),
+                    message
+                )
+            }
+        )
         navigationController?.navigationBar.isHidden = false
         navigationController?.isNavigationBarHidden = false
         applyDataToView()
     }
-    
+
+    private func determineActionType(_ action: ActionInfo) -> MessageItemActionType {
+        if action.actionUrl.hasPrefix("http://") || action.actionUrl.hasPrefix("https://") {
+            return .browser
+        } else {
+            return .deeplink
+        }
+    }
+
     private func readMainAction(_ source: MessageItem) -> MessageItemAction? {
-        guard let mainActionTypeRaw = source.content?.action,
+        guard let mainActionTypeRaw = source.content?.action?.action,
               let mainActionType = MessageItemActionType(rawValue: mainActionTypeRaw),
-              let mainActionUrl = source.content?.actionUrl else {
+              let mainActionUrl = source.content?.action?.url else {
             return nil
         }
         if SUPPORTED_MESSAGE_ACTION_TYPES.contains(mainActionType) {
@@ -68,28 +102,23 @@ open class AppInboxDetailViewController: UIViewController {
         }
         return nil
     }
-    
+
     private func applyDataToView() {
-        title = data?.content?.title ?? NSLocalizedString(
-            "exponea.inbox.defaultTitle",
-            value: "Message",
-            comment: ""
-        )
-        receivedTime.text = translateReceivedTime(data?.content?.createdAtDate ?? Date())
-        messageTitle.text = data?.content?.title ?? ""
-        message.text = data?.content?.message ?? ""
-        setupActionButtons(data)
-        if let imageUrl = data?.content?.imageUrl {
-            DispatchQueue.global(qos: .background).async {
-                guard let imageSource = self.tryDownloadImage(imageUrl),
-                      let image = self.createImage(imageData: imageSource, maxDimensionInPixels: Int(UIScreen.main.bounds.width)) else {
-                    Exponea.logger.log(.error, message: "Image cannot be shown")
-                    return
-                }
-                DispatchQueue.main.async {
-                    self.messageImage.image = image
-                }
-            }
+        guard
+            let dataType = data?.type,
+            SUPPORTED_MESSAGE_TYPES.contains(dataType) else {
+            Exponea.logger.log(.warning, message: "Unsupported AppInbox type \(data?.type ?? "nil") to be shown")
+            return
+        }
+        hideContainers()
+        switch dataType {
+        case "html":
+            showHtmlMessage()
+        case "push":
+            showPushMessage()
+        default:
+            Exponea.logger.log(.error, message: "Unsupported AppInbox type \(dataType) to be shown")
+            return
         }
     }
     @IBAction func onMainActionClicked(_ sender: Any) {
@@ -106,6 +135,72 @@ open class AppInboxDetailViewController: UIViewController {
     }
     @IBAction func onAction4Clicked(_ sender: Any) {
         invokeActionForIndex(3)
+    }
+
+    private func hideContainers() {
+        pushContainer.isHidden = true
+        htmlContainer.isHidden = true
+    }
+
+    private func showPushMessage() {
+        pushContainer.isHidden = false
+        title = data?.content?.title ?? NSLocalizedString(
+            "exponea.inbox.defaultTitle",
+            value: "Message",
+            comment: ""
+        )
+        receivedTime.text = translateReceivedTime(data?.receivedTime ?? Date())
+        messageTitle.text = data?.content?.title ?? ""
+        message.text = data?.content?.message ?? ""
+        setupActionButtons(data)
+        if let imageUrl = data?.content?.imageUrl {
+            DispatchQueue.global(qos: .background).async {
+                guard let imageSource = ImageUtils.tryDownloadImage(imageUrl),
+                      let image = ImageUtils.createImage(imageData: imageSource, maxDimensionInPixels: Int(UIScreen.main.bounds.width)) else {
+                    Exponea.logger.log(.error, message: "Image cannot be shown")
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.messageImage.image = image
+                }
+            }
+        }
+    }
+
+    private func showHtmlMessage() {
+        htmlContainer.isHidden = false
+        htmlContainer.navigationDelegate = self.actionManager
+        htmlContainer.uiDelegate = self
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let selfWhileAsync = self else {
+                Exponea.logger.log(.error, message: "Showing a HTML AppInbox stops")
+                return
+            }
+            let normalizeConf = HtmlNormalizerConfig(
+                makeImagesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: true
+            )
+            let normalizedPayload = HtmlNormalizer(selfWhileAsync.data?.content?.html ?? "").normalize(normalizeConf)
+            guard
+                normalizedPayload.valid
+            else {
+                Exponea.logger.log(.error, message: "AppInbox message contains invalid HTML")
+                return
+            }
+            selfWhileAsync.normalizedPayload = normalizedPayload
+            selfWhileAsync.actionManager?.htmlPayload = normalizedPayload
+            DispatchQueue.main.async { [weak selfWhileAsync] in
+                guard
+                    let selfWhileMain = selfWhileAsync,
+                    let normalizedHtml = selfWhileMain.normalizedPayload?.html
+                else {
+                    Exponea.logger.log(.error, message: "Showing a HTML AppInbox stops")
+                    return
+                }
+                selfWhileMain.htmlContainer.loadHTMLString(normalizedHtml, baseURL: nil)
+            }
+        }
     }
 
     func invokeMainAction() {
@@ -162,7 +257,7 @@ open class AppInboxDetailViewController: UIViewController {
         setupActionButton(action3, 2)
         setupActionButton(action4, 3)
     }
-    
+
     func setupMainActionButton(_ target: UIButton) {
         setupActionButton(target, self.mainAction)
     }
@@ -171,7 +266,7 @@ open class AppInboxDetailViewController: UIViewController {
         let action = getActionByIndex(index)
         setupActionButton(target, action)
     }
-    
+
     func setupActionButton(_ target: UIButton, _ action: MessageItemAction?) {
         guard let action = action else {
             // no action for index -> no button
@@ -198,50 +293,5 @@ open class AppInboxDetailViewController: UIViewController {
             formatter.doesRelativeDateFormatting = true
             return formatter.string(from: source)
         }
-    }
-
-    private func tryDownloadImage(_ imageSource: String?) -> Data? {
-        guard imageSource != nil,
-              let imageUrl = URL(string: imageSource!)
-                else {
-            Exponea.logger.log(.error, message: "Image cannot be downloaded \(imageSource ?? "<is nil>")")
-            return nil
-        }
-        let semaphore = DispatchSemaphore(value: 0)
-        var imageData: Data?
-        let dataTask = URLSession.shared.dataTask(with: imageUrl) { data, response, error in {
-            imageData = data
-            semaphore.signal()
-        }() }
-        dataTask.resume()
-        let awaitResult = semaphore.wait(timeout: .now() + 10.0)
-        switch (awaitResult) {
-        case .success:
-            // Nothing to do, let check imageData
-            break
-        case .timedOut:
-            Exponea.logger.log(.warning, message: "Image \(imageSource!) may be too large or slow connection - aborting")
-            dataTask.cancel()
-        }
-        return imageData
-    }
-
-    func createImage(imageData: Data, maxDimensionInPixels: Int) -> UIImage? {
-        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
-        guard let imageSource = CGImageSourceCreateWithData(imageData as CFData, imageSourceOptions) else {
-            Exponea.logger.log(.error, message: "Unable create image for in-app message - image source failed")
-            return nil
-        }
-        let downsampleOptions = [
-            kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceShouldCacheImmediately: true,
-            kCGImageSourceCreateThumbnailWithTransform: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
-        ] as CFDictionary
-        guard let downsampledCGImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) else {
-            Exponea.logger.log(.error, message: "Unable create image for in-app message - downsampling failed")
-            return nil
-        }
-        return UIImage(cgImage: downsampledCGImage)
     }
 }

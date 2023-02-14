@@ -14,7 +14,11 @@ final class AppInboxCache: AppInboxCacheType {
     // we should use our own instance of filemanager, host app can implement delegate on default one
     private let fileManager: FileManager = FileManager()
     private let semaphore: DispatchQueue = DispatchQueue(label: "AppInboxCacheLockingQueue", attributes: .concurrent)
-    private var data: AppInboxData?
+    private var data: AppInboxData!
+
+    init() {
+        data = loadDataFromLocalStorage()
+    }
 
     private func getCacheDirectoryURL() -> URL? {
         guard let documentsDir = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first else {
@@ -31,32 +35,39 @@ final class AppInboxCache: AppInboxCacheType {
         return dir
     }
 
-    private func ensureData() -> AppInboxData {
-        if (data == nil) {
-            semaphore.sync {
-                if (data == nil) {
-                    if let directory = getCacheDirectoryURL(),
-                       let data = try? Data(contentsOf: directory.appendingPathComponent(AppInboxCache.appInboxFileName)) {
-                        do {
-                            self.data = try JSONDecoder().decode(AppInboxData.self, from: data)
-                        } catch (let error) {
-                            Exponea.logger.log(.error, message: "Error getting stored AppInbox messages \(error.localizedDescription)")
-                            self.data = AppInboxData()
-                        }
-                    } else {
-                        Exponea.logger.log(.error, message: "Error getting stored AppInbox messages: Unable to create directory")
-                        self.data = AppInboxData()
-                    }
+    private func loadDataFromLocalStorage() -> AppInboxData {
+        let resultData: AppInboxData
+        if let directory = getCacheDirectoryURL(),
+           let data = try? Data(contentsOf: directory.appendingPathComponent(AppInboxCache.appInboxFileName)) {
+            do {
+                let loadedData = try JSONDecoder().decode(AppInboxData.self, from: data)
+                if areValid(loadedData) {
+                    resultData = loadedData
+                } else {
+                    resultData = AppInboxData()
                 }
+            } catch let error {
+                Exponea.logger.log(.error, message: "Error getting stored AppInbox messages \(error.localizedDescription)")
+                resultData = AppInboxData()
             }
+        } else {
+            Exponea.logger.log(.error, message: "Error getting stored AppInbox messages: Unable to create directory")
+            resultData = AppInboxData()
         }
-        return data!
+        return resultData
+    }
+
+    /// Older SDK may store AppInboxData with MessageItem without required data.
+    /// We have to check and remove them in that case
+    private func areValid(_ data: AppInboxData) -> Bool {
+        return data.messages.allSatisfy { msg in
+            msg.syncToken != nil && msg.customerId != nil
+        }
     }
 
     private func storeData() {
         guard
-            let data = self.data,
-            let jsonData = try? JSONEncoder().encode(data),
+            let jsonData = try? JSONEncoder().encode(self.data),
             let jsonString = String(data: jsonData, encoding: .utf8),
             let directory = getCacheDirectoryURL() else {
                 Exponea.logger.log(.error, message: "Unable to serialize AppInbox data.")
@@ -68,24 +79,24 @@ final class AppInboxCache: AppInboxCacheType {
                 atomically: true,
                 encoding: .utf8
             )
-        } catch (let error) {
+        } catch let error {
             Exponea.logger.log(.error, message: "Saving AppInbox to file failed: \(error.localizedDescription)")
         }
     }
 
     func setMessages(messages: [MessageItem]) {
-        ensureData().messages = messages.sorted { msg1, msg2 in
+        data.messages = messages.sorted { msg1, msg2 in
             msg1.receivedTime > msg2.receivedTime
         }
         storeData()
     }
 
     func getMessages() -> [MessageItem] {
-        return ensureData().messages
+        return data.messages
     }
 
     func addMessages(messages: [MessageItem]) {
-        let currentMessages = ensureData().messages
+        let currentMessages = data.messages
         let allMessages = currentMessages + messages
         let uniqueMessages = [String: MessageItem](
             allMessages.map { ($0.id, $0) },
@@ -152,12 +163,12 @@ final class AppInboxCache: AppInboxCacheType {
     }
 
     func setSyncToken(token: String?) {
-        ensureData().token = token
+        data.token = token
         storeData()
     }
 
     func getSyncToken() -> String? {
-        return ensureData().token
+        data.token
     }
 
     func clear() {

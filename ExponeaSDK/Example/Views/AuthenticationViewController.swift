@@ -27,12 +27,19 @@ class AuthenticationViewController: UIViewController {
             authField.text = UserDefaults.standard.string(forKey: "savedAuth") ?? ""
         }
     }
+    @IBOutlet var advancedPublicKeyField: UITextField! {
+        didSet {
+            advancedPublicKeyField.delegate = self
+            // load cached
+            advancedPublicKeyField.text = UserDefaults.standard.string(forKey: "savedAdvancedAuth") ?? ""
+        }
+    }
 
     @IBOutlet weak var urlField: UITextField! {
         didSet {
             urlField.delegate = self
             // load cached
-            urlField.text = UserDefaults.standard.string(forKey: "savedUrl") ?? "https://api.exponea.com"
+            urlField.text = UserDefaults.standard.string(forKey: "savedUrl") ?? ""
         }
     }
     @IBOutlet weak var startButton: UIButton!
@@ -42,6 +49,7 @@ class AuthenticationViewController: UIViewController {
         tokenField.attributedPlaceholder = makePlaceholderText(text: tokenField.placeholder)
         authField.attributedPlaceholder = makePlaceholderText(text: authField.placeholder)
         urlField.attributedPlaceholder = makePlaceholderText(text: urlField.placeholder)
+        advancedPublicKeyField.attributedPlaceholder = makePlaceholderText(text: advancedPublicKeyField.placeholder)
         tokenUpdated()
     }
 
@@ -63,14 +71,31 @@ class AuthenticationViewController: UIViewController {
             auth = .token(text)
         }
 
+        var advancedAuthPubKey: String?
+        if let text = advancedPublicKeyField.text, !text.isEmpty {
+            advancedAuthPubKey = text
+        }
+        var baseUrl: String?
+        if let text = urlField.text, !text.isEmpty {
+            baseUrl = text
+        }
+
         performSegue(withIdentifier: "showMain", sender: nil)
+
+        // Prepare Example Advanced Auth
+        CustomerTokenStorage.shared.configure(
+            host: baseUrl,
+            projectToken: token,
+            publicKey: advancedAuthPubKey,
+            expiration: nil
+        )
 
         Exponea.shared.checkPushSetup = true
         Exponea.shared.configure(
             Exponea.ProjectSettings(
                 projectToken: token,
                 authorization: auth,
-                baseUrl: urlField.text?.isEmpty == true ? nil : urlField.text
+                baseUrl: baseUrl
             ),
             pushNotificationTracking: .enabled(
                 appGroup: "group.com.exponea.ExponeaSDK-Example2",
@@ -79,7 +104,8 @@ class AuthenticationViewController: UIViewController {
             defaultProperties: [
                 "Property01": "String value",
                 "Property02": 123
-            ]
+            ],
+            advancedAuthEnabled: advancedAuthPubKey?.isEmpty == false
         )
         // Uncomment if you want to test in-app message delegate
         // Exponea.shared.inAppMessagesDelegate = InAppDelegate(overrideDefaultBehavior: true, trackActions: false)
@@ -89,6 +115,10 @@ class AuthenticationViewController: UIViewController {
     @objc func tokenUpdated() {
         startButton.isEnabled = (tokenField.text ?? "").count > 0
         startButton.alpha = startButton.isEnabled ? 1.0 : 0.4
+    }
+
+    @IBAction func hideKeyboard() {
+        view.endEditing(true)
     }
 }
 

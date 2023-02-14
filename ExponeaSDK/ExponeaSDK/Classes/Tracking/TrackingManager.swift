@@ -178,23 +178,32 @@ extension TrackingManager: TrackingManagerType {
             }
         }
     }
-    
+
     public func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws {
-        try trackInternal(type, with: data, trackingAllowed: trackingAllowed)
-    }
-    
-    public func track(_ type: EventType, with data: [DataType]?) throws {
-        try trackInternal(type, with: data, trackingAllowed: true)
+        try processTrack(type, with: data, trackingAllowed: trackingAllowed, for: nil)
     }
 
-    private func trackInternal(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws {
+    public func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool, for customerId: String?) throws {
+        try trackInternal(type, with: data, trackingAllowed: trackingAllowed, for: customerId)
+    }
+
+    public func track(_ type: EventType, with data: [DataType]?) throws {
+        try trackInternal(type, with: data, trackingAllowed: true, for: nil)
+    }
+
+    private func trackInternal(
+        _ type: EventType,
+        with data: [DataType]?,
+        trackingAllowed: Bool,
+        for customerId: String?
+    ) throws {
         /// Get token mapping or fail if no token provided.
         let projects = repository.configuration.projects(for: type)
         if projects.isEmpty {
             throw TrackingManagerError.unknownError("No project tokens provided.")
         }
 
-        if (trackingAllowed) {
+        if trackingAllowed {
             Exponea.logger.log(.verbose, message: "Tracking event of type: \(type) with params \(data ?? [])")
         } else {
             Exponea.logger.log(.verbose, message: "Processing event of type: \(type) with params \(data ?? []) with tracking \(trackingAllowed)")
@@ -206,7 +215,7 @@ extension TrackingManager: TrackingManagerType {
             if let stringEventType = getEventTypeString(type: type) {
                 payload.append(.eventType(stringEventType))
             }
-            if (canUseDefaultProperties(for: type)) {
+            if canUseDefaultProperties(for: type) {
                 payload = payload.addProperties(repository.configuration.defaultProperties)
             }
             switch type {
@@ -226,8 +235,8 @@ extension TrackingManager: TrackingManagerType {
                  .campaignClick,
                  .banner,
                  .appInbox:
-                if (trackingAllowed) {
-                    try database.trackEvent(with: payload, into: project)
+                if trackingAllowed {
+                    try database.trackEvent(with: payload, into: project, for: customerId)
                 }
             }
             self.onEventCallback(type, payload)

@@ -14,38 +14,49 @@ final class AppInboxManager: AppInboxManagerType {
     private let repository: RepositoryType
     private let trackingManager: TrackingManagerType
     private let appInboxCache: AppInboxCacheType
+    private let databaseManager: DatabaseManagerType
 
     private let SUPPORTED_MESSAGE_TYPES: [String] = [
-        "push"
+        "push", "html"
     ]
 
     init(
         repository: RepositoryType,
         trackingManager: TrackingManagerType,
-        cache: AppInboxCacheType = AppInboxCache()
+        cache: AppInboxCacheType = AppInboxCache(),
+        database: DatabaseManagerType
     ) {
         self.repository = repository
         self.trackingManager = trackingManager
         self.appInboxCache = cache
+        self.databaseManager = database
     }
 
     func onEventOccurred(of type: EventType, for event: [DataType]) {
-        if (type == .identifyCustomer) {
+        if type == .identifyCustomer {
             Exponea.logger.log(.verbose, message: "CustomerIDs are updated, clearing AppInbox messages")
             clear()
         }
     }
 
     func fetchAppInbox(completion: @escaping (Result<[MessageItem]>) -> Void) {
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else {
+                Exponea.logger.log(.error, message: "Fetching AppInbox stops due to obsolete thread")
+                completion(.failure(ExponeaError.stoppedProcess))
+                return
+            }
+            let customerIds = self.trackingManager.customerIds
+            let customerId = self.trackingManager.customerCookie
             self.repository.fetchAppInbox(
-                for: self.trackingManager.customerIds,
+                for: customerIds,
                 with: self.appInboxCache.getSyncToken()
             ) { result in
                 switch result {
                 case .success(let response):
                     Exponea.logger.log(.verbose, message: "AppInbox loaded successfully")
-                    self.onAppInboxDataLoaded(response, completion)
+                    let enhancedMessages = self.enhanceMessages(response.messages, customerId, response.syncToken)
+                    self.onAppInboxDataLoaded(enhancedMessages, response.syncToken, completion)
                 case .failure(let error):
                     Exponea.logger.log(.error, message: "AppInbox loading failed. \(error.localizedDescription)")
                     print(error)
@@ -58,7 +69,12 @@ final class AppInboxManager: AppInboxManagerType {
     }
 
     func fetchAppInboxItem(_ messageId: String, completion: @escaping (Result<MessageItem>) -> Void) {
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else {
+                Exponea.logger.log(.error, message: "Fetch AppInbox item stops due to obsolete thread")
+                completion(.failure(ExponeaError.stoppedProcess))
+                return
+            }
             // find message locally
             if let message = self.appInboxCache.getMessages().first(where: { msg in msg.id == messageId }) {
                 DispatchQueue.main.async {
@@ -82,18 +98,56 @@ final class AppInboxManager: AppInboxManagerType {
         }
     }
 
-    func markMessageAsRead(_ messageId: String, _ completition: ((Bool) -> Void)?) {
-        DispatchQueue.global(qos: .background).async {
+    func markMessageAsRead(_ message: MessageItem, _ completition: ((Bool) -> Void)?) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else {
+                Exponea.logger.log(.error, message: "MarkAsRead AppInbox stops due to obsolete thread")
+                DispatchQueue.main.async {
+                    completition?(false)
+                }
+                return
+            }
+            guard let syncToken = message.syncToken,
+                  let customerId = message.customerId,
+                  let customerUUID = UUID(uuidString: customerId) else {
+                Exponea.logger.log(.error, message: "Unable to mark message \(message.id) as read, try to fetch AppInbox")
+                DispatchQueue.main.async {
+                    completition?(false)
+                }
+                return
+            }
+            let customer: Customer?
+            do {
+                customer = try self.databaseManager.fetchCustomer(customerUUID)
+            } catch let error {
+                Exponea.logger.log(.error, message: "Unable to mark message \(message.id) as read, customer not found because: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    completition?(false)
+                }
+                return
+            }
+            guard let customer = customer else {
+                Exponea.logger.log(.error, message: "Unable to mark message \(message.id) as read, customer not found")
+                DispatchQueue.main.async {
+                    completition?(false)
+                }
+                return
+            }
             self.repository.postReadFlagAppInbox(
-                on: [messageId],
-                for: self.trackingManager.customerIds
+                on: [message.id],
+                for: customer.ids,
+                with: syncToken
             ) { result in
                 switch result {
                 case .success:
-                    self.markMessageDataAsRead(messageId)
-                    completition?(true)
-                case .failure(_):
-                    completition?(false)
+                    self.markMessageDataAsRead(message.id)
+                    DispatchQueue.main.async {
+                        completition?(true)
+                    }
+                case .failure:
+                    DispatchQueue.main.async {
+                        completition?(false)
+                    }
                 }
             }
         }
@@ -102,37 +156,48 @@ final class AppInboxManager: AppInboxManagerType {
     func markMessageDataAsRead(_ messageId: String) {
         var currentMessages = appInboxCache.getMessages()
         for index in currentMessages.indices {
-            if (currentMessages[index].id == messageId) {
+            if currentMessages[index].id == messageId {
                 currentMessages[index].read = true
             }
         }
         appInboxCache.setMessages(messages: currentMessages)
     }
 
-    func onAppInboxDataLoaded(_ response: AppInboxResponse, _ completion: @escaping (Result<[MessageItem]>) -> Void) {
-        if let syncToken = response.syncToken {
+    private func enhanceMessages(_ messages: [MessageItem]?, _ customerId: String, _ syncToken: String?) -> [MessageItem] {
+        guard let messages = messages, !messages.isEmpty else {
+            return []
+        }
+        return messages.map { msg in
+            var copy = msg
+            copy.customerId = customerId
+            copy.syncToken = syncToken
+            return copy
+        }
+    }
+
+    private func onAppInboxDataLoaded(_ messages: [MessageItem], _ syncToken: String?, _ completion: @escaping (Result<[MessageItem]>) -> Void) {
+        if let syncToken = syncToken {
             appInboxCache.setSyncToken(token: syncToken)
         }
-        let messages = response.messages ?? []
         let supportedMessages = messages.filter { msg in
             return SUPPORTED_MESSAGE_TYPES.contains(msg.type)
         }
         appInboxCache.addMessages(messages: supportedMessages)
         let imageUrls: [String] = supportedMessages
             .map { message in message.content?.imageUrl ?? "" }
-            .filter { imageUrl in imageUrl.isEmpty == false}
+            .filter { imageUrl in imageUrl.isEmpty == false }
         let allMessages = appInboxCache.getMessages()
-        if (imageUrls.isEmpty) {
+        if imageUrls.isEmpty {
             DispatchQueue.main.async {
                 completion(Result.success(allMessages))
             }
             return
         }
         for imageUrlString in imageUrls {
-            if (appInboxCache.hasImageData(at: imageUrlString)) {
+            if appInboxCache.hasImageData(at: imageUrlString) {
                 continue
             }
-            let imageData: Data? = tryDownloadImage(imageUrlString)
+            let imageData: Data? = ImageUtils.tryDownloadImage(imageUrlString)
             guard imageData != nil else {
                 continue
             }
@@ -143,33 +208,7 @@ final class AppInboxManager: AppInboxManagerType {
         }
     }
 
-    private func tryDownloadImage(_ imageSource: String?) -> Data? {
-        guard imageSource != nil,
-              let imageUrl = URL(string: imageSource!)
-                else {
-            Exponea.logger.log(.error, message: "Image cannot be downloaded \(imageSource ?? "<is nil>")")
-            return nil
-        }
-        let semaphore = DispatchSemaphore(value: 0)
-        var imageData: Data?
-        let dataTask = URLSession.shared.dataTask(with: imageUrl) { data, response, error in {
-            imageData = data
-            semaphore.signal()
-        }() }
-        dataTask.resume()
-        let awaitResult = semaphore.wait(timeout: .now() + 10.0)
-        switch (awaitResult) {
-        case .success:
-            // Nothing to do, let check imageData
-            break
-        case .timedOut:
-            Exponea.logger.log(.warning, message: "Image \(imageSource!) may be too large or slow connection - aborting")
-            dataTask.cancel()
-        }
-        return imageData
-    }
-
     func clear() {
-        self.appInboxCache.clear()
+        appInboxCache.clear()
     }
 }

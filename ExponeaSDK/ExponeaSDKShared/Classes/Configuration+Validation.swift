@@ -13,17 +13,18 @@ extension Configuration {
         case baseUrlInvalid
         case projectTokenInvalid(String)
         case projectMappingInvalid(EventType, Error)
+        case advancedAuthInvalid(String)
 
         public var errorDescription: String? {
             switch self {
             case .baseUrlInvalid:
                 return "Base url provided is not a valid url."
-
             case .projectTokenInvalid(let details):
                 return "Project token provided is not valid. \(details)"
-
             case .projectMappingInvalid(let eventType, let error):
                 return "Project mapping for event type \(eventType) is not valid. \(error.localizedDescription)"
+            case .advancedAuthInvalid(let message):
+                return message
             }
         }
     }
@@ -42,9 +43,14 @@ extension Configuration {
                 }
             }
         }
+        if advancedAuthEnabled && customAuthProvider == nil {
+            throw ConfigurationValidationError.advancedAuthInvalid(
+                "Advanced authorization flag has been enabled without provider"
+            )
+        }
     }
 
-    func validateProjectToken(projectToken: String) throws {
+    private func validateProjectToken(projectToken: String) throws {
         guard !projectToken.isEmpty else {
             throw ConfigurationValidationError.projectTokenInvalid("Project token cannot be empty string.")
         }

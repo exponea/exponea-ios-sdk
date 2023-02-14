@@ -17,18 +17,22 @@ class AppInboxCacheSpec: QuickSpec {
     static func getSampleMessage(
         id: String,
         read: Bool = true,
-        received: Double = Date().timeIntervalSince1970
+        received: Double = Date().timeIntervalSince1970,
+        type: String = "push",
+        data: [String: JSONValue] = [:]
     ) -> MessageItem {
         return MessageItem(
             id: id,
-            type:
-            "push",
+            type: type,
             read: read,
-            content: MessageItemContent(
-                title: nil, action: nil, actionUrl: nil, message: nil, imageUrl: nil, actions: nil,
-                attributes: ["sent_timestamp": .double(received)],
-                urlParams: nil, source: nil, silent: false, hasTrackingConsent: true, consentCategoryTracking: nil
-            )
+            rawReceivedTime: received,
+            rawContent: [
+                "attributes": .dictionary([
+                    "sent_timestamp": .double(received)
+                ]),
+                "silent": .bool(false),
+                "has_tracking_consent": .bool(true)
+            ].merging(data) { (_, new) in new }
         )
     }
 
@@ -73,13 +77,19 @@ class AppInboxCacheSpec: QuickSpec {
             }
 
             it("should keep AppInbox messages between instances") {
-                AppInboxCache().setMessages(messages: [AppInboxCacheSpec.getSampleMessage(id: "first-mock-id")])
-                expect(AppInboxCache().getMessages()).to(equal([AppInboxCacheSpec.getSampleMessage(id: "first-mock-id")]))
+                var firstMessage = AppInboxCacheSpec.getSampleMessage(id: "first-mock-id")
+                firstMessage.customerId = "some"
+                firstMessage.syncToken = "some"
+                AppInboxCache().setMessages(messages: [firstMessage])
+                var secondMessage = AppInboxCacheSpec.getSampleMessage(id: "first-mock-id")
+                secondMessage.customerId = "some"
+                secondMessage.syncToken = "some"
+                expect(AppInboxCache().getMessages()).to(equal([secondMessage]))
             }
             
             it("should save messages automatically latest first") {
                 let cache = AppInboxCache()
-                let now = Date().timeIntervalSince1970.doubleValue;
+                let now = Date().timeIntervalSince1970.doubleValue
                 let unsortedMessages = [
                     AppInboxCacheSpec.getSampleMessage(id: "id1", received: now - 20),
                     AppInboxCacheSpec.getSampleMessage(id: "id2", received: now - 10),

@@ -15,6 +15,7 @@ protocol DatabaseManagerType: AnyObject {
     var customers: [CustomerThreadSafe] { get }
 
     func trackEvent(with data: [DataType], into project: ExponeaProject) throws
+    func trackEvent(with data: [DataType], into project: ExponeaProject, for customerId: String?) throws
     func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws
     func updateEvent(withId id: NSManagedObjectID, withData data: DataType) throws
 
@@ -22,6 +23,7 @@ protocol DatabaseManagerType: AnyObject {
     func countTrackCustomer() throws -> Int
     func fetchTrackEvent() throws -> [TrackEventProxy]
     func countTrackEvent() throws -> Int
+    func fetchCustomer(_ uuid: UUID) throws -> Customer?
 
     func addRetry(_ object: DatabaseObjectProxy) throws
 

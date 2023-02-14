@@ -16,7 +16,7 @@ internal class MockTrackingManager: TrackingManagerType {
         let data: [DataType]?
     }
     public private(set) var trackedEvents: [TrackedEvent] = []
-    
+
     struct CallData: Equatable {
         let event: InAppMessageEvent
         let message: InAppMessage
@@ -44,9 +44,9 @@ internal class MockTrackingManager: TrackingManagerType {
     var hasActiveSession: Bool = false
 
     var flushingMode: FlushingMode = .manual
-    
+
     let onEventCallback: (EventType, [DataType]) -> Void
-    
+
     init(
         onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) {
@@ -61,13 +61,22 @@ internal class MockTrackingManager: TrackingManagerType {
         trackedEvents.append(TrackedEvent(type: type, data: payload))
         onEventCallback(type, payload)
     }
-    
+
     func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws {
+        try processTrack(type, with: data, trackingAllowed: trackingAllowed, for: nil)
+    }
+    
+    func processTrack(
+        _ type: ExponeaSDK.EventType,
+        with data: [ExponeaSDK.DataType]?,
+        trackingAllowed: Bool,
+        for customerId: String?
+    ) throws {
         var payload: [DataType] = data ?? []
         if let stringEventType = getEventTypeString(type: type) {
             payload.append(.eventType(stringEventType))
         }
-        if (trackingAllowed) {
+        if trackingAllowed {
             trackedEvents.append(TrackedEvent(type: type, data: payload))
         }
         onEventCallback(type, payload)
@@ -129,7 +138,7 @@ internal class MockTrackingManager: TrackingManagerType {
     }
     
     func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool) {
-        if (trackingAllowed) {
+        if trackingAllowed {
             trackedInappEvents.append(CallData(event: event, message: message))
         }
         do {
@@ -147,14 +156,14 @@ internal class MockTrackingManager: TrackingManagerType {
             if case .click(let text, let url) = event {
                 eventData["text"] = .string(text)
                 eventData["link"] = .string(url)
-                if (GdprTracking.isTrackForced(url)) {
+                if GdprTracking.isTrackForced(url) {
                     eventData["tracking_forced"] = .bool(true)
                 }
             }
             if case .error(let errorMessage) = event {
                 eventData["error"] = .string(errorMessage)
             }
-            if (message.consentCategoryTracking != nil) {
+            if message.consentCategoryTracking != nil {
                 eventData["consent_category_tracking"] = .string(message.consentCategoryTracking!)
             }
             try processTrack(
@@ -186,7 +195,7 @@ internal class MockTrackingManager: TrackingManagerType {
         case .appInbox: return Constants.EventTypes.appInbox
         }
     }
-    
+
     func clearCalls() {
         trackedInappEvents.removeAll()
         trackedEvents.removeAll()

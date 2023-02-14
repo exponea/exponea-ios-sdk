@@ -50,7 +50,7 @@ public enum EventType: String, Codable {
 
     // Tracking of in-app message related events
     case banner = "BANNER"
-    
+
     // Tracking of AppInbox message related events
     case appInbox = "APP_INBOX"
 }

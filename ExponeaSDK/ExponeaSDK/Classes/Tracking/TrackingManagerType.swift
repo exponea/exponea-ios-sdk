@@ -30,8 +30,10 @@ protocol TrackingManagerType: AnyObject {
     ///   - data: Data associated with this particular event that should be tracked along.
     /// - Throws: An error of type `TrackingManagerError`.
     func track(_ type: EventType, with data: [DataType]?) throws
-    
+
     func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws
+
+    func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool, for customerId: String?) throws
 
     // Function used to track in-app message banner shown event
     func trackInAppMessageShown(message: InAppMessage, trackingAllowed: Bool)

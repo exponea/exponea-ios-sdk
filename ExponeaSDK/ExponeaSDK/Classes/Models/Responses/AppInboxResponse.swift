@@ -20,6 +20,16 @@ public struct AppInboxResponse: Codable {
         self.syncToken = try container.decodeIfPresent(String.self, forKey: .syncToken)
     }
 
+    public init(
+        success: Bool,
+        messages: [MessageItem]?,
+        syncToken: String?
+    ) {
+        self.success = success
+        self.messages = messages
+        self.syncToken = syncToken
+    }
+
     enum CodingKeys: String, CodingKey {
         case success
         case messages

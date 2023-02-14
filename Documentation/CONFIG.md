@@ -82,6 +82,10 @@ You can configure the SDK providing a configuration file with configuration vari
 * Controls how many times an event should be flushed before aborting. Useful for example if the API is down or some other temporary error happens.
 * Default value is `5`.
 
+#### advancedAuthEnabled
+
+* If set, advanced authorization is used for communication with BE for API listed in [JWT Authorization](./AUTHORIZATION.md)
+* For more info see [authorization setup](./AUTHORIZATION.md)
 
 ## Configuring the SDK
 
@@ -162,7 +166,8 @@ Exponea.shared.configure(
 	),
 	automaticSessionTracking: .enabled(timeout: 123),
 	defaultProperties: ["prop-1": "value-1", "prop-2": 123],
-	flushingSetup: Exponea.FlushingSetup(mode: .periodic(100), maxRetries: 5)
+	flushingSetup: Exponea.FlushingSetup(mode: .periodic(100), maxRetries: 5),
+	advancedAuthEnabled: true
 )
 ```
 

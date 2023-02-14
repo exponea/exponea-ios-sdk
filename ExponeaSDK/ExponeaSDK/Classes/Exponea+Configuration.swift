@@ -146,7 +146,8 @@ public extension ExponeaInternal {
         automaticSessionTracking: Exponea.AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
         flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
-        allowDefaultCustomerProperties: Bool? = nil
+        allowDefaultCustomerProperties: Bool? = nil,
+        advancedAuthEnabled: Bool? = nil
     ) {
         do {
             let configuration = try Configuration(
@@ -162,7 +163,8 @@ public extension ExponeaInternal {
                 tokenTrackFrequency: automaticPushNotificationTracking.tokenTrackFrequency,
                 appGroup: automaticPushNotificationTracking.appGroup,
                 flushEventMaxRetries: flushingSetup.maxRetries,
-                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
+                advancedAuthEnabled: advancedAuthEnabled
             )
             self.configuration = configuration
             pushNotificationsDelegate = automaticPushNotificationTracking.delegate
@@ -179,7 +181,8 @@ public extension ExponeaInternal {
         automaticSessionTracking: Exponea.AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
         flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
-        allowDefaultCustomerProperties: Bool? = nil
+        allowDefaultCustomerProperties: Bool? = nil,
+        advancedAuthEnabled: Bool? = nil
     ) {
         do {
             var willRunSelfCheck = false
@@ -200,7 +203,8 @@ public extension ExponeaInternal {
                 tokenTrackFrequency: pushNotificationTracking.tokenTrackFrequency,
                 appGroup: pushNotificationTracking.appGroup,
                 flushEventMaxRetries: flushingSetup.maxRetries,
-                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
+                advancedAuthEnabled: advancedAuthEnabled
             )
             self.configuration = configuration
             self.pushNotificationsDelegate = pushNotificationTracking.delegate

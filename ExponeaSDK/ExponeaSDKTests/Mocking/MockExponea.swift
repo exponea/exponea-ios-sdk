@@ -65,7 +65,8 @@ final class MockExponeaImplementation: ExponeaInternal {
             
             self.appInboxManager = AppInboxManager(
                 repository: repository,
-                trackingManager: self.trackingManager!
+                trackingManager: self.trackingManager!,
+                database: database
             )
             
             processSavedCampaignData()

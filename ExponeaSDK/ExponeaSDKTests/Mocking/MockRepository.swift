@@ -74,11 +74,20 @@ final class MockRepository: RepositoryType {
         completion(.success("1.0.0"))
     }
 
-    func fetchAppInbox(for customerIds: [String : String], with syncToken: String?, completion: @escaping (Result<AppInboxResponse>) -> Void) {
+    func fetchAppInbox(
+        for customerIds: [String : String],
+        with syncToken: String?,
+        completion: @escaping (Result<AppInboxResponse>) -> Void
+    ) {
         completion(fetchAppInboxResult)
     }
 
-    func postReadFlagAppInbox(on messageIds: [String], for customerIds: [String : String], completion: @escaping (EmptyResult<RepositoryError>) -> Void) {
+    func postReadFlagAppInbox(
+        on messageIds: [String],
+        for customerIds: [String: String],
+        with syncToken: String,
+        completion: @escaping (EmptyResult<RepositoryError>) -> Void
+    ) {
         completion(.success)
     }
 }

@@ -8,6 +8,7 @@
 
 import Foundation
 import UserNotifications
+import UIKit
 
 /// Protocol of what types of events are available in the Exponea SDK.
 public protocol ExponeaType: AnyObject {
@@ -54,7 +55,8 @@ public protocol ExponeaType: AnyObject {
         automaticSessionTracking: Exponea.AutomaticSessionTracking,
         defaultProperties: [String: JSONConvertible]?,
         flushingSetup: Exponea.FlushingSetup,
-        allowDefaultCustomerProperties: Bool?
+        allowDefaultCustomerProperties: Bool?,
+        advancedAuthEnabled: Bool?
     )
 
     /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
@@ -66,13 +68,15 @@ public protocol ExponeaType: AnyObject {
     ///   - appGroup: The app group used to share data among extensions, fx. for push delivered tracking.
     ///   - defaultProperties: A list of properties to be added to all tracking events.
     ///   - allowDefaultCustomerProperties: Flag if apply default properties list to 'identifyCustomer' tracke event
+    ///   - advancedAuthEnabled: Flag if advanced authorization used for communication with BE
     func configure(
         projectToken: String,
         authorization: Authorization,
         baseUrl: String?,
         appGroup: String?,
         defaultProperties: [String: JSONConvertible]?,
-        allowDefaultCustomerProperties: Bool?
+        allowDefaultCustomerProperties: Bool?,
+        advancedAuthEnabled: Bool?
     )
 
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
@@ -86,6 +90,7 @@ public protocol ExponeaType: AnyObject {
     ///   - appGroup: The app group used to share data among extensions, fx. for push delivered tracking.
     ///   - defaultProperties: A list of properties to be added to all tracking events.
     ///   - allowDefaultCustomerProperties: Flag if apply default properties list to 'identifyCustomer' tracke event
+    ///   - advancedAuthEnabled: Flag if advanced authorization used for communication with BE
     func configure(
         projectToken: String,
         projectMapping: [EventType: [ExponeaProject]],
@@ -93,7 +98,8 @@ public protocol ExponeaType: AnyObject {
         baseUrl: String?,
         appGroup: String?,
         defaultProperties: [String: JSONConvertible]?,
-        allowDefaultCustomerProperties: Bool?
+        allowDefaultCustomerProperties: Bool?,
+        advancedAuthEnabled: Bool?
     )
 
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
@@ -194,10 +200,32 @@ public protocol ExponeaType: AnyObject {
     func trackInAppMessageCloseClickWithoutTrackingConsent(message: InAppMessage)
 
     /// Track AppInbox message detail opened event
+    /// Event is tracked if parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    func trackAppInboxOpened(message: MessageItem)
+
+    /// Track AppInbox message detail opened event
     func trackAppInboxOpenedWithoutTrackingConsent(message: MessageItem)
 
     /// Track AppInbox message click event
+    /// Event is tracked if one or both conditions met:
+    ///     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    ///     - parameter 'buttonLink' has TRUE value of query parameter 'xnpe_force_track'
+    func trackAppInboxClick(action: MessageItemAction, message: MessageItem)
+
+    /// Track AppInbox message click event
     func trackAppInboxClickWithoutTrackingConsent(action: MessageItemAction, message: MessageItem)
+
+    /// Marks AppInbox message as read
+    func markAppInboxAsRead(_ message: MessageItem, completition: ((Bool) -> Void)?)
+
+    /// Retrieves Button for opening of AppInbox list
+    func getAppInboxButton() -> UIButton
+
+    /// Retrieves UIViewController for AppInbox list
+    func getAppInboxListViewController() -> UIViewController
+
+    /// Retrieves UIViewController for AppInbox message detail
+    func getAppInboxDetailViewController(_ messageId: String) -> UIViewController
 
     // MARK: - Sessions -
 
@@ -237,7 +265,10 @@ public protocol ExponeaType: AnyObject {
     /// Anonymizes the user and starts tracking as if the app was just installed.
     /// All customer identification (including cookie) will be permanently deleted.
     /// Switches tracking into provided exponeaProject
-    func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?)
+    func anonymize(
+        exponeaProject: ExponeaProject,
+        projectMapping: [EventType: [ExponeaProject]]?
+    )
 
     func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?)
 

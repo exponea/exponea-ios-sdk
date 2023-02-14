@@ -261,7 +261,8 @@ class ConfigurationSpec: QuickSpec {
                     tokenTrackFrequency: .daily,
                     appGroup: appGroup,
                     flushEventMaxRetries: 200,
-                    allowDefaultCustomerProperties: true
+                    allowDefaultCustomerProperties: true,
+                    advancedAuthEnabled: false
                 )
                 configuration.saveToUserDefaults()
                 expect(Configuration.loadFromUserDefaults(appGroup: appGroup)).to(equal(configuration))

@@ -15,7 +15,7 @@ import ExponeaSDKShared
 final class HtmlNormalizerSpec: QuickSpec {
     override func spec() {
 
-        it ("should find Close and Action url") {
+        it("should find Close and Action url") {
             let rawHtml = "<html><body>" +
                     "<div data-actiontype='close'>Close</div>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
@@ -25,7 +25,35 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.actions.count).to(equal(1))
         }
 
-        it ("should find Close and multiple Action url") {
+        it("should find Action url by datalink and ahref") {
+            let rawHtml = "<html><body>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<a href='https://example.com/1'>Action 1</a>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
+                makeImagesOffline: false, ensureCloseButton: false, allowAnchorButton: true)
+            )
+            expect(result.closeActionUrl).to(beNil())
+            expect(result.actions.count).to(equal(2))
+        }
+
+        it("should remove target from ahref even if ahref accepted") {
+            let rawHtml = "<html><body>" +
+                    "<a href='https://example.com/1' target='_self'>Action 1</a>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
+                makeImagesOffline: false, ensureCloseButton: false, allowAnchorButton: true)
+            )
+            expect(result.closeActionUrl).to(beNil())
+            expect(result.actions.count).to(equal(1))
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("target")).to(beFalse())
+        }
+
+        it("should find Close and multiple Action url") {
             let rawHtml = "<html><body>" +
                     "<div data-actiontype='close'>Close</div>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
@@ -35,8 +63,8 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.closeActionUrl).toNot(beNil())
             expect(result.actions.count).to(equal(2))
         }
-        
-        it ("should find browser action") {
+
+        it("should find browser action") {
             let rawHtml = "<html><body>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "</body></html>"
@@ -45,7 +73,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.actions[0].actionUrl).to(equal("https://example.com/1"))
         }
 
-        it ("should find deeplink action") {
+        it("should find deeplink action") {
             let rawHtml = "<html><body>" +
                     "<div data-link='message:%3C3358921718340173851@unknownmsgid%3E'>Action 1</div>" +
                     "</body></html>"
@@ -54,7 +82,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.actions[0].actionUrl).to(equal("message:%3C3358921718340173851@unknownmsgid%3E"))
         }
 
-        it ("should find Close and no Action url") {
+        it("should find Close and no Action url") {
             let rawHtml = "<html><body>" +
                     "<div data-actiontype='close'>Close</div>" +
                     "</body></html>"
@@ -63,7 +91,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.actions.count).to(equal(0))
         }
 
-        it ("should find default Close and Action url") {
+        it("should find default Close and Action url") {
             let rawHtml = "<html><body>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "</body></html>"
@@ -72,7 +100,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.actions.count).to(equal(1))
         }
 
-        it ("should find default Close and multiple Action url") {
+        it("should find default Close and multiple Action url") {
             let rawHtml = "<html><body>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "<div data-link='https://example.com/2'>Action 2</div>" +
@@ -82,7 +110,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.actions.count).to(equal(2))
         }
 
-        it ("should find default Close and no Action url") {
+        it("should find default Close and no Action url") {
             let rawHtml = "<html><body>" +
                     "<div>Hello world</div>" +
                     "</body></html>"
@@ -91,7 +119,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.actions.count).to(equal(0))
         }
 
-        it ("should remove Javascript") {
+        it("should remove Javascript") {
             let rawHtml = "<html><body>" +
                     "<div data-actiontype='close'>Close</div>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
@@ -99,10 +127,14 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<script>alert('hello')</script>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.html!.contains("script")).to(equal(false))
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("script")).to(equal(false))
         }
 
-        it ("should remove Link") {
+        it("should remove Link") {
             let rawHtml = "<html>" +
                     "<head>" +
                     "<link rel='stylesheet' href='styles.css'>" +
@@ -113,26 +145,34 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/2'>Action 2</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.html!.contains("<link")).to(equal(false))
-            expect(result.html!.contains("styles.css")).to(equal(false))
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("<link")).to(equal(false))
+            expect(normalizedHtml.contains("styles.css")).to(equal(false))
         }
 
         /**
          Represents test, that any of HTML JS events are remove
          https://www.w3schools.com/tags/ref_eventattributes.asp
          */
-        it ("should remove Inline Javascript") {
+        it("should remove Inline Javascript") {
             let rawHtml = "<html><body>" +
                     "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "<div data-link='https://example.com/2'>Action 2</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.html!.contains("onclick")).to(equal(false))
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("onclick")).to(equal(false))
             expect(result.closeActionUrl).toNot(beNil())
         }
 
-        it ("should remove Title") {
+        it("should remove Title") {
             let rawHtml = "<html>" +
                     "<head><title>Should be removed</title></head>" +
                     "<body>" +
@@ -141,11 +181,15 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/2'>Action 2</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.html!.contains("title")).to(equal(false))
-            expect(result.html!.contains("Should be removed")).to(equal(false))
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("title")).to(equal(false))
+            expect(normalizedHtml.contains("Should be removed")).to(equal(false))
         }
 
-        it ("should remove Meta") {
+        it("should remove Meta") {
             let rawHtml = "<html>" +
                     "<head>" +
                     "<meta name='keywords' content='HTML, CSS, JavaScript'>" +
@@ -157,16 +201,20 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/2'>Action 2</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.html!.contains("meta")).to(equal(false))
-            expect(result.html!.contains("HTML, CSS, JavaScript")).to(equal(false))
-            expect(result.html!.contains("John Doe")).to(equal(false))
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("meta")).to(equal(false))
+            expect(normalizedHtml.contains("HTML, CSS, JavaScript")).to(equal(false))
+            expect(normalizedHtml.contains("John Doe")).to(equal(false))
         }
 
         /**
          Removes any 'href' from file. Final html contains <a href> but only for close and action buttons and only as final HTML.
          See possible tags: https://www.w3schools.com/tags/att_href.asp
          */
-        it ("should remove any Href attribute") {
+        it("should remove any Href attribute") {
             let rawHtml = "<html>" +
                     "<head>" +
                     "<base href=\"https://example/hreftoremove\" target=\"_blank\">" +
@@ -185,14 +233,21 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/2'>Action 2</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.html!.contains("https://example/hreftoremove")).to(equal(false))
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("https://example/hreftoremove")).to(equal(false))
             expect(result.closeActionUrl).toNot(beNil())
             expect(result.actions.count).to(equal(2))
         }
 
-        it ("should transform Image URL into Base64") {
+        it("should transform Image URL into Base64") {
             let cache = InAppMessagesCache()
-            cache.saveImageData(at: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg", data: "data".data(using: .utf8)!)
+            cache.saveImageData(
+                at: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg",
+                data: "data".data(using: .utf8) ?? Data()
+            )
             let rawHtml = "<html>" +
                     "<body>" +
                     "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg'>" +
@@ -201,11 +256,15 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/2'>Action 2</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.html!.contains("upload.wikimedia.org")).to(equal(false))
-            expect(result.html!.contains("data:image/png;base64")).to(equal(true))
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("upload.wikimedia.org")).to(equal(false))
+            expect(normalizedHtml.contains("data:image/png;base64")).to(equal(true))
         }
 
-        it ("should NOT transform invalid Image URL into Base64") {
+        it("should NOT transform invalid Image URL into Base64") {
             let rawHtml = "<html>" +
                     "<body>" +
                     "<img src='https://nonexisting.sk/image_that_not_exists.jpg'>" +

@@ -127,54 +127,68 @@ class TrackingConsentManager : TrackingConsentManagerType {
         }
         self.trackingManager.trackInAppMessageError(message: message, error: error, trackingAllowed: trackingAllowed)
     }
-    
+
     func trackAppInboxClick(message: MessageItem, buttonText: String?, buttonLink: String?, mode: MODE) {
+        guard let customerId = message.customerId else {
+            Exponea.logger.log(.error, message: "AppInbox message has no customerId")
+            return
+        }
         var trackingAllowed = true
-        if (mode == .CONSIDER_CONSENT && !message.hasTrackingConsent && !GdprTracking.isTrackForced(buttonLink)) {
-            Exponea.logger.log(.error, message: "Event for clicked MessageInbox is not tracked because consent is not given")
+        if mode == .CONSIDER_CONSENT && !message.hasTrackingConsent && !GdprTracking.isTrackForced(buttonLink) {
+            Exponea.logger.log(.error, message: "Event for clicked AppInbox is not tracked because consent is not given")
             trackingAllowed = false
         }
-        var eventData = message.content?.trackingData ?? []
-        eventData.append(.properties([
+        var eventData = message.content?.trackingData ?? [:]
+        eventData.merge([
             "action_type": .string("app inbox"),
             "status": .string("clicked"),
             "url": .string(buttonLink ?? ""),
             "cta": .string(buttonText ?? ""),
             "platform": .string("ios")
-        ]))
-        if (GdprTracking.isTrackForced(buttonLink)) {
-            eventData = eventData.addProperties(["tracking_forced": true])
+        ]) { _, new in new }
+        if GdprTracking.isTrackForced(buttonLink) {
+            eventData.merge(["tracking_forced": .bool(true)]) { _, new in new }
         }
-        eventData.append(.timestamp(Date().timeIntervalSince1970))
         do {
             try self.trackingManager.processTrack(
                 .appInbox,
-                with: eventData,
-                trackingAllowed: trackingAllowed
+                with: [
+                    .properties(eventData),
+                    .timestamp(Date().timeIntervalSince1970)
+                ],
+                trackingAllowed: trackingAllowed,
+                for: customerId
             )
         } catch {
             Exponea.logger.log(.error, message: "Error tracking AppInbox clicked: \(error.localizedDescription)")
         }
     }
-    
+
     func trackAppInboxOpened(message: MessageItem, mode: MODE) {
+        guard let customerId = message.customerId else {
+            Exponea.logger.log(.error, message: "AppInbox message contains no customerId")
+            return
+        }
         var trackingAllowed = true
-        if (mode == .CONSIDER_CONSENT && !message.hasTrackingConsent) {
-            Exponea.logger.log(.error, message: "Event for opened MessageInbox is not tracked because consent is not given")
+        if mode == .CONSIDER_CONSENT && !message.hasTrackingConsent {
+            Exponea.logger.log(.error, message: "Event for opened AppInbox is not tracked because consent is not given")
             trackingAllowed = false
         }
-        var eventData = message.content?.trackingData ?? []
-        eventData.append(.properties([
+        var eventData = message.content?.trackingData ?? [:]
+        eventData.merge([
             "action_type": .string("app inbox"),
             "status": .string("opened"),
             "platform": .string("ios")
-        ]))
-        eventData.append(.timestamp(Date().timeIntervalSince1970))
+        ]) { _, new in new }
         do {
             try self.trackingManager.processTrack(
                 .appInbox,
-                with: eventData,
-                trackingAllowed: trackingAllowed
+                with: [
+                    .properties(eventData),
+                    .timestamp(Date().timeIntervalSince1970)
+                ],
+                trackingAllowed: trackingAllowed,
+                for: customerId
             )
         } catch {
             Exponea.logger.log(.error, message: "Error tracking AppInbox opened: \(error.localizedDescription)")

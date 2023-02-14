@@ -138,6 +138,10 @@
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="Y6W-OH-hqX" id="JhK-Kh-a2h"/>
+                                    <outlet property="delegate" destination="Y6W-OH-hqX" id="0zd-Oc-me7"/>
+                                </connections>
                             </tableView>
                             <stackView opaque="NO" contentMode="center" axis="vertical" distribution="equalCentering" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="nli-7D-HEZ" userLabel="status_view">
                                 <rect key="frame" x="32" y="366" width="326" height="112.33333333333331"/>
@@ -193,7 +197,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4UM-d1-sVj">
+                            <wkWebView hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HiM-ez-Aad">
+                                <rect key="frame" x="0.0" y="47" width="390" height="797"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
+                            <scrollView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4UM-d1-sVj">
                                 <rect key="frame" x="0.0" y="47" width="390" height="797"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hEu-Qf-vp5" userLabel="message_image">
@@ -361,9 +373,13 @@ Diam maecenas sed enim ut sem viverra aliquet eget. Enim diam vulputate ut phare
                         <viewLayoutGuide key="safeArea" id="jLV-br-TLB"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="HiM-ez-Aad" firstAttribute="trailing" secondItem="jLV-br-TLB" secondAttribute="trailing" id="0Sw-TK-s4X"/>
                             <constraint firstItem="4UM-d1-sVj" firstAttribute="leading" secondItem="jLV-br-TLB" secondAttribute="leading" id="GQO-SD-enB"/>
+                            <constraint firstItem="HiM-ez-Aad" firstAttribute="top" secondItem="jLV-br-TLB" secondAttribute="top" id="V79-MY-zXW"/>
                             <constraint firstAttribute="bottom" secondItem="4UM-d1-sVj" secondAttribute="bottom" id="Z34-Yr-XL3"/>
+                            <constraint firstAttribute="bottom" secondItem="HiM-ez-Aad" secondAttribute="bottom" id="cf0-4O-BPk"/>
                             <constraint firstItem="4UM-d1-sVj" firstAttribute="top" secondItem="jLV-br-TLB" secondAttribute="top" id="dFl-ph-rPt"/>
+                            <constraint firstItem="HiM-ez-Aad" firstAttribute="leading" secondItem="jLV-br-TLB" secondAttribute="leading" id="pZx-HG-yip"/>
                             <constraint firstItem="4UM-d1-sVj" firstAttribute="trailing" secondItem="jLV-br-TLB" secondAttribute="trailing" id="ueE-Xy-0Dp"/>
                         </constraints>
                     </view>
@@ -374,9 +390,11 @@ Diam maecenas sed enim ut sem viverra aliquet eget. Enim diam vulputate ut phare
                         <outlet property="action4" destination="Y2d-mu-oFS" id="s7M-NR-Lyd"/>
                         <outlet property="actionMain" destination="w85-Jt-aba" id="bCb-KJ-DVY"/>
                         <outlet property="actionsContainer" destination="R3d-UO-M2N" id="nK7-Qa-eSi"/>
+                        <outlet property="htmlContainer" destination="HiM-ez-Aad" id="F7E-xO-2Qt"/>
                         <outlet property="message" destination="RNr-OO-rdj" id="8kO-c8-Gtz"/>
                         <outlet property="messageImage" destination="hEu-Qf-vp5" id="Vjv-Ta-kcX"/>
                         <outlet property="messageTitle" destination="IR7-Pp-9Te" id="ova-5Z-bMh"/>
+                        <outlet property="pushContainer" destination="4UM-d1-sVj" id="ciJ-0z-7xp"/>
                         <outlet property="receivedTime" destination="pXW-1k-zIO" id="URU-Ee-1Vp"/>
                     </connections>
                 </viewController>

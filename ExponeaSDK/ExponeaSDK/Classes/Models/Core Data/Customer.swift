@@ -18,6 +18,12 @@ class Customer: NSManagedObjectWithContext {
         return request
     }
 
+    @nonobjc public class func fetchRequest(uuid: UUID) -> NSFetchRequest<Customer> {
+        let request = fetchRequest()
+        request.predicate = NSPredicate(format: "uuid == %@", uuid as CVarArg)
+        return request
+    }
+
     @NSManaged public var uuid: UUID
     @NSManaged public var creationTimestamp: TimeInterval
     @NSManaged public var pushToken: String?

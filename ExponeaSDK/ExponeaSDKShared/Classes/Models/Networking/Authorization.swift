@@ -13,6 +13,7 @@ import Foundation
 public enum Authorization: Equatable, Codable {
     case none
     case token(String)
+    case bearer(token: String)
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -29,6 +30,7 @@ public enum Authorization: Equatable, Codable {
         if components.count == 2 {
             switch components.first {
             case "Token": self = .token(String(components[1]))
+            case "Bearer": self = .bearer(token: String(components[1]))
             default: break
             }
         }
@@ -46,7 +48,8 @@ public enum Authorization: Equatable, Codable {
     public func encode() -> String? {
         switch self {
         case .none: return nil
-        case .token(let token): return "Token \(token)"
+        case let .token(token): return "Token \(token)"
+        case let .bearer(token): return "Bearer \(token)"
         }
     }
 }
@@ -58,6 +61,8 @@ extension Authorization: CustomStringConvertible {
             return "No Authorization"
         case .token:
             return "Token Authorization (token redacted)"
+        case .bearer:
+            return "Bearer Authorization (token redacted)"
         }
     }
 }
@@ -67,8 +72,10 @@ extension Authorization: CustomDebugStringConvertible {
         switch self {
         case .none:
             return "No Authorization"
-        case .token(let token):
+        case let .token(token):
             return "Token Authorization (\(token))"
+        case let .bearer(token):
+            return "Bearer Authorization (\(token))"
         }
     }
 }
