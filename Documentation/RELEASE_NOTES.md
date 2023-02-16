@@ -1,4 +1,11 @@
 ## Release Notes
+## Release Notes for 2.15.0
+#### February 16, 2023
+* Features
+  * Extended App Inbox functionality with new HTML message type - Inbox message
+  * All SDK methods are invoked after SDK has been initialised
+  * Added support for Customer token authorization
+
 ## Release Notes for 2.14.0
 #### December 15, 2022
 * Features
