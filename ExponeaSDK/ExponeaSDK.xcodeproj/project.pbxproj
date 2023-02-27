@@ -207,6 +207,12 @@
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */; };
 		3384EFC629965EEB009A5981 /* Execute+AfterInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */; };
+		33FC6CC229A90ED5001F113F /* OnMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC129A90ED5001F113F /* OnMain.swift */; };
+		33FC6CC429A910BA001F113F /* SafeIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC329A910BA001F113F /* SafeIndex.swift */; };
+		33FC6CC629A9123E001F113F /* Autolayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC529A9123E001F113F /* Autolayout.swift */; };
+		33FC6CC829A912CC001F113F /* Extension+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC729A912CC001F113F /* Extension+UIView.swift */; };
+		33FC6CCA29A9158F001F113F /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC929A9158F001F113F /* Reusable.swift */; };
+		33FC6CCC29A9195B001F113F /* Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CCB29A9195B001F113F /* Typealiases.swift */; };
 		4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */; };
 		4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3F5F2C22DF98C00069E71D /* MockExponea.swift */; };
 		55130C4928DDC81600B4FE77 /* TrackingConsentManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4828DDC81600B4FE77 /* TrackingConsentManagerType.swift */; };
@@ -215,7 +221,6 @@
 		55130C5128E425D600B4FE77 /* TrackConsentManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */; };
 		552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */; };
 		552772CB28EDAF3A000ACFD5 /* AppInboxListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */; };
-		552772D128EEF30E000ACFD5 /* AppInboxTemplates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 552772D028EEF30E000ACFD5 /* AppInboxTemplates.storyboard */; };
 		5527979B28D8B6FA002B2B77 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5527979A28D8B6FA002B2B77 /* SwiftSoup */; };
 		5527979D28D98C15002B2B77 /* GdprTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5527979C28D98C15002B2B77 /* GdprTracking.swift */; };
 		55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D482953051E001D95B8 /* AppInboxParser.swift */; };
@@ -238,7 +243,6 @@
 		55DA6EC0290AD65200B5B285 /* AppInboxCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EBF290AD65200B5B285 /* AppInboxCache.swift */; };
 		55DA6EC2290AE44300B5B285 /* AppInboxMarkReadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EC1290AE44300B5B285 /* AppInboxMarkReadRequest.swift */; };
 		55EFD792291A6C26002569FB /* AppInboxCacheSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD791291A6C26002569FB /* AppInboxCacheSpec.swift */; };
-		55EFD794291BCC44002569FB /* appInbox.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55EFD793291BCC44002569FB /* appInbox.xcassets */; };
 		55EFD79B292245A5002569FB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 55EFD79A292245A5002569FB /* Localizable.strings */; };
 		55EFD79F29224FFF002569FB /* AppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD79E29224FFF002569FB /* AppInboxProvider.swift */; };
 		55EFD7A129225060002569FB /* DefaultAppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD7A029225060002569FB /* DefaultAppInboxProvider.swift */; };
@@ -654,6 +658,12 @@
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpoInitManager.swift; sourceTree = "<group>"; };
 		3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Execute+AfterInit.swift"; sourceTree = "<group>"; };
+		33FC6CC129A90ED5001F113F /* OnMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnMain.swift; sourceTree = "<group>"; };
+		33FC6CC329A910BA001F113F /* SafeIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeIndex.swift; sourceTree = "<group>"; };
+		33FC6CC529A9123E001F113F /* Autolayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autolayout.swift; sourceTree = "<group>"; };
+		33FC6CC729A912CC001F113F /* Extension+UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIView.swift"; sourceTree = "<group>"; };
+		33FC6CC929A9158F001F113F /* Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
+		33FC6CCB29A9195B001F113F /* Typealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
 		486299A97905BE77A09EC216 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackUniversalLinkSpec.swift; sourceTree = "<group>"; };
 		4C3F5F2C22DF98C00069E71D /* MockExponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExponea.swift; sourceTree = "<group>"; };
@@ -664,7 +674,6 @@
 		55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackConsentManagerSpec.swift; sourceTree = "<group>"; };
 		552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ExponeaInternal+AppInbox.swift"; sourceTree = "<group>"; };
 		552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxListViewController.swift; sourceTree = "<group>"; };
-		552772D028EEF30E000ACFD5 /* AppInboxTemplates.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AppInboxTemplates.storyboard; sourceTree = "<group>"; };
 		5527979C28D98C15002B2B77 /* GdprTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTracking.swift; sourceTree = "<group>"; };
 		552BE09128A1772C00E245B3 /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = SwiftSoup.xcframework; sourceTree = "<group>"; };
 		55391D482953051E001D95B8 /* AppInboxParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxParser.swift; sourceTree = "<group>"; };
@@ -688,7 +697,6 @@
 		55DA6EBF290AD65200B5B285 /* AppInboxCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxCache.swift; sourceTree = "<group>"; };
 		55DA6EC1290AE44300B5B285 /* AppInboxMarkReadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxMarkReadRequest.swift; sourceTree = "<group>"; };
 		55EFD791291A6C26002569FB /* AppInboxCacheSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxCacheSpec.swift; sourceTree = "<group>"; };
-		55EFD793291BCC44002569FB /* appInbox.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = appInbox.xcassets; sourceTree = "<group>"; };
 		55EFD79A292245A5002569FB /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		55EFD79E29224FFF002569FB /* AppInboxProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxProvider.swift; sourceTree = "<group>"; };
 		55EFD7A029225060002569FB /* DefaultAppInboxProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAppInboxProvider.swift; sourceTree = "<group>"; };
@@ -1395,19 +1403,31 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		33FC6CC029A90ECD001F113F /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				33FC6CC129A90ED5001F113F /* OnMain.swift */,
+				33FC6CC329A910BA001F113F /* SafeIndex.swift */,
+				33FC6CC529A9123E001F113F /* Autolayout.swift */,
+				33FC6CC729A912CC001F113F /* Extension+UIView.swift */,
+				33FC6CC929A9158F001F113F /* Reusable.swift */,
+				33FC6CCB29A9195B001F113F /* Typealiases.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		552772C328ED86E0000ACFD5 /* AppInbox */ = {
 			isa = PBXGroup;
 			children = (
+				33FC6CC029A90ECD001F113F /* Helpers */,
 				552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */,
 				552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */,
-				552772D028EEF30E000ACFD5 /* AppInboxTemplates.storyboard */,
 				556DBCBB28F03238009E3154 /* MessageItemCell.swift */,
 				55BB0E1D28F44EDA00D6243A /* AppInboxDetailViewController.swift */,
 				55DA6EB9290ABD4800B5B285 /* AppInboxManagerType.swift */,
 				55DA6EBB290ABD7500B5B285 /* AppInboxManager.swift */,
 				55DA6EBD290AD5E900B5B285 /* AppInboxCacheType.swift */,
 				55DA6EBF290AD65200B5B285 /* AppInboxCache.swift */,
-				55EFD793291BCC44002569FB /* appInbox.xcassets */,
 				55EFD79E29224FFF002569FB /* AppInboxProvider.swift */,
 				55EFD7A029225060002569FB /* DefaultAppInboxProvider.swift */,
 			);
@@ -2304,8 +2324,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55EFD794291BCC44002569FB /* appInbox.xcassets in Resources */,
-				552772D128EEF30E000ACFD5 /* AppInboxTemplates.storyboard in Resources */,
 				05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2498,6 +2516,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0EB5D9320B811F900F1031F /* PushNotificationManager.swift in Sources */,
+				33FC6CC429A910BA001F113F /* SafeIndex.swift in Sources */,
 				05D4A800247D252D00864DC1 /* PushNotificationSelfCheck.swift in Sources */,
 				054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */,
 				05B4D64F238FEC1000F5010F /* InAppMessage.swift in Sources */,
@@ -2552,6 +2571,7 @@
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
 				05CDD83B23911A1400C7291A /* InAppMessagesCacheType.swift in Sources */,
 				C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */,
+				33FC6CC629A9123E001F113F /* Autolayout.swift in Sources */,
 				053CA1FE247D4A0F003B699C /* SelfCheckRepository.swift in Sources */,
 				552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */,
 				55DA6EBA290ABD4800B5B285 /* AppInboxManagerType.swift in Sources */,
@@ -2587,6 +2607,7 @@
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */,
 				057E367523E0503F00DDD6C1 /* InAppMessageSlideInView.swift in Sources */,
+				33FC6CC829A912CC001F113F /* Extension+UIView.swift in Sources */,
 				552772CB28EDAF3A000ACFD5 /* AppInboxListViewController.swift in Sources */,
 				05A6A3EB23954654008475E7 /* InAppMessageDialogView.swift in Sources */,
 				0591906A23EC2FAB0037BD88 /* EventFilterConstraint+Operators.swift in Sources */,
@@ -2598,6 +2619,7 @@
 				CCB87B7A28169F4B005DFB8E /* VersionCheckRepository.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
 				052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */,
+				33FC6CCA29A9158F001F113F /* Reusable.swift in Sources */,
 				0591906223EC1CEC0037BD88 /* GenericOperators.swift in Sources */,
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
@@ -2624,8 +2646,10 @@
 				0591906423EC1D030037BD88 /* StringOperators.swift in Sources */,
 				C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */,
 				C030AF48216F4335004413F0 /* PushNotificationReceiver.swift in Sources */,
+				33FC6CCC29A9195B001F113F /* Typealiases.swift in Sources */,
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
 				0580BBC923969D1F0058323D /* InAppMessagePresenter.swift in Sources */,
+				33FC6CC229A90ED5001F113F /* OnMain.swift in Sources */,
 				0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */,
 				55EFD79F29224FFF002569FB /* AppInboxProvider.swift in Sources */,
 				05D2D39A23DEE60200E3E79A /* InAppMessageView.swift in Sources */,

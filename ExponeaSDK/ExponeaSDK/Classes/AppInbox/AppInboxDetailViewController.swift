@@ -12,18 +12,19 @@ import WebKit
 
 open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
 
-    @IBOutlet public var pushContainer: UIScrollView!
-    @IBOutlet public var messageImage: UIImageView!
-    @IBOutlet public var receivedTime: UILabel!
-    @IBOutlet public var messageTitle: UILabel!
-    @IBOutlet public var message: UILabel!
-    @IBOutlet public var actionsContainer: UIStackView!
-    @IBOutlet public var actionMain: UIButton!
-    @IBOutlet public var action1: UIButton!
-    @IBOutlet public var action2: UIButton!
-    @IBOutlet public var action3: UIButton!
-    @IBOutlet public var action4: UIButton!
-    @IBOutlet public var htmlContainer: WKWebView!
+    // MARK: - Properties
+    public let pushContainer = UIScrollView()
+    public let messageImage = UIImageView()
+    public let receivedTime = UILabel()
+    public let messageTitle = UILabel()
+    public let message = UILabel()
+    public let actionsContainer = UIStackView()
+    public let actionMain = UIButton()
+    public let action1 = UIButton()
+    public let action2 = UIButton()
+    public let action3 = UIButton()
+    public let action4 = UIButton()
+    public let htmlContainer = WKWebView()
 
     private let SUPPORTED_MESSAGE_ACTION_TYPES: [MessageItemActionType] = [
         .deeplink, .browser
@@ -53,6 +54,8 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
+        addContent()
+        hideContainers()
         actionManager = WebActionManager(
             onActionCallback: { [weak self] action in
                 guard let self = self,
@@ -121,21 +124,6 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
             return
         }
     }
-    @IBAction func onMainActionClicked(_ sender: Any) {
-        invokeMainAction()
-    }
-    @IBAction func onAction1Clicked(_ sender: Any) {
-        invokeActionForIndex(0)
-    }
-    @IBAction func onAction2Clicked(_ sender: Any) {
-        invokeActionForIndex(1)
-    }
-    @IBAction func onAction3Clicked(_ sender: Any) {
-        invokeActionForIndex(2)
-    }
-    @IBAction func onAction4Clicked(_ sender: Any) {
-        invokeActionForIndex(3)
-    }
 
     private func hideContainers() {
         pushContainer.isHidden = true
@@ -203,7 +191,7 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
         }
     }
 
-    func invokeMainAction() {
+    @objc func invokeMainAction() {
         guard let action = mainAction,
             let message = data else {
                 Exponea.logger.log(.error, message: "AppInbox main action called but no action or message is provided")
@@ -212,8 +200,8 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
         invokeActionInternally(action, message)
     }
 
-    func invokeActionForIndex(_ index: Int) {
-        let action = getActionByIndex(index)
+    @objc func invokeActionForIndex(_ sender: UIButton) {
+        let action = getActionByIndex(sender.tag)
         guard let action = action,
             let message = data else {
                 Exponea.logger.log(.error, message: "AppInbox action \(index) called but no action or message is provided")
@@ -293,5 +281,82 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
             formatter.doesRelativeDateFormatting = true
             return formatter.string(from: source)
         }
+    }
+}
+
+// MARK: - Methods
+private extension AppInboxDetailViewController {
+    func setupElements() {
+        view.backgroundColor = .white
+        messageImage.contentMode = .scaleAspectFill
+        messageImage.backgroundColor = UIColor(
+            red: CGFloat(245) / 255,
+            green: CGFloat(245) / 255,
+            blue: CGFloat(245) / 255,
+            alpha: 1.0
+        )
+        receivedTime.font = .systemFont(ofSize: 12)
+        receivedTime.textColor = .lightGray
+        messageTitle.font = .systemFont(ofSize: 20)
+        messageTitle.textColor = .systemPink.withAlphaComponent(0.5)
+        message.font = .systemFont(ofSize: 14)
+        message.textColor = .gray.withAlphaComponent(0.5)
+        action1.tag = 0
+        action2.tag = 1
+        action3.tag = 2
+        action4.tag = 3
+        setupActions()
+    }
+
+    func addElementsToView() {
+        view.addSubviews(htmlContainer, pushContainer)
+        [actionMain, action1, action2, action3, action4].forEach(actionsContainer.addArrangedSubview(_:))
+        pushContainer.addSubviews(
+            messageImage,
+            receivedTime,
+            messageTitle,
+            message,
+            actionsContainer
+        )
+    }
+
+    func setupLayout() {
+        htmlContainer
+            .padding()
+        pushContainer
+            .padding()
+        messageImage
+            .padding(.leading, .top, .trailing, constant: 0)
+            .frame(width: view.frame.size.width, height: view.frame.size.width)
+        receivedTime
+            .padding(messageImage, .top, constant: 16)
+            .padding(.leading, .trailing, constant: 20)
+        messageTitle
+            .padding(receivedTime, .top, constant: 8)
+            .padding(.leading, .trailing, constant: 20)
+        message
+            .padding(messageTitle, .top, constant: 8)
+            .padding(.leading, .trailing, constant: 20)
+        actionsContainer
+            .padding(message, .top, constant: 16)
+            .padding(.leading, .trailing, constant: 20)
+            .padding(pushContainer, .top, constant: 0)
+        [actionMain, action1, action2, action3, action4].forEach { button in
+            button.frame(height: 48)
+        }
+    }
+
+    func addContent() {
+        defer { setupLayout() }
+        setupElements()
+        addElementsToView()
+    }
+
+    func setupActions() {
+        actionMain.addTarget(self, action: #selector(invokeMainAction), for: .primaryActionTriggered)
+        action1.addTarget(self, action: #selector(invokeActionForIndex), for: .primaryActionTriggered)
+        action2.addTarget(self, action: #selector(invokeActionForIndex), for: .primaryActionTriggered)
+        action3.addTarget(self, action: #selector(invokeActionForIndex), for: .primaryActionTriggered)
+        action4.addTarget(self, action: #selector(invokeActionForIndex), for: .primaryActionTriggered)
     }
 }

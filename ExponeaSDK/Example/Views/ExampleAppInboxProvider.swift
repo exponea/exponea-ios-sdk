@@ -26,7 +26,7 @@ public class ExampleAppInboxProvider: DefaultAppInboxProvider {
         let listController = super.getAppInboxListViewController()
         let typedListController = listController as! AppInboxListViewController
         typedListController.loadViewIfNeeded()
-        typedListController.statusTitle.textColor = .red
+        typedListController.statusErrorTitle.textColor = .red
         return typedListController
     }
     public override func getAppInboxDetailViewController(_ messageId: String) -> UIViewController {

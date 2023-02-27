@@ -17,21 +17,21 @@ class AuthenticationViewController: UIViewController {
             tokenField.addTarget(self, action: #selector(tokenUpdated), for: .editingChanged)
 
             // load cached
-            tokenField.text = UserDefaults.standard.string(forKey: "savedToken") ?? ""
+            tokenField.text = UserDefaults.standard.string(forKey: "savedToken") ?? "2c869bfe-90c9-11ed-886a-8a4fe782ab61"
         }
     }
     @IBOutlet weak var authField: UITextField! {
         didSet {
             authField.delegate = self
             // load cached
-            authField.text = UserDefaults.standard.string(forKey: "savedAuth") ?? ""
+            authField.text = UserDefaults.standard.string(forKey: "savedAuth") ?? "rini57s5uwrrxl4nrw8s5hfwa3mrphefm6vdtvdwzayfg2dy8j5i0wq41bs5t89r"
         }
     }
     @IBOutlet var advancedPublicKeyField: UITextField! {
         didSet {
             advancedPublicKeyField.delegate = self
             // load cached
-            advancedPublicKeyField.text = UserDefaults.standard.string(forKey: "savedAdvancedAuth") ?? ""
+            advancedPublicKeyField.text = UserDefaults.standard.string(forKey: "savedAdvancedAuth") ?? "7x89k27lzclzivn9pqhbi27dcb2z38godezn5y9p4xszceipt9213sz5t3irig6f"
         }
     }
 
@@ -39,7 +39,7 @@ class AuthenticationViewController: UIViewController {
         didSet {
             urlField.delegate = self
             // load cached
-            urlField.text = UserDefaults.standard.string(forKey: "savedUrl") ?? ""
+            urlField.text = UserDefaults.standard.string(forKey: "savedUrl") ?? "https://at1.api.exponea.dev"
         }
     }
     @IBOutlet weak var startButton: UIButton!

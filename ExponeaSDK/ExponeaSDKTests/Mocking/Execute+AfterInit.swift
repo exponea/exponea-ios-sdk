@@ -2,7 +2,7 @@
 //  Execute+AfterInit.swift
 //  ExponeaSDKTests
 //
-//  Created by Michal Severín on 07.02.2023.
+//  Created by Ankmara on 07.02.2023.
 //  Copyright © 2023 Exponea. All rights reserved.
 //
 

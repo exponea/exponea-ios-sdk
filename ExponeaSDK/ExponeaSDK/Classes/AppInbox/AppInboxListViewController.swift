@@ -1,62 +1,120 @@
+import CoreData
 import Foundation
 import UIKit
 import WebKit
-import CoreData
 
-open class AppInboxListViewController: UIViewController, UITableViewDelegate {
+open class AppInboxListViewController: UIViewController {
 
-    @IBOutlet public var statusContainer: UIStackView!
-    @IBOutlet public var statusProgress: UIActivityIndicatorView!
-    @IBOutlet public var statusTitle: UILabel!
-    @IBOutlet public var statusMessage: UILabel!
+    public let XMARK_ICON_DATA = "iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAAITgAACE4AUWWMWAAAAA8UExURUdwTCAgICcnJygoKCYmJisrKycnJyYmJigoKCYmJigoKCYmJiYmJicnJycnJyYmJiYmJiUlJScnJyYmJkI9m2kAAAATdFJOUwAQv2DvMN+AIN9Az5+vj1CgYHCbPG4RAAABKklEQVRYw+3YyQ7DIAwE0Owhe9v5/3/tpVUWDIxNDz3EV6MnJMTEpCjuuuu3NdabYnU51qPYcBWAwbFO2wGYS6EzAwqpbQAAq7BTQCF9HDT+lhwU0tcBhMUNL+3OIHRfYKXdQS/1e1JKOayUdjiJcRiJc9IS66Qk3olLGicm6ZywpHVCkt6RJYsjSTbHl6zOVbI7ZynHOUlZzlHKcwTJ6HiS2blIGU5RPHZnzXEO5674msedHOns2KWrY5V8xyYd71efIZ3vqV263ner5OeGTZLyxyLJOaaXQnmolcK5qpNcJFc1kuti+cNLcYeXUg4rpR1OYhxG4py0xDpJabLMmVX4maWcMyPPLN2cWQafWbo5U3pmbZY5sxWPbZmqJ59+ddUt7f1r4q4/rTd0Akh/Hha2MQAAAABJRU5ErkJggg=="
 
-    @IBOutlet public var tableView: UITableView!
+    // MARK: - Properties
+    public let statusContainer =  UIStackView()
+    public let statusProgress = UIActivityIndicatorView()
+    public let statusEmptyTitle = UILabel()
+    public let statusEmptyMessage = UILabel()
+    public let statusErrorTitle = UILabel()
+    public let statusErrorMessage = UILabel()
+    public let tableView = UITableView()
 
-//    private var dataSourceDelegate = AppInboxDataSource(of: [])
-    
-    var messages: [MessageItem] = []
-    
+    private var messages: [MessageItem] = [] {
+        didSet {
+            onMain(self.tableView.reloadData())
+        }
+    }
+
+    // MARK: - Life-cycle
     open override func viewDidLoad() {
         super.viewDidLoad()
-        title = NSLocalizedString(
-            "exponea.inbox.title",
-            value: "Inbox",
-            comment: ""
-        )
+        addContent()
+        loadMessages()
+    }
+}
+
+// MARK: - Methods
+private extension AppInboxListViewController {
+    func setupElements() {
+        view.backgroundColor = .white
+        title = NSLocalizedString("exponea.inbox.title", value: "Inbox", comment: "")
         navigationController?.navigationBar.isHidden = false
         navigationController?.isNavigationBarHidden = false
-        #if SWIFT_PACKAGE
-        let bundle = Bundle.module
-        #else
-        let bundle = Bundle(for: AppInboxListViewController.self)
-        #endif
-        #if compiler(>=5)
-        let xmark = UIImage(named: "xmark",
-                            in: bundle,
-                            compatibleWith: nil)
-        #else
-        let xmark = UIImage(named: "xmark",
-                            inBundle: bundle,
-                            compatibleWithTraitCollection: nil)
-        #endif
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: xmark, style: .plain, target: self, action: #selector(dismissMe))
+        if let imageData = Data.init(base64Encoded: XMARK_ICON_DATA, options: .init(rawValue: 0)),
+           let xmark = UIImage(data: imageData, scale: 3) {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: xmark, style: .plain, target: self, action: #selector(close))
+        }
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 100
-        tableView.separatorStyle = .none
+        tableView.estimatedRowHeight = UITableView.automaticDimension
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = UIColor(
+            red: CGFloat(237) / 255,
+            green: CGFloat(237) / 255,
+            blue: CGFloat(237) / 255,
+            alpha: 1
+        )
+        tableView.separatorInset = .zero
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(MessageItemCell.self)
+
+        statusContainer.axis = .vertical
+        statusContainer.alignment = .center
+        statusContainer.distribution = .fillProportionally
+
+        statusProgress.startAnimating()
+
+        statusEmptyTitle.font = .boldSystemFont(ofSize: 20)
+        statusEmptyTitle.numberOfLines = 0
+        statusEmptyTitle.text = NSLocalizedString("exponea.inbox.emptyTitle", value: "Empty Inbox", comment: "")
+        statusEmptyMessage.font = .systemFont(ofSize: 14)
+        statusEmptyMessage.numberOfLines = 0
+        statusEmptyMessage.text = NSLocalizedString("exponea.inbox.emptyMessage", value: "You have no messages yet.", comment: "")
+
+        statusErrorTitle.font = .boldSystemFont(ofSize: 20)
+        statusErrorTitle.numberOfLines = 0
+        statusErrorTitle.text = NSLocalizedString("exponea.inbox.errorTitle", value: "Something went wrong :(", comment: "")
+        statusErrorMessage.font = .systemFont(ofSize: 14)
+        statusErrorMessage.numberOfLines = 0
+        statusErrorMessage.text = NSLocalizedString("exponea.inbox.errorMessage", value: "We could not retrieve your messages.", comment: "")
+    }
+
+    func addElementsToView() {
+        view.addSubviews(tableView, statusContainer)
+        [   statusProgress,
+            statusEmptyTitle,
+            statusEmptyMessage,
+            statusErrorTitle,
+            statusErrorMessage
+        ].forEach(statusContainer.addArrangedSubview(_:))
+    }
+
+    func setupLayout() {
+        tableView
+            .padding()
+        statusContainer
+            .centerY()
+            .padding(horizontalConstant: 20)
+            .spacing = 8
+    }
+
+    func addContent() {
+        defer { setupLayout() }
+        setupElements()
+        addElementsToView()
+    }
+
+    func loadMessages() {
         showLoading()
-        Exponea.shared.fetchAppInbox { result in
+        Exponea.shared.fetchAppInbox { [weak self] result in
+            guard let self = self else { return }
+            self.stopLoading()
             switch result {
-            case .success(let messages):
-                if messages.isEmpty {
+            case let .success(messages):
+                guard !messages.isEmpty else {
                     Exponea.logger.log(.verbose, message: "App inbox loaded but is empty")
                     self.showEmptyState()
-                    self.tableView.reloadData()
                     return
                 }
                 Exponea.logger.log(.verbose, message: "App inbox loaded")
                 self.messages = messages
-                self.stopLoading()
-                self.tableView.reloadData()
             case .failure(let error):
                 Exponea.logger.log(.verbose, message: "App inbox load failed due error \"\(error.localizedDescription)\"")
                 self.showErrorState()
@@ -64,88 +122,73 @@ open class AppInboxListViewController: UIViewController, UITableViewDelegate {
         }
     }
 
-    private func showLoading() {
+    func showLoading() {
         statusContainer.isHidden = false
         statusProgress.isHidden = false
-        statusTitle.isHidden = true
-        statusMessage.isHidden = false
-        statusMessage.text = NSLocalizedString(
-            "exponea.inbox.loading",
-            value: "Loading messages...",
-            comment: ""
-        )
+        statusEmptyTitle.isHidden = true
+        statusEmptyMessage.isHidden = true
+        statusErrorTitle.isHidden = true
+        statusErrorMessage.isHidden = true
         tableView.isHidden = true
     }
 
-    private func stopLoading() {
+    func stopLoading() {
         statusContainer.isHidden = true
         tableView.isHidden = false
     }
 
-    private func showEmptyState() {
+    func showEmptyState() {
         statusContainer.isHidden = false
         statusProgress.isHidden = true
-        statusTitle.isHidden = false
-        statusMessage.isHidden = false
-        statusTitle.text = NSLocalizedString(
-            "exponea.inbox.emptyTitle",
-            value: "Empty Inbox",
-            comment: "")
-        statusMessage.text = NSLocalizedString(
-            "exponea.inbox.emptyMessage",
-            value: "You have no messages yet.",
-            comment: "")
+        statusEmptyTitle.isHidden = false
+        statusEmptyMessage.isHidden = false
+        statusErrorTitle.isHidden = true
+        statusErrorMessage.isHidden = true
         tableView.isHidden = true
     }
 
-    private func showErrorState() {
+    func showErrorState() {
         statusContainer.isHidden = false
         statusProgress.isHidden = true
-        statusTitle.isHidden = false
-        statusMessage.isHidden = false
-        statusTitle.text = NSLocalizedString(
-            "exponea.inbox.errorTitle",
-            value: "Something went wrong :(",
-            comment: ""
-        )
-        statusMessage.text = NSLocalizedString(
-            "exponea.inbox.errorMessage",
-            value: "We could not retrieve your messages.",
-            comment: ""
-        )
+        statusEmptyTitle.isHidden = true
+        statusEmptyMessage.isHidden = true
+        statusErrorTitle.isHidden = false
+        statusErrorMessage.isHidden = false
         tableView.isHidden = true
     }
 
+    @objc func close() {
+        navigationController?.presentingViewController?.dismiss(animated: true)
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension AppInboxListViewController: UITableViewDataSource {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        messages.count
+    }
+
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: MessageItemCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        if let message = messages[safeIndex: indexPath.row] {
+            cell.showData(message)
+        }
+        return Exponea.shared.appInboxProvider.getAppInboxListTableViewCell(cell)
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension AppInboxListViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let message = messages[indexPath.item]
-        Exponea.shared.markAppInboxAsRead(message) { marked in
-            guard marked else {
-                return
-            }
-            self.messages[indexPath.item].read = true
+        guard let message = messages[safeIndex: indexPath.row] else { return }
+        Exponea.shared.markAppInboxAsRead(message) { [weak self] marked in
+            guard let self = self else { return }
+            guard marked else { return }
+            self.messages[indexPath.row].read = true
             self.tableView.reloadData()
         }
         let detailView = Exponea.shared.getAppInboxDetailViewController(message.id)
         Exponea.shared.trackAppInboxOpened(message: message)
         navigationController?.pushViewController(detailView, animated: true)
-    }
-
-    @objc private func dismissMe() {
-        navigationController?.presentingViewController?.dismiss(animated: true)
-    }
-}
-
-extension AppInboxListViewController: UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messages.count
-    }
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell_wrapper") as! MessageItemCell
-        populateCell(cell, indexPath.row)
-        return cell
-    }
-    private func populateCell(_ cell: MessageItemCell, _ index: Int) {
-        let item = messages[index]
-        cell.showData(item)
     }
 }

@@ -256,6 +256,18 @@ public protocol ExponeaType: AnyObject {
     ///                         which has either the returned data or error.
     func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void)
 
+    /// Fetch the App Inbox list.
+    ///
+    /// - Parameter completion: A closure executed upon request completion containing the result
+    ///                         which has either the returned data or error.
+    func fetchAppInbox(completion: @escaping (Result<[MessageItem]>) -> Void)
+
+    /// Fetch the App Inbox message by ID.
+    ///
+    /// - Parameter completion: A closure executed upon request completion containing the result
+    ///                         which has either the returned data or error.
+    func fetchAppInboxItem(_ messageId: String, completion: @escaping (Result<MessageItem>) -> Void)
+
     // MARK: - Anonymize -
 
     /// Anonymizes the user and starts tracking as if the app was just installed.

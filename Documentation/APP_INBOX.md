@@ -55,7 +55,6 @@ Exponea SDK contains only texts in EN translation. To modify this or add a local
 ```text
 "exponea.inbox.button" = "Inbox";
 "exponea.inbox.title" = "AppInbox";
-"exponea.inbox.loading" = "Loading messages...";
 "exponea.inbox.emptyTitle" = "Empty Inbox";
 "exponea.inbox.emptyMessage" = "You have no messages yet.";
 "exponea.inbox.errorTitle" = "Something went wrong :(";

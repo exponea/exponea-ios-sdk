@@ -13,6 +13,12 @@ public struct MessageItemAction: Codable, Equatable {
     public let title: String?
     public let url: String?
 
+    public init(action: String?, title: String?, url: String?) {
+        self.action = action
+        self.title = title
+        self.url = url
+    }
+
     public var type: MessageItemActionType {
         return MessageItemActionType(rawValue: action ?? "app") ?? .noAction
     }

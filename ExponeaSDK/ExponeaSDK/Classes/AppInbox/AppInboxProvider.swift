@@ -13,4 +13,5 @@ public protocol AppInboxProvider {
     func getAppInboxButton() -> UIButton
     func getAppInboxListViewController() -> UIViewController
     func getAppInboxDetailViewController(_ messageId: String) -> UIViewController
+    func getAppInboxListTableViewCell(_ cell: UITableViewCell) -> UITableViewCell
 }
