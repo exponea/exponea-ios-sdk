@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.15.1
+#### February 27, 2023
+* Bug Fixes
+  * Fixed: Fixed: App Inbox layout was reworked from using storyboard to native code implementation for better compatibility with SDK wrappers
+
+
 ## Release Notes for 2.15.0
 #### February 16, 2023
 * Features
