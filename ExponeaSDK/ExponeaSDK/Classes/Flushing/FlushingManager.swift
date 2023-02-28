@@ -20,7 +20,7 @@ class FlushingManager: FlushingManagerType {
     private var flushingTimer: Timer?
 
     private let customerIdentifiedHandler: () -> Void
-
+    
     public var flushingMode: FlushingMode = .immediate {
         didSet {
             Exponea.logger.log(.verbose, message: "Flushing mode updated to: \(flushingMode).")
@@ -86,7 +86,7 @@ class FlushingManager: FlushingManagerType {
     /// Method that flushes all data to the API.
     ///
     /// - Parameter completion: A completion that is called after all calls succeed or fail.
-    func flushData(completion: ((FlushResult) -> Void)?) {
+    func flushData(completion: ((FlushResult) -> Void)?) {            
         do {
             // Check if flush is in progress
             flushingSemaphore.wait()
@@ -98,7 +98,7 @@ class FlushingManager: FlushingManagerType {
             }
             isFlushingData = true
             flushingSemaphore.signal()
-
+            
             // Check if we have an internet connection otherwise bail
             guard reachability.connection != .none else {
                 Exponea.logger.log(.warning, message: "Connection issues when flushing data, not flushing.")
@@ -106,11 +106,11 @@ class FlushingManager: FlushingManagerType {
                 completion?(.noInternetConnection)
                 return
             }
-
+            
             // Pull from db
             let events = try database.fetchTrackEvent()
             let customers = try database.fetchTrackCustomer()
-
+            
             Exponea.logger.log(
                 .verbose,
                 message: """
@@ -118,14 +118,14 @@ class FlushingManager: FlushingManagerType {
                 \(events.count) events and \(customers.count) customer updates.
                 """
             )
-
+            
             // Check if we have any data otherwise bail
             guard !events.isEmpty || !customers.isEmpty else {
                 isFlushingData = false
                 completion?(.success(0))
                 return
             }
-
+            
             flushTrackingObjects(customers + events) { result in
                 self.isFlushingData = false
                 completion?(result)

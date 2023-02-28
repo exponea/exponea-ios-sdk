@@ -24,11 +24,11 @@ protocol DatabaseManagerType: AnyObject {
     func fetchTrackEvent() throws -> [TrackEventProxy]
     func countTrackEvent() throws -> Int
     func fetchCustomer(_ uuid: UUID) throws -> Customer?
+    
 
     func addRetry(_ object: DatabaseObjectProxy) throws
-
     func delete(_ object: DatabaseObjectProxy) throws
-
+    
     /// Creates new clear customer object. Useful for anonymizing the user.
     /// Existing events are tied to customer that was most recent when the event was created
     func makeNewCustomer()

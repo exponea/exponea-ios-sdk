@@ -45,11 +45,12 @@ public class ExponeaInternal: ExponeaType {
                 Exponea.logger.log(.error, message: "Exponea SDK already configured.")
                 return
             }
-
-            // Initialise everything
+            
             sharedInitializer(configuration: newValue)
         }
     }
+    
+    internal var onInitSucceededCallBack: EmptyBlock?
 
     /// Cookie of the current customer. Nil before the SDK is configured
     public var customerCookie: String? {
@@ -182,7 +183,8 @@ public class ExponeaInternal: ExponeaType {
     internal var nsExceptionRaised: Bool = false
 
     internal var pushNotificationSelfCheck: PushNotificationSelfCheck?
-
+    
+    internal lazy var afterInit: ExpoInitManagerType = ExpoInitManager(sdk: self)
     /// To help developers with integration, we can automatically check push notification setup
     /// when application is started in debug mode.
     /// When integrating push notifications(or when testing), we
@@ -190,8 +192,19 @@ public class ExponeaInternal: ExponeaType {
     /// Self-check only runs in debug mode and does not do anything in release builds.
     public var checkPushSetup: Bool = false
 
-    internal lazy var afterInit: ExpoInitManagerType = ExpoInitManager(sdk: self)
+    public var appInboxProvider: AppInboxProvider = DefaultAppInboxProvider()
+    
+    /// OperationQueue that is used upon SDK initialization
+    /// This queue allows only 1 max concurrent operation
+    internal lazy var initializedQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.qualityOfService = .background
+        queue.name = "com.exponea.ExponeaSDK.initializedQueue"
+        queue.maxConcurrentOperationCount = 1
+        return queue
+    }()
 
+    
     // MARK: - Init -
 
     /// The initialiser is internal, so that only the singleton can exist when used in production.
@@ -207,6 +220,15 @@ public class ExponeaInternal: ExponeaType {
 
     internal func sharedInitializer(configuration: Configuration) {
         Exponea.logger.log(.verbose, message: "Configuring Exponea with provided configuration:\n\(configuration)")
+        initialize(with: configuration)
+
+    }
+
+    /// Initialize all other dependencies
+    /// This method, used privatly, is called either from the current thread (backwards compatibility)
+    /// or when using the new onInitSucceededCallBack, it will be called wihtin the initializedQueue OperationQueue
+    /// - Parameter configuration: Configuration
+    private func initialize(with configuration: Configuration) {
         let exception = objc_tryCatch {
             do {
                 let database = try DatabaseManager()
@@ -271,12 +293,12 @@ public class ExponeaInternal: ExponeaType {
                 self.inAppMessagesManager = inAppMessagesManager
 
                 processSavedCampaignData()
-
                 configuration.saveToUserDefaults()
-
+                
                 inDebugBuild {
                     VersionChecker(repository: repository).warnIfNotLatestSDKVersion()
                 }
+                                    
             } catch {
                 telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
                 // Failing gracefully, if setup failed
@@ -294,8 +316,6 @@ public class ExponeaInternal: ExponeaType {
             """)
         }
     }
-
-    public var appInboxProvider: AppInboxProvider = DefaultAppInboxProvider()
 }
 
 // MARK: - Dependencies + Safety wrapper -
@@ -449,9 +469,23 @@ public extension ExponeaInternal {
     ///  - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
     ///  - authorization: The authorization type used to authenticate with some Exponea endpoints.
     func configure(plistName: String) {
+        if onInitSucceededCallBack != nil {
+            initializedQueue.addOperation {
+                self.doTaskConfiguration(plistName: plistName)
+                onMain {
+                    self.onInitSucceededCallBack?()
+                }
+            }            
+        } else {
+            doTaskConfiguration(plistName: plistName)
+        }
+    }
+    
+    private func doTaskConfiguration(plistName: String) {
         do {
             let configuration = try Configuration(plistName: plistName)
             self.configuration = configuration
+            // Initialise everything
             self.afterInit.setStatus(status: .configured)
         } catch {
             Exponea.logger.log(.error, message: """
@@ -459,6 +493,18 @@ public extension ExponeaInternal {
                 """)
         }
     }
+    
+    
+    func configure(with configuration: Configuration) {
+        self.configuration = configuration
+        afterInit.setStatus(status: .configured)
+    }
+    
+    func onInitSucceeded(callback completion: @escaping (() -> Void)) -> Self {
+        onInitSucceededCallBack = completion
+        return self
+    }
+    
 
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
     /// you to track events to multiple projects, even the same event to more project at once.

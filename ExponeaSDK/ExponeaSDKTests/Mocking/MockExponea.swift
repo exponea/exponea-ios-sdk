@@ -78,6 +78,7 @@ final class MockExponeaImplementation: ExponeaInternal {
         }
     }
 
+
     public func fetchTrackEvents() throws -> [TrackEventProxy] {
         return try database.fetchTrackEvent()
     }

@@ -174,7 +174,7 @@ public extension ExponeaInternal {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
     }
-
+    
     func configure(
         _ projectSettings: Exponea.ProjectSettings,
         pushNotificationTracking: Exponea.PushNotificationTracking,
@@ -184,44 +184,60 @@ public extension ExponeaInternal {
         allowDefaultCustomerProperties: Bool? = nil,
         advancedAuthEnabled: Bool? = nil
     ) {
-        do {
-            var willRunSelfCheck = false
-            inDebugBuild {
-                willRunSelfCheck = checkPushSetup && pushNotificationTracking.isEnabled
-            }
+        let taskBlock = { [weak self] in
+            guard let self = self else { return }
+            
+            do {
+                var willRunSelfCheck = false
+                inDebugBuild {
+                    willRunSelfCheck = self.checkPushSetup && pushNotificationTracking.isEnabled
+                }
 
-            let configuration = try Configuration(
-                projectToken: projectSettings.projectToken,
-                projectMapping: projectSettings.projectMapping,
-                authorization: projectSettings.authorization,
-                baseUrl: projectSettings.baseUrl,
-                defaultProperties: defaultProperties,
-                sessionTimeout: automaticSessionTracking.timeout,
-                automaticSessionTracking: automaticSessionTracking.enabled,
-                automaticPushNotificationTracking: false,
-                requirePushAuthorization: pushNotificationTracking.requirePushAuthorization && !willRunSelfCheck,
-                tokenTrackFrequency: pushNotificationTracking.tokenTrackFrequency,
-                appGroup: pushNotificationTracking.appGroup,
-                flushEventMaxRetries: flushingSetup.maxRetries,
-                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                advancedAuthEnabled: advancedAuthEnabled
-            )
-            self.configuration = configuration
-            self.pushNotificationsDelegate = pushNotificationTracking.delegate
-            self.flushingMode = flushingSetup.mode
-            if willRunSelfCheck {
-                self.executeSafelyWithDependencies { dependencies in
-                    self.pushNotificationSelfCheck = PushNotificationSelfCheck(
-                        trackingManager: dependencies.trackingManager,
-                        flushingManager: dependencies.flushingManager,
-                        repository: dependencies.repository
-                    )
-                    self.pushNotificationSelfCheck?.start()
+                let configuration = try Configuration(
+                    projectToken: projectSettings.projectToken,
+                    projectMapping: projectSettings.projectMapping,
+                    authorization: projectSettings.authorization,
+                    baseUrl: projectSettings.baseUrl,
+                    defaultProperties: defaultProperties,
+                    sessionTimeout: automaticSessionTracking.timeout,
+                    automaticSessionTracking: automaticSessionTracking.enabled,
+                    automaticPushNotificationTracking: false,
+                    requirePushAuthorization: pushNotificationTracking.requirePushAuthorization && !willRunSelfCheck,
+                    tokenTrackFrequency: pushNotificationTracking.tokenTrackFrequency,
+                    appGroup: pushNotificationTracking.appGroup,
+                    flushEventMaxRetries: flushingSetup.maxRetries,
+                    allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
+                    advancedAuthEnabled: advancedAuthEnabled
+                )
+                
+                self.configure(with: configuration)
+                self.pushNotificationsDelegate = pushNotificationTracking.delegate
+                self.flushingMode = flushingSetup.mode
+                if willRunSelfCheck {
+                    self.executeSafelyWithDependencies { dependencies in
+                        self.pushNotificationSelfCheck = PushNotificationSelfCheck(
+                            trackingManager: dependencies.trackingManager,
+                            flushingManager: dependencies.flushingManager,
+                            repository: dependencies.repository
+                        )
+                        self.pushNotificationSelfCheck?.start()
+                    }
+                }
+                self.afterInit.setStatus(status: .configured)
+            } catch {
+                Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
+            }
+        }
+        
+        if onInitSucceededCallBack != nil {
+            initializedQueue.addOperation {
+                taskBlock()
+                onMain {
+                    self.onInitSucceededCallBack?()
                 }
             }
-            self.afterInit.setStatus(status: .configured)
-        } catch {
-            Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
+        } else {
+            taskBlock()
         }
     }
 

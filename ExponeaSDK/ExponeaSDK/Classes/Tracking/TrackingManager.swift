@@ -190,7 +190,7 @@ extension TrackingManager: TrackingManagerType {
     public func track(_ type: EventType, with data: [DataType]?) throws {
         try trackInternal(type, with: data, trackingAllowed: true, for: nil)
     }
-
+    
     private func trackInternal(
         _ type: EventType,
         with data: [DataType]?,
@@ -440,31 +440,31 @@ extension TrackingManager {
 
 extension TrackingManager: InAppMessageTrackingDelegate {
     public func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool) {
+        var eventData: [String: JSONValue] = [
+            "action": .string(event.action),
+            "banner_id": .string(message.id),
+            "banner_name": .string(message.name),
+            "banner_type": .string(message.rawMessageType ?? "null"),
+            "interaction": .bool(event.isInteraction),
+            "os": .string("iOS"),
+            "type": .string("in-app message"),
+            "variant_id": .int(message.variantId),
+            "variant_name": .string(message.variantName)
+        ]
+        if case .click(let text, let url) = event {
+            eventData["text"] = .string(text)
+            eventData["link"] = .string(url)
+            if (GdprTracking.isTrackForced(url)) {
+                eventData["tracking_forced"] = .bool(true)
+            }
+        }
+        if case .error(let errorMessage) = event {
+            eventData["error"] = .string(errorMessage)
+        }
+        if (message.consentCategoryTracking != nil) {
+            eventData["consent_category_tracking"] = .string(message.consentCategoryTracking!)
+        }        
         do {
-            var eventData: [String: JSONValue] = [
-                "action": .string(event.action),
-                "banner_id": .string(message.id),
-                "banner_name": .string(message.name),
-                "banner_type": .string(message.rawMessageType ?? "null"),
-                "interaction": .bool(event.isInteraction),
-                "os": .string("iOS"),
-                "type": .string("in-app message"),
-                "variant_id": .int(message.variantId),
-                "variant_name": .string(message.variantName)
-            ]
-            if case .click(let text, let url) = event {
-                eventData["text"] = .string(text)
-                eventData["link"] = .string(url)
-                if (GdprTracking.isTrackForced(url)) {
-                    eventData["tracking_forced"] = .bool(true)
-                }
-            }
-            if case .error(let errorMessage) = event {
-                eventData["error"] = .string(errorMessage)
-            }
-            if (message.consentCategoryTracking != nil) {
-                eventData["consent_category_tracking"] = .string(message.consentCategoryTracking!)
-            }
             try processTrack(
                 .banner,
                 with: [

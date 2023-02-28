@@ -89,9 +89,17 @@ class AuthenticationViewController: UIViewController {
             publicKey: advancedAuthPubKey,
             expiration: nil
         )
-
-        Exponea.shared.checkPushSetup = true
-        Exponea.shared.configure(
+        
+        
+        let exponea = Exponea.shared.onInitSucceeded {
+            Exponea.logger.log(.verbose, message: "Configuration initialization succeeded")
+            //Uncomment if you want to test in-app message delegate
+            //Exponea.shared.inAppMessagesDelegate = InAppDelegate(overrideDefaultBehavior: true, trackActions: false)
+        }
+        
+        exponea.checkPushSetup = true
+        Exponea.logger.log(.verbose, message: "Before Configuration call")
+        exponea.configure(
             Exponea.ProjectSettings(
                 projectToken: token,
                 authorization: auth,
@@ -107,9 +115,8 @@ class AuthenticationViewController: UIViewController {
             ],
             advancedAuthEnabled: advancedAuthPubKey?.isEmpty == false
         )
-        // Uncomment if you want to test in-app message delegate
-        // Exponea.shared.inAppMessagesDelegate = InAppDelegate(overrideDefaultBehavior: true, trackActions: false)
-        Exponea.shared.appInboxProvider = ExampleAppInboxProvider()
+        Exponea.logger.log(.verbose, message: "After Configuration call")
+        Exponea.shared.appInboxProvider = ExampleAppInboxProvider()        
     }
 
     @objc func tokenUpdated() {

@@ -13,7 +13,13 @@ import CoreData
 /// Persisted data will be used to interact with the Exponea API.
 class DatabaseManager {
     internal let persistentContainer: NSPersistentContainer
-    private let context: NSManagedObjectContext
+
+    private lazy var context: NSManagedObjectContext = {
+        let backgroundContext = persistentContainer.newBackgroundContext()
+        backgroundContext.automaticallyMergesChangesFromParent = true
+        backgroundContext.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
+        return backgroundContext
+    }()
 
     internal init(persistentStoreDescriptions: [NSPersistentStoreDescription]? = nil) throws {
         #if SWIFT_PACKAGE
@@ -42,9 +48,6 @@ class DatabaseManager {
 
         // Set the container
         persistentContainer = container
-        context = persistentContainer.newBackgroundContext()
-        context.automaticallyMergesChangesFromParent = true
-        context.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
 
         // Initialise customer
         _ = currentCustomer
@@ -297,6 +300,16 @@ extension DatabaseManager: DatabaseManagerType {
     /// - Throws: <#throws value description#>
     func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws {
         try context.performAndWait {
+            loadTrackingCunstomer(context: context, with: data, into: project)
+            // Save the customer properties into CoreData
+            try saveContext(context)
+        }
+    }
+    
+    /// To be called from a bg thread, otherwise the thread will be blocked
+    /// - Parameter context: a background context
+    private func loadTrackingCunstomer(context: NSManagedObjectContext, with data: [DataType], into project: ExponeaProject) {
+        
             let trackCustomer = TrackCustomer(context: context)
             trackCustomer.customer = currentCustomerManagedObject
 
@@ -336,10 +349,6 @@ extension DatabaseManager: DatabaseManagerType {
                     break
                 }
             }
-
-            // Save the customer properties into CoreData
-            try saveContext(context)
-        }
     }
 
     /// <#Description#>

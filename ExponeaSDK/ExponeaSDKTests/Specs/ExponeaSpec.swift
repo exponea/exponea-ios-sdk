@@ -83,10 +83,14 @@ class ExponeaSpec: QuickSpec {
                 }
             }
             context("After being configured from plist file") {
-                let exponea = ExponeaInternal()
-                Exponea.shared = exponea
-                Exponea.shared.configure(plistName: "ExponeaConfig")
-
+                let initExpectation = self.expectation(description: "Exponea internal init")
+                let exponea = ExponeaInternal().onInitSucceeded {
+                    initExpectation.fulfill()
+                }
+                                
+                exponea.configure(plistName: "ExponeaConfig")
+                wait(for: [initExpectation], timeout: 10)
+                
                 it("Should have a project token") {
                     expect(exponea.configuration?.projectToken).toNot(beNil())
                 }
@@ -143,10 +147,14 @@ class ExponeaSpec: QuickSpec {
             }
 
             context("Setting automaticSessionTracking after configuration") {
-                let exponea = ExponeaInternal()
+                let initExpectation = self.expectation(description: "Exponea automaticSessionTracking init")
+                
+                let exponea = ExponeaInternal().onInitSucceeded {
+                    initExpectation.fulfill()
+                }
                 Exponea.shared = exponea
                 Exponea.shared.configure(plistName: "ExponeaConfig")
-
+                wait(for: [initExpectation], timeout: 10)
                 expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
                 exponea.setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking.disabled)
                 expect(exponea.configuration?.automaticSessionTracking).to(equal(false))
