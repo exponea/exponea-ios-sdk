@@ -138,8 +138,12 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
             comment: ""
         )
         receivedTime.text = translateReceivedTime(data?.receivedTime ?? Date())
-        messageTitle.text = data?.content?.title ?? ""
-        message.text = data?.content?.message ?? ""
+        messageTitle.attributedText = asAttributedText(
+            data?.content?.title ?? "", kern: 0.25, lineHeightMultiplier: CGFloat(1.01)
+        )
+        message.attributedText = asAttributedText(
+            data?.content?.message ?? "", kern: 0.25, lineHeightMultiplier: CGFloat(1.2)
+        )
         setupActionButtons(data)
         if let imageUrl = data?.content?.imageUrl {
             DispatchQueue.global(qos: .background).async {
@@ -153,6 +157,26 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
                 }
             }
         }
+    }
+
+    private func asAttributedText(
+        _ text: String?,
+        kern: NSNumber? = nil,
+        lineHeightMultiplier: CGFloat? = nil
+    ) -> NSAttributedString? {
+        guard let text = text else {
+            return nil
+        }
+        var attrs: [NSAttributedString.Key: Any] = [:]
+        if let kern = kern {
+            attrs[NSAttributedString.Key.kern] = kern
+        }
+        if let lineHeightMultiplier = lineHeightMultiplier {
+            var paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = lineHeightMultiplier
+            attrs[NSAttributedString.Key.paragraphStyle] = paragraphStyle
+        }
+        return NSMutableAttributedString(string: text, attributes: attrs)
     }
 
     private func showHtmlMessage() {
@@ -295,17 +319,28 @@ private extension AppInboxDetailViewController {
             blue: CGFloat(245) / 255,
             alpha: 1.0
         )
-        receivedTime.font = .systemFont(ofSize: 12)
-        receivedTime.textColor = .lightGray
-        messageTitle.font = .systemFont(ofSize: 20)
-        messageTitle.textColor = .systemPink.withAlphaComponent(0.5)
-        message.font = .systemFont(ofSize: 14)
-        message.textColor = .gray.withAlphaComponent(0.5)
+        receivedTime.font = .systemFont(ofSize: 12, weight: .regular)
+        receivedTime.textColor = UIColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1)
+        messageTitle.font = .systemFont(ofSize: 20, weight: .semibold)
+        messageTitle.textColor = UIColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1)
+        messageTitle.numberOfLines = 0
+        message.font = .systemFont(ofSize: 14, weight: .regular)
+        message.textColor = UIColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1)
+        message.numberOfLines = 0
         action1.tag = 0
         action2.tag = 1
         action3.tag = 2
         action4.tag = 3
+        [actionMain, action1, action2, action3, action4].forEach { button in
+            button.backgroundColor = UIColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1)
+            button.layer.cornerRadius = 10
+            button.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: 1), for: .normal)
+            button.clipsToBounds = true
+        }
         setupActions()
+
+        actionsContainer.axis = .vertical
+        actionsContainer.spacing = 8
     }
 
     func addElementsToView() {
@@ -330,17 +365,18 @@ private extension AppInboxDetailViewController {
             .frame(width: view.frame.size.width, height: view.frame.size.width)
         receivedTime
             .padding(messageImage, .top, constant: 16)
-            .padding(.leading, .trailing, constant: 20)
+            .padding(.leading, .trailing, constant: 16)
         messageTitle
             .padding(receivedTime, .top, constant: 8)
-            .padding(.leading, .trailing, constant: 20)
+            .padding(.leading, .trailing, constant: 16)
         message
             .padding(messageTitle, .top, constant: 8)
-            .padding(.leading, .trailing, constant: 20)
+            .padding(.leading, .trailing, constant: 16)
         actionsContainer
             .padding(message, .top, constant: 16)
-            .padding(.leading, .trailing, constant: 20)
+            .padding(.leading, .trailing, constant: 16)
             .padding(pushContainer, .top, constant: 0)
+            .padding(.bottom, constant: 16)
         [actionMain, action1, action2, action3, action4].forEach { button in
             button.frame(height: 48)
         }
