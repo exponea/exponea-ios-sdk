@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.15.2
+#### March 06, 2023
+* Bug Fixes
+  * Fixed: AppInbox detail layout fixes
+
+
 ## Release Notes for 2.15.1
 #### February 27, 2023
 * Bug Fixes
