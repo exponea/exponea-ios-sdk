@@ -33,7 +33,9 @@ pod "ExponeaSDK-Notifications", "~> 2.15.2"
 
 ```
 github "exponea/exponea-ios-sdk" ~> 2.15.2
+github "scinfu/SwiftSoup" == 2.4.3
 ```
+> In your Target's General tab, under section Frameworks, Libraries and Embeeded Content, add the carthage built xcfw into it and set to them 'Embed & Sign'. Note: SwiftSoup is a dependency for parsing HTML and CSS, so when using Carthage, you need to include as well.
 
 ## 📱 Demo Application
 
