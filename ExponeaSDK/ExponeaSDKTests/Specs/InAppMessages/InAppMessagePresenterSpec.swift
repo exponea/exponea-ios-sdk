@@ -90,7 +90,20 @@ final class InAppMessagePresenterSpec: QuickSpec {
                     let window = UIWindow()
                     window.rootViewController = UIViewController()
                     waitUntil(timeout: .seconds(5)) { done in
-                        InAppMessagePresenter(window: window).presentInAppMessage(
+                        let presenter = InAppMessagePresenter(window: window)
+                        let view = try? presenter.createInAppMessageView(
+                            messageType: .modal,
+                            payload: .init(imageUrl: "", title: "", titleTextColor: "", titleTextSize: "", bodyText: "", bodyTextColor: "", bodyTextSize: "", buttons: [], backgroundColor: "", closeButtonColor: "", messagePosition: "", textPosition: "", textOverImage: false),
+                            payloadHtml: nil,
+                            image: UIImage()
+                        ) { _ in }
+                        dismissCallback: { isUserInteraction in
+                            expect(isUserInteraction).to(beTrue())
+                        }
+                        if let inAppMessageDialogView = view as? InAppMessageDialogView {
+                            inAppMessageDialogView.simulateClick()
+                        }
+                        presenter.presentInAppMessage(
                             messageType: messageType,
                             payload: message.payload,
                             payloadHtml: message.payloadHtml,
@@ -98,7 +111,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             timeout: nil,
                             imageData: lenaImageData,
                             actionCallback: { _ in },
-                            dismissCallback: {},
+                            dismissCallback: { _ in },
                             presentedCallback: { presented, error in
                                 expect(presented).notTo(beNil())
                                 done()
@@ -108,7 +121,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
 
                 it("should not present dialog without existing UI") {
                     waitUntil(timeout: .seconds(5)) { done in
-                        InAppMessagePresenter().presentInAppMessage(
+                        let presenter = InAppMessagePresenter()
+                        presenter.presentInAppMessage(
                             messageType: messageType,
                             payload: message.payload,
                             payloadHtml: message.payloadHtml,
@@ -116,7 +130,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             timeout: nil,
                             imageData: lenaImageData,
                             actionCallback: { _ in },
-                            dismissCallback: {},
+                            dismissCallback: { _ in },
                             presentedCallback: { presented, error in
                                 expect(presented).to(beNil())
                                 done()
@@ -136,7 +150,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             timeout: nil,
                             imageData: "something".data(using: .utf8)!,
                             actionCallback: { _ in },
-                            dismissCallback: {},
+                            dismissCallback: { _ in },
                             presentedCallback: { presented, error in
                                 expect(presented).to(beNil())
                                 done()
@@ -157,7 +171,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             timeout: nil,
                             imageData: lenaImageData,
                             actionCallback: { _ in },
-                            dismissCallback: {},
+                            dismissCallback: { _ in},
                             presentedCallback: callback)
                     }
                     var presentedDialog: InAppMessageView?
@@ -174,7 +188,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             done()
                         })
                     }
-                    presentedDialog?.dismissCallback()
+                    presentedDialog?.dismissCallback(false)
                     waitUntil(timeout: .seconds(5)) { done in
                         present({ presented, error in
                             expect(presented).notTo(beNil())

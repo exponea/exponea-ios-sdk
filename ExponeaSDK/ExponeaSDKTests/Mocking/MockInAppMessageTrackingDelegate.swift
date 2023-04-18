@@ -9,13 +9,14 @@
 @testable import ExponeaSDK
 
 class MockInAppMessageTrackingDelegate: InAppMessageTrackingDelegate {
+
     struct CallData: Equatable {
         let event: InAppMessageEvent
         let message: InAppMessage
     }
     public var calls: [CallData] = []
 
-    public func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool) {
+    public func track(_ event: ExponeaSDK.InAppMessageEvent, for message: ExponeaSDK.InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
         calls.append(CallData(event: event, message: message))
     }
 }

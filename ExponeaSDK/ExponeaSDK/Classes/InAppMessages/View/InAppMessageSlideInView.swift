@@ -13,7 +13,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     private let payload: InAppMessagePayload
     private let image: UIImage
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: (() -> Void)
+    let dismissCallback: TypeBlock<Bool>
 
     private let imageView: UIImageView = UIImageView()
 
@@ -36,7 +36,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         payload: InAppMessagePayload,
         image: UIImage,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping (() -> Void)
+        dismissCallback: @escaping TypeBlock<Bool>
     ) {
         self.payload = payload
         self.image = image
@@ -80,20 +80,20 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         animateIn()
     }
 
-    func dismiss() {
+    func dismiss(isUserInteraction: Bool) {
         guard superview != nil else {
             return
         }
         animateOut {
             self.removeFromSuperview()
-            self.dismissCallback()
+            self.dismissCallback(isUserInteraction)
         }
     }
 
     @objc func handleSwipe(gesture: UISwipeGestureRecognizer) {
         animateOut {
             self.removeFromSuperview()
-            self.dismissCallback()
+            self.dismissCallback(true)
         }
     }
 
@@ -108,7 +108,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     @objc func cancelButtonAction(_ sender: Any) {
         animateOut {
             self.removeFromSuperview()
-            self.dismissCallback()
+            self.dismissCallback(true)
         }
     }
 

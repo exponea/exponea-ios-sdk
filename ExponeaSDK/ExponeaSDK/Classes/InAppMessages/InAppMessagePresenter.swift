@@ -15,7 +15,6 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
     }
 
     private let window: UIWindow?
-
     private var presenting = false
 
     init(window: UIWindow? = nil) {
@@ -30,7 +29,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         timeout: TimeInterval?,
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
-        dismissCallback: @escaping () -> Void,
+        dismissCallback: @escaping TypeBlock<Bool>,
         presentedCallback: ((InAppMessageView?, String?) -> Void)? = nil
     ) {
         Exponea.logger.log(
@@ -74,9 +73,9 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                             self.presenting = false
                             actionCallback(button)
                         },
-                        dismissCallback: {
+                        dismissCallback: { isUserInteraction in
                             self.presenting = false
-                            dismissCallback()
+                            dismissCallback(isUserInteraction)
                         }
                     )
                     try inAppMessageView.present(
@@ -103,7 +102,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         }
         if let messageTimeout = messageTimeout {
             DispatchQueue.main.asyncAfter(deadline: .now() + messageTimeout) {
-                inAppMessageView.dismiss()
+                inAppMessageView.dismiss(isUserInteraction: false)
             }
         }
     }
@@ -114,7 +113,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         payloadHtml: String?,
         image: UIImage?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
-        dismissCallback: @escaping () -> Void
+        dismissCallback: @escaping TypeBlock<Bool>
     ) throws -> InAppMessageView {
         switch messageType {
         case .alert:

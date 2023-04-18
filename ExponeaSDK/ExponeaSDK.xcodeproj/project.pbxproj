@@ -207,6 +207,8 @@
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */; };
 		3384EFC629965EEB009A5981 /* Execute+AfterInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */; };
+		3388E6D129E8475B00F28C46 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
+		3388E6D229E8475C00F28C46 /* SwiftSoup.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33FC6CC229A90ED5001F113F /* OnMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC129A90ED5001F113F /* OnMain.swift */; };
 		33FC6CC429A910BA001F113F /* SafeIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC329A910BA001F113F /* SafeIndex.swift */; };
 		33FC6CC629A9123E001F113F /* Autolayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC529A9123E001F113F /* Autolayout.swift */; };
@@ -456,6 +458,7 @@
 			files = (
 				05F33B1B25C16DEF00CFD60A /* ExponeaSDKShared.framework in Embed Frameworks */,
 				05F33B1C25C16DEF00CFD60A /* ExponeaSDKObjC.framework in Embed Frameworks */,
+				3388E6D229E8475C00F28C46 /* SwiftSoup.xcframework in Embed Frameworks */,
 				C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */,
 				C0ED33BC21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Embed Frameworks */,
 			);
@@ -874,6 +877,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */,
+				3388E6D129E8475B00F28C46 /* SwiftSoup.xcframework in Frameworks */,
 				C0ED33BB21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2138,6 +2142,8 @@
 				C08D53DA21B9474E00EA2C13 /* PBXTargetDependency */,
 			);
 			name = Example;
+			packageProductDependencies = (
+			);
 			productName = Example;
 			productReference = C0F6C4E02098A1AB00834E21 /* Example.app */;
 			productType = "com.apple.product-type.application";

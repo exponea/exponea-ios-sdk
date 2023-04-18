@@ -177,7 +177,8 @@ class TrackingManagerSpec: QuickSpec {
                     trackingManager.track(
                         .click(buttonLabel: "mock-text", url: "mock-url"),
                         for: SampleInAppMessage.getSampleInAppMessage(),
-                        trackingAllowed: true
+                        trackingAllowed: true,
+                        isUserInteraction: true
                     )
                     let trackEvents = try! trackingManager.database.fetchTrackEvent()
                     expect(trackEvents.count).to(equal(1))

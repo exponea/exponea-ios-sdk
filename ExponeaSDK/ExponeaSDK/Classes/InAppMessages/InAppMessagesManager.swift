@@ -298,11 +298,12 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                         self.processInAppMessageAction(button: button)
                     }
             },
-            dismissCallback: {
+            dismissCallback: { isUserInteraction in
                     if self.delegate.trackActions {
                         self.trackingConsentManager.trackInAppMessageClose(
                             message: message,
-                            mode: .CONSIDER_CONSENT
+                            mode: .CONSIDER_CONSENT,
+                            isUserInteraction: isUserInteraction
                         )
                     }
                     self.delegate.inAppMessageAction(with: message, button: nil, interaction: false)

@@ -125,8 +125,8 @@ internal class MockTrackingManager: TrackingManagerType {
         )
     }
 
-    func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool) {
-        self.track(.close, for: message, trackingAllowed: trackingAllowed)
+    func trackInAppMessageClose(message: ExponeaSDK.InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
+        self.track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }
 
     func trackInAppMessageShown(message: ExponeaSDK.InAppMessage, trackingAllowed: Bool) {
@@ -137,7 +137,7 @@ internal class MockTrackingManager: TrackingManagerType {
         self.track(.error(message: error), for: message, trackingAllowed: trackingAllowed)
     }
     
-    func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool) {
+    func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool = false) {
         if trackingAllowed {
             trackedInappEvents.append(CallData(event: event, message: message))
         }
@@ -147,7 +147,7 @@ internal class MockTrackingManager: TrackingManagerType {
                 "banner_id": .string(message.id),
                 "banner_name": .string(message.name),
                 "banner_type": .string(message.rawMessageType ?? "null"),
-                "interaction": .bool(event.isInteraction),
+                "interaction": .bool(isUserInteraction),
                 "os": .string("iOS"),
                 "type": .string("in-app message"),
                 "variant_id": .int(message.variantId),

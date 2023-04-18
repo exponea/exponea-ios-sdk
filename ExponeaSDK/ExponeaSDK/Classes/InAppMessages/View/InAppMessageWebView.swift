@@ -5,7 +5,7 @@ import WebKit
 final class InAppMessageWebView: UIView, InAppMessageView {
     private let payload: String
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: (() -> Void)
+    let dismissCallback: TypeBlock<Bool>
 
     var webView: WKWebView!
 
@@ -16,7 +16,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     required init(
         payload: String,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping (() -> Void)
+        dismissCallback: @escaping TypeBlock<Bool>
     ) {
         self.payload = payload
         self.actionCallback = actionCallback
@@ -27,15 +27,15 @@ final class InAppMessageWebView: UIView, InAppMessageView {
                 guard let self = self else {
                     return
                 }
-                self.dismissCallback()
-                self.dismiss()
+                self.dismissCallback(false)
+                self.dismiss(isUserInteraction: true)
             },
             onActionCallback: { [weak self] action in
                 guard let self = self else {
                     return
                 }
                 self.actionCallback(self.toPayloadButton(action))
-                self.dismiss()
+                self.dismiss(isUserInteraction: true)
             }
         )
         setup()
@@ -61,12 +61,12 @@ final class InAppMessageWebView: UIView, InAppMessageView {
         ])
     }
 
-    func dismiss() {
+    func dismiss(isUserInteraction: Bool) {
         guard superview != nil else {
             return
         }
         self.removeFromSuperview()
-        self.dismissCallback()
+        self.dismissCallback(isUserInteraction)
     }
 
     func actionButtonAction(_ sender: InAppMessageActionButton) {
@@ -79,7 +79,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
 
     func cancelButtonAction(_ sender: Any) {
         self.removeFromSuperview()
-        self.dismissCallback()
+        self.dismissCallback(true)
     }
 
     func setup() {
@@ -98,7 +98,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
                     self.webView.loadHTMLString(self.normalizedPayload!.html!, baseURL: nil)
                 }
             } else {
-                self.dismiss()
+                self.dismiss(isUserInteraction: false)
             }
         }
     }

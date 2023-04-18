@@ -110,13 +110,13 @@ class TrackingConsentManager : TrackingConsentManagerType {
         self.trackingManager.trackInAppMessageClick(message: message, buttonText: buttonText, buttonLink: buttonLink, trackingAllowed: trackingAllowed)
     }
 
-    func trackInAppMessageClose(message: InAppMessage, mode: MODE) {
+    func trackInAppMessageClose(message: InAppMessage, mode: MODE, isUserInteraction: Bool) {
         var trackingAllowed = true
         if (mode == .CONSIDER_CONSENT && !message.hasTrackingConsent) {
             Exponea.logger.log(.error, message: "Event for closed inAppMessage is not tracked because consent is not given")
             trackingAllowed = false
         }
-        self.trackingManager.trackInAppMessageClose(message: message, trackingAllowed: trackingAllowed)
+        self.trackingManager.trackInAppMessageClose(message: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }
 
     func trackInAppMessageError(message: InAppMessage, error: String, mode: MODE) {

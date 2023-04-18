@@ -33,5 +33,5 @@ enum InAppMessageEvent: Equatable {
 }
 
 protocol InAppMessageTrackingDelegate: AnyObject {
-    func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool)
+    func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool)
 }

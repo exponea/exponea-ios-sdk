@@ -17,7 +17,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     let payload: InAppMessagePayload
     let image: UIImage
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: (() -> Void)
+    let dismissCallback: TypeBlock<Bool>
     let fullscreen: Bool
 
     let dialogContainerView: UIView = UIView() // whole dialog
@@ -46,7 +46,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         payload: InAppMessagePayload,
         image: UIImage,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping (() -> Void),
+        dismissCallback: @escaping TypeBlock<Bool>,
         fullscreen: Bool
     ) {
         self.payload = payload
@@ -60,6 +60,10 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         modalPresentationStyle = .overFullScreen
         modalTransitionStyle = .crossDissolve
     }
+    
+    func simulateClick() {
+        closeButtonAction(UIButton())
+    }
 
     required init?(coder: NSCoder) {
         return nil
@@ -69,11 +73,11 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         viewController.present(self, animated: true)
     }
 
-    func dismiss() {
+    func dismiss(isUserInteraction: Bool) {
         guard presentingViewController != nil else {
             return
         }
-        dismissCallback()
+        dismissCallback(isUserInteraction)
         dismiss(animated: true)
     }
 
@@ -108,7 +112,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     @objc private func onTapOutside() {
-        dismissCallback()
+        dismissCallback(true)
         dismiss(animated: true)
     }
 
@@ -339,7 +343,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     @objc func closeButtonAction(_ sender: Any) {
-        dismissCallback()
+        dismissCallback(true)
         dismiss(animated: true)
     }
 

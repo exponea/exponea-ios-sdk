@@ -114,7 +114,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: true,
                             consentCategoryTracking: "I have consent"
                         )
-                        manager.trackInAppMessageClose(message: message, mode: mode)
+                        manager.trackInAppMessageClose(message: message, mode: mode, isUserInteraction: false)
                     },
                     expectingConsentCategory: "I have consent",
                     expectingTrackType: .banner,
@@ -129,7 +129,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: true,
                             consentCategoryTracking: "I have consent"
                         )
-                        manager.trackInAppMessageClose(message: message, mode: mode)
+                        manager.trackInAppMessageClose(message: message, mode: mode, isUserInteraction: false)
                     },
                     expectingConsentCategory: "I have consent",
                     expectingTrackType: .banner,
@@ -144,7 +144,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: false,
                             consentCategoryTracking: "I have consent"
                         )
-                        manager.trackInAppMessageClose(message: message, mode: mode)
+                        manager.trackInAppMessageClose(message: message, mode: mode, isUserInteraction: false)
                     },
                     expectingConsentCategory: nil,
                     expectingTrackType: nil,
@@ -159,7 +159,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: false,
                             consentCategoryTracking: "I have consent"
                         )
-                        manager.trackInAppMessageClose(message: message, mode: mode)
+                        manager.trackInAppMessageClose(message: message, mode: mode, isUserInteraction: false)
                     },
                     expectingConsentCategory: "I have consent",
                     expectingTrackType: .banner,
@@ -751,7 +751,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                 trackingConsentManager.trackInAppMessageClose(message: SampleInAppMessage.getSampleInAppMessage(
                     hasTrackingConsent: true,
                     consentCategoryTracking: "I have consent"
-                ), mode: .IGNORE_CONSENT)
+                ), mode: .IGNORE_CONSENT, isUserInteraction: false)
                 checkForEventWithoutForceTrack()
             }
             it("Should not contains track_forced field for error inapp") {

@@ -28,7 +28,7 @@ final class InAppMessageDialogViewSpec: QuickSpec {
                     payload: payload!,
                     image: image,
                     actionCallback: { _ in },
-                    dismissCallback: {},
+                    dismissCallback: { _ in },
                     fullscreen: fullscreen
                 )
                 dialog.beginAppearanceTransition(true, animated: false)

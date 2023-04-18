@@ -356,7 +356,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
-                presenter.presentedMessages[0].dismissCallback()
+                presenter.presentedMessages[0].dismissCallback(false)
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
@@ -398,7 +398,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
-                presenter.presentedMessages[0].dismissCallback()
+                presenter.presentedMessages[0].dismissCallback(false)
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
@@ -418,7 +418,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
-                presenter.presentedMessages[0].dismissCallback()
+                presenter.presentedMessages[0].dismissCallback(false)
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,

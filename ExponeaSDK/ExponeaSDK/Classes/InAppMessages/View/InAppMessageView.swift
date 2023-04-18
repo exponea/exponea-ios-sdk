@@ -11,8 +11,8 @@ import UIKit
 
 protocol InAppMessageView {
     var actionCallback: ((InAppMessagePayloadButton) -> Void) { get }
-    var dismissCallback: (() -> Void) { get }
+    var dismissCallback: TypeBlock<Bool> { get }
 
     func present(in viewController: UIViewController, window: UIWindow?) throws
-    func dismiss()
+    func dismiss(isUserInteraction: Bool)
 }

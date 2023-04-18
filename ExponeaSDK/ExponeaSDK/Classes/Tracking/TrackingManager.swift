@@ -268,8 +268,8 @@ extension TrackingManager: TrackingManagerType {
             )
         }
 
-    open func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool) {
-        self.track(.close, for: message, trackingAllowed: trackingAllowed)
+    open func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
+        self.track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }
 
     open func trackInAppMessageError(message: InAppMessage, error: String, trackingAllowed: Bool) {
@@ -439,13 +439,13 @@ extension TrackingManager {
 // MARK: - In-app messages -
 
 extension TrackingManager: InAppMessageTrackingDelegate {
-    public func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool) {
+    public func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool = false) {
         var eventData: [String: JSONValue] = [
             "action": .string(event.action),
             "banner_id": .string(message.id),
             "banner_name": .string(message.name),
             "banner_type": .string(message.rawMessageType ?? "null"),
-            "interaction": .bool(event.isInteraction),
+            "interaction": .bool(isUserInteraction),
             "os": .string("iOS"),
             "type": .string("in-app message"),
             "variant_id": .int(message.variantId),

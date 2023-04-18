@@ -11,12 +11,12 @@ import UIKit
 final class InAppMessageAlertView: InAppMessageView {
     let alertController: UIAlertController
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: (() -> Void)
+    let dismissCallback: TypeBlock<Bool>
 
     init(
         payload: InAppMessagePayload,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping (() -> Void)
+        dismissCallback: @escaping TypeBlock<Bool>
     ) throws {
         guard let buttons = payload.buttons else {
             throw InAppMessagePresenter.InAppMessagePresenterError.unableToCreateView
@@ -34,7 +34,7 @@ final class InAppMessageAlertView: InAppMessageView {
             case .cancel:
                 hasCancelButton = true
                 alertController.addAction(
-                    UIAlertAction(title: button.buttonText, style: .cancel, handler: { _ in dismissCallback() })
+                    UIAlertAction(title: button.buttonText, style: .cancel, handler: { _ in dismissCallback(true) })
                 )
             case .deeplink, .browser:
                 alertController.addAction(
@@ -44,7 +44,7 @@ final class InAppMessageAlertView: InAppMessageView {
         }
         if !hasCancelButton {
             alertController.addAction(
-                UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in dismissCallback() })
+                UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in dismissCallback(true) })
             )
         }
     }
@@ -53,11 +53,11 @@ final class InAppMessageAlertView: InAppMessageView {
         viewController.present(alertController, animated: true)
     }
 
-    func dismiss() {
+    func dismiss(isUserInteraction: Bool) {
         guard alertController.presentingViewController != nil else {
             return
         }
-        dismissCallback()
+        dismissCallback(isUserInteraction)
         alertController.dismiss(animated: true)
     }
 }

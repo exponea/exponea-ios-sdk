@@ -156,7 +156,7 @@ class InAppDelegate: InAppMessageActionDelegate {
         if interaction {
             Exponea.shared.trackInAppMessageClick(message: message, buttonText: button?.text, buttonLink: button?.url)
         } else {
-            Exponea.shared.trackInAppMessageClose(message: message)
+            Exponea.shared.trackInAppMessageClose(message: message, isUserInteraction: false)
         }
     }
 }
