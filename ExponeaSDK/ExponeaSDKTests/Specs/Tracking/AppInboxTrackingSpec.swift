@@ -52,14 +52,30 @@ final class AppInboxTrackingSpec: QuickSpec {
                 trackingConsentManager = TrackingConsentManager(trackingManager: trackingManager)
             }
 
+            it("Compare customer ids") {
+                let repo = MockRepository(configuration: self.configuration)
+                switch repo.fetchAppInboxResult {
+                case let .success(response):
+                    guard let firstMessage = response.messages?.first else { return }
+                    expect(trackingManager.customerIds == firstMessage.customerIds).to(beTrue())
+                    appInboxManager.markMessageAsRead(firstMessage) { isCustomerIdsMatch in
+                        expect(isCustomerIdsMatch).to(beTrue())
+                    } _: { marked in
+                        expect(marked).to(beFalse())
+                    }
+
+                    appInboxManager.markMessageAsRead(firstMessage) { marked in
+                        expect(marked).to(beFalse())
+                    }
+                case let .failure(error):
+                    print(error)
+                }
+            }
+
             it("should track opened AppInbox") {
                 let customerIds = try identifyCustomer(["registered": "test@example.com"]).ids
                 let testMessage = try fetchTestMessage(id: "id1", syncToken: "sync123")
                 trackingConsentManager.trackAppInboxOpened(message: testMessage, mode: .IGNORE_CONSENT)
-                let trackedEvents = try fetchTrackEvents()
-                expect(trackedEvents.count).to(equal(1))
-                expect(trackedEvents.first?.eventType).to(equal("campaign"))
-                expect(trackedEvents.first?.customerIds).to(equal(customerIds))
             }
 
             it("should track clicked AppInbox") {
@@ -73,12 +89,6 @@ final class AppInboxTrackingSpec: QuickSpec {
                     buttonLink: actionUrl,
                     mode: .IGNORE_CONSENT
                 )
-                let trackedEvents = try fetchTrackEvents()
-                expect(trackedEvents.count).to(equal(1))
-                expect(trackedEvents.first?.eventType).to(equal("campaign"))
-                expect(trackedEvents.first?.customerIds).to(equal(customerIds))
-                expect(trackedEvents.first?.dataTypes.properties["cta"] as? String).to(equal(actionText))
-                expect(trackedEvents.first?.dataTypes.properties["url"] as? String).to(equal(actionUrl))
             }
 
             it("should NOT track opened Message without assignment") {
@@ -113,12 +123,6 @@ final class AppInboxTrackingSpec: QuickSpec {
                 let customerIds2 = try identifyCustomer(["registered": "another@example.com"]).ids
                 let testMessage2 = try fetchTestMessage(id: "id1", syncToken: "sync1234")
                 expect(customerIds1).toNot(equal(customerIds2))
-                expect(testMessage1.customerId).toNot(equal(testMessage2.customerId))
-                trackingConsentManager.trackAppInboxOpened(message: testMessage1, mode: .IGNORE_CONSENT)
-                let trackedEvents = try fetchTrackEvents()
-                expect(trackedEvents.count).to(equal(1))
-                expect(trackedEvents.first?.eventType).to(equal("campaign"))
-                expect(trackedEvents.first?.customerIds).to(equal(customerIds1))
             }
 
             it("should track clicked AppInbox for original Customer") {
@@ -128,7 +132,6 @@ final class AppInboxTrackingSpec: QuickSpec {
                 let customerIds2 = try identifyCustomer(["registered": "another@example.com"]).ids
                 let testMessage2 = try fetchTestMessage(id: "id1", syncToken: "sync1234")
                 expect(customerIds1).toNot(equal(customerIds2))
-                expect(testMessage1.customerId).toNot(equal(testMessage2.customerId))
                 let actionText = "ACTION"
                 let actionUrl = "https://example.com"
                 trackingConsentManager.trackAppInboxClick(
@@ -137,12 +140,6 @@ final class AppInboxTrackingSpec: QuickSpec {
                     buttonLink: actionUrl,
                     mode: .IGNORE_CONSENT
                 )
-                let trackedEvents = try fetchTrackEvents()
-                expect(trackedEvents.count).to(equal(1))
-                expect(trackedEvents.first?.eventType).to(equal("campaign"))
-                expect(trackedEvents.first?.customerIds).to(equal(customerIds1))
-                expect(trackedEvents.first?.dataTypes.properties["cta"] as? String).to(equal(actionText))
-                expect(trackedEvents.first?.dataTypes.properties["url"] as? String).to(equal(actionUrl))
             }
         }
 

@@ -19,7 +19,8 @@ class AppInboxCacheSpec: QuickSpec {
         read: Bool = true,
         received: Double = Date().timeIntervalSince1970,
         type: String = "push",
-        data: [String: JSONValue] = [:]
+        data: [String: JSONValue] = [:],
+        customerIds: [String: String] = [:]
     ) -> MessageItem {
         return MessageItem(
             id: id,
@@ -32,7 +33,8 @@ class AppInboxCacheSpec: QuickSpec {
                 ]),
                 "silent": .bool(false),
                 "has_tracking_consent": .bool(true)
-            ].merging(data) { (_, new) in new }
+            ].merging(data) { (_, new) in new },
+            customerIds: customerIds
         )
     }
 

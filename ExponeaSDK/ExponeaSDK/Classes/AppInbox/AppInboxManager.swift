@@ -55,7 +55,7 @@ final class AppInboxManager: AppInboxManagerType {
                 switch result {
                 case .success(let response):
                     Exponea.logger.log(.verbose, message: "AppInbox loaded successfully")
-                    let enhancedMessages = self.enhanceMessages(response.messages, customerId, response.syncToken)
+                    let enhancedMessages = self.enhanceMessages(response.messages, response.syncToken, customerIds: customerIds)
                     self.onAppInboxDataLoaded(enhancedMessages, response.syncToken, completion)
                 case .failure(let error):
                     Exponea.logger.log(.error, message: "AppInbox loading failed. \(error.localizedDescription)")
@@ -98,7 +98,7 @@ final class AppInboxManager: AppInboxManagerType {
         }
     }
 
-    func markMessageAsRead(_ message: MessageItem, _ completition: ((Bool) -> Void)?) {
+    func markMessageAsRead(_ message: MessageItem, _ customerIdsCheck: TypeBlock<Bool>? = nil, _ completition: ((Bool) -> Void)?) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else {
                 Exponea.logger.log(.error, message: "MarkAsRead AppInbox stops due to obsolete thread")
@@ -107,35 +107,20 @@ final class AppInboxManager: AppInboxManagerType {
                 }
                 return
             }
-            guard let syncToken = message.syncToken,
-                  let customerId = message.customerId,
-                  let customerUUID = UUID(uuidString: customerId) else {
+            guard !message.customerIds.isEmpty, let syncToken = message.syncToken else {
                 Exponea.logger.log(.error, message: "Unable to mark message \(message.id) as read, try to fetch AppInbox")
                 DispatchQueue.main.async {
                     completition?(false)
                 }
                 return
             }
-            let customer: Customer?
-            do {
-                customer = try self.databaseManager.fetchCustomer(customerUUID)
-            } catch let error {
-                Exponea.logger.log(.error, message: "Unable to mark message \(message.id) as read, customer not found because: \(error.localizedDescription)")
-                DispatchQueue.main.async {
-                    completition?(false)
-                }
-                return
-            }
-            guard let customer = customer else {
-                Exponea.logger.log(.error, message: "Unable to mark message \(message.id) as read, customer not found")
-                DispatchQueue.main.async {
-                    completition?(false)
-                }
-                return
+            // For test only
+            if customerIdsCheck != nil {
+                customerIdsCheck?(message.customerIds.first(where: { $0.key == "id" && $0.value == "1" }) != nil)
             }
             self.repository.postReadFlagAppInbox(
                 on: [message.id],
-                for: customer.ids,
+                for: message.customerIds,
                 with: syncToken
             ) { result in
                 switch result {
@@ -163,14 +148,14 @@ final class AppInboxManager: AppInboxManagerType {
         appInboxCache.setMessages(messages: currentMessages)
     }
 
-    private func enhanceMessages(_ messages: [MessageItem]?, _ customerId: String, _ syncToken: String?) -> [MessageItem] {
+    private func enhanceMessages(_ messages: [MessageItem]?, _ syncToken: String?, customerIds: [String : String]) -> [MessageItem] {
         guard let messages = messages, !messages.isEmpty else {
             return []
         }
         return messages.map { msg in
             var copy = msg
-            copy.customerId = customerId
             copy.syncToken = syncToken
+            copy.customerIds = customerIds
             return copy
         }
     }

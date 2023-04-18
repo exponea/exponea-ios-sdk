@@ -18,6 +18,8 @@ public struct MessageItem: Codable, Equatable {
 
     internal var customerId: String?
     internal var syncToken: String?
+    public var customerIds: [String : String] = [:]
+
 
     public var hasTrackingConsent: Bool {
         return content?.hasTrackingConsent ?? true
@@ -59,13 +61,15 @@ public struct MessageItem: Codable, Equatable {
         type: String,
         read: Bool,
         rawReceivedTime: Double?,
-        rawContent: [String: JSONValue]?
+        rawContent: [String: JSONValue]?,
+        customerIds: [String : String] = [:]
     ) {
         self.id = id
         self.type = type
         self.read = read
         self.rawReceivedTime = rawReceivedTime
         self.rawContent = rawContent
+        self.customerIds = customerIds
     }
 
     public init(from decoder: Decoder) throws {

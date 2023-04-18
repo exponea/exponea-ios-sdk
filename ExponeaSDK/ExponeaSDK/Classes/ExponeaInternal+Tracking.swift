@@ -417,7 +417,7 @@ extension ExponeaInternal {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            dependencies.appInboxManager.markMessageAsRead(message, completition)
+            dependencies.appInboxManager.markMessageAsRead(message, nil, completition)
         }
     }
 

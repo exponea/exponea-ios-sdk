@@ -402,7 +402,6 @@ class AppInboxManagerSpec: QuickSpec {
                         return
                     }
                     expect(message.syncToken).to(equal(receivedSyncToken))
-                    expect(message.customerId).toNot(beNil())
                     done()
                 }
             }
@@ -425,7 +424,8 @@ class AppInboxManagerSpec: QuickSpec {
                             "title": .string("Title"),
                             "pre_header": .string("Message"),
                             "message": .string(AppInboxManagerSpec.htmlAppInboxMessageContent)
-                        ]
+                        ],
+                        customerIds: ["id": "1"]
                     )
                 ],
                 syncToken: receivedSyncToken
@@ -442,13 +442,17 @@ class AppInboxManagerSpec: QuickSpec {
                     done()
                 }
             }
+            fetchedMessage?.customerIds = ["id": "1"]
+            fetchedMessage?.syncToken = "token"
             guard let fetchedMessage = fetchedMessage else {
                 fail("No message loaded")
                 return
             }
             waitUntil(timeout: .seconds(20)) { done in
-                appInboxManager.markMessageAsRead(fetchedMessage) { marked in
-                    expect(marked).to(beTrue())
+                appInboxManager.markMessageAsRead(fetchedMessage) { isSuccess in
+                    expect(isSuccess).to(beTrue())
+                } _: { isMarked in
+                    expect(isMarked).to(beTrue())
                     done()
                 }
             }

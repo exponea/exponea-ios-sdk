@@ -12,6 +12,6 @@ protocol AppInboxManagerType {
     func onEventOccurred(of type: EventType, for event: [DataType])
     func fetchAppInbox(completion: @escaping (Result<[MessageItem]>) -> Void)
     func fetchAppInboxItem(_ messageId: String, completion: @escaping (Result<MessageItem>) -> Void)
-    func markMessageAsRead(_ message: MessageItem, _ completition: ((Bool) -> Void)?)
+    func markMessageAsRead(_ message: MessageItem, _ customerIdsCheck: TypeBlock<Bool>?, _ completition: ((Bool) -> Void)?)
     func clear()
 }
