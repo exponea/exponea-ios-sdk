@@ -138,6 +138,17 @@ public extension RequestFactory {
         }
     }
 
+    func mockHandler<T: Decodable>(response: Data, model: T.Type, with completion: @escaping ((Result<T>) -> Void)) {
+        do {
+            let jsonDecoder = JSONDecoder()
+            jsonDecoder.dateDecodingStrategy = .secondsSince1970
+            let object = try jsonDecoder.decode(T.self, from: response)
+            completion(.success(object))
+        } catch {
+            completion(.failure(error))
+        }
+    }
+
     func process(_ response: URLResponse?, data: Data?, error: Error?,
                  resultAction: @escaping ((Result<Data>) -> Void)) {
         // Check if we have any response at all

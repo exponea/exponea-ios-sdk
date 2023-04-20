@@ -61,6 +61,82 @@ final class RequestFactorySpec: QuickSpec {
                     flushingManager.flushData(completion: { _ in done() })
                 }
             }
+
+            it("test empty reponse") {
+                var convert: (String) -> Data = { value in
+                    value.data(using: .utf8) ?? Data()
+                }
+                let factory: RequestFactory = .init(
+                    exponeaProject: .init(
+                        baseUrl: configuration.baseUrl,
+                        projectToken: configuration.projectToken,
+                        authorization: configuration.authorization
+                    ),
+                    route: .appInbox
+                )
+                let invalidForCode200 =
+                """
+                {{{
+                """
+                let invalid =
+                """
+                """
+                let validForInApps =
+                """
+                {
+                    "success": true,
+                }
+                """
+                let valid =
+                """
+                {
+                    "success": true,
+                    "data": [],
+                }
+                """
+                let validEmptyData =
+                """
+                {
+                    "success": true,
+                    "data": null,
+                }
+                """
+                factory.mockHandler(response: convert(invalidForCode200), model: InAppMessagesResponse.self) { result in
+                    switch result {
+                    case .success: break
+                    case let .failure(error):
+                        expect(error).toNot(beNil())
+                    }
+                }
+                factory.mockHandler(response: convert(invalid), model: InAppMessagesResponse.self) { result in
+                    switch result {
+                    case .success: break
+                    case let .failure(error):
+                        expect(error).toNot(beNil())
+                    }
+                }
+                factory.mockHandler(response: convert(validForInApps), model: InAppMessagesResponse.self) { result in
+                    switch result {
+                    case let .success(data):
+                        expect(data.success).to(beTrue())
+                    case .failure: break
+                    }
+                }
+                factory.mockHandler(response: convert(valid), model: InAppMessagesResponse.self) { result in
+                    switch result {
+                    case let .success(data):
+                        expect(data.success).to(beTrue())
+                    case .failure: break
+                    }
+                }
+                factory.mockHandler(response: convert(validEmptyData), model: InAppMessagesResponse.self) { result in
+                    switch result {
+                    case let .success(data):
+                        expect(data.success).to(beTrue())
+                    case .failure: break
+                    }
+                }
+            }
         }
     }
 }

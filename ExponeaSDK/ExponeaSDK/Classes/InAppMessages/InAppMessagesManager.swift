@@ -87,9 +87,9 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                     return
                 }
                 DispatchQueue.global(qos: .background).async {
-                    self.cache.saveInAppMessages(inAppMessages: response.data)
-                    self.cache.deleteImages(except: response.data.compactMap { $0.payload?.imageUrl })
-                    self.preloadImages(inAppMessages: response.data, completion: completion)
+                    self.cache.saveInAppMessages(inAppMessages: response.data ?? [])
+                    self.cache.deleteImages(except: response.data?.compactMap { $0.payload?.imageUrl } ?? [])
+                    self.preloadImages(inAppMessages: response.data ?? [], completion: completion)
                 }
             }
         }

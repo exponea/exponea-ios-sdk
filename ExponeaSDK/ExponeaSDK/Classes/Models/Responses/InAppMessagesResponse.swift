@@ -10,5 +10,5 @@ import Foundation
 
 struct InAppMessagesResponse: Codable {
     public let success: Bool
-    public let data: [InAppMessage]
+    public let data: [InAppMessage]?
 }
