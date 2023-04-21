@@ -66,7 +66,6 @@ Then you can start using all the other features:
 
 ## 🔗 Useful links
 
-* [Exponea Developer Hub](https://developers.exponea.com)
 * [Exponea App](https://app.exponea.com/login)
 
 ## 📝 Release Notes
