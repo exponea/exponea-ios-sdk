@@ -57,6 +57,8 @@ extension AppDelegate: PushNotificationManagerDelegate {
 ## Tracking delivered notifications
 Notification service extension is required for tracking push notification delivery. This extension is part of Rich notifications setup described in [Quick start guide](./Guide/PUSH_QUICKSTART.md).
 
+Calling of ExponeaNotificationService.process is allowed before SDK initialization in case that previous initialization process was done. In such a case, ExponeaNotificationService.process will track events with configuration of last initialization. Please consider to do SDK initialization in application(_:didFinishLaunchingWithOptions:) in case of update of your application to apply a fresh new configuration.
+
 ## Silent push notifications
 Exponea SDK supports both regular "alert" push notifications and silent push notifications(Background Updates). To receive a notification, you need to track your push token to Exponea backend. When push notification tracking is enabled and properly implemented, this will happen automatically. By default, the token is only tracked when the app is authorized to receive *alert* push notifications. You can change this by setting configuration variable `requirePushAuthorization = false`. With this setting, the SDK will register for push notifications and track the push token at application start. Push notification authorization status is tracked as customer property `apple_push_notification_authorized`.
 
