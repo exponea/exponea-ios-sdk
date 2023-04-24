@@ -54,10 +54,23 @@ In-app messages are triggered when an event is tracked based on conditions setup
 
 > Show on `App load` displays in-app message when a `session_start` event is tracked. If you close and quickly reopen the app, it's possible that the session did not timeout and message won't be displayed. If you use manual session tracking, the message won't be displayed unless you track `session_start` event yourself.
 
+Message is able to be shown only if it is loaded and also its image is loaded too. In case that message is not yet fully loaded (including its image) then the request-to-show is registered in SDK for that message so SDK will show it after full load.
+ Due to prevention of unpredicted behaviour (i.e. image loading takes too long) that request-to-show has timeout of 3 seconds.
+
+ > If message loading hits timeout of 3 seconds then message will be shown on 'next request'. For example the 'session_start' event triggers a showing of message that needs to be fully loaded but it timeouts, then message will not be shown. But it will be ready for next `session_start` event so it will be shown on next 'application run'.
+
 ### In-app images caching
 To reduce the number of API calls and fetching time of in-app messages, SDK is caching the images displayed in messages. Therefore, once the SDK downloads the image, an image with the same URL may not be downloaded again, and will not change, since it was already cached. For this reason, we recommend always using different URLs for different images.
 
 > Image downloads are limited to 10 seconds per image. If the in-app message contains a large image that cannot be downloaded within this time limit, the in-app message will not be displayed. For an HTML in-app message that contains multiple images, this restriction still applies per image, but failure of any image download will prevent this HTML in-app message from being displayed.
+
+### In-app messages loading
+ In-app messages reloading is triggered by any case of:
+ - when `Exponea.identifyCustomer` is called
+ - when `Exponea.anonymize` is called
+ - when any event is tracked (except Push clicked, opened or session ends) and In-app messages cache is older then 30 minutes from last load
+ Any In-app message images are preloaded too so message is able to be shown after whole process is finished. Please considers it while testing of In-app feature.
+ It is common behaviour that if you change an In-app message data on platform then this change is reflected in SDK after 30 minutes due to usage of messages cache. Do call `Exponea.identifyCustomer` or `Exponea.anonymize` if you want to reflect changes immediately.
 
 ### Custom in-app message actions
 If you want to override default SDK behavior, when in-app message action is performed (button is clicked, message is closed), or you want to add your code to be performed along with code executed by the SDK, you can set up `inAppMessagesDelegate` on Exponea instance. You will first need to create your own implementation of `InAppMessageActionDelegate`
