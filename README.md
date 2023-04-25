@@ -18,11 +18,11 @@ It has been written 100% in Swift with ❤️
 
 ```ruby
 # Add this under your main application target
-pod "ExponeaSDK", "~> 2.15.2"
+pod "ExponeaSDK", "~> 2.16.0"
 
 # If you also use rich push notifications,
 # add this line to your notification service extension target.
-pod "ExponeaSDK-Notifications", "~> 2.15.2"
+pod "ExponeaSDK-Notifications", "~> 2.16.0"
 ```
 
 > Read more about rich push notifications support [here](./Documentation/PUSH.md).
@@ -32,7 +32,7 @@ pod "ExponeaSDK-Notifications", "~> 2.15.2"
 > Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks. The latter one is only supposed to be used in a notification service extension if you wish support rich push notifications. Read more about rich push notifications [here](./Documentation/PUSH.md).
 
 ```
-github "exponea/exponea-ios-sdk" ~> 2.15.2
+github "exponea/exponea-ios-sdk" ~> 2.16.0
 github "scinfu/SwiftSoup" == 2.4.3
 ```
 > In your Target's General tab, under section Frameworks, Libraries and Embeeded Content, add the carthage built xcfw into it and set to them 'Embed & Sign'. Note: SwiftSoup is a dependency for parsing HTML and CSS, so when using Carthage, you need to include as well.

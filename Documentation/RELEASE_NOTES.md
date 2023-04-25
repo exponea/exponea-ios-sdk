@@ -1,4 +1,19 @@
 ## Release Notes
+## Release Notes for 2.16.0
+#### April 25, 2023
+* Features
+  * Ability to track a user 'interaction' while closing InApp message
+  * Support section added to main Readme
+  * InApp loading flow has been described more deeply in documentation
+  * Push notification track action has been described more deeply in documentation
+  * SDK initialization performance improve
+* Bug Fixes
+  * Fixed: SwiftSoup takes large space because of xcframework assignment
+  * Fixed: Marking of App Inbox message as read failed due to invalid usage of Customer IDs
+  * Fixed: Empty in-app message response did not clear the cache so previously loaded messages persisted there
+  * Fixed: Remove invalid link to developers hub from Useful links
+
+
 ## Release Notes for 2.15.2
 #### March 06, 2023
 * Bug Fixes
