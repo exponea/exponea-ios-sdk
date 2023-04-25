@@ -35,7 +35,8 @@ final class InAppMessageWebView: UIView, InAppMessageView {
                     return
                 }
                 self.actionCallback(self.toPayloadButton(action))
-                self.dismiss(isUserInteraction: true)
+                // Close window
+                self.dismiss(isUserInteraction: false)
             }
         )
         setup()

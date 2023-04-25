@@ -101,13 +101,13 @@ class TrackingConsentManager : TrackingConsentManagerType {
         self.trackingManager.trackInAppMessageShown(message: message, trackingAllowed: trackingAllowed)
     }
 
-    func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?, mode: MODE) {
+    func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?, mode: MODE, isUserInteraction: Bool) {
         var trackingAllowed = true
         if (mode == .CONSIDER_CONSENT && !message.hasTrackingConsent && !GdprTracking.isTrackForced(buttonLink)) {
             Exponea.logger.log(.error, message: "Event for clicked inAppMessage is not tracked because consent is not given")
             trackingAllowed = false
         }
-        self.trackingManager.trackInAppMessageClick(message: message, buttonText: buttonText, buttonLink: buttonLink, trackingAllowed: trackingAllowed)
+        self.trackingManager.trackInAppMessageClick(message: message, buttonText: buttonText, buttonLink: buttonLink, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }
 
     func trackInAppMessageClose(message: InAppMessage, mode: MODE, isUserInteraction: Bool) {
@@ -129,7 +129,7 @@ class TrackingConsentManager : TrackingConsentManagerType {
     }
 
     func trackAppInboxClick(message: MessageItem, buttonText: String?, buttonLink: String?, mode: MODE) {
-        guard let customerId = message.customerId else {
+        guard let customerId = message.customerIds["cookie"] else {
             Exponea.logger.log(.error, message: "AppInbox message has no customerId")
             return
         }
@@ -165,7 +165,7 @@ class TrackingConsentManager : TrackingConsentManagerType {
     }
 
     func trackAppInboxOpened(message: MessageItem, mode: MODE) {
-        guard let customerId = message.customerId else {
+        guard let customerId = message.customerIds["cookie"] else {
             Exponea.logger.log(.error, message: "AppInbox message contains no customerId")
             return
         }

@@ -40,7 +40,8 @@ class InAppMessageDelegate: InAppMessageActionDelegate {
                     message: message,
                     buttonText: button?.text,
                     buttonLink: button?.url,
-                    mode: .CONSIDER_CONSENT
+                    mode: .CONSIDER_CONSENT,
+                    isUserInteraction: true
                 )
             }
         }

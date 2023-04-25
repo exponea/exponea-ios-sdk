@@ -348,7 +348,8 @@ extension ExponeaInternal {
                 message: message,
                 buttonText: buttonText,
                 buttonLink: buttonLink,
-                mode: .CONSIDER_CONSENT
+                mode: .CONSIDER_CONSENT,
+                isUserInteraction: true
             )
         }
     }
@@ -368,7 +369,8 @@ extension ExponeaInternal {
                 message: message,
                 buttonText: buttonText,
                 buttonLink: buttonLink,
-                mode: .IGNORE_CONSENT
+                mode: .IGNORE_CONSENT,
+                isUserInteraction: true
             )
         }
     }

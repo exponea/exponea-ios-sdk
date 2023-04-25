@@ -285,7 +285,8 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                             message: message,
                             buttonText: button.buttonText,
                             buttonLink: button.buttonLink,
-                            mode: .CONSIDER_CONSENT
+                            mode: .CONSIDER_CONSENT,
+                            isUserInteraction: true
                         )
                     }
                     self.delegate.inAppMessageAction(

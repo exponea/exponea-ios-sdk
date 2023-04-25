@@ -80,11 +80,11 @@ class AppInboxCacheSpec: QuickSpec {
 
             it("should keep AppInbox messages between instances") {
                 var firstMessage = AppInboxCacheSpec.getSampleMessage(id: "first-mock-id")
-                firstMessage.customerId = "some"
+                firstMessage.customerIds = ["some": "some"]
                 firstMessage.syncToken = "some"
                 AppInboxCache().setMessages(messages: [firstMessage])
                 var secondMessage = AppInboxCacheSpec.getSampleMessage(id: "first-mock-id")
-                secondMessage.customerId = "some"
+                secondMessage.customerIds = ["some": "some"]
                 secondMessage.syncToken = "some"
                 expect(AppInboxCache().getMessages()).to(equal([secondMessage]))
             }

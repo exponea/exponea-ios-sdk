@@ -10,7 +10,6 @@ import Foundation
 @testable import ExponeaSDK
 
 internal class MockTrackingManager: TrackingManagerType {
-
     public struct TrackedEvent: Equatable {
         let type: EventType
         let data: [DataType]?
@@ -117,11 +116,12 @@ internal class MockTrackingManager: TrackingManagerType {
     func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
         fatalError("Not implemented")
     }
-    func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?, trackingAllowed: Bool) {
+    func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?, trackingAllowed: Bool, isUserInteraction: Bool) {
         track(
             .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),
             for: message,
-            trackingAllowed: trackingAllowed
+            trackingAllowed: trackingAllowed,
+            isUserInteraction: isUserInteraction
         )
     }
 

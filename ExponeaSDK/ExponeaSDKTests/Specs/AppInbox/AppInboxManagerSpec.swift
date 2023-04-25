@@ -349,7 +349,7 @@ class AppInboxManagerSpec: QuickSpec {
             var testMessage = AppInboxCacheSpec.getSampleMessage(id: "id1")
             // un-assign message from customer and AppInbox
             testMessage.syncToken = nil
-            testMessage.customerId = nil
+            testMessage.customerIds = [:]
             waitUntil(timeout: .seconds(20)) { done in
                 appInboxManager.markMessageAsRead(testMessage) { marked in
                     expect(marked).to(beFalse())
@@ -363,7 +363,7 @@ class AppInboxManagerSpec: QuickSpec {
             // assign to AppInbox
             testMessage.syncToken = "some"
             // assign to non-existing customer (random)
-            testMessage.customerId = UUID().uuidString
+            testMessage.customerIds = [:]
             waitUntil(timeout: .seconds(20)) { done in
                 appInboxManager.markMessageAsRead(testMessage) { marked in
                     expect(marked).to(beFalse())

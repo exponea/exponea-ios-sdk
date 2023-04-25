@@ -94,7 +94,7 @@ final class AppInboxTrackingSpec: QuickSpec {
             it("should NOT track opened Message without assignment") {
                 let customerIds = try identifyCustomer(["registered": "test@example.com"]).ids
                 var testMessage = try fetchTestMessage(id: "id1", syncToken: "sync123")
-                testMessage.customerId = nil    // unassign from customer
+                testMessage.customerIds = [:]    // unassign from customer
                 trackingConsentManager.trackAppInboxOpened(message: testMessage, mode: .IGNORE_CONSENT)
                 let trackedEvents = try fetchTrackEvents()
                 expect(trackedEvents.count).to(equal(0))
@@ -103,7 +103,7 @@ final class AppInboxTrackingSpec: QuickSpec {
             it("should NOT track clicked AppInbox") {
                 let customerIds = try identifyCustomer(["registered": "test@example.com"]).ids
                 var testMessage = try fetchTestMessage(id: "id1", syncToken: "sync123")
-                testMessage.customerId = nil
+                testMessage.customerIds = [:]    
                 let actionText = "ACTION"
                 let actionUrl = "https://example.com"
                 trackingConsentManager.trackAppInboxClick(

@@ -61,7 +61,7 @@ final class AppInboxCache: AppInboxCacheType {
     /// We have to check and remove them in that case
     private func areValid(_ data: AppInboxData) -> Bool {
         return data.messages.allSatisfy { msg in
-            msg.syncToken != nil && msg.customerId != nil
+            msg.syncToken != nil && !msg.customerIds.isEmpty
         }
     }
 

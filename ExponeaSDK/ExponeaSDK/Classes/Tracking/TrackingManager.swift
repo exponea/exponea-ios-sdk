@@ -156,7 +156,6 @@ class TrackingManager {
 // MARK: -
 
 extension TrackingManager: TrackingManagerType {
-    
     public func hasPendingEvent(ofType type: String, withMaxAge maxAge: Double) throws -> Bool {
         let events = try database.fetchTrackEvent()
             .filter({ $0.eventType == type && $0.timestamp + maxAge >= Date().timeIntervalSince1970 })
@@ -260,11 +259,13 @@ extension TrackingManager: TrackingManagerType {
         message: InAppMessage,
         buttonText: String?,
         buttonLink: String?,
-        trackingAllowed: Bool) {
+        trackingAllowed: Bool,
+        isUserInteraction: Bool) {
             self.track(
                 .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),
                 for: message,
-                trackingAllowed: trackingAllowed
+                trackingAllowed: trackingAllowed,
+                isUserInteraction: isUserInteraction
             )
         }
 

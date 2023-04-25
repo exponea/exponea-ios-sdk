@@ -16,10 +16,8 @@ public struct MessageItem: Codable, Equatable {
     public let rawReceivedTime: Double?
     public let rawContent: [String: JSONValue]?
 
-    internal var customerId: String?
     internal var syncToken: String?
-    public var customerIds: [String : String] = [:]
-
+    public var customerIds: [String: String] = [:]
 
     public var hasTrackingConsent: Bool {
         return content?.hasTrackingConsent ?? true
@@ -49,7 +47,7 @@ public struct MessageItem: Codable, Equatable {
         case rawReceivedTime = "create_time"
         case rawContent = "content"
         case syncToken
-        case customerId
+        case customerIds
     }
 
     public static func == (lhs: MessageItem, rhs: MessageItem) -> Bool {
@@ -62,7 +60,7 @@ public struct MessageItem: Codable, Equatable {
         read: Bool,
         rawReceivedTime: Double?,
         rawContent: [String: JSONValue]?,
-        customerIds: [String : String] = [:]
+        customerIds: [String: String] = [:]
     ) {
         self.id = id
         self.type = type
@@ -87,6 +85,8 @@ public struct MessageItem: Codable, Equatable {
             rawContent: content
         )
         self.syncToken = try? container.decodeIfPresent(String.self, forKey: .syncToken)
-        self.customerId = try? container.decodeIfPresent(String.self, forKey: .customerId)
+        if let customerIds = try? container.decode([String: String].self, forKey: .customerIds) {
+            self.customerIds = customerIds
+        }
     }
 }
