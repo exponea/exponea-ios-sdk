@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.16.1
+#### May 04, 2023
+* Bug Fixes
+  * Fixed: Carthage dependency linking and wrong file name
+
+
 ## Release Notes for 2.16.0
 #### April 25, 2023
 * Features
