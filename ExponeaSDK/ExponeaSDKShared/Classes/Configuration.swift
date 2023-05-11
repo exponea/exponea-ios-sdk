@@ -417,6 +417,7 @@ extension Configuration: CustomStringConvertible {
     }
 }
 
+@objc(AuthorizationProviderType)
 public protocol AuthorizationProviderType {
     init()
     func getAuthorizationToken() -> String?
