@@ -1,5 +1,9 @@
 # Push notifications quick start
-> In order to send push notifications, we need to track Firebase token to Exponea servers. Please make sure [tracking](./TRACKING.md) is working before configuring push notifications.
+> In order to send push notifications, we need to track one of those options:
+    1. deviceToken from - ``` swift func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)```
+    2. fcmToken from - ``` swift func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?)```
+to Exponea servers.
+[See more](https://firebase.google.com/docs/cloud-messaging/ios/client) 
 
 Exponea SDK contains self-check functionality to help you successfully setup push notifications. Self-check will try to track push token, request Exponea backend to send silent push to the device and check the app is ready to open push notifications. These checks correspond to steps in this guide.
 
