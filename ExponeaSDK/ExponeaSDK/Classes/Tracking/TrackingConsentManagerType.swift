@@ -15,7 +15,7 @@ protocol TrackingConsentManagerType {
     func trackInAppMessageError(message: InAppMessage, error: String, mode: MODE)
     func trackClickedPush(data: AnyObject?, mode: MODE)
     func trackClickedPush(data: PushOpenedData)
-    func trackDeliveredPush(data: NotificationData)
+    func trackDeliveredPush(data: NotificationData, mode: MODE)
     func trackAppInboxClick(message: MessageItem, buttonText: String?, buttonLink: String?, mode: MODE)
     func trackAppInboxOpened(message: MessageItem, mode: MODE)
 }

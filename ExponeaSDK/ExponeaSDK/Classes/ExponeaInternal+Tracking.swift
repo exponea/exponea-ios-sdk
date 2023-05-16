@@ -133,6 +133,73 @@ extension ExponeaInternal {
         }
     }
 
+    public func trackPushReceived(content: UNNotificationContent) {
+        guard let userInfo = readUserInfo(content) else {
+            Exponea.logger.log(.error, message: " No user info object from notification.")
+            return
+        }
+        trackPushReceived(userInfo: userInfo)
+    }
+
+    public func trackPushReceived(userInfo: [AnyHashable: Any]) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackDeliveredPush(
+                data: self.readNotificationData(from: userInfo),
+                mode: .CONSIDER_CONSENT
+            )
+        }
+    }
+
+    public func trackPushReceivedWithoutTrackingConsent(content: UNNotificationContent) {
+        guard let userInfo = readUserInfo(content) else {
+            Exponea.logger.log(.error, message: " No user info object from notification.")
+            return
+        }
+        trackPushReceivedWithoutTrackingConsent(userInfo: userInfo)
+    }
+
+    public func trackPushReceivedWithoutTrackingConsent(userInfo: [AnyHashable: Any]) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackDeliveredPush(
+                data: self.readNotificationData(from: userInfo),
+                mode: .IGNORE_CONSENT
+            )
+        }
+    }
+
+    private func readUserInfo(_ content: UNNotificationContent) -> [AnyHashable: Any]? {
+        guard let userInfo = (content.mutableCopy() as? UNMutableNotificationContent)?.userInfo else {
+            Exponea.logger.log(
+                .error,
+                message: "Failed to prepare data for delivered push notification:" +
+                    " Unable to get user info object from notification."
+            )
+            return nil
+        }
+        return userInfo
+    }
+
+    private func readNotificationData(from source: [AnyHashable: Any]) -> NotificationData {
+        var notificationData = NotificationData.deserialize(
+            attributes: source["attributes"] as? [String: Any] ?? [:],
+            campaignData: source["url_params"] as? [String: Any] ?? [:],
+            consentCategoryTracking: source["consent_category_tracking"] as? String ?? nil,
+            hasTrackingConsent: GdprTracking.readTrackingConsentFlag(source["has_tracking_consent"])
+        ) ?? NotificationData()
+
+        let timestamp = notificationData.timestamp
+        let sentTimestamp = notificationData.sentTimestamp ?? 0
+        let deliveredTimestamp = timestamp <= sentTimestamp ? sentTimestamp + 1 : timestamp
+        notificationData.timestamp = deliveredTimestamp
+        return notificationData
+    }
+
     // MARK: Sessions
     public func trackSessionStart() {
         executeSafelyWithDependencies { dependencies in

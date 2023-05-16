@@ -172,6 +172,20 @@ public protocol ExponeaType: AnyObject {
     /// Handles push notification token registration - compared to trackPushToken respects requirePushAuthorization
     func handlePushNotificationToken(deviceToken: Data)
 
+    /// Tracks push notification delivery
+    func trackPushReceived(content: UNNotificationContent)
+
+    /// Tracks push notification delivery
+    func trackPushReceived(userInfo: [AnyHashable: Any])
+
+    /// Tracks push notification delivery
+    /// Event is tracked even if  notification and action link have not a tracking consent.
+    func trackPushReceivedWithoutTrackingConsent(content: UNNotificationContent)
+
+    /// Tracks push notification delivery
+    /// Event is tracked even if  notification and action link have not a tracking consent.
+    func trackPushReceivedWithoutTrackingConsent(userInfo: [AnyHashable: Any])
+
     /// Tracks the push notification clicked event to Exponea API.
     func trackPushOpened(with userInfo: [AnyHashable: Any])
 

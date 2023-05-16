@@ -296,7 +296,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                 Exponea.logger.log(.warning, message: "Cannot deserialize stored delivered push data.")
                 continue
             }
-            trackingConsentManager.trackDeliveredPush(data: notification)
+            trackingConsentManager.trackDeliveredPush(data: notification, mode: .CONSIDER_CONSENT)
         }
 
         // Clear after all is processed

@@ -248,9 +248,9 @@
 		55EFD79F29224FFF002569FB /* AppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD79E29224FFF002569FB /* AppInboxProvider.swift */; };
 		55EFD7A129225060002569FB /* DefaultAppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD7A029225060002569FB /* DefaultAppInboxProvider.swift */; };
 		55EFD7A329225207002569FB /* ExampleAppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD7A229225207002569FB /* ExampleAppInboxProvider.swift */; };
+		55F67ABA2A139F6100C87A3B /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
 		55F6A41829891F130029D628 /* ExampleAuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6A41729891F130029D628 /* ExampleAuthProvider.swift */; };
 		55F6A41A29891F710029D628 /* CustomerTokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6A41929891F710029D628 /* CustomerTokenStorage.swift */; };
-		6B72A7E329C068BD00E1A1F9 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
 		6BA73FED29B6377E009F92DF /* AtomicValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA73FEC29B6377E009F92DF /* AtomicValue.swift */; };
 		6BA73FF029B63A14009F92DF /* AtomicValueSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA73FEF29B63A14009F92DF /* AtomicValueSpec.swift */; };
 		792F2F886D9F14542DF0E97D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64D92FEFD20D8844C3C3BF9 /* Pods_ExponeaSDKTests.framework */; };
@@ -886,7 +886,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6B72A7E329C068BD00E1A1F9 /* SwiftSoup.xcframework in Frameworks */,
+				55F67ABA2A139F6100C87A3B /* SwiftSoup.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
