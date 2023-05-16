@@ -241,7 +241,6 @@ public extension ExponeaInternal {
         }
     }
 
-    @available(*, deprecated)
     func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
         guard let repository = repository else {
             Exponea.logger.log(

@@ -136,7 +136,7 @@ internal class MockTrackingManager: TrackingManagerType {
     func trackInAppMessageError(message: ExponeaSDK.InAppMessage, error: String, trackingAllowed: Bool) {
         self.track(.error(message: error), for: message, trackingAllowed: trackingAllowed)
     }
-    
+
     func track(_ event: InAppMessageEvent, for message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool = false) {
         if trackingAllowed {
             trackedInappEvents.append(CallData(event: event, message: message))
