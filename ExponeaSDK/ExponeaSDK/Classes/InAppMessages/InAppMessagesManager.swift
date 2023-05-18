@@ -33,15 +33,6 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private var preloaded = false
     private let pendingRequestsBarrier = DispatchQueue(label: "pendingShowRequests.barrier", attributes: .concurrent)
     private var pendingShowRequests: [InAppMessageShowRequest] = []
-    private var delegateValue: InAppMessageActionDelegate = DefaultInAppDelegate()
-    internal var delegate: InAppMessageActionDelegate {
-        get {
-            return delegateValue
-        }
-        set {
-            delegateValue = newValue
-        }
-    }
 
     init(
         repository: RepositoryType,
@@ -49,7 +40,6 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         displayStatusStore: InAppMessageDisplayStatusStore,
         presenter: InAppMessagePresenterType = InAppMessagePresenter(),
         urlOpener: UrlOpenerType = UrlOpener(),
-        delegate: InAppMessageActionDelegate,
         trackingConsentManager: TrackingConsentManagerType
     ) {
         self.repository = repository
@@ -58,7 +48,6 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         self.displayStatusStore = displayStatusStore
         self.urlOpener = urlOpener
         self.trackingConsentManager = trackingConsentManager
-        self.delegate = delegate
     }
 
     func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?) {
@@ -97,16 +86,16 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 
     @discardableResult private func preloadImage(for message: InAppMessage) -> Bool {
         var imageUrlStrings: [String] = []
-        if (message.isHtml && message.payloadHtml != nil) {
+        if message.isHtml && message.payloadHtml != nil {
             imageUrlStrings.append(contentsOf: HtmlNormalizer(message.payloadHtml!).collectImages() ?? [])
-        } else if (message.payload?.imageUrl?.isEmpty == false) {
+        } else if message.payload?.imageUrl?.isEmpty == false {
             imageUrlStrings.append(message.payload!.imageUrl!)
         }
-        if (imageUrlStrings.isEmpty) {
+        if imageUrlStrings.isEmpty {
             return true // there is no image, call preload successful
         }
         for imageUrlString in imageUrlStrings {
-            if (cache.hasImageData(at: imageUrlString)) {
+            if cache.hasImageData(at: imageUrlString) {
                 continue
             }
             let imageData: Data? = ImageUtils.tryDownloadImage(imageUrlString)
@@ -279,40 +268,46 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             imageData: imageData,
             actionCallback: { button in
                 self.displayStatusStore.didInteract(with: message, at: Date())
-
-                    if self.delegate.trackActions {
-                        self.trackingConsentManager.trackInAppMessageClick(
-                            message: message,
-                            buttonText: button.buttonText,
-                            buttonLink: button.buttonLink,
-                            mode: .CONSIDER_CONSENT,
-                            isUserInteraction: true
-                        )
-                    }
-                    self.delegate.inAppMessageAction(
-                        with: message,
-                        button: InAppMessageButton(text: button.buttonText, url: button.buttonLink),
-                        interaction: true
+                if Exponea.shared.inAppMessagesDelegate.trackActions {
+                    self.trackingConsentManager.trackInAppMessageClick(
+                        message: message,
+                        buttonText: button.buttonText,
+                        buttonLink: button.buttonLink,
+                        mode: .CONSIDER_CONSENT,
+                        isUserInteraction: true
                     )
+                }
+                Exponea.shared.inAppMessagesDelegate.inAppMessageAction(
+                    with: message,
+                    button: InAppMessageButton(
+                        text: button.buttonText,
+                        url: button.buttonLink
+                    ),
+                    interaction: true
+                )
 
-                    if !self.delegate.overrideDefaultBehavior {
-                        self.processInAppMessageAction(button: button)
-                    }
+                if !Exponea.shared.inAppMessagesDelegate.overrideDefaultBehavior {
+                    self.processInAppMessageAction(button: button)
+                }
             },
             dismissCallback: { isUserInteraction in
-                    if self.delegate.trackActions {
-                        self.trackingConsentManager.trackInAppMessageClose(
-                            message: message,
-                            mode: .CONSIDER_CONSENT,
-                            isUserInteraction: isUserInteraction
-                        )
-                    }
-                    self.delegate.inAppMessageAction(with: message, button: nil, interaction: false)
+                if Exponea.shared.inAppMessagesDelegate.trackActions {
+                    self.trackingConsentManager.trackInAppMessageClose(
+                        message: message,
+                        mode: .CONSIDER_CONSENT,
+                        isUserInteraction: isUserInteraction
+                    )
+                }
+                Exponea.shared.inAppMessagesDelegate.inAppMessageAction(
+                    with: message,
+                    button: nil,
+                    interaction: isUserInteraction
+                )
             },
             presentedCallback: { presented, error in
-                if (presented == nil && error != nil) {
+                if presented == nil && error != nil {
                     self.trackingConsentManager.trackInAppMessageError(message: message, error: error!, mode: .CONSIDER_CONSENT)
-                } else if (presented != nil) {
+                } else if presented != nil {
                     self.trackInAppMessage(message)
                 }
                 callback?(presented)
@@ -351,13 +346,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     }
 
     func onEventOccurred(of type: EventType, for event: [DataType]) {
-        if (type == .sessionStart) {
+        if type == .sessionStart {
             self.sessionDidStart(
                 at: Date(timeIntervalSince1970: event.latestTimestamp ?? Date().timeIntervalSince1970),
                 for: event.customerIds,
                 completion: {}
             )
-        } else if (type == .install) {
+        } else if type == .install {
             self.preload(for: event.customerIds)
         }
         self.showInAppMessage(for: event)
@@ -376,7 +371,7 @@ public protocol InAppMessageActionDelegate: AnyObject {
     )
 }
 
-public struct InAppMessageButton {
+public struct InAppMessageButton: Codable {
     public let text: String?
     public let url: String?
 }

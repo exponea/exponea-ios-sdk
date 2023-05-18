@@ -55,20 +55,19 @@ final class MockExponeaImplementation: ExponeaInternal {
             self.trackingConsentManager = try! TrackingConsentManager(
                 trackingManager: self.trackingManager!
             )
-            
+
             self.inAppMessagesManager = InAppMessagesManager(
                repository: repository,
                displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
-               delegate: DefaultInAppDelegate(),
                trackingConsentManager: self.trackingConsentManager!
             )
-            
+
             self.appInboxManager = AppInboxManager(
                 repository: repository,
                 trackingManager: self.trackingManager!,
                 database: database
             )
-            
+
             processSavedCampaignData()
         } catch {
             // Failing gracefully, if setup failed
@@ -77,7 +76,6 @@ final class MockExponeaImplementation: ExponeaInternal {
                 """)
         }
     }
-
 
     public func fetchTrackEvents() throws -> [TrackEventProxy] {
         return try database.fetchTrackEvent()

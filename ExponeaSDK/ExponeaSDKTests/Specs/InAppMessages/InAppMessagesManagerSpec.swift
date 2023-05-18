@@ -51,7 +51,6 @@ class InAppMessagesManagerSpec: QuickSpec {
                 displayStatusStore: displayStore,
                 presenter: presenter,
                 urlOpener: urlOpener,
-                delegate: DefaultInAppDelegate(),
                 trackingConsentManager: trackingConsentManager
             )
         }
@@ -394,7 +393,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackActions: false,
                     trackingConsentManager: trackingConsentManager
                 )
-                manager.delegate = inAppDelegate
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
@@ -414,7 +413,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackActions: true,
                     trackingConsentManager: trackingConsentManager
                 )
-                manager.delegate = inAppDelegate
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
@@ -438,7 +437,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackActions: false,
                     trackingConsentManager: trackingConsentManager
                 )
-                manager.delegate = inAppDelegate
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
@@ -460,7 +459,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     trackActions: true,
                     trackingConsentManager: trackingConsentManager
                 )
-                manager.delegate = inAppDelegate
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
@@ -488,7 +487,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     inAppMessageManager: manager,
                     trackingConsentManager: trackingConsentManager
                 )
-                manager.delegate = inAppDelegate
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
@@ -520,7 +519,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should call default action when override is turned off in delegate ") {
-                manager.delegate = InAppMessageDelegate(
+                Exponea.shared.inAppMessagesDelegate = InAppMessageDelegate(
                     overrideDefaultBehavior: false,
                     trackActions: true,
                     trackingConsentManager: trackingConsentManager
@@ -537,7 +536,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should not call default action when override is turned on in delegate ") {
-                manager.delegate = InAppMessageDelegate(overrideDefaultBehavior: true, trackActions: true)
+                Exponea.shared.inAppMessagesDelegate = InAppMessageDelegate(overrideDefaultBehavior: true, trackActions: true)
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }

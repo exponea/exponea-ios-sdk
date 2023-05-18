@@ -17,7 +17,6 @@ protocol InAppMessagesManagerType {
     )
     func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?)
     func anonymize()
-    var delegate: InAppMessageActionDelegate { get set }
     func onEventOccurred(of type: EventType, for event: [DataType])
 }
 

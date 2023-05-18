@@ -409,7 +409,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: GdprTracking.readTrackingConsentFlag(true),
                             considerConsent: true
                         )
-                        manager.trackDeliveredPush(data: notifData!)
+                        manager.trackDeliveredPush(data: notifData!, mode: mode)
                     },
                     expectingConsentCategory: "I have consent",
                     expectingTrackType: .pushDelivered,
@@ -427,7 +427,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: GdprTracking.readTrackingConsentFlag(true),
                             considerConsent: false
                         )
-                        manager.trackDeliveredPush(data: notifData!)
+                        manager.trackDeliveredPush(data: notifData!, mode: mode)
                     },
                     expectingConsentCategory: "I have consent",
                     expectingTrackType: .pushDelivered,
@@ -445,7 +445,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: GdprTracking.readTrackingConsentFlag(false),
                             considerConsent: true
                         )
-                        manager.trackDeliveredPush(data: notifData!)
+                        manager.trackDeliveredPush(data: notifData!, mode: mode)
                     },
                     expectingConsentCategory: nil,
                     expectingTrackType: nil,
@@ -463,7 +463,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: GdprTracking.readTrackingConsentFlag(false),
                             considerConsent: false
                         )
-                        manager.trackDeliveredPush(data: notifData!)
+                        manager.trackDeliveredPush(data: notifData!, mode: mode)
                     },
                     expectingConsentCategory: "I have consent",
                     expectingTrackType: .pushDelivered,
@@ -745,7 +745,7 @@ final class TrackConsentManagerSpec: QuickSpec {
                     consentCategoryTracking: "I have consent",
                     hasTrackingConsent: true,
                     considerConsent: false
-                )!)
+                )!, mode: .CONSIDER_CONSENT)
                 checkForEventWithoutForceTrack()
             }
             it("Should not contains track_forced field for shown inapp") {
