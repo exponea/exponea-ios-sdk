@@ -213,18 +213,24 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     }
 
     func handlePushTokenRegistered(dataObject: AnyObject?) {
-        Exponea.shared.executeSafely {
-            self.handlePushTokenRegisteredUnsafe(dataObject: dataObject)
-        }
-    }
-
-    func handlePushTokenRegisteredUnsafe(dataObject: AnyObject?) {
         guard let tokenData = dataObject as? Data else {
             return
         }
+        Exponea.shared.executeSafely {
+            self.handlePushTokenRegisteredUnsafe(token: tokenData.tokenString)
+        }
+    }
+
+    func handlePushTokenRegistered(token: String) {
+        Exponea.shared.executeSafely {
+            self.handlePushTokenRegisteredUnsafe(token: token)
+        }
+    }
+
+    func handlePushTokenRegisteredUnsafe(token: String) {
         UNAuthorizationStatusProvider.current.isAuthorized { authorized in
             if !self.requirePushAuthorization || authorized {
-                self.currentPushToken = tokenData.tokenString
+                self.currentPushToken = token
                 self.trackCurrentPushToken(isAuthorized: authorized)
             }
         }

@@ -172,6 +172,9 @@ public protocol ExponeaType: AnyObject {
     /// Handles push notification token registration - compared to trackPushToken respects requirePushAuthorization
     func handlePushNotificationToken(deviceToken: Data)
 
+    /// Handles push notification token registration - compared to trackPushToken respects requirePushAuthorization
+    func handlePushNotificationToken(token: String)
+
     /// Tracks push notification delivery
     func trackPushReceived(content: UNNotificationContent)
 

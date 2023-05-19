@@ -12,6 +12,7 @@ protocol PushNotificationManagerType: AnyObject {
     func handlePushOpened(userInfoObject: AnyObject?, actionIdentifier: String?)
     func handlePushOpenedWithoutTrackingConsent(userInfoObject: AnyObject?, actionIdentifier: String?)
     func handlePushTokenRegistered(dataObject: AnyObject?)
+    func handlePushTokenRegistered(token: String)
 
     var didReceiveSelfPushCheck: Bool { get }
 }

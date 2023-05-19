@@ -343,6 +343,13 @@ extension ExponeaInternal {
     }
 
     /// Handles push notification token registration - compared to trackPushToken respects requirePushAuthorization
+    public func handlePushNotificationToken(token: String) {
+        executeSafelyWithDependencies { dependencies in
+            dependencies.trackingManager.notificationsManager.handlePushTokenRegistered(token: token)
+        }
+    }
+
+    /// Handles push notification token registration - compared to trackPushToken respects requirePushAuthorization
     public func handlePushNotificationToken(deviceToken: Data) {
         executeSafelyWithDependencies { dependencies in
             dependencies.trackingManager.notificationsManager.handlePushTokenRegistered(

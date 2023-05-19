@@ -29,6 +29,10 @@ final class MockPushNotificationManager: PushNotificationManagerType {
         handlePushTokenRegisteredCalls.append(dataObject)
     }
 
+    func handlePushTokenRegistered(token: String) {
+        handlePushTokenRegisteredCalls.append(token as AnyObject)
+    }
+
     func handlePushOpenedWithoutTrackingConsent(userInfoObject: AnyObject?, actionIdentifier: String?) {
         handlePushOpenedCalls.append((userInfoObject, actionIdentifier))
     }
