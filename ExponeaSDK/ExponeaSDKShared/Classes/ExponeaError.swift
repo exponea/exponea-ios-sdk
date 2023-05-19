@@ -24,6 +24,12 @@ public enum ExponeaError: LocalizedError {
     case nsExceptionInconsistency
     /// Unable to finish an async process
     case stoppedProcess
+    /// Property is required but not found
+    case missingProperty(property: String)
+    /// Property is found but given value type mismatched
+    case invalidType(for: String)
+    /// Property is found but given value is invalid
+    case invalidValue(for: String)
 
     public var errorDescription: String? {
         switch self {
@@ -53,6 +59,9 @@ public enum ExponeaError: LocalizedError {
 
         case .stoppedProcess:
             return "Async process has stopped"
+        case .missingProperty(let property): return "Property \(property) is required."
+        case .invalidType(let name): return "Invalid type for \(name)."
+        case .invalidValue(let name): return "Invalid value for \(name)."
         }
     }
 }
