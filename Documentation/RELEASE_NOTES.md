@@ -1,4 +1,13 @@
 ## Release Notes
+## Release Notes for 2.16.2
+#### May 22, 2023
+* Features
+  * New AppInbox provider has been created for easier styling of UI components
+  * API for push token handling as string and push notification tracking
+  * Small internal refactoring for better compatibility with other wrappers
+  * Documentation about FCMID handling was described more deeply
+
+
 ## Release Notes for 2.16.1
 #### May 04, 2023
 * Bug Fixes
