@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.16.3
+#### June 01, 2023
+* Features
+  * Brings public visibility to App Inbox style API 
+
+
 ## Release Notes for 2.16.2
 #### May 22, 2023
 * Features
