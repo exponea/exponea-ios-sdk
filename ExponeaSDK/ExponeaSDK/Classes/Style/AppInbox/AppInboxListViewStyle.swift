@@ -9,16 +9,16 @@
 import Foundation
 import UIKit
 
-class AppInboxListViewStyle {
+public class AppInboxListViewStyle {
     var backgroundColor: String?
     var item: AppInboxListItemStyle?
 
-    init(backgroundColor: String? = nil, item: AppInboxListItemStyle? = nil) {
+    public init(backgroundColor: String? = nil, item: AppInboxListItemStyle? = nil) {
         self.backgroundColor = backgroundColor
         self.item = item
     }
 
-    func applyTo(_ target: UITableView) {
+    public func applyTo(_ target: UITableView) {
         if let backgroundColor = UIColor.parse(backgroundColor) {
             target.backgroundColor = backgroundColor
         }

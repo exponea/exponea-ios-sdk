@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class ButtonStyle {
+public class ButtonStyle {
     var textOverride: String?
     var textColor: String?
     var backgroundColor: String?
@@ -19,7 +19,7 @@ class ButtonStyle {
     var borderRadius: String?
     var textWeight: String?
 
-    init(
+    public init(
         textOverride: String? = nil,
         textColor: String? = nil,
         backgroundColor: String? = nil,
@@ -39,7 +39,7 @@ class ButtonStyle {
         self.textWeight = textWeight
     }
 
-    func applyTo(_ target: UIButton) {
+    public func applyTo(_ target: UIButton) {
         if let textOverride = textOverride {
             target.setTitle(textOverride, for: .normal)
         }

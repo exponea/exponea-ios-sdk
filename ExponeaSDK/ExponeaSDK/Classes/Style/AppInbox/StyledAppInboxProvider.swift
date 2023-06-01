@@ -16,7 +16,7 @@ public class StyledAppInboxProvider: DefaultAppInboxProvider {
         appInboxStyle = AppInboxStyle()
     }
 
-    init(_ style: AppInboxStyle) {
+    public init(_ style: AppInboxStyle) {
         appInboxStyle = style
     }
 

@@ -9,18 +9,18 @@
 import Foundation
 import UIKit
 
-class ProgressBarStyle {
+public class ProgressBarStyle {
     var visible: Bool?
     var progressColor: String?
     var backgroundColor: String?
 
-    init(visible: Bool? = nil, progressColor: String? = nil, backgroundColor: String? = nil) {
+    public init(visible: Bool? = nil, progressColor: String? = nil, backgroundColor: String? = nil) {
         self.visible = visible
         self.progressColor = progressColor
         self.backgroundColor = backgroundColor
     }
 
-    func applyTo(_ target: UIActivityIndicatorView) {
+    public func applyTo(_ target: UIActivityIndicatorView) {
         if let visible = visible {
             target.isHidden = !visible
         }

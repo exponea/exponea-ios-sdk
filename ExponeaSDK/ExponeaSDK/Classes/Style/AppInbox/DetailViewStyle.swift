@@ -8,14 +8,14 @@
 
 import Foundation
 
-class DetailViewStyle {
+public class DetailViewStyle {
     var title: TextViewStyle?
     var content: TextViewStyle?
     var receivedTime: TextViewStyle?
     var image: ImageViewStyle?
     var button: ButtonStyle?
 
-    init(
+    public init(
         title: TextViewStyle? = nil,
         content: TextViewStyle? = nil,
         receivedTime: TextViewStyle? = nil,
@@ -29,7 +29,7 @@ class DetailViewStyle {
         self.button = button
     }
 
-    func applyTo(_ target: AppInboxDetailViewController) {
+    public func applyTo(_ target: AppInboxDetailViewController) {
         if let title = title {
             title.applyTo(target.messageTitle)
         }

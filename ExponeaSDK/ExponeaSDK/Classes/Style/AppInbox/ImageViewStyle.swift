@@ -9,16 +9,16 @@
 import Foundation
 import UIKit
 
-class ImageViewStyle {
+public class ImageViewStyle {
     var visible: Bool?
     var backgroundColor: String?
 
-    init(visible: Bool? = nil, backgroundColor: String? = nil) {
+    public init(visible: Bool? = nil, backgroundColor: String? = nil) {
         self.visible = visible
         self.backgroundColor = backgroundColor
     }
 
-    func applyTo(_ target: UIView) {
+    public func applyTo(_ target: UIView) {
         if let visible = visible {
             target.isHidden = !visible
         }
@@ -27,7 +27,7 @@ class ImageViewStyle {
         }
     }
 
-    func applyTo(_ target: UIImageView) {
+    public func applyTo(_ target: UIImageView) {
         if let visible = visible {
             target.isHidden = !visible
         }

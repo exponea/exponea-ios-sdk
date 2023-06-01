@@ -9,14 +9,14 @@
 import Foundation
 import UIKit
 
-class TextViewStyle {
+public class TextViewStyle {
     var visible: Bool?
     var textColor: String?
     var textSize: String?
     var textWeight: String?
     var textOverride: String?
 
-    init(
+    public init(
         visible: Bool? = nil,
         textColor: String? = nil,
         textSize: String? = nil,
@@ -30,7 +30,7 @@ class TextViewStyle {
         self.textOverride = textOverride
     }
 
-    func applyTo(_ target: UILabel) {
+    public func applyTo(_ target: UILabel) {
         if let visible = visible {
             target.isHidden = !visible
         }

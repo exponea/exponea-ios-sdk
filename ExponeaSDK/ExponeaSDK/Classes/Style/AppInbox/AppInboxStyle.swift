@@ -8,12 +8,12 @@
 
 import Foundation
 
-class AppInboxStyle {
+public class AppInboxStyle {
     var appInboxButton: ButtonStyle?
     var detailView: DetailViewStyle?
     var listView: ListScreenStyle?
 
-    init(appInboxButton: ButtonStyle? = nil, detailView: DetailViewStyle? = nil, listView: ListScreenStyle? = nil) {
+    public init(appInboxButton: ButtonStyle? = nil, detailView: DetailViewStyle? = nil, listView: ListScreenStyle? = nil) {
         self.appInboxButton = appInboxButton
         self.detailView = detailView
         self.listView = listView

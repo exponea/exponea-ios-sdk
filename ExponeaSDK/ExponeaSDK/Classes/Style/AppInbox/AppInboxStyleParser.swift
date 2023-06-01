@@ -8,17 +8,17 @@
 
 import Foundation
 
-class AppInboxStyleParser {
+public class AppInboxStyleParser {
 
     private let source: NSDictionary
 
-    init(
+    public init(
         _ configMap: NSDictionary
     ) {
         self.source = configMap
     }
 
-    func parse() throws -> AppInboxStyle {
+    public func parse() throws -> AppInboxStyle {
         return AppInboxStyle(
             appInboxButton: try parseButtonStyle(self.source.getOptionalSafely(property: "appInboxButton")),
             detailView: try parseDetailViewStyle(self.source.getOptionalSafely(property: "detailView")),

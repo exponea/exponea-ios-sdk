@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ListScreenStyle {
+public class ListScreenStyle {
     var emptyTitle: TextViewStyle?
     var emptyMessage: TextViewStyle?
     var errorTitle: TextViewStyle?
@@ -16,7 +16,7 @@ class ListScreenStyle {
     var progress: ProgressBarStyle?
     var list: AppInboxListViewStyle?
 
-    init(
+    public init(
         emptyTitle: TextViewStyle? = nil,
         emptyMessage: TextViewStyle? = nil,
         errorTitle: TextViewStyle? = nil,
@@ -32,7 +32,7 @@ class ListScreenStyle {
         self.list = list
     }
 
-    func applyTo(_ target: AppInboxListViewController) {
+    public func applyTo(_ target: AppInboxListViewController) {
         if let emptyTitleStyle = emptyTitle {
             emptyTitleStyle.applyTo(target.statusEmptyTitle)
         }

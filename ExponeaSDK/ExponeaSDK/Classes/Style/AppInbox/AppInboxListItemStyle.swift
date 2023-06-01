@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class AppInboxListItemStyle {
+public class AppInboxListItemStyle {
     var backgroundColor: String?
     var readFlag: ImageViewStyle?
     var receivedTime: TextViewStyle?
@@ -17,7 +17,7 @@ class AppInboxListItemStyle {
     var content: TextViewStyle?
     var image: ImageViewStyle?
 
-    init(
+    public init(
         backgroundColor: String? = nil,
         readFlag: ImageViewStyle? = nil,
         receivedTime: TextViewStyle? = nil,
@@ -33,7 +33,7 @@ class AppInboxListItemStyle {
         self.image = image
     }
 
-    func applyTo(_ target: MessageItemCell) {
+    public func applyTo(_ target: MessageItemCell) {
         if let backgroundColor = UIColor.parse(backgroundColor) {
             target.backgroundColor = backgroundColor
         }
