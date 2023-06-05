@@ -66,7 +66,8 @@ final class PushNotificationSwizzler {
 
     /// This functions swizzles the token registration method to intercept the token and submit it to Exponea.
     private func swizzleTokenRegistrationTracking() {
-        guard let appDelegate = uiApplicationDelegating.delegate else {
+        guard uiApplicationDelegating != nil,
+              let appDelegate = uiApplicationDelegating.delegate else {
             return
         }
 
@@ -100,7 +101,8 @@ final class PushNotificationSwizzler {
     /// 3. We need to implement `application:didReceiveRemoteNotification:fetchCompletionHandler:`.
     /// We either swizzle existing method, of create a new one.
     private func swizzleNotificationReceived() {
-        guard let appDelegate = uiApplicationDelegating.delegate else {
+        guard uiApplicationDelegating != nil,
+              let appDelegate = uiApplicationDelegating.delegate else {
             Exponea.logger.log(.error, message: "Critical error, no app delegate class available.")
             return
         }
