@@ -26,7 +26,9 @@ struct MockData {
             "properties": .dictionary([
                 "first_name": .string("Marian"),
                 "last_name": .string("Galik"),
-                "email": .string("marian.galik@exponea.com")])
+                "email": .string("marian.galik@exponea.com"),
+                "platform": .string("ios")
+            ])
         ]
     }()
 

@@ -53,6 +53,14 @@ class TrackUniversalLinkSpec: QuickSpec {
                             expect(lastRequest?.url?.absoluteString)
                                 .to(equal("https://my-url.com/track/v2/projects/\(projectToken)/campaigns/clicks"))
                         }
+                        it("should contains required properties") {
+                            guard let requestBody: String = lastRequest?.httpBodyStream?.readFully() else {
+                                fail("Request data are invalid")
+                                done()
+                                return
+                            }
+                            expect(requestBody).to(contain("platform"))
+                        }
                         done()
                     }
                 }

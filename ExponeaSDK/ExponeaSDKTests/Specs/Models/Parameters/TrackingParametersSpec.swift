@@ -32,6 +32,15 @@ class TrackingParametersSpec: QuickSpec {
                 it("Should not return nil") {
                     expect(param.parameters).toNot(beNil())
                 }
+                it("should contains required properties") {
+                    if let propertiesReqDic = param.requestParameters["properties"] as? [String: Any],
+                       let propertiesDic = propertiesReqDic["properties"] as? [String: Any],
+                       let platform = propertiesDic["platform"] as? String {
+                        expect(platform).to(equal("ios"))
+                    } else {
+                        fail("properties missing")
+                    }
+                }
             }
         }
     }

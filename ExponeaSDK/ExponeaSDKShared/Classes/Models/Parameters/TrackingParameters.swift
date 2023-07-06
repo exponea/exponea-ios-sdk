@@ -51,7 +51,11 @@ extension TrackingParameters: RequestParametersType {
         }
         if eventType == Constants.EventTypes.campaignClick {
             parameters["url"] = properties["url"]
-            parameters["properties"] = properties["properties"]
+            if properties["properties"] == nil, let platform = properties["platform"] {
+                parameters["properties"] = .dictionary(["platform": platform])
+            } else {
+                parameters["properties"] = properties["properties"]
+            }
         } else {
             /// Preparing properties param
             parameters["properties"] = .dictionary(properties)
