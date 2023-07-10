@@ -21,165 +21,165 @@ final class EventFilterConstraintSpec: QuickSpec {
                 (
                     StringConstraint.isSet,
                     """
-                    {"type":"string","operator":"is set","operands":[]}
+                    {"operands":[],"operator":"is set","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.isNotSet,
                     """
-                    {"type":"string","operator":"is not set","operands":[]}
+                    {"operands":[],"operator":"is not set","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.hasValue,
                     """
-                    {"type":"string","operator":"has value","operands":[]}
+                    {"operands":[],"operator":"has value","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.hasNoValue,
                     """
-                    {"type":"string","operator":"has no value","operands":[]}
+                    {"operands":[],"operator":"has no value","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.equals("asdf"),
                     """
-                    {"type":"string","operator":"equals","operands":[{"type":"constant","value":"asdf"}]}
+                    {"operands":[{"type":"constant","value":"asdf"}],"operator":"equals","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.doesNotEqual("asdf"),
                     """
-                    {"type":"string","operator":"does not equal","operands":[{"type":"constant","value":"asdf"}]}
+                    {"operands":[{"type":"constant","value":"asdf"}],"operator":"does not equal","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.isIn(["asdf"]),
                     """
-                    {"type":"string","operator":"in","operands":[{"type":"constant","value":"asdf"}]}
+                    {"operands":[{"type":"constant","value":"asdf"}],"operator":"in","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.notIn(["asdf"]),
                     """
-                    {"type":"string","operator":"not in","operands":[{"type":"constant","value":"asdf"}]}
+                    {"operands":[{"type":"constant","value":"asdf"}],"operator":"not in","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.contains("asdf"),
                     """
-                    {"type":"string","operator":"contains","operands":[{"type":"constant","value":"asdf"}]}
+                    {"operands":[{"type":"constant","value":"asdf"}],"operator":"contains","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.doesNotContain("asdf"),
                     """
-                    {"type":"string","operator":"does not contain","operands":[{"type":"constant","value":"asdf"}]}
+                    {"operands":[{"type":"constant","value":"asdf"}],"operator":"does not contain","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.startsWith("asdf"),
                     """
-                    {"type":"string","operator":"starts with","operands":[{"type":"constant","value":"asdf"}]}
+                    {"operands":[{"type":"constant","value":"asdf"}],"operator":"starts with","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.endsWith("asdf"),
                     """
-                    {"type":"string","operator":"ends with","operands":[{"type":"constant","value":"asdf"}]}
+                    {"operands":[{"type":"constant","value":"asdf"}],"operator":"ends with","type":"string"}
                     """
                 ),
                 (
                     StringConstraint.regex("asdf"),
                     """
-                    {"type":"string","operator":"regex","operands":[{"type":"constant","value":"asdf"}]}
+                    {"operands":[{"type":"constant","value":"asdf"}],"operator":"regex","type":"string"}
                     """
                 ),
                 // number
                 (
                     NumberConstraint.isSet,
                     """
-                    {"type":"number","operator":"is set","operands":[]}
+                    {"operands":[],"operator":"is set","type":"number"}
                     """
                 ),
                 (
                     NumberConstraint.isNotSet,
                     """
-                    {"type":"number","operator":"is not set","operands":[]}
+                    {"operands":[],"operator":"is not set","type":"number"}
                     """
                 ),
                 (
                     NumberConstraint.hasValue,
                     """
-                    {"type":"number","operator":"has value","operands":[]}
+                    {"operands":[],"operator":"has value","type":"number"}
                     """
                 ),
                 (
                     NumberConstraint.hasNoValue,
                     """
-                    {"type":"number","operator":"has no value","operands":[]}
+                    {"operands":[],"operator":"has no value","type":"number"}
                     """
                 ),
                 (
                     NumberConstraint.equalTo(123),
                     """
-                    {"type":"number","operator":"equal to","operands":[{"type":"constant","value":"123.0"}]}
+                    {"operands":[{"type":"constant","value":"123.0"}],"operator":"equal to","type":"number"}
                     """
                 ),
                 (
                     NumberConstraint.lessThan(123),
                     """
-                    {"type":"number","operator":"less than","operands":[{"type":"constant","value":"123.0"}]}
+                    {"operands":[{"type":"constant","value":"123.0"}],"operator":"less than","type":"number"}
                     """
                 ),
                 (
                     NumberConstraint.greaterThan(123),
                     """
-                    {"type":"number","operator":"greater than","operands":[{"type":"constant","value":"123.0"}]}
+                    {"operands":[{"type":"constant","value":"123.0"}],"operator":"greater than","type":"number"}
                     """
                 ),
                 (// swiftlint:disable line_length
                     NumberConstraint.inBetween(123, 456),
                     """
-                    {"type":"number","operator":"in between","operands":[{"type":"constant","value":"123.0"},{"type":"constant","value":"456.0"}]}
+                    {"operands":[{"type":"constant","value":"123.0"},{"type":"constant","value":"456.0"}],"operator":"in between","type":"number"}
                     """
                 ),
                 (
                     NumberConstraint.notBetween(123, 456),
                     """
-                    {"type":"number","operator":"not between","operands":[{"type":"constant","value":"123.0"},{"type":"constant","value":"456.0"}]}
+                    {"operands":[{"type":"constant","value":"123.0"},{"type":"constant","value":"456.0"}],"operator":"not between","type":"number"}
                     """
                 ), // swiftlint:enable line_length
                 //boolean
                 (
                     BooleanConstraint.isSet,
                     """
-                    {"type":"boolean","operator":"is set","value":"true"}
+                    {"operator":"is set","type":"boolean","value":"true"}
                     """
                 ),
                 (
                     BooleanConstraint.isNotSet,
                     """
-                    {"type":"boolean","operator":"is not set","value":"true"}
+                    {"operator":"is not set","type":"boolean","value":"true"}
                     """
                 ),
                 (
                     BooleanConstraint.hasValue,
                     """
-                    {"type":"boolean","operator":"has value","value":"true"}
+                    {"operator":"has value","type":"boolean","value":"true"}
                     """
                 ),
                 (
                     BooleanConstraint.hasNoValue,
                     """
-                    {"type":"boolean","operator":"has no value","value":"true"}
+                    {"operator":"has no value","type":"boolean","value":"true"}
                     """
                 ),
                 (
                     BooleanConstraint.itIs(false),
                     """
-                    {"type":"boolean","operator":"is","value":"false"}
+                    {"operator":"is","type":"boolean","value":"false"}
                     """
                 )
             ]
@@ -188,7 +188,9 @@ final class EventFilterConstraintSpec: QuickSpec {
                 let testCaseName = "\(testCase.0.type) constraint with \(testCase.0.filterOperator.name) operator"
 
                 it("should create and correctly serialize \(testCaseName)") {
-                    let encodedData = try! JSONEncoder().encode(EventFilterConstraintCoder(testCase.0))
+                    let encoder = JSONEncoder()
+                    encoder.outputFormatting = [.sortedKeys]
+                    let encodedData = try! encoder.encode(EventFilterConstraintCoder(testCase.0))
                     let encodedString = String(data: encodedData, encoding: .utf8)
                     expect(encodedString).to(equal(testCase.1))
                 }

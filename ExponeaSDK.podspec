@@ -87,6 +87,6 @@ Pod::Spec.new do |s|
   ]
   s.exclude_files = "ExponeaSDK/ExponeaSDK-Notifications/**/*"
   s.resources = ["ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld"]
-  s.dependency 'SwiftSoup', '2.4.3'
+  s.dependency 'SwiftSoup', '2.6.1'
 
 end
