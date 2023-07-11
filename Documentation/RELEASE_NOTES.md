@@ -1,4 +1,12 @@
 ## Release Notes
+## Release Notes for 2.16.4
+#### July 11, 2023
+* Features
+  * XCode 14.3 support added
+* Bug Fixes
+  * Fixed: Property `platform` was not tracked for campaign events
+
+
 ## Release Notes for 2.16.3
 #### June 01, 2023
 * Features
