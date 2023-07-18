@@ -205,6 +205,8 @@
 		05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */; };
 		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
+		31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */; };
+		31CFEF6F2A66940E005402E5 /* SequenceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6E2A66940E005402E5 /* SequenceTest.swift */; };
 		3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */; };
 		3384EFC629965EEB009A5981 /* Execute+AfterInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */; };
 		3388E6D129E8475B00F28C46 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
@@ -674,6 +676,8 @@
 		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+RemoveNil.swift"; sourceTree = "<group>"; };
+		31CFEF6E2A66940E005402E5 /* SequenceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceTest.swift; sourceTree = "<group>"; };
 		3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpoInitManager.swift; sourceTree = "<group>"; };
 		3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Execute+AfterInit.swift"; sourceTree = "<group>"; };
 		33FC6CC129A90ED5001F113F /* OnMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnMain.swift; sourceTree = "<group>"; };
@@ -1217,6 +1221,7 @@
 		058DD937241131F400E5BF91 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */,
 				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
 				05B97D2C2417C95200FE9309 /* JSONConvertible.swift */,
@@ -1565,6 +1570,7 @@
 		C028C3A0211097D500B03ED4 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				31CFEF6E2A66940E005402E5 /* SequenceTest.swift */,
 				C05BF44A2111B3DA000C4AE1 /* DatabaseManagerProcessingSpec.swift */,
 				C028C3A12110980600B03ED4 /* JSONValueSpec.swift */,
 				05664249237309C300CCDB98 /* SwizzleSpec.swift */,
@@ -2522,6 +2528,7 @@
 				0561831325AD9EEB001E30A3 /* UIImage+Gif.swift in Sources */,
 				0561832125ADB1BC001E30A3 /* EventType.swift in Sources */,
 				0561832A25ADB1BC001E30A3 /* ExponeaProject.swift in Sources */,
+				31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */,
 				0561832B25ADB1BD001E30A3 /* Routes.swift in Sources */,
 				0561832C25ADB1BD001E30A3 /* NotificationData.swift in Sources */,
 				0561831025AD9EEB001E30A3 /* JSON+SnakeCase.swift in Sources */,
@@ -2773,6 +2780,7 @@
 				053E12CF23A264AD009CEF03 /* ServerRepositoryFetchRecommendationsSpec.swift in Sources */,
 				05895CCB247E4F7D0021B0B9 /* ExponeaAppDelegateSpec.swift in Sources */,
 				057F447D239904050070DF30 /* SampleInAppMessage.swift in Sources */,
+				31CFEF6F2A66940E005402E5 /* SequenceTest.swift in Sources */,
 				0591907323EC58550037BD88 /* NumberOperatorsSpec.swift in Sources */,
 				55391D4D295497A7001D95B8 /* AppInboxProviderSpec.swift in Sources */,
 				F04BEA9221119DD200591950 /* HTTPMethodSpec.swift in Sources */,
