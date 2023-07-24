@@ -21,7 +21,7 @@ class AppDelegate: ExponeaAppDelegate {
     static let memoryLogger = MemoryLogger()
     var window: UIWindow?
     var alertWindow: UIWindow?
-
+    
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?

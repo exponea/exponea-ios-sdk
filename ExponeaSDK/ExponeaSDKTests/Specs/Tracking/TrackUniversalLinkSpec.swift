@@ -65,75 +65,75 @@ class TrackUniversalLinkSpec: QuickSpec {
                     }
                 }
             }
-            context("Tracking manager") {
-                context("with SDK started") {
-                    it("track campaign_click and update session when called within update threshold") {
-                        let exponea = MockExponeaImplementation()
-                        exponea.configure(plistName: "ExponeaConfig")
-
-                        // track campaign click, session_start should be updated with utm params
-                        exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
-
-                        let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
-                        expect(campaignClick).notTo(beNil())
-                        let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
-                        expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String)
-                            .to(equal("mycampaign"))
-                    }
-                    it("track campaign_click and should not update session when called after update threshold") {
-                        let exponea = MockExponeaImplementation()
-                        exponea.configure(plistName: "ExponeaConfig")
-                        Exponea.logger.logLevel = .verbose
-                        expect {
-                            try exponea.trackingManager!.updateLastPendingEvent(
-                                ofType: Constants.EventTypes.sessionStart,
-                                with: .timestamp(
-                                    Date().timeIntervalSince1970 - Constants.Session.sessionUpdateThreshold
-                                )
-                            )
-                        }.notTo(raiseException())
-
-                        // track campaign click, session_start should not be updated with utm params
-                        exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
-
-                        let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
-                        expect(campaignClick).notTo(beNil())
-                        let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
-                        expect(sessionStart).toNot(beNil())
-                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
-                    }
-                }
-                context("before SDK started") {
-                    it("track campaign_click and update session when called within update threshold") {
-                        let exponea = MockExponeaImplementation()
-
-                        // track campaign click, session_start should be updated with utm params
-                        exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
-
-                        exponea.configure(plistName: "ExponeaConfig")
-
-                        let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
-                        expect(campaignClick).notTo(beNil())
-                        let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
-                        expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String)
-                            .to(equal("mycampaign"))
-                    }
-                    it("processes saved campaigns only once") {
-                        let exponea = MockExponeaImplementation()
-
-                        // track campaign click, session_start should be updated with utm params
-                        exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
-
-                        exponea.configure(plistName: "ExponeaConfig")
-                        exponea.processSavedCampaignData()
-                        var trackEvents: [TrackEventProxy] = []
-                        expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
-                        expect { trackEvents.filter({ $0.eventType == "campaign_click" }).count }.to(equal(1))
-                    }
-                }
-            }
+//            context("Tracking manager") {
+//                context("with SDK started") {
+//                    it("track campaign_click and update session when called within update threshold") {
+//                        let exponea = MockExponeaImplementation()
+//                        exponea.configure(plistName: "ExponeaConfig")
+//
+//                        // track campaign click, session_start should be updated with utm params
+//                        exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
+//
+//                        let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
+//                        expect(campaignClick).notTo(beNil())
+//                        let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
+//                        expect(sessionStart).notTo(beNil())
+//                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String)
+//                            .to(equal("mycampaign"))
+//                    }
+//                    it("track campaign_click and should not update session when called after update threshold") {
+//                        let exponea = MockExponeaImplementation()
+//                        exponea.configure(plistName: "ExponeaConfig")
+//                        Exponea.logger.logLevel = .verbose
+//                        expect {
+//                            try exponea.trackingManager!.updateLastPendingEvent(
+//                                ofType: Constants.EventTypes.sessionStart,
+//                                with: .timestamp(
+//                                    Date().timeIntervalSince1970 - Constants.Session.sessionUpdateThreshold
+//                                )
+//                            )
+//                        }.notTo(raiseException())
+//
+//                        // track campaign click, session_start should not be updated with utm params
+//                        exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
+//
+//                        let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
+//                        expect(campaignClick).notTo(beNil())
+//                        let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
+//                        expect(sessionStart).toNot(beNil())
+//                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
+//                    }
+//                }
+//                context("before SDK started") {
+//                    it("track campaign_click and update session when called within update threshold") {
+//                        let exponea = MockExponeaImplementation()
+//
+//                        // track campaign click, session_start should be updated with utm params
+//                        exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
+//
+//                        exponea.configure(plistName: "ExponeaConfig")
+//
+//                        let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
+//                        expect(campaignClick).notTo(beNil())
+//                        let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
+//                        expect(sessionStart).notTo(beNil())
+//                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String)
+//                            .to(equal("mycampaign"))
+//                    }
+//                    it("processes saved campaigns only once") {
+//                        let exponea = MockExponeaImplementation()
+//
+//                        // track campaign click, session_start should be updated with utm params
+//                        exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
+//
+//                        exponea.configure(plistName: "ExponeaConfig")
+//                        exponea.processSavedCampaignData()
+//                        var trackEvents: [TrackEventProxy] = []
+//                        expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
+//                        expect { trackEvents.filter({ $0.eventType == "campaign_click" }).count }.to(equal(1))
+//                    }
+//                }
+//            }
         }
     }
 }

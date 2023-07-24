@@ -9,7 +9,6 @@
 import Foundation
 
 class TrackingConsentManager: TrackingConsentManagerType {
-
     private let trackingManager: TrackingManagerType
 
     init(
@@ -118,6 +117,24 @@ class TrackingConsentManager: TrackingConsentManagerType {
         self.trackingManager.trackInAppMessageClose(message: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }
 
+    func trackInlineMessageClose(message: InlineMessageResponse, mode: MODE, isUserInteraction: Bool) {
+        var trackingAllowed = true
+        if mode == .CONSIDER_CONSENT && message.personalizedMessage?.hasTrackingConsent == false {
+            Exponea.logger.log(.error, message: "Event for closed inline is not tracked because consent is not given")
+            trackingAllowed = false
+        }
+        self.trackingManager.trackInlineMessageClose(message: message, trackingAllowed: trackingAllowed)
+    }
+    
+    func trackInlineMessageShow(message: InlineMessageResponse, mode: MODE) {
+        var trackingAllowed = true
+        if mode == .CONSIDER_CONSENT && message.personalizedMessage?.hasTrackingConsent == false {
+            Exponea.logger.log(.error, message: "Event for closed inline is not tracked because consent is not given")
+            trackingAllowed = false
+        }
+        self.trackingManager.trackInlineMessageShow(message: message, trackingAllowed: trackingAllowed)
+    }
+    
     func trackInAppMessageError(message: InAppMessage, error: String, mode: MODE) {
         var trackingAllowed = true
         if mode == .CONSIDER_CONSENT && !message.hasTrackingConsent {
@@ -192,5 +209,14 @@ class TrackingConsentManager: TrackingConsentManagerType {
         } catch {
             Exponea.logger.log(.error, message: "Error tracking AppInbox opened: \(error.localizedDescription)")
         }
+    }
+    
+    func trackInlineMessageClick(message: InlineMessageResponse, buttonText: String?, buttonLink: String?, mode: MODE, isUserInteraction: Bool = true) {
+        var trackingAllowed = true
+        if mode == .CONSIDER_CONSENT && message.personalizedMessage?.hasTrackingConsent == false && !GdprTracking.isTrackForced(buttonLink) {
+            Exponea.logger.log(.error, message: "Event for clicked inline message is not tracked because consent is not given")
+            trackingAllowed = false
+        }
+        self.trackingManager.trackInlineMessageClick(message: message, trackingAllowed: trackingAllowed, buttonText: buttonText, buttonLink: buttonLink)
     }
 }

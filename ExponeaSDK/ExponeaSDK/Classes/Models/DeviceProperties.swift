@@ -104,6 +104,10 @@ public extension UIDevice {
             case "iPhone14,2":                                      return "iPhone 13 Pro"
             case "iPhone14,3":                                      return "iPhone 13 Pro Max"
             case "iPhone14,6":                                      return "iPhone SE (3rd generation)"
+            case "iPhone14,7":                                      return "iPhone 14"
+            case "iPhone14,8":                                      return "iPhone 14 Plus"
+            case "iPhone15,2":                                      return "iPhone 14 Pro"
+            case "iPhone15,3":                                      return "iPhone 14 Pro Max"
             // source of truth: https://www.theiphonewiki.com/wiki/List_of_iPads
             case "iPad1,1":                                         return "iPad"
             case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":        return "iPad (2nd generation)"
@@ -114,6 +118,7 @@ public extension UIDevice {
             case "iPad7,11", "iPad7,12":                            return "iPad (7th generation)"
             case "iPad11,6", "iPad11,7":                            return "iPad (8th generation)"
             case "iPad12,1", "iPad12,2":                            return "iPad (9th generation)"
+            case "iPad13,18", "iPad13,19":                          return "iPad (10th generation)"
             // source of truth: https://www.theiphonewiki.com/wiki/List_of_iPad_Airs
             case "iPad4,1", "iPad4,2", "iPad4,3":                   return "iPad Air"
             case "iPad5,3", "iPad5,4":                              return "iPad Air (2nd generation)"

@@ -90,7 +90,7 @@ struct PushNotificationParser {
             break
 
         case .browser, .deeplink:
-            if let value = actionValue, URL(string: value) != nil {
+            if let value = actionValue, value.cleanedURL() != nil {
                 properties["url"] = .string(value)
                 if (GdprTracking.isTrackForced(value)) {
                     properties["tracking_forced"] = .bool(true)

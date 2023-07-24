@@ -105,7 +105,7 @@ public class ExponeaNotificationService {
 
             // Download and add image
             if let imagePath = content.userInfo["image"] as? String,
-                let url = URL(string: imagePath),
+                let url = imagePath.cleanedURL(),
                 let data = try? Data(contentsOf: url, options: []),
                 let attachment = saveImage("image.png", data: data, options: nil) {
                 bestAttemptContent?.attachments = [attachment]

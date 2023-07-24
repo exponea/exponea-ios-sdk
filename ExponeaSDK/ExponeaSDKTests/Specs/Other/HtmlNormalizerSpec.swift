@@ -31,7 +31,7 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<a href='https://example.com/1'>Action 1</a>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
-                makeImagesOffline: false, ensureCloseButton: false, allowAnchorButton: true)
+                makeResourcesOffline: false, ensureCloseButton: false, allowAnchorButton: true)
             )
             expect(result.closeActionUrl).to(beNil())
             expect(result.actions.count).to(equal(2))
@@ -42,7 +42,7 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<a href='https://example.com/1' target='_self'>Action 1</a>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
-                makeImagesOffline: false, ensureCloseButton: false, allowAnchorButton: true)
+                makeResourcesOffline: false, ensureCloseButton: false, allowAnchorButton: true)
             )
             expect(result.closeActionUrl).to(beNil())
             expect(result.actions.count).to(equal(1))
@@ -277,6 +277,388 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.valid).to(beFalse())
         }
 
-    }
+        it("should parse multiple css rules") {
+            let fontImportUrl = "https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap"
+            let fontSourceUrl = "https://fonts.googleapis.com/css3?family=Roboto:wght@100"
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let imageBgUrl = "https://upload.wikimedia.org/invalid/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let fontCache = FileCache()
+            fontCache.saveFileData(at: fontImportUrl, data: fakeData)
+            fontCache.saveFileData(at: fontSourceUrl, data: fakeData)
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            imageCache.saveImageData(at: imageBgUrl, data: fakeData)
+            let cssStyleString =
+                """
+                @import url('\(fontImportUrl)');
+                @font-face {
+                    font-family: 'Open Sans';
+                    src: url('\(fontSourceUrl)') format('woff');
+                    font-weight: 700;
+                    font-style: normal;
+                }
+                .img-style {
+                    background-image: url('\(imageBgImgUrl)')
+                }
+                .img-style-short {
+                    background: url('\(imageBgUrl)') bottom right repeat-x blue;
+                }
+                """
+            let htmlString =
+            """
+            <html><head><style>\(cssStyleString)</style></head><body></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(fontImportUrl)).to(beFalse())
+            expect(htmlOutput.contains(fontSourceUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgUrl)).to(beFalse())
+        }
 
+        it("should transform Image URL from CSS into Base64") {
+            let cache = InAppMessagesCache()
+            cache.saveImageData(
+                at: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg",
+                data: "data".data(using: .utf8) ?? Data()
+            )
+            let rawHtml = "<html>" +
+                    "<head>" +
+                    "<style>" +
+                    ".img-style { background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg') }"
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<div data-link='https://example.com/2'>Action 2</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("upload.wikimedia.org")).to(equal(false))
+            expect(normalizedHtml.contains("data:image/png;base64")).to(equal(true))
+        }
+
+        it("should parse single lined css rules") {
+            let fontImportUrl = "https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap"
+            let fontSourceUrl = "https://fonts.googleapis.com/css3?family=Roboto:wght@100"
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let imageBgUrl = "https://upload.wikimedia.org/invalid/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let fontCache = FileCache()
+            fontCache.saveFileData(at: fontImportUrl, data: fakeData)
+            fontCache.saveFileData(at: fontSourceUrl, data: fakeData)
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            imageCache.saveImageData(at: imageBgUrl, data: fakeData)
+            let cssStyleString =
+                """
+                @font-face { font-family: 'Open Sans'; src: url('\(fontSourceUrl)') format('woff'); font-weight: 700; font-style: normal; }
+                .img-style { background-image: url('\(imageBgImgUrl)') }
+                .img-style-short { background: url('\(imageBgUrl)') bottom right repeat-x blue; }
+                """
+            let htmlString =
+            """
+            <html><head><style>\(cssStyleString)</style></head><body></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(fontImportUrl)).to(beFalse())
+            expect(htmlOutput.contains(fontSourceUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgUrl)).to(beFalse())
+        }
+
+        it("should parse single lined css") {
+            let fontImportUrl = "https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap"
+            let fontSourceUrl = "https://fonts.googleapis.com/css3?family=Roboto:wght@100"
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let imageBgUrl = "https://upload.wikimedia.org/invalid/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let fontCache = FileCache()
+            fontCache.saveFileData(at: fontImportUrl, data: fakeData)
+            fontCache.saveFileData(at: fontSourceUrl, data: fakeData)
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            imageCache.saveImageData(at: imageBgUrl, data: fakeData)
+            let cssStyleString =
+                """
+                @font-face { font-family: 'Open Sans'; src: url('\(fontSourceUrl)') format('woff'); font-weight: 700; font-style: normal; } .img-style { background-image: url('\(imageBgImgUrl)') } .img-style-short { background: url('\(imageBgUrl)') bottom right repeat-x blue; }
+                """
+            let htmlString =
+            """
+            <html><head><style>\(cssStyleString)</style></head><body></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(fontImportUrl)).to(beFalse())
+            expect(htmlOutput.contains(fontSourceUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgUrl)).to(beFalse())
+        }
+
+        it("should parse single css style attribute") {
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let fontCache = FileCache()
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            let cssAttrStyleString = "background-image: url('\(imageBgImgUrl)')"
+            let htmlString =
+            """
+            <html><body style="\(cssAttrStyleString)"></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+        }
+
+        it("should parse multiple css style attribute") {
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let imageBgUrl = "https://upload.wikimedia.org/invalid/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let fontCache = FileCache()
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            imageCache.saveImageData(at: imageBgUrl, data: fakeData)
+            let cssAttrStyleString =
+            """
+            background-image: url('\(imageBgImgUrl)'); background: url('\(imageBgUrl)') bottom right repeat-x blue
+            """
+            let htmlString =
+            """
+            <html><body style="\(cssAttrStyleString)"></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgUrl)).to(beFalse())
+        }
+
+        it("should parse single css style attribute with apostrophes") {
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let fontCache = FileCache()
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            let cssAttrStyleString = "background-image: url('\(imageBgImgUrl)')"
+            let htmlString =
+            """
+            <html><body style="\(cssAttrStyleString)"></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+        }
+
+        it("should parse single css style attribute with quotes") {
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            let cssAttrStyleString = "background-image: url(\"\(imageBgImgUrl)\")"
+            let htmlString =
+            """
+            <html><body style="\(cssAttrStyleString)"></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+        }
+
+        it("should parse single css style attribute without punctuation") {
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            let cssAttrStyleString = "background-image: url(\(imageBgImgUrl))"
+            let htmlString =
+            """
+            <html><body style="\(cssAttrStyleString)"></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+        }
+
+        it("should parse multiple css rule without punctuation") {
+            let fontImportUrl = "https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap"
+            let fontSourceUrl = "https://fonts.googleapis.com/css3?family=Roboto:wght@100"
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let imageBgUrl = "https://upload.wikimedia.org/invalid/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let fontCache = FileCache()
+            fontCache.saveFileData(at: fontImportUrl, data: fakeData)
+            fontCache.saveFileData(at: fontSourceUrl, data: fakeData)
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            imageCache.saveImageData(at: imageBgUrl, data: fakeData)
+            let cssStyleString =
+                """
+                @import url(\(fontImportUrl));
+                @font-face {
+                    font-family: 'Open Sans';
+                    src: url(\(fontSourceUrl)) format('woff');
+                    font-weight: 700;
+                    font-style: normal;
+                }
+                .img-style {
+                    background-image: url(\(imageBgImgUrl))
+                }
+                .img-style-short {
+                    background: url(\(imageBgUrl)) bottom right repeat-x blue;
+                }
+                """
+            let htmlString =
+            """
+            <html><head><style>\(cssStyleString)</style></head><body></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(fontImportUrl)).to(beFalse())
+            expect(htmlOutput.contains(fontSourceUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgUrl)).to(beFalse())
+        }
+
+        it("should parse multiple css rule with quotes") {
+            let fontImportUrl = "https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap"
+            let fontSourceUrl = "https://fonts.googleapis.com/css3?family=Roboto:wght@100"
+            let imageBgImgUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg"
+            let imageBgUrl = "https://upload.wikimedia.org/invalid/Gull_portrait_ca_usa.jpg"
+            let fakeData = "data".data(using: .utf8) ?? Data()
+            let fontCache = FileCache()
+            fontCache.saveFileData(at: fontImportUrl, data: fakeData)
+            fontCache.saveFileData(at: fontSourceUrl, data: fakeData)
+            let imageCache = InAppMessagesCache()
+            imageCache.saveImageData(at: imageBgImgUrl, data: fakeData)
+            imageCache.saveImageData(at: imageBgUrl, data: fakeData)
+            let cssStyleString =
+                """
+                @import url(\"\(fontImportUrl)\");
+                @font-face {
+                    font-family: 'Open Sans';
+                    src: url(\"\(fontSourceUrl)\") format('woff');
+                    font-weight: 700;
+                    font-style: normal;
+                }
+                .img-style {
+                    background-image: url(\"\(imageBgImgUrl)\")
+                }
+                .img-style-short {
+                    background: url(\"\(imageBgUrl)\") bottom right repeat-x blue;
+                }
+                """
+            let htmlString =
+            """
+            <html><head><style>\(cssStyleString)</style></head><body></body></html>
+            """
+            let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: true,
+                ensureCloseButton: false,
+                allowAnchorButton: false)
+            )
+            expect(result.valid).to(beTrue())
+            guard let htmlOutput = result.html else {
+                fail("HTML has not been parsed")
+                return
+            }
+            expect(htmlOutput.contains(fontImportUrl)).to(beFalse())
+            expect(htmlOutput.contains(fontSourceUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgImgUrl)).to(beFalse())
+            expect(htmlOutput.contains(imageBgUrl)).to(beFalse())
+        }
+
+        it("check url") {
+            var urls: [String] = [
+                "pltapp://category/categories<{defaultcategory2_shopby233}/categories<{defaultcategory2_shopby233_backinstock221}?adjust_tracker=74p1fnr&adjust_campaign=PROMOTIONAL&adjust_adgroup=2023-06-19-ALL-FR&adjust_creative=CATEGORY",
+                "pltapp://category/categories<%7Bdefaultcategory2_shopby233%7D/categories<%7Bdefaultcategory2_shopby233_backinstock221%7D?adjust_tracker=74p1fnr&adjust_campaign=PROMOTIONAL&adjust_adgroup=2023-06-19-ALL-FR&adjust_creative=CATEGORY",
+                "pltapp://category/categories%3C%7Bdefaultcategory2_shopby233%7D/categories%3C%7Bdefaultcategory2_shopby233_backinstock221%7D?adjust_tracker=74p1fnr&adjust_campaign=PROMOTIONAL&adjust_adgroup=2023-06-19-ALL-FR&adjust_creative=CATEGORY",
+            ]
+            let cleanedURL = urls.compactMap { $0.cleanedURL() }.count
+            expect(cleanedURL).to(equal(3))
+            if let firstURL = urls.first?.cleanedURL()?.absoluteString, let lastURL = urls.last {
+                expect(firstURL).to(equal(lastURL))
+            }
+            if let firstURL = urls[2].cleanedURL()?.absoluteString, let lastURL = urls.last {
+                expect(firstURL).to(equal(lastURL))
+            }
+        }
+    }
 }

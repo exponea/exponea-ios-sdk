@@ -54,6 +54,7 @@ public protocol ExponeaType: AnyObject {
         pushNotificationTracking: Exponea.PushNotificationTracking,
         automaticSessionTracking: Exponea.AutomaticSessionTracking,
         defaultProperties: [String: JSONConvertible]?,
+        inlinePlaceholders: [String]?,
         flushingSetup: Exponea.FlushingSetup,
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?
@@ -75,6 +76,7 @@ public protocol ExponeaType: AnyObject {
         baseUrl: String?,
         appGroup: String?,
         defaultProperties: [String: JSONConvertible]?,
+        inlinePlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?
     )
@@ -98,6 +100,7 @@ public protocol ExponeaType: AnyObject {
         baseUrl: String?,
         appGroup: String?,
         defaultProperties: [String: JSONConvertible]?,
+        inlinePlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?
     )

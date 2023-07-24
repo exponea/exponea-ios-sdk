@@ -9,6 +9,21 @@
 @testable import ExponeaSDK
 
 final class MockRepository: RepositoryType {
+    
+    func getInlineMessages(
+        completion: @escaping TypeBlock<Result<InlineMessageDataResponse>>
+    ) {
+        completion(fetchInlinePlaceholdersResult)
+    }
+
+    func personalizedInlineMessages(
+        customerIds: [String: String],
+        inlineMessageIds: [String],
+        completion: @escaping TypeBlock<Result<PersonalizedInlineMessageResponseData>>
+    ) {
+        completion(fetchInlineResult)
+    }
+
     var configuration: Configuration
 
     var trackObjectResult: EmptyResult<RepositoryError> = EmptyResult.failure(RepositoryError.connectionError)
@@ -17,6 +32,8 @@ final class MockRepository: RepositoryType {
     var fetchConsentsResult: Result<ConsentsResponse> = Result.failure(RepositoryError.connectionError)
     var fetchInAppMessagesResult: Result<InAppMessagesResponse> = Result.failure(RepositoryError.connectionError)
     var fetchAppInboxResult: Result<AppInboxResponse> = Result.failure(RepositoryError.connectionError)
+    var fetchInlinePlaceholdersResult: Result<InlineMessageDataResponse> = Result.failure(RepositoryError.connectionError)
+    var fetchInlineResult: Result<PersonalizedInlineMessageResponseData> = Result.failure(RepositoryError.connectionError)
 
     init(configuration: Configuration) {
         self.configuration = configuration

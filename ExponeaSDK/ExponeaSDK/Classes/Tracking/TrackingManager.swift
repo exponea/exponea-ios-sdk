@@ -251,11 +251,11 @@ extension TrackingManager: TrackingManagerType {
         return repository.configuration.allowDefaultCustomerProperties || EventType.identifyCustomer != eventType
     }
 
-    open func trackInAppMessageShown(message: InAppMessage, trackingAllowed: Bool) {
+    public func trackInAppMessageShown(message: InAppMessage, trackingAllowed: Bool) {
         self.track(.show, for: message, trackingAllowed: trackingAllowed)
     }
 
-    open func trackInAppMessageClick(
+    public func trackInAppMessageClick(
         message: InAppMessage,
         buttonText: String?,
         buttonLink: String?,
@@ -269,11 +269,33 @@ extension TrackingManager: TrackingManagerType {
             )
         }
 
-    open func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
+    public func trackInlineMessageClick(
+        message: InlineMessageResponse,
+        trackingAllowed: Bool,
+        buttonText: String?,
+        buttonLink: String?
+    ) {
+        track(
+            .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),
+            for: message,
+            trackingAllowed: trackingAllowed,
+            isUserInteraction: true
+        )
+    }
+
+    public func trackInlineMessageClose(message: InlineMessageResponse, trackingAllowed: Bool) {
+        track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: true)
+    }
+
+    public func trackInlineMessageShow(message: InlineMessageResponse, trackingAllowed: Bool) {
+        track(.show, for: message, trackingAllowed: trackingAllowed)
+    }
+
+    public func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
         self.track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }
 
-    open func trackInAppMessageError(message: InAppMessage, error: String, trackingAllowed: Bool) {
+    public func trackInAppMessageError(message: InAppMessage, error: String, trackingAllowed: Bool) {
         self.track(.error(message: error), for: message, trackingAllowed: trackingAllowed)
     }
 
@@ -465,6 +487,54 @@ extension TrackingManager: InAppMessageTrackingDelegate {
         if (message.consentCategoryTracking != nil) {
             eventData["consent_category_tracking"] = .string(message.consentCategoryTracking!)
         }        
+        do {
+            try processTrack(
+                .banner,
+                with: [
+                    .properties(device.properties),
+                    .properties(eventData)
+                ],
+                trackingAllowed: trackingAllowed
+            )
+        } catch {
+            Exponea.logger.log(.error, message: error.localizedDescription)
+        }
+    }
+}
+
+// MARK: - Inline messages -
+
+extension TrackingManager: InlineMessageTrackingDelegate {
+    public func track(_ event: InlineMessageTrackingEvent, for message: InlineMessageResponse, trackingAllowed: Bool, isUserInteraction: Bool = false) {
+        var eventData: [String: JSONValue] = [
+            "action": .string(event.action),
+            "banner_id": .string(message.id),
+            "interaction": .bool(isUserInteraction),
+            "os": .string("iOS"),
+            "type": .string("inline message"),
+            "placeholder": .string(message.placeholders.first ?? ""),
+            "banner_name": .string(message.name),
+            "platform": .string("ios")
+        ]
+        if let variantId = message.personalizedMessage?.variantId{
+            eventData["variant_id"] = .int(variantId)
+        }
+        if let variantName = message.personalizedMessage?.variantName{
+            eventData["variant_name"] = .string(variantName)
+        }
+        if let consentCategory = message.trackingConsentCategory {
+            eventData["consent_category_tracking"] = .string(consentCategory)
+        }
+        if case .click(let text, let url) = event {
+            eventData["text"] = .string(text)
+            eventData["link"] = .string(url)
+            if (GdprTracking.isTrackForced(url)) {
+                eventData["tracking_forced"] = .bool(true)
+            }
+        }
+        if case .error(let errorMessage) = event {
+            eventData["error"] = .string(errorMessage)
+        }
         do {
             try processTrack(
                 .banner,

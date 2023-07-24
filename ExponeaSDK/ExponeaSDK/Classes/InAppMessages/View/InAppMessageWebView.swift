@@ -8,6 +8,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     let dismissCallback: TypeBlock<Bool>
 
     var webView: WKWebView!
+    private var inlineManager: InlineMessageManagerType = InlineMessageManager.manager
 
     var normalizedPayload: NormalizedResult?
     
@@ -123,13 +124,16 @@ final class InAppMessageWebView: UIView, InAppMessageView {
             webPagePreferences.allowsContentJavaScript = false
             configuration.defaultWebpagePreferences = webPagePreferences
         }
+        if let contentRuleList = inlineManager.contentRuleList {
+            configuration.userContentController.add(contentRuleList)
+        }
         return configuration
     }
 
     private func toPayloadButton(_ action: ActionInfo) -> InAppMessagePayloadButton {
         InAppMessagePayloadButton(
                 buttonText: action.buttonText,
-                rawButtonType: detectActionType(URL(string: action.actionUrl)!).rawValue,
+                rawButtonType: detectActionType(action.actionUrl.cleanedURL()!).rawValue,
                 buttonLink: action.actionUrl,
                 buttonTextColor: nil,
                 buttonBackgroundColor: nil

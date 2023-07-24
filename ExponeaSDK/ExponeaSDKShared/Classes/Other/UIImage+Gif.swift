@@ -40,7 +40,7 @@ extension UIImage {
 
     public class func gif(url: String) -> UIImage? {
         // Validate URL
-        guard let bundleURL = URL(string: url) else {
+        guard let bundleURL = url.cleanedURL() else {
             print("SwiftGif: This image named \"\(url)\" does not exist")
             return nil
         }

@@ -11,7 +11,7 @@ import UIKit
 
 final class UrlOpener: UrlOpenerType {
     func openBrowserLink(_ urlString: String) {
-        guard let url = parseUrlString(urlString) else {
+        guard let url = urlString.cleanedURL() else {
             Exponea.logger.log(.warning, message: "Provided url \"\(urlString)\" is invalid")
             return
         }
@@ -19,22 +19,13 @@ final class UrlOpener: UrlOpenerType {
     }
 
     func openDeeplink(_ urlString: String) {
-        guard let url = parseUrlString(urlString) else {
+        guard let url = urlString.cleanedURL() else {
             Exponea.logger.log(.warning, message: "Provided url \"\(urlString)\" is invalid")
             return
         }
         if !openUniversalLink(url, application: UIApplication.shared) {
             openURLSchemeDeeplink(url, application: UIApplication.shared)
         }
-    }
-
-    private func parseUrlString(_ urlString: String) -> URL? {
-        let sanitizedUrlString = urlString.replacingOccurrences(of: " ", with: "%20")
-        guard let url = URL(string: sanitizedUrlString) else {
-            Exponea.logger.log(.verbose, message: "Unable to parse url \(urlString).")
-            return nil
-        }
-        return url
     }
 
     private func openUniversalLink(_ url: URL, application: UIApplication) -> Bool {

@@ -22,6 +22,7 @@ extension Exponea {
 
 public class ExponeaInternal: ExponeaType {
 
+
     /// The configuration object containing all the configuration data necessary for Exponea SDK to work.
     ///
     /// The setter of this variable will setup all required tools and managers.
@@ -75,6 +76,8 @@ public class ExponeaInternal: ExponeaType {
     internal var repository: RepositoryType?
 
     internal var telemetryManager: TelemetryManager?
+    
+    internal var inlineManager: InlineMessageManagerType?
 
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
@@ -239,8 +242,14 @@ public class ExponeaInternal: ExponeaType {
                     customerIdentifiedHandler: { [weak self] in
                         // reload in-app messages once customer identification is flushed - user may have been merged
                         guard let inAppMessagesManager = self?.inAppMessagesManager,
-                              let trackingManager = self?.trackingManager else { return }
+                              let trackingManager = self?.trackingManager,
+                              let inlineManager = self?.inlineManager else { return }
                         inAppMessagesManager.preload(for: trackingManager.customerIds)
+                        if let placeholders = configuration.inlinePlaceholders {
+                            inlineManager.loadInlinePlaceholders {
+                                inlineManager.prefetchPlaceholdersWithIds(ids: placeholders)
+                            }
+                        }
                     }
                 )
                 self.flushingManager = flushingManager
@@ -279,6 +288,14 @@ public class ExponeaInternal: ExponeaType {
                 processSavedCampaignData()
                 configuration.saveToUserDefaults()
                 
+                onMain {
+                    self.inlineManager = InlineMessageManager.manager
+                    self.inlineManager?.initBlocker()
+                    self.inlineManager?.loadInlinePlaceholders { [weak self] in
+                        self?.inlineManager?.prefetchPlaceholdersWithIds(ids: configuration.inlinePlaceholders ?? [])
+                    }
+                }
+                
                 inDebugBuild {
                     VersionChecker(repository: repository).warnIfNotLatestSDKVersion()
                 }
@@ -315,6 +332,7 @@ internal extension ExponeaInternal {
         let trackingConsentManager: TrackingConsentManagerType
         let inAppMessagesManager: InAppMessagesManagerType
         let appInboxManager: AppInboxManagerType
+        let inlineManager: InlineMessageManagerType
     }
 
     typealias CompletionHandler<T> = ((Result<T>) -> Void)
@@ -331,6 +349,7 @@ internal extension ExponeaInternal {
             let flushingManager = flushingManager,
             let trackingConsentManager = trackingConsentManager,
             let inAppMessagesManager = inAppMessagesManager,
+            let inlineManager = inlineManager,
             let appInboxManager = appInboxManager else {
                 Exponea.logger.log(.error, message: "Some dependencies are not configured")
                 throw ExponeaError.notConfigured
@@ -342,7 +361,8 @@ internal extension ExponeaInternal {
             flushingManager: flushingManager,
             trackingConsentManager: trackingConsentManager,
             inAppMessagesManager: inAppMessagesManager,
-            appInboxManager: appInboxManager
+            appInboxManager: appInboxManager,
+            inlineManager: inlineManager
         )
     }
 
@@ -404,13 +424,13 @@ internal extension ExponeaInternal {
 // MARK: - Public -
 
 public extension ExponeaInternal {
-
+    
     // MARK: - Configure -
-
+    
     var isConfigured: Bool {
         return configuration != nil
-            && repository != nil
-            && trackingManager != nil
+        && repository != nil
+        && trackingManager != nil
     }
     /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
     ///
@@ -424,6 +444,7 @@ public extension ExponeaInternal {
                    baseUrl: String? = nil,
                    appGroup: String? = nil,
                    defaultProperties: [String: JSONConvertible]? = nil,
+                   inlinePlaceholders: [String]? = nil,
                    allowDefaultCustomerProperties: Bool? = nil,
                    advancedAuthEnabled: Bool? = nil
     ) {
@@ -434,6 +455,7 @@ public extension ExponeaInternal {
                 baseUrl: baseUrl,
                 appGroup: appGroup,
                 defaultProperties: defaultProperties,
+                inlinePlaceholders: inlinePlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
                 advancedAuthEnabled: advancedAuthEnabled
             )
@@ -443,7 +465,7 @@ public extension ExponeaInternal {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
     }
-
+    
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
     ///
     /// - Parameters:
@@ -459,7 +481,7 @@ public extension ExponeaInternal {
                 onMain {
                     self.onInitSucceededCallBack?()
                 }
-            }            
+            }
         } else {
             doTaskConfiguration(plistName: plistName)
         }
@@ -489,7 +511,7 @@ public extension ExponeaInternal {
         return self
     }
     
-
+    
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
     /// you to track events to multiple projects, even the same event to more project at once.
     ///
@@ -505,6 +527,7 @@ public extension ExponeaInternal {
                    baseUrl: String? = nil,
                    appGroup: String? = nil,
                    defaultProperties: [String: JSONConvertible]? = nil,
+                   inlinePlaceholders: [String]? = nil,
                    allowDefaultCustomerProperties: Bool? = nil,
                    advancedAuthEnabled: Bool? = nil
     ) {
@@ -516,6 +539,7 @@ public extension ExponeaInternal {
                 baseUrl: baseUrl,
                 appGroup: appGroup,
                 defaultProperties: defaultProperties,
+                inlinePlaceholders: inlinePlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
                 advancedAuthEnabled: advancedAuthEnabled
             )

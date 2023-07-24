@@ -15,19 +15,19 @@ internal class MockTrackingManager: TrackingManagerType {
         let data: [DataType]?
     }
     public private(set) var trackedEvents: [TrackedEvent] = []
-
+    
     struct CallData: Equatable {
         let event: InAppMessageEvent
         let message: InAppMessage
     }
     public var trackedInappEvents: [CallData] = []
-
+    
     var customerCookie: String = "mock-cookie"
-
+    
     var customerIds: [String: String] = [:]
-
+    
     var customerPushToken: String?
-
+    
     lazy var notificationsManager: PushNotificationManagerType = PushNotificationManager(
         trackingConsentManager: Exponea.shared.trackingConsentManager!,
         trackingManager: self,
@@ -39,19 +39,19 @@ internal class MockTrackingManager: TrackingManagerType {
         lastTokenTrackDate: Date(),
         urlOpener: MockUrlOpener()
     )
-
+    
     var hasActiveSession: Bool = false
-
+    
     var flushingMode: FlushingMode = .manual
-
+    
     let onEventCallback: (EventType, [DataType]) -> Void
-
+    
     init(
         onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) {
         self.onEventCallback = onEventCallback
     }
-
+    
     func track(_ type: EventType, with data: [DataType]?) throws {
         var payload: [DataType] = data ?? []
         if let stringEventType = getEventTypeString(type: type) {
@@ -60,7 +60,7 @@ internal class MockTrackingManager: TrackingManagerType {
         trackedEvents.append(TrackedEvent(type: type, data: payload))
         onEventCallback(type, payload)
     }
-
+    
     func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws {
         try processTrack(type, with: data, trackingAllowed: trackingAllowed, for: nil)
     }
@@ -80,39 +80,39 @@ internal class MockTrackingManager: TrackingManagerType {
         }
         onEventCallback(type, payload)
     }
-
+    
     func updateLastPendingEvent(ofType type: String, with data: DataType) throws {
         fatalError("Not implemented")
     }
-
+    
     func hasPendingEvent(ofType type: String, withMaxAge age: Double) throws -> Bool {
         fatalError("Not implemented")
     }
-
+    
     func flushData() {
         fatalError("Not implemented")
     }
-
+    
     func flushData(completion: (() -> Void)?) {
         fatalError("Not implemented")
     }
-
+    
     func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) throws {
         fatalError("Not implemented")
     }
-
+    
     func ensureAutomaticSessionStarted() {
         fatalError("Not implemented")
     }
-
+    
     func manualSessionStart() {
         fatalError("Not implemented")
     }
-
+    
     func manualSessionEnd() {
         fatalError("Not implemented")
     }
-
+    
     func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
         fatalError("Not implemented")
     }
@@ -124,7 +124,17 @@ internal class MockTrackingManager: TrackingManagerType {
             isUserInteraction: isUserInteraction
         )
     }
-
+    
+    func trackInlineMessageClick(
+        message: InlineMessageResponse,
+        trackingAllowed: Bool,
+        buttonText: String?,
+        buttonLink: String?
+    ) {}
+    // Function used to track inline message banner close event
+    func trackInlineMessageClose(message: InlineMessageResponse, trackingAllowed: Bool) {}
+    func trackInlineMessageShow(message: InlineMessageResponse, trackingAllowed: Bool) {}
+    
     func trackInAppMessageClose(message: ExponeaSDK.InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
         self.track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }

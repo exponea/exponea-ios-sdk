@@ -23,6 +23,33 @@ public class HtmlNormalizer {
     private let linkTagSelector = "link"
     private let iframeTagSelector = "iframe"
 
+    private let imageMimetype = "image/png"
+    private let fontMimetype = "application/font"
+
+    private let cssUrlRegexp = try! NSRegularExpression(
+        pattern: "url\\((.+?)\\)",
+        options: [.caseInsensitive, .dotMatchesLineSeparators]
+    )
+
+    private let cssImportUrlRegexp = try! NSRegularExpression(
+        pattern: "@import[\\s]+url\\(.+?\\)",
+        options: [.caseInsensitive, .dotMatchesLineSeparators]
+    )
+
+    private static let cssKeyFormat = "-?[_a-zA-Z]+[_a-zA-Z0-9-]*"
+    private static let cssDelimiterFormat = "[\\s]*:[\\s]*"
+    private static let cssValueFormat = "[^;\\n]+"
+    private static let keyGroupName = "attrKey"
+    private static let valueGroupName = "attrVal"
+
+    /**
+     Valid CSS key is defined https://www.w3.org/TR/CSS21/syndata.html#characters
+     */
+    private let cssAttributeRegexp = try! NSRegularExpression(
+        pattern: "(?<\(keyGroupName)>\(cssKeyFormat))\(cssDelimiterFormat)(?<\(valueGroupName)>\(cssValueFormat))",
+        options: [.caseInsensitive, .anchorsMatchLines]
+    )
+
     /**
      Inline javascript attributes. Listed here https://www.w3schools.com/tags/ref_eventattributes.asp
      */
@@ -38,17 +65,25 @@ public class HtmlNormalizer {
         "onplay", "onplaying", "onprogress", "onratechange", "onseeked", "onseeking", "onstalled", "onsuspend",
         "ontimeupdate", "onvolumechange", "onwaiting", "ontoggle"
     ]
-    
+
     private let anchorLinkAttributes = [
         "download", "ping", "target"
+    ]
+
+    private let supportedCssUrlProperties = [
+        "background", "background-image", "border-image", "border-image-source", "content", "cursor", "filter",
+        "list-style", "list-style-image", "mask", "mask-image", "offset-path", "src"
     ]
 
     private var document: Document?
 
     private let imageCache: InAppMessagesCacheType
 
+    private let fontCache: FileCacheType
+
     public init(_ originalHtml: String) {
         imageCache = InAppMessagesCache()
+        fontCache = FileCache()
         do {
             document = try SwiftSoup.parse(originalHtml)
         } catch {
@@ -62,18 +97,16 @@ public class HtmlNormalizer {
 
     public func normalize(_ config: HtmlNormalizerConfig? = nil) -> NormalizedResult {
         let parsingConf = config ?? HtmlNormalizerConfig(
-            makeImagesOffline: true, ensureCloseButton: true, allowAnchorButton: false
+            makeResourcesOffline: true, ensureCloseButton: true, allowAnchorButton: false
         )
         var result = NormalizedResult()
         do {
             try cleanHtml(parsingConf.allowAnchorButton)
-            if parsingConf.makeImagesOffline {
-                try makeImagesToBeOffline()
-            }
-            if parsingConf.ensureCloseButton {
-                try result.closeActionUrl = ensureCloseButton()
+            if parsingConf.makeResourcesOffline {
+                try makeResourcesToBeOffline()
             }
             try result.actions = ensureActionButtons(parsingConf.allowAnchorButton)
+            try result.closeActionUrl = detectCloseButton(parsingConf.ensureCloseButton)
             result.html = exportHtml()
         } catch let error {
             Exponea.logger.log(.error, message: "[HTML] Html has not been processed due to error \(error)")
@@ -120,7 +153,7 @@ public class HtmlNormalizer {
                 Exponea.logger.log(.error, message: "[HTML] Action button found but with empty action")
                 continue
             }
-            result.append(ActionInfo(buttonText: try actionButton.html(), actionUrl: targetAction))
+            result.append(ActionInfo(buttonText: try actionButton.text(), actionUrl: targetAction))
         }
         return result
     }
@@ -147,12 +180,12 @@ public class HtmlNormalizer {
                     """)
                 try actionButton.wrap("<a href='\(targetAction)' class='\(actionButtonHrefClass)'></a>")
             }
-            result.append(ActionInfo(buttonText: try actionButton.html(), actionUrl: targetAction))
+            result.append(ActionInfo(buttonText: try actionButton.text(), actionUrl: targetAction))
         }
         return result
     }
 
-    private func ensureCloseButton() throws -> String {
+    private func detectCloseButton(_ ensureCloseButton: Bool) throws -> String? {
         guard let document = document,
               let htmlBody = document.body(),
               let htmlHead = document.head() else {
@@ -160,7 +193,7 @@ public class HtmlNormalizer {
             throw ExponeaError.unknownError("Action close cannot be ensured")
         }
         var closeButtons = try document.select(closeButtonSelector)
-        if closeButtons.isEmpty() {
+        if closeButtons.isEmpty() && ensureCloseButton {
             Exponea.logger.log(
                     .verbose,
                     message: "[HTML] Adding default close-button"
@@ -198,8 +231,12 @@ public class HtmlNormalizer {
         }
         guard let closeButton = closeButtons.first(),
               let closeButtonParent = closeButton.parent() else {
-            // defined or default has to exist
-            throw ExponeaError.unknownError("Action close cannot be ensured")
+            if ensureCloseButton {
+                // defined or default has to exist
+                throw ExponeaError.unknownError("Action close cannot be ensured")
+            } else {
+                return nil
+            }
         }
         // randomize class name => prevents from CSS styles overriding in HTML
         let closeButtonHrefClass = "close-button-href-\(UUID().uuidString)"
@@ -219,33 +256,183 @@ public class HtmlNormalizer {
         return closeActionLink
     }
 
-    private func makeImagesToBeOffline() throws {
-        guard let document = document else {
+    private func makeResourcesToBeOffline() throws {
+        guard document != nil else {
             Exponea.logger.log(.warning, message: "[HTML] Document has not been initialized, no Image to process")
             return
         }
-        for imageEl in try document.select("img").array() {
-            try imageEl.attr("src", asBase64Image(imageEl.attr("src")) ?? "")
+        try makeImageTagsToBeOffline()
+        try makeStylesheetsToBeOffline()
+        try makeStyleAttributesToBeOffline()
+    }
+
+    private func makeImageTagsToBeOffline() throws {
+        guard let imageElements = try? document?.select("img").array() else {
+            return
+        }
+        for imageEl in imageElements {
+            do {
+                try imageEl.attr("src", asBase64Image(imageEl.attr("src")) ?? "")
+            } catch let error {
+                let elSelector = try? imageEl.cssSelector()
+                Exponea.logger.log(
+                    .error,
+                    message: "[HTML] Image \(elSelector ?? "<unknown>") cannot be processed: \(error.localizedDescription)"
+                )
+                throw error
+            }
         }
     }
 
-    public func collectImages() -> [String]? {
+    private func makeStyleAttributesToBeOffline() throws {
+        guard let styledElements = try? document?.select("[style]").array() else {
+            return
+        }
+        for styledEl in styledElements {
+            guard let styleAttrSource = try? styledEl.attr("style") else {
+                continue
+            }
+            do {
+                try styledEl.attr("style", downloadOnlineResources(styleAttrSource))
+            } catch let error {
+                let elSelector = try? styledEl.cssSelector()
+                Exponea.logger.log(
+                    .error,
+                    message: "[HTML] Element \(elSelector ?? "<unknown>") not updated: \(error.localizedDescription)"
+                )
+                throw error
+            }
+        }
+    }
+
+    private func downloadOnlineResources(_ styleSource: String) -> String {
+        let onlineStatements = collectUrlStatements(styleSource)
+        var styleTarget = styleSource
+        for statement in onlineStatements {
+            let dataBase64: String?
+            switch statement.mimeType {
+            case fontMimetype:
+                dataBase64 = try? asFontBase64(statement.url)
+            case imageMimetype:
+                dataBase64 = try? asBase64Image(statement.url)
+            default:
+                dataBase64 = nil
+                Exponea.logger.log(.error, message: "Unsupported mime type \(statement.mimeType)")
+            }
+            guard let dataBase64 = dataBase64 else {
+                Exponea.logger.log(.error, message: "Unable to make offline resource \(statement.url)")
+                continue
+            }
+            styleTarget = styleTarget.replacingOccurrences(
+                of: statement.url,
+                with: dataBase64
+            )
+        }
+        return styleTarget
+    }
+
+    private func makeStylesheetsToBeOffline() throws {
+        guard let styleTags = try? document?.select("style").array() else {
+            return
+        }
+        for styledTag in styleTags {
+            let styleSource = styledTag.data()
+            do {
+                try styledTag.text(downloadOnlineResources(styleSource))
+            } catch let error {
+                Exponea.logger.log(.error, message: "[HTML] Element <style> not updated: \(error.localizedDescription)")
+                throw error
+            }
+        }
+    }
+
+    private func collectUrlStatements(_ cssStyle: String) -> [CssOnlineUrl] {
+        var result: [CssOnlineUrl] = []
+        // CSS @import search
+        let cssImportMatches = cssImportUrlRegexp.matchesAsStrings(in: cssStyle)
+        for importRule in cssImportMatches {
+            let importUrlMatches = cssUrlRegexp.groupsAsStrings(in: importRule)
+            for importUrl in importUrlMatches {
+                result.append(CssOnlineUrl(
+                    mimeType: fontMimetype,
+                    url: importUrl.trimmingCharacters(in: CharacterSet(["'", "\""]))
+                ))
+            }
+        }
+        // CSS definitions search
+        let cssDefinitionMatches = cssAttributeRegexp.matches(in: cssStyle)
+        for cssDefinitionMatch in cssDefinitionMatches {
+            let cssKey = cssDefinitionMatch.rangeAsString(
+                withName: HtmlNormalizer.keyGroupName,
+                from: cssStyle
+            )
+            if cssKey == nil || !supportedCssUrlProperties.contains(cssKey!.lowercased()) {
+                // skip
+                continue
+            }
+            let cssValue = cssDefinitionMatch.rangeAsString(
+                withName: HtmlNormalizer.valueGroupName,
+                from: cssStyle
+            )
+            guard let cssValue = cssValue else {
+                continue
+            }
+            let urlValueMatches = cssUrlRegexp.groupsAsStrings(in: cssValue)
+            for urlValue in urlValueMatches {
+                result.append(CssOnlineUrl(
+                    mimeType: cssKey == "src" ? fontMimetype : imageMimetype,
+                    url: urlValue.trimmingCharacters(in: CharacterSet(["'", "\""]))
+                ))
+            }
+        }
+        return result
+    }
+
+    public func collectImages() -> [String] {
         guard let document = document else {
             Exponea.logger.log(.warning, message: "[HTML] Document has not been initialized, no Image to process")
             return []
         }
-        var target: [String] = []
+        var onlineUrls: [String] = []
+        // images
         do {
             for imageEl in try document.select("img").array() {
-                guard let imgSrc = try? imageEl.attr("src"), !imgSrc.isEmpty else {
-                    continue    // empty src
+                guard let imgSrc = try? imageEl.attr("src"),
+                      !imgSrc.isEmpty,
+                      !isBase64Uri(imgSrc) else {
+                    continue    // empty or offline src
                 }
-                target.append(imgSrc)
+                onlineUrls.append(imgSrc)
             }
         } catch let error {
             Exponea.logger.log(.warning, message: "[HTML] Failure while reading image source: \(error)")
         }
-        return target
+        // style tags
+        do {
+            for styleTag in try document.select("style").array() {
+                let styleSource = styleTag.data()
+                let onlineSources = collectUrlStatements(styleSource)
+                let imageOnlineSources = onlineSources.filter { $0.mimeType == imageMimetype }
+                onlineUrls.append(contentsOf: imageOnlineSources.map { $0.url })
+            }
+        } catch let error {
+            Exponea.logger.log(.warning, message: "[HTML] Failure while reading style tag source: \(error)")
+        }
+        // style attributes
+        do {
+            for styledEl in try document.select("[style]").array() {
+                guard let styleAttrSource = try? styledEl.attr("style") else {
+                    continue
+                }
+                let onlineSources = collectUrlStatements(styleAttrSource)
+                let imageOnlineSources = onlineSources.filter { $0.mimeType == imageMimetype }
+                onlineUrls.append(contentsOf: imageOnlineSources.map { $0.url })
+            }
+        } catch let error {
+            Exponea.logger.log(.warning, message: "[HTML] Failure while reading style attribute source: \(error)")
+        }
+        // end
+        return onlineUrls
     }
 
     /**
@@ -253,7 +440,10 @@ public class HtmlNormalizer {
      data:[<media type>][;charset=<character set>][;base64],<data>
      */
     private func isBase64Uri(_ uri: String?) -> Bool {
-        uri?.starts(with: "data:image/") ?? false && uri?.contains("base64,") ?? false
+        guard let uri = uri else {
+            return false
+        }
+        return uri.starts(with: "data:") && uri.contains("base64,")
     }
 
     private func asBase64Image(_ imageSource: String?) throws -> String? {
@@ -279,6 +469,31 @@ public class HtmlNormalizer {
         }
         // image type is not needed to be checked from source, WebView will fix it anyway...
         return "data:image/png;base64," + imageData.base64EncodedString()
+    }
+
+    private func asFontBase64(_ fontUrl: String?) throws -> String? {
+        guard let fontUrl = fontUrl else {
+            return nil
+        }
+        if isBase64Uri(fontUrl) {
+            return fontUrl
+        }
+        var fontData = fontCache.getFileData(at: fontUrl)
+        if fontData == nil {
+            fontData = FileUtils.tryDownloadFile(fontUrl)
+            if let fontData = fontData {
+                fontCache.saveFileData(at: fontUrl, data: fontData)
+            }
+        }
+        guard let fontData = fontData else {
+            Exponea.logger.log(
+                    .error,
+                    message: "[HTML] Font uri \(String(describing: fontUrl)) cannot be transformed into Base64"
+            )
+            throw ParsingError.imageError
+        }
+        // font type is not needed to be checked from source, WebView will fix it anyway...
+        return "data:\(fontMimetype);charset=utf-8;base64," + fontData.base64EncodedString()
     }
 
     private func cleanHtml(_ allowAnchorButton: Bool) throws {
@@ -345,7 +560,12 @@ public struct ActionInfo {
 }
 
 public struct HtmlNormalizerConfig {
-    public let makeImagesOffline: Bool
+    public let makeResourcesOffline: Bool
     public let ensureCloseButton: Bool
     public let allowAnchorButton: Bool
+}
+
+private struct CssOnlineUrl {
+    public let mimeType: String
+    public let url: String
 }

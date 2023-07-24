@@ -8,8 +8,8 @@
 
 import Foundation
 
-typealias EmptyBlock = () -> Swift.Void
-typealias EmptyThrowsBlock =  () throws -> Swift.Void
+public typealias EmptyBlock = () -> Swift.Void
+public typealias EmptyThrowsBlock =  () throws -> Swift.Void
 
 protocol ExpoInitManagerType {
     var actionBlocks: [EmptyThrowsBlock] { get set }

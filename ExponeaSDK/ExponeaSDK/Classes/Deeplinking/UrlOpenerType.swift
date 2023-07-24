@@ -6,7 +6,7 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
-protocol UrlOpenerType {
+public protocol UrlOpenerType {
     func openBrowserLink(_ urlString: String)
     func openDeeplink(_ urlString: String)
 }

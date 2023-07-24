@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Array {
+public extension Array {
     subscript(safeIndex index: Int) -> Element? {
         if index < count && index >= 0 {
             return self[index]

@@ -145,6 +145,7 @@ public extension ExponeaInternal {
         automaticPushNotificationTracking: Exponea.AutomaticPushNotificationTracking,
         automaticSessionTracking: Exponea.AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
+        inlinePlaceholders: [String]? = nil,
         flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
         allowDefaultCustomerProperties: Bool? = nil,
         advancedAuthEnabled: Bool? = nil
@@ -156,6 +157,7 @@ public extension ExponeaInternal {
                 authorization: projectSettings.authorization,
                 baseUrl: projectSettings.baseUrl,
                 defaultProperties: defaultProperties,
+                inlinePlaceholders: inlinePlaceholders,
                 sessionTimeout: automaticSessionTracking.timeout,
                 automaticSessionTracking: automaticSessionTracking.enabled,
                 automaticPushNotificationTracking: automaticPushNotificationTracking.enabled,
@@ -180,6 +182,7 @@ public extension ExponeaInternal {
         pushNotificationTracking: Exponea.PushNotificationTracking,
         automaticSessionTracking: Exponea.AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
+        inlinePlaceholders: [String]? = nil,
         flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
         allowDefaultCustomerProperties: Bool? = nil,
         advancedAuthEnabled: Bool? = nil
@@ -199,6 +202,7 @@ public extension ExponeaInternal {
                     authorization: projectSettings.authorization,
                     baseUrl: projectSettings.baseUrl,
                     defaultProperties: defaultProperties,
+                    inlinePlaceholders: inlinePlaceholders,
                     sessionTimeout: automaticSessionTracking.timeout,
                     automaticSessionTracking: automaticSessionTracking.enabled,
                     automaticPushNotificationTracking: false,

@@ -40,6 +40,7 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
     private var shownActions: [MessageItemAction]?
     private var normalizedPayload: NormalizedResult?
     private var actionManager: WebActionManager?
+    private var inlineManager: InlineMessageManagerType = InlineMessageManager.manager
 
     open func withData(_ source: MessageItem) {
         self.data = source
@@ -181,6 +182,10 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
 
     private func showHtmlMessage() {
         htmlContainer.isHidden = false
+        let configuration = htmlContainer.configuration
+        if let contentRuleList = inlineManager.contentRuleList {
+            configuration.userContentController.add(contentRuleList)
+        }
         htmlContainer.navigationDelegate = self.actionManager
         htmlContainer.uiDelegate = self
         DispatchQueue.global(qos: .background).async { [weak self] in
@@ -189,7 +194,7 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
                 return
             }
             let normalizeConf = HtmlNormalizerConfig(
-                makeImagesOffline: true,
+                makeResourcesOffline: true,
                 ensureCloseButton: false,
                 allowAnchorButton: true
             )

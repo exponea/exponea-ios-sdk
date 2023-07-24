@@ -46,4 +46,14 @@ protocol FetchRepository {
         with syncToken: String,
         completion: @escaping (EmptyResult<RepositoryError>) -> Void
     )
+
+    func getInlineMessages(
+        completion: @escaping TypeBlock<Result<InlineMessageDataResponse>>
+    )
+
+    func personalizedInlineMessages(
+        customerIds: [String: String],
+        inlineMessageIds: [String],
+        completion: @escaping TypeBlock<Result<PersonalizedInlineMessageResponseData>>
+    )
 }

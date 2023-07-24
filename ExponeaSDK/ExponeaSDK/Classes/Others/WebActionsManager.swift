@@ -47,10 +47,7 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
             decisionHandler(.allow)
         }
     }
-}
-
-private extension WebActionManager {
-
+    
     func handleActionClick(_ url: URL?) -> Bool {
         Exponea.logger.log(.verbose, message: "[HTML] action for \(String(describing: url))")
         if isCloseAction(url) {
@@ -76,7 +73,9 @@ private extension WebActionManager {
             return false
         }
     }
+}
 
+ private extension WebActionManager {
     func isBlankNav(_ url: URL?) -> Bool {
         url?.absoluteString == "about:blank"
     }
@@ -115,7 +114,7 @@ private extension WebActionManager {
         let host1 = url1?.host
         let path1 = url1?.path == "/" ? "" : url1?.path
         let query1 = url1?.query
-        let url2 = URL(string: urlPath2)
+        let url2 = urlPath2.cleanedURL()
         let scheme2 = url2?.scheme
         let host2 = url2?.host
         let path2 = url2?.path == "/" ? "" : url2?.path

@@ -11,6 +11,7 @@ target 'ExponeaSDKTests' do
 
     inhibit_all_warnings!
 
+
     # Pods for testing
     pod 'Quick'
     pod 'Nimble', '~>9.2.0'
@@ -20,9 +21,11 @@ end
 
 
 post_install do |installer|
- installer.pods_project.targets.each do |target|
-  target.build_configurations.each do |config|
-   config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
-  end
- end
+    installer.generated_projects.each do |project|
+          project.targets.each do |target|
+              target.build_configurations.each do |config|
+                  config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
+               end
+          end
+   end
 end

@@ -93,4 +93,28 @@ extension ServerRepository: FetchRepository {
             .resume()
     }
 
+    func getInlineMessages(
+        completion: @escaping TypeBlock<Result<InlineMessageDataResponse>>
+    ) {
+        let router = RequestFactory(exponeaProject: configuration.mutualExponeaProject, route: .inlineMessages)
+        let request = router.prepareRequest()
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
+    
+    func personalizedInlineMessages(
+        customerIds: [String: String],
+        inlineMessageIds: [String],
+        completion: @escaping (Result<PersonalizedInlineMessageResponseData>) -> Void
+    ) {
+        let router = RequestFactory(exponeaProject: configuration.mutualExponeaProject, route: .personalizedInlineMessages)
+        let request = router.prepareRequest(
+            parameters: InlineMessageRequest(messageIds: inlineMessageIds),
+            customerIds: customerIds
+        )
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
 }

@@ -401,6 +401,7 @@ extension ExponeaInternal {
             )
             dependencies.inAppMessagesManager.anonymize()
             dependencies.appInboxManager.clear()
+            dependencies.inlineManager.anonymize()
             self.telemetryManager?.report(eventWithType: .anonymize, properties: [:])
         }
     }
@@ -548,6 +549,63 @@ extension ExponeaInternal {
                 buttonLink: action.url,
                 mode: .IGNORE_CONSENT
             )
+        }
+    }
+    
+    /// Track inline message banner click event
+    /// Event is tracked if one or both conditions met:
+    //     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    //     - parameter 'buttonLink' has TRUE value of query parameter 'xnpe_force_track'
+    public func trackInlineMessageClick(
+        message: InlineMessageResponse,
+        buttonText: String?,
+        buttonLink: String?
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackInlineMessageClick(
+                message: message,
+                buttonText: buttonText,
+                buttonLink: buttonLink,
+                mode: .CONSIDER_CONSENT,
+                isUserInteraction: true
+            )
+        }
+    }
+ 
+    public func trackInlineMessageClose(
+        message: InlineMessageResponse,
+        isUserInteraction: Bool?
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            if Exponea.shared.inAppMessagesDelegate.trackActions {
+                dependencies.trackingConsentManager.trackInlineMessageClose(
+                    message: message,
+                    mode: .CONSIDER_CONSENT,
+                    isUserInteraction: isUserInteraction == true
+                )
+            }
+        }
+    }
+    
+    public func trackInlineMessageShow(
+        message: InlineMessageResponse
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            if Exponea.shared.inAppMessagesDelegate.trackActions {
+                dependencies.trackingConsentManager.trackInlineMessageShow(
+                    message: message,
+                    mode: .CONSIDER_CONSENT
+                )
+            }
         }
     }
 }
