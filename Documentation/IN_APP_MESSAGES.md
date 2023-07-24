@@ -115,3 +115,5 @@ func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?,
 Method `trackInAppMessageClose` will track a 'close' event with 'interaction' field of TRUE value by default. You are able to use a optional parameter 'interaction' of this method to override this value.
 
 > The behaviour of `trackInAppMessageClick` and `trackInAppMessageClose` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in [tracking consent documentation](./TRACKING_CONSENT.md).
+
+> Note: Invoking of `Exponea.anonymize` does fetch In-apps immediately but `Exponea.identifyCustomer` needs to be sent to backend successfully. The reason is to register customer IDs on backend properly to correctly assign an In-app messages. If you have set other then `Exponea.flushMode = FlushMode.IMMEDIATE` you need to call `Exponea.flushData()` to finalize `identifyCustomer` process and trigger a In-app messages fetch.
