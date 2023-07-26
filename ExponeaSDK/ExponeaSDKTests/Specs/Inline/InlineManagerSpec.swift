@@ -63,9 +63,9 @@ class InlineManagerSpec: QuickSpec {
         it("check TTL") {
             let ttlSeen = Date()
             let inline = [SampleInlineMessage.getSampleIninlineMessage(personalized: .getSample(status: .ok, ttlSeen: ttlSeen))]
-            let savedTag = inline[0].tag ?? 0
+            let savedTags = inline[0].tags ?? []
             let messagesNeeedToRefresh = inline.first(where: { inlineMessage in
-                if let tag = inlineMessage.tag, tag == savedTag,
+                if let tags = inlineMessage.tags, tags == savedTags,
                    let ttlSeen = inlineMessage.personalizedMessage?.ttlSeen,
                    let ttl = inlineMessage.personalizedMessage?.ttlSeconds,
                    inlineMessage.content == nil {
@@ -78,7 +78,7 @@ class InlineManagerSpec: QuickSpec {
             waitUntil(timeout: .seconds(6)) { done in
                 DispatchQueue.global().asyncAfter(deadline: .now() + 5) {
                     messagesNeeedToRefreshTrue = inline.first(where: { inlineMessage in
-                        if let tag = inlineMessage.tag, tag == savedTag,
+                        if let tag = inlineMessage.tags, tag == savedTags,
                            let ttlSeen = inlineMessage.personalizedMessage?.ttlSeen,
                            let ttl = inlineMessage.personalizedMessage?.ttlSeconds,
                            inlineMessage.content == nil {
@@ -172,7 +172,7 @@ class InlineManagerSpec: QuickSpec {
             var completionValue: Int = 0
             waitUntil(timeout: .seconds(25)) { done in
                 for i in 0..<11 {
-                    manager.refreshStaticViewContent(staticQueueData: .init(tag: inline.tag ?? 0, placeholderId: inline.name, completion: { _ in
+                    manager.refreshStaticViewContent(staticQueueData: .init(tag: inline.tags?.first ?? 0, placeholderId: inline.name, completion: { _ in
                         completionValue = i
                         if i == 10 {
                             done()

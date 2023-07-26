@@ -62,6 +62,7 @@ public final class StaticInlineView: UIView, WKNavigationDelegate {
         webview.tag = data.tag
         if data.html.isEmpty {
             inlineManager.refreshStaticViewContent(staticQueueData: .init(tag: data.tag, placeholderId: placeholder) {
+                self.webview.tag = $0.tag
                 self.loadContent(html: $0.html)
             })
         } else {
@@ -87,6 +88,9 @@ public final class StaticInlineView: UIView, WKNavigationDelegate {
             } completion: { [weak self] isDone in
                 guard let self else { return }
                 if isDone {
+                    loadedInlineView.constraints.forEach { cons in
+                        self.removeConstraint(cons)
+                    }
                     loadedInlineView.removeFromSuperview()
                     inputView.addSubview(loadedInlineView)
                     loadedInlineView.topAnchor.constraint(equalTo: inputView.topAnchor, constant: 5).isActive = true
@@ -115,7 +119,7 @@ public final class StaticInlineView: UIView, WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-        let result = inlineManager.inlinePlaceholders.first(where: { $0.tag == webView.tag })
+        let result = inlineManager.inlinePlaceholders.first(where: { $0.tags?.contains(webView.tag) == true })
         let webAction: WebActionManager = .init {
             let indexOfPlaceholder: Int = self.inlineManager.inlinePlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
             let currentDisplay = self.inlineManager.inlinePlaceholders[indexOfPlaceholder].displayState

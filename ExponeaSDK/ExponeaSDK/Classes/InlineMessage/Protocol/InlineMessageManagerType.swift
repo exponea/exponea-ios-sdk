@@ -13,13 +13,13 @@ import Foundation
 public protocol InlineMessageManagerType {
     var contentRuleList: WKContentRuleList? { get set }
 
-    func prepareInlineView(placeholderId: String, indexPath: IndexPath) -> UIView
+    func prepareInlineView(placeholderId: String, indexPath: IndexPath) async -> UIView
     func prefetchPlaceholdersWithIds(ids: [String])
     func loadInlinePlaceholders(completion: EmptyBlock?)
-    func loadPersonalizedInlineMessage(for placeholderId: String, tag: Int, completion: EmptyBlock?)
+    func loadPersonalizedInlineMessage(for placeholderId: String, tags: Set<Int>, completion: EmptyBlock?)
     func getFilteredMessage(message: InlineMessageResponse) -> Bool
     func prefetchPlaceholdersWithIds(input: [InlineMessageResponse], ids: [String]) -> [InlineMessageResponse]
-    func checkTTLForMessage()
+    func checkTTLForMessage(completion: EmptyBlock?)
     func anonymize()
     func initBlocker()
     func filterPriority(input: [InlineMessageResponse]) -> [Int: [InlineMessageResponse]]

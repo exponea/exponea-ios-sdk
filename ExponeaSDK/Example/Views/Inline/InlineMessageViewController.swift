@@ -65,7 +65,7 @@ class InlineMessageViewController: UIViewController, UITableViewDelegate, UITabl
     ]
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        5
+        4
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -130,7 +130,7 @@ class InlineMessageViewController: UIViewController, UITableViewDelegate, UITabl
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.keyboardDismissMode = .onDrag
-        
+    
         refreshControl.addTarget(self, action: #selector(refresh), for: .primaryActionTriggered)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 200

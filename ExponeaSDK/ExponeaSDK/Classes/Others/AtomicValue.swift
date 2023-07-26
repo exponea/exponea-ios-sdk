@@ -11,26 +11,26 @@ import Foundation
 @available(swift 5.1)
 @propertyWrapper
 /// Property wrapper for atomicity that uses DispatchQueue Approach
-final class Atomic<Value> {
+public final class Atomic<Value> {
     private let queue = DispatchQueue(label: "com.exponea.ExponeaSDK.atomic")
     private var value: Value
     
-    var wrappedValue: Value {
+    public var wrappedValue: Value {
         get { queue.sync { value } }
         set { queue.sync { value = newValue } }
     }
     
     /// To access this property, we do so by usign the $ symbol for instance foo.$.bar.mutate { /* do something here */ }
-    var projectedValue: Atomic<Value> {
+    public var projectedValue: Atomic<Value> {
         return self
     }
     
-    init(wrappedValue value: Value) {
+    public init(wrappedValue value: Value) {
         self.value = value
     }
     
     
-    func changeValue(with mutation: (inout Value) -> Void) {
+    public func changeValue(with mutation: (inout Value) -> Void) {
         return queue.sync {
             mutation(&value)
         }

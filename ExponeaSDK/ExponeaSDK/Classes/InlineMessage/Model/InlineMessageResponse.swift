@@ -82,7 +82,7 @@ public struct InlineMessageResponse: Codable {
     @CodableIgnored
     public var sessionStart: Date? = Date()
     @CodableIgnored
-    public var tag: Int?
+    public var tags: Set<Int>? = []
     @CodableIgnored
     public var indexPath: IndexPath?
     
@@ -119,7 +119,7 @@ public struct InlineMessageResponse: Codable {
         dateFilter: DateFilter,
         frequency: InlineMessageFrequency,
         placeholders: [String],
-        tag: Int,
+        tags: Set<Int>,
         loadPriority: Int,
         content: Content?,
         personalized: PersonalizedInlineMessageResponse?
@@ -129,7 +129,7 @@ public struct InlineMessageResponse: Codable {
         self.dateFilter = dateFilter
         self.frequency = frequency
         self.placeholders = placeholders
-        self.tag = tag
+        self.tags = tags
         self.loadPriority = loadPriority
         self.content = content
         self.personalizedMessage = personalized

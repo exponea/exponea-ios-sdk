@@ -14,7 +14,7 @@ public final class InlineMessageManager: NSObject {
 
     // MARK: - Properties
     public static let manager = InlineMessageManager()
-    public var inlinePlaceholders: [InlineMessageResponse] = []
+    @Atomic public var inlinePlaceholders: [InlineMessageResponse] = []
     public var refreshCallback: TypeBlock<IndexPath>?
     public let urlOpener: UrlOpenerType = UrlOpener()
     public let disableZoomSource: String =
@@ -46,7 +46,7 @@ public final class InlineMessageManager: NSObject {
     private var newUsedInline: UsedInline? {
         willSet {
             guard let newValue else { return }
-            if let placeholder = inlinePlaceholders.first(where: { $0.tag == newValue.tag }), placeholder.personalizedMessage == nil, placeholder.content == nil, newValue.height == 0 {
+            if let placeholder = inlinePlaceholders.first(where: { $0.tags?.contains(newValue.tag) == true }), placeholder.content == nil, newValue.height == 0 {
                 self.loadContentForPlacehoder(newValue: newValue, placeholder: placeholder)
             }
         }
@@ -139,7 +139,7 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-        let result = inlinePlaceholders.first(where: { $0.tag ?? 0 == webView.tag })
+        let result = inlinePlaceholders.first(where: { $0.tags?.contains(webView.tag) == true })
         let webAction: WebActionManager = .init {
             let indexOfPlaceholder: Int = self.inlinePlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
             let currentDisplay = self.inlinePlaceholders[indexOfPlaceholder].displayState
@@ -181,8 +181,8 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
         }
     }
 
-    private func parseData(placeholderId: String, data: ResponseData<PersonalizedInlineMessageResponseData>, tag: Int, completion: EmptyBlock?) {
-        let personalizedWithPayload: [PersonalizedInlineMessageResponse]? = data.data?.data.filter { $0.status == .ok }.map { response in
+    private func parseData(placeholderId: String, data: ResponseData<PersonalizedInlineMessageResponseData>, tags: Set<Int>, completion: EmptyBlock?) {
+        let personalizedWithPayload: [PersonalizedInlineMessageResponse] = data.data?.data.compactMap { response in
             var newInlineMessage = response
             let normalizeConf = HtmlNormalizerConfig(
                 makeResourcesOffline: true,
@@ -192,10 +192,10 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
             let normalizedPayload = HtmlNormalizer(newInlineMessage.content?.html ?? "").normalize(normalizeConf)
             newInlineMessage.htmlPayload = normalizedPayload
             return newInlineMessage
-        }
+        } ?? []
         var updatedPlaceholders: [InlineMessageResponse] = self.inlinePlaceholders
         for (index, inlineMessage) in updatedPlaceholders.enumerated() {
-            if var personalized = personalizedWithPayload?.first(where: { $0.id == inlineMessage.id }) {
+            if var personalized = personalizedWithPayload.first(where: { $0.id == inlineMessage.id }) {
                 personalized.ttlSeen = Date()
                 updatedPlaceholders[index].personalizedMessage = personalized
             }
@@ -204,7 +204,7 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
         completion?()
     }
 
-    private func delayledLoad(for placeholderId: String, tag: Int, completion: EmptyBlock?) {
+    private func delayledLoad(for placeholderId: String, tags: Set<Int>, completion: EmptyBlock?) {
         guard !placeholderId.isEmpty, let ids = try? DatabaseManager().currentCustomer.ids else {
             return
         }
@@ -215,13 +215,13 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
                  inlineMessageIds: [placeholderId]
              ) { [weak self] data in
                  guard let self else { return }
-                 self.parseData(placeholderId: placeholderId, data: data, tag: tag, completion: completion)
+                 self.parseData(placeholderId: placeholderId, data: data, tags: tags, completion: completion)
              }
         }
     }
 
-    public func loadPersonalizedInlineMessage(for placeholderId: String, tag: Int, completion: EmptyBlock?) {
-        delayledLoad(for: placeholderId, tag: tag, completion: completion)
+    public func loadPersonalizedInlineMessage(for placeholderId: String, tags: Set<Int>, completion: EmptyBlock?) {
+        delayledLoad(for: placeholderId, tags: tags, completion: completion)
     }
 
     public func prefetchPlaceholdersWithIds(input: [InlineMessageResponse], ids: [String]) -> [InlineMessageResponse] {
@@ -293,7 +293,11 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
 
     private func filterPersonalizedMessages(input: [InlineMessageResponse]) -> InlineMessageResponse? {
         let filtered = input.filter { inlinePlaceholder in
-            self.getFilteredMessage(message: inlinePlaceholder)
+            if inlinePlaceholder.personalizedMessage?.status == .ok {
+                return self.getFilteredMessage(message: inlinePlaceholder)
+            } else {
+                return false
+            }
         }
         guard !filtered.isEmpty else {
             return nil
@@ -308,7 +312,7 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
     public func filterPriority(input: [InlineMessageResponse]) -> [Int: [InlineMessageResponse]] {
         var toReturn: [Int: [InlineMessageResponse]] = [:]
         for inline in input {
-            guard let prio = inline.loadPriority else { continue }
+            let prio = inline.loadPriority ?? 0
             if toReturn[prio] != nil {
                 toReturn[prio]?.append(inline)
             } else {
@@ -326,7 +330,7 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
         }
     }
 
-    public func checkTTLForMessage() {
+    public func checkTTLForMessage(completion: EmptyBlock?) {
         guard let messagesNeeedToRefresh = inlinePlaceholders.first(where: { inlineMessage in
             if let ttlSeen = inlineMessage.personalizedMessage?.ttlSeen,
                let ttl = inlineMessage.personalizedMessage?.ttlSeconds,
@@ -335,7 +339,7 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
             }
             return false
         }) else { return }
-        loadPersonalizedInlineMessage(for: messagesNeeedToRefresh.id, tag: messagesNeeedToRefresh.tag ?? 0, completion: nil)
+        loadPersonalizedInlineMessage(for: messagesNeeedToRefresh.id, tags: messagesNeeedToRefresh.tags ?? [], completion: completion)
     }
 
     private func returnEmptyView(tag: Int) -> UIView {
@@ -350,12 +354,12 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
         return view
     }
 
-    private func updateDisplayStatus(placeholderId: String, tag: Int) -> InlineMessageDisplayStatus {
+    private func updateDisplayStatus(placeholderId: String, tags: Set<Int>) -> InlineMessageDisplayStatus {
         let indexOfPlaceholder: Int = inlinePlaceholders.firstIndex(where: { $0.id == placeholderId }) ?? 0
         let currentDisplay = inlinePlaceholders[safeIndex: indexOfPlaceholder]?.displayState
         let state: InlineMessageDisplayStatus = .init(displayed: currentDisplay?.displayed ?? Date(), interacted: currentDisplay?.interacted)
         inlinePlaceholders[indexOfPlaceholder].displayState = state
-        inlinePlaceholders[indexOfPlaceholder].tag = tag
+        inlinePlaceholders[indexOfPlaceholder].tags = tags
         return state
     }
 
@@ -381,14 +385,71 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
         }
     }
 
+    private func load(placeholderId: String, indexPath: IndexPath, placeholdersNeedToRefresh: [InlineMessageResponse], isRefreshingExpired: Bool) {
+        guard let ids = try? DatabaseManager().currentCustomer.ids else {
+            return
+        }
+        DispatchQueue.global().async { [weak self] in
+            guard let self else { return }
+            self.provider.loadPersonalizedInlineMessages(
+                 data: PersonalizedInlineMessageResponseData.self,
+                 customerIds: ids,
+                 inlineMessageIds: placeholdersNeedToRefresh.map { $0.id }
+             ) { data in
+                 let personalizedWithPayload: [PersonalizedInlineMessageResponse] = data.data?.data.compactMap { response in
+                     var newInlineMessage = response
+                     let normalizeConf = HtmlNormalizerConfig(
+                         makeResourcesOffline: true,
+                         ensureCloseButton: false,
+                         allowAnchorButton: true
+                     )
+                     let normalizedPayload = HtmlNormalizer(newInlineMessage.content?.html ?? "").normalize(normalizeConf)
+                     newInlineMessage.htmlPayload = normalizedPayload
+                     return newInlineMessage
+                 } ?? []
+                 var updatedPlaceholders: [InlineMessageResponse] = self.inlinePlaceholders
+                 for (index, inlineMessage) in updatedPlaceholders.enumerated() {
+                     if var personalized = personalizedWithPayload.first(where: { $0.id == inlineMessage.id }) {
+                         personalized.ttlSeen = Date()
+                         updatedPlaceholders[index].personalizedMessage = personalized
+                         updatedPlaceholders[index].indexPath = indexPath
+                     }
+                 }
+                 self.inlinePlaceholders = updatedPlaceholders
+                 let placehodlersToUse = self.inlinePlaceholders.filter { $0.placeholders.contains(placeholderId) }
+                 for placeholder in placehodlersToUse {
+                     let tag = self.createUniqueTag(placeholder: placeholder)
+                     if let index: Int = self.inlinePlaceholders.firstIndex(where: { $0.id == placeholder.id }) {
+                         self.inlinePlaceholders[index].tags?.insert(tag)
+                     }
+                     let usedInlineHeight = self.usedInlines[placeholderId]?.first(where: { $0.placeholderId == placeholder.id })?.height ?? 0
+                     self.newUsedInline = .init(tag: tag, indexPath: indexPath, placeholderId: placeholder.id, placeholder: placeholderId, height: isRefreshingExpired ? 0 : usedInlineHeight)
+                 }
+             }
+        }
+    }
+
     public func prepareInlineView(
         placeholderId: String,
         indexPath: IndexPath
     ) -> UIView {
         let placehodlersToUse = inlinePlaceholders.filter { $0.placeholders.contains(placeholderId) }
+        let placeholdersNeedToRefresh = placehodlersToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
+        let expiredMessages = placehodlersToUse.filter { inlineMessage in
+            if let ttlSeen = inlineMessage.personalizedMessage?.ttlSeen,
+               let ttl = inlineMessage.personalizedMessage?.ttlSeconds,
+               inlineMessage.content == nil {
+                return Date() > ttlSeen.addingTimeInterval(TimeInterval(ttl))
+            }
+            return false
+        }
+        guard placeholdersNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
+            load(placeholderId: placeholderId, indexPath: indexPath, placeholdersNeedToRefresh: placehodlersToUse, isRefreshingExpired: !expiredMessages.isEmpty)
+            return returnEmptyView(tag: Int.random(in: 0..<99999999))
+        }
 
         // Found message
-        guard var placeholder = filterPersonalizedMessages(input: placehodlersToUse) else {
+        guard var placeholder = filterPersonalizedMessages(input: placehodlersToUse.filter { $0.personalizedMessage?.status == .ok }) else {
             // No placeholders passed through filter. Then set all heights to 0 for the placeholderId
             var savedInlinesToDeactived = usedInlines[placeholderId] ?? []
             for (index, savedInline) in savedInlinesToDeactived.enumerated() {
@@ -409,24 +470,30 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
         let currentDisplay = inlinePlaceholders[safeIndex: indexOfPlaceholder]?.displayState
         let state: InlineMessageDisplayStatus = .init(displayed: currentDisplay?.displayed ?? Date(), interacted: currentDisplay?.interacted)
 
-        inlinePlaceholders[indexOfPlaceholder].tag = tag
-        inlinePlaceholders[indexOfPlaceholder].indexPath = indexPath
+        _inlinePlaceholders.changeValue(with: { $0[indexOfPlaceholder].tags?.insert(tag) })
+        _inlinePlaceholders.changeValue(with: { $0[indexOfPlaceholder].indexPath = indexPath })
 
-        placeholder.tag = tag
+        placeholder.tags?.insert(tag)
         placeholder.displayState = state
 
         web = .init()
         web.tag = tag
 
-        let usedInlineHeight = usedInlines[placeholderId]?.first(where: { $0.tag == tag })?.height ?? 0
-        newUsedInline = .init(tag: tag, indexPath: indexPath, placeholderId: placeholder.id, placeholder: placeholderId, height: usedInlineHeight)
-
         if let personalized = placeholder.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
+            if usedInlines[placeholderId] == nil {
+                let usedInlineHeight = usedInlines[placeholderId]?.first(where: { $0.placeholderId == placeholder.id })?.height ?? 0
+                self.newUsedInline = .init(tag: tag, indexPath: indexPath, placeholderId: placeholder.id, placeholder: placeholderId, height: 0)
+            } else {
+                if usedInlines[placeholderId]?.contains(where: { $0.placeholderId == placeholder.id }) == false {
+                    let usedInlineHeight = usedInlines[placeholderId]?.first(where: { $0.placeholderId == placeholder.id })?.height ?? 0
+                    self.newUsedInline = .init(tag: tag, indexPath: indexPath, placeholderId: placeholder.id, placeholder: placeholderId, height: 0)
+                }
+            }
             if inlinePlaceholders[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
-                inlinePlaceholders[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date()
+                _inlinePlaceholders.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
             if let html = personalized.htmlPayload?.html, !html.isEmpty {
-                inlinePlaceholders[indexOfPlaceholder].displayState = state
+                _inlinePlaceholders.changeValue(with: { $0[indexOfPlaceholder].displayState = state })
                 web.navigationDelegate = self
                 web.loadHTMLString(html, baseURL: nil)
                 markInlineAsActive(placeholder: placeholder)
@@ -436,7 +503,7 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
             }
         } else {
             if let html = placeholder.content?.html, !html.isEmpty {
-                inlinePlaceholders[indexOfPlaceholder].displayState = state
+                _inlinePlaceholders.changeValue(with: { $0[indexOfPlaceholder].displayState = state })
                 web.navigationDelegate = self
                 web.loadHTMLString(html, baseURL: nil)
                 return web
@@ -450,9 +517,22 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
         placeholderId: String
     ) -> StaticReturnData {
         let placehodlersToUse = inlinePlaceholders.filter { !$0.placeholders.filter { $0 == placeholderId }.isEmpty }
+        let placeholdersNeedToRefresh = placehodlersToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
+        let expiredMessages = placehodlersToUse.filter { inlineMessage in
+            if let ttlSeen = inlineMessage.personalizedMessage?.ttlSeen,
+               let ttl = inlineMessage.personalizedMessage?.ttlSeconds,
+               inlineMessage.content == nil {
+                return Date() > ttlSeen.addingTimeInterval(TimeInterval(ttl))
+            }
+            return false
+        }
+
+        guard placeholdersNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
+            return .init(html: "", tag: 0)
+        }
 
         // Found message
-        guard var placeholder = filterPersonalizedMessages(input: placehodlersToUse) else {
+        guard var placeholder = filterPersonalizedMessages(input: placehodlersToUse.filter { $0.personalizedMessage?.status == .ok }) else {
             return .init(html: "", tag: 0)
         }
 
@@ -463,21 +543,22 @@ extension InlineMessageManager: InlineMessageManagerType, WKNavigationDelegate {
         let indexOfPlaceholder: Int = inlinePlaceholders.firstIndex(where: { $0.id == placeholder.id }) ?? 0
         let currentDisplay = inlinePlaceholders[safeIndex: indexOfPlaceholder]?.displayState
         let state: InlineMessageDisplayStatus = .init(displayed: currentDisplay?.displayed ?? Date(), interacted: currentDisplay?.interacted)
-        placeholder.tag = tag
+        placeholder.tags?.insert(tag)
 
         if let personalized = placeholder.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
             if self.inlinePlaceholders[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
-                self.inlinePlaceholders[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date()
+                _inlinePlaceholders.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
             if let html = personalized.htmlPayload?.html, !html.isEmpty {
                 placeholder.displayState = state
-                inlinePlaceholders[indexOfPlaceholder] = placeholder
+                _inlinePlaceholders.changeValue(with: { $0[indexOfPlaceholder] = placeholder })
+                Exponea.shared.trackInlineMessageShow(message: placeholder)
                 return .init(html: html, tag: tag)
             }
         } else {
             if let html = placeholder.content?.html, !html.isEmpty {
                 placeholder.displayState = state
-                inlinePlaceholders[indexOfPlaceholder] = placeholder
+                _inlinePlaceholders.changeValue(with: { $0[indexOfPlaceholder] = placeholder })
                 return .init(html: html, tag: tag)
             }
         }
@@ -512,13 +593,14 @@ extension InlineMessageManager {
                 staticQueueData.completion?(.init(html: "", tag: 0))
                 return
             }
+            let idsForDownload = inlinePlaceholders.filter { $0.placeholders.contains(staticQueueData.placeholderId) }.map { $0.id }
             provider.loadPersonalizedInlineMessages(
                 data: PersonalizedInlineMessageResponseData.self,
                 customerIds: ids,
-                inlineMessageIds: inlinePlaceholders.filter { $0.placeholders.contains(staticQueueData.placeholderId) }.map { $0.id }
+                inlineMessageIds: idsForDownload
             ) { [weak self] data in
                 guard let self else { return }
-                let personalizedWithPayload: [PersonalizedInlineMessageResponse]? = data.data?.data.filter { $0.status == .ok }.map { response in
+                let personalizedWithPayload: [PersonalizedInlineMessageResponse] = data.data?.data.compactMap { response in
                     var newInlineMessage = response
                     let normalizeConf = HtmlNormalizerConfig(
                         makeResourcesOffline: true,
@@ -528,10 +610,10 @@ extension InlineMessageManager {
                     let normalizedPayload = HtmlNormalizer(newInlineMessage.content?.html ?? "").normalize(normalizeConf)
                     newInlineMessage.htmlPayload = normalizedPayload
                     return newInlineMessage
-                }
+                } ?? []
                 var updatedPlaceholders: [InlineMessageResponse] = self.inlinePlaceholders
                 for (index, inlineMessage) in updatedPlaceholders.enumerated() {
-                    if var personalized = personalizedWithPayload?.first(where: { $0.id == inlineMessage.id }) {
+                    if var personalized = personalizedWithPayload.first(where: { $0.id == inlineMessage.id }) {
                         personalized.ttlSeen = Date()
                         updatedPlaceholders[index].personalizedMessage = personalized
                     }
@@ -562,7 +644,7 @@ private extension InlineMessageManager {
             isUpdating = true
             let savedNewValue = newValue
             let savedPlaceholder = placeholder
-            loadPersonalizedInlineMessage(for: savedNewValue.placeholderId, tag: savedNewValue.tag) {
+            loadPersonalizedInlineMessage(for: savedNewValue.placeholderId, tags: [savedNewValue.tag]) {
                 self.calculator = .init()
                 self.calculator.heightUpdate = { height in
                     let placeholderValueFromUsedLine = savedNewValue.placeholder
@@ -573,6 +655,8 @@ private extension InlineMessageManager {
                             let newSavedInline: UsedInline = .init(tag: savedNewValue.tag, indexPath: indexPath, placeholderId: savedPlaceholder.id, placeholder: savedNewValue.placeholder, height: height.height)
                             if store[placeholderValueFromUsedLine] == nil {
                                 store[placeholderValueFromUsedLine] = [newSavedInline]
+                            } else if store[placeholderValueFromUsedLine]?.isEmpty == true {
+                                store[placeholderValueFromUsedLine]?.append(newSavedInline)
                             }
                         }
                         self.continueWithQueue()
@@ -601,7 +685,7 @@ private extension InlineMessageManager {
                         }
                     }
                 }
-                guard let html = self.inlinePlaceholders.first(where: { $0.tag == newValue.tag })?.personalizedMessage?.htmlPayload?.html, !html.isEmpty else {
+                guard let html = self.inlinePlaceholders.first(where: { $0.tags?.contains(newValue.tag) == true })?.personalizedMessage?.htmlPayload?.html, !html.isEmpty else {
                     self.isUpdating = false
                     if !self.queue.isEmpty {
                         let go = self.queue[0]

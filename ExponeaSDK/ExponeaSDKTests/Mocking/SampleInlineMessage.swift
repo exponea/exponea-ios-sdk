@@ -42,7 +42,7 @@ struct SampleInlineMessage {
         dateFilter: InlineMessageResponse.DateFilter = .init(enabled: true, fromDate: nil, toDate: nil),
         frequency: InlineMessageFrequency = .always,
         placeholders: [String] = ["placeholder"],
-        tag: Int = Int.random(in: 0..<100),
+        tags: Set<Int> = [Int.random(in: 0..<100)],
         loadPriority: Int = 1,
         content: Content? = nil,
         personalized: PersonalizedInlineMessageResponse? = nil
@@ -53,7 +53,7 @@ struct SampleInlineMessage {
             dateFilter: dateFilter,
             frequency: frequency,
             placeholders: placeholders,
-            tag: tag,
+            tags: tags,
             loadPriority: loadPriority,
             content: content,
             personalized: personalized
