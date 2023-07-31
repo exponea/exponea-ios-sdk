@@ -156,7 +156,7 @@ internal class MockTrackingManager: TrackingManagerType {
                 "action": .string(event.action),
                 "banner_id": .string(message.id),
                 "banner_name": .string(message.name),
-                "banner_type": .string(message.rawMessageType ?? "null"),
+                "banner_type": .string(message.messageType.rawValue),
                 "interaction": .bool(isUserInteraction),
                 "os": .string("iOS"),
                 "type": .string("in-app message"),

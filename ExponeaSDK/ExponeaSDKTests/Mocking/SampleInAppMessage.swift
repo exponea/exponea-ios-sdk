@@ -63,12 +63,14 @@ struct SampleInAppMessage {
         delayMS: Int? = nil,
         timeoutMS: Int? = nil,
         hasTrackingConsent: Bool? = nil,
-        consentCategoryTracking: String? = nil
+        consentCategoryTracking: String? = nil,
+        messageType: String? = "modal",
+        isHtml: Bool? = false
     ) -> InAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
             name: "Test serving in-app message",
-            rawMessageType: "modal",
+            rawMessageType: messageType,
             rawFrequency: frequency?.rawValue ?? "unknown",
             payload: InAppMessagePayload(
                 imageUrl: imageUrl ?? "https://i.ytimg.com/vi/t4nM1FoUqYs/maxresdefault.jpg",
@@ -105,7 +107,7 @@ struct SampleInAppMessage {
             delayMS: delayMS,
             timeoutMS: timeoutMS,
             payloadHtml: "<html></html>",
-            isHtml: false,
+            isHtml: isHtml,
             hasTrackingConsent: hasTrackingConsent,
             consentCategoryTracking: consentCategoryTracking
         )

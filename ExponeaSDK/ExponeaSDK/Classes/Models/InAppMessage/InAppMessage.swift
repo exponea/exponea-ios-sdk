@@ -13,10 +13,10 @@ public struct InAppMessage: Codable, Equatable {
     public let name: String
     public let rawMessageType: String?
     public var messageType: InAppMessageType {
-        if (isHtml) {
+        if isHtml {
             return .freeform
         }
-        if (rawMessageType == nil) {
+        if rawMessageType == nil {
             return .alert
         }
         return InAppMessageType(rawValue: rawMessageType!) ?? .alert
@@ -44,7 +44,7 @@ public struct InAppMessage: Codable, Equatable {
     public init(
         id: String,
         name: String,
-        rawMessageType: String,
+        rawMessageType: String?,
         rawFrequency: String,
         payload: InAppMessagePayload? = nil,
         variantId: Int,

@@ -187,11 +187,96 @@ class TrackingManagerSpec: QuickSpec {
                     expect(event.dataTypes.properties["banner_id"] as? String).to(equal("5dd86f44511946ea55132f29"))
                     expect(event.dataTypes.properties["banner_name"] as? String)
                         .to(equal("Test serving in-app message"))
+                    expect(event.dataTypes.properties["banner_type"] as? String).to(equal("modal"))
                     expect(event.dataTypes.properties["action"] as? String).to(equal("click"))
                     expect(event.dataTypes.properties["text"] as? String).to(equal("mock-text"))
                     expect(event.dataTypes.properties["interaction"] as? Bool).to(equal(true))
                     expect(event.dataTypes.properties["variant_id"] as? Int).to(equal(0))
                     expect(event.dataTypes.properties["variant_name"] as? String).to(equal("Variant A"))
+                }
+                
+                it("should track in-app message type as modal") {
+                    trackingManager.track(
+                        .click(buttonLabel: "mock-text", url: "mock-url"),
+                        for: SampleInAppMessage.getSampleInAppMessage(messageType: "modal"),
+                        trackingAllowed: true,
+                        isUserInteraction: true
+                    )
+                    let trackEvents = try! trackingManager.database.fetchTrackEvent()
+                    expect(trackEvents.count).to(equal(1))
+                    let event = trackEvents[0]
+                    expect(event.eventType).to(equal(Constants.EventTypes.banner))
+                    expect(event.dataTypes.properties["banner_type"] as? String).to(equal("modal"))
+                }
+                
+                it("should track in-app message type as alert") {
+                    trackingManager.track(
+                        .click(buttonLabel: "mock-text", url: "mock-url"),
+                        for: SampleInAppMessage.getSampleInAppMessage(messageType: "alert"),
+                        trackingAllowed: true,
+                        isUserInteraction: true
+                    )
+                    let trackEvents = try! trackingManager.database.fetchTrackEvent()
+                    expect(trackEvents.count).to(equal(1))
+                    let event = trackEvents[0]
+                    expect(event.eventType).to(equal(Constants.EventTypes.banner))
+                    expect(event.dataTypes.properties["banner_type"] as? String).to(equal("alert"))
+                }
+                
+                it("should track in-app message type as fullscreen") {
+                    trackingManager.track(
+                        .click(buttonLabel: "mock-text", url: "mock-url"),
+                        for: SampleInAppMessage.getSampleInAppMessage(messageType: "fullscreen"),
+                        trackingAllowed: true,
+                        isUserInteraction: true
+                    )
+                    let trackEvents = try! trackingManager.database.fetchTrackEvent()
+                    expect(trackEvents.count).to(equal(1))
+                    let event = trackEvents[0]
+                    expect(event.eventType).to(equal(Constants.EventTypes.banner))
+                    expect(event.dataTypes.properties["banner_type"] as? String).to(equal("fullscreen"))
+                }
+                
+                it("should track in-app message type as slide_in") {
+                    trackingManager.track(
+                        .click(buttonLabel: "mock-text", url: "mock-url"),
+                        for: SampleInAppMessage.getSampleInAppMessage(messageType: "slide_in"),
+                        trackingAllowed: true,
+                        isUserInteraction: true
+                    )
+                    let trackEvents = try! trackingManager.database.fetchTrackEvent()
+                    expect(trackEvents.count).to(equal(1))
+                    let event = trackEvents[0]
+                    expect(event.eventType).to(equal(Constants.EventTypes.banner))
+                    expect(event.dataTypes.properties["banner_type"] as? String).to(equal("slide_in"))
+                }
+                
+                it("should track in-app message type as freeform") {
+                    trackingManager.track(
+                        .click(buttonLabel: "mock-text", url: "mock-url"),
+                        for: SampleInAppMessage.getSampleInAppMessage(messageType: nil, isHtml: true),
+                        trackingAllowed: true,
+                        isUserInteraction: true
+                    )
+                    let trackEvents = try! trackingManager.database.fetchTrackEvent()
+                    expect(trackEvents.count).to(equal(1))
+                    let event = trackEvents[0]
+                    expect(event.eventType).to(equal(Constants.EventTypes.banner))
+                    expect(event.dataTypes.properties["banner_type"] as? String).to(equal("freeform"))
+                }
+                
+                it("should track in-app message type as alert for unknown type") {
+                    trackingManager.track(
+                        .click(buttonLabel: "mock-text", url: "mock-url"),
+                        for: SampleInAppMessage.getSampleInAppMessage(messageType: "non-existing_type", isHtml: false),
+                        trackingAllowed: true,
+                        isUserInteraction: true
+                    )
+                    let trackEvents = try! trackingManager.database.fetchTrackEvent()
+                    expect(trackEvents.count).to(equal(1))
+                    let event = trackEvents[0]
+                    expect(event.eventType).to(equal(Constants.EventTypes.banner))
+                    expect(event.dataTypes.properties["banner_type"] as? String).to(equal("alert"))
                 }
 
                 it("should track close in-app message event") {
@@ -207,6 +292,7 @@ class TrackingManagerSpec: QuickSpec {
                     expect(event.dataTypes.properties["banner_id"] as? String).to(equal("5dd86f44511946ea55132f29"))
                     expect(event.dataTypes.properties["banner_name"] as? String)
                         .to(equal("Test serving in-app message"))
+                    expect(event.dataTypes.properties["banner_type"] as? String).to(equal("modal"))
                     expect(event.dataTypes.properties["action"] as? String).to(equal("close"))
                     expect(event.dataTypes.properties["text"] as? String).to(beNil())
                     expect(event.dataTypes.properties["interaction"] as? Bool).to(equal(false))
