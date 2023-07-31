@@ -1,5 +1,5 @@
 //
-//  InlineMessageResponse.swift
+//  InAppContentBlockResponse.swift
 //  ExponeaSDK
 //
 //  Created by Ankmara on 26.05.2023.
@@ -39,53 +39,55 @@ extension KeyedEncodingContainer {
     {}
 }
 
-public struct InlineMessageDataResponse: Codable {
-    let data: [InlineMessageResponse]
+public struct InAppContentBlocksDataResponse: Codable {
+    let data: [InAppContentBlockResponse]
     let success: Bool
-    
+
     enum CodingKeys: String, CodingKey {
-        case data = "inline_messages"
+        case data = "in_app_content_blocks"
         case success
     }
 }
 
-public struct InlineMessageResponse: Codable {
+public struct InAppContentBlockResponse: Codable {
 
     public struct DateFilter: Codable {
         let enabled: Bool
         let fromDate: UInt?
         let toDate: UInt?
-        
+
         enum CodingKeys: String, CodingKey {
             case enabled
             case fromDate = "from_date"
             case toDate = "to_date"
         }
     }
-    
+
     public let id: String
     public let name: String
     public let dateFilter: DateFilter
     @CodableIgnored
-    public var frequency: InlineMessageFrequency?
+    public var frequency: InAppContentBlocksFrequency?
     public var loadPriority: Int? = 0
-    public var contentType: InlineMessageContentType?
+    public var contentType: InAppContentBlockContentType?
     public var content: Content?
+    @CodableIgnored
+    public var normalizedHtml: String?
     public var trackingConsentCategory: String?
     public let placeholders: [String]
     @CodableIgnored
-    public var displayState: InlineMessageDisplayStatus? = .init(displayed: nil, interacted: nil)
+    public var displayState: InAppContentBlocksDisplayStatus? = .init(displayed: nil, interacted: nil)
     @CodableIgnored
-    public var personalizedMessage: PersonalizedInlineMessageResponse?
+    public var personalizedMessage: PersonalizedInAppContentBlockResponse?
     @CodableIgnored
-    public var status: InlineMessageDisplayStatus?
+    public var status: InAppContentBlocksDisplayStatus?
     @CodableIgnored
     public var sessionStart: Date? = Date()
     @CodableIgnored
     public var tags: Set<Int>? = []
     @CodableIgnored
     public var indexPath: IndexPath?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -97,32 +99,31 @@ public struct InlineMessageResponse: Codable {
         case placeholders
         case frequency
     }
-    
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
-        self.dateFilter = try container.decode(InlineMessageResponse.DateFilter.self, forKey: .dateFilter)
+        self.dateFilter = try container.decode(InAppContentBlockResponse.DateFilter.self, forKey: .dateFilter)
         self.loadPriority = try container.decodeIfPresent(Int.self, forKey: .loadPriority)
-        self.contentType = try container.decodeIfPresent(InlineMessageContentType.self, forKey: .contentType)
+        self.contentType = try container.decodeIfPresent(InAppContentBlockContentType.self, forKey: .contentType)
         self.content = try container.decodeIfPresent(Content.self, forKey: .content)
         self.trackingConsentCategory = try container.decodeIfPresent(String.self, forKey: .trackingConsentCategory)
         self.placeholders = try container.decode([String].self, forKey: .placeholders)
         let frequency = try container.decode(String.self, forKey: .frequency)
         self.frequency = .init(value: frequency)
     }
-    
+
     public init(
         id: String,
         name: String,
         dateFilter: DateFilter,
-        frequency: InlineMessageFrequency,
+        frequency: InAppContentBlocksFrequency,
         placeholders: [String],
         tags: Set<Int>,
         loadPriority: Int,
         content: Content?,
-        personalized: PersonalizedInlineMessageResponse?
+        personalized: PersonalizedInAppContentBlockResponse?
     ) {
         self.id = id
         self.name = name
@@ -136,18 +137,18 @@ public struct InlineMessageResponse: Codable {
     }
 }
 
-public enum InlineMessageFrequency: String {
+public enum InAppContentBlocksFrequency: String {
     case always = "always"
     case onlyOnce = "only_once"
     case oncePerVisit = "once_per_visit"
     case untilVisitorInteracts = "until_visitor_interacts"
-    
+
     init(value: String) {
         self = .init(rawValue: value) ?? .always
     }
 }
 
-public struct InlineMessageDisplayStatus: Codable, Equatable {
+public struct InAppContentBlocksDisplayStatus: Codable, Equatable {
     let displayed: Date?
     let interacted: Date?
 }

@@ -15,7 +15,7 @@ public struct Configuration: Codable, Equatable {
     public internal(set) var projectToken: String
     public internal(set) var authorization: Authorization = .none
     public internal(set) var baseUrl: String = Constants.Repository.baseUrl
-    public var inlinePlaceholders: [String]?
+    public var inAppContentBlocksPlaceholders: [String]?
     public var defaultProperties: [String: JSONConvertible]?
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
@@ -82,7 +82,7 @@ public struct Configuration: Codable, Equatable {
                 baseUrl: String?,
                 appGroup: String? = nil,
                 defaultProperties: [String: JSONConvertible]? = nil,
-                inlinePlaceholders: [String]? = nil,
+                inAppContentBlocksPlaceholders: [String]? = nil,
                 allowDefaultCustomerProperties: Bool? = nil,
                 advancedAuthEnabled: Bool? = nil
     ) throws {
@@ -96,7 +96,7 @@ public struct Configuration: Codable, Equatable {
         self.defaultProperties = defaultProperties
         self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
         self.advancedAuthEnabled = advancedAuthEnabled ?? false
-        self.inlinePlaceholders = inlinePlaceholders
+        self.inAppContentBlocksPlaceholders = inAppContentBlocksPlaceholders
         if let url = baseUrl {
             self.baseUrl = url
         }
@@ -112,7 +112,7 @@ public struct Configuration: Codable, Equatable {
         authorization: Authorization = .none,
         baseUrl: String,
         defaultProperties: [String: JSONConvertible]?,
-        inlinePlaceholders: [String]? = nil,
+        inAppContentBlocksPlaceholders: [String]? = nil,
         sessionTimeout: Double,
         automaticSessionTracking: Bool = true,
         automaticPushNotificationTracking: Bool,
@@ -128,7 +128,7 @@ public struct Configuration: Codable, Equatable {
         self.authorization = authorization
         self.baseUrl = baseUrl
         self.defaultProperties = defaultProperties
-        self.inlinePlaceholders = inlinePlaceholders
+        self.inAppContentBlocksPlaceholders = inAppContentBlocksPlaceholders
         self.sessionTimeout = sessionTimeout
         self.automaticSessionTracking = automaticSessionTracking
         self.automaticPushNotificationTracking = automaticPushNotificationTracking

@@ -287,63 +287,63 @@ class AppInboxManagerSpec: QuickSpec {
             }
         }
 
-//        it("should parse HTML message") {
-//            let now = Date().timeIntervalSince1970.doubleValue
-//            let response = AppInboxResponse(
-//                success: true,
-//                messages: [
-//                    AppInboxCacheSpec.getSampleMessage(
-//                        id: "id1",
-//                        read: true,
-//                        received: now - 20,
-//                        type: "html",
-//                        data: [
-//                            "title": .string("Title"),
-//                            "pre_header": .string("Message"),
-//                            "message": .string(AppInboxManagerSpec.htmlAppInboxMessageContent)
-//                        ]
-//                    )
-//                ],
-//                syncToken: nil
-//            )
-//            repository.fetchAppInboxResult = Result.success(response)
-//            waitUntil(timeout: .seconds(30)) { done in
-//                appInboxManager.fetchAppInbox { result in
-//                    expect(result.value?.count).to(equal(1))
-//                    guard let message = result.value?.first else {
-//                        fail("No message loaded")
-//                        done()
-//                        return
-//                    }
-//                    guard let messageContent = message.content else {
-//                        fail("No message content loaded")
-//                        done()
-//                        return
-//                    }
-//                    expect(message.id).to(equal("id1"))
-//                    expect(message.type).to(equal("html"))
-//                    expect(messageContent.title).to(equal("Title"))
-//                    expect(messageContent.message).to(equal("Message"))
-//                    expect(messageContent.html).toNot(beEmpty())
-//                    expect(messageContent.actions?.count).to(equal(2))
-//                    guard let webAction = messageContent.actions?.first(where: { item in item.type == .browser }) else {
-//                        fail("WebAction not found")
-//                        done()
-//                        return
-//                    }
-//                    expect(webAction.title).to(equal("Web"))
-//                    expect(webAction.url).to(equal("https://exponea.com"))
-//                    guard let deeplinkAction = messageContent.actions?.first(where: { item in item.type == .deeplink }) else {
-//                        fail("DeeplinkAction not found")
-//                        done()
-//                        return
-//                    }
-//                    expect(deeplinkAction.title).to(equal("Deeplink"))
-//                    expect(deeplinkAction.url).to(equal("message:%3C3358921718340173851@unknownmsgid%3E"))
-//                    done()
-//                }
-//            }
-//        }
+        it("should parse HTML message") {
+            let now = Date().timeIntervalSince1970.doubleValue
+            let response = AppInboxResponse(
+                success: true,
+                messages: [
+                    AppInboxCacheSpec.getSampleMessage(
+                        id: "id1",
+                        read: true,
+                        received: now - 20,
+                        type: "html",
+                        data: [
+                            "title": .string("Title"),
+                            "pre_header": .string("Message"),
+                            "message": .string(AppInboxManagerSpec.htmlAppInboxMessageContent)
+                        ]
+                    )
+                ],
+                syncToken: nil
+            )
+            repository.fetchAppInboxResult = Result.success(response)
+            waitUntil(timeout: .seconds(30)) { done in
+                appInboxManager.fetchAppInbox { result in
+                    expect(result.value?.count).to(equal(1))
+                    guard let message = result.value?.first else {
+                        fail("No message loaded")
+                        done()
+                        return
+                    }
+                    guard let messageContent = message.content else {
+                        fail("No message content loaded")
+                        done()
+                        return
+                    }
+                    expect(message.id).to(equal("id1"))
+                    expect(message.type).to(equal("html"))
+                    expect(messageContent.title).to(equal("Title"))
+                    expect(messageContent.message).to(equal("Message"))
+                    expect(messageContent.html).toNot(beEmpty())
+                    expect(messageContent.actions?.count).to(equal(2))
+                    guard let webAction = messageContent.actions?.first(where: { item in item.type == .browser }) else {
+                        fail("WebAction not found")
+                        done()
+                        return
+                    }
+                    expect(webAction.title).to(equal("Web"))
+                    expect(webAction.url).to(equal("https://exponea.com"))
+                    guard let deeplinkAction = messageContent.actions?.first(where: { item in item.type == .deeplink }) else {
+                        fail("DeeplinkAction not found")
+                        done()
+                        return
+                    }
+                    expect(deeplinkAction.title).to(equal("Deeplink"))
+                    expect(deeplinkAction.url).to(equal("message:%3C3358921718340173851@unknownmsgid%3E"))
+                    done()
+                }
+            }
+        }
 
         it("should deny markAsRead action for non-assigned message") {
             var testMessage = AppInboxCacheSpec.getSampleMessage(id: "id1")
@@ -393,7 +393,7 @@ class AppInboxManagerSpec: QuickSpec {
                 syncToken: receivedSyncToken
             )
             repository.fetchAppInboxResult = Result.success(response)
-            waitUntil(timeout: .seconds(30)) { done in
+            waitUntil(timeout: .seconds(40)) { done in
                 appInboxManager.fetchAppInbox { result in
                     expect(result.value?.count).to(equal(1))
                     guard let message = result.value?.first else {

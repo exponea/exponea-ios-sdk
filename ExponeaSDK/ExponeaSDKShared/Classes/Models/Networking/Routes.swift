@@ -19,12 +19,12 @@ public enum Routes {
     case pushSelfCheck
     case appInbox
     case appInboxMarkRead
-    case inlineMessages
-    case personalizedInlineMessages
+    case inAppContentBlocks
+    case personalizedInAppContentBlocks
 
     public var method: HTTPMethod {
         switch self {
-        case .consents, .inlineMessages: return .get
+        case .consents, .inAppContentBlocks: return .get
         default: return .post
         }
     }

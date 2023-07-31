@@ -1,5 +1,5 @@
 //
-//  InlineMessageRequest.swift
+//  InAppContentBlocksRequest.swift
 //  ExponeaSDK
 //
 //  Created by Ankmara on 28.08.2023.
@@ -8,13 +8,13 @@
 
 import Foundation
 
-struct InlineMessageRequest: Codable, RequestParametersType {
+struct InAppContentBlocksRequest: Codable, RequestParametersType {
     var messageIds: [String]
     var syncToken: String?
     var parameters: [String: JSONValue] {
         [:]
     }
     var requestParameters: [String : Any] {
-        ["inline_message_ids": messageIds]
+        ["content_block_ids": messageIds]
     }
 }

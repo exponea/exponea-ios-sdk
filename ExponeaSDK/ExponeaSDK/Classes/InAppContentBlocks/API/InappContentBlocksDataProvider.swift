@@ -1,5 +1,5 @@
 //
-//  InlineMessageDataProvider.swift
+//  InAppContentBlocksDataProvider.swift
 //  ExponeaSDK
 //
 //  Created by Ankmara on 21.05.2023.
@@ -8,20 +8,20 @@
 
 import Foundation
 
-public protocol InlineMessageDataProviderType {
-    func loadPersonalizedInlineMessages<Data: Codable>(
+public protocol InAppContentBlocksDataProviderType {
+    func loadPersonalizedInAppContentBlocks<Data: Codable>(
         data: Data.Type,
         customerIds: [String: String],
-        inlineMessageIds: [String],
+        inAppContentBlocksIds: [String],
         completion: @escaping TypeBlock<ResponseData<Data>>
     )
-    func getInlineMessages<Data: Codable>(
+    func getInAppContentBlocks<Data: Codable>(
         data: Data.Type,
         completion: @escaping TypeBlock<ResponseData<Data>>
     )
 }
 
-public final class InlineMessageDataProvider {
+public final class InAppContentBlocksDataProvider {
 
     // MARK: - Properties
     private lazy var serverRepository = Exponea.shared.repository
@@ -33,14 +33,14 @@ public struct ResponseData<Data: Codable> {
     var error: Error?
 }
 
-// MARK: - InlineMessageDataProviderType
-extension InlineMessageDataProvider: InlineMessageDataProviderType {
-    public func getInlineMessages<Data: Codable>(
+// MARK: - InAppContentBlocksDataProviderType
+extension InAppContentBlocksDataProvider: InAppContentBlocksDataProviderType {
+    public func getInAppContentBlocks<Data: Codable>(
         data: Data.Type = Data.self,
         completion: @escaping TypeBlock<ResponseData<Data>>
     ) {
         guard let serverRepository = serverRepository else { return }
-        serverRepository.getInlineMessages { response in
+        serverRepository.getInAppContentBlocks { response in
             guard response.error == nil, let data = response.value as? Data else {
                 completion(.init(error: response.error))
                 return
@@ -49,16 +49,16 @@ extension InlineMessageDataProvider: InlineMessageDataProviderType {
         }
     }
 
-    public func loadPersonalizedInlineMessages<D: Codable>(
+    public func loadPersonalizedInAppContentBlocks<D: Codable>(
         data: D.Type = D.self,
         customerIds: [String: String],
-        inlineMessageIds: [String],
+        inAppContentBlocksIds: [String],
         completion: @escaping TypeBlock<ResponseData<D>>
     ) {
         guard let serverRepository = serverRepository else { return }
-        serverRepository.personalizedInlineMessages(
+        serverRepository.personalizedInAppContentBlocks(
             customerIds: customerIds,
-            inlineMessageIds: inlineMessageIds
+            inAppContentBlocksIds: inAppContentBlocksIds
         ) { response in
             guard response.error == nil, let data = response.value as? D else {
                 completion(.init(error: response.error))

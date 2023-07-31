@@ -8,7 +8,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     let dismissCallback: TypeBlock<Bool>
 
     var webView: WKWebView!
-    private var inlineManager: InlineMessageManagerType = InlineMessageManager.manager
+    private var inAppContentBlocksManager: InAppContentBlocksManagerType = InAppContentBlocksManager.manager
 
     var normalizedPayload: NormalizedResult?
     
@@ -124,7 +124,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
             webPagePreferences.allowsContentJavaScript = false
             configuration.defaultWebpagePreferences = webPagePreferences
         }
-        if let contentRuleList = inlineManager.contentRuleList {
+        if let contentRuleList = inAppContentBlocksManager.contentRuleList {
             configuration.userContentController.add(contentRuleList)
         }
         return configuration

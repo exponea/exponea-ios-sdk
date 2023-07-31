@@ -401,7 +401,7 @@ extension ExponeaInternal {
             )
             dependencies.inAppMessagesManager.anonymize()
             dependencies.appInboxManager.clear()
-            dependencies.inlineManager.anonymize()
+            dependencies.inAppContentBlocksManager.anonymize()
             self.telemetryManager?.report(eventWithType: .anonymize, properties: [:])
         }
     }
@@ -552,12 +552,12 @@ extension ExponeaInternal {
         }
     }
     
-    /// Track inline message banner click event
+    /// Track inAppContentBlocks message banner click event
     /// Event is tracked if one or both conditions met:
     //     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
     //     - parameter 'buttonLink' has TRUE value of query parameter 'xnpe_force_track'
-    public func trackInlineMessageClick(
-        message: InlineMessageResponse,
+    public func trackInAppContentBlocksClick(
+        message: InAppContentBlockResponse,
         buttonText: String?,
         buttonLink: String?
     ) {
@@ -565,18 +565,17 @@ extension ExponeaInternal {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            dependencies.trackingConsentManager.trackInlineMessageClick(
+            dependencies.trackingConsentManager.trackInAppContentBlocksClick(
                 message: message,
                 buttonText: buttonText,
                 buttonLink: buttonLink,
-                mode: .CONSIDER_CONSENT,
-                isUserInteraction: true
+                mode: .CONSIDER_CONSENT
             )
         }
     }
  
-    public func trackInlineMessageClose(
-        message: InlineMessageResponse,
+    public func trackInAppContentBlocksClose(
+        message: InAppContentBlockResponse,
         isUserInteraction: Bool?
     ) {
         executeSafelyWithDependencies { dependencies in
@@ -584,7 +583,7 @@ extension ExponeaInternal {
                 throw ExponeaError.authorizationInsufficient
             }
             if Exponea.shared.inAppMessagesDelegate.trackActions {
-                dependencies.trackingConsentManager.trackInlineMessageClose(
+                dependencies.trackingConsentManager.trackInAppContentBlocksClose(
                     message: message,
                     mode: .CONSIDER_CONSENT,
                     isUserInteraction: isUserInteraction == true
@@ -593,15 +592,15 @@ extension ExponeaInternal {
         }
     }
     
-    public func trackInlineMessageShow(
-        message: InlineMessageResponse
+    public func trackInAppContentBlocksShow(
+        message: InAppContentBlockResponse
     ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
             if Exponea.shared.inAppMessagesDelegate.trackActions {
-                dependencies.trackingConsentManager.trackInlineMessageShow(
+                dependencies.trackingConsentManager.trackInAppContentBlocksShow(
                     message: message,
                     mode: .CONSIDER_CONSENT
                 )

@@ -40,7 +40,7 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
     private var shownActions: [MessageItemAction]?
     private var normalizedPayload: NormalizedResult?
     private var actionManager: WebActionManager?
-    private var inlineManager: InlineMessageManagerType = InlineMessageManager.manager
+    private var inAppContentBlocksManager: InAppContentBlocksManagerType? = Exponea.shared.inAppContentBlocksManager
 
     open func withData(_ source: MessageItem) {
         self.data = source
@@ -183,7 +183,7 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
     private func showHtmlMessage() {
         htmlContainer.isHidden = false
         let configuration = htmlContainer.configuration
-        if let contentRuleList = inlineManager.contentRuleList {
+        if let contentRuleList = inAppContentBlocksManager?.contentRuleList {
             configuration.userContentController.add(contentRuleList)
         }
         htmlContainer.navigationDelegate = self.actionManager

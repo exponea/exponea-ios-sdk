@@ -67,6 +67,8 @@ final class MockExponeaImplementation: ExponeaInternal {
                 trackingManager: self.trackingManager!,
                 database: database
             )
+            
+            self.inAppContentBlocksManager = InAppContentBlocksManager()
 
             processSavedCampaignData()
         } catch {

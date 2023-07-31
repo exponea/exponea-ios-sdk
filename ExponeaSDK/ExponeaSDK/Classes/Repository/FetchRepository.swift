@@ -47,13 +47,13 @@ protocol FetchRepository {
         completion: @escaping (EmptyResult<RepositoryError>) -> Void
     )
 
-    func getInlineMessages(
-        completion: @escaping TypeBlock<Result<InlineMessageDataResponse>>
+    func getInAppContentBlocks(
+        completion: @escaping TypeBlock<Result<InAppContentBlocksDataResponse>>
     )
 
-    func personalizedInlineMessages(
+    func personalizedInAppContentBlocks(
         customerIds: [String: String],
-        inlineMessageIds: [String],
-        completion: @escaping TypeBlock<Result<PersonalizedInlineMessageResponseData>>
+        inAppContentBlocksIds: [String],
+        completion: @escaping TypeBlock<Result<PersonalizedInAppContentBlockResponseData>>
     )
 }

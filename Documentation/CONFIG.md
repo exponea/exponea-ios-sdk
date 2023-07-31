@@ -87,6 +87,10 @@ You can configure the SDK providing a configuration file with configuration vari
 * If set, advanced authorization is used for communication with BE for API listed in [JWT Authorization](./AUTHORIZATION.md)
 * For more info see [authorization setup](./AUTHORIZATION.md)
 
+#### inAppContentBlocksPlaceholders
+
+* If set, all In-app content blocks will be prefetched right after SDK init
+
 ## Configuring the SDK
 
 ### 1. Configure SDK programmatically

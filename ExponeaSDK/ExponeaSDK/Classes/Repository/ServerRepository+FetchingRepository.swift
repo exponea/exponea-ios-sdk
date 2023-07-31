@@ -93,24 +93,24 @@ extension ServerRepository: FetchRepository {
             .resume()
     }
 
-    func getInlineMessages(
-        completion: @escaping TypeBlock<Result<InlineMessageDataResponse>>
+    func getInAppContentBlocks(
+        completion: @escaping TypeBlock<Result<InAppContentBlocksDataResponse>>
     ) {
-        let router = RequestFactory(exponeaProject: configuration.mutualExponeaProject, route: .inlineMessages)
+        let router = RequestFactory(exponeaProject: configuration.mutualExponeaProject, route: .inAppContentBlocks)
         let request = router.prepareRequest()
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
     
-    func personalizedInlineMessages(
+    func personalizedInAppContentBlocks(
         customerIds: [String: String],
-        inlineMessageIds: [String],
-        completion: @escaping (Result<PersonalizedInlineMessageResponseData>) -> Void
+        inAppContentBlocksIds: [String],
+        completion: @escaping (Result<PersonalizedInAppContentBlockResponseData>) -> Void
     ) {
-        let router = RequestFactory(exponeaProject: configuration.mutualExponeaProject, route: .personalizedInlineMessages)
+        let router = RequestFactory(exponeaProject: configuration.mutualExponeaProject, route: .personalizedInAppContentBlocks)
         let request = router.prepareRequest(
-            parameters: InlineMessageRequest(messageIds: inlineMessageIds),
+            parameters: InAppContentBlocksRequest(messageIds: inAppContentBlocksIds),
             customerIds: customerIds
         )
         session

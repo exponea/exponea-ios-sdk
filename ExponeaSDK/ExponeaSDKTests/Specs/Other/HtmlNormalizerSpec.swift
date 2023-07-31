@@ -157,7 +157,7 @@ final class HtmlNormalizerSpec: QuickSpec {
          Represents test, that any of HTML JS events are remove
          https://www.w3schools.com/tags/ref_eventattributes.asp
          */
-        it("should remove Inline Javascript") {
+        it("should remove InAppContentBlocks Javascript") {
             let rawHtml = "<html><body>" +
                     "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +

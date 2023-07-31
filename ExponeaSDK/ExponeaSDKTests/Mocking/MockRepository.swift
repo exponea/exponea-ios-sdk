@@ -10,18 +10,18 @@
 
 final class MockRepository: RepositoryType {
     
-    func getInlineMessages(
-        completion: @escaping TypeBlock<Result<InlineMessageDataResponse>>
+    func getInAppContentBlocks(
+        completion: @escaping TypeBlock<Result<InAppContentBlocksDataResponse>>
     ) {
-        completion(fetchInlinePlaceholdersResult)
+        completion(fetchInAppContentBlocksPlaceholdersResult)
     }
 
-    func personalizedInlineMessages(
+    func personalizedInAppContentBlocks(
         customerIds: [String: String],
-        inlineMessageIds: [String],
-        completion: @escaping TypeBlock<Result<PersonalizedInlineMessageResponseData>>
+        inAppContentBlocksIds: [String],
+        completion: @escaping TypeBlock<Result<PersonalizedInAppContentBlockResponseData>>
     ) {
-        completion(fetchInlineResult)
+        completion(fetchInAppContentBlocksResult)
     }
 
     var configuration: Configuration
@@ -32,8 +32,8 @@ final class MockRepository: RepositoryType {
     var fetchConsentsResult: Result<ConsentsResponse> = Result.failure(RepositoryError.connectionError)
     var fetchInAppMessagesResult: Result<InAppMessagesResponse> = Result.failure(RepositoryError.connectionError)
     var fetchAppInboxResult: Result<AppInboxResponse> = Result.failure(RepositoryError.connectionError)
-    var fetchInlinePlaceholdersResult: Result<InlineMessageDataResponse> = Result.failure(RepositoryError.connectionError)
-    var fetchInlineResult: Result<PersonalizedInlineMessageResponseData> = Result.failure(RepositoryError.connectionError)
+    var fetchInAppContentBlocksPlaceholdersResult: Result<InAppContentBlocksDataResponse> = Result.failure(RepositoryError.connectionError)
+    var fetchInAppContentBlocksResult: Result<PersonalizedInAppContentBlockResponseData> = Result.failure(RepositoryError.connectionError)
 
     init(configuration: Configuration) {
         self.configuration = configuration

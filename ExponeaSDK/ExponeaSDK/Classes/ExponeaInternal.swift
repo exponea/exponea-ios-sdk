@@ -22,7 +22,6 @@ extension Exponea {
 
 public class ExponeaInternal: ExponeaType {
 
-
     /// The configuration object containing all the configuration data necessary for Exponea SDK to work.
     ///
     /// The setter of this variable will setup all required tools and managers.
@@ -76,8 +75,7 @@ public class ExponeaInternal: ExponeaType {
     internal var repository: RepositoryType?
 
     internal var telemetryManager: TelemetryManager?
-    
-    internal var inlineManager: InlineMessageManagerType?
+    public var inAppContentBlocksManager: InAppContentBlocksManagerType?
 
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
@@ -243,11 +241,11 @@ public class ExponeaInternal: ExponeaType {
                         // reload in-app messages once customer identification is flushed - user may have been merged
                         guard let inAppMessagesManager = self?.inAppMessagesManager,
                               let trackingManager = self?.trackingManager,
-                              let inlineManager = self?.inlineManager else { return }
+                              let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
                         inAppMessagesManager.preload(for: trackingManager.customerIds)
-                        if let placeholders = configuration.inlinePlaceholders {
-                            inlineManager.loadInlinePlaceholders {
-                                inlineManager.prefetchPlaceholdersWithIds(ids: placeholders)
+                        if let placeholders = configuration.inAppContentBlocksPlaceholders {
+                            inAppContentBlocksManager.loadInAppContentBlocksPlaceholders {
+                                inAppContentBlocksManager.prefetchPlaceholdersWithIds(ids: placeholders)
                             }
                         }
                     }
@@ -289,10 +287,10 @@ public class ExponeaInternal: ExponeaType {
                 configuration.saveToUserDefaults()
                 
                 onMain {
-                    self.inlineManager = InlineMessageManager.manager
-                    self.inlineManager?.initBlocker()
-                    self.inlineManager?.loadInlinePlaceholders { [weak self] in
-                        self?.inlineManager?.prefetchPlaceholdersWithIds(ids: configuration.inlinePlaceholders ?? [])
+                    self.inAppContentBlocksManager = InAppContentBlocksManager.manager
+                    self.inAppContentBlocksManager?.initBlocker()
+                    self.inAppContentBlocksManager?.loadInAppContentBlocksPlaceholders { [weak self] in
+                        self?.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: configuration.inAppContentBlocksPlaceholders ?? [])
                     }
                 }
                 
@@ -332,7 +330,7 @@ internal extension ExponeaInternal {
         let trackingConsentManager: TrackingConsentManagerType
         let inAppMessagesManager: InAppMessagesManagerType
         let appInboxManager: AppInboxManagerType
-        let inlineManager: InlineMessageManagerType
+        let inAppContentBlocksManager: InAppContentBlocksManagerType
     }
 
     typealias CompletionHandler<T> = ((Result<T>) -> Void)
@@ -349,7 +347,7 @@ internal extension ExponeaInternal {
             let flushingManager = flushingManager,
             let trackingConsentManager = trackingConsentManager,
             let inAppMessagesManager = inAppMessagesManager,
-            let inlineManager = inlineManager,
+            let inAppContentBlocksManager = inAppContentBlocksManager,
             let appInboxManager = appInboxManager else {
                 Exponea.logger.log(.error, message: "Some dependencies are not configured")
                 throw ExponeaError.notConfigured
@@ -362,7 +360,7 @@ internal extension ExponeaInternal {
             trackingConsentManager: trackingConsentManager,
             inAppMessagesManager: inAppMessagesManager,
             appInboxManager: appInboxManager,
-            inlineManager: inlineManager
+            inAppContentBlocksManager: inAppContentBlocksManager
         )
     }
 
@@ -444,7 +442,7 @@ public extension ExponeaInternal {
                    baseUrl: String? = nil,
                    appGroup: String? = nil,
                    defaultProperties: [String: JSONConvertible]? = nil,
-                   inlinePlaceholders: [String]? = nil,
+                   inAppContentBlocksPlaceholders: [String]? = nil,
                    allowDefaultCustomerProperties: Bool? = nil,
                    advancedAuthEnabled: Bool? = nil
     ) {
@@ -455,7 +453,7 @@ public extension ExponeaInternal {
                 baseUrl: baseUrl,
                 appGroup: appGroup,
                 defaultProperties: defaultProperties,
-                inlinePlaceholders: inlinePlaceholders,
+                inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
                 advancedAuthEnabled: advancedAuthEnabled
             )
@@ -527,7 +525,7 @@ public extension ExponeaInternal {
                    baseUrl: String? = nil,
                    appGroup: String? = nil,
                    defaultProperties: [String: JSONConvertible]? = nil,
-                   inlinePlaceholders: [String]? = nil,
+                   inAppContentBlocksPlaceholders: [String]? = nil,
                    allowDefaultCustomerProperties: Bool? = nil,
                    advancedAuthEnabled: Bool? = nil
     ) {
@@ -539,7 +537,7 @@ public extension ExponeaInternal {
                 baseUrl: baseUrl,
                 appGroup: appGroup,
                 defaultProperties: defaultProperties,
-                inlinePlaceholders: inlinePlaceholders,
+                inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
                 advancedAuthEnabled: advancedAuthEnabled
             )

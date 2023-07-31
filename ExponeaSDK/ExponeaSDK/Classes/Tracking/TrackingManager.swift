@@ -269,8 +269,8 @@ extension TrackingManager: TrackingManagerType {
             )
         }
 
-    public func trackInlineMessageClick(
-        message: InlineMessageResponse,
+    public func trackInAppContentBlocksClick(
+        message: InAppContentBlockResponse,
         trackingAllowed: Bool,
         buttonText: String?,
         buttonLink: String?
@@ -283,11 +283,11 @@ extension TrackingManager: TrackingManagerType {
         )
     }
 
-    public func trackInlineMessageClose(message: InlineMessageResponse, trackingAllowed: Bool) {
+    public func trackInAppContentBlocksClose(message: InAppContentBlockResponse, trackingAllowed: Bool) {
         track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: true)
     }
 
-    public func trackInlineMessageShow(message: InlineMessageResponse, trackingAllowed: Bool) {
+    public func trackInAppContentBlocksShow(message: InAppContentBlockResponse, trackingAllowed: Bool) {
         track(.show, for: message, trackingAllowed: trackingAllowed)
     }
 
@@ -502,17 +502,18 @@ extension TrackingManager: InAppMessageTrackingDelegate {
     }
 }
 
-// MARK: - Inline messages -
+// MARK: - In-app Content Blocks -
 
-extension TrackingManager: InlineMessageTrackingDelegate {
-    public func track(_ event: InlineMessageTrackingEvent, for message: InlineMessageResponse, trackingAllowed: Bool, isUserInteraction: Bool = false) {
+extension TrackingManager: InAppContentBlocksTrackingDelegate {
+    public func track(_ event: InAppContentBlocksTrackingEvent, for message: InAppContentBlockResponse, trackingAllowed: Bool, isUserInteraction: Bool = false) {
         var eventData: [String: JSONValue] = [
             "action": .string(event.action),
             "banner_id": .string(message.id),
             "interaction": .bool(isUserInteraction),
             "os": .string("iOS"),
-            "type": .string("inline message"),
-            "placeholder": .string(message.placeholders.first ?? ""),
+            "type": .string("in-app content block"),
+            "banner_type": .string(message.contentType?.rawValue ?? message.personalizedMessage?.contentType?.rawValue ?? "null"),
+            "placeholder": .string(message.placeholders.joined(separator: ", ")),
             "banner_name": .string(message.name),
             "platform": .string("ios")
         ]

@@ -9,6 +9,6 @@
 import Foundation
 
 struct QueueData {
-    let inline: InlineMessageResponse
-    let newValue: UsedInline
+    let inAppContentBlocks: InAppContentBlockResponse
+    let newValue: UsedInAppContentBlocks
 }

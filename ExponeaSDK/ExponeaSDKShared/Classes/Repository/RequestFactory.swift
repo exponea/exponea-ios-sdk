@@ -37,9 +37,9 @@ public struct RequestFactory {
             return baseUrl + "/webxp/projects/\(projectToken)/appinbox/fetch"
         case .appInboxMarkRead:
             return baseUrl + "/webxp/projects/\(projectToken)/appinbox/markasread"
-        case .personalizedInlineMessages:
-            return baseUrl + "/webxp/s/\(projectToken)/inlinemessages?v=2"
-        case .inlineMessages:
+        case .personalizedInAppContentBlocks:
+            return baseUrl + "/webxp/s/\(projectToken)/inappcontentblocks?v=2"
+        case .inAppContentBlocks:
             return baseUrl + "/wxstatic/projects/\(projectToken)/bundle-ios.json?v=2"
         }
     }

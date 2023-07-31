@@ -1,5 +1,5 @@
 //
-//  UsedInline.swift
+//  UsedInAppContentBlocks.swift
 //  ExponeaSDK
 //
 //  Created by Ankmara on 10.07.2023.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct UsedInline: Hashable {
+public struct UsedInAppContentBlocks: Hashable {
     public var tag: Int
     public var indexPath: IndexPath
     public var placeholderId: String

@@ -125,15 +125,15 @@ internal class MockTrackingManager: TrackingManagerType {
         )
     }
     
-    func trackInlineMessageClick(
-        message: InlineMessageResponse,
+    func trackInAppContentBlocksClick(
+        message: InAppContentBlockResponse,
         trackingAllowed: Bool,
         buttonText: String?,
         buttonLink: String?
     ) {}
-    // Function used to track inline message banner close event
-    func trackInlineMessageClose(message: InlineMessageResponse, trackingAllowed: Bool) {}
-    func trackInlineMessageShow(message: InlineMessageResponse, trackingAllowed: Bool) {}
+    // Function used to track inAppContentBlocks message banner close event
+    func trackInAppContentBlocksClose(message: InAppContentBlockResponse, trackingAllowed: Bool) {}
+    func trackInAppContentBlocksShow(message: InAppContentBlockResponse, trackingAllowed: Bool) {}
     
     func trackInAppMessageClose(message: ExponeaSDK.InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
         self.track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)

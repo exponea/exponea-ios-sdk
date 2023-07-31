@@ -1,16 +1,17 @@
 //
-//  InlineMessageViewController.swift
+//  InAppContentBlocksViewController.swift
 //  Example
 //
 //  Created by Ankmara on 01.06.2023.
 //  Copyright © 2023 Exponea. All rights reserved.
 //
+
 import Foundation
 import UIKit
 import WebKit
 import ExponeaSDK
 
-class InlineCell: UITableViewCell {
+class InAppContentBlocksCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -20,13 +21,13 @@ class InlineCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setupInlineView(_ inlineView: UIView) {
-        contentView.addSubview(inlineView)
-        inlineView.translatesAutoresizingMaskIntoConstraints = false
-        inlineView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
-        inlineView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
-        inlineView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
-        inlineView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
+    func setupInAppContentBlocksView(_ inAppContentBlocksView: UIView) {
+        contentView.addSubview(inAppContentBlocksView)
+        inAppContentBlocksView.translatesAutoresizingMaskIntoConstraints = false
+        inAppContentBlocksView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
+        inAppContentBlocksView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        inAppContentBlocksView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
+        inAppContentBlocksView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
     }
 }
 
@@ -35,7 +36,7 @@ struct TableTest {
     let tag: Int
 }
 
-class InlineMessageViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     private let data: [String] = [
         "Product 01",
@@ -86,7 +87,7 @@ class InlineMessageViewController: UIViewController, UITableViewDelegate, UITabl
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 1:
-            let height = InlineMessageManager.manager.getUsedInline(placeholder: "example_list", indexPath: indexPath)?.height ?? 0
+            let height = Exponea.shared.inAppContentBlocksManager?.getUsedInAppContentBlocks(placeholder: "example_list", indexPath: indexPath)?.height ?? 0
             return height
         default:
             return UITableView.automaticDimension
@@ -100,9 +101,10 @@ class InlineMessageViewController: UIViewController, UITableViewDelegate, UITabl
             cell.textLabel?.text = data[safeIndex: indexPath.row]
             return cell
         case 1:
-            let cell = InlineCell(style: .default, reuseIdentifier: "InlineCell")
-            let view = InlineMessageManager.manager.prepareInlineView(placeholderId: "example_list", indexPath: indexPath)
-            cell.setupInlineView(view)
+            let cell = InAppContentBlocksCell(style: .default, reuseIdentifier: "InAppContentBlocksCell")
+            if let view = Exponea.shared.inAppContentBlocksManager?.prepareInAppContentBlockView(placeholderId: "example_list", indexPath: indexPath) {
+                cell.setupInAppContentBlocksView(view)
+            }
             return cell
         case 2:
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "UITableViewCell") ?? UITableViewCell()
@@ -120,8 +122,8 @@ class InlineMessageViewController: UIViewController, UITableViewDelegate, UITabl
     private let tableView = UITableView()
     private let refreshControl = UIRefreshControl()
 
-    lazy var placeholder = StaticInlineView(placeholder: "example_top")
-    lazy var placeholderExample = StaticInlineView(placeholder: "ph_x_example_iOS")
+    lazy var placeholder = StaticInAppContentBlockView(placeholder: "example_top")
+    lazy var placeholderExample = StaticInAppContentBlockView(placeholder: "ph_x_example_iOS")
 
     @objc func endEditing() {
         view.endEditing(true)
@@ -134,12 +136,12 @@ class InlineMessageViewController: UIViewController, UITableViewDelegate, UITabl
         refreshControl.addTarget(self, action: #selector(refresh), for: .primaryActionTriggered)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 200
-        tableView.register(InlineCell.self, forCellReuseIdentifier: "InlineCell")
+        tableView.register(InAppContentBlocksCell.self, forCellReuseIdentifier: "InAppContentBlocksCell")
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
         tableView.delegate = self
         tableView.dataSource = self
         
-        InlineMessageManager.manager.refreshCallback = { [weak self] indexPath in
+        Exponea.shared.inAppContentBlocksManager?.refreshCallback = { [weak self] indexPath in
             onMain {
                 self?.tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
             }

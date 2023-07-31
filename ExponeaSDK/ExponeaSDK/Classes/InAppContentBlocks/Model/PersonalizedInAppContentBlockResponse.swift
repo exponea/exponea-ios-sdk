@@ -1,5 +1,5 @@
 //
-//  InlineMessageResponse.swift
+//  InAppContentBlockResponse.swift
 //  ExponeaSDK
 //
 //  Created by Ankmara on 29.05.2023.
@@ -7,28 +7,28 @@
 //
 import Foundation
 
-public enum InlineMessageStatus: String, Codable {
+public enum InAppContentBlocksStatus: String, Codable {
     case ok = "OK"
     case filterNotMatched = "filter_not_matched"
     case doesNotExist = "does_not_exist"
 }
 
 public struct Content: Codable {
-    let html: String
+    var html: String
 }
 
-public struct PersonalizedInlineMessageResponseData: Codable {
-    let data: [PersonalizedInlineMessageResponse]
+public struct PersonalizedInAppContentBlockResponseData: Codable {
+    let data: [PersonalizedInAppContentBlockResponse]
 }
 
-public struct PersonalizedInlineMessageResponse: Codable {
+public struct PersonalizedInAppContentBlockResponse: Codable {
     public let id: String
-    public let status: InlineMessageStatus
+    public let status: InAppContentBlocksStatus
     public let ttlSeconds: Int
     public var variantId: Int?
     public var hasTrackingConsent: Bool?
     public var variantName: String?
-    public var contentType: InlineMessageContentType?
+    public var contentType: InAppContentBlockContentType?
     public var content: Content?
     @CodableIgnored
     var htmlPayload: NormalizedResult?
@@ -47,11 +47,11 @@ public struct PersonalizedInlineMessageResponse: Codable {
         case contentType = "content_type"
         case content = "content"
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
-        self.status = try container.decode(InlineMessageStatus.self, forKey: .status)
+        self.status = try container.decode(InAppContentBlocksStatus.self, forKey: .status)
         self.ttlSeconds = try container.decode(Int.self, forKey: .ttlSeconds)
         self.variantId = try container.decodeIfPresent(Int.self, forKey: .variantId)
         self.hasTrackingConsent = try container.decodeIfPresent(Bool.self, forKey: .hasTrackingConsent)
@@ -62,15 +62,15 @@ public struct PersonalizedInlineMessageResponse: Codable {
         }
         self.content = try container.decodeIfPresent(Content.self, forKey: .content)
     }
-    
+
     init(
         id: String,
-        status: InlineMessageStatus,
+        status: InAppContentBlocksStatus,
         ttlSeconds: Int,
         variantId: Int?,
         hasTrackingConsent: Bool?,
         variantName: String?,
-        contentType: InlineMessageContentType?,
+        contentType: InAppContentBlockContentType?,
         content: Content?,
         htmlPayload: NormalizedResult?,
         ttlSeen: Date?

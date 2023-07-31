@@ -1,5 +1,5 @@
 //
-//  InlineMessageContentType.swift
+//  InAppContentBlockContentType.swift
 //  ExponeaSDK
 //
 //  Created by Ankmara on 29.05.2023.
@@ -7,10 +7,10 @@
 //
 import Foundation
 
-public enum InlineMessageContentType: String, Codable , Hashable {
+public enum InAppContentBlockContentType: String, Codable , Hashable {
     case html
     case native
-    
+
     public init?(status: String) {
         guard let status = Self.init(rawValue: status) else {
             return nil

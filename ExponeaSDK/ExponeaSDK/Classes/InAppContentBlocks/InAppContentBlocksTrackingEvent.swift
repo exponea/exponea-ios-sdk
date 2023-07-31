@@ -1,5 +1,5 @@
 //
-//  InlineMessageTrackingEvent.swift
+//  InAppContentBlocksTrackingEvent.swift
 //  ExponeaSDK
 //
 //  Created by Ankmara on 11.06.2023.
@@ -7,7 +7,8 @@
 //
 
 import Foundation
-enum InlineMessageTrackingEvent: Equatable {
+
+enum InAppContentBlocksTrackingEvent: Equatable {
     case close
     case show
     case click(buttonLabel: String, url: String)
@@ -32,6 +33,6 @@ enum InlineMessageTrackingEvent: Equatable {
     }
 }
 
-protocol InlineMessageTrackingDelegate: AnyObject {
-    func track(_ event: InlineMessageTrackingEvent, for message: InlineMessageResponse, trackingAllowed: Bool, isUserInteraction: Bool)
+protocol InAppContentBlocksTrackingDelegate: AnyObject {
+    func track(_ event: InAppContentBlocksTrackingEvent, for message: InAppContentBlockResponse, trackingAllowed: Bool, isUserInteraction: Bool)
 }

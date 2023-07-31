@@ -702,10 +702,10 @@
             </objects>
             <point key="canvasLocation" x="1992.8" y="-45.42728635682159"/>
         </scene>
-        <!--Inline Message View Controller-->
+        <!--In App Content Blocks View Controller-->
         <scene sceneID="oL9-Nl-iwe">
             <objects>
-                <viewController id="UqB-mr-KUQ" customClass="InlineMessageViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="UqB-mr-KUQ" customClass="InAppContentBlocksViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="edC-qG-duy">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="598"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1029,11 +1029,11 @@
             </objects>
             <point key="canvasLocation" x="-306.39999999999998" y="638.2308845577212"/>
         </scene>
-        <!--Inline-->
+        <!--In-app Content Blocks-->
         <scene sceneID="Rq6-pK-iM4">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="kk0-cW-eGX" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Inline" image="tray.full" catalog="system" id="6Ml-hu-HYN"/>
+                    <tabBarItem key="tabBarItem" title="In-app Content Blocks" image="tray.full" catalog="system" id="6Ml-hu-HYN"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="xcv-Bk-pFq">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>

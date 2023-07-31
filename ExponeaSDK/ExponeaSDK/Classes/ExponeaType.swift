@@ -27,6 +27,8 @@ public protocol ExponeaType: AnyObject {
     var inAppMessagesDelegate: InAppMessageActionDelegate { get set }
     /// App inbox provider definition
     var appInboxProvider: AppInboxProvider { get set }
+    /// In-app content block manager
+    var inAppContentBlocksManager: InAppContentBlocksManagerType? { get }
 
     /// Any NSException inside Exponea SDK will be logged and swallowed if flag is enabled, otherwise
     /// the exception will be rethrown.
@@ -54,7 +56,7 @@ public protocol ExponeaType: AnyObject {
         pushNotificationTracking: Exponea.PushNotificationTracking,
         automaticSessionTracking: Exponea.AutomaticSessionTracking,
         defaultProperties: [String: JSONConvertible]?,
-        inlinePlaceholders: [String]?,
+        inAppContentBlocksPlaceholders: [String]?,
         flushingSetup: Exponea.FlushingSetup,
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?
@@ -76,7 +78,7 @@ public protocol ExponeaType: AnyObject {
         baseUrl: String?,
         appGroup: String?,
         defaultProperties: [String: JSONConvertible]?,
-        inlinePlaceholders: [String]?,
+        inAppContentBlocksPlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?
     )
@@ -100,7 +102,7 @@ public protocol ExponeaType: AnyObject {
         baseUrl: String?,
         appGroup: String?,
         defaultProperties: [String: JSONConvertible]?,
-        inlinePlaceholders: [String]?,
+        inAppContentBlocksPlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?
     )

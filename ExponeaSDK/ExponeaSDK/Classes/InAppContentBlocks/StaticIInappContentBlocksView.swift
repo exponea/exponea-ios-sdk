@@ -1,5 +1,5 @@
 //
-//  StaticInlineView.swift
+//  StaticInAppContentBlocksView.swift
 //  ExponeaSDK
 //
 //  Created by Ankmara on 25.06.2023.
@@ -9,26 +9,26 @@
 import UIKit
 import WebKit
 
-public final class StaticInlineView: UIView, WKNavigationDelegate {
+public final class StaticInAppContentBlocksView: UIView, WKNavigationDelegate {
 
     // MARK: - Properties
     public var refresh: EmptyBlock?
     private lazy var webview: WKWebView = {
-        let userScript: WKUserScript = .init(source: inlineManager.disableZoomSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        let userScript: WKUserScript = .init(source: inAppContentBlocksManager.disableZoomSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
         let newWebview = WKWebView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 0))
         newWebview.scrollView.showsVerticalScrollIndicator = false
         newWebview.scrollView.bounces = false
         newWebview.translatesAutoresizingMaskIntoConstraints = false
         let configuration = newWebview.configuration
         configuration.userContentController.addUserScript(userScript)
-        if let contentRuleList = inlineManager.contentRuleList {
+        if let contentRuleList = inAppContentBlocksManager.contentRuleList {
             configuration.userContentController.add(contentRuleList)
         }
         return newWebview
     }()
 
     private let placeholder: String
-    private lazy var inlineManager = InlineMessageManager.manager
+    private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
     private lazy var calculator: WKWebViewHeightCalculator = .init()
     private var html: String = ""
     private var height: NSLayoutConstraint?
@@ -40,7 +40,7 @@ public final class StaticInlineView: UIView, WKNavigationDelegate {
         webview.navigationDelegate = self
         calculator.heightUpdate = { [weak self] height in
             guard let self = self, height.height > 0 else { return }
-            self.replacePlaceholder(inputView: self, loadedInlineView: self.webview, height: height.height - 15)
+            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: height.height - 15)
         }
         getContent()
     }
@@ -55,13 +55,13 @@ public final class StaticInlineView: UIView, WKNavigationDelegate {
 
     private func getContent() {
         guard !placeholder.isEmpty else {
-            replacePlaceholder(inputView: self, loadedInlineView: .init(frame: .zero), height: 0)
+            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0)
             return
         }
-        let data = inlineManager.prepareInlineStaticView(placeholderId: placeholder)
+        let data = inAppContentBlocksManager.prepareInAppContentBlocksStaticView(placeholderId: placeholder)
         webview.tag = data.tag
         if data.html.isEmpty {
-            inlineManager.refreshStaticViewContent(staticQueueData: .init(tag: data.tag, placeholderId: placeholder) {
+            inAppContentBlocksManager.refreshStaticViewContent(staticQueueData: .init(tag: data.tag, placeholderId: placeholder) {
                 self.webview.tag = $0.tag
                 self.loadContent(html: $0.html)
             })
@@ -72,41 +72,41 @@ public final class StaticInlineView: UIView, WKNavigationDelegate {
 
     private func loadContent(html: String) {
         guard !html.isEmpty else {
-            replacePlaceholder(inputView: self, loadedInlineView: .init(frame: .zero), height: 0)
+            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0)
             return
         }
         self.html = html
         calculator.loadHtml(placedholderId: placeholder, html: html)
     }
 
-    private func replacePlaceholder(inputView: UIView, loadedInlineView: UIView, height: CGFloat) {
+    private func replacePlaceholder(inputView: UIView, loadedInAppContentBlocksView: UIView, height: CGFloat) {
         onMain {
             let duration: TimeInterval = 0.3
-            loadedInlineView.alpha = 0
+            loadedInAppContentBlocksView.alpha = 0
             UIView.animate(withDuration: duration) {
-                loadedInlineView.alpha = 0
+                loadedInAppContentBlocksView.alpha = 0
             } completion: { [weak self] isDone in
                 guard let self else { return }
                 if isDone {
-                    loadedInlineView.constraints.forEach { cons in
+                    loadedInAppContentBlocksView.constraints.forEach { cons in
                         self.removeConstraint(cons)
                     }
-                    loadedInlineView.removeFromSuperview()
-                    inputView.addSubview(loadedInlineView)
-                    loadedInlineView.topAnchor.constraint(equalTo: inputView.topAnchor, constant: 5).isActive = true
-                    loadedInlineView.leadingAnchor.constraint(equalTo: inputView.leadingAnchor, constant: 5).isActive = true
-                    loadedInlineView.trailingAnchor.constraint(equalTo: inputView.trailingAnchor, constant: -5).isActive = true
+                    loadedInAppContentBlocksView.removeFromSuperview()
+                    inputView.addSubview(loadedInAppContentBlocksView)
+                    loadedInAppContentBlocksView.topAnchor.constraint(equalTo: inputView.topAnchor, constant: 5).isActive = true
+                    loadedInAppContentBlocksView.leadingAnchor.constraint(equalTo: inputView.leadingAnchor, constant: 5).isActive = true
+                    loadedInAppContentBlocksView.trailingAnchor.constraint(equalTo: inputView.trailingAnchor, constant: -5).isActive = true
                     if self.height != nil {
                         self.height?.constant = height
                     } else {
-                        self.height = loadedInlineView.heightAnchor.constraint(equalToConstant: height)
+                        self.height = loadedInAppContentBlocksView.heightAnchor.constraint(equalToConstant: height)
                         self.height?.isActive = true
                     }
-                    loadedInlineView.bottomAnchor.constraint(equalTo: inputView.bottomAnchor, constant: -5).isActive = true
-                    loadedInlineView.sizeToFit()
-                    loadedInlineView.layoutIfNeeded()
+                    loadedInAppContentBlocksView.bottomAnchor.constraint(equalTo: inputView.bottomAnchor, constant: -5).isActive = true
+                    loadedInAppContentBlocksView.sizeToFit()
+                    loadedInAppContentBlocksView.layoutIfNeeded()
                     UIView.animate(withDuration: duration) {
-                        loadedInlineView.alpha = 1
+                        loadedInAppContentBlocksView.alpha = 1
                     }
                     self.webview.loadHTMLString(self.html, baseURL: nil)
                 }
@@ -119,23 +119,23 @@ public final class StaticInlineView: UIView, WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-        let result = inlineManager.inlinePlaceholders.first(where: { $0.tags?.contains(webView.tag) == true })
+        let result = inAppContentBlocksManager.inAppContentBlocksPlaceholders.first(where: { $0.tags?.contains(webView.tag) == true })
         let webAction: WebActionManager = .init {
-            let indexOfPlaceholder: Int = self.inlineManager.inlinePlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inlineManager.inlinePlaceholders[indexOfPlaceholder].displayState
-            self.inlineManager.inlinePlaceholders[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            let indexOfPlaceholder: Int = self.inAppContentBlocksManager.inAppContentBlocksPlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
+            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState
+            self.inAppContentBlocksManager.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
             if let message = result {
-                Exponea.shared.trackInlineMessageClose(message: message, isUserInteraction: true)
+                Exponea.shared.trackInAppContentBlocksClose(message: message, isUserInteraction: true)
             }
             self.reload()
         } onActionCallback: { action in
-            let indexOfPlaceholder: Int = self.inlineManager.inlinePlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inlineManager.inlinePlaceholders[indexOfPlaceholder].displayState
-            self.inlineManager.inlinePlaceholders[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            let indexOfPlaceholder: Int = self.inAppContentBlocksManager.inAppContentBlocksPlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
+            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState
+            self.inAppContentBlocksManager.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
             if let message = result {
-                Exponea.shared.trackInlineMessageClick(message: message, buttonText: action.buttonText, buttonLink: action.actionUrl)
+                Exponea.shared.trackInAppContentBlocksClick(message: message, buttonText: action.buttonText, buttonLink: action.actionUrl)
             }
-            self.inlineManager.urlOpener.openBrowserLink(action.actionUrl)
+            self.inAppContentBlocksManager.urlOpener.openBrowserLink(action.actionUrl)
             self.reload()
         } onErrorCallback: { error in
             Exponea.logger.log(.error, message: "WebActionManager error \(error.localizedDescription)")
