@@ -1,4 +1,18 @@
 ## Release Notes
+## Release Notes for 2.17.0
+#### August 02, 2023
+* Features
+  * In-app content block feature has been added into SDK
+  * Handling of nil/null values inside objects sending tracking in requestFactory to avoid crashes
+  * Documentation is updated to describe fetching of In-app messages while identifyCustomer process in detail
+  * New devices supported for tracking events
+* Bug Fixes
+  * Fixed: Action click event from In-app messages, and App Inbox HTML Inbox messages tracked button text with HTML tags
+  * Fixed: banner_type for HTML In-app messages is null instead of freeform
+  * Fixed: Webview for HTML In-app messages and App Inbox HTML Inbox messages not fully offline
+
+> Note: Please note, we're working on the Bloomreach Engagement App release for the new In-app personalization features. This is just the mobile SDK part, for the new features, keep an eye on the Engagement App release notes, it will be released shortly.
+
 ## Release Notes for 2.16.4
 #### July 11, 2023
 * Features
