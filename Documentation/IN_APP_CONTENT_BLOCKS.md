@@ -65,4 +65,6 @@ In-app content blocks are tracked automatically by SDK. You may see these `actio
 - 'close' - event is tracked if user clicked on close button inside In-app content block
 - 'error' - event is tracked if showing of In-app content block has failed. Event contains 'error' property with meaningfull description
 
+You can find information on creating your messages in [Exponea documentation](https://documentation.bloomreach.com/engagement/docs/in-app-content-blocks)
+
 > The behaviour of In-app content block tracking may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in [tracking consent documentation](./TRACKING_CONSENT.md).
