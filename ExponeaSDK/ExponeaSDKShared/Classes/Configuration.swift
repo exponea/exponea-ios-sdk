@@ -50,6 +50,9 @@ public struct Configuration: Codable, Equatable {
     /// Advanced authorization provider instance
     public internal(set) var customAuthProvider: AuthorizationProviderType?
 
+    /// Is dark mode enabled
+    public internal(set) var isDarkModeEnabled: Bool?
+    
     enum CodingKeys: String, CodingKey {
         case projectMapping
         case projectToken
@@ -84,7 +87,8 @@ public struct Configuration: Codable, Equatable {
                 defaultProperties: [String: JSONConvertible]? = nil,
                 inAppContentBlocksPlaceholders: [String]? = nil,
                 allowDefaultCustomerProperties: Bool? = nil,
-                advancedAuthEnabled: Bool? = nil
+                advancedAuthEnabled: Bool? = nil,
+                isDarkModeEnabled: Bool? = nil
     ) throws {
         guard let projectToken = projectToken else {
             throw ExponeaError.configurationError("No project token provided.")
@@ -104,6 +108,7 @@ public struct Configuration: Codable, Equatable {
             self.customAuthProvider = try loadCustomAuthProvider()
         }
         try self.validate()
+        self.isDarkModeEnabled = isDarkModeEnabled ?? false
     }
 
     public init(

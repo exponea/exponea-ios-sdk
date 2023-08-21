@@ -165,6 +165,14 @@ public class ExponeaInternal: ExponeaType {
     }
     private var safeModeOverride: Bool?
 
+    public var isDarkMode: Bool {
+        guard configuration?.isDarkModeEnabled == true else { return false }
+        if #available(iOS 12.0, *) {
+            return UIScreen.main.traitCollection.userInterfaceStyle == .dark
+        }
+        return false
+    }
+
     /// Once ExponeaSDK runs into a NSException, all further calls will be disabled
     internal var nsExceptionRaised: Bool = false
 

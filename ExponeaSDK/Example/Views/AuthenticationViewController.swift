@@ -116,7 +116,7 @@ class AuthenticationViewController: UIViewController {
             advancedAuthEnabled: advancedAuthPubKey?.isEmpty == false
         )
         Exponea.logger.log(.verbose, message: "After Configuration call")
-        Exponea.shared.appInboxProvider = ExampleAppInboxProvider()        
+        Exponea.shared.appInboxProvider = ExampleAppInboxProvider()
     }
 
     @objc func tokenUpdated() {

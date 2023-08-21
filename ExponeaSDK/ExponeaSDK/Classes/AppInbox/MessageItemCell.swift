@@ -42,6 +42,16 @@ public class MessageItemCell: UITableViewCell {
 
 // MARK: - Private Methods
 private extension MessageItemCell {
+    func convertToDarkIfNeeded() {
+        guard Exponea.shared.isDarkMode else { return }
+        if #available(iOS 13.0, *) {
+            contentView.backgroundColor = .systemBackground
+            titleLabel.textColor = .label
+            receivedTime.textColor = .secondaryLabel
+            readFlag.backgroundColor = .systemBlue
+        }
+    }
+
     func setupElements() {
         contentStackView.axis = .horizontal
         contentStackView.alignment = .top
@@ -78,6 +88,8 @@ private extension MessageItemCell {
         messageImage.layer.backgroundColor = UIColor(red: 0.961, green: 0.961, blue: 0.961, alpha: 1).cgColor
         messageImage.layer.cornerRadius = 4
         messageImage.clipsToBounds = true
+        
+        convertToDarkIfNeeded()
     }
 
     func addElementsToView() {

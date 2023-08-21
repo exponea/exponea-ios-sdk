@@ -77,6 +77,7 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
         navigationController?.navigationBar.isHidden = false
         navigationController?.isNavigationBarHidden = false
         applyDataToView()
+        convertToDarkIfNeeded()
     }
 
     private func determineActionType(_ action: ActionInfo) -> MessageItemActionType {
@@ -315,6 +316,17 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
 
 // MARK: - Methods
 private extension AppInboxDetailViewController {
+    func convertToDarkIfNeeded() {
+        guard Exponea.shared.isDarkMode else { return }
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+            messageImage.backgroundColor = .secondarySystemBackground
+            messageTitle.textColor = .label
+            message.textColor = .secondaryLabel
+            htmlContainer.backgroundColor = .systemBackground
+        }
+    }
+
     func setupElements() {
         view.backgroundColor = .white
         messageImage.contentMode = .scaleAspectFill

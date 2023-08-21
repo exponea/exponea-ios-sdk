@@ -13,7 +13,10 @@ public class AppInboxListViewStyle {
     var backgroundColor: String?
     var item: AppInboxListItemStyle?
 
-    public init(backgroundColor: String? = nil, item: AppInboxListItemStyle? = nil) {
+    public init(
+        backgroundColor: String? = nil,
+        item: AppInboxListItemStyle? = nil
+    ) {
         self.backgroundColor = backgroundColor
         self.item = item
     }
