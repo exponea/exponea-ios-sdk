@@ -205,6 +205,9 @@
 		05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */; };
 		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
+		318B552A2A80E52B00934902 /* DeeplinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B55292A80E52B00934902 /* DeeplinkManager.swift */; };
+		31C7B4242A822848001BA5E2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4232A822848001BA5E2 /* Coordinator.swift */; };
+		31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */; };
 		31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */; };
 		31CFEF6F2A66940E005402E5 /* SequenceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6E2A66940E005402E5 /* SequenceTest.swift */; };
 		31EBB8422A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8412A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift */; };
@@ -701,6 +704,9 @@
 		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		318B55292A80E52B00934902 /* DeeplinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeeplinkManager.swift; sourceTree = "<group>"; };
+		31C7B4232A822848001BA5E2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaTabBarController.swift; sourceTree = "<group>"; };
 		31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+RemoveNil.swift"; sourceTree = "<group>"; };
 		31CFEF6E2A66940E005402E5 /* SequenceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceTest.swift; sourceTree = "<group>"; };
 		31EBB8412A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppContentBlocksViewController.swift; sourceTree = "<group>"; };
@@ -1759,6 +1765,9 @@
 			children = (
 				55F6A41929891F710029D628 /* CustomerTokenStorage.swift */,
 				C0F2406F20BD98EB00CAF7CE /* MemoryLogger.swift */,
+				318B55292A80E52B00934902 /* DeeplinkManager.swift */,
+				31C7B4232A822848001BA5E2 /* Coordinator.swift */,
+				31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -2696,17 +2705,20 @@
 			files = (
 				C0EB5D9D20B8193A00F1031F /* TrackingViewController.swift in Sources */,
 				55F6A41A29891F710029D628 /* CustomerTokenStorage.swift in Sources */,
+				31C7B4242A822848001BA5E2 /* Coordinator.swift in Sources */,
 				55F6A41829891F130029D628 /* ExampleAuthProvider.swift in Sources */,
 				C0F6C4E52098A1AB00834E21 /* AuthenticationViewController.swift in Sources */,
 				C0F2407020BD98EB00CAF7CE /* MemoryLogger.swift in Sources */,
 				31EBB8422A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift in Sources */,
 				C0F6C4E32098A1AB00834E21 /* AppDelegate.swift in Sources */,
+				31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */,
 				55EFD7A329225207002569FB /* ExampleAppInboxProvider.swift in Sources */,
 				C0EB5D9B20B8193200F1031F /* FlushingViewController.swift in Sources */,
 				C0F2407220BD9A5500CAF7CE /* LogViewController.swift in Sources */,
 				C0EB5D9720B8190500F1031F /* FetchViewController.swift in Sources */,
 				C07E41FF20C930E400920809 /* IdentifyCustomerViewController.swift in Sources */,
 				C07E41FD20C930C400920809 /* TrackEventViewController.swift in Sources */,
+				318B552A2A80E52B00934902 /* DeeplinkManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -74,7 +74,11 @@ class AppDelegate: ExponeaAppDelegate {
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
         if let components = URLComponents(url: url, resolvingAgainstBaseURL: false), components.scheme == "exponea" {
-            showAlert("Deeplink received", url.absoluteString)
+            if let type = DeeplinkType(input: url.absoluteString) {
+                DeeplinkManager.manager.setDeeplinkType(type: type)
+            } else {
+                showAlert("Deeplink received", url.absoluteString)
+            }
             return true
         }
         return false

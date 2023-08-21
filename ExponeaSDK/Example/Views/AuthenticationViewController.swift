@@ -80,7 +80,7 @@ class AuthenticationViewController: UIViewController {
             baseUrl = text
         }
 
-        performSegue(withIdentifier: "showMain", sender: nil)
+        Coordinator(navigationController: navigationController).start()
 
         // Prepare Example Advanced Auth
         CustomerTokenStorage.shared.configure(
