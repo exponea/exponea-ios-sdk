@@ -48,7 +48,7 @@ If you need to show In-app content block as soon as possible (ideally instantly)
 For correct behavior you need to setup placeholders in config which should be downloaded: 
 
 ```swift
-    inAppContentBlocksPlaceholders
+    Exponea.shared.inAppContentBlockManager.prefetchPlaceholdersWithIds(ids: [String])
 ```
 
 This has to be done (by specification, chapter 2. Pre-fetch on SDK init) on SDK init, anonymize and identifyCustomer. Not callable anytime.
