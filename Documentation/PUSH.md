@@ -126,3 +126,45 @@ UNUserNotificationCenter.current().setNotificationCategories([category1])
 There is principal usage of `Exponea.shared.anonymize()` as a sign-out feature in some applications. Keep in mind that invoking of `anonymize` will remove also a Push notification token from storage. To load a current token, your application should retrieve a valid token manually before using any Push notification feature. So it may be called right after `anonymize` or before/after `identifyCustomer`, it depends on your Push notifications usage.
 
 > Guide how to retrieve a valid Push notification token is written for [PUSH_QUICKSTART](Guide/PUSH_QUICKSTART.md).
+
+## JSON structure
+
+```json
+{
+    "url_ios": "https://example.com/ios",
+    "legacy_ios_category": "iOS Category",
+    "title": "iOS Title",
+    "action": "app",
+    "message": "iOS Message",
+    "image": "https://example.com/image.jpg",
+    "actions": [
+        {"title": "Action 1", "action": "app", "url_ios": "https://example.com/action1/ios"},
+        {"title": "Action 2", "action": "browser", "url_ios": "https://example.com/action2/ios"},
+    ],
+    "sound": "default",
+    "aps": {
+        "alert": {"title": "iOS Alert Title", "body": "iOS Alert Body"},
+        "mutable-content": 1,
+    },
+    "attributes": {
+        "event_type": "campaign",
+        "campaign_id": "123456",
+        "campaign_name": "iOS Campaign",
+        "action_id": 1,
+        "action_type": "mobile notification",
+        "action_name": "iOS Action",
+        "campaign_policy": "policy",
+        "consent_category": "General consent",
+        "subject": "iOS Subject",
+        "language": "en",
+        "platform": "ios",
+        "sent_timestamp": 1631234567.89,
+        "recipient": "ios@example.com",
+    },
+    "url_params": {"param1": "value1", "param2": "value2"},
+    "source": "xnpe_platform",
+    "silent": false,
+    "has_tracking_consent": true,
+    "consent_category_tracking": "iOS Consent",
+}
+```
