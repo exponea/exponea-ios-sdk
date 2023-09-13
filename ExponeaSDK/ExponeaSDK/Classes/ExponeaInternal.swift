@@ -10,6 +10,7 @@ import Foundation
 #if canImport(ExponeaSDKObjC)
 import ExponeaSDKObjC
 #endif
+import UIKit
 
 extension Exponea {
     /// Shared instance of ExponeaSDK.
