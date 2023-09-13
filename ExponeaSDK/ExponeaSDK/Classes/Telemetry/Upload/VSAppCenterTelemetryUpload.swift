@@ -16,6 +16,7 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     let releaseCapacitorAppSecret = "e8e38b52-a50f-4c9b-bdc1-65730ef868a0"
     let releaseFlutterAppSecret = "eba32cd0-fe8f-43fc-8a1e-bbb69d45bbcc"
     let releaseXamarinAppSecret = "bdab471a-b950-40ac-937b-ab9e5dbf49f9"
+    let releaseMauiAppSecret = "583e8970-29bb-4f1a-ba43-f7c2170c4638"
     var appSecret: String {
         var secret: String
         if isCalledFromExampleApp() || isCalledFromSDKTests() {
@@ -30,6 +31,8 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
             secret = releaseFlutterAppSecret
         } else if isXamarinSDK() {
             secret = releaseXamarinAppSecret
+        } else if isMauiSDK() {
+            secret = releaseMauiAppSecret
         } else {
             secret = releaseAppSecret
         }
