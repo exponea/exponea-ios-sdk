@@ -176,3 +176,12 @@ There is principal usage of `Exponea.shared.anonymize()` as a sign-out feature i
 ```
 
 This method is called by system if app is in foreground state. Default implementation is to not showing of push notification and userNotificationCenter::didReceive is called automatically what tracks clicked event.
+
+## Work with iOS simulator
+
+Xcode 12+ supports remote push notifications with simulator. Behavior is same as with real device. You'll get the token for APNS, FCM for Firebase etc. from app delegate's methods. 
+
+```swift
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) // Native
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) // Firebase
+```
