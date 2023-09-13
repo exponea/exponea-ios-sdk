@@ -47,6 +47,10 @@ func isXamarinSDK() -> Bool {
     return NSProtocolFromString("IsExponeaXamarinSDK") != nil
 }
 
+func isMauiSDK() -> Bool {
+    NSProtocolFromString("IsBloomreachMauiSDK") != nil
+}
+
 func isCalledFromExampleApp() -> Bool {
     return NSProtocolFromString("IsExponeaExampleApp") != nil
 }
@@ -65,6 +69,10 @@ func getFlutterSDKVersion() -> String? {
 
 func getXamarinSDKVersion() -> String? {
     getVersionFromClass("ExponeaXamarinVersion")
+}
+
+func getMauiVersion() -> String? {
+    getVersionFromClass("BloomreachMauiVersion")
 }
 
 private func getVersionFromClass(_ className: String) -> String? {
