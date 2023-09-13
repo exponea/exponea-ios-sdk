@@ -245,3 +245,7 @@ public func configure(plistName: String)
 ```
 Exponea.shared.configure(plistName: "ExponeaConfig.plist")
 ```
+
+### AppInbox detail image inset
+
+The inset is by default 56 for normal purpose (small title, without searchBar bellow etc). If you need to change its value, you can set value whatewer you want. 0 is without space bewteen status bar and image - for transaprent navigationBar for example.

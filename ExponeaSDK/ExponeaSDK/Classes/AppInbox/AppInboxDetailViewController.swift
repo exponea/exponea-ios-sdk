@@ -329,7 +329,7 @@ private extension AppInboxDetailViewController {
 
     func setupElements() {
         view.backgroundColor = .white
-        messageImage.contentMode = .scaleAspectFill
+        messageImage.contentMode = .scaleAspectFit
         messageImage.backgroundColor = UIColor(
             red: CGFloat(245) / 255,
             green: CGFloat(245) / 255,
@@ -378,8 +378,9 @@ private extension AppInboxDetailViewController {
         pushContainer
             .padding()
         messageImage
-            .padding(.leading, .top, .trailing, constant: 0)
-            .frame(width: view.frame.size.width, height: view.frame.size.width)
+            .padding(.leading, .trailing, constant: 0)
+            .padding(.top, constant: Exponea.shared.configuration?.appInboxDetailImageInset ?? 0)
+            .frame(width: view.frame.size.width)
         receivedTime
             .padding(messageImage, .top, constant: 16)
             .padding(.leading, .trailing, constant: 16)
