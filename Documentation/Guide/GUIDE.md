@@ -27,3 +27,8 @@ Learn more about how ExponeaSDK sends data, and how to control it.
 
 * #### [Anonymize](../Documentation/ANONYMIZE.md)
 Learn about user anonymizing features.
+
+### Logging
+When debugging, it's useful to set Exponea SDK to `VERBOSE` logging. You can do so by setting `Exponea.setLogLevel(LogLevel.VERBOSE)`
+  
+* For better finding is every log from ExponeaSDK prefixed with [EXP-iOS]

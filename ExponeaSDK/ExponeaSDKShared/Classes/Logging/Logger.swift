@@ -56,7 +56,7 @@ open class Logger {
         let file = sourceFile(from: fileName)
 
         // Print our log
-        logMessage("\(date) ExponeaSDK \(level.name) [\(file)]:\(line) \(funcName): \(message)")
+        logMessage("\(date) [EXP-iOS] \(level.name) [\(file)]:\(line) \(funcName): \(message)")
         return true
     }
 
