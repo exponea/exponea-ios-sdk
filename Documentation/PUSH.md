@@ -168,3 +168,11 @@ There is principal usage of `Exponea.shared.anonymize()` as a sign-out feature i
     "consent_category_tracking": "iOS Consent",
 }
 ```
+
+### Show notification if app is in foreground
+
+```swift
+    override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {}
+```
+
+This method is called by system if app is in foreground state. Default implementation is to not showing of push notification and userNotificationCenter::didReceive is called automatically what tracks clicked event.
