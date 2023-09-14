@@ -1,4 +1,16 @@
 ## Release Notes
+## Release Notes for 2.18.0
+#### September 14, 2023
+* Features
+  * Added EXP prefix for for SDK-related log output
+  * Added dynamic scaling for App Inbox PUSH message
+  * Add support for darkmode in App Inbox PUSH messages and native In-app messages in by isDarkMode
+  * Documentation extension with PUSH notification payload structure description, PUSH handling and more
+  * Small internal refactoring for better compatibility with MAUI wrapper
+* Bug Fixes
+  * Fixed: Image is under navbar in App Inbox PUSH message detail
+
+
 ## Release Notes for 2.17.0
 #### August 02, 2023
 * Features
