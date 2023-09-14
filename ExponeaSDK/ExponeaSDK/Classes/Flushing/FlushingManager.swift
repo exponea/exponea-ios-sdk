@@ -55,6 +55,7 @@ class FlushingManager: FlushingManagerType {
     }
 
     func applicationDidBecomeActive() {
+        stopPeriodicFlushTimer()
         startPeriodicFlushTimer()
     }
 
