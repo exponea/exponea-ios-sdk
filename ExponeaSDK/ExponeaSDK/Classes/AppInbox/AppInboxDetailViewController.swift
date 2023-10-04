@@ -244,9 +244,9 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
         Exponea.shared.trackAppInboxClick(action: action, message: message)
         switch action.type {
         case .browser:
-            openBrowserAction(action)
+            break//openBrowserAction(action)
         case .deeplink:
-            openDeeplinkAction(action)
+            break//openDeeplinkAction(action)
         default:
             Exponea.logger.log(.warning, message: "No AppInbox action for type \(action.type.rawValue)")
         }
