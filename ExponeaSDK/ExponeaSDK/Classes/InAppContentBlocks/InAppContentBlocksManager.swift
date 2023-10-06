@@ -179,8 +179,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             var newInAppContentBlocks = response
             let normalizeConf = HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: true
+                ensureCloseButton: false
             )
             let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
             newInAppContentBlocks.htmlPayload = normalizedPayload
@@ -217,8 +216,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 var newInAppContentBlocks = response
                 let normalizeConf = HtmlNormalizerConfig(
                     makeResourcesOffline: false,
-                    ensureCloseButton: false,
-                    allowAnchorButton: true
+                    ensureCloseButton: false
                 )
                 let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
                 newInAppContentBlocks.htmlPayload = normalizedPayload
@@ -341,8 +339,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             if inAppContentBlocksPlaceholders[indexOfPlaceholder].normalizedHtml == nil {
                 let normalizeConf = HtmlNormalizerConfig(
                     makeResourcesOffline: true,
-                    ensureCloseButton: false,
-                    allowAnchorButton: true
+                    ensureCloseButton: false
                 )
                 let normalizedPayload = HtmlNormalizer(html).normalize(normalizeConf)
                 inAppContentBlocksPlaceholders[indexOfPlaceholder].normalizedHtml = normalizedPayload.html
@@ -527,8 +524,7 @@ private extension InAppContentBlocksManager {
                     var newInAppContentBlocks = response
                     let normalizeConf = HtmlNormalizerConfig(
                         makeResourcesOffline: true,
-                        ensureCloseButton: false,
-                        allowAnchorButton: true
+                        ensureCloseButton: false
                     )
                     let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
                     newInAppContentBlocks.htmlPayload = normalizedPayload
@@ -622,8 +618,7 @@ extension InAppContentBlocksManager {
                     var newInAppContentBlocks = response
                     let normalizeConf = HtmlNormalizerConfig(
                         makeResourcesOffline: true,
-                        ensureCloseButton: false,
-                        allowAnchorButton: true
+                        ensureCloseButton: false
                     )
                     let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
                     newInAppContentBlocks.htmlPayload = normalizedPayload

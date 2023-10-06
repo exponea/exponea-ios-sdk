@@ -25,13 +25,25 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(result.actions.count).to(equal(1))
         }
 
-        it("should find Action url by datalink and ahref") {
+        it("should find Action url by datalink and ahref for same action") {
             let rawHtml = "<html><body>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "<a href='https://example.com/1'>Action 1</a>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
-                makeResourcesOffline: false, ensureCloseButton: false, allowAnchorButton: true)
+                makeResourcesOffline: false, ensureCloseButton: false)
+            )
+            expect(result.closeActionUrl).to(beNil())
+            expect(result.actions.count).to(equal(1))
+        }
+
+        it("should find Action url by datalink and ahref for multiple actions") {
+            let rawHtml = "<html><body>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<a href='https://example.com/2'>Action 2</a>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
+                makeResourcesOffline: false, ensureCloseButton: false)
             )
             expect(result.closeActionUrl).to(beNil())
             expect(result.actions.count).to(equal(2))
@@ -42,7 +54,7 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<a href='https://example.com/1' target='_self'>Action 1</a>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
-                makeResourcesOffline: false, ensureCloseButton: false, allowAnchorButton: true)
+                makeResourcesOffline: false, ensureCloseButton: false)
             )
             expect(result.closeActionUrl).to(beNil())
             expect(result.actions.count).to(equal(1))
@@ -210,11 +222,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(normalizedHtml.contains("John Doe")).to(equal(false))
         }
 
-        /**
-         Removes any 'href' from file. Final html contains <a href> but only for close and action buttons and only as final HTML.
-         See possible tags: https://www.w3schools.com/tags/att_href.asp
-         */
-        it("should remove any Href attribute") {
+        it("should remove any Href attribute but keep anchor") {
             let rawHtml = "<html>" +
                     "<head>" +
                     "<base href=\"https://example/hreftoremove\" target=\"_blank\">" +
@@ -227,7 +235,7 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<map name=\"workmap\">\n" +
                     "  <area shape=\"rect\" coords=\"34,44,270,350\" alt=\"Computer\" href=\"https://example/hreftoremove\">\n" +
                     "</map>" +
-                    "<a href='https://example/hreftoremove'>Valid anchor link but href has to be removed</a>" +
+                    "<a href='https://example.com/anchor'>Valid anchor link</a>" +
                     "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "<div data-link='https://example.com/2'>Action 2</div>" +
@@ -239,7 +247,65 @@ final class HtmlNormalizerSpec: QuickSpec {
             }
             expect(normalizedHtml.contains("https://example/hreftoremove")).to(equal(false))
             expect(result.closeActionUrl).toNot(beNil())
-            expect(result.actions.count).to(equal(2))
+            expect(result.actions.count).to(equal(3))
+        }
+
+        it("should remove any Href attribute but keep anchor with data-link") {
+            let rawHtml = "<html>" +
+                    "<head>" +
+                    "<base href=\"https://example/hreftoremove\" target=\"_blank\">" +
+                    "<meta name='keywords' content='HTML, CSS, JavaScript'>" +
+                    "<meta name='author' content='John Doe'>" +
+                    "<link rel='stylesheet' href='https://example/hreftoremove'>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div href='https://example/hreftoremove'>Unexpected href location</div>" +
+                    "<map name=\"workmap\">\n" +
+                    "  <area shape=\"rect\" coords=\"34,44,270,350\" alt=\"Computer\" href=\"https://example/hreftoremove\">\n" +
+                    "</map>" +
+                    "<a href='https://example.com/anchor' data-link='https://example.com/anchor'>Valid anchor link</a>" +
+                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<div data-link='https://example.com/2'>Action 2</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("https://example/hreftoremove")).to(equal(false))
+            expect(result.closeActionUrl).toNot(beNil())
+            expect(result.actions.count).to(equal(3))
+        }
+
+        it("should remove any Href attribute but keep anchor with data-link as prior") {
+            let rawHtml = "<html>" +
+                    "<head>" +
+                    "<base href=\"https://example/hreftoremove\" target=\"_blank\">" +
+                    "<meta name='keywords' content='HTML, CSS, JavaScript'>" +
+                    "<meta name='author' content='John Doe'>" +
+                    "<link rel='stylesheet' href='https://example/hreftoremove'>" +
+                    "</head>" +
+                    "<body>" +
+                    "<div href='https://example/hreftoremove'>Unexpected href location</div>" +
+                    "<map name=\"workmap\">\n" +
+                    "  <area shape=\"rect\" coords=\"34,44,270,350\" alt=\"Computer\" href=\"https://example/hreftoremove\">\n" +
+                    "</map>" +
+                    "<a href='https://example.com/anchor' data-link='https://example.com/anchor2'>Valid anchor link</a>" +
+                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<div data-link='https://example.com/2'>Action 2</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("https://example/hreftoremove")).to(equal(false))
+            expect(result.closeActionUrl).toNot(beNil())
+            expect(result.actions.count).to(equal(3))
+            expect(result.actions.contains { $0.actionUrl == "https://example.com/anchor2" }).to(beTrue())
+            expect(result.actions.contains { $0.actionUrl == "https://example.com/anchor" }).to(beFalse())
         }
 
         it("should transform Image URL into Base64") {
@@ -311,8 +377,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {
@@ -375,8 +440,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {
@@ -411,8 +475,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {
@@ -438,8 +501,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {
@@ -467,8 +529,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {
@@ -492,8 +553,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {
@@ -515,8 +575,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {
@@ -538,8 +597,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {
@@ -583,8 +641,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {
@@ -631,8 +688,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             """
             let result = HtmlNormalizer(htmlString).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: false)
+                ensureCloseButton: false)
             )
             expect(result.valid).to(beTrue())
             guard let htmlOutput = result.html else {

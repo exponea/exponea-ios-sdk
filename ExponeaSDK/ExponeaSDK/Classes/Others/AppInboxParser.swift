@@ -71,8 +71,7 @@ final class AppInboxParser {
             if let htmlOrigin = htmlOrigin {
                 let htmlContent = HtmlNormalizer(htmlOrigin).normalize(HtmlNormalizerConfig(
                     makeResourcesOffline: false,
-                    ensureCloseButton: false,
-                    allowAnchorButton: true
+                    ensureCloseButton: false
                 ))
                 htmlContent.actions.forEach { htmlAction in
                     let actionType: MessageItemActionType

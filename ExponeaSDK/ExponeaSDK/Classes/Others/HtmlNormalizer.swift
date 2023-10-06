@@ -97,15 +97,15 @@ public class HtmlNormalizer {
 
     public func normalize(_ config: HtmlNormalizerConfig? = nil) -> NormalizedResult {
         let parsingConf = config ?? HtmlNormalizerConfig(
-            makeResourcesOffline: true, ensureCloseButton: true, allowAnchorButton: false
+            makeResourcesOffline: true, ensureCloseButton: true
         )
         var result = NormalizedResult()
         do {
-            try cleanHtml(parsingConf.allowAnchorButton)
+            try cleanHtml()
             if parsingConf.makeResourcesOffline {
                 try makeResourcesToBeOffline()
             }
-            try result.actions = ensureActionButtons(parsingConf.allowAnchorButton)
+            try result.actions = ensureActionButtons()
             try result.closeActionUrl = detectCloseButton(parsingConf.ensureCloseButton)
             result.html = exportHtml()
         } catch let error {
@@ -130,18 +130,20 @@ public class HtmlNormalizer {
         }
     }
 
-    private func ensureActionButtons(_ allowAnchorButton: Bool) throws -> [ActionInfo] {
-        var result: [ActionInfo] = []
+    private func ensureActionButtons() throws -> [ActionInfo] {
+        var result: [String: ActionInfo] = [:]
         guard let document = document else {
             Exponea.logger.log(.warning, message: "[HTML] Document has not been initialized, no Action buttons")
-            return result
+            return []
         }
-        // process <a href> if allowed first, because datalink will produce new links
-        if allowAnchorButton {
-            result.append(contentsOf: try collectAnchorLinkButtons(document))
+        // collect 'data-link' first as it may update href
+        try collectDataLinkButtons(document).forEach { action in
+            result[action.actionUrl] = action
         }
-        result.append(contentsOf: try collectDataLinkButtons(document))
-        return result
+        try collectAnchorLinkButtons(document).forEach { action in
+            result[action.actionUrl] = action
+        }
+        return Array(result.values)
     }
 
     private func collectAnchorLinkButtons(_ document: Document) throws -> [ActionInfo] {
@@ -167,7 +169,9 @@ public class HtmlNormalizer {
                 Exponea.logger.log(.error, message: "[HTML] Action button found but with empty action")
                 continue
             }
-            if try actionButton.parent() == nil || actionButton.parent()!.iS(anchorTagSelector) == false {
+            if try actionButton.iS(anchorTagSelector) {
+                try actionButton.attr(hrefAttr, targetAction)
+            } else if try actionButton.parent() == nil || actionButton.parent()!.iS(anchorTagSelector) == false {
                 Exponea.logger.log(.verbose, message: "[HTML] Wrapping Action button with a-href")
                 // randomize class name => prevents from CSS styles overriding in HTML
                 let actionButtonHrefClass = "action-button-href-\(UUID().uuidString)"
@@ -496,16 +500,9 @@ public class HtmlNormalizer {
         return "data:\(fontMimetype);charset=utf-8;base64," + fontData.base64EncodedString()
     }
 
-    private func cleanHtml(_ allowAnchorButton: Bool) throws {
+    private func cleanHtml() throws {
         // !!! Remove HREF attr has to be called before #ensureCloseButton and #ensureActionButtons.
-        if allowAnchorButton {
-            try removeAttributes(
-                hrefAttr,
-                skipTag: anchorTagSelector
-            )
-        } else {
-            try removeAttributes(hrefAttr)
-        }
+        try removeAttributes(hrefAttr, skipTag: anchorTagSelector)
         for attribute in anchorLinkAttributes {
             try removeAttributes(attribute)
         }
@@ -562,7 +559,6 @@ public struct ActionInfo {
 public struct HtmlNormalizerConfig {
     public let makeResourcesOffline: Bool
     public let ensureCloseButton: Bool
-    public let allowAnchorButton: Bool
 }
 
 private struct CssOnlineUrl {
