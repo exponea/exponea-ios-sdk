@@ -11,6 +11,7 @@ public enum DeeplinkType {
     case track
     case manual
     case anonymize
+    case inappcb
 
     init?(input: String) {
         switch true {
@@ -22,6 +23,8 @@ public enum DeeplinkType {
             self = .manual
         case input.contains("anonymize"):
             self = .anonymize
+        case input.contains("inappcb"):
+            self = .inappcb
         default:
             return nil
         }

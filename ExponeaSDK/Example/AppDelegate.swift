@@ -65,6 +65,9 @@ class AppDelegate: ExponeaAppDelegate {
             let incomingURL = userActivity.webpageURL
             else { return false }
         Exponea.shared.trackCampaignClick(url: incomingURL, timestamp: nil)
+        if let type = DeeplinkType(input: incomingURL.absoluteString) {
+            DeeplinkManager.manager.setDeeplinkType(type: type)
+        }
         return incomingURL.host == "old.panaxeo.com"
     }
 
