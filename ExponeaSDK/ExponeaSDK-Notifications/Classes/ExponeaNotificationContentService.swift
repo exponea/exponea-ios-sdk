@@ -19,6 +19,8 @@ public class ExponeaNotificationContentService {
 
     private var attachmentUrl: URL?
 
+    weak private var context: NSExtensionContext?
+
     public init() { }
 
     deinit {
@@ -37,6 +39,7 @@ public class ExponeaNotificationContentService {
         if let first = notification.request.content.attachments.first,
             first.url.startAccessingSecurityScopedResource() {
             attachmentUrl = first.url
+            self.context = context
             createImageView(on: viewController.view, with: first.url.path)
         }
     }
@@ -68,9 +71,13 @@ public class ExponeaNotificationContentService {
             return
         }
         let imageView = UIImageView(image: UIImage.gif(data: data))
-
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(self.imageTapped(gesture:))
+        ))
+        imageView.isUserInteractionEnabled = true
         view.addSubview(imageView)
 
         // Constraints
@@ -81,4 +88,14 @@ public class ExponeaNotificationContentService {
         imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         imageView.heightAnchor.constraint(lessThanOrEqualToConstant: 300).isActive = true
     }
+
+    @objc
+    public func imageTapped(gesture: UITapGestureRecognizer) {
+        if #available(iOSApplicationExtension 12.0, *) {
+            context?.performNotificationDefaultAction()
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+
 }
