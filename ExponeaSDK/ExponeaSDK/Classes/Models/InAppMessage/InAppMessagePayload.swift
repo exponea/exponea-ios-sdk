@@ -38,6 +38,22 @@ public struct InAppMessagePayload: Codable, Equatable {
         case textPosition = "text_position"
         case textOverImage = "text_over_image"
     }
+
+    public init(imageUrl: String?, title: String?, titleTextColor: String?, titleTextSize: String?, bodyText: String?, bodyTextColor: String?, bodyTextSize: String?, buttons: [InAppMessagePayloadButton]?, backgroundColor: String?, closeButtonColor: String?, messagePosition: String?, textPosition: String?, textOverImage: Bool?) {
+        self.imageUrl = imageUrl
+        self.title = title
+        self.titleTextColor = titleTextColor
+        self.titleTextSize = titleTextSize
+        self.bodyText = bodyText
+        self.bodyTextColor = bodyTextColor
+        self.bodyTextSize = bodyTextSize
+        self.buttons = buttons
+        self.backgroundColor = backgroundColor
+        self.closeButtonColor = closeButtonColor
+        self.messagePosition = messagePosition
+        self.textPosition = textPosition
+        self.textOverImage = textOverImage
+    }
 }
 
 public struct InAppMessagePayloadButton: Codable, Equatable {
@@ -56,6 +72,14 @@ public struct InAppMessagePayloadButton: Codable, Equatable {
         case buttonLink = "button_link"
         case buttonTextColor = "button_text_color"
         case buttonBackgroundColor = "button_background_color"
+    }
+
+    public init(buttonText: String?, rawButtonType: String?, buttonLink: String?, buttonTextColor: String?, buttonBackgroundColor: String?) {
+        self.buttonText = buttonText
+        self.rawButtonType = rawButtonType
+        self.buttonLink = buttonLink
+        self.buttonTextColor = buttonTextColor
+        self.buttonBackgroundColor = buttonBackgroundColor
     }
 }
 

@@ -21,6 +21,13 @@ public struct Consent: Codable {
     /// the values are dictionaries containing the translation key as the dictionary key
     /// and translation value as the dictionary value.
     public let translations: [String: [String: String?]]
+
+    public init(id: String, legitimateInterest: Bool, sources: ConsentSources, translations: [String: [String: String?]]) {
+        self.id = id
+        self.legitimateInterest = legitimateInterest
+        self.sources = sources
+        self.translations = translations
+    }
 }
 
 private extension Consent {

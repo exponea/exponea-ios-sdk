@@ -91,7 +91,7 @@ public class ExponeaNotificationContentService {
 
     @objc
     public func imageTapped(gesture: UITapGestureRecognizer) {
-        if #available(iOSApplicationExtension 12.0, *) {
+        if #available(iOS 12.0, *) {
             context?.performNotificationDefaultAction()
         } else {
             // Fallback on earlier versions
