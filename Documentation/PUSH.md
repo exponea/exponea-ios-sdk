@@ -131,15 +131,14 @@ There is principal usage of `Exponea.shared.anonymize()` as a sign-out feature i
 
 ```json
 {
-    "url_ios": "https://example.com/ios",
-    "legacy_ios_category": "iOS Category",
+    "url": "https://example.com/ios",
     "title": "iOS Title",
     "action": "app",
     "message": "iOS Message",
     "image": "https://example.com/image.jpg",
     "actions": [
-        {"title": "Action 1", "action": "app", "url_ios": "https://example.com/action1/ios"},
-        {"title": "Action 2", "action": "browser", "url_ios": "https://example.com/action2/ios"},
+        {"title": "Action 1", "action": "app", "url": "https://example.com/action1/ios"},
+        {"title": "Action 2", "action": "browser", "url": "https://example.com/action2/ios"},
     ],
     "sound": "default",
     "aps": {
