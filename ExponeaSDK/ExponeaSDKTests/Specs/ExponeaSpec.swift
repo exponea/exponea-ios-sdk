@@ -24,6 +24,19 @@ class ExponeaSpec: QuickSpec {
                     exponea = ExponeaInternal()
                 }
 
+                it("debug mode combinations") {
+                    expect(exponea.safeModeEnabled).to(beFalse())
+                    exponea.isDebugModeEnabled = true
+                    expect(exponea.safeModeEnabled).to(beFalse())
+                    exponea.isDebugModeEnabled = false
+                    expect(exponea.safeModeEnabled).to(beTrue())
+                    exponea.safeModeEnabled = true
+                    expect(exponea.safeModeEnabled).to(beTrue())
+                    exponea.safeModeEnabled = true
+                    exponea.isDebugModeEnabled = true
+                    expect(exponea.safeModeEnabled).to(beTrue())
+                }
+
                 it("Should return a nil configuration") {
                     expect(exponea.configuration?.projectToken).to(beNil())
                 }

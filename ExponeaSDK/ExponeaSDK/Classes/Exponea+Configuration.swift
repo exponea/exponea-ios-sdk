@@ -192,7 +192,7 @@ public extension ExponeaInternal {
             
             do {
                 var willRunSelfCheck = false
-                inDebugBuild {
+                if isDebugModeEnabled {
                     willRunSelfCheck = self.checkPushSetup && pushNotificationTracking.isEnabled
                 }
 

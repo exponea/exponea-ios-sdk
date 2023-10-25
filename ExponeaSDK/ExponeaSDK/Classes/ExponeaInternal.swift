@@ -155,16 +155,28 @@ public class ExponeaInternal: ExponeaType {
     /// We advice strongly against disabling this for production builds.
     public var safeModeEnabled: Bool {
         get {
-            if let override = safeModeOverride {
-                return override
-            }
-            var enabled = true
-            inDebugBuild { enabled = false }
-            return enabled
+            safeModeOverride ?? !isDebugModeEnabled
         }
         set { safeModeOverride = newValue }
     }
     private var safeModeOverride: Bool?
+
+    public var isDebugModeEnabled: Bool {
+        get {
+            if let isDebugEnabledOverride {
+                return isDebugEnabledOverride
+            }
+#if DEBUG
+            return true
+#else
+            return false
+#endif
+        }
+        set {
+            isDebugEnabledOverride = newValue
+        }
+    }
+    private var isDebugEnabledOverride: Bool?
 
     public var isDarkMode: Bool {
         guard configuration?.isDarkModeEnabled == true else { return false }
@@ -303,7 +315,7 @@ public class ExponeaInternal: ExponeaType {
                     }
                 }
                 
-                inDebugBuild {
+                if isDebugModeEnabled {
                     VersionChecker(repository: repository).warnIfNotLatestSDKVersion()
                 }
                                     
