@@ -72,7 +72,7 @@ class CustomerTokenStorage {
             Exponea.logger.log(.verbose, message: "CustomerTokenStorage not configured yet")
             return nil
         }
-        guard let url = URL(string: "\(host)/webxp/exampleapp/customertokens") else {
+        guard let url = URL(safeString: "\(host)/webxp/exampleapp/customertokens") else {
             Exponea.logger.log(.error, message: "Invalid URL host \(host) for CustomerTokenStorage")
             return nil
         }

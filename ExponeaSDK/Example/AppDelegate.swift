@@ -130,10 +130,12 @@ extension AppDelegate: PushNotificationManagerDelegate {
             .verbose,
             message: "Silent push received, extraData \(String(describing: extraData))"
         )
-        showAlert(
-            "Silent push received",
-            "extraData \(String(describing: extraData))"
-        )
+        onMain {
+            self.showAlert(
+                "Silent push received",
+                "extraData \(String(describing: extraData))"
+            )
+        }
     }
 }
 

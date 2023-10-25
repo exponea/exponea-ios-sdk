@@ -32,16 +32,23 @@ final class EventFilterAttributeSpec: QuickSpec {
             }
 
             // swiftlint:disable open_brace_spacing close_brace_spacing
-            let serialized = """
-            {"type":"property","property":"value"}
-            """
+            let serialized = sortWithKeys(
+                [
+                    "type": "property",
+                    "property": "value"
+                ]
+            )
             // swiftlint:enable open_brace_spacing close_brace_spacing
             it("should serialize") {
                 let encoded = try! JSONEncoder().encode(EventFilterAttributeCoder(PropertyAttribute("value")))
-                expect(String(data: encoded, encoding: .utf8)).to(equal(serialized))
+                let string = String(data: encoded, encoding: .utf8)!
+                // TODO: - Refactor...
+                // Order of elements is random in xcode 15
+                expect(string.contains("\"property\":\"value\"")).to(beTrue())
+                expect(string.contains("\"type\":\"property\"")).to(beTrue())
             }
             it("should deserialize") {
-                let data = serialized.data(using: .utf8)!
+                let data = try! JSONSerialization.data(withJSONObject: serialized)
                 let decoded = try! JSONDecoder().decode(EventFilterAttributeCoder.self, from: data)
                 expect(decoded).to(equal(EventFilterAttributeCoder(PropertyAttribute("value"))))
             }

@@ -102,7 +102,7 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     }
 
     func upload(data: VSAppCenterAPIRequestData, completionHandler: @escaping (Bool) -> Void) {
-        guard let url = URL(string: defaultUploadURL),
+        guard let url = URL(safeString: defaultUploadURL),
               let payload = try? JSONEncoder().encode(data) else {
             completionHandler(false)
             return

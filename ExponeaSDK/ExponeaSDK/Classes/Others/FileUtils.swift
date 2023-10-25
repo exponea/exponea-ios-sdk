@@ -13,7 +13,7 @@ struct FileUtils {
     /// Method has to be called within background thread due to sync implementation.
     public static func tryDownloadFile(_ fileSource: String?) -> Data? {
         guard let fileSource = fileSource,
-              let fileUrl = URL(string: fileSource) else {
+              let fileUrl = URL(safeString: fileSource) else {
             Exponea.logger.log(.error, message: "File cannot be downloaded \(fileSource ?? "<is nil>")")
             return nil
         }

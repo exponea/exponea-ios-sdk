@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -210,6 +210,7 @@
 		31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */; };
 		31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */; };
 		31CFEF6F2A66940E005402E5 /* SequenceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6E2A66940E005402E5 /* SequenceTest.swift */; };
+		31E9CBA22AE9494B00A333C8 /* URL+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E9CBA12AE9494B00A333C8 /* URL+Init.swift */; };
 		31EBB8422A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8412A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift */; };
 		31EBB8552A6AC3020003AAA5 /* StaticInAppContentBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */; };
 		31EBB8562A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */; };
@@ -709,6 +710,7 @@
 		31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaTabBarController.swift; sourceTree = "<group>"; };
 		31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+RemoveNil.swift"; sourceTree = "<group>"; };
 		31CFEF6E2A66940E005402E5 /* SequenceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceTest.swift; sourceTree = "<group>"; };
+		31E9CBA12AE9494B00A333C8 /* URL+Init.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Init.swift"; sourceTree = "<group>"; };
 		31EBB8412A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppContentBlocksViewController.swift; sourceTree = "<group>"; };
 		31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticInAppContentBlockView.swift; sourceTree = "<group>"; };
 		31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppContentBlocksTrackingEvent.swift; sourceTree = "<group>"; };
@@ -2105,6 +2107,7 @@
 		F0E757DE207CF98600FE8C21 /* Others */ = {
 			isa = PBXGroup;
 			children = (
+				31E9CBA12AE9494B00A333C8 /* URL+Init.swift */,
 				55391D482953051E001D95B8 /* AppInboxParser.swift */,
 				6BA73FEC29B6377E009F92DF /* AtomicValue.swift */,
 				05FD178E2403C4CC003A799B /* BuildConfiguration.swift */,
@@ -2886,6 +2889,7 @@
 				0591906823EC1D2C0037BD88 /* BooleanOperators.swift in Sources */,
 				05735EA323A3975100DA0FA9 /* FlushingManagerType.swift in Sources */,
 				0591906423EC1D030037BD88 /* StringOperators.swift in Sources */,
+				31E9CBA22AE9494B00A333C8 /* URL+Init.swift in Sources */,
 				31EBB8552A6AC3020003AAA5 /* StaticInAppContentBlockView.swift in Sources */,
 				C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */,
 				C030AF48216F4335004413F0 /* PushNotificationReceiver.swift in Sources */,
@@ -3117,7 +3121,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "ExponeaSDKShared/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3148,7 +3152,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "ExponeaSDKShared/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3178,7 +3182,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = ExponeaSDKObjC/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3208,7 +3212,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = ExponeaSDKObjC/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3234,7 +3238,7 @@
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationContent/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3262,7 +3266,7 @@
 				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationContent/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3290,7 +3294,7 @@
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationService/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3319,7 +3323,7 @@
 				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationService/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3351,7 +3355,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK-Notifications/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3385,7 +3389,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK-Notifications/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3414,7 +3418,7 @@
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3440,7 +3444,7 @@
 				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3590,7 +3594,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3624,7 +3628,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3648,6 +3652,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3671,6 +3676,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

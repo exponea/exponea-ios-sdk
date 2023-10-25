@@ -26,7 +26,7 @@ extension ServerRepository: VersionCheckRepository {
         } else {
             gitHubProject = "exponea-ios-sdk"
         }
-        var request = URLRequest(url: URL(string: String(format: baseUrl, gitHubProject))!)
+        var request = URLRequest(url: URL(safeString: String(format: baseUrl, gitHubProject))!)
 
         // Create the basic request
         request.httpMethod = "GET"

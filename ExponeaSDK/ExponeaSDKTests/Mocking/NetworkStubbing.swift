@@ -18,7 +18,7 @@ struct NetworkStubbing {
         withRequestHook requestHook: ((URLRequest) -> Void)? = nil
     ) {
         let stubResponse = HTTPURLResponse(
-            url: URL(string: "mock-url")!,
+            url: URL(safeString: "https://mock-url")!,
             statusCode: statusCode,
             httpVersion: nil,
             headerFields: nil

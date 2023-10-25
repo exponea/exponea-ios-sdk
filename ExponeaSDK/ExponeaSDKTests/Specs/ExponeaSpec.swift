@@ -56,7 +56,7 @@ class ExponeaSpec: QuickSpec {
                     expect(exponea.trackEvent(properties: [:], timestamp: nil, eventType: nil)).notTo(raiseException())
                 }
                 it("Should not crash tracking campaign click") {
-                    expect(exponea.trackCampaignClick(url: URL(string: "mockUrl")!, timestamp: nil))
+                    expect(exponea.trackCampaignClick(url: URL(sharedSafeString: "mockUrl")!, timestamp: nil))
                         .notTo(raiseException())
                 }
                 it("Should not crash tracking payment") {

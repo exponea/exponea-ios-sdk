@@ -50,7 +50,7 @@ public extension RequestFactory {
         parameters: RequestParametersType? = nil,
         customerIds: [String: String]? = nil
     ) -> URLRequest {
-        var request = URLRequest(url: URL(string: path)!)
+        var request = URLRequest(url: URL(sharedSafeString: path)!)
 
         // Create the basic request
         request.httpMethod = route.method.rawValue

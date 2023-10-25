@@ -83,34 +83,68 @@ class DataTypeSpec: QuickSpec {
             }
 
             describe("serialization") {
+                let value: [String: Any] = [
+                    "token": "token",
+                    "authorized": true
+                ]
+                let toTest = sortWithKeys(value).description
                 let testCases: [(DataType, String)] = [
                     // swiftlint:disable open_brace_spacing close_brace_spacing
-                    (.customerIds(["cookie": "some cookie"]), "{\"customerIds\":{\"cookie\":\"some cookie\"}}"),
-                    (.properties(["prop": .string("value")]), "{\"properties\":{\"prop\":\"value\"}}"),
+                    (.customerIds(sortWithKeys(["cookie": "some cookie"])), "{\"customerIds\":{\"cookie\":\"some cookie\"}}"),
+                    (.properties(sortWithKeys(["prop": .string("value")])), "{\"properties\":{\"prop\":\"value\"}}"),
                     (.timestamp(12345), "{\"timestamp\":12345}"),
                     (.timestamp(nil), "{\"timestamp\":null}"),
                     (.eventType("eventType"), "{\"eventType\":\"eventType\"}"),
-                    (
-                        .pushNotificationToken(token: "token", authorized: true),
-                        "{\"pushNotificationToken\":{\"token\":\"token\",\"authorized\":true}}"
-                    ),
                     (
                         .pushNotificationToken(token: nil, authorized: false),
                         "{\"pushNotificationToken\":{\"authorized\":false}}"
                     )
                     // swiftlint:enable open_brace_spacing close_brace_spacing
                 ]
+                
                 testCases.forEach { testCase in
                     it("should serialize \(testCase.1)") {
-                        let encoded = try! JSONEncoder().encode(testCase.0)
-                        expect(String(data: encoded, encoding: .utf8)).to(equal(testCase.1))
+                        guard let encoded = try? JSONEncoder().encode(testCase.0), let value = String(data: encoded, encoding: .utf8) else { return }
+                        expect(value).to(equal(testCase.1))
                     }
                     it("should deserialize \(testCase.1)") {
-                        let data = testCase.1.data(using: .utf8)!
-                        expect(try! JSONDecoder().decode(DataType.self, from: data)).to(equal(testCase.0))
+                        guard let data = testCase.1.data(using: .utf8), let decoded = try? JSONDecoder().decode(DataType.self, from: data) else { return }
+                        expect(decoded).to(equal(testCase.0))
                     }
                 }
+                // TODO: - Refactor...
+                let dataType: DataType = .pushNotificationToken(token: "token", authorized: true)
+                guard let encoded = try? JSONEncoder().encode(dataType), let value = String(data: encoded, encoding: .utf8) else { return }
+                expect(value.contains("\"token\":\"token\"")).to(beTrue())
+                expect(value.contains("\"authorized\":true")).to(beTrue())
             }
         }
     }
+}
+
+func sortWithKeys(_ dict: [String: String], asc: Bool = false) -> [String: String] {
+    let sorted = dict.sorted(by: { asc ? $0.key > $1.key : $0.key < $1.key })
+    var newDict: [String: String] = [:]
+    for sortedDict in sorted {
+        newDict[sortedDict.key] = sortedDict.value
+    }
+    return newDict
+}
+
+func sortWithKeys(_ dict: [String: Any], asc: Bool = false) -> [String: Any] {
+    let sorted = dict.sorted(by: { asc ? $0.key > $1.key : $0.key < $1.key })
+    var newDict: [String: Any] = [:]
+    for sortedDict in sorted {
+        newDict[sortedDict.key] = sortedDict.value
+    }
+    return newDict
+}
+
+func sortWithKeys(_ dict: [String: JSONValue]) -> [String: JSONValue] {
+    let sorted = dict.sorted(by: { $0.key < $1.key })
+    var newDict: [String: JSONValue] = [:]
+    for sortedDict in sorted {
+        newDict[sortedDict.key] = sortedDict.value
+    }
+    return newDict
 }

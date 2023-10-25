@@ -30,7 +30,7 @@ extension Configuration {
     }
 
     func validate() throws {
-        if URL(string: self.baseUrl) == nil {
+        if URL(sharedSafeString: baseUrl) == nil {
             throw ConfigurationValidationError.baseUrlInvalid
         }
         try validateProjectToken(projectToken: projectToken)

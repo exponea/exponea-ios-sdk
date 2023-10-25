@@ -47,7 +47,7 @@ final class ServerRepositorySpec: QuickSpec {
                     )
                     let repo = ServerRepository(configuration: configuration)
                     let networkTask = URLSession.shared.dataTask(
-                        with: URL(string: configuration.baseUrl + "/projects/\(configuration.projectToken)")!
+                        with: URL(safeString: configuration.baseUrl + "/projects/\(configuration.projectToken)")!
                     )
                     networkTask.resume()
                     waitUntil(timeout: .seconds(5)) { done in
