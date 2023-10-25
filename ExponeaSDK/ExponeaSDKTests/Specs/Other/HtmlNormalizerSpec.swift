@@ -222,6 +222,31 @@ final class HtmlNormalizerSpec: QuickSpec {
             expect(normalizedHtml.contains("John Doe")).to(equal(false))
         }
 
+        it("should remove Meta except viewport") {
+            let rawHtml = "<html>" +
+                    "<head>" +
+                    "<meta name='keywords' content='HTML, CSS, JavaScript'>" +
+                    "<meta name='author' content='John Doe'>" +
+                    "<meta name='viewport' content='width=device-width, initial-scale=1' />" +
+                    "</head>" +
+                    "<body>" +
+                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<div data-link='https://example.com/2'>Action 2</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            guard let normalizedHtml = result.html else {
+                fail("Normalized HTML missing")
+                return
+            }
+            expect(normalizedHtml.contains("meta")).to(equal(true))
+            expect(normalizedHtml.contains("viewport")).to(equal(true))
+            expect(normalizedHtml.contains("keywords")).to(equal(false))
+            expect(normalizedHtml.contains("author")).to(equal(false))
+            expect(normalizedHtml.contains("HTML, CSS, JavaScript")).to(equal(false))
+            expect(normalizedHtml.contains("John Doe")).to(equal(false))
+        }
+
         it("should remove any Href attribute but keep anchor") {
             let rawHtml = "<html>" +
                     "<head>" +

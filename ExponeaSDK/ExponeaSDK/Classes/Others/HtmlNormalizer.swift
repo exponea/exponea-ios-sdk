@@ -17,7 +17,7 @@ public class HtmlNormalizer {
 
     private let hrefAttr = "href"
     private let anchorTagSelector = "a"
-    private let metaTagSelector = "meta"
+    private let metaTagSelector = "meta:not([name='viewport'])"
     private let scriptTagSelector = "script"
     private let titleTagSelector = "title"
     private let linkTagSelector = "link"
@@ -204,30 +204,31 @@ public class HtmlNormalizer {
             )
             // randomize class name => prevents from CSS styles overriding in HTML
             let closeButtonClass = "close-button-\(UUID().uuidString)"
+            let buttonSize = "max(min(5vw, 5vh), 16px)"
             try htmlBody.append("<div \(closeButtonAttrDef) class='\(closeButtonClass)'><div>")
             try htmlHead.append("""
                         <style>
                             .\(closeButtonClass) {
                               display: inline-block;
                               position: absolute;
-                              width: 36px;
-                              height: 36px;
+                              width: \(buttonSize);
+                              height: \(buttonSize);
                               top: 10px;
                               right: 10px;
-                              border: 2px solid #C0C0C099;
+                              cursor: pointer;
                               border-radius: 50%;
-                              background-color: #FAFAFA99;
+                              background-color: rgba(250, 250, 250, 0.6);
                              }
                             .\(closeButtonClass):before {
                               content: '×';
                               position: absolute;
                               display: flex;
                               justify-content: center;
-                              width: 36px;
-                              height: 36px;
-                              color: #C0C0C099;
-                              font-size: 36px;
-                              line-height: 36px;
+                              width: \(buttonSize);
+                              height: \(buttonSize);
+                              color: rgb(0, 0, 0);
+                              font-size: \(buttonSize);
+                              line-height: \(buttonSize);
                             }
                         </style>
                         """)
