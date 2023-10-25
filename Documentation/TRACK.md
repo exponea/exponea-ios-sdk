@@ -21,6 +21,18 @@ You can define any event types for each of your project based on your business m
 
 So the possible events for tracking will be: ‘search’, ‘product view’, ‘add product to cart’, ‘checkout’, ‘purchase’. Remember that you can define any event names you wish. Our recommendation is to make them self-descriptive and human understandable.
 
+## 🔍 Track Token
+
+You can manually track token for Push notification receiving. Token is assigned to currently logged customer (with `indentifyCustomer` method).
+
+```swift
+Exponea.shared.trackPushToken("value-of-push-token")
+```
+
+Invoking of this method will track a push token immediately regardless of SDK configuration for 'tokenTrackFrequency' (see [configuration](CONFIG.md))
+
+Every time, when app become active, SDK call verifyPushStatusAndTrackPushToken and track token.
+
 ## 🔍 Track Event
 
 In the SDK you can track an event using the following accessor:

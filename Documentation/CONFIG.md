@@ -73,9 +73,9 @@ You can configure the SDK providing a configuration file with configuration vari
 * Indicates the frequency which the APNS token should be tracked to Exponea
 * Default value is `onTokenChange`
 * Possible values:
-	* `onTokenChange`
-	* `everyLaunch`
-	* `daily`
+	* `onTokenChange` - tracks push token if differs from previous tracked one
+	* `everyLaunch` - tracks push token always
+	* `daily` - tracks push token once per day
 
 #### flushEventMaxRetries
 
