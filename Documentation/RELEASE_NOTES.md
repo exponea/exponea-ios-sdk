@@ -1,4 +1,20 @@
 ## Release Notes
+## Release Notes for 2.19.0
+#### October 27, 2023
+* Features
+  * Xcode 15 and iOS 17 support added
+    * iOS minimal version increased to 12
+  * Push notification token tracking frequency has been documented
+  * Anonymize feature has been described with more details in documentation
+  * Rich Push notification has clickable image with default action
+  * Viewport meta tag was removed from forbidden constructs for all HTML messages due to scaling issues
+  * Debug mode was refactored
+* Bug Fixes
+  * Fixed: Action button not working for HTML In-app messages created via Visual editor
+  * Fixed: Push notification payload docu has wrong field names
+  * Fixed: Multiple flush timers invocation
+
+
 ## Release Notes for 2.18.0
 #### September 14, 2023
 * Features
