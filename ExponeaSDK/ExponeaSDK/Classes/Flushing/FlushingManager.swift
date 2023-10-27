@@ -64,7 +64,7 @@ class FlushingManager: FlushingManagerType {
 
     private func startPeriodicFlushTimer() {
         if case let .periodic(interval) = flushingMode {
-            guard flushingTimer == nil else { return }
+            stopPeriodicFlushTimer()
             flushingTimer = Timer.scheduledTimer(
                 withTimeInterval: TimeInterval(interval),
                 repeats: true
