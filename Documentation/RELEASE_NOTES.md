@@ -1,4 +1,12 @@
 ## Release Notes
+## Release Notes for 2.20.0
+#### November 27, 2023
+* Features
+  * In-app content blocks with deferred load and onContentReady listener
+* Bug Fixes
+  * Fixed: Xcode 14.2 compiler issue for capture of isDebugModeEnabled
+
+
 ## Release Notes for 2.19.0
 #### October 27, 2023
 * Features
