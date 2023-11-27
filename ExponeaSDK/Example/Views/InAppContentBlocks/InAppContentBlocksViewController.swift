@@ -122,7 +122,7 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
     private let tableView = UITableView()
     private let refreshControl = UIRefreshControl()
 
-    lazy var placeholder = StaticInAppContentBlockView(placeholder: "example_top")
+    lazy var placeholder = StaticInAppContentBlockView(placeholder: "example_top", deferredLoad: true)
     lazy var placeholderExample = StaticInAppContentBlockView(placeholder: "ph_x_example_iOS")
 
     @objc func endEditing() {
@@ -150,10 +150,27 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
         view.backgroundColor = .black
         
         view.addSubview(placeholder)
+        placeholder.contentReadyCompletion = { [weak self] contentLoaded in
+            guard let self else {
+                Exponea.logger.log(.error, message: "In-app content block has been loaded but deattached from view controller")
+                return
+            }
+            Exponea.logger.log(.verbose, message: "In-app content block has been loaded: \(contentLoaded)")
+            if contentLoaded {
+                let contentWidth = placeholder.frame.size.width
+                let contentHeight = placeholder.frame.size.height
+                Exponea.logger.log(
+                    .verbose,
+                    message: "In-app content block content has size of width \(contentWidth)px height \(contentHeight)px"
+                )
+            }
+        }
         placeholder.translatesAutoresizingMaskIntoConstraints = false
         placeholder.topAnchor.constraint(equalTo: view.topAnchor, constant: 80).isActive = true
         placeholder.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
         placeholder.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
+        // `placeholder` has deferred load, so we trigger it
+        placeholder.reload()
         
         view.addSubview(placeholderExample)
         placeholderExample.translatesAutoresizingMaskIntoConstraints = false

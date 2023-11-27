@@ -68,3 +68,31 @@ In-app content blocks are tracked automatically by SDK. You may see these `actio
 You can find information on creating your messages in [Exponea documentation](https://documentation.bloomreach.com/engagement/docs/in-app-content-blocks)
 
 > The behaviour of In-app content block tracking may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in [tracking consent documentation](./TRACKING_CONSENT.md).
+
+### Delayed In-app content blocks loading
+
+Placing of multiple placeholders on same page may lead to unwanted performance problems. It is recommended to load In-app content block only if is visible to user, especially for large scrollable screens. You can so register an In-app content block view into layout and trigger reload later.
+
+```swift
+let placeholderView = StaticInAppContentBlockView(placeholder: "placeholder", deferredLoad: true)
+// load content later by
+placeholderView.reload()
+```
+### Show In-app content block view after content is loaded
+
+You may prefer UX design "finding and operating" principle so you want to show to user only available things. Or you may have a static layout where you need to set exact frame dimension to In-app content block view but it is blank until content is ready. For that case we recommend to use callback that will be notified if content has been successfully loaded or no content was found.
+
+```swift
+let placeholderView = StaticInAppContentBlockView(placeholder: "placeholder")
+placeholderView.contentReadyCompletion = { [weak self] contentLoaded in
+    guard let self else { return }
+    if contentLoaded {
+        let contentWidth = placeholderView.frame.size.width
+        let contentHeight = placeholderView.frame.size.height
+        // you have exact dimensions for loaded content
+    } else {
+        // you can hide this view because no In-app content block is available now
+        placeholderView.isHidden = true
+    }
+}
+```

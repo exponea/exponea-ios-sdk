@@ -12,7 +12,8 @@ import WebKit
 public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     // MARK: - Properties
-    public var refresh: EmptyBlock?
+    public var contentReadyCompletion: TypeBlock<Bool>?
+
     private lazy var webview: WKWebView = {
         let userScript: WKUserScript = .init(source: inAppContentBlocksManager.disableZoomSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
         let newWebview = WKWebView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 0))
@@ -29,22 +30,40 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         return newWebview
     }()
 
+    override public var bounds: CGRect {
+        didSet {
+            guard let currentContentReadyFlag = contentReadyFlag else {
+                return
+            }
+            contentReadyFlag = nil
+            contentReadyCompletion?(currentContentReadyFlag)
+        }
+    }
+
     private let placeholder: String
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
     private lazy var calculator: WKWebViewHeightCalculator = .init()
     private var html: String = ""
     private var height: NSLayoutConstraint?
+    private var contentReadyFlag: Bool?
 
-    public init(placeholder: String) {
+    public init(placeholder: String, deferredLoad: Bool = false) {
         self.placeholder = placeholder
         super.init(frame: .zero)
 
         webview.navigationDelegate = self
         calculator.heightUpdate = { [weak self] height in
-            guard let self = self, height.height > 0 else { return }
-            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: height.height - 15)
+            guard let self, height.height > 0 else {
+                self?.notifyContentReadyState(true)
+                return
+            }
+            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: height.height - 15) {
+                self.prepareContentReadyState(true)
+            }
         }
-        getContent()
+        if !deferredLoad {
+            getContent()
+        }
     }
 
     public func reload() {
@@ -57,7 +76,9 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     private func getContent() {
         guard !placeholder.isEmpty else {
-            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0)
+            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0) {
+                self.prepareContentReadyState(false)
+            }
             return
         }
         let data = inAppContentBlocksManager.prepareInAppContentBlocksStaticView(placeholderId: placeholder)
@@ -74,21 +95,32 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     private func loadContent(html: String) {
         guard !html.isEmpty else {
-            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0)
+            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0) {
+                self.prepareContentReadyState(true)
+            }
             return
         }
         self.html = html
         calculator.loadHtml(placedholderId: placeholder, html: html)
+        // calls `notifyContentReadyState` inside calculator
     }
 
-    private func replacePlaceholder(inputView: UIView, loadedInAppContentBlocksView: UIView, height: CGFloat) {
+    private func replacePlaceholder(
+        inputView: UIView,
+        loadedInAppContentBlocksView: UIView,
+        height: CGFloat,
+        onCompletion: @escaping EmptyBlock
+    ) {
         onMain {
             let duration: TimeInterval = 0.3
             loadedInAppContentBlocksView.alpha = 0
             UIView.animate(withDuration: duration) {
                 loadedInAppContentBlocksView.alpha = 0
             } completion: { [weak self] isDone in
-                guard let self else { return }
+                guard let self else {
+                    onCompletion()
+                    return
+                }
                 if isDone {
                     loadedInAppContentBlocksView.constraints.forEach { cons in
                         self.removeConstraint(cons)
@@ -111,6 +143,10 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                         loadedInAppContentBlocksView.alpha = 1
                     }
                     self.webview.loadHTMLString(self.html, baseURL: nil)
+                    if self.placeholder == "example_top" {
+                        Exponea.logger.log(.verbose, message: "content loaded")
+                    }
+                    onCompletion()
                 }
             }
         }
@@ -151,5 +187,18 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             Exponea.logger.log(.verbose, message: "[HTML] Action \(navigationAction.request.url?.absoluteString ?? "Invalid") has not been handled, continue")
             decisionHandler(.allow)
         }
+    }
+
+    // directly calls `contentReadyCompletion` with given contentReady flag
+    // use this method in case that no layout is going to be invoked
+    private func notifyContentReadyState(_ contentReady: Bool) {
+        onMain {
+            self.contentReadyCompletion?(contentReady)
+        }
+    }
+
+    // registers contentReady flag that will be used for `contentReadyCompletion` when layout/bounds will be updated
+    private func prepareContentReadyState(_ contentReady: Bool) {
+        contentReadyFlag = contentReady
     }
 }
