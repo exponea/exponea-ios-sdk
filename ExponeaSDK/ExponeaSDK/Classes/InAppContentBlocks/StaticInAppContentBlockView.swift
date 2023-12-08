@@ -13,6 +13,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     // MARK: - Properties
     public var contentReadyCompletion: TypeBlock<Bool>?
+    public var heightCompletion: TypeBlock<Int>?
 
     private lazy var webview: WKWebView = {
         let userScript: WKUserScript = .init(source: inAppContentBlocksManager.disableZoomSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
@@ -47,8 +48,9 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
     private var height: NSLayoutConstraint?
     private var contentReadyFlag: Bool?
 
-    public init(placeholder: String, deferredLoad: Bool = false) {
+    public init(placeholder: String, deferredLoad: Bool = false, heightCompletion: TypeBlock<Int>? = nil) {
         self.placeholder = placeholder
+        self.heightCompletion = heightCompletion
         super.init(frame: .zero)
 
         webview.navigationDelegate = self
@@ -57,7 +59,8 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                 self?.notifyContentReadyState(true)
                 return
             }
-            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: height.height - 15) {
+            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: height.height  ) {
+                self.heightCompletion?(Int(height.height))
                 self.prepareContentReadyState(true)
             }
         }
