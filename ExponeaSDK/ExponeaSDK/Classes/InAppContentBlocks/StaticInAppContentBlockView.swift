@@ -146,9 +146,6 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                         loadedInAppContentBlocksView.alpha = 1
                     }
                     self.webview.loadHTMLString(self.html, baseURL: nil)
-                    if self.placeholder == "example_top" {
-                        Exponea.logger.log(.verbose, message: "content loaded")
-                    }
                     onCompletion()
                 }
             }
