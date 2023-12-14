@@ -283,6 +283,7 @@
 		55C08DCF2A5689F4000BA66A /* FileCacheType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DCE2A5689F4000BA66A /* FileCacheType.swift */; };
 		55C08DD12A568A55000BA66A /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD02A568A55000BA66A /* FileCache.swift */; };
 		55C08DD32A568C74000BA66A /* FileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD22A568C74000BA66A /* FileUtils.swift */; };
+		55D0543E2B29BE2200BC773A /* ExtensionUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D0543D2B29BE2200BC773A /* ExtensionUtils.swift */; };
 		55DA6EBA290ABD4800B5B285 /* AppInboxManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EB9290ABD4800B5B285 /* AppInboxManagerType.swift */; };
 		55DA6EBC290ABD7500B5B285 /* AppInboxManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EBB290ABD7500B5B285 /* AppInboxManager.swift */; };
 		55DA6EBE290AD5E900B5B285 /* AppInboxCacheType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EBD290AD5E900B5B285 /* AppInboxCacheType.swift */; };
@@ -781,6 +782,7 @@
 		55C08DCE2A5689F4000BA66A /* FileCacheType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheType.swift; sourceTree = "<group>"; };
 		55C08DD02A568A55000BA66A /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
 		55C08DD22A568C74000BA66A /* FileUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUtils.swift; sourceTree = "<group>"; };
+		55D0543D2B29BE2200BC773A /* ExtensionUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUtils.swift; sourceTree = "<group>"; };
 		55DA6EB9290ABD4800B5B285 /* AppInboxManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxManagerType.swift; sourceTree = "<group>"; };
 		55DA6EBB290ABD7500B5B285 /* AppInboxManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxManager.swift; sourceTree = "<group>"; };
 		55DA6EBD290AD5E900B5B285 /* AppInboxCacheType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxCacheType.swift; sourceTree = "<group>"; };
@@ -1770,6 +1772,7 @@
 				318B55292A80E52B00934902 /* DeeplinkManager.swift */,
 				31C7B4232A822848001BA5E2 /* Coordinator.swift */,
 				31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */,
+				55D0543D2B29BE2200BC773A /* ExtensionUtils.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -2712,6 +2715,7 @@
 				55F6A41829891F130029D628 /* ExampleAuthProvider.swift in Sources */,
 				C0F6C4E52098A1AB00834E21 /* AuthenticationViewController.swift in Sources */,
 				C0F2407020BD98EB00CAF7CE /* MemoryLogger.swift in Sources */,
+				55D0543E2B29BE2200BC773A /* ExtensionUtils.swift in Sources */,
 				31EBB8422A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift in Sources */,
 				C0F6C4E32098A1AB00834E21 /* AppDelegate.swift in Sources */,
 				31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */,

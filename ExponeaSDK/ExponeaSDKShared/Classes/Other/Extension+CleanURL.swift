@@ -19,7 +19,7 @@ public extension String {
     }
 }
 
-public extension URL {
+extension URL {
     init?(sharedSafeString: String) {
 #if compiler(>=5.9) // XCODE 15+
         if #available(iOS 17.0, *) {
