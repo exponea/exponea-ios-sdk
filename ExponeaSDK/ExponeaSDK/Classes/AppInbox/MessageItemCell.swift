@@ -88,7 +88,8 @@ private extension MessageItemCell {
         messageImage.layer.backgroundColor = UIColor(red: 0.961, green: 0.961, blue: 0.961, alpha: 1).cgColor
         messageImage.layer.cornerRadius = 4
         messageImage.clipsToBounds = true
-        
+        messageImage.contentMode = UIView.ContentMode.scaleAspectFill
+
         convertToDarkIfNeeded()
     }
 
