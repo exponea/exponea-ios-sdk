@@ -16,7 +16,7 @@ public protocol InAppContentBlocksManagerType {
 
     func prepareInAppContentBlockView(placeholderId: String, indexPath: IndexPath) -> UIView
     func prefetchPlaceholdersWithIds(ids: [String])
-    func getUsedInAppContentBlocks(placeholder: String, indexPath: IndexPath) -> UsedInAppContentBlocks?
+    func getUsedInAppContentBlocks(placeholder: String) -> UsedInAppContentBlocks?
     func anonymize()
     func initBlocker()
     func loadInAppContentBlocksPlaceholders(completion: EmptyBlock?)

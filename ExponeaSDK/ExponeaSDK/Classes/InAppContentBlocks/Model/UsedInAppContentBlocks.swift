@@ -11,7 +11,7 @@ import Foundation
 public struct UsedInAppContentBlocks: Hashable {
     public var tag: Int
     public var indexPath: IndexPath
-    public var placeholderId: String
+    public var messageId: String
     public var placeholder: String
     public var height: CGFloat
     public var hasBeenLoaded = false

@@ -11,4 +11,5 @@ import Foundation
 public struct StaticReturnData {
     public let html: String
     public let tag: Int
+    public let message: InAppContentBlockResponse?
 }

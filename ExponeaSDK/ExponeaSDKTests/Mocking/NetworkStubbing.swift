@@ -9,6 +9,23 @@
 import Foundation
 import Mockingjay
 
+extension URL {
+    init?(safeString: String) {
+#if compiler(>=5.9) // XCODE 15+
+        if #available(iOS 17.0, *) {
+            self.init(
+                string: safeString,
+                encodingInvalidCharacters: false
+            )
+        } else {
+            self.init(string: safeString)
+        }
+#else
+        self.init(string: safeString)
+#endif
+    }
+}
+
 struct NetworkStubbing {
     static func stubNetwork(
         forProjectToken projectToken: String,

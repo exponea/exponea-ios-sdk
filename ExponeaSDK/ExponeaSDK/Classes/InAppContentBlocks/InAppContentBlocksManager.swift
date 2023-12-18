@@ -14,7 +14,7 @@ final class InAppContentBlocksManager: NSObject {
 
     // MARK: - Properties
     static let manager = InAppContentBlocksManager()
-    @Atomic var inAppContentBlocksPlaceholders: [InAppContentBlockResponse] = []
+    @Atomic var inAppContentBlockMessages: [InAppContentBlockResponse] = []
     var refreshCallback: TypeBlock<IndexPath>?
     let urlOpener: UrlOpenerType = UrlOpener()
     let disableZoomSource: String =
@@ -45,7 +45,7 @@ final class InAppContentBlocksManager: NSObject {
     @Atomic private var staticQueue: [StaticQueueData] = []
     private var newUsedInAppContentBlocks: UsedInAppContentBlocks? {
         willSet {
-            guard let newValue, let placeholder = inAppContentBlocksPlaceholders.first(where: { $0.tags?.contains(newValue.tag) == true }) else { return }
+            guard let newValue, let placeholder = inAppContentBlockMessages.first(where: { $0.tags?.contains(newValue.tag) == true }) else { return }
             if placeholder.content == nil, newValue.height == 0 {
                 loadContentForPlacehoder(newValue: newValue, placeholder: placeholder)
             } else if let html = placeholder.content?.html, newValue.height == 0 {
@@ -54,7 +54,7 @@ final class InAppContentBlocksManager: NSObject {
                     guard let self else { return }
                     self.calculateStaticData(height: height, newValue: newValue, placeholder: placeholder)
                 }
-                calculator.loadHtml(placedholderId: newValue.placeholderId, html: html)
+                calculator.loadHtml(placedholderId: newValue.messageId, html: html)
             }
         }
     }
@@ -118,13 +118,17 @@ struct WKWebViewData {
 
 // MARK: InAppContentBlocksManagerType
 extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigationDelegate {
-    func getUsedInAppContentBlocks(placeholder: String, indexPath: IndexPath) -> UsedInAppContentBlocks? {
+    func getUsedInAppContentBlocks(placeholder: String) -> UsedInAppContentBlocks? {
         usedInAppContentBlocks[placeholder]?.first(where: { $0.isActive })
     }
 
     func anonymize() {
         usedInAppContentBlocks.removeAll()
-        inAppContentBlocksPlaceholders.removeAll()
+        inAppContentBlockMessages.removeAll()
+    }
+
+    private func loadPlaceholderId(_ message: InAppContentBlockResponse?) -> String? {
+        return message?.placeholders.joined(separator: ", ")
     }
 
     func webView(
@@ -132,30 +136,55 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-        let result = inAppContentBlocksPlaceholders.first(where: { $0.tags?.contains(webView.tag) == true })
+        let result = inAppContentBlockMessages.first(where: { $0.tags?.contains(webView.tag) == true })
         let webAction: WebActionManager = .init {
-            let indexOfPlaceholder: Int = self.inAppContentBlocksPlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState
-            self.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
-            if let message = result {
-                Exponea.shared.trackInAppContentBlocksClose(message: message, isUserInteraction: true)
+            let indexOfMessage: Int = self.inAppContentBlockMessages.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
+            let currentDisplay = self.inAppContentBlockMessages[indexOfMessage].displayState
+            self.inAppContentBlockMessages[indexOfMessage].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            let placeholderId = self.loadPlaceholderId(result)
+            if let message = result,
+               let placeholderId {
+                Exponea.shared.trackInAppContentBlockClose(
+                    placeholderId: placeholderId,
+                    message: message
+                )
             }
             if let path = result?.indexPath {
                 self.refreshCallback?(path)
             }
         } onActionCallback: { action in
-            let indexOfPlaceholder: Int = self.inAppContentBlocksPlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState
-            self.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
-            if let message = result {
-                Exponea.shared.trackInAppContentBlocksClick(message: message, buttonText: action.buttonText, buttonLink: action.actionUrl)
+            let inAppCbAction = InAppContentBlockAction(
+                name: action.buttonText,
+                url: action.actionUrl,
+                type: self.determineActionType(action.actionUrl)
+            )
+            let indexOfPlaceholder: Int = self.inAppContentBlockMessages.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
+            let currentDisplay = self.inAppContentBlockMessages[indexOfPlaceholder].displayState
+            self.inAppContentBlockMessages[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            let placeholderId = self.loadPlaceholderId(result)
+            if let message = result,
+               let placeholderId {
+                Exponea.shared.trackInAppContentBlockClick(
+                    placeholderId: placeholderId,
+                    action: inAppCbAction,
+                    message: message
+                )
             }
-            self.urlOpener.openBrowserLink(action.actionUrl)
             if let path = result?.indexPath {
                 self.refreshCallback?(path)
             }
         } onErrorCallback: { error in
-            Exponea.logger.log(.error, message: "WebActionManager error \(error.localizedDescription)")
+            let errorMessage = "WebActionManager error \(error.localizedDescription)"
+            Exponea.logger.log(.error, message: errorMessage)
+            let placeholderId = self.loadPlaceholderId(result)
+            if let message = result,
+               let placeholderId {
+                Exponea.shared.trackInAppContentBlockError(
+                    placeholderId: placeholderId,
+                    message: message,
+                    errorMessage: errorMessage
+                )
+            }
         }
         webAction.htmlPayload = result?.personalizedMessage?.htmlPayload
         let handled = webAction.handleActionClick(navigationAction.request.url)
@@ -169,8 +198,19 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             if let indexPath = result?.indexPath {
-                self?.newUsedInAppContentBlocks = .init(tag: webView.tag, indexPath: indexPath, placeholderId: "", placeholder: "", height: webView.scrollView.contentSize.height + 10)
+                self?.newUsedInAppContentBlocks = .init(tag: webView.tag, indexPath: indexPath, messageId: "", placeholder: "", height: webView.scrollView.contentSize.height + 10)
             }
+        }
+    }
+
+    private func determineActionType(_ url: String) -> InAppContentBlockActionType {
+        if url == "https://exponea.com/close_action" {
+            return .close
+        }
+        if url.hasPrefix("http://") || url.hasPrefix("https://") {
+            return .browser
+        } else {
+            return .deeplink
         }
     }
 
@@ -185,14 +225,14 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             newInAppContentBlocks.htmlPayload = normalizedPayload
             return newInAppContentBlocks
         } ?? []
-        var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlocksPlaceholders
+        var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
         for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
             if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
                 personalized.ttlSeen = Date()
                 updatedPlaceholders[index].personalizedMessage = personalized
             }
         }
-        self.inAppContentBlocksPlaceholders = updatedPlaceholders
+        self.inAppContentBlockMessages = updatedPlaceholders
         completion?()
     }
 
@@ -209,7 +249,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         provider.loadPersonalizedInAppContentBlocks(
             data: PersonalizedInAppContentBlockResponseData.self,
             customerIds: customerIds,
-            inAppContentBlocksIds: prefetchPlaceholdersWithIds(input: inAppContentBlocksPlaceholders, ids: ids).map { $0.id }
+            inAppContentBlocksIds: prefetchPlaceholdersWithIds(input: inAppContentBlockMessages, ids: ids).map { $0.id }
         ) { [weak self] messages in
             guard let self else { return }
             let personalizedWithPayload: [PersonalizedInAppContentBlockResponse]? = messages.data?.data.filter { $0.status == .ok }.map { response in
@@ -222,14 +262,14 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 newInAppContentBlocks.htmlPayload = normalizedPayload
                 return newInAppContentBlocks
             }
-            var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlocksPlaceholders
+            var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
             for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
                 if var personalized = personalizedWithPayload?.first(where: { $0.id == inAppContentBlocks.id }) {
                     personalized.ttlSeen = Date()
                     updatedPlaceholders[index].personalizedMessage = personalized
                 }
             }
-            self.inAppContentBlocksPlaceholders = updatedPlaceholders
+            self.inAppContentBlockMessages = updatedPlaceholders
         }
     }
 
@@ -279,9 +319,9 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         placeholderId: String,
         indexPath: IndexPath
     ) -> UIView {
-        let placehodlersToUse = inAppContentBlocksPlaceholders.filter { $0.placeholders.contains(placeholderId) }
-        let placeholdersNeedToRefresh = placehodlersToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
-        let expiredMessages = placehodlersToUse.filter { inAppContentBlocks in
+        let messagesToUse = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholderId) }
+        let messagesNeedToRefresh = messagesToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
+        let expiredMessages = messagesToUse.filter { inAppContentBlocks in
             if let ttlSeen = inAppContentBlocks.personalizedMessage?.ttlSeen,
                let ttl = inAppContentBlocks.personalizedMessage?.ttlSeconds,
                inAppContentBlocks.content == nil {
@@ -290,13 +330,13 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             return false
         }
 
-        guard placeholdersNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
-            load(placeholderId: placeholderId, indexPath: indexPath, placeholdersNeedToRefresh: placehodlersToUse, isRefreshingExpired: !expiredMessages.isEmpty)
+        guard messagesNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
+            load(placeholderId: placeholderId, indexPath: indexPath, placeholdersNeedToRefresh: messagesToUse, isRefreshingExpired: !expiredMessages.isEmpty)
             return returnEmptyView(tag: Int.random(in: 0..<99999999))
         }
 
         // Found message
-        guard var placeholder = filterPersonalizedMessages(input: placehodlersToUse.filter { $0.personalizedMessage?.status == .ok }) else {
+        guard var message = filterPersonalizedMessages(input: messagesToUse.filter { $0.personalizedMessage?.status == .ok }) else {
             // No placeholders passed through filter. Then set all heights to 0 for the placeholderId
             var savedInAppContentBlocksToDeactived = usedInAppContentBlocks[placeholderId] ?? []
             for (index, savedInAppContentBlocks) in savedInAppContentBlocksToDeactived.enumerated() {
@@ -310,56 +350,56 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         }
 
         // Add random for 100% unique
-        let tag = createUniqueTag(placeholder: placeholder)
+        let tag = createUniqueTag(placeholder: message)
 
         // Update display status
-        let indexOfPlaceholder: Int = inAppContentBlocksPlaceholders.firstIndex(where: { $0.id == placeholder.id }) ?? 0
-        let currentDisplay = inAppContentBlocksPlaceholders[safeIndex: indexOfPlaceholder]?.displayState
+        let indexOfPlaceholder: Int = inAppContentBlockMessages.firstIndex(where: { $0.id == message.id }) ?? 0
+        let currentDisplay = inAppContentBlockMessages[safeIndex: indexOfPlaceholder]?.displayState
         let state: InAppContentBlocksDisplayStatus = .init(displayed: currentDisplay?.displayed ?? Date(), interacted: currentDisplay?.interacted)
 
-        _inAppContentBlocksPlaceholders.changeValue(with: { $0[indexOfPlaceholder].tags?.insert(tag) })
-        _inAppContentBlocksPlaceholders.changeValue(with: { $0[indexOfPlaceholder].indexPath = indexPath })
+        _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].tags?.insert(tag) })
+        _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].indexPath = indexPath })
 
-        placeholder.tags?.insert(tag)
-        placeholder.displayState = state
+        message.tags?.insert(tag)
+        message.displayState = state
 
         web = .init()
         web.tag = tag
         web.navigationDelegate = self
 
         if usedInAppContentBlocks[placeholderId] == nil {
-            self.newUsedInAppContentBlocks = .init(tag: tag, indexPath: indexPath, placeholderId: placeholder.id, placeholder: placeholderId, height: 0)
+            self.newUsedInAppContentBlocks = .init(tag: tag, indexPath: indexPath, messageId: message.id, placeholder: placeholderId, height: 0)
         } else {
-            if usedInAppContentBlocks[placeholderId]?.contains(where: { $0.placeholderId == placeholder.id }) == false {
-                self.newUsedInAppContentBlocks = .init(tag: tag, indexPath: indexPath, placeholderId: placeholder.id, placeholder: placeholderId, height: 0)
+            if usedInAppContentBlocks[placeholderId]?.contains(where: { $0.messageId == message.id }) == false {
+                self.newUsedInAppContentBlocks = .init(tag: tag, indexPath: indexPath, messageId: message.id, placeholder: placeholderId, height: 0)
             }
         }
 
-        if let html = placeholder.content?.html, !html.isEmpty {
-            if inAppContentBlocksPlaceholders[indexOfPlaceholder].normalizedHtml == nil {
+        if let html = message.content?.html, !html.isEmpty {
+            if inAppContentBlockMessages[indexOfPlaceholder].normalizedHtml == nil {
                 let normalizeConf = HtmlNormalizerConfig(
                     makeResourcesOffline: true,
                     ensureCloseButton: false
                 )
                 let normalizedPayload = HtmlNormalizer(html).normalize(normalizeConf)
-                inAppContentBlocksPlaceholders[indexOfPlaceholder].normalizedHtml = normalizedPayload.html
+                inAppContentBlockMessages[indexOfPlaceholder].normalizedHtml = normalizedPayload.html
             }
-            let finalHTML = inAppContentBlocksPlaceholders[indexOfPlaceholder].normalizedHtml ?? html
-            if inAppContentBlocksPlaceholders[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
-                _inAppContentBlocksPlaceholders.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
+            let finalHTML = inAppContentBlockMessages[indexOfPlaceholder].normalizedHtml ?? html
+            if inAppContentBlockMessages[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
+                _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
-            _inAppContentBlocksPlaceholders.changeValue(with: { $0[indexOfPlaceholder].displayState = state })
+            _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].displayState = state })
             web.loadHTMLString(finalHTML, baseURL: nil)
-            markInAppContentBlocksAsActive(placeholder: placeholder)
+            markInAppContentBlocksAsActive(placeholderId: placeholderId, message: message)
             return web
-        } else if let personalized = placeholder.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
-            if inAppContentBlocksPlaceholders[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
-                _inAppContentBlocksPlaceholders.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
+        } else if let personalized = message.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
+            if inAppContentBlockMessages[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
+                _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
             if let html = personalized.htmlPayload?.html, !html.isEmpty {
-                _inAppContentBlocksPlaceholders.changeValue(with: { $0[indexOfPlaceholder].displayState = state })
+                _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].displayState = state })
                 web.loadHTMLString(html, baseURL: nil)
-                markInAppContentBlocksAsActive(placeholder: placeholder)
+                markInAppContentBlocksAsActive(placeholderId: placeholderId, message: message)
                 return web
             } else {
                 return returnEmptyView(tag: tag)
@@ -372,7 +412,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     func prepareInAppContentBlocksStaticView(
         placeholderId: String
     ) -> StaticReturnData {
-        let placehodlersToUse = inAppContentBlocksPlaceholders.filter { !$0.placeholders.filter { $0 == placeholderId }.isEmpty }
+        let placehodlersToUse = inAppContentBlockMessages.filter { !$0.placeholders.filter { $0 == placeholderId }.isEmpty }
         let placeholdersNeedToRefresh = placehodlersToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
         let expiredMessages = placehodlersToUse.filter { inAppContentBlocks in
             if let ttlSeen = inAppContentBlocks.personalizedMessage?.ttlSeen,
@@ -384,41 +424,44 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         }
 
         guard placeholdersNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
-            return .init(html: "", tag: 0)
+            return .init(html: "", tag: 0, message: nil)
         }
 
         // Found message
-        guard var placeholder = filterPersonalizedMessages(input: placehodlersToUse.filter { $0.personalizedMessage?.status == .ok }) else {
-            return .init(html: "", tag: 0)
+        guard var message = filterPersonalizedMessages(input: placehodlersToUse.filter { $0.personalizedMessage?.status == .ok }) else {
+            return .init(html: "", tag: 0, message: nil)
         }
 
         // Add random for 100% unique
-        let tag = createUniqueTag(placeholder: placeholder)
+        let tag = createUniqueTag(placeholder: message)
 
         // Update display status
-        let indexOfPlaceholder: Int = inAppContentBlocksPlaceholders.firstIndex(where: { $0.id == placeholder.id }) ?? 0
-        let currentDisplay = inAppContentBlocksPlaceholders[safeIndex: indexOfPlaceholder]?.displayState
+        let indexOfPlaceholder: Int = inAppContentBlockMessages.firstIndex(where: { $0.id == message.id }) ?? 0
+        let currentDisplay = inAppContentBlockMessages[safeIndex: indexOfPlaceholder]?.displayState
         let state: InAppContentBlocksDisplayStatus = .init(displayed: currentDisplay?.displayed ?? Date(), interacted: currentDisplay?.interacted)
-        placeholder.tags?.insert(tag)
+        message.tags?.insert(tag)
 
-        if let personalized = placeholder.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
-            if self.inAppContentBlocksPlaceholders[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
-                _inAppContentBlocksPlaceholders.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
+        if let personalized = message.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
+            if self.inAppContentBlockMessages[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
+                _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
             if let html = personalized.htmlPayload?.html, !html.isEmpty {
-                placeholder.displayState = state
-                _inAppContentBlocksPlaceholders.changeValue(with: { $0[indexOfPlaceholder] = placeholder })
-                Exponea.shared.trackInAppContentBlocksShow(message: placeholder)
-                return .init(html: html, tag: tag)
+                message.displayState = state
+                _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder] = message })
+                Exponea.shared.trackInAppContentBlockShown(
+                    placeholderId: placeholderId,
+                    message: message
+                )
+                return .init(html: html, tag: tag, message: message)
             }
         } else {
-            if let html = placeholder.content?.html, !html.isEmpty {
-                placeholder.displayState = state
-                _inAppContentBlocksPlaceholders.changeValue(with: { $0[indexOfPlaceholder] = placeholder })
-                return .init(html: html, tag: tag)
+            if let html = message.content?.html, !html.isEmpty {
+                message.displayState = state
+                _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder] = message })
+                return .init(html: html, tag: tag, message: message)
             }
         }
-        return .init(html: "", tag: 0)
+        return .init(html: "", tag: 0, message: nil)
     }
 
     func loadInAppContentBlocksPlaceholders(completion: EmptyBlock?) {
@@ -426,7 +469,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             data: InAppContentBlocksDataResponse.self
         ) { [weak self] result in
             guard result.data?.success == true else { return }
-            self?.inAppContentBlocksPlaceholders = result.data?.data ?? []
+            self?.inAppContentBlockMessages = result.data?.data ?? []
             completion?()
         }
     }
@@ -468,7 +511,7 @@ private extension InAppContentBlocksManager {
     }
 
     func createUniqueTag(placeholder: InAppContentBlockResponse) -> Int {
-        if let existingTag = usedInAppContentBlocks[placeholder.placeholders.first ?? ""]?.first(where: { placeholder.id == $0.placeholderId })?.tag {
+        if let existingTag = usedInAppContentBlocks[placeholder.placeholders.first ?? ""]?.first(where: { placeholder.id == $0.messageId })?.tag {
             return existingTag
         } else {
             return Int.random(in: 0..<99999999)
@@ -487,10 +530,12 @@ private extension InAppContentBlocksManager {
         return view
     }
 
-    func markInAppContentBlocksAsActive(placeholder: InAppContentBlockResponse) {
-        Exponea.shared.trackInAppContentBlocksShow(message: placeholder)
-        let placeholderValue = placeholder.placeholders.first ?? ""
-        var savedInAppContentBlocksToDeactived = usedInAppContentBlocks[placeholderValue] ?? []
+    func markInAppContentBlocksAsActive(placeholderId: String, message: InAppContentBlockResponse) {
+        Exponea.shared.trackInAppContentBlockShown(
+            placeholderId: placeholderId,
+            message: message
+        )
+        var savedInAppContentBlocksToDeactived = usedInAppContentBlocks[placeholderId] ?? []
 
         // Mark all as inactive
         for (index, savedInAppContentBlocks) in savedInAppContentBlocksToDeactived.enumerated() {
@@ -498,13 +543,13 @@ private extension InAppContentBlocksManager {
             currentSavedInAppContentBlocks.isActive = false
             savedInAppContentBlocksToDeactived[index] = currentSavedInAppContentBlocks
         }
-        usedInAppContentBlocks[placeholderValue] = savedInAppContentBlocksToDeactived
+        usedInAppContentBlocks[placeholderId] = savedInAppContentBlocksToDeactived
 
         // Mark showed as active
-        if let indexOfSavedInAppContentBlocks: Int = usedInAppContentBlocks[placeholderValue]?.firstIndex(where: { $0.placeholderId == placeholder.id }) {
-            if var savedInAppContentBlocks = usedInAppContentBlocks[placeholderValue]?[indexOfSavedInAppContentBlocks] {
+        if let indexOfSavedInAppContentBlocks: Int = usedInAppContentBlocks[placeholderId]?.firstIndex(where: { $0.messageId == message.id }) {
+            if var savedInAppContentBlocks = usedInAppContentBlocks[placeholderId]?[indexOfSavedInAppContentBlocks] {
                 savedInAppContentBlocks.isActive = true
-                self._usedInAppContentBlocks.changeValue(with: { $0[placeholderValue]?[indexOfSavedInAppContentBlocks] = savedInAppContentBlocks })
+                self._usedInAppContentBlocks.changeValue(with: { $0[placeholderId]?[indexOfSavedInAppContentBlocks] = savedInAppContentBlocks })
             }
         }
     }
@@ -530,7 +575,7 @@ private extension InAppContentBlocksManager {
                     newInAppContentBlocks.htmlPayload = normalizedPayload
                     return newInAppContentBlocks
                 } ?? []
-                var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlocksPlaceholders
+                var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
                 for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
                     if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
                         personalized.ttlSeen = Date()
@@ -538,15 +583,15 @@ private extension InAppContentBlocksManager {
                         updatedPlaceholders[index].indexPath = indexPath
                     }
                 }
-                self.inAppContentBlocksPlaceholders = updatedPlaceholders
-                let placehodlersToUse = self.inAppContentBlocksPlaceholders.filter { $0.placeholders.contains(placeholderId) }
+                self.inAppContentBlockMessages = updatedPlaceholders
+                let placehodlersToUse = self.inAppContentBlockMessages.filter { $0.placeholders.contains(placeholderId) }
                 for placeholder in placehodlersToUse {
                     let tag = self.createUniqueTag(placeholder: placeholder)
-                    if let index: Int = self.inAppContentBlocksPlaceholders.firstIndex(where: { $0.id == placeholder.id }) {
-                        self.inAppContentBlocksPlaceholders[index].tags?.insert(tag)
+                    if let index: Int = self.inAppContentBlockMessages.firstIndex(where: { $0.id == placeholder.id }) {
+                        self.inAppContentBlockMessages[index].tags?.insert(tag)
                     }
-                    let usedInAppContentBlocksHeight = self.usedInAppContentBlocks[placeholderId]?.first(where: { $0.placeholderId == placeholder.id })?.height ?? 0
-                    self.newUsedInAppContentBlocks = .init(tag: tag, indexPath: indexPath, placeholderId: placeholder.id, placeholder: placeholderId, height: isRefreshingExpired ? 0 : usedInAppContentBlocksHeight)
+                    let usedInAppContentBlocksHeight = self.usedInAppContentBlocks[placeholderId]?.first(where: { $0.messageId == placeholder.id })?.height ?? 0
+                    self.newUsedInAppContentBlocks = .init(tag: tag, indexPath: indexPath, messageId: placeholder.id, placeholder: placeholderId, height: isRefreshingExpired ? 0 : usedInAppContentBlocksHeight)
                 }
             }
         }
@@ -559,7 +604,7 @@ private extension InAppContentBlocksManager {
         guard let indexPath = placeholder.indexPath else { return }
         if savedInAppContentBlocksToDeactived.isEmpty {
             self._usedInAppContentBlocks.changeValue { store in
-                let newSavedInAppContentBlocks: UsedInAppContentBlocks = .init(tag: savedNewValue.tag, indexPath: indexPath, placeholderId: savedNewValue.placeholderId, placeholder: savedNewValue.placeholder, height: height.height)
+                let newSavedInAppContentBlocks: UsedInAppContentBlocks = .init(tag: savedNewValue.tag, indexPath: indexPath, messageId: savedNewValue.messageId, placeholder: savedNewValue.placeholder, height: height.height)
                 if store[placeholderValueFromUsedLine] == nil {
                     store[placeholderValueFromUsedLine] = [newSavedInAppContentBlocks]
                 } else if store[placeholderValueFromUsedLine]?.isEmpty == true {
@@ -570,7 +615,7 @@ private extension InAppContentBlocksManager {
             self.calculator.heightUpdate = nil
             self.refreshCallback?(savedNewValue.indexPath)
         } else {
-            if let indexOfSavedInAppContentBlocks: Int = self.usedInAppContentBlocks[placeholderValueFromUsedLine]?.firstIndex(where: { $0.placeholderId == savedNewValue.placeholderId && $0.height == 0 }) {
+            if let indexOfSavedInAppContentBlocks: Int = self.usedInAppContentBlocks[placeholderValueFromUsedLine]?.firstIndex(where: { $0.messageId == savedNewValue.messageId && $0.height == 0 }) {
                 if var savedInAppContentBlocks = self.usedInAppContentBlocks[placeholderValueFromUsedLine]?[indexOfSavedInAppContentBlocks] {
                     if savedInAppContentBlocks.height == 0 {
                         savedInAppContentBlocks.height = height.height
@@ -578,7 +623,7 @@ private extension InAppContentBlocksManager {
                     self._usedInAppContentBlocks.changeValue(with: { $0[placeholderValueFromUsedLine]?.insert(savedInAppContentBlocks, at: indexOfSavedInAppContentBlocks) })
                 }
             } else {
-                let newSavedInAppContentBlocks: UsedInAppContentBlocks = .init(tag: savedNewValue.tag, indexPath: indexPath, placeholderId: savedNewValue.placeholderId, placeholder: savedNewValue.placeholder, height: height.height)
+                let newSavedInAppContentBlocks: UsedInAppContentBlocks = .init(tag: savedNewValue.tag, indexPath: indexPath, messageId: savedNewValue.messageId, placeholder: savedNewValue.placeholder, height: height.height)
                 self._usedInAppContentBlocks.changeValue { store in
                     store[placeholderValueFromUsedLine]?.append(newSavedInAppContentBlocks)
                 }
@@ -604,10 +649,10 @@ extension InAppContentBlocksManager {
         if !isStaticUpdating {
             isStaticUpdating = true
             guard !staticQueueData.placeholderId.isEmpty, let ids = try? DatabaseManager().currentCustomer.ids else {
-                staticQueueData.completion?(.init(html: "", tag: 0))
+                staticQueueData.completion?(.init(html: "", tag: 0, message: nil))
                 return
             }
-            let idsForDownload = inAppContentBlocksPlaceholders.filter { $0.placeholders.contains(staticQueueData.placeholderId) }.map { $0.id }
+            let idsForDownload = inAppContentBlockMessages.filter { $0.placeholders.contains(staticQueueData.placeholderId) }.map { $0.id }
             provider.loadPersonalizedInAppContentBlocks(
                 data: PersonalizedInAppContentBlockResponseData.self,
                 customerIds: ids,
@@ -624,14 +669,14 @@ extension InAppContentBlocksManager {
                     newInAppContentBlocks.htmlPayload = normalizedPayload
                     return newInAppContentBlocks
                 } ?? []
-                var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlocksPlaceholders
+                var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
                 for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
                     if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
                         personalized.ttlSeen = Date()
                         updatedPlaceholders[index].personalizedMessage = personalized
                     }
                 }
-                self.inAppContentBlocksPlaceholders = updatedPlaceholders
+                self.inAppContentBlockMessages = updatedPlaceholders
                 let data = self.prepareInAppContentBlocksStaticView(placeholderId: staticQueueData.placeholderId)
                 staticQueueData.completion?(data)
                 self.continueWithStaticQueue()
@@ -657,7 +702,7 @@ private extension InAppContentBlocksManager {
             isUpdating = true
             let savedNewValue = newValue
             let savedPlaceholder = placeholder
-            loadPersonalizedInAppContentBlocks(for: savedNewValue.placeholderId, tags: [savedNewValue.tag]) {
+            loadPersonalizedInAppContentBlocks(for: savedNewValue.messageId, tags: [savedNewValue.tag]) {
                 self.calculator = .init()
                 self.calculator.heightUpdate = { height in
                     let placeholderValueFromUsedLine = savedNewValue.placeholder
@@ -665,7 +710,7 @@ private extension InAppContentBlocksManager {
                     guard let indexPath = placeholder.indexPath else { return }
                     if savedInAppContentBlocksToDeactived.isEmpty {
                         self._usedInAppContentBlocks.changeValue { store in
-                            let newSavedInAppContentBlocks: UsedInAppContentBlocks = .init(tag: savedNewValue.tag, indexPath: indexPath, placeholderId: savedPlaceholder.id, placeholder: savedNewValue.placeholder, height: height.height)
+                            let newSavedInAppContentBlocks: UsedInAppContentBlocks = .init(tag: savedNewValue.tag, indexPath: indexPath, messageId: savedPlaceholder.id, placeholder: savedNewValue.placeholder, height: height.height)
                             if store[placeholderValueFromUsedLine] == nil {
                                 store[placeholderValueFromUsedLine] = [newSavedInAppContentBlocks]
                             } else if store[placeholderValueFromUsedLine]?.isEmpty == true {
@@ -678,7 +723,7 @@ private extension InAppContentBlocksManager {
                             self.refreshCallback?(path)
                         }
                     } else {
-                        if let indexOfSavedInAppContentBlocks: Int = self.usedInAppContentBlocks[placeholderValueFromUsedLine]?.firstIndex(where: { $0.placeholderId == savedPlaceholder.id && $0.height == 0 }) {
+                        if let indexOfSavedInAppContentBlocks: Int = self.usedInAppContentBlocks[placeholderValueFromUsedLine]?.firstIndex(where: { $0.messageId == savedPlaceholder.id && $0.height == 0 }) {
                             if var savedInAppContentBlocks = self.usedInAppContentBlocks[placeholderValueFromUsedLine]?[indexOfSavedInAppContentBlocks] {
                                 if savedInAppContentBlocks.height == 0 {
                                     savedInAppContentBlocks.height = height.height
@@ -686,7 +731,7 @@ private extension InAppContentBlocksManager {
                                 self._usedInAppContentBlocks.changeValue(with: { $0[placeholderValueFromUsedLine]?.insert(savedInAppContentBlocks, at: indexOfSavedInAppContentBlocks) })
                             }
                         } else {
-                            let newSavedInAppContentBlocks: UsedInAppContentBlocks = .init(tag: savedNewValue.tag, indexPath: indexPath, placeholderId: savedPlaceholder.id, placeholder: savedNewValue.placeholder, height: height.height)
+                            let newSavedInAppContentBlocks: UsedInAppContentBlocks = .init(tag: savedNewValue.tag, indexPath: indexPath, messageId: savedPlaceholder.id, placeholder: savedNewValue.placeholder, height: height.height)
                             self._usedInAppContentBlocks.changeValue { store in
                                 store[placeholderValueFromUsedLine]?.append(newSavedInAppContentBlocks)
                             }
@@ -698,7 +743,7 @@ private extension InAppContentBlocksManager {
                         }
                     }
                 }
-                guard let html = self.inAppContentBlocksPlaceholders.first(where: { $0.tags?.contains(newValue.tag) == true })?.personalizedMessage?.htmlPayload?.html, !html.isEmpty else {
+                guard let html = self.inAppContentBlockMessages.first(where: { $0.tags?.contains(newValue.tag) == true })?.personalizedMessage?.htmlPayload?.html, !html.isEmpty else {
                     self.isUpdating = false
                     if !self.queue.isEmpty {
                         let go = self.queue[0]

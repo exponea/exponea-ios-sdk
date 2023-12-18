@@ -269,26 +269,41 @@ extension TrackingManager: TrackingManagerType {
             )
         }
 
-    public func trackInAppContentBlocksClick(
+    func trackInAppContentBlockClick(
+        placeholderId: String,
+        action: InAppContentBlockAction,
         message: InAppContentBlockResponse,
-        trackingAllowed: Bool,
-        buttonText: String?,
-        buttonLink: String?
+        trackingAllowed: Bool
     ) {
         track(
-            .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),
+            .click(buttonLabel: action.name ?? "", url: action.url ?? "" ),
             for: message,
+            within: placeholderId,
             trackingAllowed: trackingAllowed,
             isUserInteraction: true
         )
     }
 
-    public func trackInAppContentBlocksClose(message: InAppContentBlockResponse, trackingAllowed: Bool) {
-        track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: true)
+    func trackInAppContentBlockError(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        errorMessage: String,
+        trackingAllowed: Bool
+    ) {
+        track(
+            .error(message: errorMessage),
+            for: message,
+            within: placeholderId,
+            trackingAllowed: trackingAllowed,
+            isUserInteraction: true)
     }
 
-    public func trackInAppContentBlocksShow(message: InAppContentBlockResponse, trackingAllowed: Bool) {
-        track(.show, for: message, trackingAllowed: trackingAllowed)
+    func trackInAppContentBlockClose(placeholderId: String, message: InAppContentBlockResponse, trackingAllowed: Bool) {
+        track(.close, for: message, within: placeholderId, trackingAllowed: trackingAllowed, isUserInteraction: true)
+    }
+
+    func trackInAppContentBlockShow(placeholderId: String, message: InAppContentBlockResponse, trackingAllowed: Bool) {
+        track(.show, for: message, within: placeholderId, trackingAllowed: trackingAllowed)
     }
 
     public func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
@@ -505,7 +520,13 @@ extension TrackingManager: InAppMessageTrackingDelegate {
 // MARK: - In-app Content Blocks -
 
 extension TrackingManager: InAppContentBlocksTrackingDelegate {
-    public func track(_ event: InAppContentBlocksTrackingEvent, for message: InAppContentBlockResponse, trackingAllowed: Bool, isUserInteraction: Bool = false) {
+    public func track(
+        _ event: InAppContentBlocksTrackingEvent,
+        for message: InAppContentBlockResponse,
+        within placeholderId: String,
+        trackingAllowed: Bool,
+        isUserInteraction: Bool = false
+    ) {
         var eventData: [String: JSONValue] = [
             "action": .string(event.action),
             "banner_id": .string(message.id),
@@ -513,7 +534,7 @@ extension TrackingManager: InAppContentBlocksTrackingDelegate {
             "os": .string("iOS"),
             "type": .string("in-app content block"),
             "banner_type": .string(message.contentType?.rawValue ?? message.personalizedMessage?.contentType?.rawValue ?? "null"),
-            "placeholder": .string(message.placeholders.joined(separator: ", ")),
+            "placeholder": .string(placeholderId),
             "banner_name": .string(message.name),
             "platform": .string("ios")
         ]

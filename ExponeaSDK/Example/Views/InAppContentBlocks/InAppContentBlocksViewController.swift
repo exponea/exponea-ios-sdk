@@ -87,7 +87,7 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 1:
-            let height = Exponea.shared.inAppContentBlocksManager?.getUsedInAppContentBlocks(placeholder: "example_list", indexPath: indexPath)?.height ?? 0
+            let height = Exponea.shared.inAppContentBlocksManager?.getUsedInAppContentBlocks(placeholder: "example_list")?.height ?? 0
             return height
         default:
             return UITableView.automaticDimension
@@ -165,6 +165,8 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
                 )
             }
         }
+        let origBehaviour = placeholder.behaviourCallback
+        placeholder.behaviourCallback = ExampleInAppContentBlockCallback(originalBehaviour: origBehaviour)
         placeholder.translatesAutoresizingMaskIntoConstraints = false
         placeholder.topAnchor.constraint(equalTo: view.topAnchor, constant: 80).isActive = true
         placeholder.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true

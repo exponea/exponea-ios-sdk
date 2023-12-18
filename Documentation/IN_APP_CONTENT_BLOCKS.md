@@ -96,3 +96,77 @@ placeholderView.contentReadyCompletion = { [weak self] contentLoaded in
     }
 }
 ```
+
+### Custom In-app content block actions
+
+If you want to override default SDK behavior, when in-app content block action is performed (button is clicked), or you want to add your code to be performed along with code executed by the SDK, you can set up `behaviourCallback` on View instance.
+Default SDK behaviour is mainly tracking of 'show', 'click', 'close' and 'error' events and opening action URL.
+
+Customized `InAppContentBlockCallbackType` has to be registered into `StaticInAppContentBlockView` directly: 
+```swift
+// it is recommended to postpone message load if `onMessageShown` usage is crucial for you
+// due to cached messages so message could be shown before you set `behaviourCallback`
+let placeholderView = StaticInAppContentBlockView(placeholder: "placeholder", deferredLoad: true)
+// you can access original callback and invokes it anytime
+let origBehaviour = placeholderView.behaviourCallback
+placeholderView.behaviourCallback = CustomInAppContentBlockCallback(originalBehaviour: origBehaviour)
+// `placeholderView` has deferred load, so we trigger it
+placeholderView.reload()
+```
+Customized `behaviourCallback` has to implement `InAppContentBlockCallbackType` protocol. This example is using original/default behaviour as recommended step to use a default SDK behaviour, but it is not a required step:
+```swift
+class CustomInAppContentBlockCallback: InAppContentBlockCallbackType {
+
+    private let originalBehaviour: InAppContentBlockCallbackType
+
+    init(
+        originalBehaviour: InAppContentBlockCallbackType
+    ) {
+        self.originalBehaviour = originalBehaviour
+    }
+
+    func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        originalBehaviour.onMessageShown(placeholderId: placeholderId, contentBlock: contentBlock)
+        let htmlContent = contentBlock.content?.html ?? contentBlock.personalizedMessage?.content?.html
+        // you may set this placeholder visible
+    }
+
+    func onNoMessageFound(placeholderId: String) {
+        originalBehaviour.onNoMessageFound(placeholderId: placeholderId)
+        // you may set this placeholder hidden
+    }
+
+    func onError(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse?, errorMessage: String) {
+        guard let contentBlock else {
+            return
+        }
+        // !!! invoke origBehaviour.onError to track 'error' or call it yourself
+        Exponea.shared.trackInAppContentBlockError(
+            placeholderId: placeholderId,
+            message: contentBlock,
+            errorMessage: errorMessage
+        )
+        // you may set this placeholder hidden and do any fallback
+    }
+
+    func onCloseClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // !!! invoke origBehaviour.onCloseClicked to track 'close' or call it yourself
+        Exponea.shared.trackInAppContentBlockClose(
+            placeholderId: placeholderId,
+            message: contentBlock
+        )
+        // placeholder may show another content block if is assigned to placeholder ID
+    }
+
+    func onActionClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        // content block action has to be tracked for 'click' event
+        Exponea.shared.trackInAppContentBlockClick(
+            placeholderId: placeholderId,
+            action: action,
+            message: contentBlock
+        )
+        // content block action has to be handled for given `action.url`
+        handleUrlByYourApp(action.url)
+    }
+}
+```
