@@ -1,4 +1,18 @@
 ## Release Notes
+## Release Notes for 2.21.0
+#### December 18, 2023
+* Features
+  * In-app content blocks behaviour handler for view lifecycle events
+  * In-app content blocks tracking API with handling of tracking consent according to DSGVO/GDPR
+  * In-app content blocks support for height update
+* Bug Fixes
+  * Removed: Dev debug log in StaticInAppContentBlockView class
+  * Fixed: Could not find module 'ExponeaSDK' for simulator target x86_64
+  * Fixed: Extensions were defined as public
+  * Fixed: AppInbox list item image was stretched by longer dimension
+  * Fixed: Showing of alert was causing crash for opened push in Example app
+
+
 ## Release Notes for 2.20.0
 #### November 27, 2023
 * Features
