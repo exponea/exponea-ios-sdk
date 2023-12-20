@@ -189,7 +189,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 errorMessage: errorMessage
             )
         }
-        webAction.htmlPayload = inAppContentBlockResponse.content?.html ?? inAppContentBlockResponse.personalizedMessage?.content?.html
+        webAction.htmlPayload = inAppContentBlockResponse.normalizedResult ?? inAppContentBlockResponse.personalizedMessage?.htmlPayload
         let handled = webAction.handleActionClick(navigationAction.request.url)
         if handled {
             Exponea.logger.log(.verbose, message: "[HTML] Action \(navigationAction.request.url?.absoluteString ?? "Invalid") has been handled")
@@ -377,15 +377,15 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         web.navigationDelegate = self
 
         if let html = message.content?.html, !html.isEmpty {
-            if inAppContentBlockMessages[indexOfPlaceholder].normalizedHtml == nil {
+            if inAppContentBlockMessages[indexOfPlaceholder].normalizedResult == nil {
                 let normalizeConf = HtmlNormalizerConfig(
                     makeResourcesOffline: true,
                     ensureCloseButton: false
                 )
                 let normalizedPayload = HtmlNormalizer(html).normalize(normalizeConf)
-                inAppContentBlockMessages[indexOfPlaceholder].normalizedHtml = normalizedPayload.html
+                inAppContentBlockMessages[indexOfPlaceholder].normalizedResult = normalizedPayload
             }
-            let finalHTML = inAppContentBlockMessages[indexOfPlaceholder].normalizedHtml ?? html
+            let finalHTML = inAppContentBlockMessages[indexOfPlaceholder].normalizedResult?.html ?? html
             if inAppContentBlockMessages[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
                 _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }

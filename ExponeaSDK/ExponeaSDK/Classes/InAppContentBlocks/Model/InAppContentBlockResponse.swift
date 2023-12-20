@@ -72,7 +72,7 @@ public struct InAppContentBlockResponse: Codable {
     public var contentType: InAppContentBlockContentType?
     public var content: Content?
     @CodableIgnored
-    public var normalizedHtml: String?
+    public var normalizedResult: NormalizedResult?
     public var trackingConsentCategory: String?
     public let placeholders: [String]
     @CodableIgnored
