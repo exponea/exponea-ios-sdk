@@ -32,7 +32,7 @@ public final class WKWebViewHeightCalculator: WKWebView, WKNavigationDelegate {
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.heightUpdate?(.init(height: webView.scrollView.contentSize.height + 15, placeholderId: self.id))
+            self.heightUpdate?(.init(height: webView.scrollView.contentSize.height + 25, placeholderId: self.id))
         }
         decisionHandler(.allow)
     }

@@ -265,7 +265,7 @@ public class ExponeaInternal: ExponeaType {
                               let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
                         inAppMessagesManager.preload(for: trackingManager.customerIds)
                         if let placeholders = configuration.inAppContentBlocksPlaceholders {
-                            inAppContentBlocksManager.loadInAppContentBlocksPlaceholders {
+                            inAppContentBlocksManager.loadInAppContentBlockMessages {
                                 inAppContentBlocksManager.prefetchPlaceholdersWithIds(ids: placeholders)
                             }
                         }
@@ -310,7 +310,7 @@ public class ExponeaInternal: ExponeaType {
                 onMain {
                     self.inAppContentBlocksManager = InAppContentBlocksManager.manager
                     self.inAppContentBlocksManager?.initBlocker()
-                    self.inAppContentBlocksManager?.loadInAppContentBlocksPlaceholders { [weak self] in
+                    self.inAppContentBlocksManager?.loadInAppContentBlockMessages { [weak self] in
                         self?.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: configuration.inAppContentBlocksPlaceholders ?? [])
                     }
                 }
