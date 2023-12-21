@@ -12,6 +12,12 @@ public struct InAppContentBlockAction {
     public let name: String?
     public let url: String?
     public let type: InAppContentBlockActionType
+
+    public init(name: String?, url: String?, type: InAppContentBlockActionType) {
+        self.name = name
+        self.url = url
+        self.type = type
+    }
 }
 
 public enum InAppContentBlockActionType {
