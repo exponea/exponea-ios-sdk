@@ -1,4 +1,13 @@
 ## Release Notes
+## Release Notes for 2.21.1
+#### December 21, 2023
+* Features
+  * More detailed logging added to In-app content blocks
+* Bug Fixes
+  * Removed: Explicitly defined arm7 and arm7s arch is causing problem during build
+  * Fixed: In-app content block tableView has been shown and tracked for bad placeholderID value
+
+
 ## Release Notes for 2.21.0
 #### December 18, 2023
 * Features
