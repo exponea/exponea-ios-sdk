@@ -179,6 +179,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 action: inAppCbAction,
                 message: inAppContentBlockResponse
             )
+            self.urlOpener.openBrowserLink(action.actionUrl)
             self.refreshCallback?(selectedUsed.indexPath)
         } onErrorCallback: { error in
             let errorMessage = "WebActionManager error \(error.localizedDescription)"
@@ -340,7 +341,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
 
     func prepareInAppContentBlockView(placeholderId: String, indexPath: IndexPath) -> UIView {
         let messagesToUse = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholderId) }
-        let messagesNeedToRefresh = messagesToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
+        let messagesNeedToRefresh = messagesToUse.filter { $0.indexPath == nil || $0.personalizedMessage == nil && $0.content?.html == nil }
         let expiredMessages = messagesToUse.filter { inAppContentBlocks in
             if let ttlSeen = inAppContentBlocks.personalizedMessage?.ttlSeen,
                let ttl = inAppContentBlocks.personalizedMessage?.ttlSeconds,
@@ -349,8 +350,9 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             }
             return false
         }
-        guard messagesNeedToRefresh.isEmpty else {
+        guard messagesNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
             Exponea.logger.log(.verbose, message: "Loading content for In-app Content Block with placeholder: \(placeholderId) and indxPath \(indexPath)")
+            markAsInactive(indexPath: indexPath, placeholderId: placeholderId)
             loadContent(indexPath: indexPath, placeholder: placeholderId, expired: expiredMessages)
             return returnEmptyView(tag: Int.random(in: 0..<99999999))
         }
@@ -539,7 +541,10 @@ private extension InAppContentBlocksManager {
         if !isLoadUpdating {
             isLoadUpdating = true
             let placehodlersToUse = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholder) }
-            let placeholdersNeedToGetContent = placehodlersToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
+            var placeholdersNeedToGetContent = placehodlersToUse.filter { $0.indexPath == nil || $0.personalizedMessage == nil && $0.content?.html == nil }
+            if placeholdersNeedToGetContent.isEmpty && !expired.isEmpty {
+                placeholdersNeedToGetContent = expired
+            }
             guard !placeholdersNeedToGetContent.isEmpty else {
                 for placeholderInLoop in placehodlersToUse {
                     let tag = createUniqueTag(placeholder: placeholderInLoop)
@@ -577,6 +582,7 @@ private extension InAppContentBlocksManager {
                             personalized.ttlSeen = Date()
                             updatedPlaceholders[index].personalizedMessage = personalized
                             updatedPlaceholders[index].tags?.insert(tag)
+                            updatedPlaceholders[index].indexPath = indexPath
                         }
                     }
                     self._inAppContentBlockMessages.changeValue(with: { $0 = updatedPlaceholders })
@@ -595,52 +601,6 @@ private extension InAppContentBlocksManager {
             }
         } else {
             _loadQueue.changeValue(with: { $0.append(.init(placeholder: placeholder, indexPath: indexPath, expired: expired)) })
-        }
-    }
-
-    func load(placeholderId: String, indexPath: IndexPath, placeholdersNeedToRefresh: [InAppContentBlockResponse], isRefreshingExpired: Bool) {
-        guard let ids = try? DatabaseManager().currentCustomer.ids else {
-            return
-        }
-        DispatchQueue.global().async { [weak self] in
-            guard let self else { return }
-            self.provider.loadPersonalizedInAppContentBlocks(
-                data: PersonalizedInAppContentBlockResponseData.self,
-                customerIds: ids,
-                inAppContentBlocksIds: placeholdersNeedToRefresh.map { $0.id }
-            ) { data in
-                let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data.compactMap { response in
-                    var newInAppContentBlocks = response
-                    let normalizeConf = HtmlNormalizerConfig(
-                        makeResourcesOffline: true,
-                        ensureCloseButton: false
-                    )
-                    let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
-                    newInAppContentBlocks.htmlPayload = normalizedPayload
-                    return newInAppContentBlocks
-                } ?? []
-                var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
-                for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
-                    if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
-                        updatedPlaceholders[index].personalizedMessage = personalized
-                    }
-                }
-                self._inAppContentBlockMessages.changeValue(with: { $0 = updatedPlaceholders })
-                let placehodlersToUse = self.inAppContentBlockMessages.filter { $0.placeholders.contains(placeholderId) }
-                if self.usedInAppContentBlocks.isEmpty {
-                    for placeholderInLoop in placehodlersToUse {
-                        let tag = self.createUniqueTag(placeholder: placeholderInLoop)
-                        let usedInAppContentBlocksHeight = self.usedInAppContentBlocks[placeholderId]?.first(where: { $0.messageId == placeholderInLoop.id })?.height ?? 0
-                        self.newUsedInAppContentBlocks = .init(tag: tag, indexPath: indexPath, messageId: placeholderInLoop.id, placeholder: placeholderId, height: isRefreshingExpired ? 0 : usedInAppContentBlocksHeight, placeholderData: placeholderInLoop)
-                    }
-                } else {
-                    for placeholderInLoop in placehodlersToUse where self.usedInAppContentBlocks[placeholderId]?.first(where: { $0.messageId == placeholderInLoop.id && $0.indexPath == placeholderInLoop.indexPath }) != nil {
-                        let tag = self.createUniqueTag(placeholder: placeholderInLoop)
-                        let usedInAppContentBlocksHeight = self.usedInAppContentBlocks[placeholderId]?.first(where: { $0.messageId == placeholderInLoop.id })?.height ?? 0
-                        self.newUsedInAppContentBlocks = .init(tag: tag, indexPath: indexPath, messageId: placeholderInLoop.id, placeholder: placeholderId, height: isRefreshingExpired ? 0 : usedInAppContentBlocksHeight, placeholderData: placeholderInLoop)
-                    }
-                }
-            }
         }
     }
 
