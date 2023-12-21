@@ -3547,8 +3547,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (
 					"$(ARCHS_STANDARD)",
-					armv7s,
-					armv7,
 					x86_64,
 				);
 				CLANG_ANALYZER_NONNULL = YES;
