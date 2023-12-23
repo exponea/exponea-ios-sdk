@@ -23,6 +23,11 @@ class ExampleInAppContentBlockCallback: InAppContentBlockCallbackType {
         originalBehaviour.onMessageShown(placeholderId: placeholderId, contentBlock: contentBlock)
         let htmlContent = contentBlock.content?.html ?? contentBlock.personalizedMessage?.content?.html
         Exponea.logger.log(.verbose, message: "Content block with HTML: \(htmlContent ?? "empty")")
+        let normalizerConf = HtmlNormalizerConfig(makeResourcesOffline: true, ensureCloseButton: false)
+        if let htmlContent,
+           let normalizedHtml = HtmlNormalizer(htmlContent).normalize(normalizerConf).html {
+            Exponea.logger.log(.verbose, message: "Normalized HTML: \(normalizedHtml)")
+        }
     }
 
     func onNoMessageFound(placeholderId: String) {

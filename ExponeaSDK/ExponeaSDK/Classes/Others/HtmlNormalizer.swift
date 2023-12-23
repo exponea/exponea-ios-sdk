@@ -560,6 +560,10 @@ public struct ActionInfo {
 public struct HtmlNormalizerConfig {
     public let makeResourcesOffline: Bool
     public let ensureCloseButton: Bool
+    public init(makeResourcesOffline: Bool, ensureCloseButton: Bool) {
+        self.makeResourcesOffline = makeResourcesOffline
+        self.ensureCloseButton = ensureCloseButton
+    }
 }
 
 private struct CssOnlineUrl {
