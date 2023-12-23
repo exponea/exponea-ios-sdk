@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.21.2
+#### December 23, 2023
+* Bug Fixes
+  * Fixed: Using of HtmlNormalizer is not available as public, and able to normalization process can not be set
+
+
 ## Release Notes for 2.21.1
 #### December 21, 2023
 * Features
