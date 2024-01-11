@@ -1,4 +1,10 @@
 ## Release Notes
+## Release Notes for 2.21.3
+#### January 11, 2024
+* Bug Fixes
+  * Fixed: Invoking of In-app content blocks behaviour callback from outside is not reflected to local flags about showing and interaction
+
+
 ## Release Notes for 2.21.2
 #### December 23, 2023
 * Bug Fixes
