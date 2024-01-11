@@ -179,7 +179,50 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-        let result = inAppContentBlocksManager.inAppContentBlockMessages.first(where: { $0.tags?.contains(webView.tag) == true })
+        let handled = handleUrlClick(navigationAction.request.url)
+        decisionHandler(handled ? .cancel : .allow)
+    }
+
+    private func determineActionType(_ action: ActionInfo) -> InAppContentBlockActionType {
+        if action.actionUrl == "https://exponea.com/close_action" {
+            return .close
+        }
+        if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
+            return .browser
+        }
+        return .deeplink
+    }
+
+    // directly calls `contentReadyCompletion` with given contentReady flag
+    // use this method in case that no layout is going to be invoked
+    private func notifyContentReadyState(_ contentReady: Bool) {
+        onMain {
+            self.contentReadyCompletion?(contentReady)
+        }
+    }
+
+    // registers contentReady flag that will be used for `contentReadyCompletion` when layout/bounds will be updated
+    private func prepareContentReadyState(_ contentReady: Bool) {
+        contentReadyFlag = contentReady
+    }
+
+    public func invokeActionClick(actionUrl: String) {
+        Exponea.logger.log(.verbose, message: "InAppCB: Manual action \(actionUrl) invoked on placeholder \(placeholder)")
+        _ = handleUrlClick(actionUrl.cleanedURL())
+    }
+
+    private func handleUrlClick(_ actionUrl: URL?) -> Bool {
+        guard let actionUrl else {
+            Exponea.logger.log(.warning, message: "InAppCB: Unknown action URL: \(String(describing: actionUrl))")
+            return false
+        }
+        guard let message = assignedMessage else {
+            Exponea.logger.log(.error, message: "InAppCB: Placeholder \(placeholder) has invalid state - action or message is invalid")
+            behaviourCallback.onError(placeholderId: placeholder, contentBlock: nil, errorMessage: "Invalid action definition")
+            // webView has to stop navigation, missing message data are internal issue
+            return true
+        }
+        let result = inAppContentBlocksManager.inAppContentBlockMessages.first(where: { $0.tags?.contains(webview.tag) == true })
         let webAction: WebActionManager = .init {
             let indexOfMessage: Int = self.inAppContentBlocksManager.inAppContentBlockMessages.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
             let currentDisplay = self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfMessage].displayState
@@ -213,36 +256,12 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             Exponea.logger.log(.error, message: "WebActionManager error \(error.localizedDescription)")
         }
         webAction.htmlPayload = result?.personalizedMessage?.htmlPayload
-        let handled = webAction.handleActionClick(navigationAction.request.url)
+        let handled = webAction.handleActionClick(actionUrl)
         if handled {
-            Exponea.logger.log(.verbose, message: "[HTML] Action \(navigationAction.request.url?.absoluteString ?? "Invalid") has been handled")
-            decisionHandler(.cancel)
+            Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has been handled")
         } else {
-            Exponea.logger.log(.verbose, message: "[HTML] Action \(navigationAction.request.url?.absoluteString ?? "Invalid") has not been handled, continue")
-            decisionHandler(.allow)
+            Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has not been handled, continue")
         }
-    }
-
-    private func determineActionType(_ action: ActionInfo) -> InAppContentBlockActionType {
-        if action.actionUrl == "https://exponea.com/close_action" {
-            return .close
-        }
-        if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
-            return .browser
-        }
-        return .deeplink
-    }
-
-    // directly calls `contentReadyCompletion` with given contentReady flag
-    // use this method in case that no layout is going to be invoked
-    private func notifyContentReadyState(_ contentReady: Bool) {
-        onMain {
-            self.contentReadyCompletion?(contentReady)
-        }
-    }
-
-    // registers contentReady flag that will be used for `contentReadyCompletion` when layout/bounds will be updated
-    private func prepareContentReadyState(_ contentReady: Bool) {
-        contentReadyFlag = contentReady
+        return handled
     }
 }

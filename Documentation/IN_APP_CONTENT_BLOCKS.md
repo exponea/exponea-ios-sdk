@@ -170,3 +170,99 @@ class CustomInAppContentBlockCallback: InAppContentBlockCallbackType {
     }
 }
 ```
+
+### Custom presentation of In-app content block
+
+In case that UI presentation of StaticInAppContentBlockView does not fit UX design of your application (for example customized animations) you may create own UIView element that wraps existing StaticInAppContentBlockView instance.
+Setup could differ from your use case but you should keep these 4 principles:
+
+1. Prepare StaticInAppContentBlockView instance with deferred load:
+```swift
+class CustomView: UIViewController {
+
+    lazy var placeholder = StaticInAppContentBlockView(placeholder: "placeholder_1", deferredLoad: true)
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        placeholder.behaviourCallback = CustomBehaviourCallback(
+            placeholder.behaviourCallback,
+            placeholder,
+            self
+        )
+        placeholderView.reload()
+    }
+}
+```
+2. Hook your CustomView to listen on In-app Content Block message arrival with customized behaviourCallback:
+```swift
+class CustomBehaviourCallback: InAppContentBlockCallbackType {
+
+    private let originalBehaviour: InAppContentBlockCallbackType
+    private let ownerView: StaticInAppContentBlockView
+    private let viewDelegate: InAppCbViewDelegate
+
+    init(
+        _ originalBehaviour: InAppContentBlockCallbackType,
+        _ ownerView: StaticInAppContentBlockView,
+        _ viewDelegate: InAppCbViewDelegate
+    ) {
+        self.originalBehaviour = originalBehaviour
+        self.ownerView = ownerView
+        self.viewDelegate = viewDelegate
+    }
+
+    func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // Calling originalBehavior tracks 'show' event and opens URL
+        originalBehaviour.onMessageShown(placeholderId: placeholderId, contentBlock: contentBlock)
+        viewDelegate.showMessage(contentBlock)
+    }
+
+    func onNoMessageFound(placeholderId: String) {
+        viewDelegate.showNoMessage()
+    }
+
+    func onError(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse?, errorMessage: String) {
+        // Calling originalBehavior tracks 'error' event
+        originalBehaviour.onError(placeholderId: placeholderId, contentBlock: contentBlock, errorMessage: errorMessage)
+        viewDelegate.showError()
+    }
+
+    func onCloseClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // Calling originalBehavior tracks 'close' event
+        originalBehaviour.onCloseClicked(placeholderId: placeholderId, contentBlock: contentBlock)
+        viewDelegate.hideMe()
+    }
+
+    func onActionClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        // Calling originalBehavior tracks 'click' event
+        originalBehaviour.onActionClicked(placeholderId: placeholderId, contentBlock: contentBlock, action: action)
+    }
+}
+```
+3. Show retrieved message in your customized UIView:
+```swift
+protocol InAppCbViewDelegate {
+    func showMessage(_ contentBlock: ExponeaSDK.InAppContentBlockResponse)
+    func showNoMessage()
+    func showError()
+    func hideMe()
+}
+
+class CustomView: UIViewController, InAppCbViewDelegate {
+    /// Update your customized content.
+    /// This method could be called multiple times for every content block update, especially in case that multiple messages are assigned to given "placeholder_1" ID
+    func showMessage(_ contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // ...
+    }
+}
+```
+4. Invoke clicked action manually. For example if your CustomView contains UIButton that is registered with `addTarget` for action URL and is calling `onMyActionClick` method:
+```swift
+@objc func onMyActionClick(sender: UIButton) {
+    // retrieve `actionUrl` from extended UIButton or stored in some private field, it is up to you
+    let actionUrl = getActionUrl(sender)
+    placeholder.invokeActionClick(actionUrl: actionUrl)
+}
+```
+
+That is all, now your CustomView will receive all In-app Content Block data.

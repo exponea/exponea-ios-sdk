@@ -169,7 +169,8 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
             }
         }
         let origBehaviour = placeholder.behaviourCallback
-        placeholder.behaviourCallback = ExampleInAppContentBlockCallback(originalBehaviour: origBehaviour)
+        placeholder.behaviourCallback = ExampleInAppContentBlockCallback(originalBehaviour: origBehaviour, ownerView: placeholder
+        )
         placeholder.translatesAutoresizingMaskIntoConstraints = false
         placeholder.topAnchor.constraint(equalTo: view.topAnchor, constant: 80).isActive = true
         placeholder.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true

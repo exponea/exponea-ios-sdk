@@ -12,11 +12,14 @@ import ExponeaSDK
 class ExampleInAppContentBlockCallback: InAppContentBlockCallbackType {
 
     private let originalBehaviour: InAppContentBlockCallbackType
+    private let ownerView: StaticInAppContentBlockView
 
     init(
-        originalBehaviour: InAppContentBlockCallbackType
+        originalBehaviour: InAppContentBlockCallbackType,
+        ownerView: StaticInAppContentBlockView
     ) {
         self.originalBehaviour = originalBehaviour
+        self.ownerView = ownerView
     }
 
     func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
@@ -52,26 +55,34 @@ class ExampleInAppContentBlockCallback: InAppContentBlockCallbackType {
         )
     }
 
+    private var actionClickBounce = false
+
     func onActionClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
-        Exponea.shared.trackInAppContentBlockClickWithoutTrackingConsent(
-            placeholderId: placeholderId,
-            action: action,
-            message: contentBlock
-        )
         Exponea.logger.log(.verbose, message: "Handling In-app content block action \(action.url ?? "none")")
         guard let actionUrl = action.url,
               let url = actionUrl.cleanedURL() else {
             return
         }
-        switch action.type {
-        case .browser:
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        case .deeplink:
-            if !openUniversalLink(url, application: UIApplication.shared) {
-                openURLSchemeDeeplink(url, application: UIApplication.shared)
+        if actionClickBounce {
+            actionClickBounce = false
+            Exponea.shared.trackInAppContentBlockClickWithoutTrackingConsent(
+                placeholderId: placeholderId,
+                action: action,
+                message: contentBlock
+            )
+            switch action.type {
+            case .browser:
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            case .deeplink:
+                if !openUniversalLink(url, application: UIApplication.shared) {
+                    openURLSchemeDeeplink(url, application: UIApplication.shared)
+                }
+            case .close:
+                Exponea.logger.log(.error, message: "In-app content block close has to be handled elsewhere")
             }
-        case .close:
-            Exponea.logger.log(.error, message: "In-app content block close has to be handled elsewhere")
+        } else {
+            actionClickBounce = true
+            ownerView.invokeActionClick(actionUrl: actionUrl)
         }
     }
 
