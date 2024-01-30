@@ -222,3 +222,26 @@ If you want to avoid to consider tracking, you may use `Exponea.shared.trackAppI
 To track an invoking of action, you should use method `Exponea.shared.trackAppInboxClick(MessageItemAction, MessageItem)` with clicked message action and data.
 The behaviour of `trackAppInboxClick` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in [tracking consent documentation](./TRACKING_CONSENT.md).
 If you want to avoid to consider tracking, you may use `Exponea.shared.trackAppInboxClickWithoutTrackingConsent` instead. This method will do track event ignoring tracking consent state.
+
+## Determine button action URL handling behaviour for HTML message
+
+Button action URLs are automatically processed by SDK based on URL like: if URL starts with `http` or `https`, action type is set to `browser`, else is set to `deep-link` value. To force behaviour based on your expectation, you can specify optional attribude `data-actiontype` with following values:
+
+* `browser` - for Web URL to open browser
+* `deep-link` - for custom URL scheme and Universal Link to process it
+
+You can do it in HTML builder by inserting the param to specific action button as described in example below:
+
+```html
+<div class="bee-block bee-block-4 bee-button">
+   <div data-link="https://example.com" data-actiontype="browser" style="font-size: 14px; background-color: #f84cac; border-bottom: 0px solid transparent; border-left: 0px solid transparent; border-radius: 4px; border-right: 0px solid transparent; border-top: 0px solid transparent; color: #ffffff; direction: ltr; font-family: inherit; font-weight: 700; max-width: 100%; padding-bottom: 4px; padding-left: 18px; padding-right: 18px; padding-top: 4px; width: auto; display: inline-block;" class="bee-button-content"><span style="word-break: break-word; font-size: 14px; line-height: 200%;">Action</span></div>
+</div>
+```
+
+> This atrribute is also supported for `<a`, due to compatibility with Visual builder.
+
+```html
+<div class="bee-block bee-block-4 bee-button">
+   <a data-link="https://example.com" data-actiontype="deep-link">Click me</a>
+</div>
+```

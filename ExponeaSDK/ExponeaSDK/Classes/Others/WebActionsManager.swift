@@ -10,17 +10,18 @@ import Foundation
 import WebKit
 
 final class WebActionManager: NSObject, WKNavigationDelegate {
-
+    
     // MARK: - Properties
-
+    
     var htmlPayload: NormalizedResult?
-
+    
     private var onCloseCallback: (() -> Void)?
     private var onActionCallback: ((ActionInfo) -> Void)?
     private var onErrorCallback: ((ExponeaError) -> Void)?
-
+    private var onActionTypeCallback: ((String) -> Void)?
+    
     // MARK: - Init
-
+    
     init(
         onCloseCallback: (() -> Void)? = nil,
         onActionCallback: ((ActionInfo) -> Void)? = nil,
@@ -30,9 +31,9 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
         self.onActionCallback = onActionCallback
         self.onErrorCallback = onErrorCallback
     }
-
+    
     // MARK: - Methods
-
+    
     func webView(
         _ webView: WKWebView,
         decidePolicyFor navigationAction: WKNavigationAction,
@@ -55,7 +56,7 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
             return true
         } else if isActionUrl(url) {
             guard let url = url,
-                  let action = findActionByUrl(url) else {
+                  var action = findActionByUrl(url) else {
                 Exponea.logger.log(.error, message: "[HTML] Action URL \(url?.absoluteString ?? "<nil>") cannot be found as action")
                 onErrorCallback?(ExponeaError.unknownError("Invalid Action URL - not found"))
                 // anyway we define it as Action, so URL opening has to be prevented
@@ -75,7 +76,7 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
     }
 }
 
- private extension WebActionManager {
+private extension WebActionManager {
     func isBlankNav(_ url: URL?) -> Bool {
         url?.absoluteString == "about:blank"
     }
@@ -86,14 +87,14 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
         }
         return !isCloseAction(url) && findActionByUrl(url) != nil
     }
-
+    
     func isCloseAction(_ url: URL?) -> Bool {
         guard let htmlPayload = htmlPayload else {
             return false
         }
         return url?.absoluteString == htmlPayload.closeActionUrl
     }
-
+    
     func findActionByUrl(_ url: URL?) -> ActionInfo? {
         guard let url = url,
               let htmlPayload = htmlPayload else {
@@ -103,7 +104,7 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
             areEqualAsURLs(action.actionUrl, url.absoluteString)
         })
     }
-
+    
     /**
      Put URL().absoluteString here.
      WKWebView is returning a slash at the end of URL, so we need to compare it properly
@@ -120,11 +121,11 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
         let path2 = url2?.path == "/" ? "" : url2?.path
         let query2 = url2?.query
         return (
-                scheme1 == scheme2
-                && host1 == host2
-                && path1 == path2
-                && query1 == query2
+            scheme1 == scheme2
+            && host1 == host2
+            && path1 == path2
+            && query1 == query2
         )
     }
-
+    
 }

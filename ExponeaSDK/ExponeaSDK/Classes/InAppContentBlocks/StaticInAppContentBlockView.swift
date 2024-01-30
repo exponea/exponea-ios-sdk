@@ -184,13 +184,20 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
     }
 
     private func determineActionType(_ action: ActionInfo) -> InAppContentBlockActionType {
-        if action.actionUrl == "https://exponea.com/close_action" {
-            return .close
-        }
-        if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
+        switch action.actionType {
+        case .browser:
             return .browser
+        case .deeplink:
+            return .deeplink
+        case .unknown:
+            if action.actionUrl == "https://exponea.com/close_action" {
+                return .close
+            }
+            if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
+                return .browser
+            }
+            return .deeplink
         }
-        return .deeplink
     }
 
     // directly calls `contentReadyCompletion` with given contentReady flag
