@@ -256,6 +256,7 @@
 		55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D482953051E001D95B8 /* AppInboxParser.swift */; };
 		55391D4B295342C7001D95B8 /* AppInboxManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */; };
 		55391D4D295497A7001D95B8 /* AppInboxProviderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D4C295497A7001D95B8 /* AppInboxProviderSpec.swift */; };
+		555A10E82B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555A10E72B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift */; };
 		5567C090290808F600318E68 /* MessageItemContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C08F290808F600318E68 /* MessageItemContent.swift */; };
 		5567C092290809EB00318E68 /* MessageItemAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C091290809EB00318E68 /* MessageItemAction.swift */; };
 		5567C0942909196C00318E68 /* AppInboxResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C0932909196C00318E68 /* AppInboxResponse.swift */; };
@@ -759,6 +760,7 @@
 		55391D482953051E001D95B8 /* AppInboxParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxParser.swift; sourceTree = "<group>"; };
 		55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxManagerSpec.swift; sourceTree = "<group>"; };
 		55391D4C295497A7001D95B8 /* AppInboxProviderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxProviderSpec.swift; sourceTree = "<group>"; };
+		555A10E72B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticInAppContentBlockViewSpec.swift; sourceTree = "<group>"; };
 		5567C08F290808F600318E68 /* MessageItemContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemContent.swift; sourceTree = "<group>"; };
 		5567C091290809EB00318E68 /* MessageItemAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemAction.swift; sourceTree = "<group>"; };
 		5567C0932909196C00318E68 /* AppInboxResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxResponse.swift; sourceTree = "<group>"; };
@@ -1572,6 +1574,7 @@
 			isa = PBXGroup;
 			children = (
 				31EBB86A2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift */,
+				555A10E72B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift */,
 			);
 			path = InAppContentBlocks;
 			sourceTree = "<group>";
@@ -3024,6 +3027,7 @@
 				0591907123EC573C0037BD88 /* BooleanOperatorsSpec.swift in Sources */,
 				05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */,
 				05F3EFEA2382BC4C006E83F4 /* MockTelemetryStorage.swift in Sources */,
+				555A10E82B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift in Sources */,
 				F04BEA8E21118F4700591950 /* ResultSpec.swift in Sources */,
 				053EC59F23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift in Sources */,
 				057F449123995EA00070DF30 /* MockInAppMessagePresenter.swift in Sources */,

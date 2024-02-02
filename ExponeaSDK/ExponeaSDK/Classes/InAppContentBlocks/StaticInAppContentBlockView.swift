@@ -223,6 +223,11 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             Exponea.logger.log(.warning, message: "InAppCB: Unknown action URL: \(String(describing: actionUrl))")
             return false
         }
+        if isBlankNav(actionUrl) {
+            // on first load
+            // nothing to do, not need to continue loading
+            return false
+        }
         guard let message = assignedMessage else {
             Exponea.logger.log(.error, message: "InAppCB: Placeholder \(placeholder) has invalid state - action or message is invalid")
             behaviourCallback.onError(placeholderId: placeholder, contentBlock: nil, errorMessage: "Invalid action definition")
@@ -270,5 +275,9 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has not been handled, continue")
         }
         return handled
+    }
+
+    private func isBlankNav(_ url: URL?) -> Bool {
+        url?.absoluteString == "about:blank"
     }
 }
