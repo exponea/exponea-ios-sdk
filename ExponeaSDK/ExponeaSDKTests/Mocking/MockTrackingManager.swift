@@ -116,6 +116,26 @@ internal class MockTrackingManager: TrackingManagerType {
     func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
         fatalError("Not implemented")
     }
+    func trackInAppContentBlockClick(
+        placeholderId: String,
+        action: ExponeaSDK.InAppContentBlockAction,
+        message: ExponeaSDK.InAppContentBlockResponse,
+        trackingAllowed: Bool
+    ) {
+        fatalError("Not implemented")
+    }
+    
+    func trackInAppContentBlockClose(placeholderId: String, message: ExponeaSDK.InAppContentBlockResponse, trackingAllowed: Bool) {
+        fatalError("Not implemented")
+    }
+    
+    func trackInAppContentBlockShow(placeholderId: String, message: ExponeaSDK.InAppContentBlockResponse, trackingAllowed: Bool) {
+        fatalError("Not implemented")
+    }
+    
+    func trackInAppContentBlockError(placeholderId: String, message: ExponeaSDK.InAppContentBlockResponse, errorMessage: String, trackingAllowed: Bool) {
+        fatalError("Not implemented")
+    }
     func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?, trackingAllowed: Bool, isUserInteraction: Bool) {
         track(
             .click(buttonLabel: buttonText ?? "", url: buttonLink ?? "" ),

@@ -18,9 +18,20 @@ protocol TrackingConsentManagerType {
     func trackDeliveredPush(data: NotificationData, mode: MODE)
     func trackAppInboxClick(message: MessageItem, buttonText: String?, buttonLink: String?, mode: MODE)
     func trackAppInboxOpened(message: MessageItem, mode: MODE)
-    func trackInAppContentBlocksClick(message: InAppContentBlockResponse, buttonText: String?, buttonLink: String?, mode: MODE)
-    func trackInAppContentBlocksClose(message: InAppContentBlockResponse, mode: MODE, isUserInteraction: Bool?)
-    func trackInAppContentBlocksShow(message: InAppContentBlockResponse, mode: MODE)
+    func trackInAppContentBlockClick(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        action: InAppContentBlockAction,
+        mode: MODE
+    )
+    func trackInAppContentBlockClose(placeholderId: String, message: InAppContentBlockResponse, mode: MODE)
+    func trackInAppContentBlockShow(placeholderId: String, message: InAppContentBlockResponse, mode: MODE)
+    func trackInAppContentBlockError(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        errorMessage: String,
+        mode: MODE
+    )
 }
 
 enum MODE {

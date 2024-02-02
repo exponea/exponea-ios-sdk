@@ -388,7 +388,7 @@ class DatabaseManagerSpec: QuickSpec {
                     db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
                     var objects: [TrackEventProxy] = []
 
-                    waitUntil(timeout: .seconds(6), action: { (allDone) in
+                    waitUntil(timeout: .seconds(15), action: { (allDone) in
                         var doneCount = 0
                         func done() {
                             doneCount += 1

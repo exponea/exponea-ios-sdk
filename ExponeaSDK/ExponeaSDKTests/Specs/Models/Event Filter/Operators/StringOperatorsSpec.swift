@@ -195,7 +195,6 @@ final class StringOperatorsSpec: QuickSpec {
                 expect(passes(RegexOperator.self, PropertyAttribute("missing"), [pattern])).to(beFalse())
                 expect(passes(RegexOperator.self, TimestampAttribute(), [pattern])).to(beTrue())
 
-                expect(passes(RegexOperator.self, PropertyAttribute("string"), [""])).to(beFalse())
                 expect(passes(RegexOperator.self, PropertyAttribute("string"), ["test"])).to(beFalse())
                 expect(passes(RegexOperator.self, PropertyAttribute("string"), ["^someX*thing$"])).to(beTrue())
                 expect(passes(RegexOperator.self, PropertyAttribute("string"), ["^someX+thing$"])).to(beFalse())

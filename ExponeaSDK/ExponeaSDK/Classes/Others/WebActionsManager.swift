@@ -109,7 +109,7 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
      WKWebView is returning a slash at the end of URL, so we need to compare it properly
      */
     func areEqualAsURLs(_ urlPath1: String, _ urlPath2: String) -> Bool {
-        let url1 = URL(string: urlPath1)
+        let url1 = URL(safeString: urlPath1)
         let scheme1 = url1?.scheme
         let host1 = url1?.host
         let path1 = url1?.path == "/" ? "" : url1?.path

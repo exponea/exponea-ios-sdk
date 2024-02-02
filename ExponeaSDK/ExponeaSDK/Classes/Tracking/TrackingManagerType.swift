@@ -48,18 +48,32 @@ protocol TrackingManagerType: AnyObject {
     )
     
     // Function used to track inAppContentBlocks message banner click event
-    func trackInAppContentBlocksClick(
+    func trackInAppContentBlockClick(
+        placeholderId: String,
+        action: InAppContentBlockAction,
         message: InAppContentBlockResponse,
-        trackingAllowed: Bool,
-        buttonText: String?,
-        buttonLink: String?
+        trackingAllowed: Bool
     )
     
     // Function used to track in-app message banner close event
     func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool)
     // Function used to track inAppContentBlocks message banner close event
-    func trackInAppContentBlocksClose(message: InAppContentBlockResponse, trackingAllowed: Bool)
-    func trackInAppContentBlocksShow(message: InAppContentBlockResponse, trackingAllowed: Bool)
+    func trackInAppContentBlockClose(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        trackingAllowed: Bool
+    )
+    func trackInAppContentBlockShow(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        trackingAllowed: Bool
+    )
+    func trackInAppContentBlockError(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        errorMessage: String,
+        trackingAllowed: Bool
+    )
 
     // Function used to track in-app message banner error event
     func trackInAppMessageError(message: InAppMessage, error: String, trackingAllowed: Bool)

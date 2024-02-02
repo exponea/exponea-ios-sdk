@@ -19,7 +19,7 @@ public protocol InAppContentBlocksManagerType {
     func getUsedInAppContentBlocks(placeholder: String, indexPath: IndexPath) -> UsedInAppContentBlocks?
     func anonymize()
     func initBlocker()
-    func loadInAppContentBlocksPlaceholders(completion: EmptyBlock?)
+    func loadInAppContentBlockMessages(completion: EmptyBlock?)
     // Test purposes
     func getFilteredMessage(message: InAppContentBlockResponse) -> Bool
     func prefetchPlaceholdersWithIds(input: [InAppContentBlockResponse], ids: [String]) -> [InAppContentBlockResponse]

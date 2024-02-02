@@ -17,7 +17,7 @@ public class HtmlNormalizer {
 
     private let hrefAttr = "href"
     private let anchorTagSelector = "a"
-    private let metaTagSelector = "meta"
+    private let metaTagSelector = "meta:not([name='viewport'])"
     private let scriptTagSelector = "script"
     private let titleTagSelector = "title"
     private let linkTagSelector = "link"
@@ -97,15 +97,15 @@ public class HtmlNormalizer {
 
     public func normalize(_ config: HtmlNormalizerConfig? = nil) -> NormalizedResult {
         let parsingConf = config ?? HtmlNormalizerConfig(
-            makeResourcesOffline: true, ensureCloseButton: true, allowAnchorButton: false
+            makeResourcesOffline: true, ensureCloseButton: true
         )
         var result = NormalizedResult()
         do {
-            try cleanHtml(parsingConf.allowAnchorButton)
+            try cleanHtml()
             if parsingConf.makeResourcesOffline {
                 try makeResourcesToBeOffline()
             }
-            try result.actions = ensureActionButtons(parsingConf.allowAnchorButton)
+            try result.actions = ensureActionButtons()
             try result.closeActionUrl = detectCloseButton(parsingConf.ensureCloseButton)
             result.html = exportHtml()
         } catch let error {
@@ -130,18 +130,20 @@ public class HtmlNormalizer {
         }
     }
 
-    private func ensureActionButtons(_ allowAnchorButton: Bool) throws -> [ActionInfo] {
-        var result: [ActionInfo] = []
+    private func ensureActionButtons() throws -> [ActionInfo] {
+        var result: [String: ActionInfo] = [:]
         guard let document = document else {
             Exponea.logger.log(.warning, message: "[HTML] Document has not been initialized, no Action buttons")
-            return result
+            return []
         }
-        // process <a href> if allowed first, because datalink will produce new links
-        if allowAnchorButton {
-            result.append(contentsOf: try collectAnchorLinkButtons(document))
+        // collect 'data-link' first as it may update href
+        try collectDataLinkButtons(document).forEach { action in
+            result[action.actionUrl] = action
         }
-        result.append(contentsOf: try collectDataLinkButtons(document))
-        return result
+        try collectAnchorLinkButtons(document).forEach { action in
+            result[action.actionUrl] = action
+        }
+        return Array(result.values)
     }
 
     private func collectAnchorLinkButtons(_ document: Document) throws -> [ActionInfo] {
@@ -167,7 +169,9 @@ public class HtmlNormalizer {
                 Exponea.logger.log(.error, message: "[HTML] Action button found but with empty action")
                 continue
             }
-            if try actionButton.parent() == nil || actionButton.parent()!.iS(anchorTagSelector) == false {
+            if try actionButton.iS(anchorTagSelector) {
+                try actionButton.attr(hrefAttr, targetAction)
+            } else if try actionButton.parent() == nil || actionButton.parent()!.iS(anchorTagSelector) == false {
                 Exponea.logger.log(.verbose, message: "[HTML] Wrapping Action button with a-href")
                 // randomize class name => prevents from CSS styles overriding in HTML
                 let actionButtonHrefClass = "action-button-href-\(UUID().uuidString)"
@@ -200,30 +204,31 @@ public class HtmlNormalizer {
             )
             // randomize class name => prevents from CSS styles overriding in HTML
             let closeButtonClass = "close-button-\(UUID().uuidString)"
+            let buttonSize = "max(min(5vw, 5vh), 16px)"
             try htmlBody.append("<div \(closeButtonAttrDef) class='\(closeButtonClass)'><div>")
             try htmlHead.append("""
                         <style>
                             .\(closeButtonClass) {
                               display: inline-block;
                               position: absolute;
-                              width: 36px;
-                              height: 36px;
+                              width: \(buttonSize);
+                              height: \(buttonSize);
                               top: 10px;
                               right: 10px;
-                              border: 2px solid #C0C0C099;
+                              cursor: pointer;
                               border-radius: 50%;
-                              background-color: #FAFAFA99;
+                              background-color: rgba(250, 250, 250, 0.6);
                              }
                             .\(closeButtonClass):before {
                               content: '×';
                               position: absolute;
                               display: flex;
                               justify-content: center;
-                              width: 36px;
-                              height: 36px;
-                              color: #C0C0C099;
-                              font-size: 36px;
-                              line-height: 36px;
+                              width: \(buttonSize);
+                              height: \(buttonSize);
+                              color: rgb(0, 0, 0);
+                              font-size: \(buttonSize);
+                              line-height: \(buttonSize);
                             }
                         </style>
                         """)
@@ -496,16 +501,9 @@ public class HtmlNormalizer {
         return "data:\(fontMimetype);charset=utf-8;base64," + fontData.base64EncodedString()
     }
 
-    private func cleanHtml(_ allowAnchorButton: Bool) throws {
+    private func cleanHtml() throws {
         // !!! Remove HREF attr has to be called before #ensureCloseButton and #ensureActionButtons.
-        if allowAnchorButton {
-            try removeAttributes(
-                hrefAttr,
-                skipTag: anchorTagSelector
-            )
-        } else {
-            try removeAttributes(hrefAttr)
-        }
+        try removeAttributes(hrefAttr, skipTag: anchorTagSelector)
         for attribute in anchorLinkAttributes {
             try removeAttributes(attribute)
         }
@@ -562,7 +560,10 @@ public struct ActionInfo {
 public struct HtmlNormalizerConfig {
     public let makeResourcesOffline: Bool
     public let ensureCloseButton: Bool
-    public let allowAnchorButton: Bool
+    public init(makeResourcesOffline: Bool, ensureCloseButton: Bool) {
+        self.makeResourcesOffline = makeResourcesOffline
+        self.ensureCloseButton = ensureCloseButton
+    }
 }
 
 private struct CssOnlineUrl {

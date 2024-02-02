@@ -66,7 +66,7 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
     ]
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        4
+        6
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -78,7 +78,11 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
         case 2:
             return data2.count
         case 3:
+            return 1
+        case 4:
             return data3.count
+        case 5:
+            return 1
         default:
             return 0
         }
@@ -86,9 +90,8 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
-        case 1:
-            let height = Exponea.shared.inAppContentBlocksManager?.getUsedInAppContentBlocks(placeholder: "example_list", indexPath: indexPath)?.height ?? 0
-            return height
+        case 1, 3, 5:
+            return Exponea.shared.inAppContentBlocksManager?.getUsedInAppContentBlocks(placeholder: "example_list", indexPath: indexPath)?.height ?? 0
         default:
             return UITableView.automaticDimension
         }
@@ -100,7 +103,7 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "UITableViewCell") ?? UITableViewCell()
             cell.textLabel?.text = data[safeIndex: indexPath.row]
             return cell
-        case 1:
+        case 1, 3, 5:
             let cell = InAppContentBlocksCell(style: .default, reuseIdentifier: "InAppContentBlocksCell")
             if let view = Exponea.shared.inAppContentBlocksManager?.prepareInAppContentBlockView(placeholderId: "example_list", indexPath: indexPath) {
                 cell.setupInAppContentBlocksView(view)
@@ -110,7 +113,7 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "UITableViewCell") ?? UITableViewCell()
             cell.textLabel?.text = data2[safeIndex: indexPath.row]
             return cell
-        case 3:
+        case 4:
             let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "UITableViewCell") ?? UITableViewCell()
             cell.textLabel?.text = data3[safeIndex: indexPath.row]
             return cell
@@ -122,7 +125,7 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
     private let tableView = UITableView()
     private let refreshControl = UIRefreshControl()
 
-    lazy var placeholder = StaticInAppContentBlockView(placeholder: "example_top")
+    lazy var placeholder = StaticInAppContentBlockView(placeholder: "example_top", deferredLoad: true)
     lazy var placeholderExample = StaticInAppContentBlockView(placeholder: "ph_x_example_iOS")
 
     @objc func endEditing() {
@@ -150,10 +153,30 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
         view.backgroundColor = .black
         
         view.addSubview(placeholder)
+        placeholder.contentReadyCompletion = { [weak self] contentLoaded in
+            guard let self else {
+                Exponea.logger.log(.error, message: "In-app content block has been loaded but deattached from view controller")
+                return
+            }
+            Exponea.logger.log(.verbose, message: "In-app content block has been loaded: \(contentLoaded)")
+            if contentLoaded {
+                let contentWidth = placeholder.frame.size.width
+                let contentHeight = placeholder.frame.size.height
+                Exponea.logger.log(
+                    .verbose,
+                    message: "In-app content block content has size of width \(contentWidth)px height \(contentHeight)px"
+                )
+            }
+        }
+        let origBehaviour = placeholder.behaviourCallback
+        placeholder.behaviourCallback = ExampleInAppContentBlockCallback(originalBehaviour: origBehaviour, ownerView: placeholder
+        )
         placeholder.translatesAutoresizingMaskIntoConstraints = false
         placeholder.topAnchor.constraint(equalTo: view.topAnchor, constant: 80).isActive = true
         placeholder.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
         placeholder.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
+        // `placeholder` has deferred load, so we trigger it
+        placeholder.reload()
         
         view.addSubview(placeholderExample)
         placeholderExample.translatesAutoresizingMaskIntoConstraints = false

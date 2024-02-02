@@ -196,8 +196,7 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
             }
             let normalizeConf = HtmlNormalizerConfig(
                 makeResourcesOffline: true,
-                ensureCloseButton: false,
-                allowAnchorButton: true
+                ensureCloseButton: false
             )
             let normalizedPayload = HtmlNormalizer(selfWhileAsync.data?.content?.html ?? "").normalize(normalizeConf)
             guard

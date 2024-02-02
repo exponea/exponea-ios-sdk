@@ -1,4 +1,63 @@
 ## Release Notes
+## Release Notes for 2.21.3
+#### January 11, 2024
+* Bug Fixes
+  * Fixed: Invoking of In-app content blocks behaviour callback from outside is not reflected to local flags about showing and interaction
+
+
+## Release Notes for 2.21.2
+#### December 23, 2023
+* Bug Fixes
+  * Fixed: Using of HtmlNormalizer is not available as public, and able to normalization process can not be set
+
+
+## Release Notes for 2.21.1
+#### December 21, 2023
+* Features
+  * More detailed logging added to In-app content blocks
+* Bug Fixes
+  * Removed: Explicitly defined arm7 and arm7s arch is causing problem during build
+  * Fixed: In-app content block tableView has been shown and tracked for bad placeholderID value
+
+
+## Release Notes for 2.21.0
+#### December 18, 2023
+* Features
+  * In-app content blocks behaviour handler for view lifecycle events
+  * In-app content blocks tracking API with handling of tracking consent according to DSGVO/GDPR
+  * In-app content blocks support for height update
+* Bug Fixes
+  * Removed: Dev debug log in StaticInAppContentBlockView class
+  * Fixed: Could not find module 'ExponeaSDK' for simulator target x86_64
+  * Fixed: Extensions were defined as public
+  * Fixed: AppInbox list item image was stretched by longer dimension
+  * Fixed: Showing of alert was causing crash for opened push in Example app
+
+
+## Release Notes for 2.20.0
+#### November 27, 2023
+* Features
+  * In-app content blocks with deferred load and onContentReady listener
+* Bug Fixes
+  * Fixed: Xcode 14.2 compiler issue for capture of isDebugModeEnabled
+
+
+## Release Notes for 2.19.0
+#### October 27, 2023
+* Features
+  * Xcode 15 and iOS 17 support added
+    * iOS minimal version increased to 12
+  * Push notification token tracking frequency has been documented
+  * Anonymize feature has been described with more details in documentation
+  * Rich Push notification has clickable image with default action
+  * Viewport meta tag was removed from forbidden constructs for all HTML messages due to scaling issues
+  * Debug mode was refactored
+* Bug Fixes
+  * Fixed: Action button not working for HTML In-app messages created via Visual editor
+  * Fixed: Push notification payload docu has wrong field names
+  * Fixed: Multiple flush timers invocation
+
+
 ## Release Notes for 2.18.0
 #### September 14, 2023
 * Features

@@ -12,3 +12,9 @@ struct QueueData {
     let inAppContentBlocks: InAppContentBlockResponse
     let newValue: UsedInAppContentBlocks
 }
+
+struct QueueLoadData {
+    let placeholder: String
+    let indexPath: IndexPath
+    let expired: [InAppContentBlockResponse]
+}

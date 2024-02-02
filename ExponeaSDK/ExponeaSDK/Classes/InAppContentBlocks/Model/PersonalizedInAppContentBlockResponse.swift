@@ -14,7 +14,7 @@ public enum InAppContentBlocksStatus: String, Codable {
 }
 
 public struct Content: Codable {
-    var html: String
+    public var html: String
 }
 
 public struct PersonalizedInAppContentBlockResponseData: Codable {

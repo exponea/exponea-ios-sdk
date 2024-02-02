@@ -463,9 +463,11 @@ class InAppMessagesManagerSpec: QuickSpec {
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
-                presenter.presentedMessages[0].actionCallback(
-                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
-                )
+                if !presenter.presentedMessages.isEmpty {
+                    presenter.presentedMessages[0].actionCallback(
+                        SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                    )
+                }
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,

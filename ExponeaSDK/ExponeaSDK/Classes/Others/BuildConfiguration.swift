@@ -8,25 +8,6 @@
 
 import Foundation
 
-// based on https://forums.swift.org/t/support-debug-only-code/11037
-
-func inDebugBuild(_ code: () -> Void) {
-    assert({
-        code()
-        return true
-        }()
-    )
-}
-
-func inReleaseBuild(_ code: () -> Void) {
-    var skip: Bool = false
-    inDebugBuild { skip = true }
-
-    if !skip {
-        code()
-    }
-}
-
 func isReactNativeSDK() -> Bool {
     // Our react native SDK contains a protocol IsExponeaReactNativeSDK. We only use it for this purpose.
     return NSProtocolFromString("IsExponeaReactNativeSDK") != nil

@@ -71,3 +71,42 @@ Event is normally tracked by calling `Exponea.shared.trackAppInboxClick`. This m
 > Event that is tracked because of `xnpe_force_track` (forced tracking) will contains an additional property `tracking_forced` with value `true`
 
 If you are using `Exponea.shared.trackAppInboxClick` method manually and you want to avoid to consider tracking, you may use `Exponea.shared.trackAppInboxClickWithoutTrackingConsent` instead. This method will do track event ignoring tracking consent state.
+
+### Event for shown In-app content block
+
+Event is normally tracked by calling `Exponea.shared.trackInAppContentBlockShown`. This method is tracking a clicked event only if:
+
+* Tracking consent feature is disabled
+* Tracking consent feature is enabled and 'hasTrackingConsent' has 'true' value
+
+If you are using `Exponea.shared.trackInAppContentBlockShown` method manually and you want to avoid to consider tracking, you may use `Exponea.shared.trackInAppContentBlockShownWithoutTrackingConsent` instead. This method will do track event ignoring tracking consent state.
+
+### Event for clicked In-app content block
+
+Event is normally tracked by calling `Exponea.shared.trackInAppContentBlockClick`. This method is tracking a clicked event only if:
+
+* Tracking consent feature is disabled
+* Tracking consent feature is enabled and 'hasTrackingConsent' has 'true' value
+* Action URL contains 'xnpe_force_track' with 'true' value independently from 'hasTrackingConsent' value
+
+> Event that is tracked because of `xnpe_force_track` (forced tracking) will contains an additional property `tracking_forced` with value `true`
+
+If you are using `Exponea.shared.trackInAppContentBlockClick` method manually and you want to avoid to consider tracking, you may use `Exponea.shared.trackInAppContentBlockClickWithoutTrackingConsent` instead. This method will do track event ignoring tracking consent state.
+
+### Event for closed In-app content block
+
+Event is normally tracked by calling `Exponea.shared.trackInAppContentBlockClose`. This method is tracking a delivered event only if:
+
+* Tracking consent feature is disabled
+* Tracking consent feature is enabled and 'hasTrackingConsent' has 'true' value
+
+If you are using `Exponea.shared.trackInAppContentBlockClose` method manually and you want to avoid to consider tracking, you may use `Exponea.shared.trackInAppContentBlockCloseWithoutTrackingConsent` instead. This method will do track event ignoring tracking consent state.
+
+### Event for error for In-app content block
+
+Event is normally tracked by calling `Exponea.shared.trackInAppContentBlockError` with meaningful `errorMessage` parameter. This method is tracking a delivered event only if:
+
+* Tracking consent feature is disabled
+* Tracking consent feature is enabled and 'hasTrackingConsent' has 'true' value
+
+If you are using `Exponea.shared.trackInAppContentBlockError` method manually and you want to avoid to consider tracking, you may use `Exponea.shared.trackInAppContentBlockErrorWithoutTrackingConsent` instead. This method will do track event ignoring tracking consent state.

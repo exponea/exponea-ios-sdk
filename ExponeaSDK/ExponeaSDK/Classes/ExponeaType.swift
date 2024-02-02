@@ -307,4 +307,65 @@ public protocol ExponeaType: AnyObject {
     func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?)
 
     func trackInAppMessageClose(message: InAppMessage, isUserInteraction: Bool?)
+
+    /// Tracks 'click' event for given In-app content block action.
+    /// Event is tracked if one or both conditions met:
+    ///     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    ///     - parameter 'action.url' has TRUE value of query parameter 'xnpe_force_track'
+    func trackInAppContentBlockClick(
+        placeholderId: String,
+        action: InAppContentBlockAction,
+        message: InAppContentBlockResponse
+    )
+
+    /// Tracks 'click' event for given In-app content block action.
+    func trackInAppContentBlockClickWithoutTrackingConsent(
+        placeholderId: String,
+        action: InAppContentBlockAction,
+        message: InAppContentBlockResponse
+    )
+
+    /// Tracks 'close' event for given In-app content block.
+    /// Event is tracked if one or both conditions met:
+    ///     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    func trackInAppContentBlockClose(
+        placeholderId: String,
+        message: InAppContentBlockResponse
+    )
+
+    /// Tracks 'close' event for given In-app content block.
+    func trackInAppContentBlockCloseWithoutTrackingConsent(
+        placeholderId: String,
+        message: InAppContentBlockResponse
+    )
+
+    /// Tracks 'show' event for given In-app content block.
+    /// Event is tracked if one or both conditions met:
+    ///     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    func trackInAppContentBlockShown(
+        placeholderId: String,
+        message: InAppContentBlockResponse
+    )
+
+    /// Tracks 'show' event for given In-app content block.
+    func trackInAppContentBlockShownWithoutTrackingConsent(
+        placeholderId: String,
+        message: InAppContentBlockResponse
+    )
+
+    /// Tracks 'error' event for given In-app content block.
+    /// Event is tracked if one or both conditions met:
+    ///     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
+    func trackInAppContentBlockError(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        errorMessage: String
+    )
+
+    /// Tracks 'error' event for given In-app content block.
+    func trackInAppContentBlockErrorWithoutTrackingConsent(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        errorMessage: String
+    )
 }

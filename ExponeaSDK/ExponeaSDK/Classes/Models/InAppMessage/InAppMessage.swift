@@ -178,6 +178,11 @@ public struct InAppMessageTrigger: Codable, Equatable {
         case type
         case eventType = "event_type"
     }
+    
+    public init(type: String?, eventType: String?) {
+        self.type = type
+        self.eventType = eventType
+    }
 }
 
 public enum InAppMessageFrequency: String {

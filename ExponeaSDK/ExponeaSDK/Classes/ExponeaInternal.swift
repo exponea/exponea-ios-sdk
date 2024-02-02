@@ -155,16 +155,28 @@ public class ExponeaInternal: ExponeaType {
     /// We advice strongly against disabling this for production builds.
     public var safeModeEnabled: Bool {
         get {
-            if let override = safeModeOverride {
-                return override
-            }
-            var enabled = true
-            inDebugBuild { enabled = false }
-            return enabled
+            safeModeOverride ?? !isDebugModeEnabled
         }
         set { safeModeOverride = newValue }
     }
     private var safeModeOverride: Bool?
+
+    public var isDebugModeEnabled: Bool {
+        get {
+            if let isDebugEnabledOverride {
+                return isDebugEnabledOverride
+            }
+#if DEBUG
+            return true
+#else
+            return false
+#endif
+        }
+        set {
+            isDebugEnabledOverride = newValue
+        }
+    }
+    private var isDebugEnabledOverride: Bool?
 
     public var isDarkMode: Bool {
         guard configuration?.isDarkModeEnabled == true else { return false }
@@ -253,7 +265,7 @@ public class ExponeaInternal: ExponeaType {
                               let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
                         inAppMessagesManager.preload(for: trackingManager.customerIds)
                         if let placeholders = configuration.inAppContentBlocksPlaceholders {
-                            inAppContentBlocksManager.loadInAppContentBlocksPlaceholders {
+                            inAppContentBlocksManager.loadInAppContentBlockMessages {
                                 inAppContentBlocksManager.prefetchPlaceholdersWithIds(ids: placeholders)
                             }
                         }
@@ -298,12 +310,12 @@ public class ExponeaInternal: ExponeaType {
                 onMain {
                     self.inAppContentBlocksManager = InAppContentBlocksManager.manager
                     self.inAppContentBlocksManager?.initBlocker()
-                    self.inAppContentBlocksManager?.loadInAppContentBlocksPlaceholders { [weak self] in
+                    self.inAppContentBlocksManager?.loadInAppContentBlockMessages { [weak self] in
                         self?.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: configuration.inAppContentBlocksPlaceholders ?? [])
                     }
                 }
                 
-                inDebugBuild {
+                if isDebugModeEnabled {
                     VersionChecker(repository: repository).warnIfNotLatestSDKVersion()
                 }
                                     

@@ -395,7 +395,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                         .timestamp(PushNotificationsTestData.timestamp),
                                .eventType("campaign")]
                     ),
-                    expectedBrowserLinkOpened: URL(string: "http://google.com"),
+                    expectedBrowserLinkOpened: URL(safeString: "http://google.com"),
                     expectedDeeplinkOpened: nil
                 ),
                 NotificationOpenedTestCase(
@@ -416,7 +416,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                                .eventType("campaign")]
                     ),
                     expectedBrowserLinkOpened: nil,
-                    expectedDeeplinkOpened: URL(string: "some_url")
+                    expectedDeeplinkOpened: URL(safeString: "some_url")
                 ),
                 NotificationOpenedTestCase(
                     name: "production notification",
@@ -466,7 +466,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                         .timestamp(PushNotificationsTestData.timestamp),
                         .eventType("campaign")]
                     ),
-                    expectedBrowserLinkOpened: URL(string: "http://google.com?search=something"),
+                    expectedBrowserLinkOpened: URL(safeString: "http://google.com?search=something"),
                     expectedDeeplinkOpened: nil
                 ),
                 NotificationOpenedTestCase(
@@ -521,7 +521,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                         .timestamp(PushNotificationsTestData.timestamp),
                         .eventType("campaign")]
                     ),
-                    expectedBrowserLinkOpened: URL(string: "http://google.com?search=something"),
+                    expectedBrowserLinkOpened: URL(safeString: "http://google.com?search=something"),
                     expectedDeeplinkOpened: nil
                 )
             ]

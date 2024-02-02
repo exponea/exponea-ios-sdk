@@ -31,7 +31,7 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
             builder: { urlRequest in
                 self.networkRequests.append(urlRequest)
                 let stubResponse = HTTPURLResponse(
-                    url: URL(string: "mock-url")!,
+                    url: URL(safeString: "mock-url")!,
                     statusCode: statusCode,
                     httpVersion: nil,
                     headerFields: nil

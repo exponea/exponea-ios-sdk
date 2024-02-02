@@ -12,7 +12,10 @@ import WebKit
 public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     // MARK: - Properties
-    public var refresh: EmptyBlock?
+    public var contentReadyCompletion: TypeBlock<Bool>?
+    public var heightCompletion: TypeBlock<Int>?
+    public var behaviourCallback: InAppContentBlockCallbackType = DefaultInAppContentBlockCallback()
+
     private lazy var webview: WKWebView = {
         let userScript: WKUserScript = .init(source: inAppContentBlocksManager.disableZoomSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
         let newWebview = WKWebView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 0))
@@ -29,22 +32,60 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         return newWebview
     }()
 
+    override public var bounds: CGRect {
+        didSet {
+            guard let currentContentReadyFlag = contentReadyFlag else {
+                return
+            }
+            contentReadyFlag = nil
+            contentReadyCompletion?(currentContentReadyFlag)
+        }
+    }
+
     private let placeholder: String
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
     private lazy var calculator: WKWebViewHeightCalculator = .init()
     private var html: String = ""
     private var height: NSLayoutConstraint?
+    private var contentReadyFlag: Bool?
+    private var assignedMessage: InAppContentBlockResponse?
 
-    public init(placeholder: String) {
+    public init(placeholder: String, deferredLoad: Bool = false, heightCompletion: TypeBlock<Int>? = nil) {
         self.placeholder = placeholder
+        self.heightCompletion = heightCompletion
         super.init(frame: .zero)
 
         webview.navigationDelegate = self
         calculator.heightUpdate = { [weak self] height in
-            guard let self = self, height.height > 0 else { return }
-            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: height.height - 15)
+            guard let self, height.height > 0 else {
+                guard let self else {
+                    return
+                }
+                self.notifyContentReadyState(true)
+                guard let message = self.assignedMessage else {
+                    return
+                }
+                self.behaviourCallback.onMessageShown(
+                    placeholderId: placeholder,
+                    contentBlock: message
+                )
+                return
+            }
+            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: height.height  ) {
+                self.heightCompletion?(Int(height.height))
+                self.prepareContentReadyState(true)
+                guard let message = self.assignedMessage else {
+                    return
+                }
+                self.behaviourCallback.onMessageShown(
+                    placeholderId: placeholder,
+                    contentBlock: message
+                )
+            }
         }
-        getContent()
+        if !deferredLoad {
+            getContent()
+        }
     }
 
     public func reload() {
@@ -57,7 +98,10 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     private func getContent() {
         guard !placeholder.isEmpty else {
-            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0)
+            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0) {
+                self.prepareContentReadyState(false)
+                self.behaviourCallback.onNoMessageFound(placeholderId: self.placeholder)
+            }
             return
         }
         let data = inAppContentBlocksManager.prepareInAppContentBlocksStaticView(placeholderId: placeholder)
@@ -65,30 +109,43 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         if data.html.isEmpty {
             inAppContentBlocksManager.refreshStaticViewContent(staticQueueData: .init(tag: data.tag, placeholderId: placeholder) {
                 self.webview.tag = $0.tag
-                self.loadContent(html: $0.html)
+                self.loadContent(html: $0.html, message: $0.message)
             })
         } else {
-            loadContent(html: data.html)
+            loadContent(html: data.html, message: data.message)
         }
     }
 
-    private func loadContent(html: String) {
+    private func loadContent(html: String, message: InAppContentBlockResponse?) {
         guard !html.isEmpty else {
-            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0)
+            replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0) {
+                self.prepareContentReadyState(true)
+                self.behaviourCallback.onNoMessageFound(placeholderId: self.placeholder)
+            }
             return
         }
         self.html = html
+        self.assignedMessage = message
         calculator.loadHtml(placedholderId: placeholder, html: html)
+        // calls `notifyContentReadyState` inside calculator
     }
 
-    private func replacePlaceholder(inputView: UIView, loadedInAppContentBlocksView: UIView, height: CGFloat) {
+    private func replacePlaceholder(
+        inputView: UIView,
+        loadedInAppContentBlocksView: UIView,
+        height: CGFloat,
+        onCompletion: @escaping EmptyBlock
+    ) {
         onMain {
             let duration: TimeInterval = 0.3
             loadedInAppContentBlocksView.alpha = 0
             UIView.animate(withDuration: duration) {
                 loadedInAppContentBlocksView.alpha = 0
             } completion: { [weak self] isDone in
-                guard let self else { return }
+                guard let self else {
+                    onCompletion()
+                    return
+                }
                 if isDone {
                     loadedInAppContentBlocksView.constraints.forEach { cons in
                         self.removeConstraint(cons)
@@ -111,6 +168,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                         loadedInAppContentBlocksView.alpha = 1
                     }
                     self.webview.loadHTMLString(self.html, baseURL: nil)
+                    onCompletion()
                 }
             }
         }
@@ -121,35 +179,89 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-        let result = inAppContentBlocksManager.inAppContentBlocksPlaceholders.first(where: { $0.tags?.contains(webView.tag) == true })
+        let handled = handleUrlClick(navigationAction.request.url)
+        decisionHandler(handled ? .cancel : .allow)
+    }
+
+    private func determineActionType(_ action: ActionInfo) -> InAppContentBlockActionType {
+        if action.actionUrl == "https://exponea.com/close_action" {
+            return .close
+        }
+        if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
+            return .browser
+        }
+        return .deeplink
+    }
+
+    // directly calls `contentReadyCompletion` with given contentReady flag
+    // use this method in case that no layout is going to be invoked
+    private func notifyContentReadyState(_ contentReady: Bool) {
+        onMain {
+            self.contentReadyCompletion?(contentReady)
+        }
+    }
+
+    // registers contentReady flag that will be used for `contentReadyCompletion` when layout/bounds will be updated
+    private func prepareContentReadyState(_ contentReady: Bool) {
+        contentReadyFlag = contentReady
+    }
+
+    public func invokeActionClick(actionUrl: String) {
+        Exponea.logger.log(.verbose, message: "InAppCB: Manual action \(actionUrl) invoked on placeholder \(placeholder)")
+        _ = handleUrlClick(actionUrl.cleanedURL())
+    }
+
+    private func handleUrlClick(_ actionUrl: URL?) -> Bool {
+        guard let actionUrl else {
+            Exponea.logger.log(.warning, message: "InAppCB: Unknown action URL: \(String(describing: actionUrl))")
+            return false
+        }
+        guard let message = assignedMessage else {
+            Exponea.logger.log(.error, message: "InAppCB: Placeholder \(placeholder) has invalid state - action or message is invalid")
+            behaviourCallback.onError(placeholderId: placeholder, contentBlock: nil, errorMessage: "Invalid action definition")
+            // webView has to stop navigation, missing message data are internal issue
+            return true
+        }
+        let result = inAppContentBlocksManager.inAppContentBlockMessages.first(where: { $0.tags?.contains(webview.tag) == true })
         let webAction: WebActionManager = .init {
-            let indexOfPlaceholder: Int = self.inAppContentBlocksManager.inAppContentBlocksPlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState
-            self.inAppContentBlocksManager.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            let indexOfMessage: Int = self.inAppContentBlocksManager.inAppContentBlockMessages.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
+            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfMessage].displayState
+            self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfMessage].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
             if let message = result {
-                Exponea.shared.trackInAppContentBlocksClose(message: message, isUserInteraction: true)
+                self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
             }
             self.reload()
         } onActionCallback: { action in
-            let indexOfPlaceholder: Int = self.inAppContentBlocksManager.inAppContentBlocksPlaceholders.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState
-            self.inAppContentBlocksManager.inAppContentBlocksPlaceholders[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            let indexOfPlaceholder: Int = self.inAppContentBlocksManager.inAppContentBlockMessages.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
+            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfPlaceholder].displayState
+            self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            let actionType = self.determineActionType(action)
             if let message = result {
-                Exponea.shared.trackInAppContentBlocksClick(message: message, buttonText: action.buttonText, buttonLink: action.actionUrl)
+                if actionType == .close {
+                    self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
+                } else {
+                    self.behaviourCallback.onActionClicked(
+                        placeholderId: self.placeholder,
+                        contentBlock: message,
+                        action: .init(
+                            name: action.buttonText,
+                            url: action.actionUrl,
+                            type: actionType
+                        )
+                    )
+                }
             }
-            self.inAppContentBlocksManager.urlOpener.openBrowserLink(action.actionUrl)
             self.reload()
         } onErrorCallback: { error in
             Exponea.logger.log(.error, message: "WebActionManager error \(error.localizedDescription)")
         }
         webAction.htmlPayload = result?.personalizedMessage?.htmlPayload
-        let handled = webAction.handleActionClick(navigationAction.request.url)
+        let handled = webAction.handleActionClick(actionUrl)
         if handled {
-            Exponea.logger.log(.verbose, message: "[HTML] Action \(navigationAction.request.url?.absoluteString ?? "Invalid") has been handled")
-            decisionHandler(.cancel)
+            Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has been handled")
         } else {
-            Exponea.logger.log(.verbose, message: "[HTML] Action \(navigationAction.request.url?.absoluteString ?? "Invalid") has not been handled, continue")
-            decisionHandler(.allow)
+            Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has not been handled, continue")
         }
+        return handled
     }
 }

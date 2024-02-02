@@ -34,5 +34,11 @@ enum InAppContentBlocksTrackingEvent: Equatable {
 }
 
 protocol InAppContentBlocksTrackingDelegate: AnyObject {
-    func track(_ event: InAppContentBlocksTrackingEvent, for message: InAppContentBlockResponse, trackingAllowed: Bool, isUserInteraction: Bool)
+    func track(
+        _ event: InAppContentBlocksTrackingEvent,
+        for message: InAppContentBlockResponse,
+        within placeholderId: String,
+        trackingAllowed: Bool,
+        isUserInteraction: Bool
+    )
 }

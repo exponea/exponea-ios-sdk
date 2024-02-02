@@ -13,6 +13,7 @@ enum CoordinatorType {
     case track
     case manualFlush
     case anonymize
+    case inappcb
 
     init(deeplinkType: DeeplinkType) {
         switch deeplinkType {
@@ -24,6 +25,8 @@ enum CoordinatorType {
             self = .manualFlush
         case .anonymize:
             self = .anonymize
+        case .inappcb:
+            self = .inappcb
         }
     }
 }
@@ -59,6 +62,8 @@ final class Coordinator {
             tabbar.selectedIndex = TabbarItem.fetch.index
         case .track:
             tabbar.selectedIndex = TabbarItem.tracking.index
+        case .inappcb:
+            tabbar.selectedIndex = TabbarItem.contentBlocks.index
         }
     }
 }

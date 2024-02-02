@@ -551,60 +551,140 @@ extension ExponeaInternal {
             )
         }
     }
-    
-    /// Track inAppContentBlocks message banner click event
-    /// Event is tracked if one or both conditions met:
-    //     - parameter 'message' has TRUE value of 'hasTrackingConsent' property
-    //     - parameter 'buttonLink' has TRUE value of query parameter 'xnpe_force_track'
-    public func trackInAppContentBlocksClick(
-        message: InAppContentBlockResponse,
-        buttonText: String?,
-        buttonLink: String?
-    ) {
-        executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient
-            }
-            dependencies.trackingConsentManager.trackInAppContentBlocksClick(
-                message: message,
-                buttonText: buttonText,
-                buttonLink: buttonLink,
-                mode: .CONSIDER_CONSENT
-            )
-        }
-    }
- 
-    public func trackInAppContentBlocksClose(
-        message: InAppContentBlockResponse,
-        isUserInteraction: Bool?
-    ) {
-        executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
-                throw ExponeaError.authorizationInsufficient
-            }
-            if Exponea.shared.inAppMessagesDelegate.trackActions {
-                dependencies.trackingConsentManager.trackInAppContentBlocksClose(
-                    message: message,
-                    mode: .CONSIDER_CONSENT,
-                    isUserInteraction: isUserInteraction == true
-                )
-            }
-        }
-    }
-    
-    public func trackInAppContentBlocksShow(
+
+    public func trackInAppContentBlockClick(
+        placeholderId: String,
+        action: InAppContentBlockAction,
         message: InAppContentBlockResponse
     ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            if Exponea.shared.inAppMessagesDelegate.trackActions {
-                dependencies.trackingConsentManager.trackInAppContentBlocksShow(
-                    message: message,
-                    mode: .CONSIDER_CONSENT
-                )
+            dependencies.trackingConsentManager.trackInAppContentBlockClick(
+                placeholderId: placeholderId,
+                message: message,
+                action: action,
+                mode: .CONSIDER_CONSENT
+            )
+        }
+    }
+
+    public func trackInAppContentBlockClickWithoutTrackingConsent(
+        placeholderId: String,
+        action: InAppContentBlockAction,
+        message: InAppContentBlockResponse
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
             }
+            dependencies.trackingConsentManager.trackInAppContentBlockClick(
+                placeholderId: placeholderId,
+                message: message,
+                action: action,
+                mode: .IGNORE_CONSENT
+            )
+        }
+    }
+ 
+    public func trackInAppContentBlockClose(
+        placeholderId: String,
+        message: InAppContentBlockResponse
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackInAppContentBlockClose(
+                placeholderId: placeholderId,
+                message: message,
+                mode: .CONSIDER_CONSENT
+            )
+        }
+    }
+    
+    public func trackInAppContentBlockCloseWithoutTrackingConsent(
+        placeholderId: String,
+        message: InAppContentBlockResponse
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackInAppContentBlockClose(
+                placeholderId: placeholderId,
+                message: message,
+                mode: .IGNORE_CONSENT
+            )
+        }
+    }
+    
+    public func trackInAppContentBlockShown(
+        placeholderId: String,
+        message: InAppContentBlockResponse
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackInAppContentBlockShow(
+                placeholderId: placeholderId,
+                message: message,
+                mode: .CONSIDER_CONSENT
+            )
+        }
+    }
+    
+    public func trackInAppContentBlockShownWithoutTrackingConsent(
+        placeholderId: String,
+        message: InAppContentBlockResponse
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackInAppContentBlockShow(
+                placeholderId: placeholderId,
+                message: message,
+                mode: .IGNORE_CONSENT
+            )
+        }
+    }
+    
+    public func trackInAppContentBlockError(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        errorMessage: String
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackInAppContentBlockError(
+                placeholderId: placeholderId,
+                message: message,
+                errorMessage: errorMessage,
+                mode: .CONSIDER_CONSENT
+            )
+        }
+    }
+    
+    public func trackInAppContentBlockErrorWithoutTrackingConsent(
+        placeholderId: String,
+        message: InAppContentBlockResponse,
+        errorMessage: String
+    ) {
+        executeSafelyWithDependencies { dependencies in
+            guard dependencies.configuration.authorization != Authorization.none else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            dependencies.trackingConsentManager.trackInAppContentBlockError(
+                placeholderId: placeholderId,
+                message: message,
+                errorMessage: errorMessage,
+                mode: .IGNORE_CONSENT
+            )
         }
     }
 }
