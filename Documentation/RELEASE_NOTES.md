@@ -2,9 +2,9 @@
 ## Release Notes for 2.22.0
 #### February 02, 2024
 * Features
- * New optional data-actiontype attribute added for HTML messages
+  * New optional data-actiontype attribute added for HTML messages
 * Bug Fixes
- * Fixed: In-app content block tracks error for each URL change also for about:blank
+  * Fixed: In-app content block tracks error for each URL change also for about:blank
 
 
 ## Release Notes for 2.21.3

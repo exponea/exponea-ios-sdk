@@ -1,6 +1,6 @@
 ## In-app content blocks
 
-Exponea SDK allows you to display native In-app content blocks based on definitions set up on the Exponea web application.
+Exponea SDK allows you to display native In-app content blocks based on definitions set up on the Exponea web application. You can find information on creating your messages in [Exponea documentation](https://documentation.bloomreach.com/engagement/docs/in-app-content-blocks)
 
 In-app content block will be shown exactly where you'll place a StaticInAppContentBlockView / prepareInAppContentBlockView. You can get a placeholder view from API:
 

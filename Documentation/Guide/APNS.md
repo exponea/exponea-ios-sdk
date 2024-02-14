@@ -26,5 +26,8 @@ To be able to send push notifications from Exponea, you will need to create an A
 ![](./pics/apns7.png)
 > API mode cannot be changed later. You have to create a new integration in case of different mode.
 
+5. Make sure that iOS Notification (under Settings -> Project settings -> Channels -> Push notifications) is set to `Apple Push Notification Service`
+![](./pics/apns8.png)
+
 ## Great job!
 Exponea web application is now set up to send push notifications to your application. Once you finish [push notification setup](./PUSH_QUICKSTART.md), try [sending push notifications](./PUSH_SEND.md).
