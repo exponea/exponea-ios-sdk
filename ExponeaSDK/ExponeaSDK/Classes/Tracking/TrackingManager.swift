@@ -621,6 +621,7 @@ extension TrackingManager {
         sessionManager.clear()
 
         repository.configuration.switchProjects(mainProject: exponeaProject, projectMapping: projectMapping)
+        repository.configuration.saveToUserDefaults()
 
         database.makeNewCustomer()
         UNAuthorizationStatusProvider.current.isAuthorized { authorized in

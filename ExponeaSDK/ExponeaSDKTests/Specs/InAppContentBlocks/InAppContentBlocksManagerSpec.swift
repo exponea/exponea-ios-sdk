@@ -21,6 +21,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
     )
 
     override func spec() {
+        Exponea.shared.configure(with: configuration)
         let manager: InAppContentBlocksManagerType = Exponea.shared.inAppContentBlocksManager!
 
         it("check inAppContentBlocks priority") {

@@ -445,6 +445,36 @@ class ExponeaSpec: QuickSpec {
                         ])]))
                     expect(customerUpdates[2].projectToken).to(equal("other-mock-token"))
                 }
+
+                it("should switch projects with anonymize and store them localy") {
+                    let appGroup = "MockAppGroup"
+                    let exponea = ExponeaInternal()
+                    Exponea.shared = exponea
+                    Exponea.shared.configure(
+                        Exponea.ProjectSettings(projectToken: "mock-token", authorization: .token("mock-token")),
+                        pushNotificationTracking: .enabled(appGroup: appGroup),
+                        flushingSetup: Exponea.FlushingSetup(mode: .manual)
+                    )
+                    guard let configuration = Configuration.loadFromUserDefaults(appGroup: appGroup) else {
+                        fail("Configuration has not been loaded for \(appGroup)")
+                        return
+                    }
+                    expect(configuration.projectToken).to(equal("mock-token"))
+                    expect(configuration.authorization).to(equal(.token("mock-token")))
+                    Exponea.shared.anonymize(
+                        exponeaProject: ExponeaProject(
+                            projectToken: "other-mock-token",
+                            authorization: .token("other-mock-token")
+                        ),
+                        projectMapping: nil
+                    )
+                    guard let configurationAfterAnonymize = Configuration.loadFromUserDefaults(appGroup: appGroup) else {
+                        fail("Configuration has not been loaded after anonymize for \(appGroup)")
+                        return
+                    }
+                    expect(configurationAfterAnonymize.projectToken).to(equal("other-mock-token"))
+                    expect(configurationAfterAnonymize.authorization).to(equal(.token("other-mock-token")))
+                }
             }
         }
     }
