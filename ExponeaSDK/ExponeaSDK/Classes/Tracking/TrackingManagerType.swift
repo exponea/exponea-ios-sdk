@@ -97,4 +97,7 @@ protocol TrackingManagerType: AnyObject {
     /// Anonymizes the user by deleting all identifiers (including cookie) and deletes all database data.
     /// You can switch project and new user will be tracked into it
     func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) throws
+    
+    /// Tracks delivered push notification as EventTrackingObject
+    func trackDeliveredPushEvent(_ eventObject: EventTrackingObject)
 }

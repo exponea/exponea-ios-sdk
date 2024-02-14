@@ -15,7 +15,7 @@ public protocol TrackingObject {
     var timestamp: Double { get }
 }
 
-public final class EventTrackingObject: TrackingObject, Equatable {
+public final class EventTrackingObject: TrackingObject, Equatable, Codable {
     public let exponeaProject: ExponeaProject
     public let customerIds: [String: String]
     public let eventType: String?
@@ -42,6 +42,14 @@ public final class EventTrackingObject: TrackingObject, Equatable {
             && lhs.eventType == rhs.eventType
             && lhs.timestamp == rhs.timestamp
             && lhs.dataTypes == rhs.dataTypes
+    }
+    
+    public static func deserialize(from data: Data) -> EventTrackingObject? {
+        return try? JSONDecoder.snakeCase.decode(EventTrackingObject.self, from: data)
+    }
+
+    public func serialize() -> Data? {
+        return try? JSONEncoder.snakeCase.encode(self)
     }
 }
 

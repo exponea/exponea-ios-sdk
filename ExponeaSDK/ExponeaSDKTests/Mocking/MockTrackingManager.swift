@@ -10,24 +10,61 @@ import Foundation
 @testable import ExponeaSDK
 
 internal class MockTrackingManager: TrackingManagerType {
+
     public struct TrackedEvent: Equatable {
         let type: EventType
         let data: [DataType]?
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            if lhs.type != rhs.type {
+                return false
+            }
+            if lhs.data == nil && rhs.data == nil {
+                return true
+            }
+            if lhs.data == nil || rhs.data == nil {
+                return false
+            }
+            return areDicsEqual(lhs.data?.customerIds, rhs.data?.customerIds)
+            && areDicsEqual(lhs.data?.properties, rhs.data?.properties)
+            && lhs.data?.latestTimestamp == rhs.data?.latestTimestamp
+            && areArraysEqual(lhs.data?.eventTypes, rhs.data?.eventTypes)
+        }
+        static func areDicsEqual(_ dic1: [String: String]?, _ dic2: [String: String]?) -> Bool {
+            if dic1 == nil && dic2 == nil {
+                return true
+            }
+            if dic1 == nil || dic2 == nil {
+                return false
+            }
+            return NSDictionary(dictionary: dic1!).isEqual(to: dic2!)
+        }
+        static func areDicsEqual(_ dic1: [String: JSONConvertible?]?, _ dic2: [String: JSONConvertible?]?) -> Bool {
+            if dic1 == nil && dic2 == nil {
+                return true
+            }
+            if dic1 == nil || dic2 == nil {
+                return false
+            }
+            return NSDictionary(dictionary: dic1!).isEqual(to: dic2!)
+        }
+        static func areArraysEqual(_ array1: [String]?, _ array2: [String]?) -> Bool {
+            return array1?.sorted() == array2?.sorted()
+        }
     }
     public private(set) var trackedEvents: [TrackedEvent] = []
-    
+
     struct CallData: Equatable {
         let event: InAppMessageEvent
         let message: InAppMessage
     }
     public var trackedInappEvents: [CallData] = []
-    
+
     var customerCookie: String = "mock-cookie"
-    
+
     var customerIds: [String: String] = [:]
-    
+
     var customerPushToken: String?
-    
+
     lazy var notificationsManager: PushNotificationManagerType = PushNotificationManager(
         trackingConsentManager: Exponea.shared.trackingConsentManager!,
         trackingManager: self,
@@ -39,19 +76,19 @@ internal class MockTrackingManager: TrackingManagerType {
         lastTokenTrackDate: Date(),
         urlOpener: MockUrlOpener()
     )
-    
+
     var hasActiveSession: Bool = false
-    
+
     var flushingMode: FlushingMode = .manual
-    
+
     let onEventCallback: (EventType, [DataType]) -> Void
-    
+
     init(
         onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) {
         self.onEventCallback = onEventCallback
     }
-    
+
     func track(_ type: EventType, with data: [DataType]?) throws {
         var payload: [DataType] = data ?? []
         if let stringEventType = getEventTypeString(type: type) {
@@ -60,11 +97,29 @@ internal class MockTrackingManager: TrackingManagerType {
         trackedEvents.append(TrackedEvent(type: type, data: payload))
         onEventCallback(type, payload)
     }
-    
+
+    func trackDeliveredPushEvent(_ eventObject: ExponeaSDK.EventTrackingObject) {
+        var payload = eventObject.dataTypes
+        let eventType: EventType
+        if let customEventType = eventObject.eventType,
+           customEventType != Constants.EventTypes.pushDelivered {
+            eventType = .customEvent
+            payload.append(.eventType(customEventType))
+        } else {
+            eventType = .pushDelivered
+        }
+        payload.append(.timestamp(eventObject.timestamp))
+        do {
+            try self.processTrack(eventType, with: payload, trackingAllowed: true)
+        } catch let error {
+            fatalError("Error while processing track event: \(error)")
+        }
+    }
+
     func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws {
         try processTrack(type, with: data, trackingAllowed: trackingAllowed, for: nil)
     }
-    
+
     func processTrack(
         _ type: ExponeaSDK.EventType,
         with data: [ExponeaSDK.DataType]?,
@@ -80,39 +135,39 @@ internal class MockTrackingManager: TrackingManagerType {
         }
         onEventCallback(type, payload)
     }
-    
+
     func updateLastPendingEvent(ofType type: String, with data: DataType) throws {
         fatalError("Not implemented")
     }
-    
+
     func hasPendingEvent(ofType type: String, withMaxAge age: Double) throws -> Bool {
         fatalError("Not implemented")
     }
-    
+
     func flushData() {
         fatalError("Not implemented")
     }
-    
+
     func flushData(completion: (() -> Void)?) {
         fatalError("Not implemented")
     }
-    
+
     func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) throws {
         fatalError("Not implemented")
     }
-    
+
     func ensureAutomaticSessionStarted() {
         fatalError("Not implemented")
     }
-    
+
     func manualSessionStart() {
         fatalError("Not implemented")
     }
-    
+
     func manualSessionEnd() {
         fatalError("Not implemented")
     }
-    
+
     func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
         fatalError("Not implemented")
     }
@@ -124,15 +179,15 @@ internal class MockTrackingManager: TrackingManagerType {
     ) {
         fatalError("Not implemented")
     }
-    
+
     func trackInAppContentBlockClose(placeholderId: String, message: ExponeaSDK.InAppContentBlockResponse, trackingAllowed: Bool) {
         fatalError("Not implemented")
     }
-    
+
     func trackInAppContentBlockShow(placeholderId: String, message: ExponeaSDK.InAppContentBlockResponse, trackingAllowed: Bool) {
         fatalError("Not implemented")
     }
-    
+
     func trackInAppContentBlockError(placeholderId: String, message: ExponeaSDK.InAppContentBlockResponse, errorMessage: String, trackingAllowed: Bool) {
         fatalError("Not implemented")
     }
@@ -144,7 +199,7 @@ internal class MockTrackingManager: TrackingManagerType {
             isUserInteraction: isUserInteraction
         )
     }
-    
+
     func trackInAppContentBlocksClick(
         message: InAppContentBlockResponse,
         trackingAllowed: Bool,
@@ -154,7 +209,7 @@ internal class MockTrackingManager: TrackingManagerType {
     // Function used to track inAppContentBlocks message banner close event
     func trackInAppContentBlocksClose(message: InAppContentBlockResponse, trackingAllowed: Bool) {}
     func trackInAppContentBlocksShow(message: InAppContentBlockResponse, trackingAllowed: Bool) {}
-    
+
     func trackInAppMessageClose(message: ExponeaSDK.InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
         self.track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }

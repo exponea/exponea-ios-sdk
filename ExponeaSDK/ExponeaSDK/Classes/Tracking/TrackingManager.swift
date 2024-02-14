@@ -189,7 +189,7 @@ extension TrackingManager: TrackingManagerType {
     public func track(_ type: EventType, with data: [DataType]?) throws {
         try trackInternal(type, with: data, trackingAllowed: true, for: nil)
     }
-    
+
     private func trackInternal(
         _ type: EventType,
         with data: [DataType]?,
@@ -201,49 +201,65 @@ extension TrackingManager: TrackingManagerType {
         if projects.isEmpty {
             throw TrackingManagerError.unknownError("No project tokens provided.")
         }
-
         if trackingAllowed {
             Exponea.logger.log(.verbose, message: "Tracking event of type: \(type) with params \(data ?? [])")
         } else {
             Exponea.logger.log(.verbose, message: "Processing event of type: \(type) with params \(data ?? []) with tracking \(trackingAllowed)")
         }
-
         /// For each project token we have, track the data.
+        let payload = populateTrackEventPayload(of: type, from: data)
         for project in projects {
-            var payload: [DataType] = data ?? []
-            if let stringEventType = getEventTypeString(type: type) {
-                payload.append(.eventType(stringEventType))
-            }
-            if canUseDefaultProperties(for: type) {
-                payload = payload.addProperties(repository.configuration.defaultProperties)
-            }
-            switch type {
-            case .identifyCustomer,
-                 .registerPushToken:
-                if let appGroup = repository.configuration.appGroup {
-                    database.currentCustomer.saveIdsToUserDefaults(appGroup: appGroup)
-                }
-                try database.identifyCustomer(with: payload, into: project)
-            case .install,
-                 .sessionStart,
-                 .sessionEnd,
-                 .customEvent,
-                 .payment,
-                 .pushOpened,
-                 .pushDelivered,
-                 .campaignClick,
-                 .banner,
-                 .appInbox:
-                if trackingAllowed {
-                    try database.trackEvent(with: payload, into: project, for: customerId)
-                }
-            }
+            try self.storeTrackEvent(of: type, with: payload, trackingAllowed, for: customerId, within: project)
             self.onEventCallback(type, payload)
         }
-
+        onEventStored()
+    }
+    
+    private func onEventStored() {
         // If we have immediate flushing mode, flush after tracking
         if case .immediate = self.flushingManager.flushingMode {
             self.flushingManager.flushDataWith(delay: Constants.Tracking.immediateFlushDelay)
+        }
+    }
+    
+    private func populateTrackEventPayload(of type: EventType, from source: [DataType]?) -> [DataType] {
+        var payload: [DataType] = source ?? []
+        if let stringEventType = getEventTypeString(type: type) {
+            payload.append(.eventType(stringEventType))
+        }
+        if canUseDefaultProperties(for: type) {
+            payload = payload.addProperties(repository.configuration.defaultProperties)
+        }
+        return payload
+    }
+    
+    private func storeTrackEvent(
+        of type: EventType,
+        with payload: [DataType],
+        _ trackingAllowed: Bool,
+        for customerId: String?,
+        within project: ExponeaProject
+    ) throws {
+        switch type {
+        case .identifyCustomer,
+             .registerPushToken:
+            if let appGroup = repository.configuration.appGroup {
+                database.currentCustomer.saveIdsToUserDefaults(appGroup: appGroup)
+            }
+            try database.identifyCustomer(with: payload, into: project)
+        case .install,
+             .sessionStart,
+             .sessionEnd,
+             .customEvent,
+             .payment,
+             .pushOpened,
+             .pushDelivered,
+             .campaignClick,
+             .banner,
+             .appInbox:
+            if trackingAllowed {
+                try database.trackEvent(with: payload, into: project, for: customerId)
+            }
         }
     }
     
@@ -351,6 +367,30 @@ extension TrackingManager: TrackingManagerType {
             userDefaults: userDefaults,
             trackingDelegate: self
         )
+    }
+
+    func trackDeliveredPushEvent(_ eventObject: EventTrackingObject) {
+        var payload = eventObject.dataTypes
+        let eventType: EventType
+        if let customEventType = eventObject.eventType,
+           customEventType != Constants.EventTypes.pushDelivered {
+            eventType = .customEvent
+            payload.append(.eventType(customEventType))
+        } else {
+            eventType = .pushDelivered
+            payload.append(.eventType(Constants.EventTypes.pushDelivered))
+        }
+        payload.append(.timestamp(eventObject.timestamp))
+        let customerId = eventObject.customerIds["cookie"]
+        let project = eventObject.exponeaProject
+        let trackingAllowed = true
+        do {
+            try storeTrackEvent(of: eventType, with: payload, trackingAllowed, for: customerId, within: project)
+            // calling of onEventCallback is meaningless
+            onEventStored()
+        } catch {
+            Exponea.logger.log(.error, message: "Error while tracking push opened event: \(error.localizedDescription)")
+        }
     }
 }
 
