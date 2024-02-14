@@ -72,6 +72,21 @@ To reduce the number of API calls and fetching time of In-app messages, SDK is c
  Any In-app message images are preloaded too so message is able to be shown after whole process is finished. Please considers it while testing of In-app feature.
  It is common behaviour that if you change an In-app message data on platform then this change is reflected in SDK after 30 minutes due to usage of messages cache. Do call `Exponea.identifyCustomer` or `Exponea.anonymize` if you want to reflect changes immediately.
 
+### In-app messages tracking
+
+In-app messages are tracked automatically by SDK. You may see these `action` values in customers tracked events:
+
+- 'show' - event is tracked if message has been shown to user
+- 'click' - event is tracked if user clicked on action button inside message. Event contains 'text' and 'link' properties that you might be interested in
+- 'close' - event is tracked if user clicked on button with close action inside message or message has been dismissed automatically by defined 'Closing timeout'
+- 'error' - event is tracked if showing of message has failed. Event contains 'error' property with meaningful description
+
+The behaviour of In-app messages tracking may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in [tracking consent documentation](./TRACKING_CONSENT.md).
+Tracking of 'show' and 'error' event is done by SDK and behaviour cannot be overridden. These events are tracked only if:
+
+* Tracking consent feature is disabled
+* Tracking consent feature is enabled and 'hasTrackingConsent' has 'true' value
+
 ### Custom in-app message actions
 If you want to override default SDK behavior, when in-app message action is performed (button is clicked, message is closed), or you want to add your code to be performed along with code executed by the SDK, you can set up `inAppMessagesDelegate` on Exponea instance. You will first need to create your own implementation of `InAppMessageActionDelegate`
 
