@@ -1,4 +1,15 @@
 ## Release Notes
+## Release Notes for 2.23.0
+#### February 15, 2024
+* Features
+  * App Inbox addSubviews from UIView are now internal
+  * In-app messages docu extended describing events and consent more deeply
+* Bug Fixes
+  * Fixed: Calling anonymize not saving configuration to User Defaults
+  * Fixed: Stored unprocessed PUSH events not storing and loading proper configuration in some cases
+  * Fixed: PUSH setup docu missing step of setting APNS integration in channels part
+
+
 ## Release Notes for 2.22.0
 #### February 02, 2024
 * Features
