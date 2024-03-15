@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./Documentation/images/logo_engagement.svg?raw=true" alt="Exponea"/>
+  <img src="./Documentation/images/logo_engagement.png?raw=true" alt="Exponea"/>
 </p>
 
 ![Platform](https://img.shields.io/badge/Platform-iOS-lightgrey.svg?style=flat)
