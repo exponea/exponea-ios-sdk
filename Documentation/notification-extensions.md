@@ -49,7 +49,7 @@ Follow the instructions in the relevant section for the dependency manager you u
 
 Optionally, you can specify the ExponeaSDK version as follows to let `pod` automatically any smaller than minor version updates:
 ```
-pod "ExponeaSDK-Notifications", "~> 2.21.3"
+pod "ExponeaSDK-Notifications", "~> 2.24.0"
 ```
 
 ### Carthage

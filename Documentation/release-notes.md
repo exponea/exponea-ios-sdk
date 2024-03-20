@@ -7,6 +7,14 @@ parentDocSlug: ios-sdk
 ---
 
 ## Release Notes
+## Release Notes for 2.24.0
+#### March 20, 2024
+* Features
+  * Introducing SDK documentation 2.0
+* Bug Fixes
+  * Fixed: SDK notifies initialization finish prematurely and causes ignoring of postponed SDK API methods
+
+
 ## Release Notes for 2.23.0
 #### February 15, 2024
 * Features
