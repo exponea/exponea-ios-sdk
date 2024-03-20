@@ -566,4 +566,17 @@ public extension ExponeaInternal {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
     }
+
+    @objc
+    func openAppInboxList(sender: UIButton!) {
+        let window = UIApplication.shared.keyWindow
+        guard let topViewController = InAppMessagePresenter.getTopViewController(window: window) else {
+            Exponea.logger.log(.error, message: "Unable to show AppInbox list - no view controller")
+            return
+        }
+        let listView = Exponea.shared.appInboxProvider.getAppInboxListViewController()
+        let naviController = UINavigationController(rootViewController: listView)
+        naviController.modalPresentationStyle = .formSheet
+        topViewController.present(naviController, animated: true)
+    }
 }
