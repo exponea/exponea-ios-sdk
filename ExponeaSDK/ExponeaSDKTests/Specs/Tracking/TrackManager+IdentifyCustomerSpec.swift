@@ -75,7 +75,7 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 ]
                 expect { try trackingManager.track(EventType.identifyCustomer, with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
-                    .properties(["prop": .string("value"), "default_prop": .string("default_value")]),
+                    .properties(["prop": .string("value"), "default_prop": .string("default_value")])
                 ]))
             }
 
@@ -87,6 +87,56 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 expect { try trackingManager.track(EventType.identifyCustomer, with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties(["prop": .string("value")])
+                ]))
+            }
+
+            it("should add default properties to track push token by default") {
+                prepareEnvironment(nil)
+                expect {
+                    try trackingManager.track(
+                        EventType.registerPushToken,
+                        with: [.pushNotificationToken(token: "abcd", authorized: true)]
+                    )
+                }.notTo(raiseException())
+                expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
+                    .properties([
+                        "default_prop": .string("default_value"),
+                        "apple_push_notification_authorized": .bool(true),
+                        "apple_push_notification_id": .string("abcd")
+                    ])
+                ]))
+            }
+
+            it("should add default properties to track push token if allowed") {
+                prepareEnvironment(true)
+                expect {
+                    try trackingManager.track(
+                        EventType.registerPushToken,
+                        with: [.pushNotificationToken(token: "abcd", authorized: true)]
+                    )
+                }.notTo(raiseException())
+                expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
+                    .properties([
+                        "default_prop": .string("default_value"),
+                        "apple_push_notification_authorized": .bool(true),
+                        "apple_push_notification_id": .string("abcd")
+                    ])
+                ]))
+            }
+
+            it("should NOT add default properties to track push token if denied") {
+                prepareEnvironment(false)
+                expect {
+                    try trackingManager.track(
+                        EventType.registerPushToken,
+                        with: [.pushNotificationToken(token: "abcd", authorized: true)]
+                    )
+                }.notTo(raiseException())
+                expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
+                    .properties([
+                        "apple_push_notification_authorized": .bool(true),
+                        "apple_push_notification_id": .string("abcd")
+                    ])
                 ]))
             }
         }

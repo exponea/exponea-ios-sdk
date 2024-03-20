@@ -103,7 +103,7 @@ extension ExponeaInternal {
                 let data: [DataType] = [.pushNotificationToken(token: token, authorized: authorized)]
                 // Do the actual tracking
                 self.executeSafely {
-                    try dependencies.trackingManager.track(.identifyCustomer, with: data)
+                    try dependencies.trackingManager.track(.registerPushToken, with: data)
                 }
             }
         }

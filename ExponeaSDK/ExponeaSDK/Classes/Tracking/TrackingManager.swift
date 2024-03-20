@@ -264,7 +264,12 @@ extension TrackingManager: TrackingManagerType {
     }
     
     private func canUseDefaultProperties(for eventType: EventType) -> Bool {
-        return repository.configuration.allowDefaultCustomerProperties || EventType.identifyCustomer != eventType
+        switch eventType {
+        case EventType.identifyCustomer, EventType.registerPushToken:
+            return repository.configuration.allowDefaultCustomerProperties
+        default:
+            return true
+        }
     }
 
     public func trackInAppMessageShown(message: InAppMessage, trackingAllowed: Bool) {

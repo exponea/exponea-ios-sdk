@@ -300,7 +300,7 @@ extension DatabaseManager: DatabaseManagerType {
     /// - Throws: <#throws value description#>
     func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws {
         try context.performAndWait {
-            loadTrackingCunstomer(context: context, with: data, into: project)
+            loadTrackingCustomer(context: context, with: data, into: project)
             // Save the customer properties into CoreData
             try saveContext(context)
         }
@@ -308,7 +308,7 @@ extension DatabaseManager: DatabaseManagerType {
     
     /// To be called from a bg thread, otherwise the thread will be blocked
     /// - Parameter context: a background context
-    private func loadTrackingCunstomer(context: NSManagedObjectContext, with data: [DataType], into project: ExponeaProject) {
+    private func loadTrackingCustomer(context: NSManagedObjectContext, with data: [DataType], into project: ExponeaProject) {
         
             let trackCustomer = TrackCustomer(context: context)
             trackCustomer.customer = currentCustomerManagedObject
