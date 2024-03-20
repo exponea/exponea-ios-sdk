@@ -307,12 +307,10 @@ public class ExponeaInternal: ExponeaType {
                 processSavedCampaignData()
                 configuration.saveToUserDefaults()
                 
-                onMain {
-                    self.inAppContentBlocksManager = InAppContentBlocksManager.manager
-                    self.inAppContentBlocksManager?.initBlocker()
-                    self.inAppContentBlocksManager?.loadInAppContentBlockMessages { [weak self] in
-                        self?.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: configuration.inAppContentBlocksPlaceholders ?? [])
-                    }
+                self.inAppContentBlocksManager = InAppContentBlocksManager.manager
+                self.inAppContentBlocksManager?.initBlocker()
+                self.inAppContentBlocksManager?.loadInAppContentBlockMessages { [weak self] in
+                    self?.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: configuration.inAppContentBlocksPlaceholders ?? [])
                 }
                 
                 if isDebugModeEnabled {

@@ -73,12 +73,14 @@ final class InAppContentBlocksManager: NSObject {
     }
 
     func initBlocker() {
-        WKContentRuleListStore.default().compileContentRuleList(
-            forIdentifier: "ContentBlockingRules",
-            encodedContentRuleList: blockRules
-        ) { contentRuleList, error in
-            guard error == nil else { return }
-            self.contentRuleList = contentRuleList
+        onMain {
+            WKContentRuleListStore.default().compileContentRuleList(
+                forIdentifier: "ContentBlockingRules",
+                encodedContentRuleList: self.blockRules
+            ) { contentRuleList, error in
+                guard error == nil else { return }
+                self.contentRuleList = contentRuleList
+            }
         }
     }
 
