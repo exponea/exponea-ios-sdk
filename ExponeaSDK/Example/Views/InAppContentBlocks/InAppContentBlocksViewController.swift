@@ -160,8 +160,8 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
             }
             Exponea.logger.log(.verbose, message: "In-app content block has been loaded: \(contentLoaded)")
             if contentLoaded {
-                let contentWidth = placeholder.frame.size.width
-                let contentHeight = placeholder.frame.size.height
+                let contentWidth = self.placeholder.frame.size.width
+                let contentHeight = self.placeholder.frame.size.height
                 Exponea.logger.log(
                     .verbose,
                     message: "In-app content block content has size of width \(contentWidth)px height \(contentHeight)px"

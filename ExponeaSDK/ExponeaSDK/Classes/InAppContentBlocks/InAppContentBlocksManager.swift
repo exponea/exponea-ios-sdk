@@ -713,8 +713,8 @@ private extension InAppContentBlocksManager {
             let savedPlaceholder = placeholder
             loadPersonalizedInAppContentBlocks(for: savedNewValue.messageId, tags: [savedNewValue.tag], skipLoad: true) { [weak self] in
                 guard let self else { return }
-                calculator = .init()
-                calculator.heightUpdate = { height in
+                self.calculator = .init()
+                self.calculator.heightUpdate = { height in
                     let tag = self.createUniqueTag(placeholder: placeholder)
                     // Update display status
                     let indexOfPlaceholder: Int = self.inAppContentBlockMessages.firstIndex(where: { $0.id == placeholder.id }) ?? 0
@@ -760,11 +760,11 @@ private extension InAppContentBlocksManager {
                         self.refreshCallback?(savedNewValue.indexPath)
                     }
                 }
-                guard let html = inAppContentBlockMessages.first(where: { $0.tags?.contains(newValue.tag) == true })?.personalizedMessage?.htmlPayload?.html, !html.isEmpty else {
-                    isUpdating = false
+                guard let html = self.inAppContentBlockMessages.first(where: { $0.tags?.contains(newValue.tag) == true })?.personalizedMessage?.htmlPayload?.html, !html.isEmpty else {
+                    self.isUpdating = false
                     return
                 }
-                calculator.loadHtml(placedholderId: placeholder.id, html: html)
+                self.calculator.loadHtml(placedholderId: placeholder.id, html: html)
             }
         } else {
             _queue.changeValue(with: { $0.append(.init(inAppContentBlocks: placeholder, newValue: newValue)) })
