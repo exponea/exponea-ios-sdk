@@ -72,8 +72,21 @@ extension Array where Iterator.Element == DataType {
         }
         return updatedData
     }
+    
+    public func withCustomerIds(_ customerIds: [String: String]) -> [DataType] {
+        // only single .customerIds could be populated in array
+        var updatedData: [DataType] = self.compactMap {
+            if case .customerIds(_) = $0 {
+                return nil
+            } else {
+                return $0
+            }
+        }
+        updatedData.append(.customerIds(customerIds))
+        return updatedData
+    }
 
-    public var customerIds: [String : String] {
+    public var customerIds: [String: String] {
         return compactMap { if case .customerIds(let customerIds) = $0 { return customerIds } else { return nil } }.first ?? [:]
     }
 }

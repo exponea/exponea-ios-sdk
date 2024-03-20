@@ -179,22 +179,17 @@ extension TrackingManager: TrackingManagerType {
     }
 
     public func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws {
-        try processTrack(type, with: data, trackingAllowed: trackingAllowed, for: nil)
-    }
-
-    public func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool, for customerId: String?) throws {
-        try trackInternal(type, with: data, trackingAllowed: trackingAllowed, for: customerId)
+        try trackInternal(type, with: data, trackingAllowed: trackingAllowed)
     }
 
     public func track(_ type: EventType, with data: [DataType]?) throws {
-        try trackInternal(type, with: data, trackingAllowed: true, for: nil)
+        try trackInternal(type, with: data, trackingAllowed: true)
     }
 
     private func trackInternal(
         _ type: EventType,
         with data: [DataType]?,
-        trackingAllowed: Bool,
-        for customerId: String?
+        trackingAllowed: Bool
     ) throws {
         /// Get token mapping or fail if no token provided.
         let projects = repository.configuration.projects(for: type)
@@ -209,20 +204,23 @@ extension TrackingManager: TrackingManagerType {
         /// For each project token we have, track the data.
         let payload = populateTrackEventPayload(of: type, from: data)
         for project in projects {
-            try self.storeTrackEvent(of: type, with: payload, trackingAllowed, for: customerId, within: project)
+            try self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
             self.onEventCallback(type, payload)
         }
         onEventStored()
     }
-    
+
     private func onEventStored() {
         // If we have immediate flushing mode, flush after tracking
         if case .immediate = self.flushingManager.flushingMode {
             self.flushingManager.flushDataWith(delay: Constants.Tracking.immediateFlushDelay)
         }
     }
-    
-    private func populateTrackEventPayload(of type: EventType, from source: [DataType]?) -> [DataType] {
+
+    private func populateTrackEventPayload(
+        of type: EventType,
+        from source: [DataType]?
+    ) -> [DataType] {
         var payload: [DataType] = source ?? []
         if let stringEventType = getEventTypeString(type: type) {
             payload.append(.eventType(stringEventType))
@@ -230,14 +228,16 @@ extension TrackingManager: TrackingManagerType {
         if canUseDefaultProperties(for: type) {
             payload = payload.addProperties(repository.configuration.defaultProperties)
         }
+        if (payload.customerIds.isEmpty) {
+            payload = payload.withCustomerIds(customerIds)
+        }
         return payload
     }
-    
+
     private func storeTrackEvent(
         of type: EventType,
         with payload: [DataType],
         _ trackingAllowed: Bool,
-        for customerId: String?,
         within project: ExponeaProject
     ) throws {
         switch type {
@@ -258,11 +258,11 @@ extension TrackingManager: TrackingManagerType {
              .banner,
              .appInbox:
             if trackingAllowed {
-                try database.trackEvent(with: payload, into: project, for: customerId)
+                try database.trackEvent(with: payload, into: project)
             }
         }
     }
-    
+
     private func canUseDefaultProperties(for eventType: EventType) -> Bool {
         switch eventType {
         case EventType.identifyCustomer, EventType.registerPushToken:
@@ -386,11 +386,11 @@ extension TrackingManager: TrackingManagerType {
             payload.append(.eventType(Constants.EventTypes.pushDelivered))
         }
         payload.append(.timestamp(eventObject.timestamp))
-        let customerId = eventObject.customerIds["cookie"]
+        payload = payload.withCustomerIds(eventObject.customerIds)
         let project = eventObject.exponeaProject
         let trackingAllowed = true
         do {
-            try storeTrackEvent(of: eventType, with: payload, trackingAllowed, for: customerId, within: project)
+            try storeTrackEvent(of: eventType, with: payload, trackingAllowed, within: project)
             // calling of onEventCallback is meaningless
             onEventStored()
         } catch {

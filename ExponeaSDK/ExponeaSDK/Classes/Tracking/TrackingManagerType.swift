@@ -33,8 +33,6 @@ protocol TrackingManagerType: AnyObject {
 
     func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws
 
-    func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool, for customerId: String?) throws
-
     // Function used to track in-app message banner shown event
     func trackInAppMessageShown(message: InAppMessage, trackingAllowed: Bool)
 
