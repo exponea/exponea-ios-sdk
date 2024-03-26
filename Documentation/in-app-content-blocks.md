@@ -81,7 +81,7 @@ The SDK automatically tracks `banner` events for in-app content blocks with the 
 
 > ❗️
 >
-> The behavior of in-app content block tracking may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [consent documentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-consent) documentation for details.
+> The behavior of in-app content block tracking may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [consent documentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
 
 ## Customization
 
@@ -367,7 +367,7 @@ This section provides helpful pointers for troubleshooting in-app content blocks
 
 ### Log Messages
 
-While troubleshooting in-app content block issues, you can useful information in the messages logged by the SDK at verbose log level. Look for messages similar to the ones below:
+While troubleshooting in-app content block issues, you can find useful information in the messages logged by the SDK at verbose log level. Look for messages similar to the ones below:
 
 1. ```
     InAppCB: Placeholder ["placeholder"] has invalid state - action or message is invalid.

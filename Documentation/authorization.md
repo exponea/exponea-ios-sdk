@@ -114,7 +114,7 @@ public class ExampleAuthProvider: NSObject, AuthorizationProviderType {
 
 The customer token value is requested for every HTTP call that requires it.
 
-Typically, JWT tokens have their own expiration lifetime and can be used multiple times. The SDK does not store the token in any cache. Developer may implement their own token cache as they see fit. For example:
+Typically, JWT tokens have their own expiration lifetime and can be used multiple times. The SDK does not store the token in any cache. Developers may implement their own token cache as they see fit. For example:
 
 ```swift
 @objc(ExponeaAuthProvider)

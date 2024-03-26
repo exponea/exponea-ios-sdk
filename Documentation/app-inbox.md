@@ -89,7 +89,7 @@ The SDK fetches and displays the App Inbox automatically as follows:
 
 > ❗️
 >
-> The behavior of `trackAppInboxOpened` and `trackAppInboxClick` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Refer to [Consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-consent) for details.
+> The behavior of `trackAppInboxOpened` and `trackAppInboxClick` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Refer to [Consent](https://dash.readme.com/project/bloomreachengagement/v2/docs/ios-sdk-tracking-consent) for details.
 
 ## Customize App Inbox
 

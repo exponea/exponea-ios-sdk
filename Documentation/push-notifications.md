@@ -314,7 +314,7 @@ You can completely disable notification tracking and use the methods `Exponea.sh
 
 > ❗️
 >
-> The behavior of `trackPushReceived` and `trackClickedPush` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in the [tracking consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-consent) documentation.
+> The behavior of `trackPushReceived` and `trackClickedPush` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in the [tracking consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation.
 
 ### Custom Notification Actions in iOS 11 and Lower
 

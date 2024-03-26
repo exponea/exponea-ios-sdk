@@ -29,7 +29,7 @@ The SDK automatically tracks `banner` events for in-app messages with the follow
 
 > ❗️
 >
-> The behavior of in-app message tracking may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [consent documentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-consent) documentation for details.
+> The behavior of in-app message tracking may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [consent documentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
 
 
 ## Customization
@@ -82,7 +82,7 @@ The method `trackInAppMessageClose` will track a `close` event with the `interac
 
 > ❗️
 >
-> The behaviour of `trackInAppMessageClick` and `trackInAppMessageClose` may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [Tracking Consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-consent) documentation for details.
+> The behaviour of `trackInAppMessageClick` and `trackInAppMessageClose` may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [Tracking Consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
 
 ### Override Button Action Type in HTML Message
 
@@ -184,7 +184,7 @@ While troubleshooting in-app message issues, you can follow the process of reque
 2. ```
    Data not preloaded, saving message for later.
    ```
-   In-app messages must be preloaded before they can be displayed. If the preload hasn't statted or is still in progress, the SDK will wait until the preload is complete and only perform the logic to select an in-app message afterwards.
+   In-app messages must be preloaded before they can be displayed. If the preload hasn't started or is still in progress, the SDK will wait until the preload is complete and only perform the logic to select an in-app message afterward.
 3. ```
    Created request: 
    [Request]
@@ -220,7 +220,7 @@ While troubleshooting in-app message issues, you can follow the process of reque
 8. ```
     Got 1 messages with highest priority. ["Payment in-app message"]
     ```
-    If there is more than one in-app message with the highest priority, the SDK picks one at random.
+    If there is more than one in-app message with the highest priority, the SDK randomly picks one.
 9. ```
     Attempting to show in-app message 'Payment in-app message'
     ```
