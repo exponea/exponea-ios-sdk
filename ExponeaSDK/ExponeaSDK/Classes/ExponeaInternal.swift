@@ -260,10 +260,8 @@ public class ExponeaInternal: ExponeaType {
                     repository: repository,
                     customerIdentifiedHandler: { [weak self] in
                         // reload in-app messages once customer identification is flushed - user may have been merged
-                        guard let inAppMessagesManager = self?.inAppMessagesManager,
-                              let trackingManager = self?.trackingManager,
+                        guard let trackingManager = self?.trackingManager,
                               let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
-                        inAppMessagesManager.preload(for: trackingManager.customerIds)
                         if let placeholders = configuration.inAppContentBlocksPlaceholders {
                             inAppContentBlocksManager.loadInAppContentBlockMessages {
                                 inAppContentBlocksManager.prefetchPlaceholdersWithIds(ids: placeholders)
@@ -277,32 +275,33 @@ public class ExponeaInternal: ExponeaType {
                     repository: repository,
                     database: database,
                     flushingManager: flushingManager,
+                    inAppMessageManager: inAppMessagesManager,
+                    trackManagerInitializator: { trackingManager in
+                        let trackingConsentManager = TrackingConsentManager(
+                            trackingManager: trackingManager
+                        )
+                        self.trackingConsentManager = trackingConsentManager
+                        let inAppMessagesManager = InAppMessagesManager(
+                           repository: repository,
+                           displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
+                           trackingConsentManager: trackingConsentManager
+                        )
+                        self.inAppMessagesManager = inAppMessagesManager
+                    },
                     userDefaults: userDefaults,
                     onEventCallback: { type, event in
-                        self.inAppMessagesManager?.onEventOccurred(of: type, for: event)
+                        self.inAppMessagesManager?.onEventOccurred(of: type, for: event, triggerCompletion: nil)
                         self.appInboxManager?.onEventOccurred(of: type, for: event)
                     }
                 )
 
                 self.trackingManager = trackingManager
 
-                let trackingConsentManager = TrackingConsentManager(
-                    trackingManager: trackingManager
-                )
-                self.trackingConsentManager = trackingConsentManager
-
                 self.appInboxManager = AppInboxManager(
                     repository: repository,
                     trackingManager: trackingManager,
                     database: database
                 )
-
-                let inAppMessagesManager = InAppMessagesManager(
-                   repository: repository,
-                   displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
-                   trackingConsentManager: trackingConsentManager
-                )
-                self.inAppMessagesManager = inAppMessagesManager
 
                 processSavedCampaignData()
                 configuration.saveToUserDefaults()
@@ -569,14 +568,16 @@ public extension ExponeaInternal {
 
     @objc
     func openAppInboxList(sender: UIButton!) {
-        let window = UIApplication.shared.keyWindow
-        guard let topViewController = InAppMessagePresenter.getTopViewController(window: window) else {
-            Exponea.logger.log(.error, message: "Unable to show AppInbox list - no view controller")
-            return
+        onMain {
+            let window = UIApplication.shared.keyWindow
+            guard let topViewController = InAppMessagePresenter.getTopViewController(window: window) else {
+                Exponea.logger.log(.error, message: "Unable to show AppInbox list - no view controller")
+                return
+            }
+            let listView = Exponea.shared.appInboxProvider.getAppInboxListViewController()
+            let naviController = UINavigationController(rootViewController: listView)
+            naviController.modalPresentationStyle = .formSheet
+            topViewController.present(naviController, animated: true)
         }
-        let listView = Exponea.shared.appInboxProvider.getAppInboxListViewController()
-        let naviController = UINavigationController(rootViewController: listView)
-        naviController.modalPresentationStyle = .formSheet
-        topViewController.present(naviController, animated: true)
     }
 }

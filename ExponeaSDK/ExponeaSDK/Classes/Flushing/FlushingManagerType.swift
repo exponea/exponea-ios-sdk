@@ -22,6 +22,7 @@ protocol FlushingManagerType {
 
     /// Returns true if event database contains data that needs to be flushed to exponea servers
     func hasPendingData() -> Bool
+    var inAppRefreshCallback: EmptyBlock? { get set }
 }
 
 /// Result of flushing operation

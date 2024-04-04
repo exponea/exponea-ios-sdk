@@ -80,6 +80,7 @@ internal class MockTrackingManager: TrackingManagerType {
     var hasActiveSession: Bool = false
 
     var flushingMode: FlushingMode = .manual
+    var inAppManager: InAppMessagesManagerType?
 
     let onEventCallback: (EventType, [DataType]) -> Void
 
@@ -95,6 +96,9 @@ internal class MockTrackingManager: TrackingManagerType {
             payload.append(.eventType(stringEventType))
         }
         trackedEvents.append(TrackedEvent(type: type, data: payload))
+        if type == .identifyCustomer {
+            inAppManager?.pendingShowRequests.removeAll()
+        }
         onEventCallback(type, payload)
     }
 

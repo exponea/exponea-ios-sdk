@@ -46,7 +46,7 @@ class TrackingManager {
         lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
         urlOpener: UrlOpener()
     )
-
+    private var inAppMessageManager: InAppMessagesManagerType?
     private var flushingManager: FlushingManagerType
 
     // Manager for  session tracking
@@ -85,6 +85,8 @@ class TrackingManager {
          database: DatabaseManagerType,
          device: DeviceProperties = DeviceProperties(),
          flushingManager: FlushingManagerType,
+         inAppMessageManager: InAppMessagesManagerType?,
+         trackManagerInitializator: (TrackingManager) -> (Void),
          userDefaults: UserDefaults,
          onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) throws {
@@ -94,6 +96,7 @@ class TrackingManager {
         self.userDefaults = userDefaults
 
         self.flushingManager = flushingManager
+        self.inAppMessageManager = inAppMessageManager
         self.onEventCallback = onEventCallback
 
         // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
@@ -107,6 +110,7 @@ class TrackingManager {
                                                name: UIApplication.didEnterBackgroundNotification,
                                                object: nil)
 
+        trackManagerInitializator(self)
         initialSetup()
     }
 
@@ -204,8 +208,24 @@ extension TrackingManager: TrackingManagerType {
         /// For each project token we have, track the data.
         let payload = populateTrackEventPayload(of: type, from: data)
         for project in projects {
-            try self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
-            self.onEventCallback(type, payload)
+            if type == .identifyCustomer {
+                inAppMessageManager?.pendingShowRequests.removeAll()
+                switch Exponea.shared.flushingMode {
+                case .immediate:
+                    Exponea.shared.flushingManager?.inAppRefreshCallback = {
+                        Exponea.shared.flushingManager?.inAppRefreshCallback = nil
+                        try? self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
+                        self.onEventCallback(type, payload)
+                    }
+                    Exponea.shared.flushingManager?.flushData()
+                default:
+                    try storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
+                    onEventCallback(type, payload)
+                }
+            } else {
+                try storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
+                onEventCallback(type, payload)
+            }
         }
         onEventStored()
     }

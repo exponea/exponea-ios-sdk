@@ -9,19 +9,27 @@
 @testable import ExponeaSDK
 
 final class MockInAppMessagesManager: InAppMessagesManagerType {
-    func showInAppMessage(
-        for event: [DataType],
-        callback: ((InAppMessageView?) -> Void)?
+    func startIdentifyCustomerFlow(for event: [ExponeaSDK.DataType], isFromIdentifyCustomer: Bool, isFetchDisabled: Bool, isAnonymized: Bool, triggerCompletion: ExponeaSDK.TypeBlock<ExponeaSDK.IdentifyTriggerState>?) {
+        
+    }
+    
+    func startIdentifyCustomerFlow(for event: [ExponeaSDK.DataType], isFromIdentifyCustomer: Bool, isFetchDisabled: Bool, triggerCompletion: ExponeaSDK.TypeBlock<ExponeaSDK.IdentifyTriggerState>?) {}
+    func addToPendingShowRequest(event: [ExponeaSDK.DataType]) {}
+    func loadMessagesToShow(for event: [ExponeaSDK.DataType]) -> [ExponeaSDK.InAppMessage] { [] }
+    func showInAppMessage(for type: [ExponeaSDK.DataType], callback: ((ExponeaSDK.InAppMessageView?) -> Void)?) {}
+    func fetchInAppMessages(for event: [ExponeaSDK.DataType], completion: ExponeaSDK.EmptyBlock?) {}
+    func loadMessageToShow(
+        for event: [ExponeaSDK.DataType]
+    ) -> ExponeaSDK.InAppMessage? { nil }
+    var sessionStartDate: Date = .init()
+    func onEventOccurred(
+        of type: ExponeaSDK.EventType,
+        for event: [ExponeaSDK.DataType],
+        triggerCompletion: ExponeaSDK.TypeBlock<ExponeaSDK.IdentifyTriggerState>?
     ) {}
-
-    func getInAppMessage(for event: [DataType], requireImage: Bool) -> InAppMessage? { return nil }
-
-    func preload(for customerIds: [String: String], completion: (() -> Void)?) {}
-
+    var pendingShowRequests: [String: ExponeaSDK.InAppMessagesManager.InAppMessageShowRequest] = [:]
     func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?) {}
-
     func anonymize() {}
-
     private var delegateValue: InAppMessageActionDelegate = DefaultInAppDelegate()
     internal var delegate: InAppMessageActionDelegate {
         get {

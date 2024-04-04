@@ -69,11 +69,11 @@ extension ExponeaInternal {
             if var ids = customerIds {
                 // Check for overriding cookie
                 if ids["cookie"] != nil {
-                    ids.removeValue(forKey: "cookie")
                     Exponea.logger.log(.warning, message: """
                     You should never set cookie ID directly on a customer. Ignoring.
                     """)
                 }
+                ids["cookie"] = dependencies.trackingManager.customerIds["cookie"]
                 data.append(.customerIds(ids))
             }
 

@@ -10,6 +10,8 @@ import Foundation
 @testable import ExponeaSDK
 
 internal class MockFlushingManager: FlushingManagerType {
+    var inAppRefreshCallback: ExponeaSDK.EmptyBlock?
+    
     func flushDataWith(delay: Double, completion: ((FlushResult) -> Void)?) {
         completion?(.noInternetConnection)
     }

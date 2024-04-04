@@ -175,62 +175,68 @@ If your app is successfully requesting and receiving in-app messages but they ar
 
 ### Log Messages
 
+> Note: All logs assigned to In-app handling process are prefixed with `[InApp]` shortcut to bring easier search-ability to you. Bear in mind that some supporting processes (such as Image caching) are logging without this prefix. 
+
 While troubleshooting in-app message issues, you can follow the process of requesting, receiving, preloading, and displaying in-app messages through the information logged by the SDK at verbose log level. Look for messages similar to the ones below:
 
 1. ```
-   Attempting to show in-app message for event with types ["payment"].
+   Event {eventCategory}:{eventType} occurred, going to trigger In-app show process
    ```
-   An event of type `payment` was tracked, the SDK is checking if there are any in-app messages to display on this event.
+   In-app process has been triggered by SDK usage of identifyCustomer() or event tracking.
+   ```
+   Register request for in-app message to be shown for $eventType (not for identifyCustomer). Identify customer event will always download in app messages from backend.
 2. ```
-   Data not preloaded, saving message for later.
+   Picking in-app message for eventType {eventType}. {X} messages available: [{message1 name}, {message2 name}, ...].
    ```
    In-app messages must be preloaded before they can be displayed. If the preload hasn't started or is still in progress, the SDK will wait until the preload is complete and only perform the logic to select an in-app message afterward.
+   ```
 3. ```
-   Created request: 
-   [Request]
-   POST https://api.exponea.com/webxp/s/2c4f2d02-1dbe-11eb-844d-2a3b671acf42/inappmessages?v=1
+   This log contains `eventType` for which the messages going to be searched. Then count of `X` messages and the names of **all** messages received from the server is listed in
+   ```   
+   Message '{message name}' failed event filter. Message filter: {"event_type":"session_start","filter":[]} Event type: payment properties: {price=2011.1, product_title=Item #1} timestamp: 1.59921557821E9
    ```  
-   The SDK requested in-app messages from the Engagement platform.
-3. ```
-   Response received:
-   [Response]
-   HTTP 200 https://api.exponea.com/webxp/s/2c4f2d02-1dbe-11eb-844d-2a3b671acf42/inappmessages?v=1
+   We show reasons why some messages are not picked. In this example, message failed event filter - the type was set for `session_start`, but `payment` was tracked.
    ```
-   The SDK received in-app messages from the Engagement platform. You should see `Response Body:` followed by the in-app messages data in JSON format a few lines below the above message:
+4. ``` 
+   Got {X} messages with highest priority for eventType {eventType}. [{message1 name}, {message2 name}, ...]
    ```
-   Response Body:
-   {"success":true,"data":[{"id":"65baf899dd467ee54357e371","name":"Payment in-app message","date_filter":{"enabled":false},"frequency":"until_visitor_interacts","load_priority":null,"load_delay":null,"close_timeout":null,"trigger":{"event_type": "custom_event", "filter": [], "type": "event"},"has_tracking_consent":true,"message_type":"slide_in","variant_id":0,"variant_name":"Variant A","is_html":false,"payload":{"title":"Test In-App Message","body_text":"This is an example of your in-app personalization body text.","image_url":"https://asset-templates.exponea.com/misc/media/canyon/canyon.jpg","title_text_color":"#000000","title_text_size":"22px","body_text_color":"#000000","body_text_size":"14px","background_color":"#ffffff","message_position":"top","buttons":[{"button_text":"Action","button_type":"deep-link","button_link":"https://www.bloomreach.com","button_text_color":"#2dbaee","button_background_color":"#ffffff"}]}}]}
+   There may be a tie between a few messages with the same priority. All messages with same highest priority are listed.
    ```
-4. ```
-   In-app message data preloaded, picking a message to display
+5. ``` 
+   Picking top message '{message name}' for eventType {eventType}
    ```
-   In-app messages were preloaded in the local cache. The SDK will procees with the logic to select an in-app message to display.
-5. ```
+   The single message is randomly picked from filtered messages with same highest priority for `eventType`
+   ```
+6. ```
    Picking in-app message for eventTypes ["payment"]. 2 messages available: ["Payment in-app message", "App load in-app message"].
    ```
    This log message includes a list of **all** in-app messages received from the server and preloaded in the local cache. If you don't see your message here, it's possible it wasn't available yet the last time the SDK request in-app messages. If you have confirmed the message was available when the last preload occurred, the current user may not match the audience targeted by the in-app message. Check the in-app message set up in Engagement. 
-6.  ```
-    Message 'App load in-app message' failed event filter. Event: [ExponeaSDK.DataType.properties(["value": ExponeaSDK.JSONValue.string("99")]), ExponeaSDK.DataType.timestamp(nil), ExponeaSDK.DataType.eventType("payment")]. Message filter: {"filter":[],"event_type":"session_start"}
-    ```
-    The SDK tells you why this particular message was not selected. In this example, the message failed the event filter - the event type was set for `session_start`, but `payment` was tracked.
-7. ```
+7.  ```
+   Got {X} messages available to show. [{message1 name}, {message2 name}, ...].
+   ```
+   All `X` messages has been collected for registered 'show requests'. Process continues with selecting of message with highest priority.
+   ```
+8. ```
     1 messages available after filtering. Picking highest priority message.
     ```
     After applying all the filters, there is one in-app message left that satisfies the criteria to be displayed. If more than one messages is eligible, the SDK will select the one that has the highest priority configured in Engagement.
-8. ```
-    Got 1 messages with highest priority. ["Payment in-app message"]
     ```
-    If there is more than one in-app message with the highest priority, the SDK randomly picks one.
 9. ```
-    Attempting to show in-app message 'Payment in-app message'
-    ```
-    An in-app message has been selected to be displayed in the app.
+   Picking top message '{message name}' to be shown.
+   ```
+   The single message is randomly picked from all filtered messages. This message is going to be shown to user.
+   ```
 10. ```
-    Will attempt to present in-app message on main thread with delay 0.0.
-    ```
-    A message display request is posted to the main thread, where it will be displayed in the top-most `presentedViewController`. If a failure happens after this point, refer to [Troubleshoot In-App Message Display Issues](#troubleshoot-in-app-message-display-issues) above for pointers.
+   Only logging in-app message for control group '${message.name}'
+   ```
+   A/B testing In-app message or message without payload is not shown to user but 'show' event is tracked for your analysis.
+   ```
 11. ```
-    In-app message presented.
-    ```
-    Everything went well and you should see your message. It was presented in the top-most `presentedViewController`. In case you don't see the message, it's possible that the view hierarchy changed and message is no longer on screen. Refer to [Troubleshoot In-App Message Display Issues](#troubleshoot-in-app-message-display-issues) above for details.
-
+   Attempting to show in-app message '{message name}'
+   ```
+   In-app message that meant to be show to user (not A/B testing) is going to be shown
+   ```
+12. ```
+   Posting show to main thread with delay {X}ms.
+   ```
+   Message display request is posted to the main thread with delay of `X` milliseconds. Delay is configured by `Display delay` in In-app message settings. Message will be displayed in the last resumed Activity. 

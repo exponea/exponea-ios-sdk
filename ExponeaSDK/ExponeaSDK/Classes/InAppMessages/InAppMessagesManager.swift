@@ -11,14 +11,36 @@ import Foundation
 import ExponeaSDKShared
 #endif
 
+extension Dictionary {
+    func compareWith(other: [String: String]) -> Bool {
+        guard self.count == other.count else { return false }
+        return filter { key, value in
+            guard let key = key as? String, let value = value as? String else { return false }
+            if let check = other[key] {
+                return check == value
+            }
+            return false
+        }.count == other.count
+    }
+}
+
+internal enum IdentifyTriggerState {
+    case identifyFetch
+    case shouldReloadFetch
+    case storedFetch
+}
+
 final class InAppMessagesManager: InAppMessagesManagerType {
-    private static let refreshCacheAfter: TimeInterval = 60 * 30 // refresh on session start if cache is older than this
-    private static let maxPendingMessageAge: TimeInterval = 3 // time window to show pending message after preloading
 
     struct InAppMessageShowRequest {
         let event: [DataType]
         var callback: ((InAppMessageView?) -> Void)?
         let timestamp: TimeInterval
+    }
+
+    struct PendingMessageData {
+        let request: InAppMessagesManager.InAppMessageShowRequest
+        let message: InAppMessage?
     }
 
     private let repository: RepositoryType
@@ -28,11 +50,11 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private let displayStatusStore: InAppMessageDisplayStatusStore
     private let trackingConsentManager: TrackingConsentManagerType
     private let urlOpener: UrlOpenerType
-    private var sessionStartDate: Date = Date()
-
-    private var preloaded = false
-    private let pendingRequestsBarrier = DispatchQueue(label: "pendingShowRequests.barrier", attributes: .concurrent)
-    private var pendingShowRequests: [InAppMessageShowRequest] = []
+    internal var sessionStartDate: Date = Date()
+    private var isIdentifyFlowInProcess: Bool = false
+    private static let refreshCacheAfter: TimeInterval = 60 * 30 // refresh on session start if cache is older than this
+    private static let maxPendingMessageAge: TimeInterval = 3 // time window to show pending message after preloading
+    @Atomic internal var pendingShowRequests: [String: InAppMessageShowRequest] = [:]
 
     init(
         repository: RepositoryType,
@@ -50,48 +72,33 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         self.trackingConsentManager = trackingConsentManager
     }
 
-    func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?) {
-        sessionStartDate = date
+    // MARK: - Methods
+    private func shouldReload(timestamp: TimeInterval) -> Bool {
         let refreshTime = cache.getInAppMessagesTimestamp() + InAppMessagesManager.refreshCacheAfter
-        if refreshTime < date.timeIntervalSince1970 {
-            preload(for: customerIds, completion: completion)
-        } else {
-            completion?()
-        }
+        return refreshTime < timestamp
     }
 
     func anonymize() {
+        pendingShowRequests.removeAll()
         cache.clear()
         displayStatusStore.clear()
-    }
-
-    func preload(for customerIds: [String: String], completion: (() -> Void)?) {
-        preloaded = false
-        DispatchQueue.global(qos: .background).async {
-            self.repository.fetchInAppMessages(for: customerIds) { result in
-                guard case .success(let response) = result else {
-                    Exponea.logger.log(.warning, message: "Fetching in-app messages from server failed.")
-                    self.preloaded = true // even though this failed, we can try to use cached data from another run
-                    completion?()
-                    return
-                }
-                DispatchQueue.global(qos: .background).async {
-                    self.cache.saveInAppMessages(inAppMessages: response.data ?? [])
-                    self.cache.deleteImages(except: response.data?.compactMap { $0.payload?.imageUrl } ?? [])
-                    self.preloadImages(inAppMessages: response.data ?? [], completion: completion)
-                }
-            }
+        if let cookie = Exponea.shared.trackingManager?.customerIds {
+            startIdentifyCustomerFlow(for: [.customerIds(cookie)], isAnonymized: true)
         }
     }
 
     @discardableResult private func preloadImage(for message: InAppMessage) -> Bool {
         var imageUrlStrings: [String] = []
         if message.isHtml && message.payloadHtml != nil {
-            imageUrlStrings.append(contentsOf: HtmlNormalizer(message.payloadHtml!).collectImages() ?? [])
+            imageUrlStrings.append(contentsOf: HtmlNormalizer(message.payloadHtml!).collectImages())
         } else if message.payload?.imageUrl?.isEmpty == false {
             imageUrlStrings.append(message.payload!.imageUrl!)
         }
         if imageUrlStrings.isEmpty {
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] There is no image, call preload successful"
+            )
             return true // there is no image, call preload successful
         }
         for imageUrlString in imageUrlStrings {
@@ -108,46 +115,29 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         return true
     }
 
-    internal func preloadImages(inAppMessages: [InAppMessage], completion: (() -> Void)?) {
-            var messages = inAppMessages
-            // if there is a pending message that we should display,
-            // preload image for it first and show, then preload rest
-            if let pending = self.pickPendingMessage(requireImageLoaded: false),
-               self.preloadImage(for: pending.1) {
-                messages.removeAll { $0 == pending.1 }
-                self.showPendingInAppMessage(pickedMessage: pending)
-            }
-            messages.forEach { message in self.preloadImage(for: message) }
-            self.preloaded = true
-            self.showPendingInAppMessage(pickedMessage: nil)
-            completion?()
-    }
-
-    private func pickPendingMessage(requireImageLoaded: Bool) -> (InAppMessageShowRequest, InAppMessage)? {
-        var pendingMessages: [(InAppMessageShowRequest, InAppMessage)] = []
-        pendingRequestsBarrier.sync(flags: .barrier) {
-            pendingShowRequests.filter {
-                $0.timestamp + InAppMessagesManager.maxPendingMessageAge > Date().timeIntervalSince1970
-            }.forEach { request in
-                getInAppMessages(for: request.event, requireImage: requireImageLoaded).forEach { message in
-                    pendingMessages.append((request, message))
-                }
-            }
+    private var pickPendingMessage: InAppMessage? {
+        guard let currentCustomerIds = Exponea.shared.trackingManager?.customerIds, !presenter.presenting else {
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Pick pending messages faield due to customer id: \(Exponea.shared.trackingManager?.customerIds ?? [:]) or presenter.presenting: \(presenter.presenting)"
+            )
+            return nil
         }
-        let highestPriority = pendingMessages.map { $0.1.priority }.compactMap { $0 }.max() ?? 0
-        return pendingMessages.filter { $0.1.priority ?? 0 >= highestPriority }.randomElement()
-    }
-
-    private func showPendingInAppMessage(pickedMessage: (InAppMessageShowRequest, InAppMessage)?) {
-        guard let pending = pickedMessage ?? pickPendingMessage(requireImageLoaded: true) else {
-            return
-        }
-        pendingRequestsBarrier.sync(flags: .barrier) {
-            pendingShowRequests = []
-        }
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.handleInAppMessage(pending.1, callback: pending.0.callback)
-        }
+        Exponea.logger.log(
+            .verbose,
+            message: "[InApp] Pick pending messages start"
+        )
+        let pendingMessages = pendingShowRequests
+            .filter { $0.value.timestamp + InAppMessagesManager.maxPendingMessageAge > Date().timeIntervalSince1970 }
+            .filter { $0.value.event.customerIds.compareWith(other: currentCustomerIds) }
+            .map { PendingMessageData(request: $0.value, message: loadMessageToShow(for: $0.value.event)) }
+        Exponea.logger.log(
+            .verbose,
+            message: "[InApp] Filtered pending messages \(pendingMessages)"
+        )
+        let highestPriority = pendingMessages.compactMap { $0.message?.priority }.max() ?? 0
+        let message = pendingMessages.filter { $0.message?.priority ?? 0 >= highestPriority }.randomElement()
+        return message?.message
     }
 
     private func handleInAppMessage(
@@ -157,7 +147,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         if !message.hasPayload() && message.variantId == -1 {
             Exponea.logger.log(
                 .verbose,
-                message: "Only logging in-app message for control group '\(message.name)'"
+                message: "[InApp] Only logging in-app message for control group '\(message.name)'"
             )
             self.trackInAppMessage(message)
             callback?(nil)
@@ -166,90 +156,43 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         }
     }
 
-    func getInAppMessages(for event: [DataType], requireImage: Bool) -> [InAppMessage] {
-        var messages = self.cache.getInAppMessages()
-        Exponea.logger.log(
-            .verbose,
-            message: "Picking in-app message for eventTypes \(event.eventTypes). " +
-            "\(messages.count) messages available: \(messages.map { $0.name })."
-        )
-        messages = messages.filter {
-            let imageUrl = $0.payload?.imageUrl ?? ""
-            return (!requireImage || (imageUrl.isEmpty || self.cache.hasImageData(at: imageUrl)))
-                && $0.applyDateFilter(date: Date())
-                && $0.applyEventFilter(event: event)
-                && $0.applyFrequencyFilter(
-                       displayState: displayStatusStore.status(for: $0),
-                       sessionStart: sessionStartDate
-                   )
-        }
-        Exponea.logger.log(
-            .verbose,
-            message: "\(messages.count) messages available after filtering. Picking highest priority message."
-        )
-        let highestPriority = messages.map { $0.priority }.compactMap { $0 }.max() ?? 0
-        messages = messages.filter { $0.priority ?? 0 >= highestPriority }
-        Exponea.logger.log(
-            .verbose,
-            message: "Got \(messages.count) messages with highest priority. \(messages.map { $0.name })")
-        return messages
-    }
-
-    func getInAppMessage(for event: [DataType], requireImage: Bool) -> InAppMessage? {
-        let messages = getInAppMessages(for: event, requireImage: requireImage)
-        if messages.count > 1 {
-            Exponea.logger.log(.verbose, message: "Found \(messages.count) eligible in-app messages. Picking at random")
-        }
-        return messages.randomElement()
-    }
-
     private func getImageData(for message: InAppMessage) -> Data? {
         guard let imageUrl = message.payload?.imageUrl else {
             return nil
         }
+        Exponea.logger.log(
+            .verbose,
+            message: "[InApp] Image data \(message)"
+        )
         return cache.getImageData(at: imageUrl)
     }
 
-    func showInAppMessage(
-        for event: [DataType],
-        callback: ((InAppMessageView?) -> Void)? = nil
-    ) {
-        Exponea.logger.log(
-            .verbose,
-            message: "Attempting to show in-app message for event with types \(event.eventTypes)."
-        )
-        guard preloaded else {
-            Exponea.logger.log(.verbose, message: "Data not preloaded, saving message for later.")
-            pendingRequestsBarrier.sync(flags: .barrier) {
-                pendingShowRequests.append(
-                    InAppMessageShowRequest(
-                        event: event,
-                        callback: callback,
-                        timestamp: Date().timeIntervalSince1970
-                    )
-                )
-            }
+    internal func showInAppMessage(for type: [DataType], callback: ((InAppMessageView?) -> Void)?) {
+        guard let message = loadMessageToShow(for: type) else {
+            callback?(nil)
             return
         }
-        DispatchQueue.global(qos: .userInitiated).async {
-            Exponea.logger.log(.verbose, message: "In-app message data preloaded, picking a message to display")
-            guard let message = self.getInAppMessage(for: event) else {
-                callback?(nil)
-                return
-            }
-            self.handleInAppMessage(message, callback: callback)
-        }
+        Exponea.logger.log(
+            .verbose,
+            message: "[InApp] Show InAppMessage \(message)"
+        )
+        showInAppMessage(message, callback: callback)
     }
 
     private func showInAppMessage(
         _ message: InAppMessage,
         callback: ((InAppMessageView?) -> Void)? = nil
     ) {
-        guard message.hasPayload() else {
-            Exponea.logger.log(.verbose, message: "Not showing message with empty payload '\(message.name)'")
+        guard message.hasPayload() && message.variantId != -1 else {
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Only logging in-app message for control group '\(message.name)'"
+            )
+            self.trackInAppMessage(message)
+            callback?(nil)
             return
         }
-        Exponea.logger.log(.verbose, message: "Attempting to show in-app message '\(message.name)'")
+        Exponea.logger.log(.verbose, message: "[InApp] Attempting to show in-app message '\(message.name)'")
         var imageData: Data?
         if !(message.payload?.imageUrl ?? "").isEmpty {
             guard let createdImageData = self.getImageData(for: message) else {
@@ -337,6 +280,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             Exponea.logger.log(
                 .error,
                 message: """
+                    [InApp]
                     Unable to process in-app message button action
                     type: \(String(describing: button.buttonType))
                     link: \(String(describing: button.buttonLink))"
@@ -345,17 +289,205 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         }
     }
 
-    func onEventOccurred(of type: EventType, for event: [DataType]) {
-        if type == .sessionStart {
-            self.sessionDidStart(
-                at: Date(timeIntervalSince1970: event.latestTimestamp ?? Date().timeIntervalSince1970),
-                for: event.customerIds,
-                completion: {}
-            )
-        } else if type == .install {
-            self.preload(for: event.customerIds)
+    private func checkPendingRequests() -> [DataType] {
+        if let event = pendingShowRequests.map({ $0.value }).last?.event {
+            return event
         }
-        self.showInAppMessage(for: event)
+        Exponea.logger.log(.warning, message: "[InApp] No more pending requests")
+        return []
+    }
+
+    func fetchInAppMessages(for event: [DataType], completion: EmptyBlock? = nil) {
+        repository.fetchInAppMessages(for: event.customerIds) { [weak self] result in
+            self?.isIdentifyFlowInProcess = false
+            guard case let .success(response) = result,
+                    let self,
+                    var currentCustomerIds = Exponea.shared.trackingManager?.customerIds
+            else {
+                Exponea.logger.log(
+                    .verbose,
+                    message: "[InApp] fetchInAppMessages failed '\(result)', current customer: '\(Exponea.shared.trackingManager?.customerIds ?? [:])'"
+                )
+                completion?()
+                return
+            }
+            // For test purpose only
+            if event.customerIds.isEmpty {
+                currentCustomerIds.removeAll()
+            }
+            guard event.customerIds.compareWith(other: currentCustomerIds) else {
+                Exponea.logger.log(
+                    .verbose,
+                    message: "[InApp] Fetch InAppMessages - different customer ids"
+                )
+                return
+            }
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Fetch completed \(response.data ?? []), total messages: \(response.data?.count ?? 0)"
+            )
+            self.cache.saveInAppMessages(inAppMessages: response.data ?? [])
+            self.cache.deleteImages(except: response.data?.compactMap { $0.payload?.imageUrl } ?? [])
+            completion?()
+        }
+    }
+
+    internal func addToPendingShowRequest(event: [DataType]) {
+        _pendingShowRequests.changeValue { value in
+            let newRequest = InAppMessageShowRequest(
+                event: event,
+                callback: nil,
+                timestamp: Date().timeIntervalSince1970
+            )
+            if let eventType = newRequest.event.eventTypes.last {
+                value[eventType] = newRequest
+            }
+        }
+    }
+
+    internal func startIdentifyCustomerFlow(
+        for event: [DataType],
+        isFromIdentifyCustomer: Bool = false,
+        isFetchDisabled: Bool = false,
+        isAnonymized: Bool = false,
+        triggerCompletion: TypeBlock<IdentifyTriggerState>? = nil
+    ) {
+        // Register pending request if event is not identify customer
+        if !isFromIdentifyCustomer {
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Add event - \(event) to pending requests"
+            )
+            addToPendingShowRequest(event: event)
+        }
+        // Should reload or identify customer
+        switch true {
+        case isFromIdentifyCustomer:
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Identify customer in progress"
+            )
+            pendingShowRequests.removeAll()
+            isIdentifyFlowInProcess = true
+            if triggerCompletion != nil {
+                isIdentifyFlowInProcess = false
+                triggerCompletion?(.identifyFetch)
+            }
+            fetchInAppMessages(for: event) {
+                loadMessageIfNeeded()
+            }
+        case isAnonymized:
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Fetch in app messages, because 'isAnonymized'"
+            )
+            fetchInAppMessages(for: event)
+        case shouldReload(timestamp: event.latestTimestamp ?? Date().timeIntervalSince1970) && !isFetchDisabled:
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Reloading in app messages, because 'shouldReload'"
+            )
+            fetchInAppMessages(for: event) {
+                loadMessageIfNeeded()
+            }
+            // For test purposes. Initialized only inside test
+            if triggerCompletion != nil {
+                sessionStartDate = Date().addingTimeInterval(-Date().timeIntervalSince1970)
+                isIdentifyFlowInProcess = false
+                triggerCompletion?(.shouldReloadFetch)
+            }
+        default:
+            if !isIdentifyFlowInProcess {
+                Exponea.logger.log(
+                    .verbose,
+                    message: "[InApp] ShoulReload is false. Just load messages'"
+                )
+                loadMessageIfNeeded()
+                // For test purposes. Initialized only inside test
+                if triggerCompletion != nil {
+                    isIdentifyFlowInProcess = false
+                    triggerCompletion?(.storedFetch)
+                }
+            }
+        }
+        func loadMessageIfNeeded() {
+            if let message = pickPendingMessage {
+                Exponea.logger.log(
+                    .verbose,
+                    message: "[InApp] Show pending InAppMessage for event \(event)"
+                )
+                if preloadImage(for: message) {
+                    isIdentifyFlowInProcess = false
+                    onMain(self.showInAppMessage(message))
+                }
+            } else {
+                if let message = loadMessageToShow(for: event) {
+                    if preloadImage(for: message) {
+                        isIdentifyFlowInProcess = false
+                        onMain(self.showInAppMessage(message))
+                    }
+                }
+            }
+            pendingShowRequests.removeAll()
+        }
+    }
+
+    @discardableResult
+    func loadMessagesToShow(for event: [DataType]) -> [InAppMessage] {
+        var messages = cache.getInAppMessages()
+        Exponea.logger.log(
+            .verbose,
+            message: "[InApp] Picking in-app message for eventTypes \(event.eventTypes). " +
+            "\(messages.count) messages available: \(messages.map { $0.name })."
+        )
+        messages = messages.filter {
+            $0.applyDateFilter(date: Date())
+            && $0.applyEventFilter(event: event)
+            && $0.applyFrequencyFilter(
+                displayState: displayStatusStore.status(for: $0),
+                sessionStart: sessionStartDate
+            )
+        }
+        Exponea.logger.log(
+            .verbose,
+            message: "[InApp] \(messages.count) messages available after filtering. Picking highest priority message."
+        )
+        let messagesWithImage = messages.filter { preloadImage(for: $0) }
+        let highestPriority = messagesWithImage.map { $0.priority }.compactMap { $0 }.max() ?? 0
+        messages = messages.filter { $0.priority ?? 0 >= highestPriority }
+        Exponea.logger.log(
+            .verbose,
+            message: "[InApp] Got \(messages.count) messages with highest priority. \(messages.map { $0.name })")
+        return messages
+    }
+
+    @discardableResult
+    func loadMessageToShow(for event: [DataType]) -> InAppMessage? {
+        loadMessagesToShow(for: event).randomElement()
+    }
+
+    internal func onEventOccurred(of type: EventType, for event: [DataType], triggerCompletion: TypeBlock<IdentifyTriggerState>? = nil) {
+        switch type {
+        case .sessionStart:
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Session start"
+            )
+            sessionStartDate = Date(timeIntervalSince1970: event.latestTimestamp ?? Date().timeIntervalSince1970)
+            startIdentifyCustomerFlow(for: event, triggerCompletion: triggerCompletion)
+        case .sessionEnd, .pushDelivered, .pushOpened:
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Event type - \(type)"
+            )
+            startIdentifyCustomerFlow(for: event, isFetchDisabled: true)
+        default:
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Event type - \(type)"
+            )
+            startIdentifyCustomerFlow(for: event, isFromIdentifyCustomer: type == .identifyCustomer, triggerCompletion: triggerCompletion)
+        }
     }
 }
 
