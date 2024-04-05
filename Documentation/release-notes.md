@@ -7,6 +7,18 @@ parentDocSlug: ios-sdk
 ---
 
 ## Release Notes
+## Release Notes for 2.25.0
+#### April 05, 2024
+* Features
+  * In-app message load refactoring (show on the first load etc.)
+  * Logging for In-app content blocks is extended
+  * Privacy manifest added
+* Bug Fixes
+  * Fixed: Some of variables missing self so it is not possible to compile SDK with XCode 14.2
+  * Fixed: Documentation contain invalid URLs and not correct info about default session timeout duration
+  * Fixed: App Inbox provider setter disable AppInboxButton so it is not possible to click on it
+
+
 ## Release Notes for 2.24.0
 #### March 20, 2024
 * Features
