@@ -85,7 +85,7 @@ Pod::Spec.new do |s|
     "ExponeaSDK/ExponeaSDKObjC/objc_tryCatch.h",
     "ExponeaSDK/ExponeaSDKObjC/objc_tryCatch.m",
   ]
-  s.resource_bundles = {'ExponeaSDK' => ['ExponeaSDK/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'ExponeaSDK' => ['ExponeaSDK/ExponeaSDK/Supporting Files/PrivacyInfo.xcprivacy']}
   s.exclude_files = "ExponeaSDK/ExponeaSDK-Notifications/**/*"
   s.resources = ["ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld"]
   s.dependency 'SwiftSoup', '2.6.1'

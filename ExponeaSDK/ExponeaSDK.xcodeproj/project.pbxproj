@@ -206,7 +206,6 @@
 		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		315DCDFF2B6A67E9004BD7A7 /* beefree-actiontype.png in Resources */ = {isa = PBXBuildFile; fileRef = 315DCDFE2B6A67E9004BD7A7 /* beefree-actiontype.png */; };
-		317431CA2BBDADC5003FD69A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 317431C92BBDADC5003FD69A /* PrivacyInfo.xcprivacy */; };
 		318B552A2A80E52B00934902 /* DeeplinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B55292A80E52B00934902 /* DeeplinkManager.swift */; };
 		31C7B4242A822848001BA5E2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4232A822848001BA5E2 /* Coordinator.swift */; };
 		31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */; };
@@ -713,7 +712,6 @@
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		315DCDFE2B6A67E9004BD7A7 /* beefree-actiontype.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "beefree-actiontype.png"; sourceTree = "<group>"; };
-		317431C92BBDADC5003FD69A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		318B55292A80E52B00934902 /* DeeplinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeeplinkManager.swift; sourceTree = "<group>"; };
 		31C7B4232A822848001BA5E2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaTabBarController.swift; sourceTree = "<group>"; };
@@ -1955,7 +1953,6 @@
 		F021E84F206CF10200788ABC = {
 			isa = PBXGroup;
 			children = (
-				317431C92BBDADC5003FD69A /* PrivacyInfo.xcprivacy */,
 				C0F6C4E12098A1AB00834E21 /* Example */,
 				C08D53D221B9474E00EA2C13 /* ExampleNotificationContent */,
 				C0ED33A421A6FA31003649C3 /* ExampleNotificationService */,
@@ -2556,7 +2553,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				317431CA2BBDADC5003FD69A /* PrivacyInfo.xcprivacy in Resources */,
 				05E1A3812359B3A500E5EDDE /* .swiftlint.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -26,14 +26,15 @@ let package = Package(
             dependencies: ["ExponeaSDKShared", "ExponeaSDKObjC"],
             path: "ExponeaSDK/ExponeaSDK",
             exclude: ["Supporting Files/Info.plist"],
-            resources: [.copy("../PrivacyInfo.xcprivacy")]
+            resources: [.copy("Supporting Files/PrivacyInfo.xcprivacy")]
         ),
         // Notification extension library
         .target(
             name: "ExponeaSDK-Notifications",
             dependencies: ["ExponeaSDKShared"],
             path: "ExponeaSDK/ExponeaSDK-Notifications",
-            exclude: ["Supporting Files/Info.plist"]
+            exclude: ["Supporting Files/Info.plist"],
+            resources: [.copy("Supporting Files/PrivacyInfo.xcprivacy")]
         ),
         // Code shared between ExponeaSDK and ExponeaSDK-Notifications
         .target(
