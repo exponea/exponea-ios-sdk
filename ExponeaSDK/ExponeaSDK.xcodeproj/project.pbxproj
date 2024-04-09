@@ -1955,6 +1955,7 @@
 		F021E84F206CF10200788ABC = {
 			isa = PBXGroup;
 			children = (
+				317431C92BBDADC5003FD69A /* PrivacyInfo.xcprivacy */,
 				C0F6C4E12098A1AB00834E21 /* Example */,
 				C08D53D221B9474E00EA2C13 /* ExampleNotificationContent */,
 				C0ED33A421A6FA31003649C3 /* ExampleNotificationService */,
@@ -1992,7 +1993,6 @@
 			children = (
 				F0E757EC207D023A00FE8C21 /* Classes */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
-				317431C92BBDADC5003FD69A /* PrivacyInfo.xcprivacy */,
 			);
 			path = ExponeaSDK;
 			sourceTree = "<group>";

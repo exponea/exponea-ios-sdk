@@ -25,7 +25,8 @@ let package = Package(
             name: "ExponeaSDK",
             dependencies: ["ExponeaSDKShared", "ExponeaSDKObjC"],
             path: "ExponeaSDK/ExponeaSDK",
-            exclude: ["Supporting Files/Info.plist"]
+            exclude: ["Supporting Files/Info.plist"],
+            resources: [.copy("../PrivacyInfo.xcprivacy")]
         ),
         // Notification extension library
         .target(
