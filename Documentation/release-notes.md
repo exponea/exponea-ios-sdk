@@ -7,6 +7,12 @@ parentDocSlug: ios-sdk
 ---
 
 ## Release Notes
+## Release Notes for 2.25.2
+#### April 10, 2024
+* Bug Fixes
+  * Fixed: SDK Privacy manifest file is not linked correctly for SPM usage
+
+
 ## Release Notes for 2.25.1
 #### April 09, 2024
 * Bug Fixes
