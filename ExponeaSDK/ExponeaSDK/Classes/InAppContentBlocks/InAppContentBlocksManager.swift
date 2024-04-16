@@ -49,7 +49,7 @@ final class InAppContentBlocksManager: NSObject {
         willSet {
             guard let newValue, let placeholder = newValue.placeholderData else { return }
             if placeholder.content == nil, newValue.height == 0 {
-                loadContentForPlacehoder(newValue: newValue, placeholder: placeholder)
+                loadContentForPlacehoder(newValue: newValue, message: placeholder)
             } else if let html = placeholder.content?.html, newValue.height == 0 {
                 calculator = .init()
                 calculator.heightUpdate = { [weak self] height in
@@ -153,12 +153,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             return
         }
         let webAction: WebActionManager = .init {
-            guard let indexOfMessage: Int = self.inAppContentBlockMessages.firstIndex(where: { $0.id == inAppContentBlockResponse.id }) else {
-                Exponea.logger.log(.error, message: "Placeholder cant be found for action click")
-                return
-            }
-            let currentDisplay = self.inAppContentBlockMessages[indexOfMessage].displayState
-            self.inAppContentBlockMessages[indexOfMessage].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            self.updateInteractedState(for: selectedUsed.messageId)
             Exponea.shared.trackInAppContentBlockClose(
                 placeholderId: selectedUsed.placeholder,
                 message: inAppContentBlockResponse
@@ -170,12 +165,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 url: action.actionUrl,
                 type: self.determineActionType(action.actionUrl)
             )
-            guard let indexOfPlaceholder: Int = self.inAppContentBlockMessages.firstIndex(where: { $0.id == inAppContentBlockResponse.id }) else {
-                Exponea.logger.log(.error, message: "Placeholder cant be found for action click")
-                return
-            }
-            let currentDisplay = self.inAppContentBlockMessages[indexOfPlaceholder].displayState
-            self.inAppContentBlockMessages[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            self.updateInteractedState(for: selectedUsed.messageId)
             Exponea.shared.trackInAppContentBlockClick(
                 placeholderId: selectedUsed.placeholder,
                 action: inAppCbAction,
@@ -280,7 +270,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     }
 
     func getFilteredMessage(message: InAppContentBlockResponse) -> Bool {
-        guard let displayState = message.displayState else { return false }
+        let displayState = getDisplayState(of: message.id)
         switch message.frequency {
         case .oncePerVisit:
             let shouldDisplay = displayState.displayed == nil
@@ -383,8 +373,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         markAsActive(message: message, indexPath: indexPath, placeholderId: placeholderId)
         let tag = createUniqueTag(placeholder: message)
         let indexOfPlaceholder: Int = inAppContentBlockMessages.firstIndex(where: { $0.indexPath == message.indexPath }) ?? 0
-        let currentDisplay = inAppContentBlockMessages[safeIndex: indexOfPlaceholder]?.displayState
-        let state: InAppContentBlocksDisplayStatus = .init(displayed: currentDisplay?.displayed ?? Date(), interacted: currentDisplay?.interacted)
+        updateDisplayedState(for: message.id)
 
         web = .init()
         web.tag = tag
@@ -406,7 +395,6 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             if inAppContentBlockMessages[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
                 _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
-            _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].displayState = state })
             web.loadHTMLString(finalHTML, baseURL: nil)
             return web
         } else if let personalized = message.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
@@ -414,7 +402,6 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
             if let html = personalized.htmlPayload?.html, !html.isEmpty {
-                _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].displayState = state })
                 web.loadHTMLString(html, baseURL: nil)
                 return web
             } else {
@@ -457,8 +444,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
 
         // Update display status
         let indexOfPlaceholder: Int = inAppContentBlockMessages.firstIndex(where: { $0.id == message.id }) ?? 0
-        let currentDisplay = inAppContentBlockMessages[safeIndex: indexOfPlaceholder]?.displayState
-        let state: InAppContentBlocksDisplayStatus = .init(displayed: currentDisplay?.displayed ?? Date(), interacted: currentDisplay?.interacted)
+        updateDisplayedState(for: message.id)
         message.tags?.insert(tag)
 
         if let personalized = message.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
@@ -467,7 +453,6 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
             if let html = personalized.htmlPayload?.html, !html.isEmpty {
-                message.displayState = state
                 _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder] = message })
                 Exponea.shared.trackInAppContentBlockShown(
                     placeholderId: placeholderId,
@@ -478,7 +463,6 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         } else {
             Exponea.logger.log(.verbose, message: "In-app Content Blocks prepareInAppContentBlocksStaticView static \(message).")
             if let html = message.content?.html, !html.isEmpty {
-                message.displayState = state
                 _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder] = message })
                 return .init(html: html, tag: tag, message: message)
             }
@@ -766,36 +750,34 @@ private extension InAppContentBlocksManager {
         if !queue.isEmpty {
             let go = queue.removeFirst()
             Exponea.logger.log(.verbose, message: "In-app Content Blocks continueWithQueue data: \(go)")
-            loadContentForPlacehoder(newValue: go.newValue, placeholder: go.inAppContentBlocks)
+            loadContentForPlacehoder(newValue: go.newValue, message: go.inAppContentBlocks)
         }
     }
 
-    func loadContentForPlacehoder(newValue: UsedInAppContentBlocks, placeholder: InAppContentBlockResponse) {
+    func loadContentForPlacehoder(newValue: UsedInAppContentBlocks, message: InAppContentBlockResponse) {
         if !isUpdating {
             isUpdating = true
             let savedNewValue = newValue
-            let savedPlaceholder = placeholder
+            let savedPlaceholder = message
             loadPersonalizedInAppContentBlocks(for: savedNewValue.messageId, tags: [savedNewValue.tag], skipLoad: true) { [weak self] in
                 guard let self else { return }
                 self.calculator = .init()
                 self.calculator.heightUpdate = { height in
-                    let tag = self.createUniqueTag(placeholder: placeholder)
+                    let tag = self.createUniqueTag(placeholder: message)
                     Exponea.logger.log(.verbose, message: "In-app Content Blocks loadContentForPlacehoder calculator data \(height)")
                     // Update display status
-                    let indexOfPlaceholder: Int = self.inAppContentBlockMessages.firstIndex(where: { $0.id == placeholder.id }) ?? 0
-                    let currentDisplay = self.inAppContentBlockMessages[safeIndex: indexOfPlaceholder]?.displayState
-                    let state: InAppContentBlocksDisplayStatus = .init(displayed: currentDisplay?.displayed ?? Date(), interacted: currentDisplay?.interacted)
+                    let indexOfPlaceholder: Int = self.inAppContentBlockMessages.firstIndex(where: { $0.id == message.id }) ?? 0
+                    self.updateDisplayedState(for: message.id)
 
                     self._inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].tags?.insert(tag) })
                     self._inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].indexPath = savedPlaceholder.indexPath })
-                    self._inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].displayState = state })
                     Exponea.logger.log(.verbose, message: "In-app Content Blocks loadContentForPlacehoder count \(self.inAppContentBlockMessages.count)")
                     Exponea.logger.log(.verbose, message: "In-app Content Blocks loadContentForPlacehoder \(self.inAppContentBlockMessages)")
                     Exponea.logger.log(.verbose, message:
                         """
                         In-app Content Blocks loadContentForPlacehoder(newValue: UsedInAppContentBlocks, placeholder: InAppContentBlockResponse)
                         newValue: \(newValue)
-                        placeholder: \(placeholder)
+                        placeholder: \(message)
                         """
                     )
                     let placeholderValueFromUsedLine = savedNewValue.placeholder
@@ -837,17 +819,35 @@ private extension InAppContentBlocksManager {
                     self.isUpdating = false
                     return
                 }
-                self.calculator.loadHtml(placedholderId: placeholder.id, html: html)
+                self.calculator.loadHtml(placedholderId: message.id, html: html)
             }
         } else {
             Exponea.logger.log(.verbose, message:
                 """
                 In-app Content Blocks added to queue
                 newValue: \(newValue)
-                placeholder: \(placeholder)
+                placeholder: \(message)
                 """
             )
-            _queue.changeValue(with: { $0.append(.init(inAppContentBlocks: placeholder, newValue: newValue)) })
+            _queue.changeValue(with: { $0.append(.init(inAppContentBlocks: message, newValue: newValue)) })
         }
+    }
+}
+
+// Display and Interaction state
+extension InAppContentBlocksManager {
+
+    /// Stores timestamp of interaction (click/close) for given In-app content block message ID
+    func updateInteractedState(for messageId: String) {
+        Exponea.shared.inAppContentBlockStatusStore.didInteract(with: messageId, at: Date())
+    }
+
+    /// Stores timestamp of displaying (show) of given In-app content block message ID
+    func updateDisplayedState(for messageId: String) {
+        Exponea.shared.inAppContentBlockStatusStore.didDisplay(of: messageId, at: Date())
+    }
+
+    func getDisplayState(of messageId: String) -> InAppContentBlocksDisplayStatus {
+        Exponea.shared.inAppContentBlockStatusStore.status(for: messageId)
     }
 }

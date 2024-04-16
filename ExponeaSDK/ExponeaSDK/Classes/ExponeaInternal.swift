@@ -210,6 +210,10 @@ public class ExponeaInternal: ExponeaType {
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
+    
+    internal lazy var inAppContentBlockStatusStore: InAppContentBlockDisplayStatusStore = {
+        return InAppContentBlockDisplayStatusStore(userDefaults: userDefaults)
+    }()
 
     
     // MARK: - Init -

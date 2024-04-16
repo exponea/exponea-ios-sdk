@@ -234,40 +234,31 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             // webView has to stop navigation, missing message data are internal issue
             return true
         }
-        let result = inAppContentBlocksManager.inAppContentBlockMessages.first(where: { $0.tags?.contains(webview.tag) == true })
         let webAction: WebActionManager = .init {
-            let indexOfMessage: Int = self.inAppContentBlocksManager.inAppContentBlockMessages.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfMessage].displayState
-            self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfMessage].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
-            if let message = result {
-                self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
-            }
+            InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
+            self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
             self.reload()
         } onActionCallback: { action in
-            let indexOfPlaceholder: Int = self.inAppContentBlocksManager.inAppContentBlockMessages.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfPlaceholder].displayState
-            self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
             let actionType = self.determineActionType(action)
-            if let message = result {
-                if actionType == .close {
-                    self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
-                } else {
-                    self.behaviourCallback.onActionClicked(
-                        placeholderId: self.placeholder,
-                        contentBlock: message,
-                        action: .init(
-                            name: action.buttonText,
-                            url: action.actionUrl,
-                            type: actionType
-                        )
+            if actionType == .close {
+                self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
+            } else {
+                self.behaviourCallback.onActionClicked(
+                    placeholderId: self.placeholder,
+                    contentBlock: message,
+                    action: .init(
+                        name: action.buttonText,
+                        url: action.actionUrl,
+                        type: actionType
                     )
-                }
+                )
             }
             self.reload()
         } onErrorCallback: { error in
             Exponea.logger.log(.error, message: "WebActionManager error \(error.localizedDescription)")
         }
-        webAction.htmlPayload = result?.personalizedMessage?.htmlPayload
+        webAction.htmlPayload = message.normalizedResult ?? message.personalizedMessage?.htmlPayload 
         let handled = webAction.handleActionClick(actionUrl)
         if handled {
             Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has been handled")

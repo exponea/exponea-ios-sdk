@@ -20,6 +20,9 @@ public protocol InAppContentBlocksManagerType {
     func anonymize()
     func initBlocker()
     func loadInAppContentBlockMessages(completion: EmptyBlock?)
+    func updateInteractedState(for messageId: String)
+    func updateDisplayedState(for messageId: String)
+    func getDisplayState(of messageId: String) -> InAppContentBlocksDisplayStatus
     // Test purposes
     func getFilteredMessage(message: InAppContentBlockResponse) -> Bool
     func prefetchPlaceholdersWithIds(input: [InAppContentBlockResponse], ids: [String]) -> [InAppContentBlockResponse]

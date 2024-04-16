@@ -74,63 +74,78 @@ class InAppContentBlocksManagerSpec: QuickSpec {
         }
 
         it("filter - always") {
-            var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(personalized: .getSample(status: .ok, ttlSeen: Date()))
+            var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                id: "filter - always - msg123",
+                personalized: .getSample(
+                    status: .ok,
+                    ttlSeen: Date()
+                )
+            )
             DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: Date())
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
+                manager.updateInteractedState(for: inAppContentBlocks.id)
             }
             DispatchQueue.global().asyncAfter(deadline: .now() + 1.5) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: Date())
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
+                manager.updateInteractedState(for: inAppContentBlocks.id)
             }
             DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: Date())
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
+                manager.updateInteractedState(for: inAppContentBlocks.id)
             }
             DispatchQueue.global().asyncAfter(deadline: .now() + 2.5) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: Date())
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
+                manager.updateInteractedState(for: inAppContentBlocks.id)
             }
             DispatchQueue.global().asyncAfter(deadline: .now() + 3) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: Date())
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
+                manager.updateInteractedState(for: inAppContentBlocks.id)
             }
             expect(manager.getFilteredMessage(message: inAppContentBlocks)).toEventually(beTrue(), timeout: .seconds(4))
         }
 
         it("filter - interaction") {
-            var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(frequency: .untilVisitorInteracts, personalized: .getSample(status: .ok, ttlSeen: Date()))
+            var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                id: "filter - interaction - msg123",
+                frequency: .untilVisitorInteracts,
+                personalized: .getSample(
+                    status: .ok,
+                    ttlSeen: Date()
+                )
+            )
             DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: nil)
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
             }
             DispatchQueue.global().asyncAfter(deadline: .now() + 1.5) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: nil)
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
             }
             DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: nil)
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
             }
             expect(manager.getFilteredMessage(message: inAppContentBlocks)).toEventually(beTrue(), timeout: .seconds(3))
             DispatchQueue.global().asyncAfter(deadline: .now() + 3.1) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: nil)
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
             }
             DispatchQueue.global().asyncAfter(deadline: .now() + 3.5) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: Date())
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
+                manager.updateInteractedState(for: inAppContentBlocks.id)
             }
             expect(manager.getFilteredMessage(message: inAppContentBlocks)).toEventually(beFalse(), timeout: .seconds(4))
         }
 
         it("filter - seen") {
-            var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(frequency: .onlyOnce, personalized: .getSample(status: .ok, ttlSeen: Date()))
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                inAppContentBlocks.displayState = .init(displayed: nil, interacted: nil)
-            }
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1.5) {
-                inAppContentBlocks.displayState = .init(displayed: nil, interacted: nil)
-            }
-            DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
-                inAppContentBlocks.displayState = .init(displayed: nil, interacted: nil)
-            }
+            var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                id: "filter - seen - msg123",
+                frequency: .onlyOnce,
+                personalized: .getSample(
+                    status: .ok,
+                    ttlSeen: Date()
+                )
+            )
             expect(manager.getFilteredMessage(message: inAppContentBlocks)).toEventually(beTrue(), timeout: .seconds(3))
-            DispatchQueue.global().asyncAfter(deadline: .now() + 3.1) {
-                inAppContentBlocks.displayState = .init(displayed: nil, interacted: nil)
-            }
             DispatchQueue.global().asyncAfter(deadline: .now() + 3.5) {
-                inAppContentBlocks.displayState = .init(displayed: Date(), interacted: Date())
+                manager.updateDisplayedState(for: inAppContentBlocks.id)
+                manager.updateInteractedState(for: inAppContentBlocks.id)
             }
             expect(manager.getFilteredMessage(message: inAppContentBlocks)).toEventually(beFalse(), timeout: .seconds(4))
         }

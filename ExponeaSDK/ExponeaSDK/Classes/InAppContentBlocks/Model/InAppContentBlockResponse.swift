@@ -76,8 +76,6 @@ public struct InAppContentBlockResponse: Codable {
     public var trackingConsentCategory: String?
     public let placeholders: [String]
     @CodableIgnored
-    public var displayState: InAppContentBlocksDisplayStatus? = .init(displayed: nil, interacted: nil)
-    @CodableIgnored
     public var personalizedMessage: PersonalizedInAppContentBlockResponse?
     @CodableIgnored
     public var status: InAppContentBlocksDisplayStatus?

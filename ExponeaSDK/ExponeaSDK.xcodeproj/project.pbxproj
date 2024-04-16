@@ -276,6 +276,7 @@
 		556887562A176B0200498B40 /* NSDictionary+getSafely.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556887552A176B0200498B40 /* NSDictionary+getSafely.swift */; };
 		556DBCBC28F03238009E3154 /* MessageItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556DBCBB28F03238009E3154 /* MessageItemCell.swift */; };
 		55734B022A5E9B9400F24427 /* RegExpExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55734B012A5E9B9400F24427 /* RegExpExtensions.swift */; };
+		557856032BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557856022BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift */; };
 		558453A1297E8D26000707E4 /* AppInboxTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558453A0297E8D26000707E4 /* AppInboxTrackingSpec.swift */; };
 		558DFADB2B2B350F00177800 /* ExtensionUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D0543D2B29BE2200BC773A /* ExtensionUtils.swift */; };
 		558DFADD2B2B442400177800 /* ExampleInAppContentBlockCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558DFADC2B2B442400177800 /* ExampleInAppContentBlockCallback.swift */; };
@@ -781,6 +782,7 @@
 		556887552A176B0200498B40 /* NSDictionary+getSafely.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSDictionary+getSafely.swift"; sourceTree = "<group>"; };
 		556DBCBB28F03238009E3154 /* MessageItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemCell.swift; sourceTree = "<group>"; };
 		55734B012A5E9B9400F24427 /* RegExpExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegExpExtensions.swift; sourceTree = "<group>"; };
+		557856022BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockDisplayStatusStore.swift; sourceTree = "<group>"; };
 		558453A0297E8D26000707E4 /* AppInboxTrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxTrackingSpec.swift; sourceTree = "<group>"; };
 		558DFADC2B2B442400177800 /* ExampleInAppContentBlockCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleInAppContentBlockCallback.swift; sourceTree = "<group>"; };
 		559D97072962FCF0006D4499 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
@@ -1534,6 +1536,7 @@
 				31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */,
 				31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */,
 				31EBB8462A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift */,
+				557856022BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift */,
 			);
 			path = InAppContentBlocks;
 			sourceTree = "<group>";
@@ -2876,6 +2879,7 @@
 				05A6A3EB23954654008475E7 /* InAppMessageDialogView.swift in Sources */,
 				0591906A23EC2FAB0037BD88 /* EventFilterConstraint+Operators.swift in Sources */,
 				053EC59923AA32A7004D1C8B /* InAppMessageDisplayStatus.swift in Sources */,
+				557856032BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
 				05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */,
 				053CA200247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift in Sources */,
