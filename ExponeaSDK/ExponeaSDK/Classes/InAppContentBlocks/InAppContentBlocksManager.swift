@@ -205,25 +205,32 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     }
 
     private func parseData(placeholderId: String, data: ResponseData<PersonalizedInAppContentBlockResponseData>, tags: Set<Int>, completion: EmptyBlock?) {
-        let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data.compactMap { response in
-            var newInAppContentBlocks = response
-            let normalizeConf = HtmlNormalizerConfig(
-                makeResourcesOffline: true,
-                ensureCloseButton: false
-            )
-            let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
-            newInAppContentBlocks.htmlPayload = normalizedPayload
-            return newInAppContentBlocks
-        } ?? []
-        var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
-        for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
-            if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
-                personalized.ttlSeen = Date()
-                updatedPlaceholders[index].personalizedMessage = personalized
+        ensureBackground {
+            let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data.compactMap { response in
+                var newInAppContentBlocks = response
+                let normalizeConf = HtmlNormalizerConfig(
+                    makeResourcesOffline: true,
+                    ensureCloseButton: false
+                )
+                let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
+                newInAppContentBlocks.htmlPayload = normalizedPayload
+                let isCorruptedImage = !self.hasHtmlImages(html: response.content?.html ?? "")
+                newInAppContentBlocks.isCorruptedImage = isCorruptedImage
+                return newInAppContentBlocks
+            } ?? []
+            var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
+            for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
+                if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
+                    personalized.ttlSeen = Date()
+                    updatedPlaceholders[index].personalizedMessage = personalized
+                }
+            }
+            self.inAppContentBlockMessages = updatedPlaceholders
+            onMain {
+                completion?()
             }
         }
-        self.inAppContentBlockMessages = updatedPlaceholders
-        completion?()
+  
     }
 
     func prefetchPlaceholdersWithIds(input: [InAppContentBlockResponse], ids: [String]) -> [InAppContentBlockResponse] {
@@ -247,25 +254,29 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             inAppContentBlocksIds: prefetchPlaceholdersWithIds(input: inAppContentBlockMessages, ids: ids).map { $0.id }
         ) { [weak self] messages in
             guard let self else { return }
-            Exponea.logger.log(.verbose, message: "In-app Content Blocks downloaded prefetched messages \(messages.data?.data ?? [])")
-            let personalizedWithPayload: [PersonalizedInAppContentBlockResponse]? = messages.data?.data.filter { $0.status == .ok }.map { response in
-                var newInAppContentBlocks = response
-                let normalizeConf = HtmlNormalizerConfig(
-                    makeResourcesOffline: false,
-                    ensureCloseButton: false
-                )
-                let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
-                newInAppContentBlocks.htmlPayload = normalizedPayload
-                return newInAppContentBlocks
-            }
-            var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
-            for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
-                if var personalized = personalizedWithPayload?.first(where: { $0.id == inAppContentBlocks.id }) {
-                    personalized.ttlSeen = Date()
-                    updatedPlaceholders[index].personalizedMessage = personalized
+            ensureBackground {
+                Exponea.logger.log(.verbose, message: "In-app Content Blocks downloaded prefetched messages \(messages.data?.data ?? [])")
+                let personalizedWithPayload: [PersonalizedInAppContentBlockResponse]? = messages.data?.data.filter { $0.status == .ok }.compactMap { response in
+                    var newInAppContentBlocks = response
+                    let normalizeConf = HtmlNormalizerConfig(
+                        makeResourcesOffline: false,
+                        ensureCloseButton: false
+                    )
+                    let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
+                    newInAppContentBlocks.htmlPayload = normalizedPayload
+                    let isCorruptedImage = !self.hasHtmlImages(html: response.content?.html ?? "")
+                    newInAppContentBlocks.isCorruptedImage = isCorruptedImage
+                    return newInAppContentBlocks
                 }
+                var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
+                for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
+                    if var personalized = personalizedWithPayload?.first(where: { $0.id == inAppContentBlocks.id }) {
+                        personalized.ttlSeen = Date()
+                        updatedPlaceholders[index].personalizedMessage = personalized
+                    }
+                }
+                self.inAppContentBlockMessages = updatedPlaceholders
             }
-            self.inAppContentBlockMessages = updatedPlaceholders
         }
     }
 
@@ -316,8 +327,9 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         var blocksToReturn: [UsedInAppContentBlocks] = []
         for msg in usedMessages {
             var value = msg
-            if value.indexPath == indexPath {
-                value.isActive = value.messageId == message.id
+            value.isActive = value.messageId == message.id
+            if value.isActive {
+                value.indexPath = indexPath
             }
             blocksToReturn.append(value)
         }
@@ -343,7 +355,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
 
     func prepareInAppContentBlockView(placeholderId: String, indexPath: IndexPath) -> UIView {
         let messagesToUse = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholderId) }
-        let messagesNeedToRefresh = messagesToUse.filter { $0.indexPath == nil || $0.personalizedMessage == nil && $0.content?.html == nil }
+        let messagesNeedToRefresh = messagesToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
         let expiredMessages = messagesToUse.filter { inAppContentBlocks in
             if let ttlSeen = inAppContentBlocks.personalizedMessage?.ttlSeen,
                let ttl = inAppContentBlocks.personalizedMessage?.ttlSeconds,
@@ -361,7 +373,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         let contentBlocksForId = usedInAppContentBlocks[placeholderId] ?? []
         let messagesForThisIndexPath = contentBlocksForId.filter { $0.indexPath == indexPath }
         var messagesToFilter: [InAppContentBlockResponse] = []
-        for message in inAppContentBlockMessages where messagesForThisIndexPath.contains(where: { $0.messageId == message.id }) {
+        for message in inAppContentBlockMessages where contentBlocksForId.contains(where: { $0.messageId == message.id }) {
             messagesToFilter.append(message)
         }
         guard let message = filterPersonalizedMessages(input: messagesToFilter) else {
@@ -425,7 +437,6 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             }
             return false
         }
-        
         Exponea.logger.log(.verbose, message: "In-app Content Blocks prepareInAppContentBlocksStaticView expiredMessages \(expiredMessages).")
         guard placeholdersNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
             return .init(html: "", tag: 0, message: nil)
@@ -474,10 +485,20 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         provider.getInAppContentBlocks(
             data: InAppContentBlocksDataResponse.self
         ) { [weak self] result in
-            guard result.data?.success == true else { return }
-            self?.inAppContentBlockMessages = result.data?.data ?? []
-            Exponea.logger.log(.verbose, message: "In-app Content Blocks loadInAppContentBlockMessages done with \(result.data?.data ?? []).")
-            completion?()
+            guard result.data?.success == true, let messages = result.data?.data else { return }
+            ensureBackground {
+                let filteredMessages: [InAppContentBlockResponse] = messages.map { message in
+                    if let content = message.content?.html {
+                        var msg = message
+                        msg.isCorruptedImage = self?.hasHtmlImages(html: content) == false
+                        return msg
+                    }
+                    return message
+                }
+                self?.inAppContentBlockMessages = filteredMessages
+                Exponea.logger.log(.verbose, message: "In-app Content Blocks loadInAppContentBlockMessages done with \(result.data?.data ?? []).")
+                completion?()
+            }
         }
     }
 }
@@ -511,7 +532,7 @@ private extension InAppContentBlocksManager {
     func filterPersonalizedMessages(input: [InAppContentBlockResponse]) -> InAppContentBlockResponse? {
         Exponea.logger.log(.verbose, message: "In-app Content Blocks filterPersonalizedMessages filtering: \(input)")
         let filtered = input.filter { inAppContentBlocksPlaceholder in
-            if inAppContentBlocksPlaceholder.personalizedMessage?.status == .ok {
+            if inAppContentBlocksPlaceholder.personalizedMessage?.status == .ok && inAppContentBlocksPlaceholder.personalizedMessage?.isCorruptedImage == false {
                 return self.getFilteredMessage(message: inAppContentBlocksPlaceholder)
             } else {
                 return false
@@ -583,13 +604,13 @@ private extension InAppContentBlocksManager {
                 }
                 return
             }
-            DispatchQueue.global().async { [weak self] in
+            self.provider.loadPersonalizedInAppContentBlocks(
+                data: PersonalizedInAppContentBlockResponseData.self,
+                customerIds: ids,
+                inAppContentBlocksIds: placeholdersNeedToGetContent.map { $0.id }
+            ) { [weak self] data in
                 guard let self else { return }
-                self.provider.loadPersonalizedInAppContentBlocks(
-                    data: PersonalizedInAppContentBlockResponseData.self,
-                    customerIds: ids,
-                    inAppContentBlocksIds: placeholdersNeedToGetContent.map { $0.id }
-                ) { data in
+                ensureBackground {
                     let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data.compactMap { response in
                         var newInAppContentBlocks = response
                         let normalizeConf = HtmlNormalizerConfig(
@@ -598,6 +619,8 @@ private extension InAppContentBlocksManager {
                         )
                         let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
                         newInAppContentBlocks.htmlPayload = normalizedPayload
+                        let isCorruptedImage = !self.hasHtmlImages(html: response.content?.html ?? "")
+                        newInAppContentBlocks.isCorruptedImage = isCorruptedImage
                         return newInAppContentBlocks
                     } ?? []
                     var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
@@ -637,6 +660,19 @@ private extension InAppContentBlocksManager {
             )
             _loadQueue.changeValue(with: { $0.append(.init(placeholder: placeholder, indexPath: indexPath, expired: expired)) })
         }
+    }
+
+    private func hasHtmlImages(html: String) -> Bool {
+        let isAnyCorrectImage = !HtmlNormalizer(html)
+            .collectImages().map { $0 }
+            .compactMap { URL(string: $0) }
+            .compactMap { try? Data(contentsOf: $0) }
+            .compactMap { UIImage(data: $0) }
+            .isEmpty
+        if !isAnyCorrectImage {
+            Exponea.logger.log(.verbose, message: "No correct images inside \(html)")
+        }
+        return isAnyCorrectImage
     }
 
     func calculateStaticData(height: CalculatorData, newValue: UsedInAppContentBlocks, placeholder: InAppContentBlockResponse) {
@@ -714,28 +750,34 @@ extension InAppContentBlocksManager {
                 inAppContentBlocksIds: idsForDownload
             ) { [weak self] data in
                 guard let self else { return }
-                Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshStaticViewContent data: \(data.data?.data ?? [])")
-                let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data.compactMap { response in
-                    var newInAppContentBlocks = response
-                    let normalizeConf = HtmlNormalizerConfig(
-                        makeResourcesOffline: true,
-                        ensureCloseButton: false
-                    )
-                    let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
-                    newInAppContentBlocks.htmlPayload = normalizedPayload
-                    return newInAppContentBlocks
-                } ?? []
-                var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
-                for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
-                    if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
-                        personalized.ttlSeen = Date()
-                        updatedPlaceholders[index].personalizedMessage = personalized
+                ensureBackground {
+                    Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshStaticViewContent data: \(data.data?.data ?? [])")
+                    let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data.compactMap { response in
+                        var newInAppContentBlocks = response
+                        let normalizeConf = HtmlNormalizerConfig(
+                            makeResourcesOffline: true,
+                            ensureCloseButton: false
+                        )
+                        let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
+                        newInAppContentBlocks.htmlPayload = normalizedPayload
+                        let isCorruptedImage = !self.hasHtmlImages(html: response.content?.html ?? "")
+                        newInAppContentBlocks.isCorruptedImage = isCorruptedImage
+                        return newInAppContentBlocks
+                    } ?? []
+                    var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
+                    for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
+                        if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
+                            personalized.ttlSeen = Date()
+                            updatedPlaceholders[index].personalizedMessage = personalized
+                        }
                     }
+                    self.inAppContentBlockMessages = updatedPlaceholders
+                    let data = self.prepareInAppContentBlocksStaticView(placeholderId: staticQueueData.placeholderId)
+                    onMain {
+                        staticQueueData.completion?(data)
+                    }
+                    self.continueWithStaticQueue()
                 }
-                self.inAppContentBlockMessages = updatedPlaceholders
-                let data = self.prepareInAppContentBlocksStaticView(placeholderId: staticQueueData.placeholderId)
-                staticQueueData.completion?(data)
-                self.continueWithStaticQueue()
             }
         } else {
             _staticQueue.changeValue(with: { $0.append(staticQueueData) })

@@ -85,6 +85,7 @@ public struct InAppContentBlockResponse: Codable {
     public var tags: Set<Int>? = []
     @CodableIgnored
     public var indexPath: IndexPath?
+    public var isCorruptedImage = true
 
     enum CodingKeys: String, CodingKey {
         case id

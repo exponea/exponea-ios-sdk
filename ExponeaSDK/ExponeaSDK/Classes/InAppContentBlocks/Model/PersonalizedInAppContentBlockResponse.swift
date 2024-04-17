@@ -36,6 +36,7 @@ public struct PersonalizedInAppContentBlockResponse: Codable {
     public var ttlSeen: Date?
     @CodableIgnored
     public var tag: Int?
+    public var isCorruptedImage = false
 
     enum CodingKeys: String, CodingKey {
         case id = "id"
