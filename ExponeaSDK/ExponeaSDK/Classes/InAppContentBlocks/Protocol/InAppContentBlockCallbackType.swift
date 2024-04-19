@@ -18,7 +18,10 @@ public protocol InAppContentBlockCallbackType {
 
 internal struct DefaultInAppContentBlockCallback: InAppContentBlockCallbackType {
     func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse) {
-        Exponea.logger.log(.verbose, message: "Tracking of InApp Content Block \(contentBlock.id) show")
+        Exponea.logger.log(
+            .verbose,
+            message: "Tracking of InApp Content Block \(contentBlock) show"
+        )
         Exponea.shared.trackInAppContentBlockShown(placeholderId: placeholderId, message: contentBlock)
     }
     func onNoMessageFound(placeholderId: String) {

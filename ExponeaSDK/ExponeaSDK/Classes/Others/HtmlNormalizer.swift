@@ -89,7 +89,7 @@ public class HtmlNormalizer {
             document = try SwiftSoup.parse(originalHtml)
         } catch {
             Exponea.logger.log(
-                    .verbose,
+                    .warning,
                     message: "[HTML] Unable to parse original HTML source code \(originalHtml)"
             )
             document = nil
@@ -122,9 +122,7 @@ public class HtmlNormalizer {
             return nil
         }
         do {
-            let result = try document.html()
-            Exponea.logger.log(.verbose, message: "[HTML] Output is:\n \(String(describing: result))")
-            return result
+            return try document.html()
         } catch let error {
             Exponea.logger.log(.error, message: "[HTML] Output cannot be exported: \(error)")
             return nil

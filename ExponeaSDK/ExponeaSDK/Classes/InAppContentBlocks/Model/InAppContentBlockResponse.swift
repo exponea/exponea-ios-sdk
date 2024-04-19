@@ -151,3 +151,9 @@ public struct InAppContentBlocksDisplayStatus: Codable, Equatable {
     let displayed: Date?
     let interacted: Date?
 }
+
+internal extension InAppContentBlockResponse {
+    func describe() -> String {
+        return "ID:\(id), Name:\(name)"
+    }
+}

@@ -89,3 +89,22 @@ public struct PersonalizedInAppContentBlockResponse: Codable {
         self.ttlSeen = ttlSeen
     }
 }
+
+extension PersonalizedInAppContentBlockResponse {
+    func describeDetailed() -> String {
+        return """
+        {
+            id: \(id),
+            status: \(status),
+            ttlSeconds: \(ttlSeconds),
+            variantId: \(String(describing: variantId)),
+            hasTrackingConsent: \(String(describing: hasTrackingConsent)),
+            variantName: \(String(describing: variantName)),
+            contentType: \(String(describing: contentType)),
+            ttlSeen: \(String(describing: ttlSeen)),
+            tag: \(String(describing: tag)),
+            isCorruptedImage: \(isCorruptedImage)
+        }
+        """
+    }
+}
