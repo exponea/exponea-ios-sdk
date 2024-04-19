@@ -35,7 +35,7 @@ The instructions below are for Xcode 15.1 and may differ if you use a different 
 
 Optionally, you can specify the `ExponeaSDK` version as follows to let `pod` automatically any smaller than minor version updates:
 ```
-pod "ExponeaSDK", "~> 2.25.0"
+pod "ExponeaSDK", "~> 2.25.3"
 ```
 For more information, refer to [Specifying pod versions](https://guides.cocoapods.org/using/the-podfile.html#specifying-pod-versions) in the Cocoapods documentation.
 

@@ -7,6 +7,15 @@ parentDocSlug: ios-sdk
 ---
 
 ## Release Notes
+## Release Notes for 2.25.3
+#### April 19, 2024
+* Bug Fixes
+  * Fixed: In-app content blocks ignores handleUrlClick because of nil message state
+  * Fixed: In-app content block with not successfully loaded image is shown
+  * Fixed: App Inbox HTML message ignore action type
+  * Fixed: In-app content blocks logging in debug verbose mode slowing down the app and cause glitching
+
+
 ## Release Notes for 2.25.2
 #### April 10, 2024
 * Bug Fixes
