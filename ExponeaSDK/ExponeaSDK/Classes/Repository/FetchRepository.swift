@@ -56,4 +56,15 @@ protocol FetchRepository {
         inAppContentBlocksIds: [String],
         completion: @escaping TypeBlock<Result<PersonalizedInAppContentBlockResponseData>>
     )
+
+    func getSegmentations(
+        cookie: String,
+        completion: @escaping TypeBlock<Result<SegmentDataDTO>>
+    )
+
+    func getLinkIds(
+        cookie: String,
+        externalIds: [String: String],
+        completion: @escaping TypeBlock<Result<SegmentDataDTO>>
+    )
 }

@@ -192,6 +192,13 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .refresh, target: self, action: #selector(reloadStaticView))
+        
+        SegmentationManager.shared.addCallback(
+            callbackData: .init(
+                category: .merchandise(),
+                isIncludeFirstLoad: false,
+                onNewData: { segments in
+        }))
     }
 
     override func viewWillAppear(_ animated: Bool) {

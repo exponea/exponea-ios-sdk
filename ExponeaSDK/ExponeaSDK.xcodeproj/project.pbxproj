@@ -205,10 +205,20 @@
 		05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */; };
 		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
+		314CF9272BD8F2820000EFD9 /* SegmentationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314CF9262BD8F2820000EFD9 /* SegmentationSpec.swift */; };
 		315DCDFF2B6A67E9004BD7A7 /* beefree-actiontype.png in Resources */ = {isa = PBXBuildFile; fileRef = 315DCDFE2B6A67E9004BD7A7 /* beefree-actiontype.png */; };
+		317536862BD27D910062A5E5 /* SegmentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317536852BD27D910062A5E5 /* SegmentDTO.swift */; };
+		317536882BD27DEB0062A5E5 /* SegmentCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317536872BD27DEB0062A5E5 /* SegmentCategory.swift */; };
+		3175368A2BD29F6E0062A5E5 /* EmptyDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317536892BD29F6E0062A5E5 /* EmptyDTO.swift */; };
+		3175368C2BD2AFF70062A5E5 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3175368B2BD2AFF70062A5E5 /* Debouncer.swift */; };
 		318B552A2A80E52B00934902 /* DeeplinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B55292A80E52B00934902 /* DeeplinkManager.swift */; };
+		319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */; };
 		31C7B4242A822848001BA5E2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4232A822848001BA5E2 /* Coordinator.swift */; };
 		31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */; };
+		31CC0B742BD2519000608057 /* SegmentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B732BD2519000608057 /* SegmentationManager.swift */; };
+		31CC0B772BD251E200608057 /* SegmentationDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B762BD251E200608057 /* SegmentationDataProvider.swift */; };
+		31CC0B792BD255D300608057 /* SegmentationRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B782BD255D300608057 /* SegmentationRequests.swift */; };
+		31CC0B7B2BD2562000608057 /* LinkIdsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B7A2BD2562000608057 /* LinkIdsRequest.swift */; };
 		31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */; };
 		31CFEF6F2A66940E005402E5 /* SequenceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6E2A66940E005402E5 /* SequenceTest.swift */; };
 		31E9CBA22AE9494B00A333C8 /* URL+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E9CBA12AE9494B00A333C8 /* URL+Init.swift */; };
@@ -712,10 +722,20 @@
 		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		314CF9262BD8F2820000EFD9 /* SegmentationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationSpec.swift; sourceTree = "<group>"; };
 		315DCDFE2B6A67E9004BD7A7 /* beefree-actiontype.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "beefree-actiontype.png"; sourceTree = "<group>"; };
+		317536852BD27D910062A5E5 /* SegmentDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentDTO.swift; sourceTree = "<group>"; };
+		317536872BD27DEB0062A5E5 /* SegmentCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentCategory.swift; sourceTree = "<group>"; };
+		317536892BD29F6E0062A5E5 /* EmptyDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyDTO.swift; sourceTree = "<group>"; };
+		3175368B2BD2AFF70062A5E5 /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		318B55292A80E52B00934902 /* DeeplinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeeplinkManager.swift; sourceTree = "<group>"; };
+		319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationStoring.swift; sourceTree = "<group>"; };
 		31C7B4232A822848001BA5E2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaTabBarController.swift; sourceTree = "<group>"; };
+		31CC0B732BD2519000608057 /* SegmentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationManager.swift; sourceTree = "<group>"; };
+		31CC0B762BD251E200608057 /* SegmentationDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationDataProvider.swift; sourceTree = "<group>"; };
+		31CC0B782BD255D300608057 /* SegmentationRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationRequests.swift; sourceTree = "<group>"; };
+		31CC0B7A2BD2562000608057 /* LinkIdsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkIdsRequest.swift; sourceTree = "<group>"; };
 		31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+RemoveNil.swift"; sourceTree = "<group>"; };
 		31CFEF6E2A66940E005402E5 /* SequenceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceTest.swift; sourceTree = "<group>"; };
 		31E9CBA12AE9494B00A333C8 /* URL+Init.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Init.swift"; sourceTree = "<group>"; };
@@ -1053,6 +1073,7 @@
 		01EC2DA2207E3D060031BFEB /* Specs */ = {
 			isa = PBXGroup;
 			children = (
+				314CF9252BD8F2620000EFD9 /* Segmentation */,
 				55EFD790291A6C08002569FB /* AppInbox */,
 				6BA73FEE29B639F6009F92DF /* Attomicity */,
 				C09A6495212D83D700DCAC06 /* Database */,
@@ -1515,6 +1536,53 @@
 				05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		314CF9252BD8F2620000EFD9 /* Segmentation */ = {
+			isa = PBXGroup;
+			children = (
+				314CF9262BD8F2820000EFD9 /* SegmentationSpec.swift */,
+			);
+			path = Segmentation;
+			sourceTree = "<group>";
+		};
+		317536842BD27D870062A5E5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				317536852BD27D910062A5E5 /* SegmentDTO.swift */,
+				317536872BD27DEB0062A5E5 /* SegmentCategory.swift */,
+				317536892BD29F6E0062A5E5 /* EmptyDTO.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		319FEBF22BD6DA0900E0EB11 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		31CC0B722BD2518500608057 /* Segmentation */ = {
+			isa = PBXGroup;
+			children = (
+				319FEBF22BD6DA0900E0EB11 /* Helper */,
+				317536842BD27D870062A5E5 /* Model */,
+				31CC0B752BD251D700608057 /* API */,
+				31CC0B732BD2519000608057 /* SegmentationManager.swift */,
+			);
+			path = Segmentation;
+			sourceTree = "<group>";
+		};
+		31CC0B752BD251D700608057 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				31CC0B762BD251E200608057 /* SegmentationDataProvider.swift */,
+				31CC0B782BD255D300608057 /* SegmentationRequests.swift */,
+				31CC0B7A2BD2562000608057 /* LinkIdsRequest.swift */,
+			);
+			path = API;
 			sourceTree = "<group>";
 		};
 		31EBB8402A6AC2E90003AAA5 /* InAppContentBlocks */ = {
@@ -2152,6 +2220,7 @@
 				0580BBC6239698E60058323D /* UIColor+FromHexString.swift */,
 				CCB87B7728169C6C005DFB8E /* VersionChecker.swift */,
 				55A468CF296F154C00E62438 /* WebActionsManager.swift */,
+				3175368B2BD2AFF70062A5E5 /* Debouncer.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -2175,6 +2244,7 @@
 		F0E757EC207D023A00FE8C21 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				31CC0B722BD2518500608057 /* Segmentation */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 				552772C328ED86E0000ACFD5 /* AppInbox */,
 				01EC2DB8207E68BF0031BFEB /* Database */,
@@ -2754,6 +2824,7 @@
 			files = (
 				C0EB5D9320B811F900F1031F /* PushNotificationManager.swift in Sources */,
 				33FC6CC429A910BA001F113F /* SafeIndex.swift in Sources */,
+				31CC0B7B2BD2562000608057 /* LinkIdsRequest.swift in Sources */,
 				05D4A800247D252D00864DC1 /* PushNotificationSelfCheck.swift in Sources */,
 				556887422A1756C400498B40 /* ButtonStyle.swift in Sources */,
 				054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */,
@@ -2768,6 +2839,7 @@
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
 				05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */,
 				05BA5804250649F000E10994 /* PushOpenedData.swift in Sources */,
+				3175368C2BD2AFF70062A5E5 /* Debouncer.swift in Sources */,
 				05CDD8392391193E00C7291A /* InAppMessagesCache.swift in Sources */,
 				0591905D23EC1A550037BD88 /* EventFilterConstraint.swift in Sources */,
 				C07E420F20CA8AF700920809 /* DateFilter.swift in Sources */,
@@ -2803,6 +2875,7 @@
 				05C289332428A1480021220C /* SessionManagerType.swift in Sources */,
 				556887562A176B0200498B40 /* NSDictionary+getSafely.swift in Sources */,
 				5567C090290808F600318E68 /* MessageItemContent.swift in Sources */,
+				3175368A2BD29F6E0062A5E5 /* EmptyDTO.swift in Sources */,
 				05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */,
 				C0F2406E20BC511500CAF7CE /* ExponeaInternal+Tracking.swift in Sources */,
 				5567C092290809EB00318E68 /* MessageItemAction.swift in Sources */,
@@ -2864,10 +2937,12 @@
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
 				053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */,
 				057D476723C87F0B00AEE902 /* UrlOpenerType.swift in Sources */,
+				317536882BD27DEB0062A5E5 /* SegmentCategory.swift in Sources */,
 				CCB87B7E2816A6A6005DFB8E /* GitHubReleaseResponse.swift in Sources */,
 				05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */,
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */,
+				317536862BD27D910062A5E5 /* SegmentDTO.swift in Sources */,
 				55D0543A2B230C9600BC773A /* InAppContentBlockCallbackType.swift in Sources */,
 				057E367523E0503F00DDD6C1 /* InAppMessageSlideInView.swift in Sources */,
 				33FC6CC829A912CC001F113F /* Extension+UIView.swift in Sources */,
@@ -2878,6 +2953,7 @@
 				053EC59923AA32A7004D1C8B /* InAppMessageDisplayStatus.swift in Sources */,
 				557856032BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
+				31CC0B742BD2519000608057 /* SegmentationManager.swift in Sources */,
 				05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */,
 				053CA200247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift in Sources */,
 				556887542A176A6800498B40 /* AppInboxStyleParser.swift in Sources */,
@@ -2885,11 +2961,13 @@
 				CCB87B7A28169F4B005DFB8E /* VersionCheckRepository.swift in Sources */,
 				31EBB8602A6AC3020003AAA5 /* StaticQueueData.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
+				31CC0B792BD255D300608057 /* SegmentationRequests.swift in Sources */,
 				052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */,
 				33FC6CCA29A9158F001F113F /* Reusable.swift in Sources */,
 				0591906223EC1CEC0037BD88 /* GenericOperators.swift in Sources */,
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
+				319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				5524BD662B2B5DBE005CF699 /* ExponeaType.swift in Sources */,
 				55DA6EC0290AD65200B5B285 /* AppInboxCache.swift in Sources */,
@@ -2921,6 +2999,7 @@
 				C030AF48216F4335004413F0 /* PushNotificationReceiver.swift in Sources */,
 				33FC6CCC29A9195B001F113F /* Typealiases.swift in Sources */,
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
+				31CC0B772BD251E200608057 /* SegmentationDataProvider.swift in Sources */,
 				0580BBC923969D1F0058323D /* InAppMessagePresenter.swift in Sources */,
 				33FC6CC229A90ED5001F113F /* OnMain.swift in Sources */,
 				0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */,
@@ -2943,6 +3022,7 @@
 				05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */,
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
 				05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */,
+				314CF9272BD8F2820000EFD9 /* SegmentationSpec.swift in Sources */,
 				31EBB86D2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift in Sources */,
 				0529797A241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift in Sources */,
 				559E7609296E0E5C00F27BC9 /* MessageItemSpec.swift in Sources */,

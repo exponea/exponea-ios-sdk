@@ -230,7 +230,6 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 completion?()
             }
         }
-  
     }
 
     func prefetchPlaceholdersWithIds(input: [InAppContentBlockResponse], ids: [String]) -> [InAppContentBlockResponse] {

@@ -75,7 +75,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
 
         it("filter - always") {
             var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
-                id: "filter - always - msg123",
+                id: "filter - always - msg123 - \(UUID().uuidString)",
                 personalized: .getSample(
                     status: .ok,
                     ttlSeen: Date()
@@ -106,7 +106,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
 
         it("filter - interaction") {
             var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
-                id: "filter - interaction - msg123",
+                id: "filter - interaction - msg123 - \(UUID().uuidString)",
                 frequency: .untilVisitorInteracts,
                 personalized: .getSample(
                     status: .ok,
@@ -135,7 +135,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
 
         it("filter - seen") {
             var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
-                id: "filter - seen - msg123",
+                id: "filter - seen - msg123 - \(UUID().uuidString)",
                 frequency: .onlyOnce,
                 personalized: .getSample(
                     status: .ok,

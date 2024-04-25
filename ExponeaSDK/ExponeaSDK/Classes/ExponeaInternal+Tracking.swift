@@ -402,6 +402,7 @@ extension ExponeaInternal {
             dependencies.inAppMessagesManager.anonymize()
             dependencies.appInboxManager.clear()
             dependencies.inAppContentBlocksManager.anonymize()
+            SegmentationManager.shared.anonymize()
             self.telemetryManager?.report(eventWithType: .anonymize, properties: [:])
         }
     }

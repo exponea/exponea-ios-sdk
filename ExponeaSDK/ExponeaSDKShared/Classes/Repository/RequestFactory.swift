@@ -41,6 +41,10 @@ public struct RequestFactory {
             return baseUrl + "/webxp/s/\(projectToken)/inappcontentblocks?v=2"
         case .inAppContentBlocks:
             return baseUrl + "/wxstatic/projects/\(projectToken)/bundle-ios.json?v=2"
+        case let .segmentation(cookie):
+            return baseUrl + "/webxp/projects/\(projectToken)/segments?cookie=\(cookie)"
+        case let .linkIds(cookie):
+            return baseUrl + "/webxp/projects/\(projectToken)/cookies/\(cookie)/link-ids"
         }
     }
 }
