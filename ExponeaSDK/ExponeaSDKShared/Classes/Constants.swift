@@ -60,7 +60,7 @@ public enum Constants {
         public static let sdkNotConfigured = "Exponea SDK isn't configured. " +
             "Before any calls to SDK functions, please configure the SDK " +
             "with Exponea.shared.config() according to the documentation " +
-            "https://github.com/exponea/exponea-ios-sdk/blob/develop/Documentation/CONFIG.md#configuring-the-sdk"
+            "https://github.com/exponea/exponea-ios-sdk/blob/main/Documentation/configuration.md"
     }
 
     /// Success messages

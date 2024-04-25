@@ -77,7 +77,7 @@ For your application to be able to respond to push notification-related events, 
 - `userNotificationCenter(_:didReceive:withCompletionHandler:)` 
    Called when the user opens an alert push notification.
 
-The [`ExponeaAppDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/ExponeaSDK/Classes/ExponeaAppDelegate.swift) class in the SDK provides default implementations of these methods. We recommend that you extend `ExponeaAppDelegate` in your `AppDelegate`. 
+The [`ExponeaAppDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/ExponeaSDK/Classes/ExponeaAppDelegate.swift) class in the SDK provides default implementations of these methods. We recommend that you extend `ExponeaAppDelegate` in your `AppDelegate`. 
 
 ```swift
 @UIApplicationMain
@@ -202,7 +202,7 @@ extension AppDelegate: PushNotificationManagerDelegate {
 
 > 📘
 >
-> Refer to [`AppDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/AppDelegate.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a basic example.
+> Refer to [`AppDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/AppDelegate.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a basic example.
 
 ### Silent Push Notifications
 
@@ -253,7 +253,7 @@ Using of `ExponeaNotificationContentService.didReceive()` method will enhance no
 Received push notifications handled by `ExponeaNotificationService.process()` can play a default or customized sound when the notification is displayed.
 
 To use the default sound for a notification, enter `default` as value for `Media > Sound` in your push notification scenario in the Engagement web app.
-![Configure sound for a push notification in Engagement](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/push-sound-config.png)
+![Configure sound for a push notification in Engagement](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/push-sound-config.png)
 
 To use a custom sound for a notification, you must create a sound file that [iOS supports](https://developer.apple.com/documentation/usernotifications/unnotificationsound#2943048). Include the sound file in your Xcode project and add it to the app's target.
 

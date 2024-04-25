@@ -53,7 +53,7 @@ For more information, refer to [Specifying pod versions](https://guides.cocoapod
     ```
 5. Open your Xcode project and navigate to your application target's settings. On the `General` tab, find the `Frameworks, Libraries, and Embedded Content` section.
 6. Open Finder, navigate to the `Carthage/Build` folder inside your project folder, and drag and drop every `*.xcframework` folder inside it to the `Frameworks, Libraries, and Embedded Content` section in Xcode.
-   ![XCFRameworks added to Frameworks, Libraries, and Embedded Content](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/carthage-xcframeworks.png)
+   ![XCFRameworks added to Frameworks, Libraries, and Embedded Content](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/carthage-xcframeworks.png)
 
 ### Swift Package Manager
 
@@ -61,10 +61,10 @@ For more information, refer to [Specifying pod versions](https://guides.cocoapod
 2. Open `File -> Add Package Dependencies...`
 3. In the dialog that appears, enter the Exponia iOS SDK repository URL `https://github.com/exponea/exponea-ios-sdk` in the search box.
 4. In the `Dependency Rule` section, select the SDK version.
-   ![Add Package Dependencies dialog](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/swift-pm-1.png)
+   ![Add Package Dependencies dialog](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/swift-pm-1.png)
 5. Click on `Add Package`.
 6. In the next dialog, make sure `ExponeaSDK` and `ExponeaSDK-Notifications` are both selected.
-   ![Choose Packages dialog](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/swift-pm-2.png)
+   ![Choose Packages dialog](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/swift-pm-2.png)
 7. Click on `Add Package`.
 
 ## Initialize the SDK
@@ -73,7 +73,7 @@ Now that you have installed the SDK in your project, you must import, configure,
 
 The required configuration parameters are `projectToken`, `authorization.token`, and `baseUrl`. You can find these as `Project token`, `API Token`, and `API Base URL` in the Bloomreach Engagement webapp under `Project settings` > `Access management` > `API`:
 
-![Project token, API Base URL, and API key](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/api-access-management.png)
+![Project token, API Base URL, and API key](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/api-access-management.png)
 
 > 📘
 >

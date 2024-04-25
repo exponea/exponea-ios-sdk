@@ -139,7 +139,7 @@ public extension Exponea {
 
 public extension ExponeaInternal {
     // swiftlint:disable:next line_length
-    @available(*, deprecated, message: "Automatic push notification tracking is deprecated. Find more information in the documentation. https://github.com/exponea/exponea-ios-sdk/blob/develop/Documentation/PUSH.md")
+    @available(*, deprecated, message: "Automatic push notification tracking is deprecated. Find more information in the documentation. https://github.com/exponea/exponea-ios-sdk/blob/main/Documentation/PUSH.md")
     func configure(
         _ projectSettings: Exponea.ProjectSettings,
         automaticPushNotificationTracking: Exponea.AutomaticPushNotificationTracking,

@@ -19,7 +19,7 @@ This page describes the steps to create an extension of either type. Make sure t
 
 Navigate to `File` > `New` > `Target` in Xcode and select the extension type (`Notification Service Extension` or `Notification Content Extension`).
 
-![Create new notification extension in Xcode](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/extension1.png)
+![Create new notification extension in Xcode](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/extension1.png)
 
 > ❗️
 >
@@ -106,7 +106,7 @@ class NotificationService: UNNotificationServiceExtension {
 
 > 📘
 >
-> Refer to [ExampleNotificationService](https://github.com/exponea/exponea-ios-sdk/tree/develop/ExponeaSDK/ExampleNotificationService) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> Refer to [ExampleNotificationService](https://github.com/exponea/exponea-ios-sdk/tree/main/ExponeaSDK/ExampleNotificationService) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
 #### Notification Content Extension
 
@@ -126,7 +126,7 @@ Open `Info.plist` in the content extension group.
   - Remove `NSExtensionMainStoryboard`.
   - Add `NSExtensionPrincipalClass` and set its value to your view controller class, for example, `TestingPushContentExtension.NotificationViewController`.
 
-![Configure notification content extension in Xcode](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/extension3.png)
+![Configure notification content extension in Xcode](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/extension3.png)
 
 Notice the parameter `UNNotificationExtensionInitialContentSizeRatio` (with the default value 1). It specifies the ratio between the width and height of the content in the push notification. By default, the content is as high as it is wide. This setting is not part of the SDK but can cause unwanted blank space when no image is present. Change this value to 0 if you want the height to be dynamic (it will scale to the correct height if an image is present, but there will be no blank space if there is not).
 
@@ -153,4 +153,4 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
 
 > 📘
 >
-> Refer to [ExampleNotificationContent](https://github.com/exponea/exponea-ios-sdk/tree/develop/ExponeaSDK/ExampleNotificationContent) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> Refer to [ExampleNotificationContent](https://github.com/exponea/exponea-ios-sdk/tree/main/ExponeaSDK/ExampleNotificationContent) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.

@@ -14,7 +14,7 @@ You can strategically position placeholders for in-app content blocks within you
 >
 > Refer to the [In-App Content Blocks](https://documentation.bloomreach.com/engagement/docs/in-app-content-blocks) user guide for instructions on how to create in-app content blocks in Engagement.
 
-![In-app content blocks in the example app](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/in-app-content-blocks.png)
+![In-app content blocks in the example app](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/in-app-content-blocks.png)
 
 ## Integration
 
@@ -60,7 +60,7 @@ Exponea.shared.inAppContentBlocksManager?.refreshCallback = { [weak self] indexP
 
 > 📘
 >
-> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
 > 👍
 >
@@ -214,7 +214,7 @@ class CustomInAppContentBlockCallback: InAppContentBlockCallbackType {
 
 > 📘
 >
-> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a working example.
+> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a working example.
 
 ### Override Button Action Type in HTML Message
 
@@ -252,7 +252,7 @@ In the Visual builder, you can set the action type as follows:
 4) Select `data-actiontype`
 5) Insert a value (either `browser` or  `deep-link`)
 
-![Screenshot](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/actiontype.png)
+![Screenshot](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/actiontype.png)
 
 ### Customize Presentation
 

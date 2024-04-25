@@ -46,29 +46,29 @@ In Xcode, navigate to `Xcode` > `Preferences` > `Locations` and make sure `Comma
 
 ## Navigate the Example App
 
-![Example app screens: configuration, fetch, track, track event](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/sample-app-1.png)
+![Example app screens: configuration, fetch, track, track event](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/sample-app-1.png)
 
 When you run the app in the simulator, you'll see the **Authentication** view. Enter your [project token, API token, and API base URL](https://documentation.bloomreach.com/engagement/docs/mobile-sdks-api-access-management), then click `Start` to [initialize the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk).
-> [`AuthenticationViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/AuthenticationViewController.swift)
+> [`AuthenticationViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/AuthenticationViewController.swift)
 
 The app provides several views, accessible using the bottom navigation, to test the different SDK features:
 
 - The **Fetch Data** view enables you to fetch recommendations and consents as well as open the app inbox.
-  > [`FetchViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/Fetching/FetchViewController.swift)
+  > [`FetchViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Fetching/FetchViewController.swift)
 
 - The **Tracking** view enables you to test tracking of different events and properties. The `Custom Event` and `Identify Customer` buttons lead to their separate views to enter test data.
-  > [`TrackingViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/Tracking/TrackingViewController.swift)
-  > [`TrackEventViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/Tracking/TrackEventViewController.swift)
-  > [`IdentifyCustomerViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/Tracking/IdentifyCustomerViewController.swift)
+  > [`TrackingViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Tracking/TrackingViewController.swift)
+  > [`TrackEventViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Tracking/TrackEventViewController.swift)
+  > [`IdentifyCustomerViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Tracking/IdentifyCustomerViewController.swift)
 
 - The **Flushing** view lets you trigger a manual data flush, anonymize the customer data, and log out.
-  > [`FlushingViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/Flushing/FlushingViewController.swift)
+  > [`FlushingViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Flushing/FlushingViewController.swift)
 
 - The **Logging** view displays log messages from the SDK.
-  > [`LogViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/Logging/LogViewController.swift)
+  > [`LogViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Logging/LogViewController.swift)
 
 - The **In-app Content Blocks** view displays in-app content blocks. Use placeholder IDs `example_top`, `ph_x_example_iOS`, and `example_list` in your in-app content block settings.
-  > [`InAppContentBlocksViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift)
+  > [`InAppContentBlocksViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift)
 
 Try out the different features in the app, then find the customer profile in the Engagement web app (under `Data & Assets` > `Customers`) to see the properties and events tracked by the SDK.
 
@@ -80,7 +80,7 @@ Once you use `Identify Customer` in the app to set the `registered` hard ID (use
 >
 > Refer to [Customer Identification](https://documentation.bloomreach.com/engagement/docs/customer-identification) for more information on soft IDs and hard IDs.
 
-![Example app screens: identify, flushing, logging, content blocks](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/sample-app-2.png)
+![Example app screens: identify, flushing, logging, content blocks](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/sample-app-2.png)
 
 ## Troubleshooting
 

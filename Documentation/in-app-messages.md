@@ -120,7 +120,7 @@ In the Visual builder, you can set the action type as follows:
 4) Select `data-actiontype`
 5) Insert a value (either `browser` or  `deep-link`)
 
-![Screenshot](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/actiontype.png)
+![Screenshot](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/actiontype.png)
 
 ## Troubleshooting
 

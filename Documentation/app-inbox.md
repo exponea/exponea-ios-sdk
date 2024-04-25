@@ -18,7 +18,7 @@ Refer to the [App Inbox](https://documentation.bloomreach.com/engagement/docs/ap
 
 You can integrate the App Inbox through a button provided by the SDK, which opens the App Inbox messages list view.
 
-![App Inbox button](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/app-inbox-button.png)
+![App Inbox button](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/app-inbox-button.png)
 
 Use the `getAppInboxButton()` method to retrieve the button:
 
@@ -55,7 +55,7 @@ That's all that's required to integrate the App Inbox. Optionally, you can [cust
 
 > 📘
 >
-> See [FetchViewController](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/Fetching/FetchViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> See [FetchViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Fetching/FetchViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
 ## Default App Inbox Behavior
 
@@ -81,7 +81,7 @@ The SDK fetches and displays the App Inbox automatically as follows:
 5. Call `Exponea.shared.trackAppInboxClick` automatically when the user clicks a button in the message detail view.
 
 
-![App Inbox messages list view and message detail view](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/app-inbox.png)
+![App Inbox messages list view and message detail view](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/app-inbox.png)
 
 > ❗️
 >
@@ -124,13 +124,13 @@ Your `AppInboxProvider` instance must implement all App Inbox UI components. You
 
 > 📘
 >
-> Refer to [ExampleAppInboxProvider](https://github.com/exponea/exponea-ios-sdk/blob/develop/ExponeaSDK/Example/Views/ExampleAppInboxProvider.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> Refer to [ExampleAppInboxProvider](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/ExampleAppInboxProvider.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
 #### App Inbox Button
 
 The method `getAppInboxButton()` returns a `UIButton` instance.
 
-The default implementation builds a simple button instance with an icon ![Inbox icon](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/develop/Documentation/images/inbox.png) and the `exponea.inbox.button` label. The click action for the button opens the App Inbox list view.
+The default implementation builds a simple button instance with an icon ![Inbox icon](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/inbox.png) and the `exponea.inbox.button` label. The click action for the button opens the App Inbox list view.
 
 To customize this behavior, override `getAppInboxButton()`. For example:
 
