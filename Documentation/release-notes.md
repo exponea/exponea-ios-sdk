@@ -7,6 +7,12 @@ parentDocSlug: ios-sdk
 ---
 
 ## Release Notes
+## Release Notes for 2.26.0
+#### April 26, 2024
+* Features
+  * Segmentation API feature support
+
+
 ## Release Notes for 2.25.3
 #### April 19, 2024
 * Bug Fixes
