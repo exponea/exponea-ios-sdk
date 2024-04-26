@@ -1,5 +1,5 @@
-# This GitHub Actions workflow syncs Markdown files to the Bloomreach documentation site.
-name: ReadMe GitHub Action 🦉
+# This GitHub Actions workflow syncs Markdown files to the Bloomreach sandbox documentation site.
+name: ReadMe Sandbox GitHub Action 🦉
 
 on:
   push:
@@ -19,4 +19,4 @@ jobs:
       - name: Run `docs` command 🚀
         uses: readmeio/rdme@v8
         with:
-          rdme: docs Documentation --key=${{ secrets.README_API_KEY }} --version=2
+          rdme: docs Documentation --key=${{ secrets.README_SANDBOX_API_KEY }} --version=2
