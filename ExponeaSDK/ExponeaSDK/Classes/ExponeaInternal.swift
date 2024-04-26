@@ -266,7 +266,8 @@ public class ExponeaInternal: ExponeaType {
                     repository: repository,
                     customerIdentifiedHandler: { [weak self] in
                         // reload in-app messages once customer identification is flushed - user may have been merged
-                        guard let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
+                        guard let trackingManager = self?.trackingManager,
+                                                let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
                         if let placeholders = configuration.inAppContentBlocksPlaceholders {
                             inAppContentBlocksManager.loadInAppContentBlockMessages {
                                 inAppContentBlocksManager.prefetchPlaceholdersWithIds(ids: placeholders)

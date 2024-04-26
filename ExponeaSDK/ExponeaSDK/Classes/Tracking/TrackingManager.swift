@@ -210,15 +210,19 @@ extension TrackingManager: TrackingManagerType {
         for project in projects {
             if type == .identifyCustomer {
                 inAppMessageManager?.pendingShowRequests.removeAll()
-            }
-            switch Exponea.shared.flushingMode {
-            case .immediate:
-                try? self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
-                Exponea.shared.flushingManager?.inAppRefreshCallback = {
-                    Exponea.shared.flushingManager?.inAppRefreshCallback = nil
-                    self.onEventCallback(type, payload)
+                switch Exponea.shared.flushingMode {
+                case .immediate:
+                    Exponea.shared.flushingManager?.inAppRefreshCallback = {
+                        Exponea.shared.flushingManager?.inAppRefreshCallback = nil
+                        try? self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
+                        self.onEventCallback(type, payload)
+                    }
+                    Exponea.shared.flushingManager?.flushData()
+                default:
+                    try storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
+                    onEventCallback(type, payload)
                 }
-            default:
+            } else {
                 try storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
                 onEventCallback(type, payload)
             }
