@@ -64,11 +64,11 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     }
 
     func dismiss(isUserInteraction: Bool) {
+        self.dismissCallback(isUserInteraction)
         guard superview != nil else {
             return
         }
         self.removeFromSuperview()
-        self.dismissCallback(isUserInteraction)
     }
 
     func actionButtonAction(_ sender: InAppMessageActionButton) {
@@ -80,8 +80,8 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     }
 
     func cancelButtonAction(_ sender: Any) {
-        self.removeFromSuperview()
         self.dismissCallback(true)
+        self.removeFromSuperview()
     }
 
     func setup() {

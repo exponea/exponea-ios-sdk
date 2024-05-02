@@ -54,10 +54,10 @@ final class InAppMessageAlertView: InAppMessageView {
     }
 
     func dismiss(isUserInteraction: Bool) {
+        dismissCallback(isUserInteraction)
         guard alertController.presentingViewController != nil else {
             return
         }
-        dismissCallback(isUserInteraction)
         alertController.dismiss(animated: true)
     }
 }

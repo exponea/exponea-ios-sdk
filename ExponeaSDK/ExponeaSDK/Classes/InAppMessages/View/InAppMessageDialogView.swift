@@ -74,10 +74,10 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     func dismiss(isUserInteraction: Bool) {
+        dismissCallback(isUserInteraction)
         guard presentingViewController != nil else {
             return
         }
-        dismissCallback(isUserInteraction)
         dismiss(animated: true)
     }
 

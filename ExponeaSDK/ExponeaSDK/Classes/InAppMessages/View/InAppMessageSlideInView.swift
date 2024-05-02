@@ -81,19 +81,19 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     }
 
     func dismiss(isUserInteraction: Bool) {
+        self.dismissCallback(isUserInteraction)
         guard superview != nil else {
             return
         }
         animateOut {
             self.removeFromSuperview()
-            self.dismissCallback(isUserInteraction)
         }
     }
 
     @objc func handleSwipe(gesture: UISwipeGestureRecognizer) {
+        self.dismissCallback(true)
         animateOut {
             self.removeFromSuperview()
-            self.dismissCallback(true)
         }
     }
 
@@ -106,9 +106,9 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     }
 
     @objc func cancelButtonAction(_ sender: Any) {
+        self.dismissCallback(true)
         animateOut {
             self.removeFromSuperview()
-            self.dismissCallback(true)
         }
     }
 
