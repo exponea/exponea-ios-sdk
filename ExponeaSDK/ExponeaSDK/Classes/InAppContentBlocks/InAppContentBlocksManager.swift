@@ -481,10 +481,6 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             }
             if let html = personalized.htmlPayload?.html, !html.isEmpty {
                 _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder] = message })
-                Exponea.shared.trackInAppContentBlockShown(
-                    placeholderId: placeholderId,
-                    message: message
-                )
                 return .init(html: html, tag: tag, message: message)
             }
         } else {
