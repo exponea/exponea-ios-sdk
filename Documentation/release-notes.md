@@ -7,6 +7,14 @@ parentDocSlug: ios-sdk
 ---
 
 ## Release Notes
+## Release Notes for 2.26.1
+#### May 03, 2024
+* Bug Fixes
+  * Fixed: In-app content block track dual show event
+  * Fixed: In-app message dismiss callback is not called in some specific case
+  * Fixed: Generic view in-app content block has default padding on the bottom
+
+
 ## Release Notes for 2.26.0
 #### April 26, 2024
 * Features
