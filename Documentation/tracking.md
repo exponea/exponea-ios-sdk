@@ -12,7 +12,7 @@ By default, the SDK tracks certain events automatically, including:
 
 * Installation (after app installation and after invoking [anonymize](#anonymize))
 * User session start and end
-* Banner event for each in-app message and content block delivery
+* Banner event for showing an in-app message or content block
 
 Additionally, you can track any custom event relevant to your business.
 
@@ -81,9 +81,15 @@ Exponea.shared.trackEvent(properties: properties,
 
 Without identification, events are tracked for an anonymous customer, only identified by a cookie. Once the customer is identified by a hard ID, these events will be transferred to a newly identified customer.
 
+> 👍
+>
+> Keep in mind that, while an app user and a customer record can be related by a soft or hard ID, they are separate entities, each with their own lifecycle. Take a moment to consider how their lifecycles relate and when to use [identify](#identify) and [anonymize](#anonymize).
+
 ### Identify
 
-Use the `identifyCustomer()` method to identify a customer using their unique [hard ID](https://documentation.bloomreach.com/engagement/docs/customer-identification#hard-id) (for example, their email address).
+Use the `identifyCustomer()` method to identify a customer using their unique [hard ID](https://documentation.bloomreach.com/engagement/docs/customer-identification#hard-id).
+
+The default hard ID is `registered` and its value is typically the customer's email address. However, your Engagement project may define a different hard ID.
 
 Optionally, you can track additional customer properties such as first and last names, age, etc.
 
@@ -91,7 +97,7 @@ Optionally, you can track additional customer properties such as first and last 
 
 | Name                        | Type                      | Description |
 | --------------------------- | ------------------------- | ----------- |
-| customerIds **(required)**  | [String: String]          | Dictionary of customer unique identifiers. |
+| customerIds **(required)**  | [String: String]          | Dictionary of customer unique identifiers. Only identifiers defined in the Engagement project are accepted. |
 | properties                  | [String: JSONConvertible] | Dictionary of customer properties. |
 | timestamp                   | Double                    | Unix timestamp specifying when the customer properties were updated. Specify `nil` value to use the current time. |
 
@@ -141,15 +147,15 @@ Use the `anonymize()` method to delete all information stored locally and reset 
 
 Invoking this method will cause the SDK to:
 
-* Remove the push notification token for the current customer from both local and online storage.
+* Remove the push notification token for the current customer from local device storage and the customer profile in Engagement.
 * Clear local repositories and caches, excluding tracked events.
 * Track a new session start if `automaticSessionTracking` is enabled.
-* Create a new customer record (a new `cookie` soft ID is generated).
-* Assign the previous push notification token to the new customer.
+* Create a new customer record in Engagement (a new `cookie` soft ID is generated).
+* Assign the previous push notification token to the new customer record.
 * Preload in-app messages, in-app content blocks, and app inbox for the new customer.
 * Track a new `installation` event for the new customer.
 
-You can also use the `anonymize` method to switch to a different Engagement project. The new user will have the same events as if they installed the app on a new device.
+You can also use the `anonymize` method to switch to a different Engagement project. The SDK will then track events to a new customer record in the new project, similar to the first app session after installation on a new device.
 
 #### Examples
 

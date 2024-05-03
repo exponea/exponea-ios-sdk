@@ -108,7 +108,7 @@ public class ExampleAuthProvider: NSObject, AuthorizationProviderType {
 
 > 👍
 >
-> Different network libraries support different approaches but the principle stays same - feel free to block tje invocation of the `getAuthorizationToken` method.
+> Different network libraries support different approaches but the principle stays same - feel free to block the invocation of the `getAuthorizationToken` method.
 
 ### Customer Token Retrieval Policy
 
