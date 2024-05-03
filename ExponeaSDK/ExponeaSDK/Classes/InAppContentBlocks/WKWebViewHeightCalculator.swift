@@ -13,6 +13,7 @@ import UIKit
 public final class WKWebViewHeightCalculator: WKWebView, WKNavigationDelegate {
 
     // MARK: - Properties
+    var defaultPadding: CGFloat = 20
     var heightUpdate: TypeBlock<CalculatorData>?
     var height: CGFloat?
     var id: String = ""
@@ -32,7 +33,7 @@ public final class WKWebViewHeightCalculator: WKWebView, WKNavigationDelegate {
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.heightUpdate?(.init(height: webView.scrollView.contentSize.height + 25, placeholderId: self.id))
+            self.heightUpdate?(.init(height: webView.scrollView.contentSize.height + self.defaultPadding, placeholderId: self.id))
         }
         decisionHandler(.allow)
     }

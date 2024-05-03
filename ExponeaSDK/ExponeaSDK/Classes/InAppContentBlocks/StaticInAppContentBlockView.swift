@@ -71,8 +71,9 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                 )
                 return
             }
-            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: height.height  ) {
-                self.heightCompletion?(Int(height.height))
+            let usableHeight = height.height - calculator.defaultPadding
+            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: usableHeight) {
+                self.heightCompletion?(Int(usableHeight))
                 self.prepareContentReadyState(true)
                 guard let message = self.assignedMessage else {
                     return
@@ -152,16 +153,16 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                     }
                     loadedInAppContentBlocksView.removeFromSuperview()
                     inputView.addSubview(loadedInAppContentBlocksView)
-                    loadedInAppContentBlocksView.topAnchor.constraint(equalTo: inputView.topAnchor, constant: 5).isActive = true
-                    loadedInAppContentBlocksView.leadingAnchor.constraint(equalTo: inputView.leadingAnchor, constant: 5).isActive = true
-                    loadedInAppContentBlocksView.trailingAnchor.constraint(equalTo: inputView.trailingAnchor, constant: -5).isActive = true
+                    loadedInAppContentBlocksView.topAnchor.constraint(equalTo: inputView.topAnchor).isActive = true
+                    loadedInAppContentBlocksView.leadingAnchor.constraint(equalTo: inputView.leadingAnchor).isActive = true
+                    loadedInAppContentBlocksView.trailingAnchor.constraint(equalTo: inputView.trailingAnchor).isActive = true
                     if self.height != nil {
                         self.height?.constant = height
                     } else {
                         self.height = loadedInAppContentBlocksView.heightAnchor.constraint(equalToConstant: height)
                         self.height?.isActive = true
                     }
-                    loadedInAppContentBlocksView.bottomAnchor.constraint(equalTo: inputView.bottomAnchor, constant: -5).isActive = true
+                    loadedInAppContentBlocksView.bottomAnchor.constraint(equalTo: inputView.bottomAnchor).isActive = true
                     loadedInAppContentBlocksView.sizeToFit()
                     loadedInAppContentBlocksView.layoutIfNeeded()
                     UIView.animate(withDuration: duration) {
