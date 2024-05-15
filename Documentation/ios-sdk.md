@@ -52,5 +52,6 @@ This short video guide provides a step-by-step introduction to integrating the i
   - [In-App Messages](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-messages)
   - [In-App Content Blocks](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks)
 - [App Inbox](https://documentation.bloomreach.com/engagement/docs/ios-sdk-app-inbox)
+- [Segmentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-segmentation)
 - [Example App](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app)
 - [Release Notes](https://documentation.bloomreach.com/engagement/docs/ios-sdk-release-notes)

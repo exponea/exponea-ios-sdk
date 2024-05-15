@@ -1,23 +1,35 @@
-## Segmentation
+---
+title: Segmentation
+excerpt: Implement Real-Time Segments using the iOS SDK
+slug: ios-sdk-segmentation
+categorySlug: integrations
+parentDocSlug: ios-sdk
+---
 
-Real-Time Segments feature personalizes the product search, category and pathway results in real-time based on customer demographic and behavioral data. More information could found [here](https://documentation.bloomreach.com/discovery/docs/real-time-customer-segments-for-discovery).
-This guide provides few integration steps required to retrieve any segmentation data changes assigned to active customer.
+The [Real-Time Segments](https://documentation.bloomreach.com/discovery/docs/real-time-customer-segments-for-discovery) feature personalizes the product search, category and pathway results in real-time based on customer demographic and behavioral data. The feature combines Bloomreach Discovery’s extensive search algorithms and Bloomreach Engagement’s rich customer data to get the best of both worlds.
 
-### Using Segmentation feature
+Refer to the [Discovery Real-Time Segments](https://documentation.bloomreach.com/discovery/docs/real-time-customer-segments-for-discovery) documentation for more details about this feature.
 
-Only required step is to register one or more of your customized `SegmentCallbackData` instances.
-Each instance has to define 3 things to work:
+This page describes the integration steps required to retrieve any segmentation data changes assigned to the current customer.
 
-1. Your point of interest for segmentation as field `category`
-   1. Possible values are `content`, `discovery` or `merchandise`. You will get update only for segmentation data assigned to given `category`.
-2. Boolean flag to force fetch of segmentation data as field `includeFirstLoad`
-   1. Setting this flag to TRUE invokes segmentation data fetch immediately
-   2. This callback instance is notified with data even if data has not changed from last known state
-   3. Other callbacks are also notified but only if data has changed
-   4. Setting this flag to FALSE also triggers segmentation data fetch but instance is notified only if new data differs from last known state
-3. Handler for new segmentation data as method `onNewData`
-   1. It will get all segmentation data for `category` assigned to current customer
-   2. Data are list of `Segment` objects; Each `Segment` contains `id` and `segmentation_id` values
+### Use Real-Time Segments
+
+To use real-time segments in your app, you must register one or more customized `SegmentCallbackData` instances.
+
+Each instance must define the following three items:
+
+1. A `category` indicating your point of interest for segmentation:
+   * Possible values are `content`, `discovery`, or `merchandise`. You will get updates only for segmentation data assigned to the specified `category`.
+2. A boolean flag `includeFirstLoad` to force a fetch of segmentation data:
+   * Setting this flag to `true` triggers a segmentation data fetch immediately.
+   * The SDK will notify this callback instance with the new data even if the data has not changed from the last known state.
+   * If the data has changed, the SDK will also notify any other registered callbacks.
+   * Setting this flag to `false` also triggers a segmentation data fetch, but the SDK only notifies the instance if the new data differs from the last known state.
+3. A handler method `onNewData` for new segmentation data:
+   * The method will receive all segmentation data for `category` assigned to the current customer.
+   * The data are provided as a list of `Segment` objects; each `Segment` contains `id` and `segmentation_id` values.
+
+#### Example
 
 ```swift
 SegmentationManager.shared.addCallback(
@@ -29,18 +41,20 @@ SegmentationManager.shared.addCallback(
 }))
 ```
 
-### Getter for segmentation data
-Exponea SDK contains API to get segmentation data directly. This feature could be invoked easily by `Exponea.shared.getSegments` usage for `category` value.
+### Get Segmentation Data Directly
+
+The SDK provides an API to get segmentation data directly. Invoke the `Exponea.shared.getSegments` method, passing a `category` value as argument:
 
 ```swift
 Exponea.shared.getSegments(category: .content()) { segments in
     print(segments)
 }
 ```
+> 👍
+>
+> The `getSegments` method loads segmentation data for the requested `category` and the current customer as identified by `Exponea.shared.identifyCustomer`. Please bear in mind that the callback is invoked in a background thread.
 
-> Method loads segmentation data for given `category` and currently assigned customer by `Exponea.shared.identifyCustomer`. Bear in mind that callback is invoked in background thread.
-
-Data payload of each `Segment` is:
+The data payload of each `Segment` is as follows:
 ```json
 { 
   "id": "66140257f4cb337324209871",
@@ -48,72 +62,106 @@ Data payload of each `Segment` is:
 }
 ```
 
-### When segmentation data are loaded
+### Segmentation Data Reload Triggers
 
-There are few cases when segmentation data are refreshed and this process could occur multiple times. But registered callbacks are notified only if these data has changed or if `includeFirstLoad` is TRUE. Behaviour of callback notification process is described later in this documentation with more details.
-Data reload is triggered in these cases:
+There are a few cases when the SDK refreshes segmentation data, and this process could occur multiple times. However, the SDK only notifies registered callbacks if the data have changed or if `includeFirstLoad` is `true`. Refer to [Callback Behavior](#callback-behavior) for more details about the callback notification process.
 
-1. On callback instance is registered while SDK is fully initialized
-2. While SDK initialization if there is any callback registered
-3. On `Exponea.shared.identifyCustomer` if is called with Hard ID
-4. On any event has been tracked successfully
+A data reload is triggered in the following cases:
 
-When segmentation data reload is triggered then process waits 5 seconds to fully start to eliminate meaningful update requests especially for higher frequency of events tracking.
+1. When a callback instance is registered while the SDK is fully initialized.
+2. During SDK initialization if there is any callback registered.
+3. When `Exponea.shared.identifyCustomer` is called with a [hard ID](https://documentation.bloomreach.com/engagement/docs/customer-identification#section-hard-id).
+4. When any event is tracked successfully.
 
-> It is required to set `Exponea.shared.flushingMode` to `IMMEDIATE` value to get expected results. Process of segment calculation needs to all tracked events to be uploaded to server to calculate results effectively.
+When a segmentation data reload is triggered, the process waits 5 seconds before starting, in order to ensure duplicate update requests especially for higher frequency of events tracking.
 
-### Behaviour of callback
+> ❗️
+>
+> It is required to [set](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing#flushing-modes) `Exponea.shared.flushingMode` to `IMMEDIATE` to get accurate results. The process of segment calculation needs all tracked events to be uploaded to server to calculate results effectively.
 
-SDK allows you to register multiple `SegmentCallbackData` for multiple or for same `category`. You may register callback into SDK anytime (before and after initialization). Instances of callbacks are hold by SDK until application is terminated or until you unregister callback.
-There are some principles how callback is working:
+### Callback Behavior
 
-1. Callback got data assigned only for defined `category`
-2. Callback is always notified if data differs from previous reload in scope of `category`
-3. Newly registered callback is notified also for unchanged data if `includeFirstLoad` is TRUE but only once. Next callback update is called only if data has changed.
-4. Unregistered callback stops listening for data change, you should consider to keep number of callbacks within reasonable value
-5. Callback is notified always in background thread
+The SDK allows you to register multiple `SegmentCallbackData` instances for multiple categories or for the same category. You may register a callback with the SDK anytime (before and after initialization). Callback instances remain active until the application terminates or until you unregister the callback.
 
-### Unregistering of callback
+The callback behavior follows the following principles:
 
-Unregistering of callback is up to developer. SDK will hold callback instance until application is terminated otherwise.
+* A callback receives data assigned only for the specified `category`.
+* A callback is always notified if data differs from the previous reload in the scope of the specified `category`.
+* A newly registered callback is also notified for unchanged data if `includeFirstLoad` is `true`, but only once. On subsequent updates, the callback is notified only if the data have changed.
+* A deregistered callback stops listening for data changes.
+* A callback is always notified in a background thread.
 
-> To unregister callback successfully you have to call `SegmentationManager.shared.removeCallback(callbackData: SegmentCallbackData)` with callback instance you already registered, otherwise callback will not be unregistered.
+> 👍
+>
+> Consider keeping the number of callbacks within a reasonable value.
+
+### Deregister a Callback
+
+Deregistration of a callback instance is up to the developer. If you don't deregister a callback instance, the SDK will keep it active until the application terminates.
+
+> ❗️
+>
+> To deregister callback successfully, call `SegmentationManager.shared.removeCallback(callbackData: SegmentCallbackData)` with the callback instance you already registered, otherwise the callback will not be unregistered.
 
 ```swift
 let callback: SegmentCallbackData = .init(category: .discovery(), isIncludeFirstLoad: false) { _ in }
 manager.removeCallback(callbackData: callback)
 ```
 
-### Logging
+### Troubleshooting
 
-The SDK logs a lot of useful information on the `VERBOSE` level for segmentation data update. You can set the logger level using `Exponea.logger.logLevel` before initializing the SDK.
+> 👍 Enable Verbose Logging
+>
+> The SDK logs a lot of useful information related to segmentation data updates on the `VERBOSE` level. You can set the logger level using `Exponea.logger.logLevel` before initializing the SDK.
 
-> Note: All logs assigned to segmentation process are prefixed with `Segments:` to bring easier search-ability to you. Bear in mind that some supporting processes (such as HTTP communication) are logging without this prefix.
+> 👍
+>
+> All log messages related to the segmentation process are prefixed with `Segments:` to make them easier to find. Bear in mind that some supporting processes (such as HTTP communication) are logging without this prefix.
 
-#### Log examples
 
-Process of segmentation data update may be canceled due to current state of SDK. Segmentation data are assigned to current customer and whole process is active only if there are any callbacks registered. All these validations are described in logs.
 
-If you are not retrieving segmentation data update, you may see these logs:
+The process of updating segmentation data may be canceled due to the current state of the SDK. Segmentation data are assigned to the current customer and the process is active only if there are any callbacks registered. The SDK logs information about all these validations.
 
-- `Segments: Skipping segments update process after tracked event due to no callback registered`
-  - SDK tracked event successfully but there is no registered callback for segments. Please register at least one callback.
-- `Segments: Skipping segments reload process for no callback`
-  - SDK is trying to reload segmentation data but there is no registered callback for segments. Please register at least one callback.
-- `Segments: Skipping initial segments update process for no callback`
-  - SDK initialization flow tries to reload segmentation data but there is no registered callback for segments. If you want to check segmentation data on SDK init, please register at least one callback before SDK initialization.
-- `Segments: Skipping initial segments update process as is not required`
-  - SDK initialization flow detects that all registered callbacks have `includeFirstLoad` with FALSE value. If you want to check segmentation data on SDK init, please register at least one callback with `includeFirstLoad` with TRUE value before SDK initialization.
+#### Log Messages
 
-If you are not retrieving segmentation data while registering customer, please check your usage of `ExponeaExponea.shared.identifyCustomer` or `Exponea.shared.anonymize`. You may face these logs:
+If you are not receiving segmentation data updates, you may see the following log messages:
 
-- `Segments: Segments change check has been cancelled meanwhile`
-  - Segmentation data update process started but has been cancelled meanwhile by invoking of `Exponea.shared.anonymize`. If this is unwanted behaviour, check your `Exponea.shared.anonymize` usage.
-- `Segments: Check process was canceled because customer has changed`
-  - Segmentation data update process started for customer but customer IDs has changed meanwhile by invoking of `Exponea.shared.identifyCustomer` for another customer. If this is unwanted behaviour, check your `Exponea.shared.identifyCustomer` usage.
-- `Segments: Customer IDs <customer_ids> merge failed, unable to fetch segments`
-  - Segmentation data update process requires to link IDs but that part of process failed. Please see error logs what happen and check your `Exponea.identifyCustomer`. This part should not happen so consider to discuss it with support team.
-- `Segments: New data are ignored because were loaded for different customer`
-  - Segmentation data update process detects that data has been fetched for previous customer. This should not lead to any problem as there is another fetch process registered for new customer, but you may face a short delay for new data retrieval. If you see this log often, check your `Exponea.shared.identifyCustomer` usage.
-- `Segments: Fetch of segments failed: <error message>`
-  - Please read error message carefully. This log is print if fetch of data failed by technical reason, probably network connection is not stable.
+- ```
+  Segments: Skipping segments update process after tracked event due to no callback registered
+  ```
+  The SDK tracked an event successfully but there is no registered callback for segments. Please register at least one callback.
+- ```
+  Segments: Skipping segments reload process for no callback
+  ```
+  The SDK is trying to reload segmentation data but there is no registered callback for segments. Please register at least one callback.
+- ```
+  Segments: Skipping initial segments update process for no callback
+  ```
+  The SDK initialization flow tries to reload segmentation data but there is no registered callback for segments. To check segmentation data on SDK initialization, please register at least one callback before SDK initialization.
+- ```
+  Segments: Skipping initial segments update process as is not required
+  ```
+  The SDK initialization flow detects that all registered callbacks have `includeFirstLoad` with `false` value. To check segmentation data on SDK initialization, please register at least one callback with `includeFirstLoad` with `true` value before SDK initialization.
+
+If you are not receiving segmentation data while registering a customer, please check your usage of `ExponeaExponea.shared.identifyCustomer` or `Exponea.shared.anonymize`. You may face these logs:
+
+- ```
+  Segments: Segments change check has been cancelled meanwhile
+  ```
+  The segmentation data update process started but was subsequently canceled by an invocation of `Exponea.shared.anonymize`. If this is unwanted behavior, check your `Exponea.shared.anonymize` usage.
+- ```
+  Segments: Check process was canceled because customer has changed
+  ```
+  The segmentation data update process started for the current customer but the customer ID was subsequently changed by an invocation of `Exponea.shared.identifyCustomer` for another customer. If this is unwanted behaviour, check your `Exponea.shared.identifyCustomer` usage.
+- ```
+  Segments: Customer IDs <customer_ids> merge failed, unable to fetch segments
+  ```
+  The segmentation data update process requires to link IDs but that part of the process failed. Please refer to the error log messages and check your `Exponea.identifyCustomer` usage. This  should not happen, please discuss this with the Bloomreach support team.
+- ```
+  Segments: New data are ignored because were loaded for different customer
+  ```
+  The segmentation data update process detects that data has been fetched for a previous customer. This should not lead to any problem as there is another fetch process registered for the new customer, but you may face a short delay for new data retrieval. If you see this log often, check your `Exponea.shared.identifyCustomer` usage.
+- ```
+  Segments: Fetch of segments failed: <error message>
+  ```
+  Please read the error message carefully. This message is logged if the data retrieval failed for some technical reason, such as an unstable network connection.
