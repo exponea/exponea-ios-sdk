@@ -163,7 +163,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             let inAppCbAction = InAppContentBlockAction(
                 name: action.buttonText,
                 url: action.actionUrl,
-                type: self.determineActionType(action.actionUrl)
+                type: self.determineActionType(action: action)
             )
             self.updateInteractedState(for: selectedUsed.messageId)
             Exponea.shared.trackInAppContentBlockClick(
@@ -171,7 +171,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 action: inAppCbAction,
                 message: inAppContentBlockResponse
             )
-            self.urlOpener.openBrowserLink(action.actionUrl)
+            self.invokeActionInternally(inAppCbAction)
             self.refreshCallback?(selectedUsed.indexPath)
         } onErrorCallback: { error in
             let errorMessage = "WebActionManager error \(error.localizedDescription)"
@@ -192,15 +192,48 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             decisionHandler(.allow)
         }
     }
-
-    private func determineActionType(_ url: String) -> InAppContentBlockActionType {
-        if url == "https://exponea.com/close_action" {
-            return .close
+    
+    private func invokeActionInternally(_ action: InAppContentBlockAction) {
+        switch action.type {
+        case .browser:
+            openBrowserAction(action)
+        case .deeplink:
+            openDeeplinkAction(action)
+        default:
+            Exponea.logger.log(.warning, message: "No AppInbox action for type \(action.type)")
         }
-        if url.hasPrefix("http://") || url.hasPrefix("https://") {
+    }
+
+    func openBrowserAction(_ action: InAppContentBlockAction) {
+        guard let buttonLink = action.url else {
+            Exponea.logger.log(.error, message: "AppInbox action \"\(action.name ?? "<nil>")\" contains invalid browser link \(action.url ?? "<nil>")")
+            return
+        }
+        urlOpener.openBrowserLink(buttonLink)
+    }
+
+    func openDeeplinkAction(_ action: InAppContentBlockAction) {
+        guard let buttonLink = action.url else {
+            Exponea.logger.log(.error, message: "AppInbox action \"\(action.name ?? "<nil>")\" contains invalid universal link \(action.url ?? "<nil>")")
+            return
+        }
+        urlOpener.openDeeplink(buttonLink)
+    }
+
+    private func determineActionType(action: ActionInfo) -> InAppContentBlockActionType {
+        switch action.actionType {
+        case .browser:
             return .browser
-        } else {
+        case .deeplink:
             return .deeplink
+        case .unknown:
+            if action.actionUrl == "https://exponea.com/close_action" {
+                return .close
+            } else if action.actionUrl.hasPrefix("http://") || action.actionUrl.hasPrefix("https://") {
+                return .browser
+            } else {
+                return .deeplink
+            }
         }
     }
 

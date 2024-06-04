@@ -81,10 +81,17 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
     }
 
     private func determineActionType(_ action: ActionInfo) -> MessageItemActionType {
-        if action.actionUrl.hasPrefix("http://") || action.actionUrl.hasPrefix("https://") {
+        switch action.actionType {
+        case .browser:
             return .browser
-        } else {
+        case .deeplink:
             return .deeplink
+        case .unknown:
+            if action.actionUrl.hasPrefix("http://") || action.actionUrl.hasPrefix("https://") {
+                return .browser
+            } else {
+                return .deeplink
+            }
         }
     }
 
