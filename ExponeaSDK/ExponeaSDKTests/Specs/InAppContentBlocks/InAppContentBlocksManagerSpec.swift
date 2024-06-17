@@ -24,6 +24,36 @@ class InAppContentBlocksManagerSpec: QuickSpec {
         Exponea.shared.configure(with: configuration)
         let manager: InAppContentBlocksManagerType = Exponea.shared.inAppContentBlocksManager!
 
+        it("Corrupted images") {
+            let rawHtml = "<html>" +
+                    "<body>" +
+                    "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg'>" +
+                    "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg'>" +
+                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<div data-link='https://example.com/2'>Action 2</div>" +
+                    "</body></html>"
+            let rawHtmlEmptyImages = "<html>" +
+                    "<body>" +
+                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<div data-link='https://example.com/2'>Action 2</div>" +
+                    "</body></html>"
+            let rawHtmlCorruptedImage = "<html>" +
+                    "<body>" +
+                    "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usssssa.jpg'>" +
+                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<div data-link='https://example.com/2'>Action 2</div>" +
+                    "</body></html>"
+            let result = manager.hasHtmlImages(html: rawHtml) // true
+            let result2 = manager.hasHtmlImages(html: rawHtmlEmptyImages) // true
+            let result3 = manager.hasHtmlImages(html: rawHtmlCorruptedImage) // false
+            expect(result).to(beTrue())
+            expect(result2).to(beTrue())
+            expect(result3).to(beFalse())
+        }
+        
         it("check inAppContentBlocks priority") {
             let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(loadPriority: 1)
             let secondInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(loadPriority: 2)

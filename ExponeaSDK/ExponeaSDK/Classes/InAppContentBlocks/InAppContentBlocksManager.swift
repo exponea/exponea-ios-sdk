@@ -123,7 +123,21 @@ struct WKWebViewData {
 }
 
 // MARK: InAppContentBlocksManagerType
-extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigationDelegate {
+extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigationDelegate {    
+    func hasHtmlImages(html: String) -> Bool {
+        let collectImages = HtmlNormalizer(html).collectImages()
+        guard !collectImages.isEmpty else { return true }
+        let isAnyCorrectImage = !collectImages.map { $0 }
+            .compactMap { URL(string: $0) }
+            .compactMap { try? Data(contentsOf: $0) }
+            .compactMap { UIImage(data: $0) }
+            .isEmpty
+        if !isAnyCorrectImage {
+            Exponea.logger.log(.warning, message: "No correct images inside \(html)")
+        }
+        return isAnyCorrectImage
+    }
+
     func getUsedInAppContentBlocks(placeholder: String, indexPath: IndexPath) -> UsedInAppContentBlocks? {
         usedInAppContentBlocks[placeholder]?.first(where: { $0.indexPath == indexPath && $0.isActive })
     }
@@ -739,19 +753,6 @@ private extension InAppContentBlocksManager {
             )
             _loadQueue.changeValue(with: { $0.append(.init(placeholder: placeholder, indexPath: indexPath, expired: expired)) })
         }
-    }
-
-    private func hasHtmlImages(html: String) -> Bool {
-        let isAnyCorrectImage = !HtmlNormalizer(html)
-            .collectImages().map { $0 }
-            .compactMap { URL(string: $0) }
-            .compactMap { try? Data(contentsOf: $0) }
-            .compactMap { UIImage(data: $0) }
-            .isEmpty
-        if !isAnyCorrectImage {
-            Exponea.logger.log(.warning, message: "No correct images inside \(html)")
-        }
-        return isAnyCorrectImage
     }
 
     func calculateStaticData(height: CalculatorData, newValue: UsedInAppContentBlocks, placeholder: InAppContentBlockResponse) {
