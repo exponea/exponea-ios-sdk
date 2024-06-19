@@ -7,6 +7,16 @@ parentDocSlug: ios-sdk
 ---
 
 ## Release Notes
+## Release Notes for 2.26.2
+#### June 19, 2024
+* Features
+  * Segmentation API documentation improvements
+* Bug Fixes
+  * Fixed: SDK Privacy manifest value is assigned under wrong key
+  * Fixed: App Inbox HTML message ignore data-actiontype parameter for action URL
+  * Fixed: In-app content block filtration flag and filter out valid messages without image as images with corrupted image
+
+
 ## Release Notes for 2.26.1
 #### May 03, 2024
 * Bug Fixes
