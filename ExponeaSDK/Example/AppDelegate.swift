@@ -168,4 +168,15 @@ class InAppDelegate: InAppMessageActionDelegate {
             Exponea.shared.trackInAppMessageClose(message: message, isUserInteraction: false)
         }
     }
+
+    func inAppMessageShown(message: ExponeaSDK.InAppMessage) {
+        Exponea.logger.log(.verbose, message: "In app message \(message.name) has been shown")
+    }
+
+    func inAppMessageError(message: ExponeaSDK.InAppMessage?, errorMessage: String) {
+        Exponea.logger.log(
+            .verbose,
+            message: "Error occurred '\(errorMessage)' while showing in app message \(message?.name ?? "<no_name>")"
+        )
+    }
 }

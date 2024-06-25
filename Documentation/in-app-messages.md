@@ -54,6 +54,17 @@ class MyInAppDelegate: InAppMessageActionDelegate {
        // On in-app click, the button contains button text and button URL and the interaction is true  
        // On in-app close, the button is null, and the interaction is false.
     }
+
+    // Method called when in-app message is shown.
+    func inAppMessageShown(message: ExponeaSDK.InAppMessage) {
+        // Here goes your code
+    }
+
+    // Method called when any error occurs while showing in-app message.
+    func inAppMessageError(message: ExponeaSDK.InAppMessage?, errorMessage: String) {
+        // Here goes your code
+        // In-app message could be NULL if error is not related to in-app message.
+    }
 }
 
 ```

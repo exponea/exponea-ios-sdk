@@ -14,6 +14,8 @@ class InAppMessageDelegate: InAppMessageActionDelegate {
     let overrideDefaultBehavior: Bool
     let trackActions: Bool
     var inAppMessageActionCalled: Bool = false
+    var inAppMessageShownCalled: Bool = false
+    var inAppMessageErrorCalled: Bool = false
     var trackClickInActionCallback: Bool = false
     var inAppMessageManager: InAppMessagesManager?
     var trackingConsentManager: TrackingConsentManagerType?
@@ -45,5 +47,13 @@ class InAppMessageDelegate: InAppMessageActionDelegate {
                 )
             }
         }
+    }
+
+    func inAppMessageShown(message: ExponeaSDK.InAppMessage) {
+        inAppMessageShownCalled = true
+    }
+
+    func inAppMessageError(message: ExponeaSDK.InAppMessage?, errorMessage: String) {
+        inAppMessageErrorCalled = true
     }
 }

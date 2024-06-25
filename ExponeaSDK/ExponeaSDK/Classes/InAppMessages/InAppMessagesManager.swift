@@ -149,7 +149,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 .verbose,
                 message: "[InApp] Only logging in-app message for control group '\(message.name)'"
             )
-            self.trackInAppMessage(message)
+            self.trackInAppMessageShown(message)
             callback?(nil)
         } else {
             self.showInAppMessage(message, callback: callback)
@@ -188,7 +188,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 .verbose,
                 message: "[InApp] Only logging in-app message for control group '\(message.name)'"
             )
-            self.trackInAppMessage(message)
+            self.trackInAppMessageShown(message)
             callback?(nil)
             return
         }
@@ -249,20 +249,29 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             },
             presentedCallback: { presented, error in
                 if presented == nil && error != nil {
-                    self.trackingConsentManager.trackInAppMessageError(message: message, error: error!, mode: .CONSIDER_CONSENT)
+                    self.trackInAppMessageError(message, error!)
                 } else if presented != nil {
-                    self.trackInAppMessage(message)
+                    self.trackInAppMessageShown(message)
                 }
                 callback?(presented)
             }
         )
     }
+    
+    private func trackInAppMessageError(
+        _ message: InAppMessage,
+        _ error: String
+    ) {
+        self.trackingConsentManager.trackInAppMessageError(message: message, error: error, mode: .CONSIDER_CONSENT)
+        Exponea.shared.inAppMessagesDelegate.inAppMessageError(message: message, errorMessage: error)
+    }
 
-    private func trackInAppMessage(
+    private func trackInAppMessageShown(
         _ message: InAppMessage
     ) {
         displayStatusStore.didDisplay(message, at: Date())
         trackingConsentManager.trackInAppMessageShown(message: message, mode: .CONSIDER_CONSENT)
+        Exponea.shared.inAppMessagesDelegate.inAppMessageShown(message: message)
         Exponea.shared.telemetryManager?.report(
             eventWithType: .showInAppMessage,
             properties: ["messageType": message.rawMessageType ?? "null"]
@@ -501,6 +510,8 @@ public protocol InAppMessageActionDelegate: AnyObject {
         button: InAppMessageButton?,
         interaction: Bool
     )
+    func inAppMessageShown(message: InAppMessage)
+    func inAppMessageError(message: InAppMessage?, errorMessage: String)
 }
 
 public struct InAppMessageButton: Codable {
@@ -513,4 +524,6 @@ public class DefaultInAppDelegate: InAppMessageActionDelegate {
     public let trackActions = true
 
     public func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {}
+    public func inAppMessageShown(message: InAppMessage) {}
+    public func inAppMessageError(message: InAppMessage?, errorMessage: String) {}
 }

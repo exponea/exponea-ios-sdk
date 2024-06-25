@@ -564,6 +564,100 @@ class InAppMessagesManagerSpec: QuickSpec {
                 ]))
                 expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
             }
+
+            it("should track show event when delegate is setup without tracking") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")]
+                ) { _ in done() } }
+                expect(trackingManager.trackedInappEvents).to(equal([
+                    MockTrackingManager.CallData(
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageShownCalled).to(equal(true))
+            }
+            
+            it("should track show event when delegate is setup with custom behaviour") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: true,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")]
+                ) { _ in done() } }
+                expect(trackingManager.trackedInappEvents).to(equal([
+                    MockTrackingManager.CallData(
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageShownCalled).to(equal(true))
+            }
+            
+            it("should track error event when delegate is setup without tracking") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
+                var alreadyDone = false
+                waitUntil(timeout: .seconds(5)) { done in
+                    manager.showInAppMessage(for: [.eventType("session_start")]) { _ in
+                        if alreadyDone {
+                            return
+                        }
+                        alreadyDone = true
+                        done()
+                    }
+                }
+                trackingManager.trackedInappEvents.removeAll()
+                presenter.presentedMessages[0].presentedCallback!(nil, "Error occured")
+                expect(trackingManager.trackedInappEvents).to(equal([
+                    MockTrackingManager.CallData(
+                        event: .error(message: "Error occured"),
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageErrorCalled).to(equal(true))
+            }
+            
+            it("should track error event when delegate is setup with custom behaviour") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: true,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
+                var alreadyDone = false
+                waitUntil(timeout: .seconds(5)) { done in
+                    manager.showInAppMessage(for: [.eventType("session_start")]) { _ in
+                        if alreadyDone {
+                            return
+                        }
+                        alreadyDone = true
+                        done()
+                    }
+                }
+                trackingManager.trackedInappEvents.removeAll()
+                presenter.presentedMessages[0].presentedCallback!(nil, "Error occured")
+                expect(trackingManager.trackedInappEvents).to(equal([
+                    MockTrackingManager.CallData(
+                        event: .error(message: "Error occured"),
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageErrorCalled).to(equal(true))
+            }
         }
 
         context("default action performing") {
