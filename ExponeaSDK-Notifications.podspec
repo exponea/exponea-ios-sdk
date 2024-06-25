@@ -30,6 +30,7 @@ Pod::Spec.new do |s|
                    DESC
 
   s.homepage     = "https://github.com/exponea/exponea-ios-sdk"
+  s.readme       = "https://github.com/exponea/exponea-ios-sdk/blob/main/README.md"
 
   # ―――  Spec License  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
