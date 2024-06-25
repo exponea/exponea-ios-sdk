@@ -45,6 +45,11 @@ class StaticInAppContentBlockViewSpec: QuickSpec {
 }
 
 class SimpleBehaviourCallback: InAppContentBlockCallbackType {
+
+    func onActionClickedSafari(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        
+    }
+
     private var onMessageShownAction: ((String, ExponeaSDK.InAppContentBlockResponse) -> Void)?
     private var onNoMessageFoundAction: ((String) -> Void)?
     private var onErrorAction: ((String, ExponeaSDK.InAppContentBlockResponse?, String) -> Void)?

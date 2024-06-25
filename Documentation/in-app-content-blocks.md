@@ -66,6 +66,42 @@ Exponea.shared.inAppContentBlocksManager?.refreshCallback = { [weak self] indexP
 >
 > Always us descriptive, human-readable placeholder IDs. They are tracked as an event property and can be used for analytics within Engagement.
 
+### Add a Carousel View
+
+Get a Carousel view for the specified `placeholderId`:
+
+```swift
+ let carouselView = InAppContentBlockCarouselView(
+        placeholder: "placeholderId",
+        maxMessagesCount: 5, // max count of visible content blocks; 0 for show all
+        customHeight: 200, // nil for autoheight
+        scrollDelay: 5 // delay in seconds between automatic scroll; 0 for no scroll
+    )
+```
+
+Then, place the placeholder view at the desired location by adding it to your layout:
+
+```swift
+view.addSubview(carouselView)
+```
+
+Then, you need to call few methods for correct behavior:
+
+#### In viewDidLoad()/loadView() in view controller
+```swift
+carouselView.reload()
+```
+
+#### inside deinit
+```swift
+carouselView.release()
+```
+
+#### inside viewWillAppear
+```swift
+carouselView.continueWithTimer()
+```
+
 ## Tracking
 
 The SDK automatically tracks `banner` events for in-app content blocks with the following values for the `action` event property:
@@ -96,6 +132,35 @@ Exponea.shared.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: ["pla
 ```
 
 This must be done after SDK [initialization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk) and after calling `anonymize` or `identifyCustomer`. Prefetching should not be done at any other time.
+
+### Handle Carousel Presentation Status
+
+If you want to show additional information about Carousel shown content block, position and list size, check methods:
+
+```swift
+// returns complete InAppContentBlock structure of shown content block or null
+let blockName = carouselView.getShownContentBlock()?.message?.name
+// returns zero-base index of shown content block or -1 for empty list
+let index = carouselView.getShownIndex()
+// returns count of content blocks available for user
+let count = carouselView.getShownCount()
+```
+
+You are able to register a `onMessageShown` or `onMessageChanged` to Carousel view instance to retrieve information for each update.
+
+```swift
+// This is triggered on each scroll so 'contentBlock' parameter represents currently shown content block
+carouselView.onMessageShown = { message in
+    print(message.index) // so as 'index' represents position index of currently shown content block 
+    print(message.placeholderId)
+}
+
+// This is triggered after 'reload' or if a content block is removed because interaction has been done
+carouselView.onMessageChanged = { data in
+    print("ON MESSAGE CHANGED")
+    print(data)
+}    
+```
 
 ### Defer In-App Content Blocks Loading
 
@@ -348,6 +413,48 @@ class CustomView: UIViewController, InAppCbViewDelegate {
     placeholder.invokeActionClick(actionUrl: actionUrl)
 }
 ```
+### Customize Carousel View Filtration and Sorting
+
+Carousel View default filtration has same behaviour as Placeholder view:
+- content block is show-able according to `Display` configuration
+- content is valid and supported by SDK
+
+Order of shown content blocks is determined by:
+- primarily by `Priority` descending
+- secondary by `name` ascending (alphabetically)
+
+You could subclass InAppContentBlockCarouselView to override methods like `func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?)` and `func sortContentBlocks(data: [StaticReturnData]) -> [StaticReturnData]` (open InAppContentBlockCarouselViewController from Example app and check implementation for `CustomCarouselView`)
+
+```swift
+class CustomCarouselView: InAppContentBlockCarouselView {
+    override func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?) {
+        super.filterContentBlocks(placeholder: placeholder) { data in
+            let customFilter = data.filter { !$0.name.contains("test") } // custom filter
+            continueCallback?(customFilter) // data passed through this callback will be applied
+        } expiredCompletion: {
+            expiredCompletion?() // If you want to log expired messages or somwthing, you can put it to this place
+        }
+    }
+
+    override func sortContentBlocks(data: [StaticReturnData]) -> [StaticReturnData] {
+        let origin = super.sortContentBlocks(data: data) // our filter + your update
+        return origin.sorted(by: { $0.tag < $1.tag })
+        
+        ========= OR =========
+        
+        return data.sorted(by: { $0.tag < $1.tag }) // just your filter update
+    }
+}
+```
+
+> ❗️
+>
+> Carousel view fully accepts result from filtration and sorting implementations. Ensure that you return all wanted items as result from your implementations to avoid any missing items.
+
+> ❗️
+>
+> Carousel view could be configured with `maxMessagesCount`. Any value higher than zero applies max limit of shown content blocks independently of size of lists as results from filtration and sorting methods. So if you return 10 items from filtration and sorting method but `maxMessagesCount` is set to 5 then only first 5 items from your results.
+
 
 ## Troubleshooting
 

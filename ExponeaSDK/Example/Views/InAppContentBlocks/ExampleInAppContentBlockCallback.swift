@@ -8,6 +8,7 @@
 
 import Foundation
 import ExponeaSDK
+import SafariServices
 
 class ExampleInAppContentBlockCallback: InAppContentBlockCallbackType {
 
@@ -73,6 +74,31 @@ class ExampleInAppContentBlockCallback: InAppContentBlockCallbackType {
             switch action.type {
             case .browser:
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            case .deeplink:
+                if !openUniversalLink(url, application: UIApplication.shared) {
+                    openURLSchemeDeeplink(url, application: UIApplication.shared)
+                }
+            case .close:
+                Exponea.logger.log(.error, message: "In-app content block close has to be handled elsewhere")
+            }
+        } else {
+            actionClickBounce = true
+            ownerView.invokeActionClick(actionUrl: actionUrl)
+        }
+    }
+
+    func onActionClickedSafari(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        Exponea.logger.log(.verbose, message: "Handling In-app content block action \(action.url ?? "none")")
+        guard let actionUrl = action.url,
+              let url = actionUrl.cleanedURL() else {
+            return
+        }
+        if actionClickBounce {
+            actionClickBounce = false
+            switch action.type {
+            case .browser:
+                let safari = SFSafariViewController(url: url)
+                UIApplication.shared.windows.first?.rootViewController?.present(safari, animated: true)
             case .deeplink:
                 if !openUniversalLink(url, application: UIApplication.shared) {
                     openURLSchemeDeeplink(url, application: UIApplication.shared)

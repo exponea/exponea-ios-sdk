@@ -72,10 +72,10 @@ class AppDelegate: ExponeaAppDelegate {
     }
 
     func application(
-        _ app: UIApplication,
-        open url: URL,
-        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-    ) -> Bool {
+           _ app: UIApplication,
+           open url: URL,
+           options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+       ) -> Bool {
         if let components = URLComponents(url: url, resolvingAgainstBaseURL: false), components.scheme == "exponea" {
             if let type = DeeplinkType(input: url.absoluteString) {
                 DeeplinkManager.manager.setDeeplinkType(type: type)

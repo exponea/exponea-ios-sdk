@@ -42,9 +42,12 @@ final class InAppContentBlocksManager: NSObject {
     private var isStaticUpdating = false
     private var isUpdating = false
     private var isLoadUpdating = false
+    private var isCarouselLoading = false
     @Atomic private var queue: [QueueData] = []
     @Atomic private var loadQueue: [QueueLoadData] = []
     @Atomic private var staticQueue: [StaticQueueData] = []
+    @Atomic private var carouselQueue: [String] = []
+
     private var newUsedInAppContentBlocks: UsedInAppContentBlocks? {
         willSet {
             guard let newValue, let placeholder = newValue.placeholderData else { return }
@@ -344,6 +347,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             return shouldDisplay
         case .untilVisitorInteracts:
             let shouldDisplay = displayState.interacted == nil
+            Exponea.logger.log(.verbose, message: "shouldDisplay \(shouldDisplay) for id \(message.id)")
             if !shouldDisplay {
                 Exponea.logger.log(.verbose, message: "In-app Content Blocks '\(message.name)' already interacted with.")
             }
@@ -475,6 +479,44 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         } else {
             return returnEmptyView(tag: tag)
         }
+    }
+
+    func filterCarouselData(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?) {
+        let placehodlersToUse = inAppContentBlockMessages.filter { !$0.placeholders.filter { $0 == placeholder }.isEmpty }
+        let placeholdersNeedToRefresh = placehodlersToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
+        let expiredMessages = inAppContentBlockMessages.filter { inAppContentBlocks in
+            if let ttlSeen = inAppContentBlocks.personalizedMessage?.ttlSeen,
+               let ttl = inAppContentBlocks.personalizedMessage?.ttlSeconds,
+               inAppContentBlocks.content == nil {
+                return Date() > ttlSeen.addingTimeInterval(TimeInterval(ttl))
+            }
+            return false
+        }
+        let expiredMessagesDescriptions = expiredMessages.map { $0.describe() }
+        Exponea.logger.log(
+            .verbose,
+            message: "In-app Content Blocks prepareInAppContentBlocksStaticView expiredMessages \(expiredMessagesDescriptions)."
+        )
+        guard placeholdersNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
+            expiredCompletion?()
+            return
+        }
+        let filtered = placehodlersToUse.filter { inAppContentBlocksPlaceholder in
+            if inAppContentBlocksPlaceholder.personalizedMessage?.status == .ok && inAppContentBlocksPlaceholder.personalizedMessage?.isCorruptedImage == false {
+                return self.getFilteredMessage(message: inAppContentBlocksPlaceholder)
+            } else {
+                return false
+            }
+        }
+        Exponea.logger.log(
+            .verbose,
+            message: "In-app Content Blocks filtering result: \(filtered.map { $0.describe() })"
+        )
+        guard !filtered.isEmpty else {
+            expiredCompletion?()
+            return
+        }
+        continueCallback?(filtered)
     }
 
     func prepareInAppContentBlocksStaticView(
@@ -817,6 +859,161 @@ extension InAppContentBlocksManager {
         }
     }
 
+    private func continueWithCarouselQueue(dataCompletion: TypeBlock<[StaticReturnData]>?) {
+        isCarouselLoading = false
+        if !carouselQueue.isEmpty {
+            let go = carouselQueue.removeFirst()
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks carousel queue \(go)")
+            refreshCarouselData(placeholder: go, dataCompletion: dataCompletion)
+        }
+    }
+
+    public func isMessageValid(message: InAppContentBlockResponse, isValidCompletion: TypeBlock<Bool>?, refreshCallback: EmptyBlock?) {
+        var isMessageExpired = false
+        if let ttlSeen = message.personalizedMessage?.ttlSeen,
+           let ttl = message.personalizedMessage?.ttlSeconds, message.content == nil {
+            isMessageExpired = Date() > ttlSeen.addingTimeInterval(TimeInterval(ttl))
+        }
+        let isValid = getFilteredMessage(message: message)
+        // Just expired - refresh content
+        if isMessageExpired && isValid {
+            refreshCallback?()
+        } else {
+            isValidCompletion?(isValid)
+        }
+    }
+
+    func loadMessagesForCarousel(placeholder: String, completion: EmptyBlock?) {
+        guard !placeholder.isEmpty, let ids = try? DatabaseManager().currentCustomer.ids else {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks Carousel cant refresh placeholderId: \(placeholder), ids: \(String(describing: try? DatabaseManager().currentCustomer.ids))")
+            return
+        }
+        let idsForDownload = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholder) }.map { $0.id }
+        provider.loadPersonalizedInAppContentBlocks(
+            data: PersonalizedInAppContentBlockResponseData.self,
+            customerIds: ids,
+            inAppContentBlocksIds: idsForDownload
+        ) { [weak self] data in
+            guard let self else { return }
+            ensureBackground {
+                let refreshStaticViewContentDescriptions = (data.data?.data ?? []).map { $0.describeDetailed() }
+                Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshStaticViewContent data: \(refreshStaticViewContentDescriptions)")
+                let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data.compactMap { response in
+                    var newInAppContentBlocks = response
+                    let normalizeConf = HtmlNormalizerConfig(
+                        makeResourcesOffline: true,
+                        ensureCloseButton: false
+                    )
+                    let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
+                    newInAppContentBlocks.htmlPayload = normalizedPayload
+                    let isCorruptedImage = !self.hasHtmlImages(html: response.content?.html ?? "")
+                    newInAppContentBlocks.isCorruptedImage = isCorruptedImage
+                    return newInAppContentBlocks
+                } ?? []
+                var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
+                for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
+                    if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
+                        personalized.ttlSeen = Date()
+                        updatedPlaceholders[index].personalizedMessage = personalized
+                    }
+                }
+                self._inAppContentBlockMessages.changeValue(with: { $0 = updatedPlaceholders })
+                completion?()
+            }
+        }
+    }
+
+    func refreshMessage(message: InAppContentBlockResponse, completion: TypeBlock<InAppContentBlockResponse>?) {
+        guard let ids = try? DatabaseManager().currentCustomer.ids else {
+            return
+        }
+        provider.loadPersonalizedInAppContentBlocks(
+            data: PersonalizedInAppContentBlockResponseData.self,
+            customerIds: ids,
+            inAppContentBlocksIds: [message.id]
+        ) { [weak self] data in
+            guard let self else { return }
+            ensureBackground {
+                let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data
+                    .filter { $0.id == message.id }
+                    .compactMap { response in
+                        var newInAppContentBlocks = response
+                        let normalizeConf = HtmlNormalizerConfig(
+                            makeResourcesOffline: true,
+                            ensureCloseButton: false
+                        )
+                        let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
+                        newInAppContentBlocks.htmlPayload = normalizedPayload
+                        let isCorruptedImage = !self.hasHtmlImages(html: response.content?.html ?? "")
+                        newInAppContentBlocks.isCorruptedImage = isCorruptedImage
+                        return newInAppContentBlocks
+                    } ?? []
+                for (index, inAppContentBlocks) in self.inAppContentBlockMessages.enumerated() {
+                    if let personal = personalizedWithPayload.first, inAppContentBlocks.id == personal.id {
+                        var personalized = personal
+                        print("Refreshed personalized: \(personal.id) for message \(inAppContentBlocks.id)")
+                        personalized.ttlSeen = Date()
+                        if self.inAppContentBlockMessages[safeIndex: index]?.personalizedMessage != nil {
+                            self._inAppContentBlockMessages.changeValue(with: { $0[index].personalizedMessage = personalized })
+                        }
+                        completion?(self.inAppContentBlockMessages[index])
+                    }
+                }
+            }
+        }
+    }
+
+    func refreshCarouselData(placeholder: String, dataCompletion: TypeBlock<[StaticReturnData]>?) {
+        Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshStaticViewContent")
+        if !isCarouselLoading {
+            isCarouselLoading = true
+            guard !placeholder.isEmpty, let ids = try? DatabaseManager().currentCustomer.ids else {
+                Exponea.logger.log(.verbose, message: "In-app Content Blocks Carousel cant refresh placeholderId: \(placeholder), ids: \(String(describing: try? DatabaseManager().currentCustomer.ids))")
+                return
+            }
+            let idsForDownload = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholder) }.map { $0.id }
+            provider.loadPersonalizedInAppContentBlocks(
+                data: PersonalizedInAppContentBlockResponseData.self,
+                customerIds: ids,
+                inAppContentBlocksIds: idsForDownload
+            ) { [weak self] data in
+                guard let self else { return }
+                ensureBackground {
+                    let refreshStaticViewContentDescriptions = (data.data?.data ?? []).map { $0.describeDetailed() }
+                    Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshStaticViewContent data: \(refreshStaticViewContentDescriptions)")
+                    let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data.compactMap { response in
+                        var newInAppContentBlocks = response
+                        let normalizeConf = HtmlNormalizerConfig(
+                            makeResourcesOffline: true,
+                            ensureCloseButton: false
+                        )
+                        let normalizedPayload = HtmlNormalizer(newInAppContentBlocks.content?.html ?? "").normalize(normalizeConf)
+                        newInAppContentBlocks.htmlPayload = normalizedPayload
+                        let isCorruptedImage = !self.hasHtmlImages(html: response.content?.html ?? "")
+                        newInAppContentBlocks.isCorruptedImage = isCorruptedImage
+                        return newInAppContentBlocks
+                    } ?? []
+                    var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
+                    for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
+                        if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
+                            personalized.ttlSeen = Date()
+                            updatedPlaceholders[index].personalizedMessage = personalized
+                        }
+                    }
+                    self.inAppContentBlockMessages = updatedPlaceholders
+                    let toReturn = updatedPlaceholders.filter { $0.placeholders.contains(placeholder) }
+                        .compactMap { response in
+                            self.prepareCarouselStaticData(messages: response)
+                        }
+                    dataCompletion?(toReturn)
+                    self.continueWithCarouselQueue(dataCompletion: dataCompletion)
+                }
+            }
+        } else {
+            _carouselQueue.changeValue(with: { $0.append(placeholder) })
+        }
+    }
+    
     func refreshStaticViewContent(staticQueueData: StaticQueueData) {
         Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshStaticViewContent")
         if !isStaticUpdating {
@@ -866,6 +1063,50 @@ extension InAppContentBlocksManager {
         } else {
             _staticQueue.changeValue(with: { $0.append(staticQueueData) })
         }
+    }
+    
+    func prepareCarouselStaticData(
+        messages: InAppContentBlockResponse
+    ) -> StaticReturnData? {
+        // Found message
+        guard var message = filterPersonalizedMessages(input: messages.personalizedMessage?.status == .ok ? [messages] : []) else {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks prepareInAppContentBlocksStaticView message not found.")
+            return nil
+        }
+        Exponea.logger.log(
+            .verbose,
+            message: "In-app Content Blocks prepareInAppContentBlocksStaticView message \(message.describe())."
+        )
+
+        // Add random for 100% unique
+        let tag = createUniqueTag(placeholder: message)
+        Exponea.logger.log(.verbose, message: "In-app Content Blocks prepareInAppContentBlocksStaticView tag \(tag).")
+
+        let indexOfPlaceholder: Int = inAppContentBlockMessages.firstIndex(where: { $0.id == message.id }) ?? 0
+
+        message.tags?.insert(tag)
+
+        if let personalized = message.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
+            Exponea.logger.log(
+                .verbose,
+                message: "In-app Content Blocks prepareInAppContentBlocksStaticView personalized \(personalized.describeDetailed())."
+            )
+            if self.inAppContentBlockMessages[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
+                _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
+            }
+            if let html = personalized.htmlPayload?.html, !html.isEmpty {
+                return .init(html: html, tag: tag, message: message)
+            }
+        } else {
+            Exponea.logger.log(
+                .verbose,
+                message: "In-app Content Blocks prepareInAppContentBlocksStaticView static \(message.describe())."
+            )
+            if let html = message.content?.html, !html.isEmpty {
+                return .init(html: html, tag: tag, message: message)
+            }
+        }
+        return nil
     }
 }
 

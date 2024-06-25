@@ -9,7 +9,7 @@
 import Foundation
 import Quick
 import Nimble
-
+import Combine
 @testable import ExponeaSDK
 
 class InAppContentBlocksManagerSpec: QuickSpec {
@@ -23,29 +23,29 @@ class InAppContentBlocksManagerSpec: QuickSpec {
     override func spec() {
         Exponea.shared.configure(with: configuration)
         let manager: InAppContentBlocksManagerType = Exponea.shared.inAppContentBlocksManager!
-
+        
         it("Corrupted images") {
             let rawHtml = "<html>" +
-                    "<body>" +
-                    "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg'>" +
-                    "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg'>" +
-                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
-                    "<div data-link='https://example.com/1'>Action 1</div>" +
-                    "<div data-link='https://example.com/2'>Action 2</div>" +
-                    "</body></html>"
+            "<body>" +
+            "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg'>" +
+            "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg'>" +
+            "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+            "<div data-link='https://example.com/1'>Action 1</div>" +
+            "<div data-link='https://example.com/2'>Action 2</div>" +
+            "</body></html>"
             let rawHtmlEmptyImages = "<html>" +
-                    "<body>" +
-                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
-                    "<div data-link='https://example.com/1'>Action 1</div>" +
-                    "<div data-link='https://example.com/2'>Action 2</div>" +
-                    "</body></html>"
+            "<body>" +
+            "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+            "<div data-link='https://example.com/1'>Action 1</div>" +
+            "<div data-link='https://example.com/2'>Action 2</div>" +
+            "</body></html>"
             let rawHtmlCorruptedImage = "<html>" +
-                    "<body>" +
-                    "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usssssa.jpg'>" +
-                    "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
-                    "<div data-link='https://example.com/1'>Action 1</div>" +
-                    "<div data-link='https://example.com/2'>Action 2</div>" +
-                    "</body></html>"
+            "<body>" +
+            "<img src='https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usssssa.jpg'>" +
+            "<div data-actiontype='close' onclick='alert('hello')'>Close</div>" +
+            "<div data-link='https://example.com/1'>Action 1</div>" +
+            "<div data-link='https://example.com/2'>Action 2</div>" +
+            "</body></html>"
             let result = manager.hasHtmlImages(html: rawHtml) // true
             let result2 = manager.hasHtmlImages(html: rawHtmlEmptyImages) // true
             let result3 = manager.hasHtmlImages(html: rawHtmlCorruptedImage) // false
@@ -70,7 +70,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             expect(prioritized[2]?.count).toNot(equal(10))
             expect(prioritized[2]?.count).to(equal(3))
         }
-
+        
         it("check TTL") {
             let ttlSeen = Date()
             let inAppContentBlocks = [SampleInAppContentBlocks.getSampleIninAppContentBlocks(personalized: .getSample(status: .ok, ttlSeen: ttlSeen))]
@@ -102,7 +102,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             }
             expect(messagesNeeedToRefreshTrue).toEventuallyNot(beNil(), timeout: .seconds(1))
         }
-
+        
         it("filter - always") {
             var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
                 id: "filter - always - msg123 - \(UUID().uuidString)",
@@ -133,7 +133,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             }
             expect(manager.getFilteredMessage(message: inAppContentBlocks)).toEventually(beTrue(), timeout: .seconds(4))
         }
-
+        
         it("filter - interaction") {
             var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
                 id: "filter - interaction - msg123 - \(UUID().uuidString)",
@@ -162,7 +162,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             }
             expect(manager.getFilteredMessage(message: inAppContentBlocks)).toEventually(beFalse(), timeout: .seconds(4))
         }
-
+        
         it("filter - seen") {
             var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
                 id: "filter - seen - msg123 - \(UUID().uuidString)",
@@ -179,7 +179,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             }
             expect(manager.getFilteredMessage(message: inAppContentBlocks)).toEventually(beFalse(), timeout: .seconds(4))
         }
-
+        
         it("prefetch") {
             let inAppContentBlocks = [
                 SampleInAppContentBlocks.getSampleIninAppContentBlocks(placeholders: ["ph1"], personalized: .getSample(status: .ok, ttlSeen: Date())),
@@ -192,7 +192,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             expect(manager.prefetchPlaceholdersWithIds(input: inAppContentBlocks, ids: ["ph1", "ph2"]).count).to(be(4))
             expect(manager.prefetchPlaceholdersWithIds(input: inAppContentBlocks, ids: [""]).count).to(be(0))
         }
-
+        
         it("queue") {
             var inAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(frequency: .onlyOnce, personalized: .getSample(status: .ok, ttlSeen: Date()))
             var completionValue: Int = 0
@@ -207,6 +207,161 @@ class InAppContentBlocksManagerSpec: QuickSpec {
                 }
             }
             expect(completionValue).to(be(10))
+        }
+        
+        it("message changed") {
+            var wasMessageChanged = false
+            let view = CarouselInAppContentBlockView(placeholder: "placeholder")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                view.state = .refresh
+            }
+            waitUntil(timeout: .seconds(2)) { done in
+                view.onMessageChanged = { _ in
+                    wasMessageChanged = true
+                    done()
+                }
+            }
+            expect(wasMessageChanged).to(beTrue())
+        }
+        
+        it("overlimit") {
+            let array: [Int] = [1, 2, 3, 4, 5]
+            let maxOverLimit = 10
+            let result = array.prefix(maxOverLimit)
+            expect(result.count).to(be(5))
+        }
+
+        it("is valid check") {
+            let messageExpired: StaticReturnData = .init(
+                html: "",
+                tag: 0,
+                message: .init(
+                    id: UUID().uuidString,
+                    name: "",
+                    dateFilter: .init(
+                        enabled: false,
+                        fromDate: nil,
+                        toDate: nil
+                    ),
+                    frequency: .untilVisitorInteracts,
+                    placeholders: [""],
+                    tags: [],
+                    loadPriority: 100,
+                    content: nil,
+                    personalized: .getSample(status: .ok, ttlSeen: Date().addingTimeInterval(-10000))
+                )
+            )
+            
+             var userDefaults: UserDefaults = {
+                if UserDefaults(suiteName: Constants.General.userDefaultsSuite) == nil {
+                    UserDefaults.standard.addSuite(named: Constants.General.userDefaultsSuite)
+                }
+                return UserDefaults(suiteName: Constants.General.userDefaultsSuite)!
+            }()
+            
+            let store = InAppContentBlockDisplayStatusStore(userDefaults: userDefaults)
+
+            var messageInvalidInteracted: StaticReturnData = .init(
+                html: "",
+                tag: 0,
+                message: .init(
+                    id: UUID().uuidString,
+                    name: "",
+                    dateFilter: .init(
+                        enabled: false,
+                        fromDate: nil,
+                        toDate: nil
+                    ),
+                    frequency: .untilVisitorInteracts,
+                    placeholders: [""],
+                    tags: [],
+                    loadPriority: 100,
+                    content: nil,
+                    personalized: .getSample(status: .ok, ttlSeen: Date())
+                )
+            )
+            store.didInteract(with: messageInvalidInteracted.message?.id ?? "", at: Date().addingTimeInterval(4000))
+
+            var messageInvalidShowed: StaticReturnData = .init(
+                html: "",
+                tag: 0,
+                message: .init(
+                    id: UUID().uuidString,
+                    name: "",
+                    dateFilter: .init(
+                        enabled: false,
+                        fromDate: nil,
+                        toDate: nil
+                    ),
+                    frequency: .oncePerVisit,
+                    placeholders: [""],
+                    tags: [],
+                    loadPriority: 100,
+                    content: nil,
+                    personalized: .getSample(status: .ok, ttlSeen: Date())
+                )
+            )
+            store.didDisplay(of: messageInvalidShowed.message?.id ?? "", at: Date().addingTimeInterval(4000))
+
+            var messageValid: StaticReturnData = .init(
+                html: "",
+                tag: 0,
+                message: .init(
+                    id: UUID().uuidString,
+                    name: "",
+                    dateFilter: .init(
+                        enabled: false,
+                        fromDate: nil,
+                        toDate: nil
+                    ),
+                    frequency: .always,
+                    placeholders: [""],
+                    tags: [],
+                    loadPriority: 100,
+                    content: nil,
+                    personalized: .getSample(status: .ok, ttlSeen: Date().addingTimeInterval(4000))
+                )
+            )
+
+            var isMessageExpiredAndValid = false
+            waitUntil(timeout: .seconds(2)) { done in
+                manager.isMessageValid(message: messageExpired.message!) { _ in
+                } refreshCallback: {
+                    isMessageExpiredAndValid = true
+                    done()
+                }
+            }
+            expect(isMessageExpiredAndValid).to(beTrue())
+
+            var isMessageInvalid = false
+            waitUntil(timeout: .seconds(2)) { done in
+                manager.isMessageValid(message: messageInvalidInteracted.message!) { isValid in
+                    isMessageInvalid = !isValid
+                    done()
+                } refreshCallback: {
+                }
+            }
+            expect(isMessageInvalid).to(beTrue())
+
+            var isMessageInvalidShowed = false
+            waitUntil(timeout: .seconds(2)) { done in
+                manager.isMessageValid(message: messageInvalidShowed.message!) { isValid in
+                    isMessageInvalidShowed = !isValid
+                    done()
+                } refreshCallback: {
+                }
+            }
+            expect(isMessageInvalidShowed).to(beTrue())
+
+            var isMessageValid = false
+            waitUntil(timeout: .seconds(2)) { done in
+                manager.isMessageValid(message: messageValid.message!) { isValid in
+                    isMessageValid = isValid
+                    done()
+                } refreshCallback: {
+                }
+            }
+            expect(isMessageValid).to(beTrue())
         }
     }
 }
