@@ -7,6 +7,18 @@ parentDocSlug: ios-sdk
 ---
 
 ## Release Notes
+## Release Notes for 2.27.0
+#### June 27, 2024
+* Added:
+  * Adds support for multiple In-App Content Blocks in the same placeholder through `InAppContentBlockCarouselView`. The SDK will loop through the content blocks one at a time in order of the configured Priority.
+  * Adds `inAppMessageShown` and `inAppMessageError` methods to `InAppMessageCallback` to improve support for customized In-App Message behavior.
+  * Increases the minimum required iOS version to 13.
+  * Adds support for newer Swift versions in Podspec.
+* Fixed:
+  * Fixes an issue where iPhone 15 devices would not be recognized in tracked events.
+  * Fixes a broken README link and outdated info in the Podspec.
+
+
 ## Release Notes for 2.26.2
 #### June 19, 2024
 * Features
