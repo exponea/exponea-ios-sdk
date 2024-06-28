@@ -75,10 +75,17 @@ final class AppInboxParser {
                 ))
                 htmlContent.actions.forEach { htmlAction in
                     let actionType: MessageItemActionType
-                    if htmlAction.actionUrl.hasPrefix("http://") || htmlAction.actionUrl.hasPrefix("https://") {
+                    switch htmlAction.actionType {
+                    case .browser:
                         actionType = .browser
-                    } else {
+                    case .deeplink:
                         actionType = .deeplink
+                    case .unknown:
+                        if htmlAction.actionUrl.hasPrefix("http://") || htmlAction.actionUrl.hasPrefix("https://") {
+                            actionType = .browser
+                        } else {
+                            actionType = .deeplink
+                        }
                     }
                     actions.append(MessageItemAction(
                         action: actionType.rawValue,

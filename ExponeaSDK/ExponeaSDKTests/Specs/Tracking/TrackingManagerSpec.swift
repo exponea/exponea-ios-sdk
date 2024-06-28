@@ -46,6 +46,8 @@ class TrackingManagerSpec: QuickSpec {
                     repository: repository,
                     database: database,
                     flushingManager: MockFlushingManager(),
+                    inAppMessageManager: nil,
+                    trackManagerInitializator: { _ in },
                     userDefaults: userDefaults,
                     onEventCallback: { type, event in
                         

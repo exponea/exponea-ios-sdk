@@ -18,8 +18,8 @@ class FlushingManager: FlushingManagerType {
     private var isFlushingData: Bool = false
     /// Used for periodic data flushing.
     private var flushingTimer: Timer?
-
-    private let customerIdentifiedHandler: () -> Void
+    internal var inAppRefreshCallback: EmptyBlock?
+    private var customerIdentifiedHandler: () -> Void
     
     public var flushingMode: FlushingMode = .immediate {
         didSet {
@@ -123,6 +123,7 @@ class FlushingManager: FlushingManagerType {
             // Check if we have any data otherwise bail
             guard !events.isEmpty || !customers.isEmpty else {
                 isFlushingData = false
+                inAppRefreshCallback?()
                 completion?(.success(0))
                 return
             }
@@ -184,6 +185,7 @@ class FlushingManager: FlushingManagerType {
                 )
                 if trackingObject is CustomerTrackingObject {
                     customerIdentifiedHandler()
+                    inAppRefreshCallback?()
                 }
                 try database.delete(flushableObject.databaseObjectProxy)
             } catch {

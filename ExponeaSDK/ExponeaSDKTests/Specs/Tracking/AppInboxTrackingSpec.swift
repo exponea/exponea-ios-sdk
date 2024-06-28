@@ -39,6 +39,8 @@ final class AppInboxTrackingSpec: QuickSpec {
                     repository: repository,
                     database: database,
                     flushingManager: flushManager,
+                    inAppMessageManager: nil,
+                    trackManagerInitializator: { _ in },
                     userDefaults: UserDefaults(),
                     onEventCallback: { _, _ in
                         // nothing

@@ -9,6 +9,8 @@
 @testable import ExponeaSDK
 
 class MockInAppMessagePresenter: InAppMessagePresenterType {
+    var presenting: Bool = false
+    
     struct PresentedMessageData {
         let messageType: InAppMessageType
         let payload: InAppMessagePayload?

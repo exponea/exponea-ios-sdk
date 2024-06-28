@@ -89,14 +89,13 @@ class AuthenticationViewController: UIViewController {
             publicKey: advancedAuthPubKey,
             expiration: nil
         )
-        
-        
+
         let exponea = Exponea.shared.onInitSucceeded {
             Exponea.logger.log(.verbose, message: "Configuration initialization succeeded")
             //Uncomment if you want to test in-app message delegate
             //Exponea.shared.inAppMessagesDelegate = InAppDelegate(overrideDefaultBehavior: true, trackActions: false)
         }
-        
+        Exponea.logger.logLevel = .verbose
         exponea.checkPushSetup = true
         Exponea.logger.log(.verbose, message: "Before Configuration call")
         exponea.configure(

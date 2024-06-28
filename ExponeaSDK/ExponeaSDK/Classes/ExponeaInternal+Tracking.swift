@@ -69,11 +69,11 @@ extension ExponeaInternal {
             if var ids = customerIds {
                 // Check for overriding cookie
                 if ids["cookie"] != nil {
-                    ids.removeValue(forKey: "cookie")
                     Exponea.logger.log(.warning, message: """
                     You should never set cookie ID directly on a customer. Ignoring.
                     """)
                 }
+                ids["cookie"] = dependencies.trackingManager.customerIds["cookie"]
                 data.append(.customerIds(ids))
             }
 
@@ -103,7 +103,7 @@ extension ExponeaInternal {
                 let data: [DataType] = [.pushNotificationToken(token: token, authorized: authorized)]
                 // Do the actual tracking
                 self.executeSafely {
-                    try dependencies.trackingManager.track(.identifyCustomer, with: data)
+                    try dependencies.trackingManager.track(.registerPushToken, with: data)
                 }
             }
         }
@@ -402,6 +402,7 @@ extension ExponeaInternal {
             dependencies.inAppMessagesManager.anonymize()
             dependencies.appInboxManager.clear()
             dependencies.inAppContentBlocksManager.anonymize()
+            SegmentationManager.shared.anonymize()
             self.telemetryManager?.report(eventWithType: .anonymize, properties: [:])
         }
     }

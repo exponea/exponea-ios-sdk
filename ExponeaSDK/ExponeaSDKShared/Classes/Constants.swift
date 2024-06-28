@@ -60,7 +60,7 @@ public enum Constants {
         public static let sdkNotConfigured = "Exponea SDK isn't configured. " +
             "Before any calls to SDK functions, please configure the SDK " +
             "with Exponea.shared.config() according to the documentation " +
-            "https://github.com/exponea/exponea-ios-sdk/blob/develop/Documentation/CONFIG.md#configuring-the-sdk"
+            "https://github.com/exponea/exponea-ios-sdk/blob/main/Documentation/configuration.md"
     }
 
     /// Success messages
@@ -87,9 +87,11 @@ public enum Constants {
         public static let iTunesStore = "iTunes Store"
         public static let userDefaultsSuite = "ExponeaSDK"
         public static let deliveredPushUserDefaultsKey = "EXPONEA_DELIVERED_PUSH_TRACKING"
+        public static let deliveredPushEventUserDefaultsKey = "EXPONEA_DELIVERED_PUSH_EVENT_TRACKING"
         public static let openedPushUserDefaultsKey = "EXPONEA_OPENED_PUSH_TRACKING"
         public static let savedCampaignClickEvent = "EXPONEA_SAVED_CAMPAIGN_CLICK"
         public static let inAppMessageDisplayStatusUserDefaultsKey = "EXPONEA_IN_APP_MESSAGE_DISPLAY_STATUS"
+        public static let inAppContentBlockDisplayStatusUserDefaultsKey = "EXPONEA_IN_APP_CONTENT_BLOCK_DISPLAY_STATUS"
         public static let lastKnownConfiguration = "EXPONEA_LAST_KNOWN_CONFIGURATION"
         public static let lastKnownCustomerIds = "EXPONEA_LAST_KNOWN_CUSTOMER_IDS"
     }

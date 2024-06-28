@@ -46,28 +46,28 @@ final class MockExponeaImplementation: ExponeaInternal {
                 repository: repository,
                 database: database,
                 flushingManager: flushingManager!,
+                inAppMessageManager: inAppMessagesManager,
+                trackManagerInitializator: { trackingManager in
+                    self.trackingConsentManager = try! TrackingConsentManager(
+                        trackingManager: trackingManager
+                    )
+                    self.inAppMessagesManager = InAppMessagesManager(
+                       repository: repository,
+                       displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
+                       trackingConsentManager: self.trackingConsentManager!
+                    )
+                    self.appInboxManager = AppInboxManager(
+                        repository: repository,
+                        trackingManager: trackingManager,
+                        database: database
+                    )
+                },
                 userDefaults: userDefaults,
                 onEventCallback: { type, event in
-                    self.inAppMessagesManager?.onEventOccurred(of: type, for: event)
+                    self.inAppMessagesManager?.onEventOccurred(of: type, for: event, triggerCompletion: nil)
                 }
             )
 
-            self.trackingConsentManager = try! TrackingConsentManager(
-                trackingManager: self.trackingManager!
-            )
-
-            self.inAppMessagesManager = InAppMessagesManager(
-               repository: repository,
-               displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
-               trackingConsentManager: self.trackingConsentManager!
-            )
-
-            self.appInboxManager = AppInboxManager(
-                repository: repository,
-                trackingManager: self.trackingManager!,
-                database: database
-            )
-            
             self.inAppContentBlocksManager = InAppContentBlocksManager()
 
             processSavedCampaignData()

@@ -9,6 +9,14 @@
 @testable import ExponeaSDK
 
 final class MockRepository: RepositoryType {
+    func getSegmentations(cookie: String, completion: @escaping TypeBlock<Result<SegmentDataDTO>>) {
+        
+    }
+    
+    func getLinkIds(cookie: String, externalIds: [String : String], completion: @escaping TypeBlock<Result<SegmentDataDTO>>) {
+        
+    }
+    
     
     func getInAppContentBlocks(
         completion: @escaping TypeBlock<Result<InAppContentBlocksDataResponse>>

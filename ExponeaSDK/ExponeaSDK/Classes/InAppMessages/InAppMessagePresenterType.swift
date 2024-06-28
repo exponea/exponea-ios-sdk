@@ -9,6 +9,7 @@
 import Foundation
 
 protocol InAppMessagePresenterType {
+    var presenting: Bool { get set }
     func presentInAppMessage(
         messageType: InAppMessageType,
         payload: InAppMessagePayload?,

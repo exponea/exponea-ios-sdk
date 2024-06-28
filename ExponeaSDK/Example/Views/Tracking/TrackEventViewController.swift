@@ -29,6 +29,14 @@ class TrackEventViewController: UIViewController {
         keyField1.placeholder = "custom_key_1"
         keyField2.placeholder = "custom_key_2"
         keyField3.placeholder = "custom_key_3"
+        
+        SegmentationManager.shared.addCallback(
+            callbackData: .init(
+                category: .discovery(),
+                isIncludeFirstLoad: true,
+                onNewData: { segments in
+            print(segments)
+        }))
     }
 
     @IBAction func hideKeyboard() {

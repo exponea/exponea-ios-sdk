@@ -72,15 +72,15 @@ class AppDelegate: ExponeaAppDelegate {
     }
 
     func application(
-        _ app: UIApplication,
-        open url: URL,
-        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-    ) -> Bool {
+           _ app: UIApplication,
+           open url: URL,
+           options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+       ) -> Bool {
         if let components = URLComponents(url: url, resolvingAgainstBaseURL: false), components.scheme == "exponea" {
             if let type = DeeplinkType(input: url.absoluteString) {
                 DeeplinkManager.manager.setDeeplinkType(type: type)
             } else {
-                showAlert("Deeplink received", url.absoluteString)
+                onMain(self.showAlert("Deeplink received", url.absoluteString))
             }
             return true
         }
@@ -90,27 +90,21 @@ class AppDelegate: ExponeaAppDelegate {
 
 extension AppDelegate {
     func showAlert(_ title: String, _ message: String?) {
-        DispatchQueue.main.sync { [weak self] in
-            guard let self else {
-                Exponea.logger.log(.warning, message: "Alert not shown because of lost frame")
-                return
-            }
-            let alert = UIAlertController(title: title, message: message ?? "no body", preferredStyle: .alert)
-            alert.addAction(
-                UIAlertAction(
-                    title: "Ok",
-                    style: .default,
-                    handler: { [weak self] _ in self?.alertWindow?.isHidden = true }
-                )
+        let alert = UIAlertController(title: title, message: message ?? "no body", preferredStyle: .alert)
+        alert.addAction(
+            UIAlertAction(
+                title: "Ok",
+                style: .default,
+                handler: { [weak self] _ in self?.alertWindow?.isHidden = true }
             )
-            if alertWindow == nil {
-                alertWindow = UIWindow(frame: UIScreen.main.bounds)
-                alertWindow?.rootViewController = UIViewController()
-                alertWindow?.windowLevel = .alert + 1
-            }
-            alertWindow?.makeKeyAndVisible()
-            alertWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+        )
+        if alertWindow == nil {
+            alertWindow = UIWindow(frame: UIScreen.main.bounds)
+            alertWindow?.rootViewController = UIViewController()
+            alertWindow?.windowLevel = .alert + 1
         }
+        alertWindow?.makeKeyAndVisible()
+        alertWindow?.rootViewController?.present(alert, animated: true, completion: nil)
     }
 }
 
@@ -173,5 +167,16 @@ class InAppDelegate: InAppMessageActionDelegate {
         } else {
             Exponea.shared.trackInAppMessageClose(message: message, isUserInteraction: false)
         }
+    }
+
+    func inAppMessageShown(message: ExponeaSDK.InAppMessage) {
+        Exponea.logger.log(.verbose, message: "In app message \(message.name) has been shown")
+    }
+
+    func inAppMessageError(message: ExponeaSDK.InAppMessage?, errorMessage: String) {
+        Exponea.logger.log(
+            .verbose,
+            message: "Error occurred '\(errorMessage)' while showing in app message \(message?.name ?? "<no_name>")"
+        )
     }
 }

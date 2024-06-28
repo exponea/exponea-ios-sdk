@@ -31,7 +31,7 @@ open class DefaultAppInboxProvider: AppInboxProvider {
             comment: ""
         ), for: .normal)
         button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        button.addTarget(Exponea.shared, action: #selector(Exponea.shared.openAppInboxList), for: .touchUpInside)
         return button
     }
 
@@ -50,19 +50,6 @@ open class DefaultAppInboxProvider: AppInboxProvider {
             }
         }
         return detailViewController
-    }
-
-    @objc
-    private func buttonAction(sender: UIButton!) {
-        let window = UIApplication.shared.keyWindow
-        guard let topViewController = InAppMessagePresenter.getTopViewController(window: window) else {
-            Exponea.logger.log(.error, message: "Unable to show AppInbox list - no view controller")
-            return
-        }
-        let listView = getAppInboxListViewController()
-        let naviController = UINavigationController(rootViewController: listView)
-        naviController.modalPresentationStyle = .formSheet
-        topViewController.present(naviController, animated: true)
     }
 
     open func getAppInboxListTableViewCell(_ cell: UITableViewCell) -> UITableViewCell {

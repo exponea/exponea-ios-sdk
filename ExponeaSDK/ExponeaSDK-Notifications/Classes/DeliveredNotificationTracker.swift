@@ -13,7 +13,7 @@ import ExponeaSDKShared
 #endif
 
 final class DeliveredNotificationTracker {
-    private let events: [EventTrackingObject]
+    let events: [EventTrackingObject]
     private let repository: ServerRepository
 
     init(appGroup: String, notificationData: NotificationData) throws {
@@ -61,14 +61,14 @@ final class DeliveredNotificationTracker {
         customerIds: [String: String],
         notification: NotificationData
     ) -> [EventTrackingObject] {
-        if (notification.considerConsent && !notification.hasTrackingConsent) {
+        if notification.considerConsent && !notification.hasTrackingConsent {
             Exponea.logger.log(.verbose, message: "Event for delivered notification is not tracked because consent is not given")
             return []
         }
         var properties = configuration.defaultProperties?.mapValues { $0.jsonValue } ?? [:]
         properties = properties.merging(notification.properties, uniquingKeysWith: { (_, new) in new })
         properties["status"] = .string("delivered")
-        if (notification.consentCategoryTracking != nil) {
+        if notification.consentCategoryTracking != nil {
             properties["consent_category_tracking"] = .string(notification.consentCategoryTracking!)
         }
 

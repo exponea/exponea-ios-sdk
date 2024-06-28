@@ -203,6 +203,7 @@ class ConfigurationSpec: QuickSpec {
             beforeEach {
                 let defaults = UserDefaults(suiteName: appGroup)!
                 defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+                defaults.removeObject(forKey: Constants.General.deliveredPushEventUserDefaultsKey)
                 defaults.removeObject(forKey: Constants.General.lastKnownConfiguration)
             }
 

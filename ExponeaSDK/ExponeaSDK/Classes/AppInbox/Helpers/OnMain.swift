@@ -21,3 +21,17 @@ public func onMain(_ closure: @escaping () -> Void) {
 public func onMain(_ closure: @autoclosure @escaping () -> Void) {
     onMain(closure)
 }
+
+public func ensureBackground(_ closure: @escaping () -> Void) {
+    if !Thread.current.isMainThread {
+        closure()
+    } else {
+        DispatchQueue.global(qos: .background).async {
+            closure()
+        }
+    }
+}
+
+public func onGlobal(_ closure: @autoclosure @escaping () -> Void) {
+    ensureBackground(closure)
+}

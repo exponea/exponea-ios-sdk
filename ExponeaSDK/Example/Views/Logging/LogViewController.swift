@@ -22,6 +22,14 @@ class LogViewController: UIViewController {
         AppDelegate.memoryLogger.delegate = self
 
         logUpdated()
+        
+        SegmentationManager.shared.addCallback(
+            callbackData: .init(
+                category: .discovery(),
+                isIncludeFirstLoad: true,
+                onNewData: { segments in
+            print(segments)
+        }))
     }
 }
 

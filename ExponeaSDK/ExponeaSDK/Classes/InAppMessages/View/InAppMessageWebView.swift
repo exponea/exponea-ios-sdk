@@ -11,7 +11,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     private var inAppContentBlocksManager: InAppContentBlocksManagerType = InAppContentBlocksManager.manager
 
     var normalizedPayload: NormalizedResult?
-    
+
     var actionManager: WebActionManager?
 
     required init(
@@ -64,11 +64,11 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     }
 
     func dismiss(isUserInteraction: Bool) {
+        self.dismissCallback(isUserInteraction)
         guard superview != nil else {
             return
         }
         self.removeFromSuperview()
-        self.dismissCallback(isUserInteraction)
     }
 
     func actionButtonAction(_ sender: InAppMessageActionButton) {
@@ -80,8 +80,8 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     }
 
     func cancelButtonAction(_ sender: Any) {
-        self.removeFromSuperview()
         self.dismissCallback(true)
+        self.removeFromSuperview()
     }
 
     func setup() {
@@ -133,17 +133,24 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     private func toPayloadButton(_ action: ActionInfo) -> InAppMessagePayloadButton {
         InAppMessagePayloadButton(
                 buttonText: action.buttonText,
-                rawButtonType: detectActionType(action.actionUrl.cleanedURL()!).rawValue,
+                rawButtonType: detectActionType(action).rawValue,
                 buttonLink: action.actionUrl,
                 buttonTextColor: nil,
                 buttonBackgroundColor: nil
         )
     }
 
-    private func detectActionType(_ url: URL) -> InAppMessageButtonType {
-        if url.scheme == "http" || url.scheme == "https" {
+    private func detectActionType(_ action: ActionInfo) -> InAppMessageButtonType {
+        switch action.actionType {
+        case .browser:
             return .browser
+        case .deeplink:
+            return .deeplink
+        case .unknown:
+            if action.actionUrl.cleanedURL()!.scheme == "http" || action.actionUrl.cleanedURL()!.scheme == "https" {
+                return .browser
+            }
+            return .deeplink
         }
-        return .deeplink
     }
 }

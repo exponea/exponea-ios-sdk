@@ -76,8 +76,6 @@ public struct InAppContentBlockResponse: Codable {
     public var trackingConsentCategory: String?
     public let placeholders: [String]
     @CodableIgnored
-    public var displayState: InAppContentBlocksDisplayStatus? = .init(displayed: nil, interacted: nil)
-    @CodableIgnored
     public var personalizedMessage: PersonalizedInAppContentBlockResponse?
     @CodableIgnored
     public var status: InAppContentBlocksDisplayStatus?
@@ -87,6 +85,7 @@ public struct InAppContentBlockResponse: Codable {
     public var tags: Set<Int>? = []
     @CodableIgnored
     public var indexPath: IndexPath?
+    public var isCorruptedImage = true
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -151,4 +150,10 @@ public enum InAppContentBlocksFrequency: String {
 public struct InAppContentBlocksDisplayStatus: Codable, Equatable {
     let displayed: Date?
     let interacted: Date?
+}
+
+internal extension InAppContentBlockResponse {
+    func describe() -> String {
+        return "ID:\(id), Name:\(name)"
+    }
 }

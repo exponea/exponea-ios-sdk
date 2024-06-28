@@ -116,16 +116,16 @@ public class ExponeaNotificationService {
 
     func trackDeliveredNotification(appGroup: String, notificationData: NotificationData) {
         do {
-            try DeliveredNotificationTracker(appGroup: appGroup, notificationData: notificationData)
-                .track(
-                    onSuccess: {
-                        self.notificationTracked = true
-                    },
-                    onFailure: {
-                        self.saveNotificationForLaterTracking(notification: notificationData)
-                        self.notificationTracked = true
-                    }
-                )
+            let deliveredTracker = try DeliveredNotificationTracker(appGroup: appGroup, notificationData: notificationData)
+            deliveredTracker.track(
+                onSuccess: {
+                    self.notificationTracked = true
+                },
+                onFailure: {
+                    self.saveNotificationEventsForLaterTracking(deliveredTracker.events)
+                    self.notificationTracked = true
+                }
+            )
         } catch {
             Exponea.logger.log(
                 .error,
@@ -174,15 +174,31 @@ public class ExponeaNotificationService {
     func saveNotificationForLaterTracking(notification: NotificationData?) {
         guard let appGroup = appGroup,
               let userDefaults = UserDefaults(suiteName: appGroup),
-              let notificationData = notification else {
+              let notificationData = notification,
+              let serialized = notificationData.serialize() else {
+            Exponea.logger.log(.error, message: "Unable to store delivered notification data")
             return
         }
+        var delivered = userDefaults.array(forKey: Constants.General.deliveredPushUserDefaultsKey) ?? []
+        delivered.append(serialized)
+        userDefaults.set(delivered, forKey: Constants.General.deliveredPushUserDefaultsKey)
+    }
 
-        if let serialized = notificationData.serialize() {
-            var delivered = userDefaults.array(forKey: Constants.General.deliveredPushUserDefaultsKey) ?? []
-            delivered.append(serialized)
-            userDefaults.set(delivered, forKey: Constants.General.deliveredPushUserDefaultsKey)
+    func saveNotificationEventsForLaterTracking(_ events: [EventTrackingObject]) {
+        guard let appGroup = appGroup,
+              let userDefaults = UserDefaults(suiteName: appGroup) else {
+            Exponea.logger.log(.error, message: "Unable to store delivery notification tracking events")
+            return
         }
+        var deliveredNotifEvents = userDefaults.array(forKey: Constants.General.deliveredPushEventUserDefaultsKey) ?? []
+        for each in events {
+            guard let trackingData = each.serialize() else {
+                Exponea.logger.log(.error, message: "Unable to store delivery notification tracking event")
+                continue
+            }
+            deliveredNotifEvents.append(trackingData)
+        }
+        userDefaults.set(deliveredNotifEvents, forKey: Constants.General.deliveredPushEventUserDefaultsKey)
     }
 
     func saveImage(_ identifier: String, data: Data, options: [AnyHashable: Any]?) -> UNNotificationAttachment? {

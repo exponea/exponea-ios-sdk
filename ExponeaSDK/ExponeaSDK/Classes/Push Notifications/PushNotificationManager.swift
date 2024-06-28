@@ -284,18 +284,24 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             Exponea.logger.log(.verbose, message: "No app group was setup, push delivered tracking is disabled.")
             return
         }
+        guard let userDefaults = UserDefaults(suiteName: appGroup) else {
+            Exponea.logger.log(.verbose, message: "Unable to load local storage of delivered push to track")
+            return
+        }
+        trackDeliveredPushMessages(userDefaults)
+        trackDeliveredPushEvents(userDefaults)
+    }
 
-        let userDefaults = UserDefaults(suiteName: appGroup)
-        guard let array = userDefaults?.array(forKey: Constants.General.deliveredPushUserDefaultsKey) else {
+    /// Loads received and stored Push notifications that were not tracked due to missing SDK configuration
+    internal func trackDeliveredPushMessages(_ source: UserDefaults) {
+        guard let array = source.array(forKey: Constants.General.deliveredPushUserDefaultsKey) else {
             Exponea.logger.log(.verbose, message: "No delivered push to track present in shared app group.")
             return
         }
-
         guard let dataArray = array as? [Data] else {
             Exponea.logger.log(.warning, message: "Delivered push data present in shared group but incorrect type.")
             return
         }
-
         // Process notifications
         for data in dataArray {
             guard let notification = NotificationData.deserialize(from: data) else {
@@ -304,9 +310,30 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             }
             trackingConsentManager.trackDeliveredPush(data: notification, mode: .CONSIDER_CONSENT)
         }
-
         // Clear after all is processed
-        userDefaults?.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+        source.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+    }
+
+    /// Uploads track events for delivered Push notifications that were not uploaded to backend because of some problem
+    internal func trackDeliveredPushEvents(_ source: UserDefaults) {
+        guard let array = source.array(forKey: Constants.General.deliveredPushEventUserDefaultsKey) else {
+            Exponea.logger.log(.verbose, message: "No delivered push events to track in shared app group.")
+            return
+        }
+        guard let dataArray = array as? [Data] else {
+            Exponea.logger.log(.warning, message: "Delivered push events present in shared group but incorrect type.")
+            return
+        }
+        // Process notification events
+        for each in dataArray {
+            guard let notificationEvent = EventTrackingObject.deserialize(from: each) else {
+                Exponea.logger.log(.warning, message: "Cannot deserialize stored delivered push event")
+                continue
+            }
+            trackingManager.trackDeliveredPushEvent(notificationEvent)
+        }
+        // Clear after all is processed
+        source.removeObject(forKey: Constants.General.deliveredPushEventUserDefaultsKey)
     }
 
     func verifyPushStatusAndTrackPushToken() {

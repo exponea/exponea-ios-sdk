@@ -71,8 +71,9 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                 )
                 return
             }
-            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: height.height  ) {
-                self.heightCompletion?(Int(height.height))
+            let usableHeight = height.height - calculator.defaultPadding
+            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: usableHeight) {
+                self.heightCompletion?(Int(usableHeight))
                 self.prepareContentReadyState(true)
                 guard let message = self.assignedMessage else {
                     return
@@ -82,6 +83,10 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                     contentBlock: message
                 )
             }
+            Exponea.shared.telemetryManager?.report(
+                eventWithType: .showInAppMessage,
+                properties: ["messageType": InAppContentBlockType.contentBlock.type]
+            )
         }
         if !deferredLoad {
             getContent()
@@ -152,16 +157,16 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                     }
                     loadedInAppContentBlocksView.removeFromSuperview()
                     inputView.addSubview(loadedInAppContentBlocksView)
-                    loadedInAppContentBlocksView.topAnchor.constraint(equalTo: inputView.topAnchor, constant: 5).isActive = true
-                    loadedInAppContentBlocksView.leadingAnchor.constraint(equalTo: inputView.leadingAnchor, constant: 5).isActive = true
-                    loadedInAppContentBlocksView.trailingAnchor.constraint(equalTo: inputView.trailingAnchor, constant: -5).isActive = true
+                    loadedInAppContentBlocksView.topAnchor.constraint(equalTo: inputView.topAnchor).isActive = true
+                    loadedInAppContentBlocksView.leadingAnchor.constraint(equalTo: inputView.leadingAnchor).isActive = true
+                    loadedInAppContentBlocksView.trailingAnchor.constraint(equalTo: inputView.trailingAnchor).isActive = true
                     if self.height != nil {
                         self.height?.constant = height
                     } else {
                         self.height = loadedInAppContentBlocksView.heightAnchor.constraint(equalToConstant: height)
                         self.height?.isActive = true
                     }
-                    loadedInAppContentBlocksView.bottomAnchor.constraint(equalTo: inputView.bottomAnchor, constant: -5).isActive = true
+                    loadedInAppContentBlocksView.bottomAnchor.constraint(equalTo: inputView.bottomAnchor).isActive = true
                     loadedInAppContentBlocksView.sizeToFit()
                     loadedInAppContentBlocksView.layoutIfNeeded()
                     UIView.animate(withDuration: duration) {
@@ -184,13 +189,20 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
     }
 
     private func determineActionType(_ action: ActionInfo) -> InAppContentBlockActionType {
-        if action.actionUrl == "https://exponea.com/close_action" {
-            return .close
-        }
-        if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
+        switch action.actionType {
+        case .browser:
             return .browser
+        case .deeplink:
+            return .deeplink
+        case .unknown:
+            if action.actionUrl == "https://exponea.com/close_action" {
+                return .close
+            }
+            if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
+                return .browser
+            }
+            return .deeplink
         }
-        return .deeplink
     }
 
     // directly calls `contentReadyCompletion` with given contentReady flag
@@ -216,46 +228,42 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             Exponea.logger.log(.warning, message: "InAppCB: Unknown action URL: \(String(describing: actionUrl))")
             return false
         }
+        if isBlankNav(actionUrl) {
+            // on first load
+            // nothing to do, not need to continue loading
+            return false
+        }
         guard let message = assignedMessage else {
             Exponea.logger.log(.error, message: "InAppCB: Placeholder \(placeholder) has invalid state - action or message is invalid")
             behaviourCallback.onError(placeholderId: placeholder, contentBlock: nil, errorMessage: "Invalid action definition")
             // webView has to stop navigation, missing message data are internal issue
             return true
         }
-        let result = inAppContentBlocksManager.inAppContentBlockMessages.first(where: { $0.tags?.contains(webview.tag) == true })
         let webAction: WebActionManager = .init {
-            let indexOfMessage: Int = self.inAppContentBlocksManager.inAppContentBlockMessages.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfMessage].displayState
-            self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfMessage].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
-            if let message = result {
-                self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
-            }
+            InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
+            self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
             self.reload()
         } onActionCallback: { action in
-            let indexOfPlaceholder: Int = self.inAppContentBlocksManager.inAppContentBlockMessages.firstIndex(where: { $0.id == result?.id ?? "" }) ?? 0
-            let currentDisplay = self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfPlaceholder].displayState
-            self.inAppContentBlocksManager.inAppContentBlockMessages[indexOfPlaceholder].displayState = .init(displayed: currentDisplay?.displayed, interacted: Date())
+            InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
             let actionType = self.determineActionType(action)
-            if let message = result {
-                if actionType == .close {
-                    self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
-                } else {
-                    self.behaviourCallback.onActionClicked(
-                        placeholderId: self.placeholder,
-                        contentBlock: message,
-                        action: .init(
-                            name: action.buttonText,
-                            url: action.actionUrl,
-                            type: actionType
-                        )
+            if actionType == .close {
+                self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
+            } else {
+                self.behaviourCallback.onActionClicked(
+                    placeholderId: self.placeholder,
+                    contentBlock: message,
+                    action: .init(
+                        name: action.buttonText,
+                        url: action.actionUrl,
+                        type: actionType
                     )
-                }
+                )
             }
             self.reload()
         } onErrorCallback: { error in
             Exponea.logger.log(.error, message: "WebActionManager error \(error.localizedDescription)")
         }
-        webAction.htmlPayload = result?.personalizedMessage?.htmlPayload
+        webAction.htmlPayload = message.normalizedResult ?? message.personalizedMessage?.htmlPayload 
         let handled = webAction.handleActionClick(actionUrl)
         if handled {
             Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has been handled")
@@ -263,5 +271,9 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has not been handled, continue")
         }
         return handled
+    }
+
+    private func isBlankNav(_ url: URL?) -> Bool {
+        url?.absoluteString == "about:blank"
     }
 }

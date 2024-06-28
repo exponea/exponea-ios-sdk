@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "ExponeaSDK"
-  s.version      = "2.21.3"
+  s.version      = "2.27.0"
   s.summary      = "Exponea SDK used to track and fetch data from Exponea Experience Cloud."
 
   # This description is used to generate tags and improve search results.
@@ -30,6 +30,7 @@ Pod::Spec.new do |s|
                    DESC
 
   s.homepage     = "https://github.com/exponea/exponea-ios-sdk"
+  s.readme       = "https://github.com/exponea/exponea-ios-sdk/blob/main/README.md"
 
   # ―――  Spec License  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
@@ -58,8 +59,8 @@ Pod::Spec.new do |s|
   #  the deployment target. You can optionally include the target after the platform.
   #
 
-  s.platform     = :ios, "11.0"
-  s.swift_versions = ['4.2.0', '5.0', '5.6.1', '5.7']
+  s.platform     = :ios, "13.0"
+  s.swift_versions = ['4.2.0', '5.0', '5.6.1', '5.7', '5.8', '5.8.1', '5.9', '5.10']
 
   # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
@@ -85,8 +86,9 @@ Pod::Spec.new do |s|
     "ExponeaSDK/ExponeaSDKObjC/objc_tryCatch.h",
     "ExponeaSDK/ExponeaSDKObjC/objc_tryCatch.m",
   ]
+  s.resource_bundles = {'ExponeaSDK' => ['ExponeaSDK/ExponeaSDK/Supporting Files/PrivacyInfo.xcprivacy']}
   s.exclude_files = "ExponeaSDK/ExponeaSDK-Notifications/**/*"
   s.resources = ["ExponeaSDK/ExponeaSDK/Classes/Database/*.xcdatamodeld"]
   s.dependency 'SwiftSoup', '2.6.1'
-
+  
 end

@@ -77,6 +77,7 @@ public class ExponeaInternal: ExponeaType {
 
     internal var telemetryManager: TelemetryManager?
     public var inAppContentBlocksManager: InAppContentBlocksManagerType?
+    public var segmentationManager: SegmentationManagerType?
 
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
@@ -190,7 +191,7 @@ public class ExponeaInternal: ExponeaType {
     internal var nsExceptionRaised: Bool = false
 
     internal var pushNotificationSelfCheck: PushNotificationSelfCheck?
-    
+
     internal lazy var afterInit: ExpoInitManagerType = ExpoInitManager(sdk: self)
     /// To help developers with integration, we can automatically check push notification setup
     /// when application is started in debug mode.
@@ -200,7 +201,7 @@ public class ExponeaInternal: ExponeaType {
     public var checkPushSetup: Bool = false
 
     public var appInboxProvider: AppInboxProvider = DefaultAppInboxProvider()
-    
+
     /// OperationQueue that is used upon SDK initialization
     /// This queue allows only 1 max concurrent operation
     internal lazy var initializedQueue: OperationQueue = {
@@ -210,8 +211,11 @@ public class ExponeaInternal: ExponeaType {
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
-
     
+    internal lazy var inAppContentBlockStatusStore: InAppContentBlockDisplayStatusStore = {
+        return InAppContentBlockDisplayStatusStore(userDefaults: userDefaults)
+    }()
+
     // MARK: - Init -
 
     /// The initialiser is internal, so that only the singleton can exist when used in production.
@@ -238,6 +242,8 @@ public class ExponeaInternal: ExponeaType {
     private func initialize(with configuration: Configuration) {
         let exception = objc_tryCatch {
             do {
+                self.segmentationManager = SegmentationManager.shared
+
                 let database = try DatabaseManager()
                 if !Exponea.isBeingTested {
                     telemetryManager = TelemetryManager(
@@ -260,10 +266,8 @@ public class ExponeaInternal: ExponeaType {
                     repository: repository,
                     customerIdentifiedHandler: { [weak self] in
                         // reload in-app messages once customer identification is flushed - user may have been merged
-                        guard let inAppMessagesManager = self?.inAppMessagesManager,
-                              let trackingManager = self?.trackingManager,
-                              let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
-                        inAppMessagesManager.preload(for: trackingManager.customerIds)
+                        guard let trackingManager = self?.trackingManager,
+                                                let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
                         if let placeholders = configuration.inAppContentBlocksPlaceholders {
                             inAppContentBlocksManager.loadInAppContentBlockMessages {
                                 inAppContentBlocksManager.prefetchPlaceholdersWithIds(ids: placeholders)
@@ -277,19 +281,30 @@ public class ExponeaInternal: ExponeaType {
                     repository: repository,
                     database: database,
                     flushingManager: flushingManager,
+                    inAppMessageManager: inAppMessagesManager,
+                    trackManagerInitializator: { trackingManager in
+                        let trackingConsentManager = TrackingConsentManager(
+                            trackingManager: trackingManager
+                        )
+                        self.trackingConsentManager = trackingConsentManager
+                        let inAppMessagesManager = InAppMessagesManager(
+                           repository: repository,
+                           displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
+                           trackingConsentManager: trackingConsentManager
+                        )
+                        self.inAppMessagesManager = inAppMessagesManager
+                    },
                     userDefaults: userDefaults,
                     onEventCallback: { type, event in
-                        self.inAppMessagesManager?.onEventOccurred(of: type, for: event)
+                        self.inAppMessagesManager?.onEventOccurred(of: type, for: event, triggerCompletion: nil)
                         self.appInboxManager?.onEventOccurred(of: type, for: event)
+                        if case .immediate = Exponea.shared.flushingMode {
+                            self.segmentationManager?.processTriggeredBy(type: .identify)
+                        }
                     }
                 )
 
                 self.trackingManager = trackingManager
-
-                let trackingConsentManager = TrackingConsentManager(
-                    trackingManager: trackingManager
-                )
-                self.trackingConsentManager = trackingConsentManager
 
                 self.appInboxManager = AppInboxManager(
                     repository: repository,
@@ -297,28 +312,22 @@ public class ExponeaInternal: ExponeaType {
                     database: database
                 )
 
-                let inAppMessagesManager = InAppMessagesManager(
-                   repository: repository,
-                   displayStatusStore: InAppMessageDisplayStatusStore(userDefaults: userDefaults),
-                   trackingConsentManager: trackingConsentManager
-                )
-                self.inAppMessagesManager = inAppMessagesManager
-
                 processSavedCampaignData()
                 configuration.saveToUserDefaults()
-                
-                onMain {
-                    self.inAppContentBlocksManager = InAppContentBlocksManager.manager
-                    self.inAppContentBlocksManager?.initBlocker()
-                    self.inAppContentBlocksManager?.loadInAppContentBlockMessages { [weak self] in
-                        self?.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: configuration.inAppContentBlocksPlaceholders ?? [])
-                    }
+
+                self.inAppContentBlocksManager = InAppContentBlocksManager.manager
+                self.inAppContentBlocksManager?.initBlocker()
+                self.inAppContentBlocksManager?.loadInAppContentBlockMessages { [weak self] in
+                    self?.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: configuration.inAppContentBlocksPlaceholders ?? [])
                 }
-                
+
                 if isDebugModeEnabled {
                     VersionChecker(repository: repository).warnIfNotLatestSDKVersion()
                 }
-                                    
+
+                self.afterInit.doActionAfterExponeaInit {
+                    SegmentationManager.shared.processTriggeredBy(type: .`init`)
+                }
             } catch {
                 telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
                 // Failing gracefully, if setup failed
@@ -410,7 +419,7 @@ internal extension ExponeaInternal {
             try self.afterInit.doActionAfterExponeaInit(closure)
         }, errorHandler: errorHandler)
     }
-    
+
     func logOnException(_ closure: @escaping () throws -> Void, errorHandler: ((Error) -> Void)?) {
         if nsExceptionRaised {
             Exponea.logger.log(.error, message: ExponeaError.nsExceptionInconsistency.localizedDescription)
@@ -443,9 +452,9 @@ internal extension ExponeaInternal {
 // MARK: - Public -
 
 public extension ExponeaInternal {
-    
+
     // MARK: - Configure -
-    
+
     var isConfigured: Bool {
         return configuration != nil
         && repository != nil
@@ -484,7 +493,7 @@ public extension ExponeaInternal {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
         }
     }
-    
+
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
     ///
     /// - Parameters:
@@ -505,7 +514,7 @@ public extension ExponeaInternal {
             doTaskConfiguration(plistName: plistName)
         }
     }
-    
+
     private func doTaskConfiguration(plistName: String) {
         do {
             let configuration = try Configuration(plistName: plistName)
@@ -518,19 +527,17 @@ public extension ExponeaInternal {
                 """)
         }
     }
-    
-    
+
     func configure(with configuration: Configuration) {
         self.configuration = configuration
         afterInit.setStatus(status: .configured)
     }
-    
+
     func onInitSucceeded(callback completion: @escaping (() -> Void)) -> Self {
         onInitSucceededCallBack = completion
         return self
     }
-    
-    
+
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
     /// you to track events to multiple projects, even the same event to more project at once.
     ///
@@ -566,6 +573,34 @@ public extension ExponeaInternal {
             self.afterInit.setStatus(status: .configured)
         } catch {
             Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
+        }
+    }
+
+    @objc
+    func openAppInboxList(sender: UIButton!) {
+        onMain {
+            let window = UIApplication.shared.keyWindow
+            guard let topViewController = InAppMessagePresenter.getTopViewController(window: window) else {
+                Exponea.logger.log(.error, message: "Unable to show AppInbox list - no view controller")
+                return
+            }
+            let listView = Exponea.shared.appInboxProvider.getAppInboxListViewController()
+            let naviController = UINavigationController(rootViewController: listView)
+            naviController.modalPresentationStyle = .formSheet
+            topViewController.present(naviController, animated: true)
+        }
+    }
+
+    func getSegments(category: SegmentCategory, successCallback: @escaping TypeBlock<[SegmentDTO]>) {
+        var callback: SegmentCallbackData?
+        callback = .init(category: category, isIncludeFirstLoad: true) { data in
+            successCallback(data)
+            if let callback {
+                self.segmentationManager?.removeCallback(callbackData: callback)
+            }
+        }
+        if let callback {
+            segmentationManager?.addCallback(callbackData: callback)
         }
     }
 }

@@ -61,7 +61,7 @@ extension ServerRepository: FetchRepository {
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
-    
+
     func fetchAppInbox(
         for customerIds: [String: String],
         with syncToken: String?,
@@ -102,7 +102,7 @@ extension ServerRepository: FetchRepository {
             .dataTask(with: request, completionHandler: router.handler(with: completion))
             .resume()
     }
-    
+
     func personalizedInAppContentBlocks(
         customerIds: [String: String],
         inAppContentBlocksIds: [String],
@@ -112,6 +112,31 @@ extension ServerRepository: FetchRepository {
         let request = router.prepareRequest(
             parameters: InAppContentBlocksRequest(messageIds: inAppContentBlocksIds),
             customerIds: customerIds
+        )
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
+
+    func getSegmentations(
+        cookie: String,
+        completion: @escaping TypeBlock<Result<SegmentDataDTO>>
+    ) {
+        let router = RequestFactory(exponeaProject: configuration.mutualExponeaProject, route: .segmentation(cookie: cookie))
+        let request = router.prepareRequest()
+        session
+            .dataTask(with: request, completionHandler: router.handler(with: completion))
+            .resume()
+    }
+
+    func getLinkIds(
+        cookie: String,
+        externalIds: [String: String],
+        completion: @escaping TypeBlock<Result<SegmentDataDTO>>
+    ) {
+        let router = RequestFactory(exponeaProject: configuration.mutualExponeaProject, route: .linkIds(cookie: cookie))
+        let request = router.prepareRequest(
+            parameters: LinkIdsRequest(externalIds: externalIds)
         )
         session
             .dataTask(with: request, completionHandler: router.handler(with: completion))

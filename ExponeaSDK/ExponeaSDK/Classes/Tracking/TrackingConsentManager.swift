@@ -153,7 +153,7 @@ class TrackingConsentManager: TrackingConsentManagerType {
     }
 
     func trackAppInboxClick(message: MessageItem, buttonText: String?, buttonLink: String?, mode: MODE) {
-        guard let customerId = message.customerIds["cookie"] else {
+        guard !message.customerIds.isEmpty, let _ = message.customerIds["cookie"] else {
             Exponea.logger.log(.error, message: "AppInbox message has no customerId")
             return
         }
@@ -178,10 +178,10 @@ class TrackingConsentManager: TrackingConsentManagerType {
                 .appInbox,
                 with: [
                     .properties(eventData),
-                    .timestamp(Date().timeIntervalSince1970)
+                    .timestamp(Date().timeIntervalSince1970),
+                    .customerIds(message.customerIds)
                 ],
-                trackingAllowed: trackingAllowed,
-                for: customerId
+                trackingAllowed: trackingAllowed
             )
         } catch {
             Exponea.logger.log(.error, message: "Error tracking AppInbox clicked: \(error.localizedDescription)")
@@ -189,8 +189,8 @@ class TrackingConsentManager: TrackingConsentManagerType {
     }
 
     func trackAppInboxOpened(message: MessageItem, mode: MODE) {
-        guard let customerId = message.customerIds["cookie"] else {
-            Exponea.logger.log(.error, message: "AppInbox message contains no customerId")
+        guard !message.customerIds.isEmpty, let _ = message.customerIds["cookie"] else {
+            Exponea.logger.log(.error, message: "AppInbox message has no customerId")
             return
         }
         var trackingAllowed = true
@@ -209,10 +209,10 @@ class TrackingConsentManager: TrackingConsentManagerType {
                 .appInbox,
                 with: [
                     .properties(eventData),
-                    .timestamp(Date().timeIntervalSince1970)
+                    .timestamp(Date().timeIntervalSince1970),
+                    .customerIds(message.customerIds)
                 ],
-                trackingAllowed: trackingAllowed,
-                for: customerId
+                trackingAllowed: trackingAllowed
             )
         } catch {
             Exponea.logger.log(.error, message: "Error tracking AppInbox opened: \(error.localizedDescription)")

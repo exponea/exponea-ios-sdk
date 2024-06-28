@@ -27,6 +27,8 @@ class InAppMessagesManagerSpec: QuickSpec {
         var urlOpener: MockUrlOpener!
         var trackingConsentManager: TrackingConsentManagerType!
         var trackingManager: MockTrackingManager!
+        let customer1 = ["fake": "user"]
+        let event: DataType = .customerIds(Exponea.shared.trackingManager?.customerIds ?? customer1)
 
         beforeEach {
             cache = MockInAppMessagesCache()
@@ -38,9 +40,7 @@ class InAppMessagesManagerSpec: QuickSpec {
             displayStore = InAppMessageDisplayStatusStore(userDefaults: MockUserDefaults())
             urlOpener = MockUrlOpener()
             trackingManager = MockTrackingManager(
-                onEventCallback: { type, event in
-                    manager.onEventOccurred(of: type, for: event)
-                }
+                onEventCallback: { _, _ in }
             )
             trackingConsentManager = TrackingConsentManager(
                 trackingManager: trackingManager
@@ -53,45 +53,86 @@ class InAppMessagesManagerSpec: QuickSpec {
                 urlOpener: urlOpener,
                 trackingConsentManager: trackingConsentManager
             )
+            trackingManager.inAppManager = manager
+        }
+
+        describe("Load") {
+            it("Try to append pending request during identify customer") {
+                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                expect(manager.pendingShowRequests.count).to(equal(0))
+                manager.addToPendingShowRequest(event: [.eventType("session_start"), .customerIds(customer1)])
+                manager.addToPendingShowRequest(event: [.eventType("session_start"), .customerIds(customer1)])
+                expect(manager.pendingShowRequests.count).to(equal(1))
+                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                expect(manager.pendingShowRequests.count).to(equal(0))
+            }
+            it("Check if pendingShowRequests are removed after identify customer") {
+                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                expect(manager.pendingShowRequests.count).to(equal(0))
+                manager.onEventOccurred(of: .sessionStart, for: [.customerIds(customer1)])
+                manager.onEventOccurred(of: .sessionStart, for: [.customerIds(customer1)])
+                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                expect(manager.pendingShowRequests.count).to(equal(0))
+            }
+            it("Load in appm essages and try all statuses") {
+                Exponea.shared.flushingMode = .manual
+                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                var successOperations = 0
+                waitUntil(timeout: .seconds(3)) { done in
+                    manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)]) { state in
+                        switch state {
+                        case .identifyFetch:
+                            successOperations += 1
+                            done()
+                        case .shouldReloadFetch: break
+                        case .storedFetch: break
+                        }
+                    }
+                }
+                waitUntil(timeout: .seconds(3)) { done in
+                    manager.onEventOccurred(of: .sessionStart, for: [.customerIds(customer1), .timestamp(Date().timeIntervalSince1970)]) { state in
+                        switch state {
+                        case .identifyFetch: break
+                        case .shouldReloadFetch:
+                            successOperations += 1
+                            done()
+                        case .storedFetch: break
+                        }
+                    }
+                }
+                waitUntil(timeout: .seconds(3)) { done in
+                    manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)]) { state in
+                        switch state {
+                        case .identifyFetch:
+                            successOperations += 1
+                            done()
+                        case .shouldReloadFetch: break
+                        case .storedFetch: break
+                        }
+                    }
+                }
+                waitUntil(timeout: .seconds(3)) { done in
+                    // InApp cache is 0.0, so we need to add timestamp as 0 to get shouldReload false
+                    let nulDate = Date().addingTimeInterval(-Date().timeIntervalSince1970).timeIntervalSince1970
+                    manager.onEventOccurred(of: .customEvent, for: [.customerIds(customer1), .timestamp(nulDate)]) { state in
+                        switch state {
+                        case .identifyFetch: break
+                        case .shouldReloadFetch: break
+                        case .storedFetch:
+                            successOperations += 1
+                            done()
+                        }
+                    }
+                }
+                expect(successOperations).to(equal(4))
+            }
         }
 
         it("should preload messages") {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
-            expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
-        }
-
-        it("should preload messages on session start after timeout") {
-            repository.fetchInAppMessagesResult = Result.success(
-                InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
-            )
-            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
-            expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
-            repository.fetchInAppMessagesResult = Result.success(
-                InAppMessagesResponse(success: true, data: [])
-            )
-            cache.setInAppMessagesTimestamp(10000)
-            waitUntil(timeout: .seconds(3)) { done in
-                manager.sessionDidStart(at: Date(timeIntervalSince1970: 12345), for: [:]) { done() }
-            }
-            expect(cache.getInAppMessages()).to(equal([]))
-        }
-
-        it("should not preload messages on session start during timeout") {
-            repository.fetchInAppMessagesResult = Result.success(
-                InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
-            )
-            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
-            expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
-            repository.fetchInAppMessagesResult = Result.success(
-                InAppMessagesResponse(success: true, data: [])
-            )
-            cache.setInAppMessagesTimestamp(12300)
-            waitUntil(timeout: .seconds(3)) { done in
-                manager.sessionDidStart(at: Date(timeIntervalSince1970: 12345), for: [:]) { done() }
-            }
+            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
         }
 
@@ -99,9 +140,9 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
             repository.fetchInAppMessagesResult = Result.failure(ExponeaError.unknownError(""))
-            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
         }
 
@@ -109,16 +150,16 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage(id: "new-id")])
             )
-            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:]) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage(id: "new-id")]))
         }
 
         it("should get nil in-app message on cold start") {
-            expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
+            expect(manager.loadMessageToShow(for: [.eventType("session_start")])).to(beNil())
         }
 
         it("should get in-app messages from cache if image is needed and precached") {
@@ -127,18 +168,13 @@ class InAppMessagesManagerSpec: QuickSpec {
                 at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
-            expect(manager.getInAppMessage(for: [.eventType("session_start")]))
+            expect(manager.loadMessageToShow(for: [.eventType("session_start")]))
                 .to(equal(SampleInAppMessage.getSampleInAppMessage()))
         }
 
         it("should not get in-app messages from cache if image is needed and not precached") {
-            cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
-            expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
-        }
-
-        it("should not get in-app messages from cache if image is needed and not precached") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage(imageUrl: "")])
-            expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+            expect(manager.loadMessageToShow(for: [.eventType("session_start")])).notTo(beNil())
         }
 
         context("filtering messages") {
@@ -152,9 +188,9 @@ class InAppMessagesManagerSpec: QuickSpec {
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
-                        expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                        expect(manager.loadMessageToShow(for: [.eventType("session_start")])).notTo(beNil())
                     } else {
-                        expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
+                        expect(manager.loadMessageToShow(for: [.eventType("session_start")])).to(beNil())
                     }
                 }
                 let future = Date().addingTimeInterval(100)
@@ -177,9 +213,9 @@ class InAppMessagesManagerSpec: QuickSpec {
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
-                        expect(manager.getInAppMessage(for: data)).notTo(beNil())
+                        expect(manager.loadMessageToShow(for: data)).notTo(beNil())
                     } else {
-                        expect(manager.getInAppMessage(for: data)).to(beNil())
+                        expect(manager.loadMessageToShow(for: data)).to(beNil())
                     }
                 }
                 runTest(EventFilter(eventType: "session_start", filter: []), [.eventType("session_start")], true)
@@ -209,7 +245,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             context("with frequency filter") {
                 beforeEach {
-                    waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
+                    waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
                 }
                 let createMessage = { (frequency: InAppMessageFrequency) in
                     let message = SampleInAppMessage.getSampleInAppMessage(frequency: frequency)
@@ -218,32 +254,30 @@ class InAppMessagesManagerSpec: QuickSpec {
                 }
                 it("should apply always filter") {
                     createMessage(.always)
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    expect(manager.loadMessageToShow(for: [.eventType("session_start")])).notTo(beNil())
+                    expect(manager.loadMessageToShow(for: [.eventType("session_start")])).notTo(beNil())
                 }
                 it("should apply only_once filter") {
                     createMessage(.onlyOnce)
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    expect(manager.loadMessageToShow(for: [.eventType("session_start")])).notTo(beNil())
                     waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
+                    expect(manager.loadMessageToShow(for: [.eventType("session_start")])).to(beNil())
                 }
                 it("should apply until_visitor_interacts filter") {
                     createMessage(.untilVisitorInteracts)
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    expect(manager.loadMessageToShow(for: [.eventType("session_start")])).notTo(beNil())
                     waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    expect(manager.loadMessageToShow(for: [.eventType("session_start")])).notTo(beNil())
                     presenter.presentedMessages[0].actionCallback(
                         SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
                     )
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
+                    expect(manager.loadMessageToShow(for: [.eventType("session_start")])).to(beNil())
                 }
                 it("should apply once_per_visit filter") {
                     createMessage(.oncePerVisit)
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    expect(manager.loadMessageToShow(for: [.eventType("session_start")])).notTo(beNil())
                     waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).to(beNil())
-                    manager.sessionDidStart(at: Date(), for: [:], completion: nil)
-                    expect(manager.getInAppMessage(for: [.eventType("session_start")])).notTo(beNil())
+                    expect(manager.loadMessageToShow(for: [.eventType("session_start")])).to(beNil())
                 }
             }
 
@@ -254,7 +288,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                         cache.saveImageData(at: $0.payload!.imageUrl!, data: "mock data".data(using: .utf8)!)
                     }
                     expect(
-                        manager.getInAppMessages(for: [.eventType("session_start")], requireImage: true)
+                        manager.loadMessagesToShow(for: [.eventType("session_start")])
                     ).to(equal(expectedMessages))
                 }
                 runTest(
@@ -295,7 +329,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         it("should show dialog") {
-            waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
                 at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
@@ -310,7 +344,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         it("should not show dialog without messages") {
-            waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
             cache.saveInAppMessages(inAppMessages: [])
             waitUntil(timeout: .seconds(5)) { done in
                 manager.showInAppMessage(for: [.eventType("session_start")]) { viewController in
@@ -322,7 +356,7 @@ class InAppMessagesManagerSpec: QuickSpec {
 
         context("tracking events") {
             beforeEach {
-                waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
+                waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
                 trackingManager.clearCalls()
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
@@ -352,6 +386,12 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
 
             it("should track dismiss event when closing message") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: true,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
@@ -367,8 +407,14 @@ class InAppMessagesManagerSpec: QuickSpec {
                     )
                 ]))
             }
-
+            
             it("should track action event when action button pressed on message") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: true,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
@@ -385,6 +431,16 @@ class InAppMessagesManagerSpec: QuickSpec {
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
                 ]))
+            }
+
+            it("should show in-app message after preload is complete") {
+                cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
+                cache.saveImageData(
+                    at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
+                    data: "mock data".data(using: .utf8)!
+                )
+                manager.onEventOccurred(of: .sessionStart, for: [.eventType("session_start")])
+                expect(presenter.presentedMessages.count).to(equal(1))
             }
 
             it("should not track dismiss event when delegate is setup without tracking") {
@@ -508,11 +564,105 @@ class InAppMessagesManagerSpec: QuickSpec {
                 ]))
                 expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
             }
+
+            it("should track show event when delegate is setup without tracking") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")]
+                ) { _ in done() } }
+                expect(trackingManager.trackedInappEvents).to(equal([
+                    MockTrackingManager.CallData(
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageShownCalled).to(equal(true))
+            }
+            
+            it("should track show event when delegate is setup with custom behaviour") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: true,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
+                waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
+                    for: [.eventType("session_start")]
+                ) { _ in done() } }
+                expect(trackingManager.trackedInappEvents).to(equal([
+                    MockTrackingManager.CallData(
+                        event: .show,
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageShownCalled).to(equal(true))
+            }
+            
+            it("should track error event when delegate is setup without tracking") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: false,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
+                var alreadyDone = false
+                waitUntil(timeout: .seconds(5)) { done in
+                    manager.showInAppMessage(for: [.eventType("session_start")]) { _ in
+                        if alreadyDone {
+                            return
+                        }
+                        alreadyDone = true
+                        done()
+                    }
+                }
+                trackingManager.trackedInappEvents.removeAll()
+                presenter.presentedMessages[0].presentedCallback!(nil, "Error occured")
+                expect(trackingManager.trackedInappEvents).to(equal([
+                    MockTrackingManager.CallData(
+                        event: .error(message: "Error occured"),
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageErrorCalled).to(equal(true))
+            }
+            
+            it("should track error event when delegate is setup with custom behaviour") {
+                let inAppDelegate = InAppMessageDelegate(
+                    overrideDefaultBehavior: true,
+                    trackActions: false,
+                    trackingConsentManager: trackingConsentManager
+                )
+                Exponea.shared.inAppMessagesDelegate = inAppDelegate
+                var alreadyDone = false
+                waitUntil(timeout: .seconds(5)) { done in
+                    manager.showInAppMessage(for: [.eventType("session_start")]) { _ in
+                        if alreadyDone {
+                            return
+                        }
+                        alreadyDone = true
+                        done()
+                    }
+                }
+                trackingManager.trackedInappEvents.removeAll()
+                presenter.presentedMessages[0].presentedCallback!(nil, "Error occured")
+                expect(trackingManager.trackedInappEvents).to(equal([
+                    MockTrackingManager.CallData(
+                        event: .error(message: "Error occured"),
+                        message: SampleInAppMessage.getSampleInAppMessage()
+                    )
+                ]))
+                expect(inAppDelegate.inAppMessageErrorCalled).to(equal(true))
+            }
         }
 
         context("default action performing") {
             beforeEach {
-                waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
+                waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
                     at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
@@ -549,28 +699,11 @@ class InAppMessagesManagerSpec: QuickSpec {
             }
         }
 
-        it("should show in-app message after preload is complete") {
-            cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
-            cache.saveImageData(
-                at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
-                data: "mock data".data(using: .utf8)!
-            )
-            let delegate = MockInAppMessageTrackingDelegate()
-            let semaphore = DispatchSemaphore(value: 0) // we'll wait for the message to be shown
-            manager.showInAppMessage(for: [.eventType("session_start")]) { _ in
-                semaphore.signal()
-            }
-            expect(presenter.presentedMessages.count).to(equal(0))
-            waitUntil(timeout: .seconds(3)) { done in manager.preload(for: [:], completion: done) }
-            _ = semaphore.wait(timeout: .now() + 1)
-            expect(presenter.presentedMessages.count).to(equal(1))
-        }
-
         it("should track control group message without showing it") {
-            waitUntil(timeout: .seconds(5)) { done in manager.preload(for: [:], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
             trackingManager.clearCalls()
             let message = SampleInAppMessage.getSampleInAppMessage(
-                payload: nil,
+                payload: SampleInAppMessage.getSampleInAppMessage().payload!,
                 variantName: "Control group",
                 variantId: -1)
             cache.saveInAppMessages(inAppMessages: [message])
@@ -583,35 +716,6 @@ class InAppMessagesManagerSpec: QuickSpec {
                     message: message
                 )
             ]))
-            expect(presenter.presentedMessages.count).to(equal(0))
-        }
-
-        it("should not download same image multiple times") {
-            let message = SampleInAppMessage.getSampleInAppMessage()
-            expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(false))
-            expect(cache.getImageDownloadCount()).to(equal(0))
-            waitUntil(timeout: .seconds(5)) { done in manager.preloadImages(inAppMessages: [message], completion: done) }
-            expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(true))
-            expect(cache.getImageDownloadCount()).to(equal(1))
-            waitUntil(timeout: .seconds(5)) { done in manager.preloadImages(inAppMessages: [message], completion: done) }
-            expect(cache.getImageDownloadCount()).to(equal(1))
-        }
-
-        it("should download image with different URL") {
-            let message = SampleInAppMessage.getSampleInAppMessage()
-            expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(false))
-            expect(cache.getImageDownloadCount()).to(equal(0))
-            waitUntil(timeout: .seconds(5)) { done in manager.preloadImages(inAppMessages: [message], completion: done) }
-            expect(cache.hasImageData(at: (message.payload?.imageUrl)!)).to(equal(true))
-            expect(cache.getImageDownloadCount()).to(equal(1))
-
-            let messageWithDifferentUrl = SampleInAppMessage.getSampleInAppMessage(
-                imageUrl: "https://storage.googleapis.com/exp-app-storage/" +
-                "f02807dc-6b57-11e9-8cc8-0a580a203636/media/original/8a32cbd6-43a1-11ec-8188-8a3224482d07"
-            )
-            waitUntil(timeout: .seconds(5)) { done in manager.preloadImages(inAppMessages: [messageWithDifferentUrl], completion: done) }
-            expect(cache.hasImageData(at: (messageWithDifferentUrl.payload?.imageUrl)!)).to(equal(true))
-            expect(cache.getImageDownloadCount()).to(equal(2))
         }
     }
 }

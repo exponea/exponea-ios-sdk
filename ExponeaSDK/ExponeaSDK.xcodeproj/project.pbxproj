@@ -205,9 +205,22 @@
 		05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */; };
 		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
+		313E30682C22B21200375D4B /* InAppContentBlockCarouselViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313E30672C22B21200375D4B /* InAppContentBlockCarouselViewController.swift */; };
+		314CF9272BD8F2820000EFD9 /* SegmentationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314CF9262BD8F2820000EFD9 /* SegmentationSpec.swift */; };
+		315598082C09CAE500FBED42 /* CarouselInAppContentBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315598072C09CAE500FBED42 /* CarouselInAppContentBlockView.swift */; };
+		315DCDFF2B6A67E9004BD7A7 /* beefree-actiontype.png in Resources */ = {isa = PBXBuildFile; fileRef = 315DCDFE2B6A67E9004BD7A7 /* beefree-actiontype.png */; };
+		317536862BD27D910062A5E5 /* SegmentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317536852BD27D910062A5E5 /* SegmentDTO.swift */; };
+		317536882BD27DEB0062A5E5 /* SegmentCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317536872BD27DEB0062A5E5 /* SegmentCategory.swift */; };
+		3175368A2BD29F6E0062A5E5 /* EmptyDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317536892BD29F6E0062A5E5 /* EmptyDTO.swift */; };
+		3175368C2BD2AFF70062A5E5 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3175368B2BD2AFF70062A5E5 /* Debouncer.swift */; };
 		318B552A2A80E52B00934902 /* DeeplinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B55292A80E52B00934902 /* DeeplinkManager.swift */; };
+		319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */; };
 		31C7B4242A822848001BA5E2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4232A822848001BA5E2 /* Coordinator.swift */; };
 		31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */; };
+		31CC0B742BD2519000608057 /* SegmentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B732BD2519000608057 /* SegmentationManager.swift */; };
+		31CC0B772BD251E200608057 /* SegmentationDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B762BD251E200608057 /* SegmentationDataProvider.swift */; };
+		31CC0B792BD255D300608057 /* SegmentationRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B782BD255D300608057 /* SegmentationRequests.swift */; };
+		31CC0B7B2BD2562000608057 /* LinkIdsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B7A2BD2562000608057 /* LinkIdsRequest.swift */; };
 		31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */; };
 		31CFEF6F2A66940E005402E5 /* SequenceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6E2A66940E005402E5 /* SequenceTest.swift */; };
 		31E9CBA22AE9494B00A333C8 /* URL+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E9CBA12AE9494B00A333C8 /* URL+Init.swift */; };
@@ -247,7 +260,7 @@
 		55130C4B28DDCA6800B4FE77 /* TrackingConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4A28DDCA6800B4FE77 /* TrackingConsentManager.swift */; };
 		55130C4F28E3C50D00B4FE77 /* GdprTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4E28E3C50D00B4FE77 /* GdprTrackingSpec.swift */; };
 		55130C5128E425D600B4FE77 /* TrackConsentManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */; };
-		5524BD632B2B5BA0005CF699 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
+		551F651A2BAAD0FC0072B980 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
 		5524BD662B2B5DBE005CF699 /* ExponeaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9E20BB530000F1031F /* ExponeaType.swift */; };
 		552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */; };
 		552772CB28EDAF3A000ACFD5 /* AppInboxListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */; };
@@ -255,6 +268,7 @@
 		55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D482953051E001D95B8 /* AppInboxParser.swift */; };
 		55391D4B295342C7001D95B8 /* AppInboxManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */; };
 		55391D4D295497A7001D95B8 /* AppInboxProviderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D4C295497A7001D95B8 /* AppInboxProviderSpec.swift */; };
+		555A10E82B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555A10E72B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift */; };
 		5567C090290808F600318E68 /* MessageItemContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C08F290808F600318E68 /* MessageItemContent.swift */; };
 		5567C092290809EB00318E68 /* MessageItemAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C091290809EB00318E68 /* MessageItemAction.swift */; };
 		5567C0942909196C00318E68 /* AppInboxResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C0932909196C00318E68 /* AppInboxResponse.swift */; };
@@ -274,6 +288,7 @@
 		556887562A176B0200498B40 /* NSDictionary+getSafely.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556887552A176B0200498B40 /* NSDictionary+getSafely.swift */; };
 		556DBCBC28F03238009E3154 /* MessageItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556DBCBB28F03238009E3154 /* MessageItemCell.swift */; };
 		55734B022A5E9B9400F24427 /* RegExpExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55734B012A5E9B9400F24427 /* RegExpExtensions.swift */; };
+		557856032BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557856022BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift */; };
 		558453A1297E8D26000707E4 /* AppInboxTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558453A0297E8D26000707E4 /* AppInboxTrackingSpec.swift */; };
 		558DFADB2B2B350F00177800 /* ExtensionUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D0543D2B29BE2200BC773A /* ExtensionUtils.swift */; };
 		558DFADD2B2B442400177800 /* ExampleInAppContentBlockCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558DFADC2B2B442400177800 /* ExampleInAppContentBlockCallback.swift */; };
@@ -709,9 +724,22 @@
 		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		313E30672C22B21200375D4B /* InAppContentBlockCarouselViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockCarouselViewController.swift; sourceTree = "<group>"; };
+		314CF9262BD8F2820000EFD9 /* SegmentationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationSpec.swift; sourceTree = "<group>"; };
+		315598072C09CAE500FBED42 /* CarouselInAppContentBlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselInAppContentBlockView.swift; sourceTree = "<group>"; };
+		315DCDFE2B6A67E9004BD7A7 /* beefree-actiontype.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "beefree-actiontype.png"; sourceTree = "<group>"; };
+		317536852BD27D910062A5E5 /* SegmentDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentDTO.swift; sourceTree = "<group>"; };
+		317536872BD27DEB0062A5E5 /* SegmentCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentCategory.swift; sourceTree = "<group>"; };
+		317536892BD29F6E0062A5E5 /* EmptyDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyDTO.swift; sourceTree = "<group>"; };
+		3175368B2BD2AFF70062A5E5 /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		318B55292A80E52B00934902 /* DeeplinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeeplinkManager.swift; sourceTree = "<group>"; };
+		319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationStoring.swift; sourceTree = "<group>"; };
 		31C7B4232A822848001BA5E2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaTabBarController.swift; sourceTree = "<group>"; };
+		31CC0B732BD2519000608057 /* SegmentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationManager.swift; sourceTree = "<group>"; };
+		31CC0B762BD251E200608057 /* SegmentationDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationDataProvider.swift; sourceTree = "<group>"; };
+		31CC0B782BD255D300608057 /* SegmentationRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationRequests.swift; sourceTree = "<group>"; };
+		31CC0B7A2BD2562000608057 /* LinkIdsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkIdsRequest.swift; sourceTree = "<group>"; };
 		31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+RemoveNil.swift"; sourceTree = "<group>"; };
 		31CFEF6E2A66940E005402E5 /* SequenceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceTest.swift; sourceTree = "<group>"; };
 		31E9CBA12AE9494B00A333C8 /* URL+Init.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Init.swift"; sourceTree = "<group>"; };
@@ -751,12 +779,14 @@
 		55130C4A28DDCA6800B4FE77 /* TrackingConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingConsentManager.swift; sourceTree = "<group>"; };
 		55130C4E28E3C50D00B4FE77 /* GdprTrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTrackingSpec.swift; sourceTree = "<group>"; };
 		55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackConsentManagerSpec.swift; sourceTree = "<group>"; };
+		551F65192BAAD0F60072B980 /* Build */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Build; path = ../Carthage/Build; sourceTree = "<group>"; };
 		552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ExponeaInternal+AppInbox.swift"; sourceTree = "<group>"; };
 		552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxListViewController.swift; sourceTree = "<group>"; };
 		5527979C28D98C15002B2B77 /* GdprTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTracking.swift; sourceTree = "<group>"; };
 		55391D482953051E001D95B8 /* AppInboxParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxParser.swift; sourceTree = "<group>"; };
 		55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxManagerSpec.swift; sourceTree = "<group>"; };
 		55391D4C295497A7001D95B8 /* AppInboxProviderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxProviderSpec.swift; sourceTree = "<group>"; };
+		555A10E72B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticInAppContentBlockViewSpec.swift; sourceTree = "<group>"; };
 		5567C08F290808F600318E68 /* MessageItemContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemContent.swift; sourceTree = "<group>"; };
 		5567C091290809EB00318E68 /* MessageItemAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemAction.swift; sourceTree = "<group>"; };
 		5567C0932909196C00318E68 /* AppInboxResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxResponse.swift; sourceTree = "<group>"; };
@@ -776,6 +806,7 @@
 		556887552A176B0200498B40 /* NSDictionary+getSafely.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSDictionary+getSafely.swift"; sourceTree = "<group>"; };
 		556DBCBB28F03238009E3154 /* MessageItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemCell.swift; sourceTree = "<group>"; };
 		55734B012A5E9B9400F24427 /* RegExpExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegExpExtensions.swift; sourceTree = "<group>"; };
+		557856022BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockDisplayStatusStore.swift; sourceTree = "<group>"; };
 		558453A0297E8D26000707E4 /* AppInboxTrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxTrackingSpec.swift; sourceTree = "<group>"; };
 		558DFADC2B2B442400177800 /* ExampleInAppContentBlockCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleInAppContentBlockCallback.swift; sourceTree = "<group>"; };
 		559D97072962FCF0006D4499 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
@@ -981,7 +1012,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5524BD632B2B5BA0005CF699 /* SwiftSoup.xcframework in Frameworks */,
+				551F651A2BAAD0FC0072B980 /* SwiftSoup.xcframework in Frameworks */,
 				55C08DCD2A4ED5EE000BA66A /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1046,6 +1077,7 @@
 		01EC2DA2207E3D060031BFEB /* Specs */ = {
 			isa = PBXGroup;
 			children = (
+				314CF9252BD8F2620000EFD9 /* Segmentation */,
 				55EFD790291A6C08002569FB /* AppInbox */,
 				6BA73FEE29B639F6009F92DF /* Attomicity */,
 				C09A6495212D83D700DCAC06 /* Database */,
@@ -1510,11 +1542,67 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		314CF9252BD8F2620000EFD9 /* Segmentation */ = {
+			isa = PBXGroup;
+			children = (
+				314CF9262BD8F2820000EFD9 /* SegmentationSpec.swift */,
+			);
+			path = Segmentation;
+			sourceTree = "<group>";
+		};
+		315598062C09CAD400FBED42 /* Carousel */ = {
+			isa = PBXGroup;
+			children = (
+				315598072C09CAE500FBED42 /* CarouselInAppContentBlockView.swift */,
+			);
+			path = Carousel;
+			sourceTree = "<group>";
+		};
+		317536842BD27D870062A5E5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				317536852BD27D910062A5E5 /* SegmentDTO.swift */,
+				317536872BD27DEB0062A5E5 /* SegmentCategory.swift */,
+				317536892BD29F6E0062A5E5 /* EmptyDTO.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		319FEBF22BD6DA0900E0EB11 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		31CC0B722BD2518500608057 /* Segmentation */ = {
+			isa = PBXGroup;
+			children = (
+				319FEBF22BD6DA0900E0EB11 /* Helper */,
+				317536842BD27D870062A5E5 /* Model */,
+				31CC0B752BD251D700608057 /* API */,
+				31CC0B732BD2519000608057 /* SegmentationManager.swift */,
+			);
+			path = Segmentation;
+			sourceTree = "<group>";
+		};
+		31CC0B752BD251D700608057 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				31CC0B762BD251E200608057 /* SegmentationDataProvider.swift */,
+				31CC0B782BD255D300608057 /* SegmentationRequests.swift */,
+				31CC0B7A2BD2562000608057 /* LinkIdsRequest.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
 		31EBB8402A6AC2E90003AAA5 /* InAppContentBlocks */ = {
 			isa = PBXGroup;
 			children = (
 				31EBB8412A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift */,
 				558DFADC2B2B442400177800 /* ExampleInAppContentBlockCallback.swift */,
+				313E30672C22B21200375D4B /* InAppContentBlockCarouselViewController.swift */,
 			);
 			path = InAppContentBlocks;
 			sourceTree = "<group>";
@@ -1522,6 +1610,7 @@
 		31EBB8432A6AC3020003AAA5 /* InAppContentBlocks */ = {
 			isa = PBXGroup;
 			children = (
+				315598062C09CAD400FBED42 /* Carousel */,
 				31EBB8532A6AC3020003AAA5 /* API */,
 				31EBB84A2A6AC3020003AAA5 /* Model */,
 				31EBB8472A6AC3020003AAA5 /* Protocol */,
@@ -1529,6 +1618,7 @@
 				31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */,
 				31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */,
 				31EBB8462A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift */,
+				557856022BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift */,
 			);
 			path = InAppContentBlocks;
 			sourceTree = "<group>";
@@ -1570,6 +1660,7 @@
 			isa = PBXGroup;
 			children = (
 				31EBB86A2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift */,
+				555A10E72B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift */,
 			);
 			path = InAppContentBlocks;
 			sourceTree = "<group>";
@@ -1671,6 +1762,7 @@
 		A3613BD1E2C1D4616B6A9767 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				551F65192BAAD0F60072B980 /* Build */,
 				6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */,
 				C08D53CE21B9474E00EA2C13 /* UserNotifications.framework */,
 				C08D53D021B9474E00EA2C13 /* UserNotificationsUI.framework */,
@@ -1749,6 +1841,7 @@
 		C0EA5FCD20CE95EE00660802 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				315DCDFE2B6A67E9004BD7A7 /* beefree-actiontype.png */,
 				C0F6C4E92098A1AC00834E21 /* Assets.xcassets */,
 				C0F6C4EE2098A1AC00834E21 /* Info.plist */,
 				C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */,
@@ -2141,6 +2234,7 @@
 				0580BBC6239698E60058323D /* UIColor+FromHexString.swift */,
 				CCB87B7728169C6C005DFB8E /* VersionChecker.swift */,
 				55A468CF296F154C00E62438 /* WebActionsManager.swift */,
+				3175368B2BD2AFF70062A5E5 /* Debouncer.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -2164,6 +2258,7 @@
 		F0E757EC207D023A00FE8C21 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				31CC0B722BD2518500608057 /* Segmentation */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 				552772C328ED86E0000ACFD5 /* AppInbox */,
 				01EC2DB8207E68BF0031BFEB /* Database */,
@@ -2419,12 +2514,10 @@
 					C08D53CC21B9474E00EA2C13 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
 					};
 					C0ED33A221A6FA31003649C3 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -2439,7 +2532,6 @@
 					C0F6C4DF2098A1AB00834E21 = {
 						CreatedOnToolsVersion = 9.3;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -2534,6 +2626,7 @@
 			files = (
 				55EFD79B292245A5002569FB /* Localizable.strings in Resources */,
 				C0F6C4ED2098A1AC00834E21 /* LaunchScreen.storyboard in Resources */,
+				315DCDFF2B6A67E9004BD7A7 /* beefree-actiontype.png in Resources */,
 				C03B23D421AAF34000360EE6 /* beep.wav in Resources */,
 				C0F6C4EA2098A1AC00834E21 /* Assets.xcassets in Resources */,
 				C0F6C4E82098A1AB00834E21 /* Main.storyboard in Resources */,
@@ -2729,6 +2822,7 @@
 				558DFADD2B2B442400177800 /* ExampleInAppContentBlockCallback.swift in Sources */,
 				C0F6C4E32098A1AB00834E21 /* AppDelegate.swift in Sources */,
 				31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */,
+				313E30682C22B21200375D4B /* InAppContentBlockCarouselViewController.swift in Sources */,
 				55EFD7A329225207002569FB /* ExampleAppInboxProvider.swift in Sources */,
 				C0EB5D9B20B8193200F1031F /* FlushingViewController.swift in Sources */,
 				C0F2407220BD9A5500CAF7CE /* LogViewController.swift in Sources */,
@@ -2745,6 +2839,7 @@
 			files = (
 				C0EB5D9320B811F900F1031F /* PushNotificationManager.swift in Sources */,
 				33FC6CC429A910BA001F113F /* SafeIndex.swift in Sources */,
+				31CC0B7B2BD2562000608057 /* LinkIdsRequest.swift in Sources */,
 				05D4A800247D252D00864DC1 /* PushNotificationSelfCheck.swift in Sources */,
 				556887422A1756C400498B40 /* ButtonStyle.swift in Sources */,
 				054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */,
@@ -2759,6 +2854,7 @@
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
 				05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */,
 				05BA5804250649F000E10994 /* PushOpenedData.swift in Sources */,
+				3175368C2BD2AFF70062A5E5 /* Debouncer.swift in Sources */,
 				05CDD8392391193E00C7291A /* InAppMessagesCache.swift in Sources */,
 				0591905D23EC1A550037BD88 /* EventFilterConstraint.swift in Sources */,
 				C07E420F20CA8AF700920809 /* DateFilter.swift in Sources */,
@@ -2794,6 +2890,7 @@
 				05C289332428A1480021220C /* SessionManagerType.swift in Sources */,
 				556887562A176B0200498B40 /* NSDictionary+getSafely.swift in Sources */,
 				5567C090290808F600318E68 /* MessageItemContent.swift in Sources */,
+				3175368A2BD29F6E0062A5E5 /* EmptyDTO.swift in Sources */,
 				05B78B1E2355CAFA0055077A /* NSManagedObjectWithContext.swift in Sources */,
 				C0F2406E20BC511500CAF7CE /* ExponeaInternal+Tracking.swift in Sources */,
 				5567C092290809EB00318E68 /* MessageItemAction.swift in Sources */,
@@ -2821,6 +2918,7 @@
 				55C08DCF2A5689F4000BA66A /* FileCacheType.swift in Sources */,
 				556887502A175A0900498B40 /* AppInboxListItemStyle.swift in Sources */,
 				31EBB85C2A6AC3020003AAA5 /* StaticReturnData.swift in Sources */,
+				315598082C09CAE500FBED42 /* CarouselInAppContentBlockView.swift in Sources */,
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
 				3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
@@ -2855,10 +2953,12 @@
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
 				053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */,
 				057D476723C87F0B00AEE902 /* UrlOpenerType.swift in Sources */,
+				317536882BD27DEB0062A5E5 /* SegmentCategory.swift in Sources */,
 				CCB87B7E2816A6A6005DFB8E /* GitHubReleaseResponse.swift in Sources */,
 				05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */,
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */,
+				317536862BD27D910062A5E5 /* SegmentDTO.swift in Sources */,
 				55D0543A2B230C9600BC773A /* InAppContentBlockCallbackType.swift in Sources */,
 				057E367523E0503F00DDD6C1 /* InAppMessageSlideInView.swift in Sources */,
 				33FC6CC829A912CC001F113F /* Extension+UIView.swift in Sources */,
@@ -2867,7 +2967,9 @@
 				05A6A3EB23954654008475E7 /* InAppMessageDialogView.swift in Sources */,
 				0591906A23EC2FAB0037BD88 /* EventFilterConstraint+Operators.swift in Sources */,
 				053EC59923AA32A7004D1C8B /* InAppMessageDisplayStatus.swift in Sources */,
+				557856032BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift in Sources */,
 				C0EB5D9520B8123200F1031F /* PushNotificationSelectors.swift in Sources */,
+				31CC0B742BD2519000608057 /* SegmentationManager.swift in Sources */,
 				05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */,
 				053CA200247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift in Sources */,
 				556887542A176A6800498B40 /* AppInboxStyleParser.swift in Sources */,
@@ -2875,11 +2977,13 @@
 				CCB87B7A28169F4B005DFB8E /* VersionCheckRepository.swift in Sources */,
 				31EBB8602A6AC3020003AAA5 /* StaticQueueData.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
+				31CC0B792BD255D300608057 /* SegmentationRequests.swift in Sources */,
 				052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */,
 				33FC6CCA29A9158F001F113F /* Reusable.swift in Sources */,
 				0591906223EC1CEC0037BD88 /* GenericOperators.swift in Sources */,
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
+				319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
 				5524BD662B2B5DBE005CF699 /* ExponeaType.swift in Sources */,
 				55DA6EC0290AD65200B5B285 /* AppInboxCache.swift in Sources */,
@@ -2911,6 +3015,7 @@
 				C030AF48216F4335004413F0 /* PushNotificationReceiver.swift in Sources */,
 				33FC6CCC29A9195B001F113F /* Typealiases.swift in Sources */,
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
+				31CC0B772BD251E200608057 /* SegmentationDataProvider.swift in Sources */,
 				0580BBC923969D1F0058323D /* InAppMessagePresenter.swift in Sources */,
 				33FC6CC229A90ED5001F113F /* OnMain.swift in Sources */,
 				0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */,
@@ -2933,6 +3038,7 @@
 				05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */,
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
 				05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */,
+				314CF9272BD8F2820000EFD9 /* SegmentationSpec.swift in Sources */,
 				31EBB86D2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift in Sources */,
 				0529797A241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift in Sources */,
 				559E7609296E0E5C00F27BC9 /* MessageItemSpec.swift in Sources */,
@@ -3020,6 +3126,7 @@
 				0591907123EC573C0037BD88 /* BooleanOperatorsSpec.swift in Sources */,
 				05AA63BE2342413E00D78452 /* NetworkStubbing.swift in Sources */,
 				05F3EFEA2382BC4C006E83F4 /* MockTelemetryStorage.swift in Sources */,
+				555A10E82B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift in Sources */,
 				F04BEA8E21118F4700591950 /* ResultSpec.swift in Sources */,
 				053EC59F23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift in Sources */,
 				057F449123995EA00070DF30 /* MockInAppMessagePresenter.swift in Sources */,
@@ -3137,7 +3244,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "ExponeaSDKShared/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3168,7 +3275,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "ExponeaSDKShared/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3198,7 +3305,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = ExponeaSDKObjC/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3228,7 +3335,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = ExponeaSDKObjC/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3248,13 +3355,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 32;
-				DEVELOPMENT_TEAM = UVDCL7YSZS;
+				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationContent/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3265,7 +3373,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2.ExampleNotificationContent";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Exponea iOS SDK Example App Notification Content";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Exponea iOS SDK Example App Notification Content";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -3277,12 +3385,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 32;
-				DEVELOPMENT_TEAM = UVDCL7YSZS;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationContent/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3292,7 +3402,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2.ExampleNotificationContent";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Exponea iOS SDK Example App Notification Content";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Exponea iOS SDK Example App Notification Content";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3304,13 +3415,14 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ExampleNotificationService/ExampleNotificationService.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 32;
-				DEVELOPMENT_TEAM = UVDCL7YSZS;
+				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationService/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3321,7 +3433,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2.ExampleNotificationService";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Exponea iOS SDK Example App Notification Service";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Exponea iOS SDK Example App Notification Service";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -3334,12 +3446,14 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ExampleNotificationService/ExampleNotificationService.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 32;
-				DEVELOPMENT_TEAM = UVDCL7YSZS;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationService/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3349,7 +3463,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2.ExampleNotificationService";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Exponea iOS SDK Example App Notification Service";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Exponea iOS SDK Example App Notification Service";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3373,7 +3488,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK-Notifications/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3407,7 +3522,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK-Notifications/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3430,13 +3545,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = Example/Example.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 32;
-				DEVELOPMENT_TEAM = UVDCL7YSZS;
+				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3444,7 +3560,7 @@
 				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Exponea iOS SDK Example App";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Exponea iOS SDK Example App";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -3457,13 +3573,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = Example/Example.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 32;
-				DEVELOPMENT_TEAM = UVDCL7YSZS;
+				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3471,7 +3588,7 @@
 				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Exponea iOS SDK Example App";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Exponea iOS SDK Example App";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -3618,7 +3735,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3652,7 +3769,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3676,7 +3793,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3700,7 +3817,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12;
+				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

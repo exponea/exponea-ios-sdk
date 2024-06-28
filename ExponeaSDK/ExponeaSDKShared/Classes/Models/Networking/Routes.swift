@@ -21,10 +21,12 @@ public enum Routes {
     case appInboxMarkRead
     case inAppContentBlocks
     case personalizedInAppContentBlocks
+    case segmentation(cookie: String)
+    case linkIds(cookie: String)
 
     public var method: HTTPMethod {
         switch self {
-        case .consents, .inAppContentBlocks: return .get
+        case .consents, .inAppContentBlocks, .segmentation: return .get
         default: return .post
         }
     }

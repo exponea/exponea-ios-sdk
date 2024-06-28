@@ -15,6 +15,48 @@ import ExponeaSDKShared
 final class HtmlNormalizerSpec: QuickSpec {
     override func spec() {
 
+        it("should find data link type - deeplink") {
+            let rawHtml = "<html><body>" +
+                    "<div data-actiontype=\"deep-link\" data-link='https://example.com/1'>Action 1</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            expect(result.actions.contains(where: { $0.actionType == .deeplink })).to(beTrue())
+        }
+
+        it("should find data link type - browser") {
+            let rawHtml = "<html><body>" +
+                    "<div data-actiontype=\"browser\" data-link='https://example.com/1'>Action 1</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            expect(result.actions.contains(where: { $0.actionType == .browser })).to(beTrue())
+        }
+
+        it("should find data link type - unknown") {
+            let rawHtml = "<html><body>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            expect(result.actions.contains(where: { $0.actionType == .unknown })).to(beTrue())
+        }
+
+        it("should find data link type - unknown") {
+            let rawHtml = "<html><body>" +
+                    "<div data-link='https://example.com/1'>Action 1</div>" +
+                    "<a data-actiontype=\"deep-link\" data-link='https://example.com/2'>Action 1</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            expect(result.actions.contains(where: { $0.actionType == .deeplink })).to(beTrue())
+        }
+        
+        it("should find data link type - browser and deep-link") {
+            let rawHtml = "<html><body>" +
+                    "<div data-actiontype=\"browser\" data-link=\"https://example.com/1\">Action 1</div>" +
+                    "<a data-actiontype=\"deep-link\" data-link=\"https://example.com/2\">Action 1</div>" +
+                    "</body></html>"
+            let result = HtmlNormalizer(rawHtml).normalize()
+            expect(result.actions.filter({ $0.actionType == .deeplink || $0.actionType == .browser }).count).to(equal(2))
+        }
+        
         it("should find Close and Action url") {
             let rawHtml = "<html><body>" +
                     "<div data-actiontype='close'>Close</div>" +

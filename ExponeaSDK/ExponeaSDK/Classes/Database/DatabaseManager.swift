@@ -224,17 +224,6 @@ extension DatabaseManager: DatabaseManagerType {
             try saveContext(context)
         }
     }
-    
-    /// Add any type of event into coredata.
-    ///
-    /// - Parameter data: See `DataType` for more information. Types specified below are required at minimum.
-    ///     - `customerId`
-    ///     - `properties`
-    ///     - `timestamp`
-    ///     - `eventType`
-    func trackEvent(with data: [DataType], into project: ExponeaProject) throws {
-        try trackEvent(with: data, into: project, for: nil)
-    }
 
     /// Add any type of event into coredata.
     ///
@@ -243,11 +232,13 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `properties`
     ///     - `timestamp`
     ///     - `eventType`
-    /// - Parameter customerId: An UUID of local Customer database record; currentCustomer is used in case of nil
-    func trackEvent(with data: [DataType], into project: ExponeaProject, for customerId: String?) throws {
+    func trackEvent(with data: [DataType], into project: ExponeaProject) throws {
         try context.performAndWait {
             let trackEvent = TrackEvent(context: context)
-            if let customerId = customerId,
+            if data.customerIds.isEmpty {
+                Exponea.logger.log(.error, message: "Event track with no customer IDs occured, fallback to current")
+            }
+            if let customerId = data.customerIds["cookie"],
                let customerUuid = UUID(uuidString: customerId),
                let customer = try context.fetch(Customer.fetchRequest(uuid: customerUuid)).first {
                 trackEvent.customer = customer
@@ -300,55 +291,58 @@ extension DatabaseManager: DatabaseManagerType {
     /// - Throws: <#throws value description#>
     func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws {
         try context.performAndWait {
-            loadTrackingCunstomer(context: context, with: data, into: project)
+            loadTrackingCustomer(context: context, with: data, into: project)
             // Save the customer properties into CoreData
             try saveContext(context)
         }
     }
-    
+
     /// To be called from a bg thread, otherwise the thread will be blocked
     /// - Parameter context: a background context
-    private func loadTrackingCunstomer(context: NSManagedObjectContext, with data: [DataType], into project: ExponeaProject) {
-        
-            let trackCustomer = TrackCustomer(context: context)
-            trackCustomer.customer = currentCustomerManagedObject
+    private func loadTrackingCustomer(context: NSManagedObjectContext, with data: [DataType], into project: ExponeaProject) {
+        let trackCustomer = TrackCustomer(context: context)
+        trackCustomer.customer = currentCustomerManagedObject
 
-            // Always specify a timestamp
-            trackCustomer.timestamp = Date().timeIntervalSince1970
-            trackCustomer.baseUrl = project.baseUrl
-            trackCustomer.projectToken = project.projectToken
-            trackCustomer.authorizationString = project.authorization.encode()
+        // Always specify a timestamp
+        trackCustomer.timestamp = Date().timeIntervalSince1970
+        trackCustomer.baseUrl = project.baseUrl
+        trackCustomer.projectToken = project.projectToken
+        trackCustomer.authorizationString = project.authorization.encode()
 
-            for type in data {
-                switch type {
-                case .customerIds(let ids):
-                    trackCustomer.customer = fetchCurrentCustomerAndUpdate(with: ids)
+        if data.customerIds.isEmpty {
+            Exponea.logger.log(.error, message: "IdentifyCustomer event with no customer IDs occured, fallback to current")
+        }
 
-                case .timestamp(let time):
-                    trackCustomer.timestamp = time ?? trackCustomer.timestamp
+        for type in data {
+            switch type {
+            case .customerIds(let ids):
+                trackCustomer.customer = fetchCurrentCustomerAndUpdate(with: ids)
 
-                case .properties(let properties):
-                    // Add the customer properties to the customer entity
-                    processProperties(properties, into: trackCustomer)
+            case .timestamp(let time):
+                trackCustomer.timestamp = time ?? trackCustomer.timestamp
 
-                case .pushNotificationToken(let token, let authorized):
-                    let tokenItem = KeyValueItem(context: context)
-                    tokenItem.key = "apple_push_notification_id"
-                    tokenItem.value = (token ?? "") as NSString
-                    trackCustomer.addToProperties(tokenItem)
+            case .properties(let properties):
+                // Add the customer properties to the customer entity
+                processProperties(properties, into: trackCustomer)
 
-                    let authorizatedItem = KeyValueItem(context: context)
-                    authorizatedItem.key = "apple_push_notification_authorized"
-                    authorizatedItem.value = authorized as NSObject
-                    trackCustomer.addToProperties(authorizatedItem)
+            case .pushNotificationToken(let token, let authorized):
+                let tokenItem = KeyValueItem(context: context)
+                tokenItem.key = "apple_push_notification_id"
+                tokenItem.value = (token ?? "") as NSString
+                trackCustomer.addToProperties(tokenItem)
 
-                    // Update push token on customer
-                    trackCustomer.customer = fetchCurrentCustomerAndUpdate(pushToken: token)
+                let authorizatedItem = KeyValueItem(context: context)
+                authorizatedItem.key = "apple_push_notification_authorized"
+                authorizatedItem.value = authorized as NSObject
+                trackCustomer.addToProperties(authorizatedItem)
 
-                default:
-                    break
-                }
+                // Update push token on customer
+                trackCustomer.customer = fetchCurrentCustomerAndUpdate(pushToken: token)
+
+            default:
+                break
             }
+        }
     }
 
     /// <#Description#>

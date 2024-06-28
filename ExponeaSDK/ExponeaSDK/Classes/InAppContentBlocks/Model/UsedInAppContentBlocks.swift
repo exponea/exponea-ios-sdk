@@ -36,4 +36,19 @@ public struct UsedInAppContentBlocks {
         self.hasBeenLoaded = hasBeenLoaded
         self.placeholderData = placeholderData
     }
+    
+    func describeDetailed() -> String {
+        return """
+        {
+            tag: \(tag),
+            indexPath: \(indexPath),
+            messageId: \(messageId),
+            placeholder: \(placeholder),
+            height: \(height),
+            hasBeenLoaded: \(hasBeenLoaded),
+            placeholderData: \(String(describing: placeholderData?.describe())),
+            isActive: \(isActive)
+        }
+        """
+    }
 }

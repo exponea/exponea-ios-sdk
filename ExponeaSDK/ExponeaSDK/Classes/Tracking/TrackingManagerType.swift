@@ -33,8 +33,6 @@ protocol TrackingManagerType: AnyObject {
 
     func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool) throws
 
-    func processTrack(_ type: EventType, with data: [DataType]?, trackingAllowed: Bool, for customerId: String?) throws
-
     // Function used to track in-app message banner shown event
     func trackInAppMessageShown(message: InAppMessage, trackingAllowed: Bool)
 
@@ -97,4 +95,7 @@ protocol TrackingManagerType: AnyObject {
     /// Anonymizes the user by deleting all identifiers (including cookie) and deletes all database data.
     /// You can switch project and new user will be tracked into it
     func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) throws
+    
+    /// Tracks delivered push notification as EventTrackingObject
+    func trackDeliveredPushEvent(_ eventObject: EventTrackingObject)
 }

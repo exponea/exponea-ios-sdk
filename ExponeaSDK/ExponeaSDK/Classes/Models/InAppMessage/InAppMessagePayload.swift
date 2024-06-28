@@ -86,5 +86,5 @@ public struct InAppMessagePayloadButton: Codable, Equatable {
 public enum InAppMessageButtonType: String {
     case cancel
     case deeplink = "deep-link"
-    case browser = "browser"
+    case browser
 }

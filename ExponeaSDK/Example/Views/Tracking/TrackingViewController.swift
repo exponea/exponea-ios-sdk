@@ -23,6 +23,14 @@ class TrackingViewController: UIViewController {
             sessionStartButton.isEnabled = !config.automaticSessionTracking
             sessionEndButton.isEnabled = !config.automaticSessionTracking
         }
+        
+        SegmentationManager.shared.addCallback(
+            callbackData: .init(
+                category: .discovery(),
+                isIncludeFirstLoad: true,
+                onNewData: { segments in
+            print(segments)
+        }))
     }
 
     @IBAction func paymentPressed(_ sender: Any) {

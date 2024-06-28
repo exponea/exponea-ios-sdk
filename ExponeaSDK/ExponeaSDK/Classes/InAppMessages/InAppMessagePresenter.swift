@@ -15,7 +15,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
     }
 
     private let window: UIWindow?
-    private var presenting = false
+    internal var presenting = false
 
     init(window: UIWindow? = nil) {
         self.window = window
@@ -38,57 +38,59 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         )
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             Exponea.shared.executeSafely {
-                guard !self.presenting else {
-                    Exponea.logger.log(.verbose, message: "Already presenting in-app message.")
-                    presentedCallback?(nil, nil)
-                    return
-                }
-                var image: UIImage?
-                if let imageData = imageData {
-                    if let createdImage = self.createImage(
-                        imageData: imageData,
-                        maxDimensionInPixels: self.getMaxScreenDimension()
-                    ) {
-                        image = createdImage
-                    } else {
-                        Exponea.logger.log(.error, message: "Unable to create in-app message image")
-                        presentedCallback?(nil, "Unable to create in-app message image")
+                onMain {
+                    guard !self.presenting else {
+                        Exponea.logger.log(.verbose, message: "Already presenting in-app message.")
+                        presentedCallback?(nil, nil)
                         return
                     }
-                }
-
-                guard let viewController = InAppMessagePresenter.getTopViewController(window: self.window) else {
-                    Exponea.logger.log(.error, message: "Unable to present in-app message - no view controller")
-                    presentedCallback?(nil, "Unable to present in-app message - no view controller")
-                    return
-                }
-
-                do {
-                    let inAppMessageView = try self.createInAppMessageView(
-                        messageType: messageType,
-                        payload: payload,
-                        payloadHtml: payloadHtml,
-                        image: image,
-                        actionCallback: { button in
-                            self.presenting = false
-                            actionCallback(button)
-                        },
-                        dismissCallback: { isUserInteraction in
-                            self.presenting = false
-                            dismissCallback(isUserInteraction)
+                    var image: UIImage?
+                    if let imageData = imageData {
+                        if let createdImage = self.createImage(
+                            imageData: imageData,
+                            maxDimensionInPixels: self.getMaxScreenDimension()
+                        ) {
+                            image = createdImage
+                        } else {
+                            Exponea.logger.log(.error, message: "Unable to create in-app message image")
+                            presentedCallback?(nil, "Unable to create in-app message image")
+                            return
                         }
-                    )
-                    try inAppMessageView.present(
-                        in: viewController,
-                        window: self.window ?? UIApplication.shared.keyWindow
-                    )
-                    self.presenting = true
-                    Exponea.logger.log(.error, message: "In-app message presented.")
-                    self.setMessageTimeout(inAppMessageView: inAppMessageView, timeout: timeout)
-                    presentedCallback?(inAppMessageView, nil)
-                } catch {
-                    Exponea.logger.log(.error, message: "Unable to present in-app message \(error)")
-                    presentedCallback?(nil, error.localizedDescription)
+                    }
+
+                    guard let viewController = InAppMessagePresenter.getTopViewController(window: self.window) else {
+                        Exponea.logger.log(.error, message: "Unable to present in-app message - no view controller")
+                        presentedCallback?(nil, "Unable to present in-app message - no view controller")
+                        return
+                    }
+
+                    do {
+                        let inAppMessageView = try self.createInAppMessageView(
+                            messageType: messageType,
+                            payload: payload,
+                            payloadHtml: payloadHtml,
+                            image: image,
+                            actionCallback: { button in
+                                self.presenting = false
+                                actionCallback(button)
+                            },
+                            dismissCallback: { isUserInteraction in
+                                self.presenting = false
+                                dismissCallback(isUserInteraction)
+                            }
+                        )
+                        try inAppMessageView.present(
+                            in: viewController,
+                            window: self.window ?? UIApplication.shared.keyWindow
+                        )
+                        self.presenting = true
+                        Exponea.logger.log(.error, message: "In-app message presented.")
+                        self.setMessageTimeout(inAppMessageView: inAppMessageView, timeout: timeout)
+                        presentedCallback?(inAppMessageView, nil)
+                    } catch {
+                        Exponea.logger.log(.error, message: "Unable to present in-app message \(error)")
+                        presentedCallback?(nil, error.localizedDescription)
+                    }
                 }
             }
         }

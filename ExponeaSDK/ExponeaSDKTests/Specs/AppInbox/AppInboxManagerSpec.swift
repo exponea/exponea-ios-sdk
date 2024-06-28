@@ -165,14 +165,21 @@ class AppInboxManagerSpec: QuickSpec {
                                 This is an example of your in-app message body text.
                             </span>
                             <div class="buttons">
-
                                 <span class="button" style="color:#ffffff;background-color:#f44cac" data-link="message:%3C3358921718340173851@unknownmsgid%3E">
                                     Deeplink
                                 </span>
-                                <span class="button" style="color:#ffffff;background-color:#f44cac" data-link="https://exponea.com">
+                                <span class="button" style="color:#ffffff;background-color:#f44cac" data-link="https://exponea.com/web">
                                     Web
                                 </span>
-
+                                <span class="button" style="color:#ffffff;background-color:#f44cac" data-link="https://exponea.com/deeplink" data-actiontype="deep-link">
+                                    Https as Deeplink
+                                </span>
+                                <span class="button" style="color:#ffffff;background-color:#f44cac" data-link="message:%3C3358921718340173850@unknownmsgid%3E" data-actiontype="browser">
+                                    Forced browser
+                                </span>
+                                <span class="button" style="color:#ffffff;background-color:#f44cac" data-link="https://exponea.com/fallback" data-actiontype="invalid_type">
+                                    Fallback to browser
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -325,21 +332,47 @@ class AppInboxManagerSpec: QuickSpec {
                     expect(messageContent.title).to(equal("Title"))
                     expect(messageContent.message).to(equal("Message"))
                     expect(messageContent.html).toNot(beEmpty())
-                    expect(messageContent.actions?.count).to(equal(2))
-                    guard let webAction = messageContent.actions?.first(where: { item in item.type == .browser }) else {
+                    guard let actions = messageContent.actions else {
+                        fail("WebActions not found")
+                        done()
+                        return
+                    }
+                    expect(actions.count).to(equal(5))
+                    guard let action1 = actions.first(where: { $0.url == "message:%3C3358921718340173851@unknownmsgid%3E" }) else {
                         fail("WebAction not found")
                         done()
                         return
                     }
-                    expect(webAction.title).to(equal("Web"))
-                    expect(webAction.url).to(equal("https://exponea.com"))
-                    guard let deeplinkAction = messageContent.actions?.first(where: { item in item.type == .deeplink }) else {
-                        fail("DeeplinkAction not found")
+                    expect(action1.title).to(equal("Deeplink"))
+                    expect(action1.type).to(equal(.deeplink))
+                    guard let action2 = actions.first(where: { $0.url == "https://exponea.com/web" }) else {
+                        fail("WebAction not found")
                         done()
                         return
                     }
-                    expect(deeplinkAction.title).to(equal("Deeplink"))
-                    expect(deeplinkAction.url).to(equal("message:%3C3358921718340173851@unknownmsgid%3E"))
+                    expect(action2.title).to(equal("Web"))
+                    expect(action2.type).to(equal(.browser))
+                    guard let action3 = actions.first(where: { $0.url == "https://exponea.com/deeplink" }) else {
+                        fail("WebAction not found")
+                        done()
+                        return
+                    }
+                    expect(action3.title).to(equal("Https as Deeplink"))
+                    expect(action3.type).to(equal(.deeplink))
+                    guard let action4 = actions.first(where: { $0.url == "message:%3C3358921718340173850@unknownmsgid%3E" }) else {
+                        fail("WebAction not found")
+                        done()
+                        return
+                    }
+                    expect(action4.title).to(equal("Forced browser"))
+                    expect(action4.type).to(equal(.browser))
+                    guard let action5 = actions.first(where: { $0.url == "https://exponea.com/fallback" }) else {
+                        fail("WebAction not found")
+                        done()
+                        return
+                    }
+                    expect(action5.title).to(equal("Fallback to browser"))
+                    expect(action5.type).to(equal(.browser))
                     done()
                 }
             }

@@ -19,6 +19,7 @@ class InAppMessagesCacheSpec: QuickSpec {
                 at: documentsDir!.appendingPathComponent(InAppMessagesCache.inAppMessagesFolder, isDirectory: true)
             )
         }
+
         describe("in-app message definition") {
             it("should get empty in-app messages on cold start") {
                 expect(InAppMessagesCache().getInAppMessages()).to(beEmpty())

@@ -368,4 +368,6 @@ public protocol ExponeaType: AnyObject {
         message: InAppContentBlockResponse,
         errorMessage: String
     )
+
+    func getSegments(category: SegmentCategory, successCallback: @escaping TypeBlock<[SegmentDTO]>)
 }

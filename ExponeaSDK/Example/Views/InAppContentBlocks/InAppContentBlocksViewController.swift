@@ -11,31 +11,6 @@ import UIKit
 import WebKit
 import ExponeaSDK
 
-class InAppContentBlocksCell: UITableViewCell {
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func setupInAppContentBlocksView(_ inAppContentBlocksView: UIView) {
-        contentView.addSubview(inAppContentBlocksView)
-        inAppContentBlocksView.translatesAutoresizingMaskIntoConstraints = false
-        inAppContentBlocksView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
-        inAppContentBlocksView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
-        inAppContentBlocksView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
-        inAppContentBlocksView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
-    }
-}
-
-struct TableTest {
-    var height: CGFloat
-    let tag: Int
-}
-
 class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     private let data: [String] = [
@@ -135,7 +110,7 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.keyboardDismissMode = .onDrag
-    
+
         refreshControl.addTarget(self, action: #selector(refresh), for: .primaryActionTriggered)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 200
@@ -143,16 +118,17 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "UITableViewCell")
         tableView.delegate = self
         tableView.dataSource = self
-        
+
         Exponea.shared.inAppContentBlocksManager?.refreshCallback = { [weak self] indexPath in
             onMain {
                 self?.tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
             }
         }
-        
-        view.backgroundColor = .black
-        
+
+        view.backgroundColor = .white
+
         view.addSubview(placeholder)
+
         placeholder.contentReadyCompletion = { [weak self] contentLoaded in
             guard let self else {
                 Exponea.logger.log(.error, message: "In-app content block has been loaded but deattached from view controller")
@@ -160,8 +136,8 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
             }
             Exponea.logger.log(.verbose, message: "In-app content block has been loaded: \(contentLoaded)")
             if contentLoaded {
-                let contentWidth = placeholder.frame.size.width
-                let contentHeight = placeholder.frame.size.height
+                let contentWidth = self.placeholder.frame.size.width
+                let contentHeight = self.placeholder.frame.size.height
                 Exponea.logger.log(
                     .verbose,
                     message: "In-app content block content has size of width \(contentWidth)px height \(contentHeight)px"
@@ -177,35 +153,64 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
         placeholder.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
         // `placeholder` has deferred load, so we trigger it
         placeholder.reload()
-        
+
         view.addSubview(placeholderExample)
         placeholderExample.translatesAutoresizingMaskIntoConstraints = false
         placeholderExample.topAnchor.constraint(equalTo: placeholder.bottomAnchor, constant: 5).isActive = true
         placeholderExample.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
         placeholderExample.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
-        
+
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: placeholderExample.bottomAnchor, constant: 5).isActive = true
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        
+
+        navigationItem.leftBarButtonItem = .init(title: "Carousel", style: .plain, target: self, action: #selector(openCarousel))
         navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .refresh, target: self, action: #selector(reloadStaticView))
-    }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
+        SegmentationManager.shared.addCallback(
+            callbackData: .init(
+                category: .merchandise(),
+                isIncludeFirstLoad: false,
+                onNewData: { segments in
+        }))
     }
 
     @objc func refresh() {
         tableView.reloadData()
         refreshControl.endRefreshing()
     }
-    
+
     @objc func reloadStaticView() {
         placeholder.reload()
         placeholderExample.reload()
+    }
+
+    @objc func openCarousel() {
+        let vc = InAppContentBlockCarouselViewController()
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+class InAppContentBlocksCell: UITableViewCell {
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func setupInAppContentBlocksView(_ inAppContentBlocksView: UIView) {
+        contentView.addSubview(inAppContentBlocksView)
+        inAppContentBlocksView.translatesAutoresizingMaskIntoConstraints = false
+        inAppContentBlocksView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
+        inAppContentBlocksView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        inAppContentBlocksView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
+        inAppContentBlocksView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
     }
 }

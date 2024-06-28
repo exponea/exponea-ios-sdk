@@ -9,27 +9,23 @@
 import Foundation
 
 protocol InAppMessagesManagerType {
-    func preload(for customerIds: [String: String], completion: (() -> Void)?)
-    func getInAppMessage(for event: [DataType], requireImage: Bool) -> InAppMessage?
-    func showInAppMessage(
+    var pendingShowRequests: [String: InAppMessagesManager.InAppMessageShowRequest] { get set }
+    var sessionStartDate: Date { get set }
+    func addToPendingShowRequest(event: [DataType])
+    func fetchInAppMessages(for event: [DataType], completion: EmptyBlock?)
+    func anonymize()
+    func loadMessageToShow(for event: [DataType]) -> InAppMessage?
+    func onEventOccurred(of type: EventType, for event: [DataType], triggerCompletion: TypeBlock<IdentifyTriggerState>?)
+    func startIdentifyCustomerFlow(
         for event: [DataType],
+        isFromIdentifyCustomer: Bool,
+        isFetchDisabled: Bool,
+        isAnonymized: Bool,
+        triggerCompletion: TypeBlock<IdentifyTriggerState>?
+    )
+    func showInAppMessage(
+        for type: [DataType],
         callback: ((InAppMessageView?) -> Void)?
     )
-    func sessionDidStart(at date: Date, for customerIds: [String: String], completion: (() -> Void)?)
-    func anonymize()
-    func onEventOccurred(of type: EventType, for event: [DataType])
-}
-
-extension InAppMessagesManagerType {
-    func preload(for customerIds: [String: String]) {
-        preload(for: customerIds, completion: nil)
-    }
-
-    func showInAppMessage(for event: [DataType]) {
-        showInAppMessage(for: event, callback: nil)
-    }
-
-    func getInAppMessage(for event: [DataType]) -> InAppMessage? {
-        return getInAppMessage(for: event, requireImage: true)
-    }
+    func loadMessagesToShow(for event: [DataType]) -> [InAppMessage]
 }
