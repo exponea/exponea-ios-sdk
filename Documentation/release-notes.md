@@ -7,6 +7,12 @@ parentDocSlug: ios-sdk
 ---
 
 ## Release Notes
+## Release Notes for 2.27.1
+#### July 01, 2024
+* Fixed:
+  * Fixes an issue with wrong minimal iOS version (11 instead of 13 as should be) for SPM causing build error
+
+
 ## Release Notes for 2.27.0
 #### June 27, 2024
 * Added:
