@@ -18,14 +18,14 @@ The instructions below are for Xcode 15.1 and may differ if you use a different 
 2. Create a file named `Podfile` in your Xcode project folder.
 3. Add the following to your `Podfile`
    ```
-   platform :ios, '11.0'
+   platform :ios, '13.0'
    use_frameworks!
 
    target 'YourAppTarget' do
      pod "ExponeaSDK"
    end
    ```
-   (Replace `11.0` with your desired iOS deployment target and `YourAppTarget` with your app target's name)
+   (Replace `13.0` with your desired iOS deployment target and `YourAppTarget` with your app target's name)
 4. In a terminal window, navigate to your Xcode project folder and run the following command:
     ```
     pod install
