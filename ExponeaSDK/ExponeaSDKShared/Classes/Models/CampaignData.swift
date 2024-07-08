@@ -37,25 +37,27 @@ public struct CampaignData {
     }
 
     public init(url: URL) {
-        self.url = url.absoluteString
-        timestamp = Date().timeIntervalSince1970
-        guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
-              let params = components.queryItems else {
+        let params = NSURLComponents(url: url, resolvingAgainstBaseURL: true)?.queryItems
+        if params == nil {
             Exponea.logger.log(.warning, message: "Unable to parse universal link parameters.")
-            source = nil
-            campaign = nil
-            content = nil
-            medium = nil
-            term = nil
-            payload = nil
-            return
+            // continue with creation of empty dict
         }
-        source = params.first { $0.name == "utm_source" }?.value
-        campaign = params.first { $0.name == "utm_campaign" }?.value
-        content = params.first { $0.name == "utm_content" }?.value
-        medium = params.first { $0.name == "utm_medium" }?.value
-        term = params.first { $0.name == "utm_term" }?.value
-        payload = params.first { $0.name == "xnpe_cmp" }?.value
+        let paramsMap = params?.reduce(into: [String: Any?]()) { partialResult, item in
+            // keep first occurence
+            partialResult[item.name] = partialResult[item.name] ?? item.value
+        } ?? [:]
+        self.init(source: paramsMap, url: url.absoluteString)
+    }
+
+    public init(source: [String: Any?], url: String? = nil) {
+        self.url = url
+        self.source = source["utm_source"] as? String
+        campaign = source["utm_campaign"] as? String
+        content = source["utm_content"] as? String
+        medium = source["utm_medium"] as? String
+        term = source["utm_term"] as? String
+        payload = source["xnpe_cmp"] as? String
+        timestamp = Date().timeIntervalSince1970
     }
 
     public var trackingData: [String: JSONValue] {
