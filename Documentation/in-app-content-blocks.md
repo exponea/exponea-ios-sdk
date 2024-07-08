@@ -68,14 +68,20 @@ Exponea.shared.inAppContentBlocksManager?.refreshCallback = { [weak self] indexP
 
 ### Add a Carousel View
 
-Get a Carousel view for the specified `placeholderId`:
+Get a Carousel view for the specified `placeholderId` with default configuration:
+
+```swift
+ let carouselView = InAppContentBlockCarouselView(placeholder: "placeholderId")
+```
+
+If you need to configure Carousel view to fit your requirements then instance could be configured while creation:
 
 ```swift
  let carouselView = InAppContentBlockCarouselView(
         placeholder: "placeholderId",
-        maxMessagesCount: 5, // max count of visible content blocks; 0 for show all
-        customHeight: 200, // nil for autoheight
-        scrollDelay: 5 // delay in seconds between automatic scroll; 0 for no scroll
+        maxMessagesCount: 5, // max count of visible content blocks; 0 for show all; default value is 0
+        customHeight: 200, // nil for autoheight; default value is nil
+        scrollDelay: 5 // delay in seconds between automatic scroll; 0 for no scroll; default value is 3
     )
 ```
 
