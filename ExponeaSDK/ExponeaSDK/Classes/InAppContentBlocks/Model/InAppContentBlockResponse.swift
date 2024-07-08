@@ -52,10 +52,14 @@ public struct InAppContentBlocksDataResponse: Codable {
 public struct InAppContentBlockResponse: Codable {
 
     public struct DateFilter: Codable {
-        let enabled: Bool
-        let fromDate: UInt?
-        let toDate: UInt?
-
+        public let enabled: Bool
+        public let fromDate: UInt?
+        public let toDate: UInt?
+        public init(enabled: Bool, fromDate: UInt?, toDate: UInt?) {
+            self.enabled = enabled
+            self.fromDate = fromDate
+            self.toDate = toDate
+        }
         enum CodingKeys: String, CodingKey {
             case enabled
             case fromDate = "from_date"
