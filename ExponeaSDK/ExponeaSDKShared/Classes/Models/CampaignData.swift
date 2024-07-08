@@ -69,6 +69,11 @@ public struct CampaignData {
         if let payload = payload { data["xnpe_cmp"] = .string(payload) }
         return data
     }
+    
+    public var isValid: Bool {
+        // xnpe_cmp is required
+        return payload?.count ?? 0 > 0
+    }
 }
 
 extension CampaignData: Codable {

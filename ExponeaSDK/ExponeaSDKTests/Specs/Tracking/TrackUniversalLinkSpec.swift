@@ -103,6 +103,19 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(sessionStart).toNot(beNil())
                         expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
                     }
+                    it("not track campaign_click") {
+                        let exponea = MockExponeaImplementation()
+                        exponea.configure(plistName: "ExponeaConfig")
+
+                        // track campaign click, session_start should be updated with utm params
+                        exponea.trackCampaignClick(url: mockData.invalidCampaignUrl!, timestamp: nil)
+
+                        let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
+                        expect(campaignClick).to(beNil())
+                        let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
+                        expect(sessionStart).notTo(beNil())
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
+                    }
                 }
                 context("before SDK started") {
                     it("track campaign_click and update session when called within update threshold") {
@@ -131,6 +144,20 @@ class TrackUniversalLinkSpec: QuickSpec {
                         var trackEvents: [TrackEventProxy] = []
                         expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
                         expect { trackEvents.filter({ $0.eventType == "campaign_click" }).count }.to(equal(1))
+                    }
+                    it("not track campaign_click") {
+                        let exponea = MockExponeaImplementation()
+
+                        // track campaign click, session_start should be updated with utm params
+                        exponea.trackCampaignClick(url: mockData.invalidCampaignUrl!, timestamp: nil)
+
+                        exponea.configure(plistName: "ExponeaConfig")
+
+                        let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
+                        expect(campaignClick).to(beNil())
+                        let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
+                        expect(sessionStart).notTo(beNil())
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
                     }
                 }
             }
