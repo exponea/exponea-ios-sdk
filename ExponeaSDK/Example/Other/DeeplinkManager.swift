@@ -9,7 +9,7 @@
 public enum DeeplinkType {
     case fetch
     case track
-    case manual
+    case flush
     case anonymize
     case inappcb
 
@@ -19,8 +19,8 @@ public enum DeeplinkType {
             self = .fetch
         case input.contains("track"):
             self = .track
-        case input.contains("manual"):
-            self = .manual
+        case input.contains("flush"):
+            self = .flush
         case input.contains("anonymize"):
             self = .anonymize
         case input.contains("inappcb"):

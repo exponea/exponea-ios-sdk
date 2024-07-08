@@ -11,7 +11,7 @@ import UIKit
 enum CoordinatorType {
     case fetch
     case track
-    case manualFlush
+    case flush
     case anonymize
     case inappcb
 
@@ -21,8 +21,8 @@ enum CoordinatorType {
             self = .fetch
         case .track:
             self = .track
-        case .manual:
-            self = .manualFlush
+        case .flush:
+            self = .flush
         case .anonymize:
             self = .anonymize
         case .inappcb:
@@ -34,10 +34,13 @@ enum CoordinatorType {
 final class Coordinator {
 
     let navigationController: UINavigationController?
+    let tabbar: ExponeaTabBarController?
     private let deeplinkManager = DeeplinkManager.manager
 
     init(navigationController: UINavigationController?) {
         self.navigationController = navigationController
+        self.tabbar = UIStoryboard(name: "Main", bundle: nil)
+            .instantiateViewController(withIdentifier: "tabbar") as? ExponeaTabBarController
         // Delay presenting vc
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             self.deeplinkManager.listener = { [weak self] type in
@@ -48,16 +51,21 @@ final class Coordinator {
 
     func start() {
         let sb = UIStoryboard(name: "Main", bundle: nil)
-        guard let tabbar = sb.instantiateViewController(withIdentifier: "tabbar") as? ExponeaTabBarController else { return }
-        tabbar.coordiantor = self
-        navigationController?.present(tabbar, animated: true)
+        guard let tabbar else { return }
+        tabbar.coordinator = self
+        navigationController?.pushViewController(tabbar, animated: true)
     }
 
     func navigate(type: CoordinatorType) {
-        guard let tabbar = navigationController?.presentedViewController as? ExponeaTabBarController else { return }
+        guard let navigationController,
+              let tabbar else {
+            return
+        }
         switch type {
-        case .anonymize, .manualFlush:
+        case .flush:
             tabbar.selectedIndex = TabbarItem.flush.index
+        case .anonymize:
+            tabbar.selectedIndex = TabbarItem.anonymize.index
         case .fetch:
             tabbar.selectedIndex = TabbarItem.fetch.index
         case .track:
@@ -65,5 +73,6 @@ final class Coordinator {
         case .inappcb:
             tabbar.selectedIndex = TabbarItem.contentBlocks.index
         }
+        navigationController.dismiss(animated: true)
     }
 }

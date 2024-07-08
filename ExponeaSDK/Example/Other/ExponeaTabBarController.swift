@@ -13,8 +13,9 @@ enum TabbarItem {
     case fetch
     case tracking
     case flush
-    case logging
+    case anonymize
     case contentBlocks
+    case logging
 
     var index: Int {
         switch self {
@@ -24,14 +25,16 @@ enum TabbarItem {
             return 1
         case .flush:
             return 2
-        case .logging:
+        case .anonymize:
             return 3
         case .contentBlocks:
             return 4
+        case .logging:
+            return 5
         }
     }
 }
 
 final class ExponeaTabBarController: UITabBarController {
-    var coordiantor: Coordinator?
+    var coordinator: Coordinator?
 }

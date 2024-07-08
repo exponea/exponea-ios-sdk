@@ -295,6 +295,7 @@
 		559D97082962FCF0006D4499 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559D97072962FCF0006D4499 /* ImageUtils.swift */; };
 		559E7609296E0E5C00F27BC9 /* MessageItemSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E7608296E0E5C00F27BC9 /* MessageItemSpec.swift */; };
 		55A468D0296F154C00E62438 /* WebActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A468CF296F154C00E62438 /* WebActionsManager.swift */; };
+		55B6E6CA2C359FE70052FC2B /* AnonymizeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B6E6C92C359FE70052FC2B /* AnonymizeViewController.swift */; };
 		55BB0E1A28F4126100D6243A /* MessageItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BB0E1928F4126100D6243A /* MessageItem.swift */; };
 		55BB0E1E28F44EDA00D6243A /* AppInboxDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BB0E1D28F44EDA00D6243A /* AppInboxDetailViewController.swift */; };
 		55C08DCD2A4ED5EE000BA66A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
@@ -812,6 +813,7 @@
 		559D97072962FCF0006D4499 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		559E7608296E0E5C00F27BC9 /* MessageItemSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemSpec.swift; sourceTree = "<group>"; };
 		55A468CF296F154C00E62438 /* WebActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebActionsManager.swift; sourceTree = "<group>"; };
+		55B6E6C92C359FE70052FC2B /* AnonymizeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnonymizeViewController.swift; sourceTree = "<group>"; };
 		55BB0E1928F4126100D6243A /* MessageItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItem.swift; sourceTree = "<group>"; };
 		55BB0E1D28F44EDA00D6243A /* AppInboxDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxDetailViewController.swift; sourceTree = "<group>"; };
 		55C08DCE2A5689F4000BA66A /* FileCacheType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheType.swift; sourceTree = "<group>"; };
@@ -1731,6 +1733,14 @@
 			path = AppInbox;
 			sourceTree = "<group>";
 		};
+		55B6E6C82C359FA70052FC2B /* Anonymize */ = {
+			isa = PBXGroup;
+			children = (
+				55B6E6C92C359FE70052FC2B /* AnonymizeViewController.swift */,
+			);
+			path = Anonymize;
+			sourceTree = "<group>";
+		};
 		55BB0E1828F4123C00D6243A /* MessageInbox */ = {
 			isa = PBXGroup;
 			children = (
@@ -1845,8 +1855,8 @@
 				C0F6C4E92098A1AC00834E21 /* Assets.xcassets */,
 				C0F6C4EE2098A1AC00834E21 /* Info.plist */,
 				C0F6C4EB2098A1AC00834E21 /* LaunchScreen.storyboard */,
-				55EFD79A292245A5002569FB /* Localizable.strings */,
 				C0F6C4E62098A1AB00834E21 /* Main.storyboard */,
+				55EFD79A292245A5002569FB /* Localizable.strings */,
 				C03B23D321AAF34000360EE6 /* beep.wav */,
 			);
 			path = Resources;
@@ -1855,6 +1865,7 @@
 		C0EA5FCE20CE960700660802 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				55B6E6C82C359FA70052FC2B /* Anonymize */,
 				C0EA5FD120CE962500660802 /* Fetching */,
 				C0EA5FD220CE962B00660802 /* Flushing */,
 				31EBB8402A6AC2E90003AAA5 /* InAppContentBlocks */,
@@ -2820,6 +2831,7 @@
 				558DFADB2B2B350F00177800 /* ExtensionUtils.swift in Sources */,
 				31EBB8422A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift in Sources */,
 				558DFADD2B2B442400177800 /* ExampleInAppContentBlockCallback.swift in Sources */,
+				55B6E6CA2C359FE70052FC2B /* AnonymizeViewController.swift in Sources */,
 				C0F6C4E32098A1AB00834E21 /* AppDelegate.swift in Sources */,
 				31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */,
 				313E30682C22B21200375D4B /* InAppContentBlockCarouselViewController.swift in Sources */,
