@@ -64,7 +64,7 @@ public struct PersonalizedInAppContentBlockResponse: Codable {
         self.content = try container.decodeIfPresent(Content.self, forKey: .content)
     }
 
-    init(
+    public init(
         id: String,
         status: InAppContentBlocksStatus,
         ttlSeconds: Int,
