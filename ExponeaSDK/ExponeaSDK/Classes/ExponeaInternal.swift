@@ -216,17 +216,21 @@ public class ExponeaInternal: ExponeaType {
         return InAppContentBlockDisplayStatusStore(userDefaults: userDefaults)
     }()
 
+    internal var isAppForeground: Bool = false
+
     // MARK: - Init -
 
     /// The initialiser is internal, so that only the singleton can exist when used in production.
     internal init() {
         Exponea.logger.logMessage("⚙️ Starting ExponeaSDK, version \(Exponea.version).")
+        registerApplicationStateListener()
     }
 
     deinit {
         if !Exponea.isBeingTested {
             Exponea.logger.log(.error, message: "Exponea has deallocated. This should never happen.")
         }
+        unregisterApplicationStateListener()
     }
 
     internal func sharedInitializer(configuration: Configuration) {
@@ -447,6 +451,47 @@ internal extension ExponeaInternal {
             }
         }
     }
+
+    func registerApplicationStateListener() {
+        onMain {
+            self.isAppForeground = UIApplication.shared.applicationState == .active
+        }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+
+    func unregisterApplicationStateListener() {
+        self.isAppForeground = false
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+
+    @objc func applicationDidBecomeActive() {
+        self.isAppForeground = true
+    }
+
+    @objc func applicationDidEnterBackground() {
+        self.isAppForeground = false
+    }
+
 }
 
 // MARK: - Public -

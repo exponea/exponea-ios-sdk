@@ -369,6 +369,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             )
             addToPendingShowRequest(event: event)
         }
+        guard Exponea.shared.isAppForeground else {
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Skipping messages process for \(event) because app is not in foreground state"
+            )
+            return
+        }
         // Should reload or identify customer
         switch true {
         case isFromIdentifyCustomer:

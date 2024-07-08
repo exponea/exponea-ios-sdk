@@ -197,57 +197,61 @@ While troubleshooting in-app message issues, you can follow the process of reque
    ```
    Register request for in-app message to be shown for $eventType (not for identifyCustomer). Identify customer event will always download in app messages from backend.
 2. ```
+   Skipping messages process for {event} because app is not in foreground state
+   ```
+   The in-app message process was triggered while application UI is not visible to user therefore no in-app message could be shown anyway.
+3. ```
    Picking in-app message for eventType {eventType}. {X} messages available: [{message1 name}, {message2 name}, ...].
    ```
    In-app messages must be preloaded before they can be displayed. If the preload hasn't started or is still in progress, the SDK will wait until the preload is complete and only perform the logic to select an in-app message afterward.
    ```
-3. ```
+4. ```
    This log contains `eventType` for which the messages going to be searched. Then count of `X` messages and the names of **all** messages received from the server is listed in
    ```   
    Message '{message name}' failed event filter. Message filter: {"event_type":"session_start","filter":[]} Event type: payment properties: {price=2011.1, product_title=Item #1} timestamp: 1.59921557821E9
    ```  
    We show reasons why some messages are not picked. In this example, message failed event filter - the type was set for `session_start`, but `payment` was tracked.
    ```
-4. ``` 
+5. ``` 
    Got {X} messages with highest priority for eventType {eventType}. [{message1 name}, {message2 name}, ...]
    ```
    There may be a tie between a few messages with the same priority. All messages with same highest priority are listed.
    ```
-5. ``` 
+6. ``` 
    Picking top message '{message name}' for eventType {eventType}
    ```
    The single message is randomly picked from filtered messages with same highest priority for `eventType`
    ```
-6. ```
+7. ```
    Picking in-app message for eventTypes ["payment"]. 2 messages available: ["Payment in-app message", "App load in-app message"].
    ```
    This log message includes a list of **all** in-app messages received from the server and preloaded in the local cache. If you don't see your message here, it's possible it wasn't available yet the last time the SDK request in-app messages. If you have confirmed the message was available when the last preload occurred, the current user may not match the audience targeted by the in-app message. Check the in-app message set up in Engagement. 
-7.  ```
+8. ```
    Got {X} messages available to show. [{message1 name}, {message2 name}, ...].
    ```
    All `X` messages has been collected for registered 'show requests'. Process continues with selecting of message with highest priority.
    ```
-8. ```
+9. ```
     1 messages available after filtering. Picking highest priority message.
     ```
     After applying all the filters, there is one in-app message left that satisfies the criteria to be displayed. If more than one messages is eligible, the SDK will select the one that has the highest priority configured in Engagement.
     ```
-9. ```
-   Picking top message '{message name}' to be shown.
-   ```
-   The single message is randomly picked from all filtered messages. This message is going to be shown to user.
-   ```
 10. ```
+    Picking top message '{message name}' to be shown.
+    ```
+    The single message is randomly picked from all filtered messages. This message is going to be shown to user.
+    ```
+11. ```
    Only logging in-app message for control group '${message.name}'
    ```
    A/B testing In-app message or message without payload is not shown to user but 'show' event is tracked for your analysis.
    ```
-11. ```
+12. ```
    Attempting to show in-app message '{message name}'
    ```
    In-app message that meant to be show to user (not A/B testing) is going to be shown
    ```
-12. ```
+13. ```
    Posting show to main thread with delay {X}ms.
    ```
    Message display request is posted to the main thread with delay of `X` milliseconds. Delay is configured by `Display delay` in In-app message settings. Message will be displayed in the last resumed Activity. 
