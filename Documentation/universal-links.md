@@ -68,9 +68,12 @@ func application(_ application:UIApplication,
         else { return false }
 
     Exponea.shared.trackCampaignClick(url: incomingURL, timestamp: nil)
+    // process universal link and return true if has been processed
     return true
 }
 ```
+
+Universal Link parameters are automatically tracked in `session_start` events when a new session is started for given Universal Link click. If URL contains a parameter `xnpe_cmp` then additional `campaign` event is tracked. Parameter `xnpe_cmp` represents campaign identifier generated typically for Email or SMS campaigns. 
 
 > ❗️
 >

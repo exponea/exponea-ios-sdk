@@ -276,19 +276,11 @@ extension ExponeaInternal {
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            // Check if CampaingData are valid
-            guard data.isValid else {
-                Exponea.logger.log(
-                    .verbose,
-                    message: "Campaign click not tracked because \(data.description) is invalid"
-                )
-                return
-            }
-            // Do the actual tracking
-            var properties = data.trackingData
-            properties["platform"] = .string("ios")
             // url and payload is required for campaigns, but missing in notifications
-            if data.url != nil && data.payload != nil {
+            if data.isValid {
+                // Do the actual tracking
+                var properties = data.trackingData
+                properties["platform"] = .string("ios")
                 try dependencies.trackingManager.track(.campaignClick, with: [.properties(properties)])
             }
             if dependencies.configuration.automaticSessionTracking {

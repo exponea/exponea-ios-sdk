@@ -103,7 +103,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(sessionStart).toNot(beNil())
                         expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
                     }
-                    it("not track campaign_click") {
+                    it("not track campaign_click but update session") {
                         let exponea = MockExponeaImplementation()
                         exponea.configure(plistName: "ExponeaConfig")
 
@@ -114,7 +114,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).to(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(equal("mycampaign"))
                     }
                 }
                 context("before SDK started") {
@@ -145,7 +145,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
                         expect { trackEvents.filter({ $0.eventType == "campaign_click" }).count }.to(equal(1))
                     }
-                    it("not track campaign_click") {
+                    it("not track campaign_click but update session") {
                         let exponea = MockExponeaImplementation()
 
                         // track campaign click, session_start should be updated with utm params
@@ -157,7 +157,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         expect(campaignClick).to(beNil())
                         let sessionStart = findEvent(exponea: exponea, eventType: "session_start")
                         expect(sessionStart).notTo(beNil())
-                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(beNil())
+                        expect(sessionStart!.dataTypes.properties["utm_campaign"] as? String).to(equal("mycampaign"))
                     }
                 }
             }

@@ -73,8 +73,8 @@ public struct CampaignData {
     }
     
     public var isValid: Bool {
-        // xnpe_cmp is required
-        return payload?.count ?? 0 > 0
+        // url and xnpe_cmp is required
+        url?.isEmpty == false && payload?.isEmpty == false
     }
 }
 
