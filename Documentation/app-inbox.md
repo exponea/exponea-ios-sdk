@@ -164,12 +164,18 @@ public override func getAppInboxListViewController() -> UIViewController {
    let listController = super.getAppInboxListViewController()
    // you are able to access default class impl by casting
    let typedListController = listController as! AppInboxListViewController
+   // override onItemClick behaviour
+   typedListController.onItemClickedOverride = onItemClickOverride
    // load View to access elements
    typedListController.loadViewIfNeeded()
    // apply your setup to any element
    typedListController.statusTitle.textColor = .red
    // return instance
    return typedListController
+}
+private func onItemClickedOverride(message: MessageItem, index: Int) {
+   // invoke your customized behaviour
+   // default implementation opens AppInboxDetailViewController
 }
 ```
 

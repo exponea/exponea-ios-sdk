@@ -243,8 +243,11 @@ public protocol ExponeaType: AnyObject {
     /// Retrieves Button for opening of AppInbox list
     func getAppInboxButton() -> UIButton
 
-    /// Retrieves UIViewController for AppInbox list
+    /// Retrieves UIViewController for AppInbox list with default behaviour
     func getAppInboxListViewController() -> UIViewController
+    
+    /// Retrieves UIViewController for AppInbox list with overriden onItemClicked behaviour
+    func getAppInboxListViewController(onItemClicked: @escaping (MessageItem, Int) -> Void) -> UIViewController
 
     /// Retrieves UIViewController for AppInbox message detail
     func getAppInboxDetailViewController(_ messageId: String) -> UIViewController

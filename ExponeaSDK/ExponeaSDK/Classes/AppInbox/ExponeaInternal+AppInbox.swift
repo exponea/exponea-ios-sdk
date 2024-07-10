@@ -16,6 +16,14 @@ extension ExponeaInternal {
     public func getAppInboxListViewController() -> UIViewController {
         return appInboxProvider.getAppInboxListViewController()
     }
+    
+    public func getAppInboxListViewController(onItemClicked: @escaping (MessageItem, Int) -> Void) -> UIViewController {
+        let listController = getAppInboxListViewController()
+        if let appInboxListController = listController as? AppInboxListViewController {
+            appInboxListController.onItemClickedOverride = onItemClicked
+        }
+        return listController
+    }
 
     public func getAppInboxDetailViewController(_ messageId: String) -> UIViewController {
         return appInboxProvider.getAppInboxDetailViewController(messageId)
