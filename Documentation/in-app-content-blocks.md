@@ -68,16 +68,16 @@ Exponea.shared.inAppContentBlocksManager?.refreshCallback = { [weak self] indexP
 
 ### Add a Carousel View
 
-Get a Carousel view for the specified `placeholderId` with default configuration:
+Get a carousel view for the specified `placeholderId` with default configuration:
 
 ```swift
- let carouselView = InAppContentBlockCarouselView(placeholder: "placeholderId")
+ let carouselView = CarouselInAppContentBlockView(placeholder: "placeholderId")
 ```
 
-If you need to configure Carousel view to fit your requirements then instance could be configured while creation:
+Optionally, you can configure the carousel view's maximum number of messages to display, custom height, and scroll delay to fit your requirements:
 
 ```swift
- let carouselView = InAppContentBlockCarouselView(
+ let carouselView = CarouselInAppContentBlockView(
         placeholder: "placeholderId",
         maxMessagesCount: 5, // max count of visible content blocks; 0 for show all; default value is 0
         customHeight: 200, // nil for autoheight; default value is nil
@@ -91,19 +91,19 @@ Then, place the placeholder view at the desired location by adding it to your la
 view.addSubview(carouselView)
 ```
 
-Then, you need to call few methods for correct behavior:
+Finally, call the following methods in the following places for correct behavior:
 
-#### In viewDidLoad()/loadView() in view controller
+Inside `viewDidLoad()`/`loadView()` in your view controller:
 ```swift
 carouselView.reload()
 ```
 
-#### inside deinit
+Inside `deinit`:
 ```swift
 carouselView.release()
 ```
 
-#### inside viewWillAppear
+Inside `viewWillAppear`:
 ```swift
 carouselView.continueWithTimer()
 ```
@@ -141,7 +141,7 @@ This must be done after SDK [initialization](https://documentation.bloomreach.co
 
 ### Handle Carousel Presentation Status
 
-If you want to show additional information about Carousel shown content block, position and list size, check methods:
+If you need to access additional information about content blocks displayed in a carousel, you can use the following methods:
 
 ```swift
 // returns complete InAppContentBlock structure of shown content block or null
@@ -152,7 +152,7 @@ let index = carouselView.getShownIndex()
 let count = carouselView.getShownCount()
 ```
 
-You are able to register a `onMessageShown` or `onMessageChanged` to Carousel view instance to retrieve information for each update.
+You can register a `onMessageShown` or `onMessageChanged` callback to a carousel view instance to retrieve information for each update.
 
 ```swift
 // This is triggered on each scroll so 'contentBlock' parameter represents currently shown content block
@@ -421,24 +421,26 @@ class CustomView: UIViewController, InAppCbViewDelegate {
 ```
 ### Customize Carousel View Filtration and Sorting
 
-Carousel View default filtration has same behaviour as Placeholder view:
-- content block is show-able according to `Display` configuration
-- content is valid and supported by SDK
+A carousel view filters available content blocks in the same way as a placeholder view:
 
-Order of shown content blocks is determined by:
-- primarily by `Priority` descending
-- secondary by `name` ascending (alphabetically)
+- The content block must meet the `Display` setting configured in the Engagement web app
+- The content must be valid and supported by the SDK
 
-You could subclass InAppContentBlockCarouselView to override methods like `func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?)` and `func sortContentBlocks(data: [StaticReturnData]) -> [StaticReturnData]` (open InAppContentBlockCarouselViewController from Example app and check implementation for `CustomCarouselView`)
+The order in which content blocks are displayed is determined by:
+
+1. By the `Priority` setting, descending
+2. By the `Name`, ascending (alphabetically)
+
+You can extend `CarouselInAppContentBlockView` to override methods like `func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?)` and `func sortContentBlocks(data: [StaticReturnData]) -> [StaticReturnData]`. Refer to [`InAppContentBlockCarouselViewController`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlockCarouselViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for an example implementation ()`CustomCarouselView`).
 
 ```swift
-class CustomCarouselView: InAppContentBlockCarouselView {
+class CustomCarouselView: CarouselInAppContentBlockView {
     override func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?) {
         super.filterContentBlocks(placeholder: placeholder) { data in
             let customFilter = data.filter { !$0.name.contains("test") } // custom filter
             continueCallback?(customFilter) // data passed through this callback will be applied
         } expiredCompletion: {
-            expiredCompletion?() // If you want to log expired messages or somwthing, you can put it to this place
+            expiredCompletion?() // If you want to log expired messages or something, you can put it to this place
         }
     }
 
@@ -455,11 +457,11 @@ class CustomCarouselView: InAppContentBlockCarouselView {
 
 > ❗️
 >
-> Carousel view fully accepts result from filtration and sorting implementations. Ensure that you return all wanted items as result from your implementations to avoid any missing items.
+> A carousel view accepts the results from the filtration and sorting implementations. Ensure that you return all wanted items as result from your implementations to avoid any missing items.
 
 > ❗️
 >
-> Carousel view could be configured with `maxMessagesCount`. Any value higher than zero applies max limit of shown content blocks independently of size of lists as results from filtration and sorting methods. So if you return 10 items from filtration and sorting method but `maxMessagesCount` is set to 5 then only first 5 items from your results.
+> A carousel view can be configured with `maxMessagesCount`. Any value higher than zero applies a maximum number of content blocks displayed, independently of the number of results from filtration and sorting methods. So if you return 10 items from filtration and sorting method but `maxMessagesCount` is set to 5 then only first 5 items from your results.
 
 
 ## Troubleshooting
