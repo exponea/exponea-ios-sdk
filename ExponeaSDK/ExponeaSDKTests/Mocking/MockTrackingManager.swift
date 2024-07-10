@@ -28,6 +28,7 @@ internal class MockTrackingManager: TrackingManagerType {
             && areDicsEqual(lhs.data?.properties, rhs.data?.properties)
             && lhs.data?.latestTimestamp == rhs.data?.latestTimestamp
             && areArraysEqual(lhs.data?.eventTypes, rhs.data?.eventTypes)
+            && areArraysEqual(lhs.data?.pushNotificationTokens, rhs.data?.pushNotificationTokens)
         }
         static func areDicsEqual(_ dic1: [String: String]?, _ dic2: [String: String]?) -> Bool {
             if dic1 == nil && dic2 == nil {
@@ -49,6 +50,17 @@ internal class MockTrackingManager: TrackingManagerType {
         }
         static func areArraysEqual(_ array1: [String]?, _ array2: [String]?) -> Bool {
             return array1?.sorted() == array2?.sorted()
+        }
+        static func areArraysEqual(_ lhs: [(String?, Bool)]?, _ rhs: [(String?, Bool)]?) -> Bool {
+            var rhsCopy = rhs
+            lhs?.forEach { string, bool in
+              if let foundIndex = rhsCopy?.firstIndex(where: { $0.0 == string && $0.1 == bool }) {
+                if rhsCopy?[safeIndex: foundIndex] != nil {
+                  rhsCopy?.remove(at: foundIndex)
+                }
+              }
+            }
+            return rhsCopy?.isEmpty == true
         }
     }
     public private(set) var trackedEvents: [TrackedEvent] = []

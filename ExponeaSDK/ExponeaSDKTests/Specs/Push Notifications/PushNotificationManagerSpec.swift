@@ -662,6 +662,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                     tokenTrackFrequency: .onTokenChange,
                     lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 + 10)
                 )
+                trackingManager.clearCalls()
                 pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
@@ -675,7 +676,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                 createPushManager(
                     requirePushAuthorization: true,
                     currentToken: "mock-token",
-                    tokenTrackFrequency: .onTokenChange,
+                    tokenTrackFrequency: .daily,
                     lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 + 10)
                 )
                 expect(trackingManager.trackedEvents).to(beEmpty())
@@ -742,6 +743,60 @@ final class PushNotificationManagerSpec: QuickSpec {
                     )
                 ]))
             }
+
+            it("should compare tracked token events successfully") {
+                let authorizedToken = MockTrackingManager.TrackedEvent(
+                    type: .registerPushToken,
+                    data: [.pushNotificationToken(token: "authorized-token-1", authorized: true)]
+                )
+                let nonAuthorizedToken = MockTrackingManager.TrackedEvent(
+                    type: .registerPushToken,
+                    data: [.pushNotificationToken(token: "", authorized: false)]
+                )
+                expect(authorizedToken).toNot(equal(nonAuthorizedToken))
+                let authorizedTokenAsArray = [authorizedToken]
+                let nonAuthorizedTokenAsArray = [nonAuthorizedToken]
+                expect(authorizedTokenAsArray).toNot(equal(nonAuthorizedTokenAsArray))
+                expect(authorizedTokenAsArray).to(equal(authorizedTokenAsArray))
+                expect(nonAuthorizedTokenAsArray).to(equal(nonAuthorizedTokenAsArray))
+            }
+
+            it("should track token if authorization swaps") {
+                // first run, authorization is given, app starts
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .authorized)
+                createPushManager(
+                    requirePushAuthorization: true,
+                    currentToken: "authorized-token-1",
+                    tokenTrackFrequency: .everyLaunch,
+                    lastTokenTrackDate: Date(timeIntervalSince1970: 1)
+                )
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .registerPushToken,
+                        data: [.pushNotificationToken(token: "authorized-token-1", authorized: true)]
+                    )
+                ]))
+                trackingManager.clearCalls()
+                // second run, authorization is denied, app goes to foreground
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
+                pushManager.applicationDidBecomeActive()
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .registerPushToken,
+                        data: [.pushNotificationToken(token: nil, authorized: false)]
+                    )
+                ]))
+                trackingManager.clearCalls()
+                // third run, authorization is given back, app goes to foreground again
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .authorized)
+                pushManager.applicationDidBecomeActive()
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .registerPushToken,
+                        data: [.pushNotificationToken(token: "authorized-token-1", authorized: true)]
+                    )
+                ]))
+            }
         }
 
         describe("saving opened push for later") {
@@ -798,8 +853,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                 createPushManager(
                     requirePushAuthorization: false,
                     currentToken: "mock-token",
-                    tokenTrackFrequency: .onTokenChange,
-                    lastTokenTrackDate: Date(timeIntervalSince1970: 1)
+                    tokenTrackFrequency: .daily,
+                    lastTokenTrackDate: Date()
                 )
                 expect(
                     UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?

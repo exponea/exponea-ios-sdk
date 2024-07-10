@@ -314,6 +314,7 @@
 		55EFD79F29224FFF002569FB /* AppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD79E29224FFF002569FB /* AppInboxProvider.swift */; };
 		55EFD7A129225060002569FB /* DefaultAppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD7A029225060002569FB /* DefaultAppInboxProvider.swift */; };
 		55EFD7A329225207002569FB /* ExampleAppInboxProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFD7A229225207002569FB /* ExampleAppInboxProvider.swift */; };
+		55F5F23D2C3E89070094B558 /* ArrayComparisonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F5F23C2C3E89070094B558 /* ArrayComparisonTests.swift */; };
 		55F6A41829891F130029D628 /* ExampleAuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6A41729891F130029D628 /* ExampleAuthProvider.swift */; };
 		55F6A41A29891F710029D628 /* CustomerTokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6A41929891F710029D628 /* CustomerTokenStorage.swift */; };
 		6BA73FED29B6377E009F92DF /* AtomicValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA73FEC29B6377E009F92DF /* AtomicValue.swift */; };
@@ -832,6 +833,7 @@
 		55EFD79E29224FFF002569FB /* AppInboxProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxProvider.swift; sourceTree = "<group>"; };
 		55EFD7A029225060002569FB /* DefaultAppInboxProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAppInboxProvider.swift; sourceTree = "<group>"; };
 		55EFD7A229225207002569FB /* ExampleAppInboxProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAppInboxProvider.swift; sourceTree = "<group>"; };
+		55F5F23C2C3E89070094B558 /* ArrayComparisonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayComparisonTests.swift; sourceTree = "<group>"; };
 		55F6A41729891F130029D628 /* ExampleAuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAuthProvider.swift; sourceTree = "<group>"; };
 		55F6A41929891F710029D628 /* CustomerTokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerTokenStorage.swift; sourceTree = "<group>"; };
 		6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftSoup.xcframework; path = ../Carthage/Build/SwiftSoup.xcframework; sourceTree = "<group>"; };
@@ -1813,6 +1815,7 @@
 				0566424D2373198B00CCDB98 /* SwizzleTestClass.swift */,
 				0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */,
 				057F44842399301A0070DF30 /* UIColor+FromHexStringSpec.swift */,
+				55F5F23C2C3E89070094B558 /* ArrayComparisonTests.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -3079,6 +3082,7 @@
 				55391D4B295342C7001D95B8 /* AppInboxManagerSpec.swift in Sources */,
 				B42DA69022B0594D00BBA225 /* FetchConsentsSpec.swift in Sources */,
 				05F3EFED2382BD08006E83F4 /* MockTelemetryUpload.swift in Sources */,
+				55F5F23D2C3E89070094B558 /* ArrayComparisonTests.swift in Sources */,
 				01764BC42087742100D0D673 /* ConfigurationSpec.swift in Sources */,
 				05080C3E23D736C400E4241B /* TelemetryManagerSpec.swift in Sources */,
 				F04BEA8B2111217700591950 /* RepositoryErrorSpec.swift in Sources */,

@@ -36,6 +36,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     private let tokenTrackFrequency: TokenTrackFrequency
     private let urlOpener: UrlOpenerType
     private var currentPushToken: String?
+    private var lastKnownPushToken: String?
     private var lastTokenTrackDate: Date
     private var pushNotificationSwizzler: PushNotificationSwizzler?
 
@@ -86,6 +87,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         self.trackingManager = trackingManager
         self.tokenTrackFrequency = tokenTrackFrequency
         self.currentPushToken = currentPushToken
+        self.lastKnownPushToken = currentPushToken
         self.lastTokenTrackDate = lastTokenTrackDate ?? .distantPast
         self.urlOpener = urlOpener
         self.requirePushAuthorization = requirePushAuthorization
@@ -247,6 +249,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     }
 
     func handlePushTokenRegisteredUnsafe(token: String) {
+        self.lastKnownPushToken = token
         UNAuthorizationStatusProvider.current.isAuthorized { authorized in
             if !self.requirePushAuthorization || authorized {
                 self.currentPushToken = token
@@ -363,6 +366,9 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                     self.trackCurrentPushToken(isAuthorized: authorized)
                 }
             } else {
+                if self.currentPushToken == nil {
+                    self.currentPushToken = self.lastKnownPushToken
+                }
                 self.checkForPushTokenFrequency(isAuthorized: authorized)
             }
         }
@@ -395,8 +401,11 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             }
 
         case .onTokenChange:
-            // nothing to do
-            break
+            // Track if changed from last tracked
+            if trackingManager.customerPushToken != currentPushToken {
+                lastTokenTrackDate = .init()
+                trackCurrentPushToken(isAuthorized: authorized)
+            }
         }
     }
 }

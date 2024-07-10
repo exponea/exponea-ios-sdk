@@ -72,7 +72,7 @@ extension Array where Iterator.Element == DataType {
         }
         return updatedData
     }
-    
+
     public func withCustomerIds(_ customerIds: [String: String]) -> [DataType] {
         // only single .customerIds could be populated in array
         var updatedData: [DataType] = self.compactMap {
@@ -88,5 +88,15 @@ extension Array where Iterator.Element == DataType {
 
     public var customerIds: [String: String] {
         return compactMap { if case .customerIds(let customerIds) = $0 { return customerIds } else { return nil } }.first ?? [:]
+    }
+
+    public var pushNotificationTokens: [(String?, Bool)] {
+        var tokens = [(String?, Bool)]()
+        forEach {
+            if case .pushNotificationToken(let token, let authorized) = $0 {
+                tokens.append((token, authorized))
+            }
+        }
+        return tokens
     }
 }

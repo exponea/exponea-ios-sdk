@@ -236,7 +236,7 @@ extension TrackingManager: TrackingManagerType {
         if canUseDefaultProperties(for: type) {
             payload = payload.addProperties(repository.configuration.defaultProperties)
         }
-        if (payload.customerIds.isEmpty) {
+        if payload.customerIds.isEmpty {
             payload = payload.withCustomerIds(customerIds)
         }
         return payload
