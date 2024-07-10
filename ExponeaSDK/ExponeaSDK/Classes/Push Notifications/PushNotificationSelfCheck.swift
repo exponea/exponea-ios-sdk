@@ -23,13 +23,20 @@ final class PushNotificationSelfCheck {
     private let timeout = 5.0
 
     private let trackingManager: TrackingManagerType
+    private let notificationsManager: PushNotificationManagerType
     private let flushingManager: FlushingManagerType
     private let repository: RepositoryType
 
-    init(trackingManager: TrackingManagerType, flushingManager: FlushingManagerType, repository: RepositoryType) {
+    init(
+        trackingManager: TrackingManagerType,
+        flushingManager: FlushingManagerType,
+        repository: RepositoryType,
+        notificationsManager: PushNotificationManagerType
+    ) {
         self.trackingManager = trackingManager
         self.flushingManager = flushingManager
         self.repository = repository
+        self.notificationsManager = notificationsManager
     }
 
     private enum Selectors {
@@ -169,7 +176,7 @@ final class PushNotificationSelfCheck {
             )
             return
         }
-        if trackingManager.notificationsManager.didReceiveSelfPushCheck {
+        if notificationsManager.didReceiveSelfPushCheck {
             completion()
             return
         }

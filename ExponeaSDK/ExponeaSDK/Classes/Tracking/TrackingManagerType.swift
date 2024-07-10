@@ -20,9 +20,6 @@ protocol TrackingManagerType: AnyObject {
     /// Returns the push token of the current customer if there is any.
     var customerPushToken: String? { get }
 
-    /// The manager responsible for handling notification callbacks.
-    var notificationsManager: PushNotificationManagerType { get }
-
     /// Main function used to track events to Exponea.
     ///
     /// - Parameters:

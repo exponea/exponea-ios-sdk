@@ -115,10 +115,29 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                 UIApplication.shared.registerForRemoteNotifications()
             }
         }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     deinit {
         pushNotificationSwizzler?.removeAutomaticPushTracking()
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+    
+    // MARK: App lifecycle
+    
+    @objc internal func applicationDidBecomeActive() {
+        Exponea.shared.executeSafely {
+            self.applicationDidBecomeActiveUnsafe()
+        }
     }
 
     // MARK: - Actions -
@@ -383,7 +402,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 }
 
 extension PushNotificationManager {
-    func applicationDidBecomeActive() {
+    func applicationDidBecomeActiveUnsafe() {
         checkForDeliveredPushMessages()
         // we don't have to check for opened pushes here, Exponea SDK was initialized so it will be tracked directly
         verifyPushStatusAndTrackPushToken()

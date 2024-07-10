@@ -201,7 +201,7 @@ class ExponeaSpec: QuickSpec {
                     exponea.configure(plistName: "ExponeaConfig")
                     let delegate = MockDelegate()
                     // just initialize the notifications manager to clear the swizzling error
-                    _ = exponea.trackingManager?.notificationsManager
+                    _ = exponea.notificationsManager
                     logger.messages.removeAll()
                     exponea.pushNotificationsDelegate = delegate
                     expect(exponea.pushNotificationsDelegate).to(be(delegate))
