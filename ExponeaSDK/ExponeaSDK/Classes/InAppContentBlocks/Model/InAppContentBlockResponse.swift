@@ -113,8 +113,11 @@ public struct InAppContentBlockResponse: Codable {
         self.content = try container.decodeIfPresent(Content.self, forKey: .content)
         self.trackingConsentCategory = try container.decodeIfPresent(String.self, forKey: .trackingConsentCategory)
         self.placeholders = try container.decode([String].self, forKey: .placeholders)
-        let frequency = try container.decode(String.self, forKey: .frequency)
-        self.frequency = .init(value: frequency)
+        if let frequency = try container.decodeIfPresent(String.self, forKey: .frequency) {
+            self.frequency = .init(value: frequency)
+        } else {
+            self.frequency = .always
+        }
     }
 
     public init(
