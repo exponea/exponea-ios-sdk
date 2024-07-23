@@ -218,7 +218,13 @@ open class CarouselInAppContentBlockView: UIView {
         timer = Timer.publish(every: every, on: .main, in: .common)
             .autoconnect()
             .sink(receiveValue: { [weak self] _ in
-                self?.state = .shouldReload
+                guard let self else { return }
+                if every < self.defaultRefreshInterval {
+                    self.state = .restart
+                    self.state = .shouldReload
+                } else {
+                    self.state = .shouldReload
+                }
             })
     }
 
