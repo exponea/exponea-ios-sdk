@@ -207,9 +207,11 @@ placeholderView.contentReadyCompletion = { [weak self] contentLoaded in
 
 ### Customize Action Behavior
 
-When an in-app content block action (show, click, close, error) is performed, by default, the SDK tracks the appropriate event and, in case of a button click, opens a link. 
+When an in-app content block action (show, click, close, error) is performed, by default, the SDK tracks the appropriate event and, in case of a button click, opens a link. It's possible to customize this behavior.
 
-You can override or customize this behavior by setting `behaviourCallback` on the `StaticInAppContentBlockView`.
+#### Static View
+
+You can override or customize the default action behavior by setting `behaviourCallback` on the `StaticInAppContentBlockView`.
 
 ```swift
 // it is recommended to postpone message load if `onMessageShown` usage is crucial for you
@@ -286,6 +288,62 @@ class CustomInAppContentBlockCallback: InAppContentBlockCallbackType {
 > 📘
 >
 > Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a working example.
+
+#### Carousel View
+
+You can configure the action behavior for a `CarouselInAppContentBlockView` through `contentBlockCarouselCallback` by setting the `trackActions` and `overrideDefaultBehavior` flags.
+
+##### trackActions
+
+- Default value: `true`
+- If `false`, events "close" and "click" on banners won't be tracked by the SDK. You can add your custom behavior via `customContentBlockCarouselCallback` (see example [below](#customcontentblockcarouselcallback)).
+
+```swift
+carousel.contentBlockCarouselCallback.trackActions = false
+```
+
+##### overrideDefaultBehavior
+
+- Default value: `false`
+- If `true`, deep links and universal links won't be opened. You can add your custom behavior via `customContentBlockCarouselCallback` (see example [below](#customcontentblockcarouselcallback)).
+
+##### customContentBlockCarouselCallback
+
+You can add your custom behavior by setting `customContentBlockCarouselCallback` on the `CarouselInAppContentBlockView`:
+
+```swift
+CarouselInAppContentBlockView(placeholder: "example_carousel", customContentBlockCarouselCallback: CustomCarouselCallback())
+```
+
+The callback behavior object must implement `ContentBlockCarouselCallbackType`.
+
+```swift
+public class CustomCarouselCallback: ContentBlockCarouselCallbackType {
+
+    public var overrideDefaultBehavior: Bool = false
+    public var trackActions: Bool = true
+
+    public func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    public func onNoMessageFound(placeholderId: String) {
+        // space for custom implementation
+    }
+
+    public func onError(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse?, errorMessage: String) {
+        // space for custom implementation
+    }
+
+    public func onCloseClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    public func onActionClickedSafari(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        // space for custom implementation
+    }
+}
+```
 
 ### Override Button Action Type in HTML Message
 

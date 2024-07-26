@@ -213,6 +213,11 @@
 		317536882BD27DEB0062A5E5 /* SegmentCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317536872BD27DEB0062A5E5 /* SegmentCategory.swift */; };
 		3175368A2BD29F6E0062A5E5 /* EmptyDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317536892BD29F6E0062A5E5 /* EmptyDTO.swift */; };
 		3175368C2BD2AFF70062A5E5 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3175368B2BD2AFF70062A5E5 /* Debouncer.swift */; };
+		3189E2DF2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2DE2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift */; };
+		3189E2E12C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E02C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift */; };
+		3189E2E32C4EBEFE00C4CD68 /* InAppCarouselStateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E22C4EBEFE00C4CD68 /* InAppCarouselStateType.swift */; };
+		3189E2E52C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E42C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift */; };
+		3189E2E72C4EBF2300C4CD68 /* CarouselOnChangeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E62C4EBF2300C4CD68 /* CarouselOnChangeData.swift */; };
 		318B552A2A80E52B00934902 /* DeeplinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B55292A80E52B00934902 /* DeeplinkManager.swift */; };
 		319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */; };
 		31C7B4242A822848001BA5E2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4232A822848001BA5E2 /* Coordinator.swift */; };
@@ -244,6 +249,7 @@
 		31EBB8682A6AC3470003AAA5 /* SampleInappContentBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8672A6AC3470003AAA5 /* SampleInappContentBlocks.swift */; };
 		31EBB86B2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB86A2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift */; };
 		31EBB86D2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB86C2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift */; };
+		31EC20A02C528A0900CE7BE9 /* CustomCarouselCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EC209F2C528A0900CE7BE9 /* CustomCarouselCallback.swift */; };
 		3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */; };
 		3384EFC629965EEB009A5981 /* Execute+AfterInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */; };
 		3388E6D129E8475B00F28C46 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
@@ -734,6 +740,11 @@
 		317536872BD27DEB0062A5E5 /* SegmentCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentCategory.swift; sourceTree = "<group>"; };
 		317536892BD29F6E0062A5E5 /* EmptyDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyDTO.swift; sourceTree = "<group>"; };
 		3175368B2BD2AFF70062A5E5 /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
+		3189E2DE2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentBlockCarouselCallback.swift; sourceTree = "<group>"; };
+		3189E2E02C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselContentBlockViewCell.swift; sourceTree = "<group>"; };
+		3189E2E22C4EBEFE00C4CD68 /* InAppCarouselStateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppCarouselStateType.swift; sourceTree = "<group>"; };
+		3189E2E42C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselOnShowMessageData.swift; sourceTree = "<group>"; };
+		3189E2E62C4EBF2300C4CD68 /* CarouselOnChangeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselOnChangeData.swift; sourceTree = "<group>"; };
 		318B55292A80E52B00934902 /* DeeplinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeeplinkManager.swift; sourceTree = "<group>"; };
 		319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationStoring.swift; sourceTree = "<group>"; };
 		31C7B4232A822848001BA5E2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
@@ -765,6 +776,7 @@
 		31EBB8672A6AC3470003AAA5 /* SampleInappContentBlocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleInappContentBlocks.swift; sourceTree = "<group>"; };
 		31EBB86A2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppContentBlocksManagerSpec.swift; sourceTree = "<group>"; };
 		31EBB86C2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TrackManager+IdentifyCustomerSpec.swift"; sourceTree = "<group>"; };
+		31EC209F2C528A0900CE7BE9 /* CustomCarouselCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCarouselCallback.swift; sourceTree = "<group>"; };
 		3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpoInitManager.swift; sourceTree = "<group>"; };
 		3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Execute+AfterInit.swift"; sourceTree = "<group>"; };
 		33FC6CC129A90ED5001F113F /* OnMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnMain.swift; sourceTree = "<group>"; };
@@ -1558,6 +1570,12 @@
 			isa = PBXGroup;
 			children = (
 				315598072C09CAE500FBED42 /* CarouselInAppContentBlockView.swift */,
+				3189E2DE2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift */,
+				3189E2E02C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift */,
+				3189E2E22C4EBEFE00C4CD68 /* InAppCarouselStateType.swift */,
+				3189E2E42C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift */,
+				3189E2E62C4EBF2300C4CD68 /* CarouselOnChangeData.swift */,
+				31EC209F2C528A0900CE7BE9 /* CustomCarouselCallback.swift */,
 			);
 			path = Carousel;
 			sourceTree = "<group>";
@@ -2869,6 +2887,8 @@
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
 				05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */,
 				05BA5804250649F000E10994 /* PushOpenedData.swift in Sources */,
+				3189E2DF2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift in Sources */,
+				3189E2E72C4EBF2300C4CD68 /* CarouselOnChangeData.swift in Sources */,
 				3175368C2BD2AFF70062A5E5 /* Debouncer.swift in Sources */,
 				05CDD8392391193E00C7291A /* InAppMessagesCache.swift in Sources */,
 				0591905D23EC1A550037BD88 /* EventFilterConstraint.swift in Sources */,
@@ -2919,6 +2939,7 @@
 				05F3EFD3237E9291006E83F4 /* TelemetryStorage.swift in Sources */,
 				056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */,
 				05F3EFCD237E9260006E83F4 /* TelemetryManager.swift in Sources */,
+				3189E2E12C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift in Sources */,
 				55DA6EBE290AD5E900B5B285 /* AppInboxCacheType.swift in Sources */,
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
 				31EBB85B2A6AC3020003AAA5 /* PersonalizedInAppContentBlockResponse.swift in Sources */,
@@ -2935,6 +2956,7 @@
 				31EBB85C2A6AC3020003AAA5 /* StaticReturnData.swift in Sources */,
 				315598082C09CAE500FBED42 /* CarouselInAppContentBlockView.swift in Sources */,
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
+				3189E2E52C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift in Sources */,
 				3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				CCB87B7C28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift in Sources */,
@@ -2967,6 +2989,7 @@
 				05CDD837239114F700C7291A /* InAppMessagesManagerType.swift in Sources */,
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
 				053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */,
+				31EC20A02C528A0900CE7BE9 /* CustomCarouselCallback.swift in Sources */,
 				057D476723C87F0B00AEE902 /* UrlOpenerType.swift in Sources */,
 				317536882BD27DEB0062A5E5 /* SegmentCategory.swift in Sources */,
 				CCB87B7E2816A6A6005DFB8E /* GitHubReleaseResponse.swift in Sources */,
@@ -2988,6 +3011,7 @@
 				05D2D39C23DEF1E300E3E79A /* InAppMessageAlertView.swift in Sources */,
 				053CA200247D4A42003B699C /* ServerRepository+SelfCheckRepository.swift in Sources */,
 				556887542A176A6800498B40 /* AppInboxStyleParser.swift in Sources */,
+				3189E2E32C4EBEFE00C4CD68 /* InAppCarouselStateType.swift in Sources */,
 				55EFD7A129225060002569FB /* DefaultAppInboxProvider.swift in Sources */,
 				CCB87B7A28169F4B005DFB8E /* VersionCheckRepository.swift in Sources */,
 				31EBB8602A6AC3020003AAA5 /* StaticQueueData.swift in Sources */,

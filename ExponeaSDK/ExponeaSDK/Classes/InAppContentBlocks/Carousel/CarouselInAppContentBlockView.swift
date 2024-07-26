@@ -9,40 +9,6 @@
 import WebKit
 import UIKit
 import Combine
-import SwiftUI
-
-enum InAppCarouselStateType {
-    case idle
-    case startTimer
-    case stopTimer
-    case refresh
-    case shouldReload
-    case restart
-}
-
-public struct CarouselOnShowMessageData {
-    public let placeholderId: String
-    public let contentBlock: StaticReturnData
-    public let index: Int
-    public let count: Int
-
-    public init(placeholderId: String, contentBlock: StaticReturnData, index: Int, count: Int) {
-        self.placeholderId = placeholderId
-        self.contentBlock = contentBlock
-        self.index = index
-        self.count = count
-    }
-}
-
-public struct CarouselOnChangeData {
-    public let count: Int
-    public let messages: [StaticReturnData]
-
-    public init(count: Int, messages: [StaticReturnData]) {
-        self.count = count
-        self.messages = messages
-    }
-}
 
 open class CarouselInAppContentBlockView: UIView {
 
@@ -85,17 +51,24 @@ open class CarouselInAppContentBlockView: UIView {
     private var customHeight: CGFloat?
     private var currentMessage: StaticReturnData?
     private var alreadyShowedMessages: [String] = []
-    private var behaviourCallback: InAppContentBlockCallbackType = DefaultInAppContentBlockCallback()
+    private let defaultBehaviourCallback: DefaultContentBlockCarouselCallback!
 
     private var data: [StaticReturnData] = []
     private var savedTimer: TimeInterval?
     private let placeholder: String
 
-    public init(placeholder: String, maxMessagesCount: Int = 0, customHeight: CGFloat? = nil, scrollDelay: TimeInterval = 3) {
+    public init(
+        placeholder: String,
+        maxMessagesCount: Int = 0,
+        customHeight: CGFloat? = nil,
+        scrollDelay: TimeInterval = 3,
+        behaviourCallback: DefaultContentBlockCarouselCallback? = nil
+    ) {
         self.placeholder = placeholder
         self.maxMessagesCount = maxMessagesCount
         self.customHeight = customHeight
         self.defaultRefreshInterval = scrollDelay
+        defaultBehaviourCallback = ContentBlockCarouselCallback(behaviourCallback: behaviourCallback)
         super.init(frame: .zero)
 
         listenToState()
@@ -150,7 +123,21 @@ open class CarouselInAppContentBlockView: UIView {
         state = .stopTimer
         inAppContentBlocksManager.loadMessagesForCarousel(placeholder: placeholder) { [weak self] in
             guard let self else { return }
+            self.inAppContentBlocksManager
+                .inAppContentBlockMessages
+                .filter { $0.placeholders.contains(self.placeholder) }
+                .filter { $0.isCorruptedImage }
+                .forEach { message in
+                    self.defaultBehaviourCallback.onError(
+                        placeholderId: message.id,
+                        contentBlock: message,
+                        errorMessage: "Corrupted image for \(message.id)"
+                    )
+                }
             self.filterContentBlocks(placeholder: self.placeholder) { data in
+                if data.isEmpty {
+                    self.defaultBehaviourCallback.onNoMessageFound(placeholderId: self.placeholder)
+                }
                 let toReturn = data
                     .compactMap { response in
                         self.inAppContentBlocksManager.prepareCarouselStaticData(messages: response)
@@ -335,7 +322,7 @@ extension CarouselInAppContentBlockView: UICollectionViewDelegateFlowLayout {
         currentMessage = message
         if !alreadyShowedMessages.contains(id), let messageResponse = message.message {
             alreadyShowedMessages.append(id)
-            behaviourCallback.onMessageShown(placeholderId: placeholder, contentBlock: messageResponse)
+            defaultBehaviourCallback.onMessageShown(placeholderId: placeholder, contentBlock: messageResponse)
             Exponea.shared.telemetryManager?.report(
                 eventWithType: .showInAppMessage,
                 properties: ["messageType": InAppContentBlockType.carouselContentBlock.type]
@@ -369,142 +356,6 @@ extension CarouselInAppContentBlockView: UICollectionViewDelegateFlowLayout {
     }
 }
 
-class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
-    private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
-    private let webview = WKWebView()
-    var assignedMessage: InAppContentBlockResponse?
-    public var behaviourCallback: InAppContentBlockCallbackType = DefaultInAppContentBlockCallback()
-    var placeholder: String = ""
-    var actionClicked: EmptyBlock?
-    var closeClicked: EmptyBlock?
-    var touchCallback: EmptyBlock?
-    var releaseCallback: EmptyBlock?
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        contentView.addSubview(webview)
-        webview.scrollView.showsVerticalScrollIndicator = false
-        webview.scrollView.bounces = false
-        webview.backgroundColor = .clear
-        webview.isOpaque = false
-        webview.translatesAutoresizingMaskIntoConstraints = false
-        webview.navigationDelegate = self
-        webview.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        webview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        webview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        webview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        let userScript: WKUserScript = .init(source: inAppContentBlocksManager.disableZoomSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-        let configuration = webview.configuration
-        configuration.userContentController.addUserScript(userScript)
-        if let contentRuleList = inAppContentBlocksManager.contentRuleList {
-            configuration.userContentController.add(contentRuleList)
-        }
-        contentView.backgroundColor = .clear
-
-        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(checkAction))
-        webview.addGestureRecognizer(gesture)
-    }
-
-    @objc func checkAction(sender: UILongPressGestureRecognizer) {
-        switch sender.state {
-        case .began:
-            touchCallback?()
-        default:
-            releaseCallback?()
-        }
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func loadHtml(html: String, assignedMessage: InAppContentBlockResponse?, placeholder: String) {
-        self.assignedMessage = assignedMessage
-        self.placeholder = placeholder
-        webview.loadHTMLString(html, baseURL: nil)
-    }
-
-    public func webView(
-        _ webView: WKWebView,
-        decidePolicyFor navigationAction: WKNavigationAction,
-        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-    ) {
-        let handled = handleUrlClick(navigationAction.request.url)
-        decisionHandler(handled ? .cancel : .allow)
-    }
-
-    private func handleUrlClick(_ actionUrl: URL?) -> Bool {
-        guard let actionUrl else {
-            Exponea.logger.log(.warning, message: "InAppCB: Unknown action URL: \(String(describing: actionUrl))")
-            return false
-        }
-        if isBlankNav(actionUrl) {
-            // on first load
-            // nothing to do, not need to continue loading
-            return false
-        }
-        guard let message = assignedMessage else {
-            return true
-        }
-        let webAction: WebActionManager = .init { [weak self] in
-            guard let self else { return }
-            InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
-            self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
-            self.closeClicked?()
-        } onActionCallback: { [weak self] action in
-            guard let self else { return }
-            InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
-            let actionType = self.determineActionType(action)
-            if actionType == .close {
-                self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
-            } else {
-                self.behaviourCallback.onActionClickedSafari(
-                    placeholderId: self.placeholder,
-                    contentBlock: message,
-                    action: .init(
-                        name: action.buttonText,
-                        url: action.actionUrl,
-                        type: actionType
-                    )
-                )
-            }
-            self.actionClicked?()
-        } onErrorCallback: { error in
-            Exponea.logger.log(.error, message: "WebActionManager error \(error.localizedDescription)")
-        }
-        webAction.htmlPayload = message.normalizedResult ?? message.personalizedMessage?.htmlPayload
-        let handled = webAction.handleActionClick(actionUrl)
-        if handled {
-            Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has been handled")
-        } else {
-            Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has not been handled, continue")
-        }
-        return handled
-    }
-
-    private func isBlankNav(_ url: URL?) -> Bool {
-        url?.absoluteString == "about:blank"
-    }
-
-    private func determineActionType(_ action: ActionInfo) -> InAppContentBlockActionType {
-        switch action.actionType {
-        case .browser:
-            return .browser
-        case .deeplink:
-            return .deeplink
-        case .unknown:
-            if action.actionUrl == "https://exponea.com/close_action" {
-                return .close
-            }
-            if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
-                return .browser
-            }
-            return .deeplink
-        }
-    }
-}
-
 // MARK: - DataSource
 extension CarouselInAppContentBlockView: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -514,6 +365,7 @@ extension CarouselInAppContentBlockView: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let message = data[safeIndex: indexPath.row] else { return collectionView.dequeueReusableCell(withReuseIdentifier: "UICollectionViewCell", for: indexPath) }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CarouselContentBlockViewCell
+        cell.contentBlockCarouselCallback = defaultBehaviourCallback
         cell.actionClicked = { [weak self] in
             guard let message = self?.data[safeIndex: indexPath.row] else { return }
             let isMessageWithAlwayFrequency = message.message?.frequency == .always

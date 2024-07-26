@@ -30,7 +30,7 @@ class CustomCarouselView: CarouselInAppContentBlockView {
 
 class InAppContentBlockCarouselViewController: UIViewController {
 
-    let carousel = CarouselInAppContentBlockView(placeholder: "example_carousel")
+    let carousel = CarouselInAppContentBlockView(placeholder: "example_carousel", behaviourCallback: CustomCarouselCallback())
     let carousel2 = CustomCarouselView(placeholder: "example_carousel", maxMessagesCount: 5, scrollDelay: 10)
     let carousel3 = CustomCarouselView(placeholder: "example_carousel_ios")
 
