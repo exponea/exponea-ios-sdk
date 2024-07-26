@@ -15,6 +15,38 @@ final class ArrayComparisonTests: QuickSpec {
         MockTrackingManager.TrackedEvent.areArraysEqual(lhs, rhs)
     }
     override func spec() {
+        it("atomic test") {
+            @Atomic var testArray: [String] = []
+            waitUntil(timeout: .seconds(3)) { done in
+                for i in 0..<10000 {
+                    if i < 9000 {
+                        if i % 2 == 0 {
+                            DispatchQueue.global().async {
+                                _testArray.changeValue(with: { $0.append("\(i)") })
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                _testArray.changeValue(with: { $0.append("\(i)") })
+                            }
+                        }
+                    }
+                    if i >= 9000 {
+                        DispatchQueue.main.async {
+                            _testArray.changeValue(with: { $0.append("\(i)") })
+                        }
+                        DispatchQueue.global().async {
+                            _testArray.changeValue(with: { $0.append("\(i)") })
+                        }
+                    }
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    done()
+                }
+            }
+            let count = testArray.count
+            expect(count).to(be(11000))
+        }
+
         it("compare string with bool arrays") {
             expect(self.areArraysEqual([
                 (nil, false)

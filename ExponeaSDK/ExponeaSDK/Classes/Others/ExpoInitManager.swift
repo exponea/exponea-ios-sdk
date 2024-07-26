@@ -32,7 +32,7 @@ final class ExpoInitManager: ExpoInitManagerType {
     // MARK: - Properties
     internal var status: ExponeaInitType = .notInitialized
     internal var isConfigured: Bool { sdkInstance.isConfigured }
-    internal var actionBlocks: [EmptyThrowsBlock] = []
+    @Atomic internal var actionBlocks: [EmptyThrowsBlock] = []
     internal var sdkInstance: ExponeaType
 
     // MARK: - Init
@@ -65,12 +65,12 @@ extension ExpoInitManager {
         if isConfigured && status == .configured {
             try action()
         } else {
-            actionBlocks.append(action)
+            _actionBlocks.changeValue(with: { $0.append(action) })
         }
     }
 
     func clean() {
         Exponea.logger.log(.verbose, message: "Action blocks (\(actionBlocks.count)) have been deleted")
-        actionBlocks.removeAll()
+        _actionBlocks.changeValue(with: { $0.removeAll() })
     }
 }
