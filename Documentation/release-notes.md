@@ -9,7 +9,7 @@ parentDocSlug: ios-sdk
 ## Release Notes
 ## Release Notes for 2.28.0
 #### August 01, 2024
-* Features
+* Added:
   * ContentBlockCarouselCallback extended with additional callback methods.
   * Adds an improvement ensuring that In-App Messages are only fetched while the app is in the foreground.
   * InAppContentBlock.Content struct exposed to have public constructor.
@@ -17,7 +17,7 @@ parentDocSlug: ios-sdk
   * Tracking of campaign/clicks event updated only for cases when xnpe_cmp is present, described more deeply in documentation.
   * AppInboxListViewController extended with onItemClicked callback.
   * Carousel documentation updated.
-* Bug Fixes
+* Fixed:
   * Fixed: InAppContentBlock deserialisation now able to handle NIL.
   * Fixed: Crash caused by calling track events for not configured SDK from multiple threads fixed by adding atomicity to actionBlocks array in ExpoInitManager.
   * Fixed: Carousel timer inconsistency for next message after resuming from action.
