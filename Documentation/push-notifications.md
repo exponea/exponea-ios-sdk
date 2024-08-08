@@ -129,10 +129,6 @@ If the user hasn't granted permission yet, this code will trigger an alert askin
 
 By default, the SDK only tracks the push notification token if the app is authorized (unless the [push setup check](#configure-the-sdk) is enabled). Refer to [Silent Push Notifications](#silent-push-notifications) below to learn how to track the push token even when the app is not authorized.
 
-> 👍
->
-> Push notification authorization status is tracked as customer property `apple_push_notification_authorized`.
-
 #### Checklist: 
  - [ ] Engagement should now be able to send push notifications to your device. Refer to the [Creating a new notification](https://documentation.bloomreach.com/engagement/docs/mobile-push-notifications#creating-a-new-notification) guide for instructions.
 

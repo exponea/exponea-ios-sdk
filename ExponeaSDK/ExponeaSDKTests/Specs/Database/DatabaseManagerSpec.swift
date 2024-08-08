@@ -101,11 +101,10 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(db.currentCustomer.ids["registered"]).to(equal("myemail"))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
-                    expect(props.count).to(equal(3))
+                    expect(props.count).to(equal(2))
 
                     expect(props["customprop"] as? String).to(equal("customval"))
                     expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
-                    expect(props["apple_push_notification_authorized"] as? Bool).to(equal(true))
 
                     expect(object.timestamp).to(equal(100))
 
@@ -276,11 +275,10 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(db.currentCustomer.ids["registered"]).to(equal("myemail"))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
-                    expect(props.count).to(equal(3))
+                    expect(props.count).to(equal(2))
 
                     expect(props["customprop"] as? String).to(equal("customval"))
                     expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
-                    expect(props["apple_push_notification_authorized"] as? Bool).to(equal(true))
 
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.5))
 
