@@ -395,6 +395,9 @@ extension ExponeaInternal {
         projectMapping: [EventType: [ExponeaProject]]?
     ) {
         executeSafelyWithDependencies { dependencies in
+            if dependencies.configuration.automaticSessionTracking {
+                try dependencies.trackingManager.track(.sessionEnd, with: [.timestamp(Date().timeIntervalSince1970)])
+            }
             try dependencies.trackingManager.anonymize(
                 exponeaProject: exponeaProject,
                 projectMapping: projectMapping

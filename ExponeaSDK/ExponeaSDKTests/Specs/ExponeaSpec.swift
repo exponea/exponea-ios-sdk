@@ -402,7 +402,7 @@ class ExponeaSpec: QuickSpec {
                     let secondCustomer = database.currentCustomer
 
                     let events = try! database.fetchTrackEvent()
-                    expect(events.count).to(equal(4))
+                    expect(events.count).to(equal(5))
                     expect(events[0].eventType).to(equal("installation"))
                     expect(events[0].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(events[0].projectToken).to(equal("mock-token"))
@@ -411,13 +411,17 @@ class ExponeaSpec: QuickSpec {
                     expect(events[1].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(events[1].projectToken).to(equal("mock-token"))
 
-                    expect(events[2].eventType).to(equal("installation"))
-                    expect(events[2].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
-                    expect(events[2].projectToken).to(equal("other-mock-token"))
+                    expect(events[2].eventType).to(equal("session_end"))
+                    expect(events[2].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
+                    expect(events[2].projectToken).to(equal("mock-token"))
 
-                    expect(events[3].eventType).to(equal("session_start"))
+                    expect(events[3].eventType).to(equal("installation"))
                     expect(events[3].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
                     expect(events[3].projectToken).to(equal("other-mock-token"))
+
+                    expect(events[4].eventType).to(equal("session_start"))
+                    expect(events[4].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
+                    expect(events[4].projectToken).to(equal("other-mock-token"))
 
                     let customerUpdates = try! database.fetchTrackCustomer()
                     expect(customerUpdates.count).to(equal(3))
