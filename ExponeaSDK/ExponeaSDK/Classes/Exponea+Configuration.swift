@@ -227,7 +227,6 @@ public extension ExponeaInternal {
                         self.pushNotificationSelfCheck?.start()
                     }
                 }
-                self.afterInit.setStatus(status: .configured)
             } catch {
                 Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
             }
