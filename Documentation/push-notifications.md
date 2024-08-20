@@ -257,7 +257,7 @@ Once the custom sound is in place in your app, enter the file name of the sound 
 
 ### Track Delivered Notifications
 
-To track the delivery of push notifications, implement a **Notification Service Extension** as [described for rich push notifications above](#notification-service-extension).
+To track the delivery of push notifications, implement a **Notification Service Extension** as [described for rich push notifications above](#rich-push-notifications).
 
 Calling `ExponeaNotificationService.process` in `didReceive` will track the notification delivery as a `campaign` event in Engagement.
 
