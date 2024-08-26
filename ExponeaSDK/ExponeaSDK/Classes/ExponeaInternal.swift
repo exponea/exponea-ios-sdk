@@ -74,7 +74,7 @@ public class ExponeaInternal: ExponeaType {
 
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
-    
+
     /// The manager for push registration and delivery tracking
     internal var notificationsManager: PushNotificationManagerType?
 
@@ -214,7 +214,7 @@ public class ExponeaInternal: ExponeaType {
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
-    
+
     internal lazy var inAppContentBlockStatusStore: InAppContentBlockDisplayStatusStore = {
         return InAppContentBlockDisplayStatusStore(userDefaults: userDefaults)
     }()
@@ -537,7 +537,8 @@ public extension ExponeaInternal {
                    defaultProperties: [String: JSONConvertible]? = nil,
                    inAppContentBlocksPlaceholders: [String]? = nil,
                    allowDefaultCustomerProperties: Bool? = nil,
-                   advancedAuthEnabled: Bool? = nil
+                   advancedAuthEnabled: Bool? = nil,
+                   manualSessionAutoClose: Bool = true
     ) {
         do {
             let configuration = try Configuration(
@@ -548,7 +549,8 @@ public extension ExponeaInternal {
                 defaultProperties: defaultProperties,
                 inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                advancedAuthEnabled: advancedAuthEnabled
+                advancedAuthEnabled: advancedAuthEnabled,
+                manualSessionAutoClose: manualSessionAutoClose
             )
             self.configuration = configuration
             self.afterInit.setStatus(status: .configured)
@@ -618,7 +620,8 @@ public extension ExponeaInternal {
                    defaultProperties: [String: JSONConvertible]? = nil,
                    inAppContentBlocksPlaceholders: [String]? = nil,
                    allowDefaultCustomerProperties: Bool? = nil,
-                   advancedAuthEnabled: Bool? = nil
+                   advancedAuthEnabled: Bool? = nil,
+                   manualSessionAutoClose: Bool = true
     ) {
         do {
             let configuration = try Configuration(
@@ -630,7 +633,8 @@ public extension ExponeaInternal {
                 defaultProperties: defaultProperties,
                 inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                advancedAuthEnabled: advancedAuthEnabled
+                advancedAuthEnabled: advancedAuthEnabled,
+                manualSessionAutoClose: manualSessionAutoClose
             )
             self.configuration = configuration
             self.afterInit.setStatus(status: .configured)

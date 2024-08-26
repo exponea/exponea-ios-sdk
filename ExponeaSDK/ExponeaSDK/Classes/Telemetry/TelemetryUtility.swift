@@ -29,7 +29,8 @@ final class TelemetryUtility {
             projectToken: "placeholder",
             authorization: .none,
             baseUrl: Constants.Repository.baseUrl,
-            allowDefaultCustomerProperties: true
+            allowDefaultCustomerProperties: true, 
+            manualSessionAutoClose: config.manualSessionAutoClose
         ) else {
             return [:]
         }

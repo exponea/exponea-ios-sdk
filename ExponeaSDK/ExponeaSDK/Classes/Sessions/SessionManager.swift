@@ -13,6 +13,7 @@ final class SessionManager: SessionManagerType {
     private let isAutomatic: Bool
     private let sessionTimeout: Double
     private weak var trackingDelegate: SessionTrackingDelegate?
+    private let manualSessionAutoClose: Bool
 
     var sessionStartTime: Double {
         get { return userDefaults.double(forKey: Constants.Keys.sessionStarted) }
@@ -31,6 +32,7 @@ final class SessionManager: SessionManagerType {
         userDefaults: UserDefaults,
         trackingDelegate: SessionTrackingDelegate
     ) {
+        self.manualSessionAutoClose = configuration.manualSessionAutoClose == true
         self.userDefaults = userDefaults
         self.trackingDelegate = trackingDelegate
         self.sessionTimeout = configuration.sessionTimeout
@@ -94,7 +96,9 @@ final class SessionManager: SessionManagerType {
         if hasActiveSession {
             if !shouldResumeCurrentSession(at: timestamp) {
                 Exponea.logger.log(.verbose, message: "We're past session timeout, tracking previous session end.")
-                triggerSessionEnd(at: timestamp)
+                if isAutomatic || manualSessionAutoClose {
+                    triggerSessionEnd(at: timestamp)
+                }
             } else {
                 Exponea.logger.log(.verbose, message: "Continuing current session as we're within session timeout.")
                 return

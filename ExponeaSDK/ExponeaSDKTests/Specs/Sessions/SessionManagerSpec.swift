@@ -29,13 +29,15 @@ class SessionManagerSpec: QuickSpec {
     override func spec() {
         var sessionManager: SessionManager!
         var trackingDelegate: MockSessionTrackingDelegate!
-        func setup(automaticSessionTracking: Bool) {
-            var configuration = try! Configuration(
+        var configuration: Configuration!
+        func setup(automaticSessionTracking: Bool, manualSessionAutoClose: Bool = true) {
+            configuration = try! Configuration(
                 projectToken: "mock-project-token",
                 authorization: .none,
                 baseUrl: "mock-base-url",
                 appGroup: "mock-app-group",
-                defaultProperties: nil
+                defaultProperties: nil,
+                manualSessionAutoClose: manualSessionAutoClose
             )
             configuration.sessionTimeout = 100
             configuration.automaticSessionTracking = automaticSessionTracking
@@ -143,6 +145,34 @@ class SessionManagerSpec: QuickSpec {
                 expect(trackingDelegate.sessionEnds.count).to(equal(1))
                 expect(trackingDelegate.sessionEnds[0].0).to(equal(100))
                 expect(trackingDelegate.sessionEnds[0].1).to(equal(90))
+            }
+        }
+
+        describe("manual autoclose false") {
+            beforeEach {
+                setup(automaticSessionTracking: false, manualSessionAutoClose: false)
+            }
+
+            it("manual autoclose") {
+                sessionManager.manualSessionStart(at: 10)
+                sessionManager.manualSessionStart(at: 400)
+
+                expect(trackingDelegate.sessionStarts.count).to(equal(2))
+                expect(trackingDelegate.sessionEnds.count).to(equal(0))
+            }
+        }
+
+        describe("manual autoclose true") {
+            beforeEach {
+                setup(automaticSessionTracking: false, manualSessionAutoClose: true)
+            }
+
+            it("manual autoclose") {
+                sessionManager.manualSessionStart(at: 10)
+                sessionManager.manualSessionStart(at: 400)
+
+                expect(trackingDelegate.sessionStarts.count).to(equal(2))
+                expect(trackingDelegate.sessionEnds.count).to(equal(1))
             }
         }
     }

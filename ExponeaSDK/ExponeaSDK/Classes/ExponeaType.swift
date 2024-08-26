@@ -59,7 +59,8 @@ public protocol ExponeaType: AnyObject {
         inAppContentBlocksPlaceholders: [String]?,
         flushingSetup: Exponea.FlushingSetup,
         allowDefaultCustomerProperties: Bool?,
-        advancedAuthEnabled: Bool?
+        advancedAuthEnabled: Bool?,
+        manualSessionAutoClose: Bool
     )
 
     /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
@@ -80,7 +81,8 @@ public protocol ExponeaType: AnyObject {
         defaultProperties: [String: JSONConvertible]?,
         inAppContentBlocksPlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
-        advancedAuthEnabled: Bool?
+        advancedAuthEnabled: Bool?,
+        manualSessionAutoClose: Bool
     )
 
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
@@ -104,7 +106,8 @@ public protocol ExponeaType: AnyObject {
         defaultProperties: [String: JSONConvertible]?,
         inAppContentBlocksPlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
-        advancedAuthEnabled: Bool?
+        advancedAuthEnabled: Bool?,
+        manualSessionAutoClose: Bool
     )
 
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.

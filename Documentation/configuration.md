@@ -84,6 +84,10 @@ This page provides an overview of all configuration parameters for the SDK and s
 * `inAppContentBlocksPlaceholders`
   * If set, all [In-app content blocks](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks) will be prefetched right after the SDK is initialized.
 
+* `manualSessionAutoClose`
+  * Determines whether the SDK automatically tracks `session_end` for sessions that remain open when `Exponea.shared.trackSessionStart()` is called multiple times in manual session tracking mode.
+  * Default value: `true`
+
 ## Configure the SDK
 
 ### Configure the SDK Programmatically

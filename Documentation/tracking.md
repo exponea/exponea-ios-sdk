@@ -196,9 +196,14 @@ Use the `trackSessionStart()` and `trackSessionEnd()` methods to track sessions 
 Exponea.shared.trackSessionStart()
 ```
 
+> 👍
+>
+> The default behavior for manually calling `Exponea.shared.trackSessionStart()` multiple times can be controlled by the `manualSessionAutoClose` flag in the `Configuration`, which is set to `true` by default. If a previous session is still open (i.e., it hasn’t been manually closed with `Exponea.shared.trackSessionEnd()`) before `Exponea.shared.trackSessionStart()` is called again, the SDK will automatically track a `sessionEnd` for the previous session and then trigger a new `sessionStart` event. To prevent this behavior, set the `manualSessionAutoClose` flag in the `Configuration` to `false`.   
+
+
 ``` swift
 Exponea.shared.trackSessionEnd()
-```
+``` 
 
 ## Push Notifications
 
