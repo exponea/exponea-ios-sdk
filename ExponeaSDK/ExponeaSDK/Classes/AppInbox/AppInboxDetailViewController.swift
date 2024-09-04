@@ -154,15 +154,23 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
             data?.content?.message ?? "", kern: 0.25, lineHeightMultiplier: CGFloat(1.2)
         )
         setupActionButtons(data)
-        if let imageUrl = data?.content?.imageUrl {
-            DispatchQueue.global(qos: .background).async {
-                guard let imageSource = ImageUtils.tryDownloadImage(imageUrl),
-                      let image = ImageUtils.createImage(imageData: imageSource, maxDimensionInPixels: Int(UIScreen.main.bounds.width)) else {
-                    Exponea.logger.log(.error, message: "Image cannot be shown")
-                    return
-                }
-                DispatchQueue.main.async {
-                    self.messageImage.image = image
+
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self else { return }
+            if let imageUrl = self.data?.content?.imageUrl {
+                if let image = UIImage.gifImageWithURL(imageUrl) {
+                    onMain {
+                        self.messageImage.image = image
+                    }
+                } else {
+                    guard let imageSource = ImageUtils.tryDownloadImage(imageUrl),
+                          let image = ImageUtils.createImage(imageData: imageSource, maxDimensionInPixels: Int(UIScreen.main.bounds.width)) else {
+                        Exponea.logger.log(.error, message: "Image cannot be shown")
+                        return
+                    }
+                    onMain {
+                        self.messageImage.image = image
+                    }
                 }
             }
         }

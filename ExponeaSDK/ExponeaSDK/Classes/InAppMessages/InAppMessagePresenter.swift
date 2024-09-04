@@ -46,7 +46,9 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     }
                     var image: UIImage?
                     if let imageData = imageData {
-                        if let createdImage = self.createImage(
+                        if let gifImage = UIImage.gifImageWithData(imageData) {
+                            image = gifImage
+                        } else if let createdImage = self.createImage(
                             imageData: imageData,
                             maxDimensionInPixels: self.getMaxScreenDimension()
                         ) {

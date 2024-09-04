@@ -220,6 +220,8 @@
 		3189E2E72C4EBF2300C4CD68 /* CarouselOnChangeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E62C4EBF2300C4CD68 /* CarouselOnChangeData.swift */; };
 		318B552A2A80E52B00934902 /* DeeplinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B55292A80E52B00934902 /* DeeplinkManager.swift */; };
 		319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */; };
+		31A1D21B2C6F8A6300606633 /* GiftHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A1D21A2C6F8A6300606633 /* GiftHelper.swift */; };
+		31A277DD2C74E08E00354CD2 /* GIFTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A277DC2C74E08E00354CD2 /* GIFTest.swift */; };
 		31C7B4242A822848001BA5E2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4232A822848001BA5E2 /* Coordinator.swift */; };
 		31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */; };
 		31CC0B742BD2519000608057 /* SegmentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B732BD2519000608057 /* SegmentationManager.swift */; };
@@ -747,6 +749,8 @@
 		3189E2E62C4EBF2300C4CD68 /* CarouselOnChangeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselOnChangeData.swift; sourceTree = "<group>"; };
 		318B55292A80E52B00934902 /* DeeplinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeeplinkManager.swift; sourceTree = "<group>"; };
 		319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationStoring.swift; sourceTree = "<group>"; };
+		31A1D21A2C6F8A6300606633 /* GiftHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftHelper.swift; sourceTree = "<group>"; };
+		31A277DC2C74E08E00354CD2 /* GIFTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFTest.swift; sourceTree = "<group>"; };
 		31C7B4232A822848001BA5E2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaTabBarController.swift; sourceTree = "<group>"; };
 		31CC0B732BD2519000608057 /* SegmentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationManager.swift; sourceTree = "<group>"; };
@@ -1598,6 +1602,14 @@
 			path = Helper;
 			sourceTree = "<group>";
 		};
+		31A1D2192C6F8A5A00606633 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				31A1D21A2C6F8A6300606633 /* GiftHelper.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		31CC0B722BD2518500608057 /* Segmentation */ = {
 			isa = PBXGroup;
 			children = (
@@ -1834,6 +1846,7 @@
 				0566424B237318CF00CCDB98 /* SwizzlerSpec.swift */,
 				057F44842399301A0070DF30 /* UIColor+FromHexStringSpec.swift */,
 				55F5F23C2C3E89070094B558 /* ArrayComparisonTests.swift */,
+				31A277DC2C74E08E00354CD2 /* GIFTest.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -2290,6 +2303,7 @@
 		F0E757EC207D023A00FE8C21 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				31A1D2192C6F8A5A00606633 /* Helpers */,
 				31CC0B722BD2518500608057 /* Segmentation */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 				552772C328ED86E0000ACFD5 /* AppInbox */,
@@ -2954,6 +2968,7 @@
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
 				3189E2E52C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift in Sources */,
 				3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */,
+				31A1D21B2C6F8A6300606633 /* GiftHelper.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				CCB87B7C28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift in Sources */,
 				31EBB8572A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift in Sources */,
@@ -3137,6 +3152,7 @@
 				CC06F95125FA037800F38D93 /* RequestFactorySpec.swift in Sources */,
 				05D9F62E2387EE6600C47509 /* Exponea+ConfigurationSpec.swift in Sources */,
 				0591906F23EC4E8C0037BD88 /* GenericOperatorsSpec.swift in Sources */,
+				31A277DD2C74E08E00354CD2 /* GIFTest.swift in Sources */,
 				052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */,
 				05C024E223EAEBDD0046CCFC /* EventFilterSpec.swift in Sources */,
 				05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */,
