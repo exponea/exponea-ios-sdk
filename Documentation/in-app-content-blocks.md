@@ -1,5 +1,5 @@
 ---
-title: In-App Content Blocks
+title: In-app content blocks
 excerpt: Display native in-app content blocks based on definitions set up in Engagement using the iOS SDK
 slug: ios-sdk-in-app-content-blocks
 categorySlug: integrations
@@ -12,15 +12,15 @@ You can strategically position placeholders for in-app content blocks within you
 
 > 📘
 >
-> Refer to the [In-App Content Blocks](https://documentation.bloomreach.com/engagement/docs/in-app-content-blocks) user guide for instructions on how to create in-app content blocks in Engagement.
+> Refer to the [In-app content blocks](https://documentation.bloomreach.com/engagement/docs/in-app-content-blocks) user guide for instructions on how to create in-app content blocks in Engagement.
 
 ![In-app content blocks in the example app](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/in-app-content-blocks.png)
 
-## Integration of a Placeholder View
+## Integration of a placeholder view
 
 You can integrate in-app content blocks by adding one or more placeholder views in your app. Each in-app content block must have a `Placeholder ID` specified in its [settings](https://documentation.bloomreach.com/engagement/docs/in-app-content-blocks#3-fill-the-settings) in Engagement. The SDK will display an in-app content block in the corresponding placeholder in the app if the current app user matches the target audience.
 
-### In a Generic View
+### In a generic view
 
 In a generic [view](https://developer.apple.com/documentation/uikit/uiview), initialize a `StaticInAppContentBlockView` to the view controller with its `placeholderId`:
 
@@ -39,7 +39,7 @@ Use the `.reload()` method if you need to reload the content block view:
 placeholder.reload()
 ```
 
-### In a Table View or Collection View
+### In a table view or collection view
 
 In a [table view](https://developer.apple.com/documentation/uikit/uitableview/) or [collection view](https://developer.apple.com/documentation/uikit/uicollectionview/), use the `prepareInAppContentBlockView` method, specifying the content block's `placeholderID` and the `indexPath` of the table row or collection item where you want to add the in-app content block.
 
@@ -66,13 +66,13 @@ Exponea.shared.inAppContentBlocksManager?.refreshCallback = { [weak self] indexP
 >
 > Always us descriptive, human-readable placeholder IDs. They are tracked as an event property and can be used for analytics within Engagement.
 
-## Integration of a Carousel View
+## Integration of a carousel view
 
 If you want to show multiple in-app content blocks to the user for the same `Placeholder ID`, consider using `CarouselInAppContentBlockView`. The SDK will display the in-app content blocks for the current app user in a loop, in order of `Priority`. The in-app content blocks are displayed in a loop until the user interacts with them or until the carousel view instance is reloaded programmatically.
 
 If the carousel view's placeholder ID only matches a single in-app content block, it will behave like a static placeholder view with no loop effect.
 
-### Add a Carousel View
+### Add a carousel view
 
 Get a carousel view for the specified `placeholderId` with default configuration:
 
@@ -133,7 +133,7 @@ The SDK automatically tracks `banner` events for in-app content blocks with the 
 
 ## Customization
 
-### Prefetch In-App Content Blocks
+### Prefetch in-app content blocks
 
 The SDK can only display an in-app content block after it has been fully loaded (including its content, any images, and its height). Therefore, the in-app content block may only show in the app after a delay.
 
@@ -145,7 +145,7 @@ Exponea.shared.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: ["pla
 
 This must be done after SDK [initialization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk) and after calling `anonymize` or `identifyCustomer`. Prefetching should not be done at any other time.
 
-### Handle Carousel Presentation Status
+### Handle carousel presentation status
 
 If you need to access additional information about content blocks displayed in a carousel, you can use the following methods:
 
@@ -174,7 +174,7 @@ carouselView.onMessageChanged = { data in
 }    
 ```
 
-### Defer In-App Content Blocks Loading
+### Defer in-app content blocks loading
 
 Placing multiple placeholders on the same screen may have a negative impact on performance. We recommend only loading in-app content blocks that are visible to the user, especially for large scrollable screens.
 
@@ -189,7 +189,7 @@ Then call `reload()` later when the placeholder becomes visible to the user:
 placeholderView.reload()
 ```
 
-### Display In-App Content Block After Content Has Loaded
+### Display in-app content block after content has loaded
 
 You may want to render your app's UI differently depending on whether an in-app content block is available. For example, your layout may depend on the exact dimensions of the in-app content block, which are only known once it has been loaded.
 
@@ -211,11 +211,11 @@ placeholderView.contentReadyCompletion = { [weak self] contentLoaded in
 }
 ```
 
-### Customize Action Behavior
+### Customize action behavior
 
 When an in-app content block action (show, click, close, error) is performed, by default, the SDK tracks the appropriate event and, in case of a button click, opens a link. It's possible to customize this behavior.
 
-#### Static View
+#### Static view
 
 You can override or customize the default action behavior by setting `behaviourCallback` on the `StaticInAppContentBlockView`.
 
@@ -295,7 +295,7 @@ class CustomInAppContentBlockCallback: InAppContentBlockCallbackType {
 >
 > Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a working example.
 
-#### Carousel View
+#### Carousel view
 
 You can configure the action behavior for a `CarouselInAppContentBlockView` through `contentBlockCarouselCallback` by setting the `trackActions` and `overrideDefaultBehavior` flags.
 
@@ -351,7 +351,7 @@ public class CustomCarouselCallback: ContentBlockCarouselCallbackType {
 }
 ```
 
-### Override Button Action Type in HTML Message
+### Override button action type in HTML message
 
 The SDK automatically processes button action URLs as follows:
 
@@ -389,7 +389,7 @@ In the Visual builder, you can set the action type as follows:
 
 ![Screenshot](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/actiontype.png)
 
-### Customize Presentation
+### Customize presentation
 
 If the default UI presentation of the `StaticInAppContentBlockView` doesn't fit the UX design of your app, you can create a `UIView` element that wraps the existing `StaticInAppContentBlockView` instance.
 
@@ -483,7 +483,7 @@ class CustomView: UIViewController, InAppCbViewDelegate {
     placeholder.invokeActionClick(actionUrl: actionUrl)
 }
 ```
-### Customize Carousel View Filtration and Sorting
+### Customize carousel view filtration and sorting
 
 A carousel view filters available content blocks in the same way as a placeholder view:
 
@@ -535,16 +535,16 @@ This section provides helpful pointers for troubleshooting in-app content blocks
 > 👍 Enable Verbose Logging
 > The SDK logs a lot of information in verbose mode while loading in-app content blocks. When troubleshooting in-app content block issues, first ensure to [set the SDK's log level](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#log-level) to `.verbose`.
 
-### In-App Content Block Not Displayed
+### In-app content block not displayed
 
 - The SDK can only display an in-app content block after it has been fully loaded (including its content, any images, and its height). Therefore, the in-app content block may only show in the app after a delay.
 - Always ensure that the placeholder IDs in the in-app content block configuration (in the Engagement web app) and in your mobile app match.
 
-### In-App Content Block Shows Incorrect Image
+### In-app content block shows incorrect image
 
 - To reduce the number of API calls and fetching time of in-app content blocks, the SDK caches the images contained in content blocks. Once the SDK downloads an image, an image with the same URL may not be downloaded again. If a content block contains a new image with the same URL as a previously used image, the previous image is displayed since it was already cached. For this reason, we recommend always using different URLs for different images.
 
-### Log Messages
+### Log messages
 
 While troubleshooting in-app content block issues, you can find useful information in the messages logged by the SDK at verbose log level. Look for messages similar to the ones below:
 

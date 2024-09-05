@@ -90,7 +90,7 @@ This page provides an overview of all configuration parameters for the SDK and s
 
 ## Configure the SDK
 
-### Configure the SDK Programmatically
+### Configure the SDK programmatically
 Configuration is split into several objects that are passed into the `Exponea.shared.configure()` function.
 ``` swift
 func configure(
@@ -175,7 +175,7 @@ Exponea.shared.configure(
 ```
 
 
-### Using a Configuration File - LEGACY
+### Using a configuration file - LEGACY
 > ❗️ 
 > 
 > Configuring the SDK using a `plist` file is deprecated but still supported for backward compatibility.

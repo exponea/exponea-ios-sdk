@@ -1,5 +1,5 @@
 ---
-title: Initial SDK Setup
+title: Initial SDK setup
 excerpt: Install and configure the iOS SDK
 slug: ios-sdk-setup
 categorySlug: integrations
@@ -77,7 +77,7 @@ The required configuration parameters are `projectToken`, `authorization.token`,
 
 > 📘
 >
-> Refer to [Mobile SDKs API Access Management](https://documentation.bloomreach.com/engagement/docs/mobile-sdks-api-access-management) for details.
+> Refer to [Mobile SDKs API access management](https://documentation.bloomreach.com/engagement/docs/mobile-sdks-api-access-management) for details.
 
 Import the SDK:
 
@@ -112,13 +112,13 @@ SDK initialization immediately creates a new customer profile with a new cookie 
 > 
 > [Configuring the SDK using a `plist` file](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration#using-a-configuration-file---legacy) is deprecated but still supported for backward compatibility.
 
-## Other SDK Configuration
+## Other SDK configuration
 
-### Advanced Configuration
+### Advanced configuration
 
 The SDK can be further configured by providing additional parameters to the `configure` method. For a complete list of available configuration parameters, refer to the [Configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) documentation.
 
-### Log Level
+### Log level
 
 The SDK supports the following log levels:
 
@@ -145,6 +145,6 @@ Exponea.logger.logLevel = .verbose
 
 Read [Authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization) to learn more about the different authorization modes supported by the SDK and how to use [customer token](https://documentation.bloomreach.com/engagement/docs/customer-token) authorization.
 
-### Data Flushing
+### Data flushing
 
-Read [Data Flushing](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing) to learn more about how the SDK uploads data to the Engagement API and how to customize this behavior.
+Read [Data flushing](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing) to learn more about how the SDK uploads data to the Engagement API and how to customize this behavior.

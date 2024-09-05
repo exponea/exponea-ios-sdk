@@ -18,13 +18,13 @@ Additionally, you can track any custom event relevant to your business.
 
 ## Events
 
-### Track Event
+### Track event
 
 Use the `trackEvent()` method to track any custom event type relevant to your business.
 
 You can use any name for a custom event type. We recommended using a descriptive and human-readable name.
 
-Refer to the [Custom Events](https://documentation.bloomreach.com/engagement/docs/custom-events) documentation for an overview of commonly used custom events.
+Refer to the [Custom events](https://documentation.bloomreach.com/engagement/docs/custom-events) documentation for an overview of commonly used custom events.
 
 #### Arguments
 
@@ -184,7 +184,7 @@ The session represents the actual time spent in the app. It starts when the appl
 
 The default session timeout is 6.0 seconds. Set `sessionTimeout` in the [SDK configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) to specify a different timeout.
 
-### Track Session Manually
+### Track session manually
 
 To disable automatic session tracking, set `automaticSessionTracking` to `false` in the [SDK configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration).
 
@@ -205,11 +205,11 @@ Exponea.shared.trackSessionStart()
 Exponea.shared.trackSessionEnd()
 ``` 
 
-## Push Notifications
+## Push notifications
 
 If developers [integrate push notification functionality](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications#integration) in their app, the SDK automatically tracks the push notification token by default.
 
-### Track Token Manually
+### Track token manually
 
 Use the `trackPushToken()` method to manually track the token for receiving push notifications. The token is assigned to the currently logged-in customer (with the `identifyCustomer` method).
 
@@ -237,7 +237,7 @@ Exponea.shared.trackPushToken("value-of-push-token")
 
 The SDK tracks in-app purchases automatically.
 
-### Track Payment
+### Track payment
 
 Use the `trackPayment()` method to track payments manually.
 
@@ -262,7 +262,7 @@ Exponea.shared.trackPayment(
 )
 ```
 
-## Default Properties
+## Default properties
 
 You can configure default properties to be tracked with every event. Note that the value of a default property will be overwritten if the tracking event has a property with the same key.
 
