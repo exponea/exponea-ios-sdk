@@ -41,7 +41,7 @@ This page provides an overview of all configuration parameters for the SDK and s
 * `sessionTimeout`
   * The session is the actual time spent in the app. It starts when the app is launched and ends when the app goes to background.
   * This value is used to calculate the session timing.
-  * Default value: `6.0` seconds.
+  * Default value: `60.0` seconds.
   * The minimum value is `5.0` seconds.
   * The **recommended** maximum value is `120.0` seconds, but the **absolute** max is `180.0` seconds. Higher will cause iOS to kill the session.
   * Read more about [Tracking Sessions](tracking#session)
