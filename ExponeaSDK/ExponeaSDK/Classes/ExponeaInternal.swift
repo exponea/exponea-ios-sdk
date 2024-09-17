@@ -8,7 +8,7 @@
 
 import Foundation
 #if canImport(ExponeaSDKObjC)
-import ExponeaSDKObjC
+internal import ExponeaSDKObjC
 #endif
 import UIKit
 

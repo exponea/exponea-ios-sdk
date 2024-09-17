@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 
 import PackageDescription
 
@@ -26,7 +26,10 @@ let package = Package(
             dependencies: ["ExponeaSDKShared", "ExponeaSDKObjC"],
             path: "ExponeaSDK/ExponeaSDK",
             exclude: ["Supporting Files/Info.plist"],
-            resources: [.copy("Supporting Files/PrivacyInfo.xcprivacy")]
+            resources: [.copy("Supporting Files/PrivacyInfo.xcprivacy")],
+            swiftSettings: [
+                .enableExperimentalFeature("AccessLevelOnImport")
+            ]
         ),
         // Notification extension library
         .target(
