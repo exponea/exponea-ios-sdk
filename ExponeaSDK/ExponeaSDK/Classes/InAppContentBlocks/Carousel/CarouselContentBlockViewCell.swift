@@ -11,7 +11,7 @@ import WebKit
 
 class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
-    private let webview = WKWebView()
+    var webview = WKWebView()
     var assignedMessage: InAppContentBlockResponse?
     var placeholder: String = ""
     var actionClicked: EmptyBlock?
@@ -22,7 +22,7 @@ class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        
+
         contentBlockCarouselCallback = nil
         assignedMessage = nil
     }

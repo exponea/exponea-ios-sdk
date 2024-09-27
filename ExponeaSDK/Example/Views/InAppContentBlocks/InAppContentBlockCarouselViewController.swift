@@ -32,7 +32,7 @@ class InAppContentBlockCarouselViewController: UIViewController {
 
     let carousel = CarouselInAppContentBlockView(placeholder: "example_carousel", behaviourCallback: CustomCarouselCallback())
     let carousel2 = CustomCarouselView(placeholder: "example_carousel", maxMessagesCount: 5, scrollDelay: 10)
-    let carousel3 = CustomCarouselView(placeholder: "example_carousel_ios")
+    let carousel3 = CustomCarouselView(placeholder: "example_carousel_ios", scrollDelay: 1000)
 
     @objc func endEditing() {
         view.endEditing(true)
@@ -48,14 +48,11 @@ class InAppContentBlockCarouselViewController: UIViewController {
         super.viewDidLoad()
 
         carousel.onMessageShown = { message in
-            print("ON MESSAGE SHOW")
-            print(message.index)
-            print(message.placeholderId)
+            print("ON MESSAGE SHOW \(message.placeholderId)")
         }
 
-        carousel.onMessageChanged = { chagned in
-            print("ON MESSAGE CHANGED")
-            print(chagned)
+        carousel.onMessageChanged = { changed in
+            print("ON MESSAGE CHANGED \(changed.count)")
         }
 
         carousel.reload()

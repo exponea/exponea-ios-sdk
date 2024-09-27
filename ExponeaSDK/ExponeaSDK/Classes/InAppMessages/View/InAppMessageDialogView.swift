@@ -60,7 +60,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         modalPresentationStyle = .overFullScreen
         modalTransitionStyle = .crossDissolve
     }
-    
+
     func simulateClick() {
         closeButtonAction(UIButton())
     }

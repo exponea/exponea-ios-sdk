@@ -15,7 +15,13 @@ open class CarouselInAppContentBlockView: UIView {
     var isFirstCellLoaded = false
     private var height: NSLayoutConstraint?
 
-    private lazy var collectionView: UICollectionView = {
+    func createCompositionalLayout() -> UICollectionViewLayout {
+        UICollectionViewCompositionalLayout { _, _ in
+            self.createHorizontalScrollLayoutSection()
+        }
+    }
+
+    func createHorizontalScrollLayoutSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0))
@@ -26,9 +32,11 @@ open class CarouselInAppContentBlockView: UIView {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
-        let config = UICollectionViewCompositionalLayoutConfiguration()
-        let layout = UICollectionViewCompositionalLayout(section: section, configuration: config)
-        let collectionView = UICollectionView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 0), collectionViewLayout: layout)
+        return section
+    }
+
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
         collectionView.delegate = self
         collectionView.backgroundColor = .clear
         collectionView.dataSource = self
@@ -52,8 +60,24 @@ open class CarouselInAppContentBlockView: UIView {
     private var currentMessage: StaticReturnData?
     private var alreadyShowedMessages: [String] = []
     private let defaultBehaviourCallback: DefaultContentBlockCarouselCallback!
+    private var behaviourCallback: InAppContentBlockCallbackType = DefaultInAppContentBlockCallback()
+    private var shouSkipCollectionReload = false
+    private var didSet = false
 
-    private var data: [StaticReturnData] = []
+    @Atomic private var data: [StaticReturnData] = [] {
+        didSet {
+            if data.count > 1 && !didSet {
+                didSet = true
+                _data.changeValue(with: { $0.insert(data.last!, at: 0) })
+                _data.changeValue(with: { $0.append(data[1]) })
+            }
+            guard !shouSkipCollectionReload else { return }
+            onMain {
+                self.collectionView.reloadData()
+                self.collectionView.scrollToItem(at: IndexPath(item: self.data.count / 2, section: 0), at: .centeredHorizontally, animated: false)
+            }
+        }
+    }
     private var savedTimer: TimeInterval?
     private let placeholder: String
 
@@ -126,7 +150,7 @@ open class CarouselInAppContentBlockView: UIView {
             self.inAppContentBlocksManager
                 .inAppContentBlockMessages
                 .filter { $0.placeholders.contains(self.placeholder) }
-                .filter { $0.isCorruptedImage }
+                .filter { $0.personalizedMessage?.isCorruptedImage == true }
                 .forEach { message in
                     self.defaultBehaviourCallback.onError(
                         placeholderId: message.id,
@@ -143,7 +167,8 @@ open class CarouselInAppContentBlockView: UIView {
                         self.inAppContentBlocksManager.prepareCarouselStaticData(messages: response)
                     }
                 let sortedMessages = self.sortContentBlocks(data: toReturn)
-                self.data = self.maxMessagesCount > 0 ? Array(sortedMessages.prefix(self.maxMessagesCount)) : sortedMessages
+                let input = self.maxMessagesCount > 0 ? Array(sortedMessages.prefix(self.maxMessagesCount)) : sortedMessages
+                self._data.changeValue(with: { $0 = self.makeDuplicate(input: input) })
                 self.state = .refresh
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.startCarouseling()
@@ -156,12 +181,38 @@ open class CarouselInAppContentBlockView: UIView {
         }
     }
 
+    internal func makeDuplicate(input: [StaticReturnData]) -> [StaticReturnData] {
+        let multiplier: Int
+        switch true {
+        case input.count == 1:
+            multiplier = 1
+        case input.count <= 2:
+            multiplier = 100
+        case input.count <= 5:
+            multiplier = 50
+        case input.count <= 10:
+            multiplier = 25
+        default:
+            multiplier = 10
+        }
+        var copy: [StaticReturnData] = []
+        for _ in 0..<multiplier {
+            let updatedInput = input.map { data in
+                var beforeUpdate = data
+                beforeUpdate.id = UUID()
+                return beforeUpdate
+            }
+            copy.append(contentsOf: updatedInput)
+        }
+        return copy
+    }
+
     public func checkMessage(message: StaticReturnData, shouldBeReloaded: Bool = false) {
         guard let messageResponse = message.message else { return }
         inAppContentBlocksManager.isMessageValid(message: messageResponse) { [weak self] isValid in
             guard let self else { return }
             if !isValid {
-                self.data.removeAll(where: { $0.message?.id == message.message?.id })
+                self._data.changeValue(with: { $0.removeAll(where: { $0.message?.id == message.message?.id }) })
                 self.state = .refresh
             }
             if shouldBeReloaded {
@@ -170,10 +221,19 @@ open class CarouselInAppContentBlockView: UIView {
         } refreshCallback: { [weak self] in
             guard let self else { return }
             self.inAppContentBlocksManager.refreshMessage(message: messageResponse) { message in
-                if let index = self.data.firstIndex(where: { $0.message?.id == message.id }),
-                   let newData = self.inAppContentBlocksManager.prepareCarouselStaticData(messages: message) {
-                    if self.data[safeIndex: index] != nil {
-                        self.data[index] = newData
+                if let newData = self.inAppContentBlocksManager.prepareCarouselStaticData(messages: message) {
+                    var indexes: [Int] = []
+                    for message in self.data.filter({ $0.message?.id == message.id }) {
+                        if let index = self.data.firstIndex(where: { $0.id == message.id }) {
+                            indexes.append(index)
+                        }
+                    }
+                    indexes.forEach { index in
+                        if self.data[safeIndex: index] != nil {
+                            self.shouSkipCollectionReload = true
+                            self._data.changeValue(with: { $0[index] = newData })
+                            self.shouSkipCollectionReload = false
+                        }
                     }
                 }
             }
@@ -245,7 +305,9 @@ open class CarouselInAppContentBlockView: UIView {
     private func refreshContent() {
         if let visibleCell = collectionView.visibleCells.first, let indexPath = collectionView.indexPath(for: visibleCell) {
             if indexPath.row < data.count - 1 {
-                let nextIndexPath: IndexPath = .init(row: indexPath.row + 1, section: indexPath.section)
+                let newIndexPath = indexPath.row + 1
+                guard newIndexPath < data.count else { return }
+                let nextIndexPath: IndexPath = .init(row: newIndexPath, section: indexPath.section)
                 collectionView.scrollToItem(at: nextIndexPath, at: .right, animated: true)
             } else {
                 collectionView.scrollToItem(at: .init(row: 0, section: 0), at: .left, animated: false)
@@ -343,6 +405,7 @@ extension CarouselInAppContentBlockView: UICollectionViewDelegateFlowLayout {
     }
 
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard data[safeIndex: indexPath.row] != nil else { return }
         ensureBackground { [weak self] in
             if let message = self?.data[safeIndex: indexPath.row] {
                 self?.checkMessage(message: message)
