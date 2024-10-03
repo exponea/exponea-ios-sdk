@@ -176,6 +176,10 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
                 isIncludeFirstLoad: false,
                 onNewData: { segments in
         }))
+
+        Exponea.shared.getSegments(force: true, category: .discovery()) { data in
+            
+        }
     }
 
     @objc func refresh() {

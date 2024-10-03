@@ -81,6 +81,7 @@ public class ExponeaInternal: ExponeaType {
     internal var telemetryManager: TelemetryManager?
     public var inAppContentBlocksManager: InAppContentBlocksManagerType?
     public var segmentationManager: SegmentationManagerType?
+    public var manualSegmentationManager: ManualSegmentationManagerType?
 
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
@@ -250,6 +251,7 @@ public class ExponeaInternal: ExponeaType {
         let exception = objc_tryCatch {
             do {
                 self.segmentationManager = SegmentationManager.shared
+                self.manualSegmentationManager = ManualSegmentationManager.shared
 
                 let database = try DatabaseManager()
                 if !Exponea.isBeingTested {
@@ -657,16 +659,9 @@ public extension ExponeaInternal {
         }
     }
 
-    func getSegments(category: SegmentCategory, successCallback: @escaping TypeBlock<[SegmentDTO]>) {
-        var callback: SegmentCallbackData?
-        callback = .init(category: category, isIncludeFirstLoad: true) { data in
-            successCallback(data)
-            if let callback {
-                self.segmentationManager?.removeCallback(callbackData: callback)
-            }
-        }
-        if let callback {
-            segmentationManager?.addCallback(callbackData: callback)
+    func getSegments(force: Bool = false, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>) {
+        executeSafelyWithDependencies { [weak self] _ in
+            self?.manualSegmentationManager?.getSegments(category: category, force: force, result: result)
         }
     }
 }

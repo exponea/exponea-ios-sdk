@@ -2,7 +2,7 @@
 //  GIFTest.swift
 //  ExponeaSDKTests
 //
-//  Created by Michal Severín on 20.08.2024.
+//  Created by Ankmara on 20.08.2024.
 //  Copyright © 2024 Exponea. All rights reserved.
 //
 

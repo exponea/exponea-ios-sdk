@@ -375,5 +375,5 @@ public protocol ExponeaType: AnyObject {
         errorMessage: String
     )
 
-    func getSegments(category: SegmentCategory, successCallback: @escaping TypeBlock<[SegmentDTO]>)
+    func getSegments(force: Bool, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>)
 }

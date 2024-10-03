@@ -50,6 +50,20 @@ Exponea.shared.getSegments(category: .content()) { segments in
     print(segments)
 }
 ```
+
+Segments data received by `getSegments` method are primary loaded from valid cache. Cache is automatically fetched from server if:
+
+* cache is empty or was loaded for previous customer
+* cache data are older than 5 seconds
+* method is forced to fetch segments from server by developer
+
+If you want to force to fetch segmentations data from server, use `force` parameter with `true` value as argument:
+```swift
+    Exponea.shared.getSegments(force: true, category: .discovery()) { data in
+        print(data)
+    }
+```
+
 > 👍
 >
 > The `getSegments` method loads segmentation data for the requested `category` and the current customer as identified by `Exponea.shared.identifyCustomer`. Please bear in mind that the callback is invoked in a background thread.

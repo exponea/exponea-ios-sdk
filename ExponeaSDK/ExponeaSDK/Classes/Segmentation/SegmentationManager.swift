@@ -18,9 +18,9 @@ public struct SegmentCallbackData: Equatable {
     let category: SegmentCategory
     let isIncludeFirstLoad: Bool
     let id = UUID()
-    let onNewData: TypeBlock<[SegmentDTO]>
+    var onNewData: TypeBlock<[SegmentDTO]>?
 
-    public init(category: SegmentCategory, isIncludeFirstLoad: Bool, onNewData: @escaping TypeBlock<[SegmentDTO]>) {
+    public init(category: SegmentCategory, isIncludeFirstLoad: Bool, onNewData: TypeBlock<[SegmentDTO]>?) {
         self.category = category
         self.isIncludeFirstLoad = isIncludeFirstLoad
         self.onNewData = onNewData
@@ -31,7 +31,11 @@ public struct SegmentCallbackData: Equatable {
     }
 
     public func fireBlock(category: [SegmentDTO]) {
-        onNewData(category)
+        onNewData?(category)
+    }
+
+    public mutating func releaseBlock() {
+        onNewData = nil
     }
 }
 

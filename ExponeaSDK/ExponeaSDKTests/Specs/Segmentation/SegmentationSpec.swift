@@ -194,5 +194,22 @@ class SegmentationSpec: QuickSpec {
             let result4 = manager.synchronizeSegments(customerIds: ["customer": "oldText"], input: .init(categories: []))
             expect(result4.count).to(equal(0))
         }
+
+        it("lifetime") {
+            let manualDTO: ManualSegmentsCacheDTO = .init(
+                timestamp: Date().timeIntervalSince1970,
+                data: .init(categories: [.content()]),
+                assignedCustomer: ["user": "123"]
+            )
+            expect(manualDTO.isWithinTime).to(beTrue())
+            var isExpired = false
+            waitUntil(timeout: .seconds(6)) { done in
+                DispatchQueue.global().asyncAfter(deadline: .now() + 5.5) {
+                    isExpired = !manualDTO.isWithinTime
+                    done()
+                }
+            }
+            expect(isExpired).to(beTrue())
+        }
     }
 }
