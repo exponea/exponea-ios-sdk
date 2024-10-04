@@ -86,7 +86,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                             window: self.window ?? UIApplication.shared.keyWindow
                         )
                         self.presenting = true
-                        Exponea.logger.log(.error, message: "In-app message presented.")
+                        Exponea.logger.log(.verbose, message: "In-app message presented.")
                         self.setMessageTimeout(inAppMessageView: inAppMessageView, timeout: timeout)
                         presentedCallback?(inAppMessageView, nil)
                     } catch {
