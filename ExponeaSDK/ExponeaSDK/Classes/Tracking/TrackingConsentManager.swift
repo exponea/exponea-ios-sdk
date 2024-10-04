@@ -26,6 +26,7 @@ class TrackingConsentManager: TrackingConsentManagerType {
         // Create payload
         var properties: [String: JSONValue] = data.properties
         properties["status"] = .string("delivered")
+        properties["state"] = .string("shown")
         if data.consentCategoryTracking != nil {
             properties["consent_category_tracking"] = .string(data.consentCategoryTracking!)
         }

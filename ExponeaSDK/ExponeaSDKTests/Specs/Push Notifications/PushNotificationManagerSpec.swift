@@ -178,7 +178,11 @@ final class PushNotificationManagerSpec: QuickSpec {
                         MockTrackingManager.TrackedEvent(
                             type: .pushDelivered,
                             data: [
-                                .properties(["status": .string("delivered"), "platform": .string("ios")]),
+                                .properties([
+                                    "status": .string("delivered"),
+                                    "state": .string("shown"),
+                                    "platform": .string("ios")
+                                ]),
                                 .timestamp($0),
                                 .eventType("campaign")
                             ]
@@ -192,7 +196,11 @@ final class PushNotificationManagerSpec: QuickSpec {
                         MockTrackingManager.TrackedEvent(
                             type: .pushDelivered,
                             data: [
-                                .properties(["status": .string("delivered"), "platform": .string("ios")]),
+                                .properties([
+                                    "status": .string("delivered"),
+                                    "state": .string("shown"),
+                                    "platform": .string("ios")
+                                ]),
                                 .timestamp($0),
                                 .eventType("campaign")
                             ]
@@ -212,6 +220,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             data: [
                                 .properties([
                                     "status": .string("delivered"),
+                                    "state": .string("shown"),
                                     "campaign_id": .string("mock campaign id"),
                                     "platform": .string("mock platform"),
                                     "action_id": .int(123)
@@ -230,7 +239,11 @@ final class PushNotificationManagerSpec: QuickSpec {
                             type: .customEvent,
                             data: [
                                 .eventType("custom push delivered"),
-                                .properties(["status": .string("delivered"), "platform": .string("ios")]),
+                                .properties([
+                                    "status": .string("delivered"),
+                                    "state": .string("shown"),
+                                    "platform": .string("ios")
+                                ]),
                                 .timestamp($0)
                             ]
                         )
@@ -258,6 +271,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             data: [
                                 .properties([
                                     "status": .string("delivered"),
+                                    "state": .string("shown"),
                                     "subject": .string("Notification title"),
                                     "action_name": .string("Unnamed mobile push"),
                                     "action_id": .int(2),
@@ -324,6 +338,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             data: [
                                 .properties([
                                     "status": .string("delivered"),
+                                    "state": .string("shown"),
                                     "campaign_id": .string("mock campaign id"),
                                     "platform": .string("mock platform"),
                                     "action_id": .int(123),
