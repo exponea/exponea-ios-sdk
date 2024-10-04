@@ -169,7 +169,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             decisionHandler(.cancel)
             return
         }
-        let webAction: WebActionManager = .init {
+        let webAction: WebActionManager = .init { _ in
             self.updateInteractedState(for: selectedUsed.messageId)
             Exponea.shared.trackInAppContentBlockClose(
                 placeholderId: selectedUsed.placeholder,
@@ -243,14 +243,8 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             return .browser
         case .deeplink:
             return .deeplink
-        case .unknown:
-            if action.actionUrl == "https://exponea.com/close_action" {
-                return .close
-            } else if action.actionUrl.hasPrefix("http://") || action.actionUrl.hasPrefix("https://") {
-                return .browser
-            } else {
-                return .deeplink
-            }
+        case .close:
+            return .close
         }
     }
 

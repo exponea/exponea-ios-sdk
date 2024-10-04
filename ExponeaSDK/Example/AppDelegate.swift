@@ -21,7 +21,7 @@ class AppDelegate: ExponeaAppDelegate {
     static let memoryLogger = MemoryLogger()
     var window: UIWindow?
     var alertWindow: UIWindow?
-    
+
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -151,7 +151,19 @@ class InAppDelegate: InAppMessageActionDelegate {
         self.trackActions = trackActions
     }
 
-    func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
+    func inAppMessageClickAction(message: ExponeaSDK.InAppMessage, button: ExponeaSDK.InAppMessageButton) {
+        Exponea.logger.log(
+            .verbose,
+            message: "In app action performed, messageId: \(message.id), button: \(String(describing: button))"
+        )
+        (UIApplication.shared.delegate as? AppDelegate)?.showAlert(
+            "In app action performed",
+            "messageId: \(message.id), button: \(String(describing: button))"
+        )
+        Exponea.shared.trackInAppMessageClick(message: message, buttonText: button.text, buttonLink: button.url)
+    }
+
+    func inAppMessageCloseAction(message: ExponeaSDK.InAppMessage, button: ExponeaSDK.InAppMessageButton?, interaction: Bool) {
         Exponea.logger.log(
             .verbose,
             message: "In app action performed, messageId: \(message.id),"
@@ -161,12 +173,7 @@ class InAppDelegate: InAppMessageActionDelegate {
             "In app action performed",
             "messageId: \(message.id), interaction: \(interaction), button: \(String(describing: button))"
         )
-
-        if interaction {
-            Exponea.shared.trackInAppMessageClick(message: message, buttonText: button?.text, buttonLink: button?.url)
-        } else {
-            Exponea.shared.trackInAppMessageClose(message: message, isUserInteraction: false)
-        }
+        Exponea.shared.trackInAppMessageClose(message: message, buttonText: button?.text, isUserInteraction: false)
     }
 
     func inAppMessageShown(message: ExponeaSDK.InAppMessage) {

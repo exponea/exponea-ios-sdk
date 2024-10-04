@@ -194,14 +194,8 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             return .browser
         case .deeplink:
             return .deeplink
-        case .unknown:
-            if action.actionUrl == "https://exponea.com/close_action" {
-                return .close
-            }
-            if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
-                return .browser
-            }
-            return .deeplink
+        case .close:
+            return .close
         }
     }
 
@@ -239,7 +233,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             // webView has to stop navigation, missing message data are internal issue
             return true
         }
-        let webAction: WebActionManager = .init {
+        let webAction: WebActionManager = .init { _ in
             InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
             self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
             self.reload()

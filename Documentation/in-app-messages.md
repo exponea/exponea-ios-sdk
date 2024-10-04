@@ -23,7 +23,7 @@ The SDK automatically tracks `banner` events for in-app messages with the follow
 - `click`
   User clicked on action button inside in-app message. The event also contains the corresponding `text` and `link` properties.
 - `close`
-  User clicked on close button inside in-app message.
+  User clicked on close button inside in-app message or in-app message has been automatically closed by delay. The event also contains the corresponding `text` property if close button with label has been clicked.
 - `error`
   Displaying in-app message failed. The event contains an `error` property with an error message.
 
@@ -49,10 +49,26 @@ class MyInAppDelegate: InAppMessageActionDelegate {
     let trackActions: Bool = false
 
     // This method will be called when an in-app message action is performed
-    func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
-       // Here goes your code
-       // On in-app click, the button contains button text and button URL and the interaction is true  
-       // On in-app close, the button is null, and the interaction is false.
+    func inAppMessageClickAction(message: InAppMessage, button: InAppMessageButton) {
+       // Here goes your code  
+       // Method called when action button has been clicked by user.
+       // The button contains button text and button URL
+    }
+
+    // This method will be called when an in-app message is closed
+    func inAppMessageCloseAction(message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
+        // Here goes your code
+        // Method called when in-app message has been closed.
+        // On in-app close by click on CANCEL button:
+        //  - the `button` is not null
+        //  - the `button` contains button text
+        //  - the `interaction` is true
+        // On in-app close with default interaction by user (close button, dismiss, etc...):
+        //  - the `button` is null
+        //  - the `interaction` is true
+        // On in-app close without interaction by user (in-app message timeout)
+        //  - the `button` is null
+        //  - the `interaction` is false
     }
 
     // Method called when in-app message is shown.
@@ -75,16 +91,18 @@ Then set the delegate:
 Exponea.shared.inAppMessagesDelegate = MyInAppDelegate()
 ```
 
-If you set `trackActions` to `false` but you still want to track click or close events under some circumstances, you can call the methods `trackInAppMessageClick` or `trackInAppMessageClose` in the `inAppMessageAction` method:
+If you set `trackActions` to `false` but you still want to track click or close events under some circumstances, you can call the methods `trackInAppMessageClick` or `trackInAppMessageClose` in the action methods:
 
 ```swift
-func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
+func inAppMessageClickAction(message: InAppMessage, button: InAppMessageButton) {
     if <your-special-condition>  { 
-        if interaction {
-            Exponea.shared.trackInAppMessageClick(message: message, buttonText: button?.text, buttonLink: button?.url)
-        } else {
-            Exponea.shared.trackInAppMessageClose(message: message)
-        }
+        Exponea.shared.trackInAppMessageClick(message: message, buttonText: button.text, buttonLink: button.url)
+    } 
+}
+
+func inAppMessageCloseAction(message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
+    if <your-special-condition>  { 
+        Exponea.shared.trackInAppMessageClose(message: message, buttonText: button?.text, isUserInteraction: interaction)
     } 
 }
 ```

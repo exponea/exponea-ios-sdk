@@ -14,6 +14,7 @@ class InAppMessageDelegate: InAppMessageActionDelegate {
     let overrideDefaultBehavior: Bool
     let trackActions: Bool
     var inAppMessageActionCalled: Bool = false
+    var inAppMessageCloseCalled: Bool = false
     var inAppMessageShownCalled: Bool = false
     var inAppMessageErrorCalled: Bool = false
     var trackClickInActionCallback: Bool = false
@@ -34,8 +35,23 @@ class InAppMessageDelegate: InAppMessageActionDelegate {
         self.trackingConsentManager = trackingConsentManager
     }
 
-    func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
+    func inAppMessageClickAction(message: ExponeaSDK.InAppMessage, button: ExponeaSDK.InAppMessageButton) {
         inAppMessageActionCalled = true
+        if trackClickInActionCallback {
+            if let trackingConsentManager = trackingConsentManager {
+                trackingConsentManager.trackInAppMessageClick(
+                    message: message,
+                    buttonText: button.text,
+                    buttonLink: button.url,
+                    mode: .CONSIDER_CONSENT,
+                    isUserInteraction: true
+                )
+            }
+        }
+    }
+
+    func inAppMessageCloseAction(message: ExponeaSDK.InAppMessage, button: ExponeaSDK.InAppMessageButton?, interaction: Bool) {
+        inAppMessageCloseCalled = true
         if trackClickInActionCallback {
             if let trackingConsentManager = trackingConsentManager {
                 trackingConsentManager.trackInAppMessageClick(

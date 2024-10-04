@@ -6,6 +6,10 @@ categorySlug: integrations
 parentDocSlug: ios-sdk
 ---
 
+> 📘
+>
+> Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
+
 ## Release Notes
 ## Release Notes for 2.28.0
 #### August 01, 2024

@@ -9,14 +9,17 @@
 import UIKit
 
 final class InAppMessageAlertView: InAppMessageView {
+    var isPresented: Bool {
+        return alertController.presentingViewController != nil
+    }
     let alertController: UIAlertController
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: TypeBlock<Bool>
+    let dismissCallback: (Bool, InAppMessagePayloadButton?) -> Void
 
     init(
         payload: InAppMessagePayload,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping TypeBlock<Bool>
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void
     ) throws {
         guard let buttons = payload.buttons else {
             throw InAppMessagePresenter.InAppMessagePresenterError.unableToCreateView
@@ -34,17 +37,33 @@ final class InAppMessageAlertView: InAppMessageView {
             case .cancel:
                 hasCancelButton = true
                 alertController.addAction(
-                    UIAlertAction(title: button.buttonText, style: .cancel, handler: { _ in dismissCallback(true) })
+                    UIAlertAction(title: button.buttonText, style: .cancel, handler: { [weak self] _ in
+                        guard let self else { return }
+                        self.dismiss(isUserInteraction: true, cancelButton: button)
+                    })
                 )
             case .deeplink, .browser:
                 alertController.addAction(
-                    UIAlertAction(title: button.buttonText, style: .default, handler: { _ in actionCallback(button) })
+                    UIAlertAction(title: button.buttonText, style: .default, handler: { [weak self] _ in
+                        guard let self else { return }
+                        self.dismiss(actionButton: button)
+                    })
                 )
             }
         }
         if !hasCancelButton {
+            let button = InAppMessagePayloadButton(
+                buttonText: "Cancel",
+                rawButtonType: "cancel",
+                buttonLink: nil,
+                buttonTextColor: nil,
+                buttonBackgroundColor: nil
+            )
             alertController.addAction(
-                UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in dismissCallback(true) })
+                UIAlertAction(title: button.buttonText, style: .cancel, handler: { [weak self] _ in
+                    guard let self else { return }
+                    self.dismiss(isUserInteraction: true, cancelButton: button)
+                })
             )
         }
     }
@@ -53,8 +72,17 @@ final class InAppMessageAlertView: InAppMessageView {
         viewController.present(alertController, animated: true)
     }
 
-    func dismiss(isUserInteraction: Bool) {
-        dismissCallback(isUserInteraction)
+    func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?) {
+        dismissCallback(isUserInteraction, cancelButton)
+        dismissFromSuperView()
+    }
+
+    func dismiss(actionButton: InAppMessagePayloadButton) {
+        actionCallback(actionButton)
+        dismissFromSuperView()
+    }
+
+    func dismissFromSuperView() {
         guard alertController.presentingViewController != nil else {
             return
         }

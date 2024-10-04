@@ -283,7 +283,7 @@ class TrackingManagerSpec: QuickSpec {
 
                 it("should track close in-app message event") {
                     trackingManager.track(
-                        .close,
+                        .close(buttonLabel: nil),
                         for: SampleInAppMessage.getSampleInAppMessage(),
                         trackingAllowed: true
                     )

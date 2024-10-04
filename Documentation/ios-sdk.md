@@ -55,3 +55,4 @@ This short video guide provides a step-by-step introduction to integrating the i
 - [Segmentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-segmentation)
 - [Example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app)
 - [Release notes](https://documentation.bloomreach.com/engagement/docs/ios-sdk-release-notes)
+  - [SDK Version Update Guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update)

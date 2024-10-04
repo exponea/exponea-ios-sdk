@@ -457,26 +457,38 @@ extension ExponeaInternal {
     /// Track in-app message banner close event
     public func trackInAppMessageClose(
         message: InAppMessage,
+        buttonText: String?,
         isUserInteraction: Bool?
     ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            dependencies.trackingConsentManager.trackInAppMessageClose(message: message, mode: .CONSIDER_CONSENT, isUserInteraction: isUserInteraction == true)
+            dependencies.trackingConsentManager.trackInAppMessageClose(
+                message: message,
+                buttonText: buttonText,
+                mode: .CONSIDER_CONSENT,
+                isUserInteraction: isUserInteraction == true
+            )
         }
     }
 
     /// Track in-app message banner close event
     public func trackInAppMessageCloseClickWithoutTrackingConsent(
         message: InAppMessage,
+        buttonText: String?,
         isUserInteraction: Bool?
     ) {
         executeSafelyWithDependencies { dependencies in
             guard dependencies.configuration.authorization != Authorization.none else {
                 throw ExponeaError.authorizationInsufficient
             }
-            dependencies.trackingConsentManager.trackInAppMessageClose(message: message, mode: .IGNORE_CONSENT, isUserInteraction: isUserInteraction == true)
+            dependencies.trackingConsentManager.trackInAppMessageClose(
+                message: message,
+                buttonText: buttonText,
+                mode: .IGNORE_CONSENT,
+                isUserInteraction: isUserInteraction == true
+            )
         }
     }
 

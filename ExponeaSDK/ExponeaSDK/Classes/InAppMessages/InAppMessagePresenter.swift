@@ -29,7 +29,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         timeout: TimeInterval?,
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
-        dismissCallback: @escaping TypeBlock<Bool>,
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void,
         presentedCallback: ((InAppMessageView?, String?) -> Void)? = nil
     ) {
         Exponea.logger.log(
@@ -76,9 +76,9 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                                 self.presenting = false
                                 actionCallback(button)
                             },
-                            dismissCallback: { isUserInteraction in
+                            dismissCallback: { isUserInteraction, cancelButtonPayload in
                                 self.presenting = false
-                                dismissCallback(isUserInteraction)
+                                dismissCallback(isUserInteraction, cancelButtonPayload)
                             }
                         )
                         try inAppMessageView.present(
@@ -106,7 +106,14 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         }
         if let messageTimeout = messageTimeout {
             DispatchQueue.main.asyncAfter(deadline: .now() + messageTimeout) {
-                inAppMessageView.dismiss(isUserInteraction: false)
+                if !inAppMessageView.isPresented {
+                    Exponea.logger.log(
+                        .verbose,
+                        message: "In-app delayed close is skipped because view is not presented"
+                    )
+                    return
+                }
+                inAppMessageView.dismiss(isUserInteraction: false, cancelButton: nil)
             }
         }
     }
@@ -117,7 +124,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         payloadHtml: String?,
         image: UIImage?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
-        dismissCallback: @escaping TypeBlock<Bool>
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void
     ) throws -> InAppMessageView {
         switch messageType {
         case .alert:

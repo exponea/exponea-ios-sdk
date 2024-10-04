@@ -86,12 +86,8 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
             return .browser
         case .deeplink:
             return .deeplink
-        case .unknown:
-            if action.actionUrl.hasPrefix("http://") || action.actionUrl.hasPrefix("https://") {
-                return .browser
-            } else {
-                return .deeplink
-            }
+        case .close:
+            return .noAction
         }
     }
 

@@ -66,6 +66,8 @@ Follow the detailed [step by step guide here](https://documentation.bloomreach.c
 - [App Inbox](https://documentation.bloomreach.com/engagement/docs/ios-sdk-app-inbox)
 - [Tracking Consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent)
 - [Example App](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app)
+- [Release Notes](https://documentation.bloomreach.com/engagement/docs/ios-sdk-release-notes)
+  - [SDK Version Update Guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update)
 
 ## 🔗 Useful links
 

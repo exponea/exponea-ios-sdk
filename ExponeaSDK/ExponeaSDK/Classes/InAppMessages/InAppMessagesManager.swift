@@ -220,30 +220,36 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                         isUserInteraction: true
                     )
                 }
-                Exponea.shared.inAppMessagesDelegate.inAppMessageAction(
-                    with: message,
+                Exponea.shared.inAppMessagesDelegate.inAppMessageClickAction(
+                    message: message,
                     button: InAppMessageButton(
                         text: button.buttonText,
                         url: button.buttonLink
-                    ),
-                    interaction: true
+                    )
                 )
 
                 if !Exponea.shared.inAppMessagesDelegate.overrideDefaultBehavior {
                     self.processInAppMessageAction(button: button)
                 }
             },
-            dismissCallback: { isUserInteraction in
+            dismissCallback: { isUserInteraction, cancelButtonPayload in
                 if Exponea.shared.inAppMessagesDelegate.trackActions {
                     self.trackingConsentManager.trackInAppMessageClose(
                         message: message,
+                        buttonText: cancelButtonPayload?.buttonText,
                         mode: .CONSIDER_CONSENT,
                         isUserInteraction: isUserInteraction
                     )
                 }
-                Exponea.shared.inAppMessagesDelegate.inAppMessageAction(
-                    with: message,
-                    button: nil,
+                var cancelButton: InAppMessageButton?
+                if let cancelButtonPayload {
+                    cancelButton = InAppMessageButton(
+                        text: cancelButtonPayload.buttonText, url: cancelButtonPayload.buttonLink
+                    )
+                }
+                Exponea.shared.inAppMessagesDelegate.inAppMessageCloseAction(
+                    message: message,
+                    button: cancelButton,
                     interaction: isUserInteraction
                 )
             },
@@ -508,17 +514,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 }
 
 public protocol InAppMessageActionDelegate: AnyObject {
-
     var overrideDefaultBehavior: Bool { get }
     var trackActions: Bool { get }
 
-    func inAppMessageAction(
-        with message: InAppMessage,
-        button: InAppMessageButton?,
-        interaction: Bool
-    )
     func inAppMessageShown(message: InAppMessage)
     func inAppMessageError(message: InAppMessage?, errorMessage: String)
+    func inAppMessageClickAction(message: InAppMessage, button: InAppMessageButton)
+    func inAppMessageCloseAction(message: InAppMessage, button: InAppMessageButton?, interaction: Bool)
 }
 
 public struct InAppMessageButton: Codable {
@@ -530,7 +532,8 @@ public class DefaultInAppDelegate: InAppMessageActionDelegate {
     public let overrideDefaultBehavior = false
     public let trackActions = true
 
-    public func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {}
     public func inAppMessageShown(message: InAppMessage) {}
     public func inAppMessageError(message: InAppMessage?, errorMessage: String) {}
+    public func inAppMessageClickAction(message: InAppMessage, button: InAppMessageButton) {}
+    public func inAppMessageCloseAction(message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {}
 }

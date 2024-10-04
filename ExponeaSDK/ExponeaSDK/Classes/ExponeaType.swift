@@ -222,7 +222,7 @@ public protocol ExponeaType: AnyObject {
     func trackInAppMessageClickWithoutTrackingConsent(message: InAppMessage, buttonText: String?, buttonLink: String?)
 
     /// Track in-app message banner close event
-    func trackInAppMessageCloseClickWithoutTrackingConsent(message: InAppMessage, isUserInteraction: Bool?)
+    func trackInAppMessageCloseClickWithoutTrackingConsent(message: InAppMessage, buttonText: String?, isUserInteraction: Bool?)
 
     /// Track AppInbox message detail opened event
     /// Event is tracked if parameter 'message' has TRUE value of 'hasTrackingConsent' property
@@ -312,7 +312,7 @@ public protocol ExponeaType: AnyObject {
 
     func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?)
 
-    func trackInAppMessageClose(message: InAppMessage, isUserInteraction: Bool?)
+    func trackInAppMessageClose(message: InAppMessage, buttonText: String?, isUserInteraction: Bool?)
 
     /// Tracks 'click' event for given In-app content block action.
     /// Event is tracked if one or both conditions met:

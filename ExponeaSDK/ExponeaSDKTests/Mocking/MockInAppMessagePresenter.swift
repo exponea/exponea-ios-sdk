@@ -10,14 +10,14 @@
 
 class MockInAppMessagePresenter: InAppMessagePresenterType {
     var presenting: Bool = false
-    
+
     struct PresentedMessageData {
         let messageType: InAppMessageType
         let payload: InAppMessagePayload?
         let payloadHtml: String?
         let imageData: Data?
         let actionCallback: (InAppMessagePayloadButton) -> Void
-        let dismissCallback: TypeBlock<Bool>
+        let dismissCallback: (Bool, InAppMessagePayloadButton?) -> Void
         let presentedCallback: ((InAppMessageView?, String?) -> Void)?
     }
 
@@ -32,7 +32,7 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
         timeout: TimeInterval?,
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
-        dismissCallback: @escaping TypeBlock<Bool>,
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void,
         presentedCallback: ((InAppMessageView?, String?) -> Void)?
     ) {
         if presentResult {
