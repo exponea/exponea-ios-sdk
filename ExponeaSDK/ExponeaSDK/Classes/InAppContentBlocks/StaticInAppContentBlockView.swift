@@ -94,14 +94,14 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
     }
 
     public func reload() {
-        getContent()
+        getContent(force: true)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func getContent() {
+    private func getContent(force: Bool = false) {
         guard !placeholder.isEmpty else {
             replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0) {
                 self.prepareContentReadyState(false)
@@ -111,7 +111,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         }
         let data = inAppContentBlocksManager.prepareInAppContentBlocksStaticView(placeholderId: placeholder)
         webview.tag = data.tag
-        if data.html.isEmpty {
+        if data.html.isEmpty || force {
             inAppContentBlocksManager.refreshStaticViewContent(staticQueueData: .init(tag: data.tag, placeholderId: placeholder) {
                 self.webview.tag = $0.tag
                 self.loadContent(html: $0.html, message: $0.message)
