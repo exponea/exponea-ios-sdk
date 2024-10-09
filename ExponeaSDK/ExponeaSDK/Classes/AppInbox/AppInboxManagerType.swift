@@ -10,8 +10,14 @@ import Foundation
 
 protocol AppInboxManagerType {
     func onEventOccurred(of type: EventType, for event: [DataType])
-    func fetchAppInbox(completion: @escaping (Result<[MessageItem]>) -> Void)
+    func fetchAppInbox(customerIds: [String: String]?, completion: @escaping (Result<[MessageItem]>) -> Void)
     func fetchAppInboxItem(_ messageId: String, completion: @escaping (Result<MessageItem>) -> Void)
     func markMessageAsRead(_ message: MessageItem, _ customerIdsCheck: TypeBlock<Bool>?, _ completition: ((Bool) -> Void)?)
     func clear()
+}
+
+extension AppInboxManagerType {
+    func fetchAppInbox(customerIds: [String: String]? = nil, completion: @escaping (Result<[MessageItem]>) -> Void) {
+        fetchAppInbox(customerIds: customerIds, completion: completion)
+    }
 }
