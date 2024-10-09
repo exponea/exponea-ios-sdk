@@ -396,7 +396,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 triggerCompletion?(.identifyFetch)
             }
             fetchInAppMessages(for: event) {
-                loadMessageIfNeeded()
+                loadMessageIfNeeded(event: event)
             }
         case isAnonymized:
             Exponea.logger.log(
@@ -410,7 +410,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 message: "[InApp] Reloading in app messages, because 'shouldReload'"
             )
             fetchInAppMessages(for: event) {
-                loadMessageIfNeeded()
+                loadMessageIfNeeded(event: event)
             }
             // For test purposes. Initialized only inside test
             if triggerCompletion != nil {
@@ -424,7 +424,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                     .verbose,
                     message: "[InApp] ShoulReload is false. Just load messages'"
                 )
-                loadMessageIfNeeded()
+                loadMessageIfNeeded(event: event)
                 // For test purposes. Initialized only inside test
                 if triggerCompletion != nil {
                     isIdentifyFlowInProcess = false
@@ -432,15 +432,31 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 }
             }
         }
-        func loadMessageIfNeeded() {
+        func loadMessageIfNeeded(event: [DataType]) {
             if let message = pickPendingMessage {
-                Exponea.logger.log(
-                    .verbose,
-                    message: "[InApp] Show pending InAppMessage for event \(event)"
-                )
-                if preloadImage(for: message) {
-                    isIdentifyFlowInProcess = false
-                    onMain(self.showInAppMessage(message))
+                if !presenter.presenting &&
+                    event.customerIds.compareWith(
+                        other: Exponea.shared.trackingManager?.customerIds ?? [:]
+                ) {
+                    Exponea.logger.log(
+                        .verbose,
+                        message: """
+                            [InApp] Show pending InAppMessage for event \(event)
+                            presenter.presenting is \(presenter.presenting)
+                            compareWith is \(event.customerIds.compareWith(
+                                other: Exponea.shared.trackingManager?.customerIds ?? [:]
+                            ))
+                        """
+                    )
+                    if preloadImage(for: message) {
+                        isIdentifyFlowInProcess = false
+                        onMain(self.showInAppMessage(message))
+                    }
+                } else {
+                    Exponea.logger.log(
+                        .verbose,
+                        message: "[InApp] Fetch InAppMessages - different customer ids"
+                    )
                 }
             } else {
                 if let message = loadMessageToShow(for: event) {
