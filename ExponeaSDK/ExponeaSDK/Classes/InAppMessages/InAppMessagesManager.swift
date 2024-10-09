@@ -419,6 +419,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 triggerCompletion?(.shouldReloadFetch)
             }
         default:
+            if let banner = event.first(where: { $0 == .eventType("banner") }), banner == .properties(["action": .string("show")]) {
+                Exponea.logger.log(
+                    .verbose,
+                    message: "InApp: Skipping messages process for In-app show event"
+                )
+                return
+            }
             if !isIdentifyFlowInProcess {
                 Exponea.logger.log(
                     .verbose,
