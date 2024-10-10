@@ -47,3 +47,7 @@ func inAppMessageCloseAction(message: InAppMessage, button: InAppMessageButton?,
 ```
 
 A benefit of the new behaviour is that the method `inAppMessageCloseAction` can be called with a non-null `button` parameter. This happens when a user clicks on the Cancel button and enables you to determine which button has been clicked by reading the button text.
+
+### SegmentationManager - category change
+
+Category `merchandise` has been changed to `merchandising`.

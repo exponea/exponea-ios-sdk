@@ -172,9 +172,10 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
 
         SegmentationManager.shared.addCallback(
             callbackData: .init(
-                category: .merchandise(),
-                isIncludeFirstLoad: false,
+                category: .merchandising(),
+                isIncludeFirstLoad: true,
                 onNewData: { segments in
+                    
         }))
 
         Exponea.shared.getSegments(force: true, category: .discovery()) { data in

@@ -166,9 +166,9 @@ extension SegmentationManager {
                     if case let .discovery(storeData) = found, let index = toReturn.firstIndex(where: { $0.id == s.id }) {
                         toReturn[index] = .discovery(data: Array(Set(data + storeData)))
                     }
-                case let .merchandise(data):
-                    if case let .merchandise(storeData) = found, let index = toReturn.firstIndex(where: { $0.id == s.id }) {
-                        toReturn[index] = .merchandise(data: Array(Set(data + storeData)))
+                case let .merchandising(data):
+                    if case let .merchandising(storeData) = found, let index = toReturn.firstIndex(where: { $0.id == s.id }) {
+                        toReturn[index] = .merchandising(data: Array(Set(data + storeData)))
                     }
                 case .other: continue
                 }
@@ -209,7 +209,7 @@ extension SegmentationManager {
                     switch category {
                     case let .discovery(data),
                         let .content(data),
-                        let .merchandise(data):
+                        let .merchandising(data):
                         if newbies.contains(where: { $0.id == callback.id }) {
                             callback.fireBlock(category: data)
                         } else if syncStatus.contains(where: { $0.id == category.id }) {
@@ -238,10 +238,10 @@ extension SegmentationManager {
                     }
                 }
                 return nil
-            case let .merchandise(fetchData):
-                if case let .merchandise(storeData) = store.segmentData.categories.first(where: { $0 == .merchandise() }) {
+            case let .merchandising(fetchData):
+                if case let .merchandising(storeData) = store.segmentData.categories.first(where: { $0 == .merchandising() }) {
                     if !fetchData.diff(from: storeData).isEmpty {
-                        return SegmentCategory(type: "merchandise", data: fetchData)
+                        return SegmentCategory(type: "merchandising", data: fetchData)
                     }
                 }
                 return nil

@@ -19,7 +19,7 @@ To use real-time segments in your app, you must register one or more customized 
 Each instance must define the following three items:
 
 1. A `category` indicating your point of interest for segmentation:
-   * Possible values are `content`, `discovery`, or `merchandise`. You will get updates only for segmentation data assigned to the specified `category`.
+   * Possible values are `content`, `discovery`, or `merchandising`. You will get updates only for segmentation data assigned to the specified `category`.
 2. A boolean flag `includeFirstLoad` to force a fetch of segmentation data:
    * Setting this flag to `true` triggers a segmentation data fetch immediately.
    * The SDK will notify this callback instance with the new data even if the data has not changed from the last known state.
@@ -34,7 +34,7 @@ Each instance must define the following three items:
 ```swift
 SegmentationManager.shared.addCallback(
     callbackData: .init(
-        category: .merchandise(),
+        category: .merchandising(),
         isIncludeFirstLoad: false,
         onNewData: { segments in
     print(segments)

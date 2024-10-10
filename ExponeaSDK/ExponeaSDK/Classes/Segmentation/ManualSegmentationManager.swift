@@ -106,7 +106,7 @@ public final class ManualSegmentationManager: ManualSegmentationManagerType {
                     switch category {
                     case let .discovery(data),
                         let .content(data),
-                        let .merchandise(data):
+                        let .merchandising(data):
                         callback.fireBlock(category: data)
                         if let index = self.manualCallbacks.firstIndex(where: { $0.category.id == category.id }) {
                             self._manualCallbacks.changeValue(with: { $0.remove(at: index) })
@@ -131,7 +131,7 @@ public final class ManualSegmentationManager: ManualSegmentationManagerType {
                 switch category {
                 case let .discovery(data),
                     let .content(data),
-                    let .merchandise(data):
+                    let .merchandising(data):
                     result(data)
                 case .other: break
                 }
