@@ -118,13 +118,20 @@ public final class ManualSegmentationManager: ManualSegmentationManagerType {
         }
     }
 
+    private func checkCacheCustomer() -> Bool {
+        if let cache = cache?.assignedCustomer {
+            return areCustomerIdsEqual(customerIds: cache)
+        }
+        return false
+    }
+
     public func getSegments(
         category: SegmentCategory,
         force: Bool = false,
         result: @escaping TypeBlock<[SegmentDTO]>
     ) {
         guard force ||
-                cache?.assignedCustomer == nil ||
+                !checkCacheCustomer() ||
                 cache?.isWithinTime == false
         else {
             cache?.data.categories.forEach { category in
@@ -138,26 +145,21 @@ public final class ManualSegmentationManager: ManualSegmentationManagerType {
             }
             return
         }
-        if let cachedCustomerIds = cache?.assignedCustomer, !areCustomerIdsEqual(customerIds: cachedCustomerIds) {
-            result([])
-            return
-        }
         let manual: SegmentCallbackData = .init(
             category: category,
             isIncludeFirstLoad: true,
             onNewData: result
         )
+        _manualCallbacks.changeValue(with: { $0.append(manual) })
         guard !isRequestRunning else {
             Exponea.logger.log(.verbose, message: "Segments: Manual fetch is already in progress, waiting for result")
             return
         }
-        guard let customerIds = cache?.assignedCustomer,
-              let cookie = customerIds["cookie"] else {
+        guard let customerIds = Exponea.shared.trackingManager?.customerIds, let cookie = customerIds["cookie"] else {
             Exponea.logger.log(.verbose, message: "Segments: Customer in not identified")
             result([])
             return
         }
-        _manualCallbacks.changeValue(with: { $0.append(manual) })
         invokeFetch(
             customerIds: customerIds,
             category: category,
