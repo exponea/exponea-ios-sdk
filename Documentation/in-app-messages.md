@@ -14,6 +14,10 @@ In-app messages work out-of-the-box once the [SDK is installed and configured](h
 >
 > Refer to the [In-app messages](https://documentation.bloomreach.com/engagement/docs/in-app-messages) user guide for instructions on how to create in-app messages in the Engagement web app.
 
+> 📘
+>
+> Also see [In-app messages FAQ](https://support.bloomreach.com/hc/en-us/articles/18152718785437-In-App-Messages-FAQ) at Bloomreach Support Help Center.
+
 ## Tracking
 
 The SDK automatically tracks `banner` events for in-app messages with the following values for the `action` event property:

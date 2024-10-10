@@ -14,6 +14,10 @@ Push notifications can also be silent, used only to update the app’s interface
 >
 > Refer to [Mobile push notifications](https://documentation.bloomreach.com/engagement/docs/mobile-push-notifications#creating-a-new-notification) to learn how to create push notifications in the Engagement web app.
 
+> 📘
+>
+> Also see [Mobile push notifications FAQ](https://support.bloomreach.com/hc/en-us/articles/18152713374877-Mobile-Push-Notifications-FAQ) at Bloomreach Support Help Center.
+
 > ❗️ Deprecation of automatic push notifications
 >
 > Previous versions of the SDK used method swizzling to automatically register for push notifications. This sometimes caused issues and therefore is no longer supported. Refer to [Implement application delegate methods](#implement-application-delegate-methods) below for a list of delegate methods your application needs to implement in order to properly process push notifications.

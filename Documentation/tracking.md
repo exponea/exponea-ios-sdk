@@ -16,6 +16,10 @@ By default, the SDK tracks certain events automatically, including:
 
 Additionally, you can track any custom event relevant to your business.
 
+> 📘
+>
+> Also see [Mobile SDK tracking FAQ](https://support.bloomreach.com/hc/en-us/articles/18153058904733-Mobile-SDK-tracking-FAQ) at Bloomreach Support Help Center.
+
 ## Events
 
 ### Track event
