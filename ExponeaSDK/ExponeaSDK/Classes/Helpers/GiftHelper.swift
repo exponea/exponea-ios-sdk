@@ -63,6 +63,10 @@ extension UIImage {
             CFDictionaryGetValue(cfProperties,
                 Unmanaged.passUnretained(kCGImagePropertyGIFDictionary).toOpaque()),
             to: CFDictionary.self)
+        let dict = gifProperties as? [String: AnyObject] ?? [:]
+        guard !dict.isEmpty else {
+            return delay
+        }
         var delayObject: AnyObject = unsafeBitCast(
             CFDictionaryGetValue(gifProperties,
                 Unmanaged.passUnretained(kCGImagePropertyGIFUnclampedDelayTime).toOpaque()),

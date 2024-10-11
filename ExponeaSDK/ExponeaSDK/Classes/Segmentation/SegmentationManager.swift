@@ -261,7 +261,6 @@ extension SegmentationManager {
     }
 
     private func linkIds(completion: @escaping EmptyBlock) {
-        
         guard let cookie = Exponea.shared.customerCookie, let ids = Exponea.shared.trackingManager?.customerIds else { return }
         dataProvider.linkIds(data: EmptyDTO.self, cookie: cookie, externalIds: externalIds) { response in
             if response.error != nil {
