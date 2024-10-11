@@ -36,7 +36,7 @@ class FetchViewController: UIViewController {
     typealias MyRecommendationResponse = RecommendationResponse<MyRecommendation>
 
     @IBAction func segment(_ sender: Any) {
-        Exponea.shared.getSegments(force: true, category: .discovery()) { data in
+        Exponea.shared.getSegments(force: true, category: .content()) { data in
             DispatchQueue.main.async {
                 let alertController = UIAlertController(title: "Segment", message: data.map { segment in
                     "id: \(segment.id), segmentationId: \(segment.segmentationId)\n"

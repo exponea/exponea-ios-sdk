@@ -43,7 +43,11 @@ public protocol SegmentationManagerType {
     func getNewbies() -> [SegmentCallbackData]
     func getCallbacks() -> [SegmentCallbackData]
     func processTriggeredBy(type: SegmentTriggerType)
-    func unionSegments(first: [SegmentCategory], second: [SegmentCategory]) -> [SegmentCategory]
+    func unionSegments(
+        fetchedCategories: [SegmentCategory],
+        cachedCategories: [SegmentCategory],
+        newbies: [SegmentCallbackData]
+    ) -> [SegmentCategory]
     func anonymize()
     func removeAll()
     func addCallback(callbackData: SegmentCallbackData)
@@ -150,29 +154,19 @@ extension SegmentationManager {
         }
     }
 
-    public func unionSegments(first: [SegmentCategory], second: [SegmentCategory]) -> [SegmentCategory] {
-        let source = first + second
+    public func unionSegments(
+        fetchedCategories: [SegmentCategory],
+        cachedCategories: [SegmentCategory],
+        newbies: [SegmentCallbackData]
+    ) -> [SegmentCategory] {
+        let unionCategoryNames = Set(
+            fetchedCategories.map { $0.name } + cachedCategories.map { $0.name } + newbies.map { $0.category.name }
+        )
         var toReturn: [SegmentCategory] = []
-        for s in source {
-            if !toReturn.contains(where: { $0.id == s.id }) {
-                toReturn.append(s)
-            } else if let found = toReturn.first(where: { $0.id == s.id }) {
-                switch s {
-                case let .content(data):
-                    if case let .content(storeData) = found, let index = toReturn.firstIndex(where: { $0.id == s.id }) {
-                        toReturn[index] = .content(data: Array(Set(data + storeData)))
-                    }
-                case let .discovery(data):
-                    if case let .discovery(storeData) = found, let index = toReturn.firstIndex(where: { $0.id == s.id }) {
-                        toReturn[index] = .discovery(data: Array(Set(data + storeData)))
-                    }
-                case let .merchandising(data):
-                    if case let .merchandising(storeData) = found, let index = toReturn.firstIndex(where: { $0.id == s.id }) {
-                        toReturn[index] = .merchandising(data: Array(Set(data + storeData)))
-                    }
-                case .other: continue
-                }
-            }
+        for categoryName in unionCategoryNames {
+            toReturn.append(
+                fetchedCategories.first { $0.name == categoryName } ?? SegmentCategory.init(type: categoryName, data: [])
+            )
         }
         return toReturn
     }
@@ -192,7 +186,7 @@ extension SegmentationManager {
             }
             let storeSegments = self.storedSegmentations?.segmentData.categories ?? []
             let syncStatus = synchronizeSegments(customerIds: customerIds, input: result)
-            let union = unionSegments(first: result.categories, second: storeSegments)
+            let union = unionSegments(fetchedCategories: result.categories, cachedCategories: storeSegments, newbies: newbies)
             guard !union.isEmpty else {
                 Exponea.logger.log(.verbose, message: "Segments: Empty data from server and store.")
                 self.newbieCallbacks.forEach { callback in
@@ -214,8 +208,6 @@ extension SegmentationManager {
                             callback.fireBlock(category: data)
                         } else if syncStatus.contains(where: { $0.id == category.id }) {
                             callback.fireBlock(category: data)
-                        } else {
-                            callback.fireBlock(category: [])
                         }
                     case .other: break
                     }

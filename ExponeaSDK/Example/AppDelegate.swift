@@ -21,6 +21,24 @@ class AppDelegate: ExponeaAppDelegate {
     static let memoryLogger = MemoryLogger()
     var window: UIWindow?
     var alertWindow: UIWindow?
+    let discoverySegmentsCallback = SegmentCallbackData(
+        category: .discovery(),
+        isIncludeFirstLoad: false
+    ) { newSegments in
+        notifyNewSegments(categoryName: "discovery", segments: newSegments)
+    }
+    let contentSegmentsCallback = SegmentCallbackData(
+        category: .content(),
+        isIncludeFirstLoad: false
+    ) { newSegments in
+        notifyNewSegments(categoryName: "content", segments: newSegments)
+    }
+    let merchandisingSegmentsCallback = SegmentCallbackData(
+        category: .merchandising(),
+        isIncludeFirstLoad: false
+    ) { newSegments in
+        notifyNewSegments(categoryName: "merchandising", segments: newSegments)
+    }
 
     override func application(
         _ application: UIApplication,
@@ -29,6 +47,9 @@ class AppDelegate: ExponeaAppDelegate {
         super.application(application, didFinishLaunchingWithOptions: launchOptions)
         Exponea.logger = AppDelegate.memoryLogger
         Exponea.logger.logLevel = .verbose
+        SegmentationManager.shared.addCallback(callbackData: discoverySegmentsCallback)
+        SegmentationManager.shared.addCallback(callbackData: contentSegmentsCallback)
+        SegmentationManager.shared.addCallback(callbackData: merchandisingSegmentsCallback)
 
         UITabBar.appearance().tintColor = UIColor(red: 28/255, green: 23/255, blue: 50/255, alpha: 1.0)
         UINavigationBar.appearance().backgroundColor = UIColor(red: 249/255, green: 249/255, blue: 249/255, alpha: 0.94)
@@ -85,6 +106,15 @@ class AppDelegate: ExponeaAppDelegate {
             return true
         }
         return false
+    }
+
+    private static func notifyNewSegments(categoryName: String, segments: [SegmentDTO]) {
+        Exponea.logger.log(
+            .verbose,
+            message: "Segments: New for category \(categoryName) with IDs: [" + segments.map {
+                return "{ segmentation_id=\($0.segmentationId), id=\($0.id) }"
+            }.joined() + "]"
+        )
     }
 }
 

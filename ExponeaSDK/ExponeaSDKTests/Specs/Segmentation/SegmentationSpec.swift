@@ -27,63 +27,38 @@ class SegmentationSpec: QuickSpec {
             let discovery: SegmentCategory = .discovery(data: [
                 .init(id: "id1", segmentationId: "segmentationId1"),
                 .init(id: "id2", segmentationId: "segmentationId2"),
-                .init(id: "id2", segmentationId: "segmentationId3"),
+                .init(id: "id2", segmentationId: "segmentationId3")
             ])
-            let discovery2: SegmentCategory = .discovery(data: [
+            let content: SegmentCategory = .content(data: [
+                .init(id: "id1", segmentationId: "segmentationId1")
+            ])
+            let merchandising: SegmentCategory = .merchandising(data: [
                 .init(id: "id2", segmentationId: "segmentationId2"),
                 .init(id: "id5", segmentationId: "segmentationId5"),
-                .init(id: "id1", segmentationId: "segmentationId1"),
+                .init(id: "id1", segmentationId: "segmentationId1")
             ])
-            let discovery3: SegmentCategory = .discovery(data: [
-                .init(id: "id6", segmentationId: "segmentationId6"),
-                .init(id: "id6", segmentationId: "segmentationId6"),
-                .init(id: "id6", segmentationId: "segmentationId6"),
-                .init(id: "id8", segmentationId: "segmentationId8"),
-                .init(id: "id7", segmentationId: "segmentationId7"),
-            ])
-
-            let content: SegmentCategory = .content(data: [
-                .init(id: "id1", segmentationId: "segmentationId1"),
-            ])
-            let content2: SegmentCategory = .content(data: [
-                .init(id: "id2", segmentationId: "segmentationId2"),
-                .init(id: "id3", segmentationId: "segmentationId3"),
-                .init(id: "id3", segmentationId: "segmentationId5"),
-            ])
-            let content1: SegmentCategory = .content(data: [
-                .init(id: "id3", segmentationId: "segmentationId3"),
-                .init(id: "id4", segmentationId: "segmentationId4"),
-                .init(id: "id4", segmentationId: "segmentationId4"),
-            ])
-
-            let fetch = [discovery, content2, discovery3]
-            let cache = [discovery2, content1, content]
-
-            let result = manager.unionSegments(first: fetch, second: cache)
+            let fetch = [discovery, content]
+            let cache = [content, merchandising]
+            let unionSegments = manager.unionSegments(fetchedCategories: fetch, cachedCategories: cache, newbies: [])
+            // discovery + content + merchandising
+            expect(unionSegments.count).to(equal(3))
             var numberOfDiscovery = 0
             var numberOfContent = 0
-
-            for category in result {
+            var numberOfMerchandising = 0
+            for category in unionSegments {
                 switch category {
                 case let .discovery(data):
                     numberOfDiscovery = data.count
-                default: continue
-                }
-            }
-
-            for category in result {
-                switch category {
                 case let .content(data):
                     numberOfContent = data.count
+                case let .merchandising(data):
+                    numberOfMerchandising = data.count
                 default: continue
                 }
             }
-
-            expect(numberOfDiscovery).to(equal(7))
-            expect(numberOfContent).to(equal(5))
-
-            expect(result.filter { $0.id == SegmentCategory.discovery().id }.count).to(equal(1))
-            expect(result.filter { $0.id == SegmentCategory.content().id }.count).to(equal(1))
+            expect(numberOfDiscovery).to(equal(3))  // is in Fetch
+            expect(numberOfContent).to(equal(1))  // is in Fetch
+            expect(numberOfMerchandising).to(equal(0))  // is only in cache, so Fetch is empty
         }
 
         it("callbacks") {
