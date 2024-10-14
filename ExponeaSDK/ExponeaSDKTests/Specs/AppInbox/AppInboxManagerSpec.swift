@@ -250,6 +250,17 @@ class AppInboxManagerSpec: QuickSpec {
                                     "url": .string("mail:something"),
                                     "title": .string("Deeplink")
                                 ])
+                            ]),
+                            "url_params": .dictionary([
+                                "utm_source": .string("source"),
+                                "utm_campaign": .string("campaign"),
+                                "utm_content": .string("content"),
+                                "utm_medium": .string("medium"),
+                                "utm_term": .string("term"),
+                                "xnpe_cmp": .string("cmp123")
+                            ]),
+                            "attributes": .dictionary([
+                                "event_type": .string("campaign")
                             ])
                         ]
                     )
@@ -289,6 +300,18 @@ class AppInboxManagerSpec: QuickSpec {
                     }
                     expect(deeplinkAction.title).to(equal("Deeplink"))
                     expect(deeplinkAction.url).to(equal("mail:something"))
+                    guard let trackingData = message.content?.trackingData else {
+                        fail("Campaign data are empty")
+                        done()
+                        return
+                    }
+                    expect(trackingData["utm_source"]?.rawValue as? String).to(equal("source"))
+                    expect(trackingData["utm_campaign"]?.rawValue as? String).to(equal("campaign"))
+                    expect(trackingData["utm_content"]?.rawValue as? String).to(equal("content"))
+                    expect(trackingData["utm_medium"]?.rawValue as? String).to(equal("medium"))
+                    expect(trackingData["utm_term"]?.rawValue as? String).to(equal("term"))
+                    expect(trackingData["xnpe_cmp"]?.rawValue as? String).to(equal("cmp123"))
+                    expect(trackingData["event_type"]).to(beNil())
                     done()
                 }
             }
@@ -307,7 +330,18 @@ class AppInboxManagerSpec: QuickSpec {
                         data: [
                             "title": .string("Title"),
                             "pre_header": .string("Message"),
-                            "message": .string(AppInboxManagerSpec.htmlAppInboxMessageContent)
+                            "message": .string(AppInboxManagerSpec.htmlAppInboxMessageContent),
+                            "url_params": .dictionary([
+                                "utm_source": .string("source"),
+                                "utm_campaign": .string("campaign"),
+                                "utm_content": .string("content"),
+                                "utm_medium": .string("medium"),
+                                "utm_term": .string("term"),
+                                "xnpe_cmp": .string("cmp123")
+                            ]),
+                            "attributes": .dictionary([
+                                "event_type": .string("campaign")
+                            ])
                         ]
                     )
                 ],
@@ -373,6 +407,18 @@ class AppInboxManagerSpec: QuickSpec {
                     }
                     expect(action5.title).to(equal("Fallback to browser"))
                     expect(action5.type).to(equal(.browser))
+                    guard let trackingData = message.content?.trackingData else {
+                        fail("Campaign data are empty")
+                        done()
+                        return
+                    }
+                    expect(trackingData["utm_source"]?.rawValue as? String).to(equal("source"))
+                    expect(trackingData["utm_campaign"]?.rawValue as? String).to(equal("campaign"))
+                    expect(trackingData["utm_content"]?.rawValue as? String).to(equal("content"))
+                    expect(trackingData["utm_medium"]?.rawValue as? String).to(equal("medium"))
+                    expect(trackingData["utm_term"]?.rawValue as? String).to(equal("term"))
+                    expect(trackingData["xnpe_cmp"]?.rawValue as? String).to(equal("cmp123"))
+                    expect(trackingData["event_type"]).to(beNil())
                     done()
                 }
             }

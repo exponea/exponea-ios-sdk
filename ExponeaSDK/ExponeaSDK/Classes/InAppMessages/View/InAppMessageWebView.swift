@@ -5,7 +5,7 @@ import WebKit
 final class InAppMessageWebView: UIView, InAppMessageView {
     private let payload: String
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: TypeBlock<Bool>
+    let dismissCallback: (Bool, InAppMessagePayloadButton?) -> Void
 
     var webView: WKWebView!
     private var inAppContentBlocksManager: InAppContentBlocksManagerType = InAppContentBlocksManager.manager
@@ -13,31 +13,39 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     var normalizedPayload: NormalizedResult?
 
     var actionManager: WebActionManager?
+    
+    var isPresented: Bool {
+        return superview != nil
+    }
 
     required init(
         payload: String,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping TypeBlock<Bool>
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void
     ) {
         self.payload = payload
         self.actionCallback = actionCallback
         self.dismissCallback = dismissCallback
         super.init(frame: UIScreen.main.bounds)
         actionManager = WebActionManager(
-            onCloseCallback: { [weak self] in
+            onCloseCallback: { [weak self] cancelButtonInfo in
                 guard let self = self else {
                     return
                 }
-                self.dismissCallback(false)
-                self.dismiss(isUserInteraction: true)
+                let cancelButtonPayload = InAppMessagePayloadButton(
+                    buttonText: cancelButtonInfo?.buttonText,
+                    rawButtonType: "cancel",
+                    buttonLink: cancelButtonInfo?.actionUrl,
+                    buttonTextColor: nil,
+                    buttonBackgroundColor: nil
+                )
+                self.dismiss(isUserInteraction: true, cancelButton: cancelButtonPayload)
             },
             onActionCallback: { [weak self] action in
                 guard let self = self else {
                     return
                 }
-                self.actionCallback(self.toPayloadButton(action))
-                // Close window
-                self.dismiss(isUserInteraction: false)
+                self.dismiss(actionButton: self.toPayloadButton(action))
             }
         )
         setup()
@@ -63,25 +71,28 @@ final class InAppMessageWebView: UIView, InAppMessageView {
         ])
     }
 
-    func dismiss(isUserInteraction: Bool) {
-        self.dismissCallback(isUserInteraction)
+    func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?) {
+        dismissCallback(isUserInteraction, cancelButton)
+        dismissFromSuperView()
+    }
+
+    func dismiss(actionButton: InAppMessagePayloadButton) {
+        actionCallback(actionButton)
+        dismissFromSuperView()
+    }
+
+    func dismissFromSuperView() {
         guard superview != nil else {
             return
         }
-        self.removeFromSuperview()
+        removeFromSuperview()
     }
 
     func actionButtonAction(_ sender: InAppMessageActionButton) {
         guard let payload = sender.payload else {
             return
         }
-        removeFromSuperview()
-        actionCallback(payload)
-    }
-
-    func cancelButtonAction(_ sender: Any) {
-        self.dismissCallback(true)
-        self.removeFromSuperview()
+        dismiss(actionButton: payload)
     }
 
     func setup() {
@@ -100,7 +111,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
                     self.webView.loadHTMLString(self.normalizedPayload!.html!, baseURL: nil)
                 }
             } else {
-                self.dismiss(isUserInteraction: false)
+                self.dismiss(isUserInteraction: false, cancelButton: nil)
             }
         }
     }
@@ -146,11 +157,8 @@ final class InAppMessageWebView: UIView, InAppMessageView {
             return .browser
         case .deeplink:
             return .deeplink
-        case .unknown:
-            if action.actionUrl.cleanedURL()!.scheme == "http" || action.actionUrl.cleanedURL()!.scheme == "https" {
-                return .browser
-            }
-            return .deeplink
+        case .close:
+            return .cancel
         }
     }
 }

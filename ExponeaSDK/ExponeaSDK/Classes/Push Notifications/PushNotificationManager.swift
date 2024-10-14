@@ -36,6 +36,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     private let tokenTrackFrequency: TokenTrackFrequency
     private let urlOpener: UrlOpenerType
     private var currentPushToken: String?
+    private var lastKnownPushToken: String?
     private var lastTokenTrackDate: Date
     private var pushNotificationSwizzler: PushNotificationSwizzler?
 
@@ -86,6 +87,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         self.trackingManager = trackingManager
         self.tokenTrackFrequency = tokenTrackFrequency
         self.currentPushToken = currentPushToken
+        self.lastKnownPushToken = currentPushToken
         self.lastTokenTrackDate = lastTokenTrackDate ?? .distantPast
         self.urlOpener = urlOpener
         self.requirePushAuthorization = requirePushAuthorization
@@ -115,10 +117,29 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                 UIApplication.shared.registerForRemoteNotifications()
             }
         }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     deinit {
         pushNotificationSwizzler?.removeAutomaticPushTracking()
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+    
+    // MARK: App lifecycle
+    
+    @objc internal func applicationDidBecomeActive() {
+        Exponea.shared.executeSafely {
+            self.applicationDidBecomeActiveUnsafe()
+        }
     }
 
     // MARK: - Actions -
@@ -228,6 +249,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     }
 
     func handlePushTokenRegisteredUnsafe(token: String) {
+        self.lastKnownPushToken = token
         UNAuthorizationStatusProvider.current.isAuthorized { authorized in
             if !self.requirePushAuthorization || authorized {
                 self.currentPushToken = token
@@ -344,6 +366,9 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                     self.trackCurrentPushToken(isAuthorized: authorized)
                 }
             } else {
+                if self.currentPushToken == nil {
+                    self.currentPushToken = self.lastKnownPushToken
+                }
                 self.checkForPushTokenFrequency(isAuthorized: authorized)
             }
         }
@@ -376,14 +401,17 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             }
 
         case .onTokenChange:
-            // nothing to do
-            break
+            // Track if changed from last tracked
+            if trackingManager.customerPushToken != currentPushToken {
+                lastTokenTrackDate = .init()
+                trackCurrentPushToken(isAuthorized: authorized)
+            }
         }
     }
 }
 
 extension PushNotificationManager {
-    func applicationDidBecomeActive() {
+    func applicationDidBecomeActiveUnsafe() {
         checkForDeliveredPushMessages()
         // we don't have to check for opened pushes here, Exponea SDK was initialized so it will be tracked directly
         verifyPushStatusAndTrackPushToken()

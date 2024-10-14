@@ -21,11 +21,11 @@ It has been written 100% in Swift with ❤️
 
 ```ruby
 # Add this under your main application target
-pod "ExponeaSDK", "~> 2.27.0"
+pod "ExponeaSDK", "~> 3.0.0"
 
 # If you also use rich push notifications,
 # add this line to your notification service extension target.
-pod "ExponeaSDK-Notifications", "~> 2.27.0"
+pod "ExponeaSDK-Notifications", "~> 3.0.0"
 ```
 
 ### Carthage
@@ -33,7 +33,7 @@ pod "ExponeaSDK-Notifications", "~> 2.27.0"
 > Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks. The latter one is only supposed to be used in a notification service extension if you wish to support rich push notifications. Read more about rich push notifications [here](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications#rich-push-notifications).
 
 ```
-github "exponea/exponea-ios-sdk" ~> 2.27.0
+github "exponea/exponea-ios-sdk" ~> 3.0.0
 ```
 > And then in your Command line tool type ```carthage update --use-xcframeworks --platform ios```
 
@@ -66,6 +66,8 @@ Follow the detailed [step by step guide here](https://documentation.bloomreach.c
 - [App Inbox](https://documentation.bloomreach.com/engagement/docs/ios-sdk-app-inbox)
 - [Tracking Consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent)
 - [Example App](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app)
+- [Release Notes](https://documentation.bloomreach.com/engagement/docs/ios-sdk-release-notes)
+  - [SDK Version Update Guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update)
 
 ## 🔗 Useful links
 
@@ -80,3 +82,7 @@ Release notes can be found [here](https://documentation.bloomreach.com/engagemen
 Are you a Bloomreach customer and having some issues with the mobile SDK? You can reach the official Engagement Support [via these recommended ways](https://documentation.bloomreach.com/engagement/docs/engagement-support#contacting-the-support).
 
 Note that Github repository issues and PRs will also be considered but with the lowest priority and without guaranteed output.
+
+- [Mobile SDK tracking FAQ](https://support.bloomreach.com/hc/en-us/articles/18153058904733-Mobile-SDK-tracking-FAQ) at Bloomreach Support Help Center
+- [Mobile push notifications FAQ](https://support.bloomreach.com/hc/en-us/articles/18152713374877-Mobile-Push-Notifications-FAQ) at Bloomreach Support Help Center
+- [In-app messages FAQ](https://support.bloomreach.com/hc/en-us/articles/18152718785437-In-App-Messages-FAQ) at Bloomreach Support Help Center

@@ -56,6 +56,9 @@ public struct Configuration: Codable, Equatable {
     ///  App inbox detail image inset
     public internal(set) var appInboxDetailImageInset: CGFloat?
 
+    ///  Manual session autoclose
+    public internal(set) var manualSessionAutoClose: Bool = true
+
     enum CodingKeys: String, CodingKey {
         case projectMapping
         case projectToken
@@ -94,7 +97,8 @@ public struct Configuration: Codable, Equatable {
                 allowDefaultCustomerProperties: Bool? = nil,
                 advancedAuthEnabled: Bool? = nil,
                 isDarkModeEnabled: Bool? = nil,
-                appInboxDetailImageInset: CGFloat? = 56
+                appInboxDetailImageInset: CGFloat? = 56,
+                manualSessionAutoClose: Bool = true
     ) throws {
         guard let projectToken = projectToken else {
             throw ExponeaError.configurationError("No project token provided.")
@@ -108,6 +112,7 @@ public struct Configuration: Codable, Equatable {
         self.advancedAuthEnabled = advancedAuthEnabled ?? false
         self.inAppContentBlocksPlaceholders = inAppContentBlocksPlaceholders
         self.appInboxDetailImageInset = appInboxDetailImageInset
+        self.manualSessionAutoClose = manualSessionAutoClose
         if let url = baseUrl {
             self.baseUrl = url
         }
@@ -135,7 +140,8 @@ public struct Configuration: Codable, Equatable {
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?,
         isDarkModeEnabled: Bool? = nil,
-        appInboxDetailImageInset: CGFloat? = 56
+        appInboxDetailImageInset: CGFloat? = 56,
+        manualSessionAutoClose: Bool = true
     ) throws {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
@@ -153,6 +159,7 @@ public struct Configuration: Codable, Equatable {
         self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
         self.advancedAuthEnabled = advancedAuthEnabled ?? false
         self.appInboxDetailImageInset = appInboxDetailImageInset
+        self.manualSessionAutoClose = manualSessionAutoClose
         if (self.advancedAuthEnabled) {
             self.customAuthProvider = try loadCustomAuthProvider()
         }

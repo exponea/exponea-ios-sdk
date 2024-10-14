@@ -1,5 +1,5 @@
 ---
-title: Example App
+title: Example app
 excerpt: Build, run, and navigate the example app included with the iOS SDK
 slug: ios-sdk-example-app
 categorySlug: integrations
@@ -18,7 +18,7 @@ You must have the following software installed to be able to build and run the e
 
 In Xcode, navigate to `Xcode` > `Preferences` > `Locations` and make sure `Command Line Tools` is set to your Xcode version.
 
-## Build and Run the Example App
+## Build and run the example app
 
 1. Clone the [exponea-ios-sdk](https://github.com/exponea/exponea-ios-sdk) repository on GitHub:
    ```shell
@@ -44,7 +44,7 @@ In Xcode, navigate to `Xcode` > `Preferences` > `Locations` and make sure `Comma
 >
 > To enable push notifications in the example app, you must also [configure the Apple Push Notification Service integration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configure-apns) in the Exponea web app.
 
-## Navigate the Example App
+## Navigate the example app
 
 ![Example app screens: configuration, fetch, track, track event](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/sample-app-1.png)
 
@@ -67,8 +67,9 @@ The app provides several views, accessible using the bottom navigation, to test 
 - The **Logging** view displays log messages from the SDK.
   > [`LogViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Logging/LogViewController.swift)
 
-- The **In-app Content Blocks** view displays in-app content blocks. Use placeholder IDs `example_top`, `ph_x_example_iOS`, and `example_list` in your in-app content block settings.
+- The **In-app Content Blocks** view displays in-app content blocks. Use placeholder IDs `example_top`, `ph_x_example_iOS`, `example_list`, `example_carousel`, and `example_carousel_ios` in your in-app content block settings.
   > [`InAppContentBlocksViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift)
+  > [`InAppContentBlockCarouselViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlockCarouselViewController.swift)
 
 Try out the different features in the app, then find the customer profile in the Engagement web app (under `Data & Assets` > `Customers`) to see the properties and events tracked by the SDK.
 
@@ -78,7 +79,7 @@ Once you use `Identify Customer` in the app to set the `registered` hard ID (use
 
 > 📘
 >
-> Refer to [Customer Identification](https://documentation.bloomreach.com/engagement/docs/customer-identification) for more information on soft IDs and hard IDs.
+> Refer to [Customer identification](https://documentation.bloomreach.com/engagement/docs/customer-identification) for more information on soft IDs and hard IDs.
 
 ![Example app screens: identify, flushing, logging, content blocks](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/sample-app-2.png)
 

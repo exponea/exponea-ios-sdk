@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NlS-1s-Oy5">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NlS-1s-Oy5">
     <device id="retina4_7" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -588,26 +588,6 @@
                                             <action selector="flushData:" destination="SuS-8c-tDs" eventType="touchUpInside" id="Qle-oT-UNC"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jwb-ir-R9R">
-                                        <rect key="frame" x="0.0" y="241.5" width="345" height="45"/>
-                                        <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="45" id="FWy-Ix-T0t"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
-                                        <state key="normal" title="Anonymize">
-                                            <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        </state>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                <integer key="value" value="4"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                        <connections>
-                                            <action selector="anonymizePressed:" destination="SuS-8c-tDs" eventType="touchUpInside" id="Qrk-Xf-wrl"/>
-                                        </connections>
-                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UFf-ks-6sF">
                                         <rect key="frame" x="0.0" y="482.5" width="345" height="45"/>
                                         <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -650,6 +630,69 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4jQ-a5-zUt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1172" y="-45.42728635682159"/>
+        </scene>
+        <!--Anonymize-->
+        <scene sceneID="bvp-lG-s6e">
+            <objects>
+                <viewController id="kWZ-GU-1rP" customClass="AnonymizeViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="0Wv-c3-FOh">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="p3v-rs-ZUI">
+                                <rect key="frame" x="15" y="35" width="345" height="568"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Anonymize" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="aPe-bI-Wiy">
+                                        <rect key="frame" x="0.0" y="0.0" width="345" height="20.5"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="0.1058823466" green="0.1058823466" blue="0.1058823466" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button autoresizesSubviews="NO" opaque="NO" contentMode="center" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jwb-ir-R9R">
+                                        <rect key="frame" x="0.0" y="247" width="345" height="45"/>
+                                        <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="FWy-Ix-T0t"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                        <state key="normal" title="Anonymize">
+                                            <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="4"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="anonymizePressed:" destination="kWZ-GU-1rP" eventType="touchUpInside" id="Ly4-UB-Bkl"/>
+                                        </connections>
+                                    </button>
+                                    <view contentMode="bottom" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="msB-Gm-wyD">
+                                        <rect key="frame" x="0.0" y="518" width="345" height="50"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="QV7-CR-nqq"/>
+                        <color key="backgroundColor" red="0.96470588450000005" green="0.96470588450000005" blue="0.96470588450000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="p3v-rs-ZUI" firstAttribute="leading" secondItem="QV7-CR-nqq" secondAttribute="leading" constant="15" id="34y-tr-oS4"/>
+                            <constraint firstItem="p3v-rs-ZUI" firstAttribute="bottom" secondItem="QV7-CR-nqq" secondAttribute="bottom" constant="-15" id="JM5-so-caf"/>
+                            <constraint firstItem="p3v-rs-ZUI" firstAttribute="top" secondItem="QV7-CR-nqq" secondAttribute="top" constant="15" id="cue-TC-3et"/>
+                            <constraint firstItem="p3v-rs-ZUI" firstAttribute="trailing" secondItem="QV7-CR-nqq" secondAttribute="trailing" constant="-15" id="qb3-YF-30F"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Anonymize" image="anonymize" id="RYg-oe-fs3">
+                        <color key="badgeColor" red="0.97254902119999997" green="0.84313726430000002" blue="0.2823529541" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    </tabBarItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WRB-xb-rX8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2076" y="-44"/>
         </scene>
         <!--Logging-->
         <scene sceneID="TQe-kx-4O0">
@@ -699,7 +742,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QiV-oZ-Nc5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1992.8" y="-45.42728635682159"/>
+            <point key="canvasLocation" x="2945" y="-44"/>
         </scene>
         <!--In App Content Blocks View Controller-->
         <scene sceneID="oL9-Nl-iwe">
@@ -726,7 +769,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="EGp-60-pFN">
-                                <rect key="frame" x="15" y="75.5" width="345" height="105"/>
+                                <rect key="frame" x="15" y="75.5" width="345" height="165"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XE9-RJ-fEr">
                                         <rect key="frame" x="0.0" y="0.0" width="345" height="45"/>
@@ -768,6 +811,26 @@
                                             <action selector="fetchConsents:" destination="TFH-0C-ErW" eventType="touchUpInside" id="ctJ-Uf-gFo"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bSW-de-dE1">
+                                        <rect key="frame" x="0.0" y="120" width="345" height="45"/>
+                                        <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="FbF-Bq-FNN"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
+                                        <state key="normal" title="Segment">
+                                            <color key="titleColor" red="0.10980392160000001" green="0.090196078430000007" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="4"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="segment:" destination="TFH-0C-ErW" eventType="touchUpInside" id="TEs-03-JbW"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fetch Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="01m-PX-pAF">
@@ -807,7 +870,7 @@
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="nLA-gC-GPU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.96470588450000005" green="0.96470588450000005" blue="0.96470588450000005" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <color key="tintColor" red="0.10196078431372549" green="0.086274509803921567" blue="0.17647058823529413" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
@@ -815,8 +878,9 @@
                         <segue destination="TFH-0C-ErW" kind="relationship" relationship="viewControllers" id="80S-D9-Mf4"/>
                         <segue destination="IHP-ii-3Rl" kind="relationship" relationship="viewControllers" id="Gz7-83-qlU"/>
                         <segue destination="SuS-8c-tDs" kind="relationship" relationship="viewControllers" id="mUY-wx-9L5"/>
-                        <segue destination="0k4-0F-rze" kind="relationship" relationship="viewControllers" id="ndT-Lo-KZI"/>
+                        <segue destination="kWZ-GU-1rP" kind="relationship" relationship="viewControllers" id="KAb-Bm-T3H"/>
                         <segue destination="kk0-cW-eGX" kind="relationship" relationship="viewControllers" id="hAX-Ge-XxK"/>
+                        <segue destination="0k4-0F-rze" kind="relationship" relationship="viewControllers" id="ndT-Lo-KZI"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JYz-Km-XZy" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1066,6 +1130,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="anonymize" width="26.666666030883789" height="26.666666030883789"/>
         <image name="fetch" width="26.666666030883789" height="26.666666030883789"/>
         <image name="flush" width="26.666666030883789" height="26.666666030883789"/>
         <image name="log" width="20" height="20"/>

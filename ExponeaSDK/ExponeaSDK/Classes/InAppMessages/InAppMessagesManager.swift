@@ -220,30 +220,36 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                         isUserInteraction: true
                     )
                 }
-                Exponea.shared.inAppMessagesDelegate.inAppMessageAction(
-                    with: message,
+                Exponea.shared.inAppMessagesDelegate.inAppMessageClickAction(
+                    message: message,
                     button: InAppMessageButton(
                         text: button.buttonText,
                         url: button.buttonLink
-                    ),
-                    interaction: true
+                    )
                 )
 
                 if !Exponea.shared.inAppMessagesDelegate.overrideDefaultBehavior {
                     self.processInAppMessageAction(button: button)
                 }
             },
-            dismissCallback: { isUserInteraction in
+            dismissCallback: { isUserInteraction, cancelButtonPayload in
                 if Exponea.shared.inAppMessagesDelegate.trackActions {
                     self.trackingConsentManager.trackInAppMessageClose(
                         message: message,
+                        buttonText: cancelButtonPayload?.buttonText,
                         mode: .CONSIDER_CONSENT,
                         isUserInteraction: isUserInteraction
                     )
                 }
-                Exponea.shared.inAppMessagesDelegate.inAppMessageAction(
-                    with: message,
-                    button: nil,
+                var cancelButton: InAppMessageButton?
+                if let cancelButtonPayload {
+                    cancelButton = InAppMessageButton(
+                        text: cancelButtonPayload.buttonText, url: cancelButtonPayload.buttonLink
+                    )
+                }
+                Exponea.shared.inAppMessagesDelegate.inAppMessageCloseAction(
+                    message: message,
+                    button: cancelButton,
                     interaction: isUserInteraction
                 )
             },
@@ -369,6 +375,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             )
             addToPendingShowRequest(event: event)
         }
+        guard Exponea.shared.isAppForeground else {
+            Exponea.logger.log(
+                .verbose,
+                message: "[InApp] Skipping messages process for \(event) because app is not in foreground state"
+            )
+            return
+        }
         // Should reload or identify customer
         switch true {
         case isFromIdentifyCustomer:
@@ -383,7 +396,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 triggerCompletion?(.identifyFetch)
             }
             fetchInAppMessages(for: event) {
-                loadMessageIfNeeded()
+                loadMessageIfNeeded(event: event)
             }
         case isAnonymized:
             Exponea.logger.log(
@@ -397,7 +410,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 message: "[InApp] Reloading in app messages, because 'shouldReload'"
             )
             fetchInAppMessages(for: event) {
-                loadMessageIfNeeded()
+                loadMessageIfNeeded(event: event)
             }
             // For test purposes. Initialized only inside test
             if triggerCompletion != nil {
@@ -406,12 +419,19 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 triggerCompletion?(.shouldReloadFetch)
             }
         default:
+            if let banner = event.first(where: { $0 == .eventType("banner") }), banner == .properties(["action": .string("show")]) {
+                Exponea.logger.log(
+                    .verbose,
+                    message: "InApp: Skipping messages process for In-app show event"
+                )
+                return
+            }
             if !isIdentifyFlowInProcess {
                 Exponea.logger.log(
                     .verbose,
                     message: "[InApp] ShoulReload is false. Just load messages'"
                 )
-                loadMessageIfNeeded()
+                loadMessageIfNeeded(event: event)
                 // For test purposes. Initialized only inside test
                 if triggerCompletion != nil {
                     isIdentifyFlowInProcess = false
@@ -419,15 +439,31 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 }
             }
         }
-        func loadMessageIfNeeded() {
+        func loadMessageIfNeeded(event: [DataType]) {
             if let message = pickPendingMessage {
-                Exponea.logger.log(
-                    .verbose,
-                    message: "[InApp] Show pending InAppMessage for event \(event)"
-                )
-                if preloadImage(for: message) {
-                    isIdentifyFlowInProcess = false
-                    onMain(self.showInAppMessage(message))
+                if !presenter.presenting &&
+                    event.customerIds.compareWith(
+                        other: Exponea.shared.trackingManager?.customerIds ?? [:]
+                ) {
+                    Exponea.logger.log(
+                        .verbose,
+                        message: """
+                            [InApp] Show pending InAppMessage for event \(event)
+                            presenter.presenting is \(presenter.presenting)
+                            compareWith is \(event.customerIds.compareWith(
+                                other: Exponea.shared.trackingManager?.customerIds ?? [:]
+                            ))
+                        """
+                    )
+                    if preloadImage(for: message) {
+                        isIdentifyFlowInProcess = false
+                        onMain(self.showInAppMessage(message))
+                    }
+                } else {
+                    Exponea.logger.log(
+                        .verbose,
+                        message: "[InApp] Fetch InAppMessages - different customer ids"
+                    )
                 }
             } else {
                 if let message = loadMessageToShow(for: event) {
@@ -501,17 +537,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
 }
 
 public protocol InAppMessageActionDelegate: AnyObject {
-
     var overrideDefaultBehavior: Bool { get }
     var trackActions: Bool { get }
 
-    func inAppMessageAction(
-        with message: InAppMessage,
-        button: InAppMessageButton?,
-        interaction: Bool
-    )
     func inAppMessageShown(message: InAppMessage)
     func inAppMessageError(message: InAppMessage?, errorMessage: String)
+    func inAppMessageClickAction(message: InAppMessage, button: InAppMessageButton)
+    func inAppMessageCloseAction(message: InAppMessage, button: InAppMessageButton?, interaction: Bool)
 }
 
 public struct InAppMessageButton: Codable {
@@ -523,7 +555,8 @@ public class DefaultInAppDelegate: InAppMessageActionDelegate {
     public let overrideDefaultBehavior = false
     public let trackActions = true
 
-    public func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {}
     public func inAppMessageShown(message: InAppMessage) {}
     public func inAppMessageError(message: InAppMessage?, errorMessage: String) {}
+    public func inAppMessageClickAction(message: InAppMessage, button: InAppMessageButton) {}
+    public func inAppMessageCloseAction(message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {}
 }

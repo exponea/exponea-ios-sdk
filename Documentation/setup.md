@@ -1,5 +1,5 @@
 ---
-title: Initial SDK Setup
+title: Initial SDK setup
 excerpt: Install and configure the iOS SDK
 slug: ios-sdk-setup
 categorySlug: integrations
@@ -18,14 +18,14 @@ The instructions below are for Xcode 15.1 and may differ if you use a different 
 2. Create a file named `Podfile` in your Xcode project folder.
 3. Add the following to your `Podfile`
    ```
-   platform :ios, '11.0'
+   platform :ios, '13.0'
    use_frameworks!
 
    target 'YourAppTarget' do
      pod "ExponeaSDK"
    end
    ```
-   (Replace `11.0` with your desired iOS deployment target and `YourAppTarget` with your app target's name)
+   (Replace `13.0` with your desired iOS deployment target and `YourAppTarget` with your app target's name)
 4. In a terminal window, navigate to your Xcode project folder and run the following command:
     ```
     pod install
@@ -35,7 +35,7 @@ The instructions below are for Xcode 15.1 and may differ if you use a different 
 
 Optionally, you can specify the `ExponeaSDK` version as follows to let `pod` automatically any smaller than minor version updates:
 ```
-pod "ExponeaSDK", "~> 2.27.0"
+pod "ExponeaSDK", "~> 3.0.0"
 ```
 For more information, refer to [Specifying pod versions](https://guides.cocoapods.org/using/the-podfile.html#specifying-pod-versions) in the Cocoapods documentation.
 
@@ -77,7 +77,7 @@ The required configuration parameters are `projectToken`, `authorization.token`,
 
 > 📘
 >
-> Refer to [Mobile SDKs API Access Management](https://documentation.bloomreach.com/engagement/docs/mobile-sdks-api-access-management) for details.
+> Refer to [Mobile SDKs API access management](https://documentation.bloomreach.com/engagement/docs/mobile-sdks-api-access-management) for details.
 
 Import the SDK:
 
@@ -112,13 +112,13 @@ SDK initialization immediately creates a new customer profile with a new cookie 
 > 
 > [Configuring the SDK using a `plist` file](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration#using-a-configuration-file---legacy) is deprecated but still supported for backward compatibility.
 
-## Other SDK Configuration
+## Other SDK configuration
 
-### Advanced Configuration
+### Advanced configuration
 
 The SDK can be further configured by providing additional parameters to the `configure` method. For a complete list of available configuration parameters, refer to the [Configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) documentation.
 
-### Log Level
+### Log level
 
 The SDK supports the following log levels:
 
@@ -145,6 +145,6 @@ Exponea.logger.logLevel = .verbose
 
 Read [Authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization) to learn more about the different authorization modes supported by the SDK and how to use [customer token](https://documentation.bloomreach.com/engagement/docs/customer-token) authorization.
 
-### Data Flushing
+### Data flushing
 
-Read [Data Flushing](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing) to learn more about how the SDK uploads data to the Engagement API and how to customize this behavior.
+Read [Data flushing](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing) to learn more about how the SDK uploads data to the Engagement API and how to customize this behavior.

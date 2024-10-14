@@ -15,6 +15,7 @@ open class AppInboxListViewController: UIViewController {
     public let statusErrorTitle = UILabel()
     public let statusErrorMessage = UILabel()
     public let tableView = UITableView()
+    public var onItemClickedOverride: ((MessageItem, Int) -> Void)?
 
     private var messages: [MessageItem] = [] {
         didSet {
@@ -127,7 +128,7 @@ private extension AppInboxListViewController {
                     return
                 }
                 Exponea.logger.log(.verbose, message: "App inbox loaded")
-                self.messages = messages
+                self.withData(messages)
             case .failure(let error):
                 Exponea.logger.log(.verbose, message: "App inbox load failed due error \"\(error.localizedDescription)\"")
                 self.showErrorState()
@@ -173,6 +174,16 @@ private extension AppInboxListViewController {
     @objc func close() {
         navigationController?.presentingViewController?.dismiss(animated: true)
     }
+
+    private func onMessageItemClicked(_ message: MessageItem, _ index: Int) {
+        let detailView = Exponea.shared.getAppInboxDetailViewController(message.id)
+        Exponea.shared.trackAppInboxOpened(message: message)
+        navigationController?.pushViewController(detailView, animated: true)
+    }
+
+    internal func withData(_ messages: [MessageItem]) {
+        self.messages = messages
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -200,8 +211,6 @@ extension AppInboxListViewController: UITableViewDelegate {
             self.messages[indexPath.row].read = true
             self.tableView.reloadData()
         }
-        let detailView = Exponea.shared.getAppInboxDetailViewController(message.id)
-        Exponea.shared.trackAppInboxOpened(message: message)
-        navigationController?.pushViewController(detailView, animated: true)
+        (onItemClickedOverride ?? onMessageItemClicked)(message, indexPath.row)
     }
 }

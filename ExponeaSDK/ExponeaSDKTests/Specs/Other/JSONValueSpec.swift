@@ -337,6 +337,34 @@ class JSONValueSpec: QuickSpec {
             })
         }
 
+        describe("Decoding..") {
+            it("decode") {
+                struct Content: Codable {
+                    let frequency: String?
+                    init(from decoder: Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        if let frequency = try container.decodeIfPresent(String.self, forKey: .frequency) {
+                            self.frequency = frequency
+                        } else {
+                            self.frequency = "always"
+                        }
+                    }
+                }
+                let content: [String: Any?] = [
+                    "frequency": nil
+                ]
+                let content2: [String: Any?] = [
+                    "frequency": "once"
+                ]
+                if let json = try? JSONSerialization.data(withJSONObject: content), let result = try? JSONDecoder().decode(Content.self, from: json) {
+                    expect(result.frequency).to(be("always"))
+                }
+                if let json2 = try? JSONSerialization.data(withJSONObject: content2), let result2 = try? JSONDecoder().decode(Content.self, from: json2) {
+                    expect(result2.frequency).to(be("once"))
+                }
+            }
+        }
+
         describe("Encoding to JSON") {
             context("with valid data", {
                 let encoder = JSONEncoder()

@@ -8,7 +8,7 @@ import SwiftSoup
 
 public class HtmlNormalizer {
 
-    private let closeActionCommand = "close_action"
+    private let closeActionCommandUrlPrefix = "https://exponea.com/close_action_"
     private let closeButtonAttrDef = "data-actiontype='close'"
     private let closeButtonSelector = "[data-actiontype='close']"
     private let actionButtonAttr = "data-link"
@@ -107,7 +107,7 @@ public class HtmlNormalizer {
                 try makeResourcesToBeOffline()
             }
             try result.actions = ensureActionButtons()
-            try result.closeActionUrl = detectCloseButton(parsingConf.ensureCloseButton)
+            try result.actions += detectCloseButton(parsingConf.ensureCloseButton)
             result.html = exportHtml()
         } catch let error {
             Exponea.logger.log(.error, message: "[HTML] Html has not been processed due to error \(error)")
@@ -165,12 +165,28 @@ public class HtmlNormalizer {
         let anchorlinkButtons = try document.select(anchorlinkButtonSelector)
         for actionButton in anchorlinkButtons.array() {
             let targetAction = try actionButton.attr(hrefAttr)
-            let actionType: ActionType = .init(try actionButton.attr(dataLinkTypeAttr))
             if targetAction.isEmpty {
                 Exponea.logger.log(.error, message: "[HTML] Action button found but with empty action")
                 continue
             }
-            result.append(ActionInfo(buttonText: try actionButton.text(), actionUrl: targetAction, actionType: actionType))
+            let actionType: ActionType
+            if let datalinkType = ActionType(rawValue: try actionButton.attr(dataLinkTypeAttr)) {
+                actionType = datalinkType
+            } else if targetAction.hasPrefix("http://") || targetAction.hasPrefix("https://") {
+                actionType = .browser
+            } else {
+                actionType = .deeplink
+            }
+            var buttonLabel: String? = try actionButton.text()
+            if buttonLabel != nil && buttonLabel!.isEmpty {
+                // Close X button produces empty string
+                buttonLabel = nil
+            }
+            result.append(ActionInfo(
+                buttonText: buttonLabel,
+                actionUrl: targetAction,
+                actionType: actionType
+            ))
         }
         return result
     }
@@ -180,10 +196,17 @@ public class HtmlNormalizer {
         let datalinkButtons = try document.select(datalinkButtonSelector)
         for actionButton in datalinkButtons.array() {
             let targetAction = try actionButton.attr(actionButtonAttr)
-            let dataLinkType: ActionType = .init(try actionButton.attr(dataLinkTypeAttr))
             if targetAction.isEmpty {
                 Exponea.logger.log(.error, message: "[HTML] Action button found but with empty action")
                 continue
+            }
+            let actionType: ActionType
+            if let datalinkType = ActionType(rawValue: try actionButton.attr(dataLinkTypeAttr)) {
+                actionType = datalinkType
+            } else if targetAction.hasPrefix("http://") || targetAction.hasPrefix("https://") {
+                actionType = .browser
+            } else {
+                actionType = .deeplink
             }
             if try actionButton.iS(anchorTagSelector) {
                 try actionButton.attr(hrefAttr, targetAction)
@@ -200,12 +223,21 @@ public class HtmlNormalizer {
                     """)
                 try actionButton.wrap("<a href='\(targetAction)' class='\(actionButtonHrefClass)'></a>")
             }
-            result.append(ActionInfo(buttonText: try actionButton.text(), actionUrl: targetAction, actionType: dataLinkType))
+            var buttonLabel: String? = try actionButton.text()
+            if buttonLabel != nil && buttonLabel!.isEmpty {
+                // Close X button produces empty string
+                buttonLabel = nil
+            }
+            result.append(ActionInfo(
+                buttonText: buttonLabel,
+                actionUrl: targetAction,
+                actionType: actionType
+            ))
         }
         return result
     }
 
-    private func detectCloseButton(_ ensureCloseButton: Bool) throws -> String? {
+    private func detectCloseButton(_ ensureCloseButton: Bool) throws -> [ActionInfo] {
         guard let document = document,
               let htmlBody = document.body(),
               let htmlHead = document.head() else {
@@ -250,31 +282,43 @@ public class HtmlNormalizer {
                         """)
             closeButtons = try document.select(closeButtonSelector)
         }
-        guard let closeButton = closeButtons.first(),
-              let closeButtonParent = closeButton.parent() else {
-            if ensureCloseButton {
-                // defined or default has to exist
-                throw ExponeaError.unknownError("Action close cannot be ensured")
-            } else {
-                return nil
+        var closeButtonActions: [ActionInfo] = []
+        for closeButton in closeButtons {
+            guard let closeButtonParent = closeButton.parent() else {
+                continue
             }
+            let closeButtonId = UUID().uuidString
+            let closeButtonUrl = closeActionCommandUrlPrefix + "_" + closeButtonId
+            // randomize class name => prevents from CSS styles overriding in HTML
+            let closeButtonHrefClass = "close-button-href-\(closeButtonId)"
+            // link has to be valid URL, but is handled by String comparison anyway
+            if try closeButtonParent.iS(anchorTagSelector) == false {
+                Exponea.logger.log(.verbose, message: "[HTML] Wrapping Close button with a-href")
+                try closeButton.wrap("<a href='\(closeButtonUrl)' class='\(closeButtonHrefClass)'></a>")
+            } else {
+                Exponea.logger.log(
+                        .verbose,
+                        message: "[HTML] Fixing parent a-href link to close action"
+                )
+                try closeButtonParent.attr("href", closeButtonUrl)
+                try closeButtonParent.addClass(closeButtonHrefClass)
+            }
+            var buttonLabel: String? = try closeButton.text()
+            if buttonLabel != nil && buttonLabel!.isEmpty {
+                // Close X button produces empty string
+                buttonLabel = nil
+            }
+            closeButtonActions.append(ActionInfo(
+                buttonText: buttonLabel,
+                actionUrl: closeButtonUrl,
+                actionType: .close
+            ))
         }
-        // randomize class name => prevents from CSS styles overriding in HTML
-        let closeButtonHrefClass = "close-button-href-\(UUID().uuidString)"
-        // link has to be valid URL, but is handled by String comparison anyway
-        let closeActionLink = "https://exponea.com/\(closeActionCommand)"
-        if try closeButtonParent.iS(anchorTagSelector) == false {
-            Exponea.logger.log(.verbose, message: "[HTML] Wrapping Close button with a-href")
-            try closeButton.wrap("<a href='\(closeActionLink)' class='\(closeButtonHrefClass)'></a>")
-        } else if try closeButtonParent.attr("href") != closeActionLink {
-            Exponea.logger.log(
-                    .verbose,
-                    message: "[HTML] Fixing parent a-href link to close action"
-            )
-            try closeButtonParent.attr("href", closeActionLink)
-            try closeButtonParent.addClass(closeButtonHrefClass)
+        if ensureCloseButton && closeButtonActions.isEmpty {
+            // defined or default has to exist
+            throw ExponeaError.unknownError("Action close cannot be ensured")
         }
-        return closeActionLink
+        return closeButtonActions
     }
 
     private func makeResourcesToBeOffline() throws {
@@ -564,16 +608,58 @@ public enum ParsingError: Error {
 public struct NormalizedResult {
     public var valid = true
     public var actions: [ActionInfo] = []
-    public var closeActionUrl: String?
     public var html: String?
+    public func findActionByUrl(_ url: URL?) -> ActionInfo? {
+        guard let url = url else {
+            return nil
+        }
+        return actions.first(where: { action in
+            areEqualAsURLs(action.actionUrl, url.absoluteString)
+        })
+    }
+    func isActionUrl(_ url: URL?) -> Bool {
+        guard let url = url,
+              let action = findActionByUrl(url) else {
+            return false
+        }
+        return action.actionType == .browser || action.actionType == .deeplink
+    }
+    func isCloseAction(_ url: URL?) -> Bool {
+        guard let url = url,
+              let action = findActionByUrl(url) else {
+            return false
+        }
+        return action.actionType == .close
+    }
+    func areEqualAsURLs(_ urlPath1: String?, _ urlPath2: String?) -> Bool {
+        guard let urlPath1, let urlPath2 else {
+            return false
+        }
+        let url1 = urlPath1.cleanedURL()
+        let scheme1 = url1?.scheme
+        let host1 = url1?.host
+        let path1 = url1?.path == "/" ? "" : url1?.path
+        let query1 = url1?.query
+        let url2 = urlPath2.cleanedURL()
+        let scheme2 = url2?.scheme
+        let host2 = url2?.host
+        let path2 = url2?.path == "/" ? "" : url2?.path
+        let query2 = url2?.query
+        return (
+            scheme1 == scheme2
+            && host1 == host2
+            && path1 == path2
+            && query1 == query2
+        )
+    }
 }
 
 public struct ActionInfo {
-    public var buttonText: String
+    public var buttonText: String?
     public var actionUrl: String
     public var actionType: ActionType
 
-    public init(buttonText: String, actionUrl: String, actionType: ActionType = .unknown) {
+    public init(buttonText: String?, actionUrl: String, actionType: ActionType) {
         self.buttonText = buttonText
         self.actionUrl = actionUrl
         self.actionType = actionType
@@ -581,13 +667,9 @@ public struct ActionInfo {
 }
 
 public enum ActionType: String {
-    case unknown
     case deeplink = "deep-link"
     case browser
-
-    init(_ type: String) {
-        self = .init(rawValue: type) ?? .unknown
-    }
+    case close
 }
 
 public struct HtmlNormalizerConfig {

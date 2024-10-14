@@ -62,7 +62,7 @@ final class TelemetryUtilitySpec: QuickSpec {
                         "flushEventMaxRetries": "5 [default]",
                         "projectMapping": "",
                         "projectToken": "[REDACTED]",
-                        "sessionTimeout": "6.0 [default]"
+                        "sessionTimeout": "60.0 [default]"
                     ])
                 )
             }

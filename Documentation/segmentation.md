@@ -1,25 +1,25 @@
 ---
 title: Segmentation
-excerpt: Implement Real-Time Segments using the iOS SDK
+excerpt: Implement real-time segments using the iOS SDK
 slug: ios-sdk-segmentation
 categorySlug: integrations
 parentDocSlug: ios-sdk
 ---
 
-The [Real-Time Segments](https://documentation.bloomreach.com/discovery/docs/real-time-customer-segments-for-discovery) feature personalizes the product search, category and pathway results in real-time based on customer demographic and behavioral data. The feature combines Bloomreach Discovery’s extensive search algorithms and Bloomreach Engagement’s rich customer data to get the best of both worlds.
+The [real-time segments](https://documentation.bloomreach.com/discovery/docs/real-time-customer-segments-for-discovery) feature personalizes the product search, category and pathway results in real-time based on customer demographic and behavioral data. The feature combines Bloomreach Discovery’s extensive search algorithms and Bloomreach Engagement’s rich customer data to get the best of both worlds.
 
-Refer to the [Discovery Real-Time Segments](https://documentation.bloomreach.com/discovery/docs/real-time-customer-segments-for-discovery) documentation for more details about this feature.
+Refer to the [Discovery real-time segments](https://documentation.bloomreach.com/discovery/docs/real-time-customer-segments-for-discovery) documentation for more details about this feature.
 
 This page describes the integration steps required to retrieve any segmentation data changes assigned to the current customer.
 
-### Use Real-Time Segments
+### Use real-time segments
 
 To use real-time segments in your app, you must register one or more customized `SegmentCallbackData` instances.
 
 Each instance must define the following three items:
 
 1. A `category` indicating your point of interest for segmentation:
-   * Possible values are `content`, `discovery`, or `merchandise`. You will get updates only for segmentation data assigned to the specified `category`.
+   * Possible values are `content`, `discovery`, or `merchandising`. You will get updates only for segmentation data assigned to the specified `category`.
 2. A boolean flag `includeFirstLoad` to force a fetch of segmentation data:
    * Setting this flag to `true` triggers a segmentation data fetch immediately.
    * The SDK will notify this callback instance with the new data even if the data has not changed from the last known state.
@@ -34,14 +34,14 @@ Each instance must define the following three items:
 ```swift
 SegmentationManager.shared.addCallback(
     callbackData: .init(
-        category: .merchandise(),
+        category: .merchandising(),
         isIncludeFirstLoad: false,
         onNewData: { segments in
     print(segments)
 }))
 ```
 
-### Get Segmentation Data Directly
+### Get segmentation data directly
 
 The SDK provides an API to get segmentation data directly. Invoke the `Exponea.shared.getSegments` method, passing a `category` value as argument:
 
@@ -50,6 +50,20 @@ Exponea.shared.getSegments(category: .content()) { segments in
     print(segments)
 }
 ```
+
+Segments data received by `getSegments` method are primary loaded from valid cache. Cache is automatically fetched from server if:
+
+* cache is empty or was loaded for previous customer
+* cache data are older than 5 seconds
+* method is forced to fetch segments from server by developer
+
+If you want to force to fetch segmentations data from server, use `force` parameter with `true` value as argument:
+```swift
+    Exponea.shared.getSegments(force: true, category: .discovery()) { data in
+        print(data)
+    }
+```
+
 > 👍
 >
 > The `getSegments` method loads segmentation data for the requested `category` and the current customer as identified by `Exponea.shared.identifyCustomer`. Please bear in mind that the callback is invoked in a background thread.
@@ -62,9 +76,9 @@ The data payload of each `Segment` is as follows:
 }
 ```
 
-### Segmentation Data Reload Triggers
+### Segmentation data reload triggers
 
-There are a few cases when the SDK refreshes segmentation data, and this process could occur multiple times. However, the SDK only notifies registered callbacks if the data have changed or if `includeFirstLoad` is `true`. Refer to [Callback Behavior](#callback-behavior) for more details about the callback notification process.
+There are a few cases when the SDK refreshes segmentation data, and this process could occur multiple times. However, the SDK only notifies registered callbacks if the data have changed or if `includeFirstLoad` is `true`. Refer to [Callback behavior](#callback-behavior) for more details about the callback notification process.
 
 A data reload is triggered in the following cases:
 
@@ -79,7 +93,7 @@ When a segmentation data reload is triggered, the process waits 5 seconds before
 >
 > It is required to [set](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing#flushing-modes) `Exponea.shared.flushingMode` to `IMMEDIATE` to get accurate results. The process of segment calculation needs all tracked events to be uploaded to server to calculate results effectively.
 
-### Callback Behavior
+### Callback behavior
 
 The SDK allows you to register multiple `SegmentCallbackData` instances for multiple categories or for the same category. You may register a callback with the SDK anytime (before and after initialization). Callback instances remain active until the application terminates or until you unregister the callback.
 
@@ -95,7 +109,7 @@ The callback behavior follows the following principles:
 >
 > Consider keeping the number of callbacks within a reasonable value.
 
-### Deregister a Callback
+### Deregister a callback
 
 Deregistration of a callback instance is up to the developer. If you don't deregister a callback instance, the SDK will keep it active until the application terminates.
 
@@ -122,7 +136,7 @@ manager.removeCallback(callbackData: callback)
 
 The process of updating segmentation data may be canceled due to the current state of the SDK. Segmentation data are assigned to the current customer and the process is active only if there are any callbacks registered. The SDK logs information about all these validations.
 
-#### Log Messages
+#### Log messages
 
 If you are not receiving segmentation data updates, you may see the following log messages:
 

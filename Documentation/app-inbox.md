@@ -57,7 +57,7 @@ That's all that's required to integrate the App Inbox. Optionally, you can [cust
 >
 > See [FetchViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Fetching/FetchViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
-## Default App Inbox Behavior
+## Default App Inbox behavior
 
 The SDK fetches and displays the App Inbox automatically as follows:
 
@@ -89,7 +89,7 @@ The SDK fetches and displays the App Inbox automatically as follows:
 
 > ❗️
 >
-> The behavior of `trackAppInboxOpened` and `trackAppInboxClick` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Refer to [Consent](https://dash.readme.com/project/bloomreachengagement/v2/docs/ios-sdk-tracking-consent) for details.
+> The behavior of `trackAppInboxOpened` and `trackAppInboxClick` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Refer to [Tracking consent](https://dash.readme.com/project/bloomreachengagement/v2/docs/ios-sdk-tracking-consent) for details.
 
 ## Customize App Inbox
 
@@ -110,7 +110,7 @@ The SDK provides the following UI labels in English. You can modify these or add
 "exponea.inbox.mainActionTitle" = "See more";
 ```
 
-### Customize UI Components
+### Customize UI components
 
 You can override App Inbox UI elements by registering your own `AppInboxProvider` implementation:
 
@@ -126,7 +126,7 @@ Your `AppInboxProvider` instance must implement all App Inbox UI components. You
 >
 > Refer to [ExampleAppInboxProvider](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/ExampleAppInboxProvider.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
-#### App Inbox Button
+#### App Inbox button
 
 The method `getAppInboxButton()` returns a `UIButton` instance.
 
@@ -148,7 +148,7 @@ public override func getAppInboxButton() -> UIButton {
 }
 ```
 
-#### App Inbox List View
+#### App Inbox list view
 
 The method `getAppInboxListViewController()` returns a `UIViewController` instance to display the App Inbox messages list.
 
@@ -164,6 +164,8 @@ public override func getAppInboxListViewController() -> UIViewController {
    let listController = super.getAppInboxListViewController()
    // you are able to access default class impl by casting
    let typedListController = listController as! AppInboxListViewController
+   // override onItemClick behavior
+   typedListController.onItemClickedOverride = onItemClickOverride
    // load View to access elements
    typedListController.loadViewIfNeeded()
    // apply your setup to any element
@@ -171,13 +173,17 @@ public override func getAppInboxListViewController() -> UIViewController {
    // return instance
    return typedListController
 }
+private func onItemClickedOverride(message: MessageItem, index: Int) {
+   // invoke your customized behavior
+   // default implementation opens AppInboxDetailViewController
+}
 ```
 
 > ❗️
 >
 > The methods `Exponea.shared.trackAppInboxOpened` and `Exponea.shared.markAppInboxAsRead` are called when the user clicks on an item. Please call these methods in your custom implementation to maintain correct App Inbox behavior.
 
-#### App Inbox Detail View
+#### App Inbox detail view
 
 The method `getAppInboxDetailViewController(String)` returns a `UIViewController` implementation to show an App Inbox message detail view.
 
@@ -224,7 +230,7 @@ private func stylizeActionButton(_ button: UIButton) {
 >
 > The method `Exponea.shared.trackAppInboxClick` is called when the user clicks on an action. Please call this method in your custom implementation to maintain correct App Inbox behavior.
 
-### App Inbox Data API
+### App Inbox data API
 
 The SDK provides methods to access App Inbox data directly without accessing the UI layer.
 
@@ -268,7 +274,7 @@ Exponea.shared.fetchAppInboxItem(messageId) { data in
 
 Fetching a single message triggers fetching the entire App Inbox (including incremental loading) but will retrieve the data from local storage if the App Inbox was fetched previously.
 
-#### Mark Message as Read
+#### Mark message as read
 
 Use the `markAppInboxAsRead` method to mark an App Inbox message (specified by their ID) as read:
 
@@ -282,27 +288,27 @@ Exponea.shared.markAppInboxAsRead(messageId) { marked in
 >
 > Marking a message as read using the `markAppInboxAsRead` method does not trigger a tracking event for opening the message. To track an opened message, you need to call the `Exponea.shared.trackAppInboxOpened` method). 
 
-### Track App Inbox Events Manually
+### Track App Inbox events manually
 
 The SDK tracks App Inbox events automatically by default. In case of a [custom implementation](#customize-app-inbox), it is the developers' responsibility to use the relevant tracking methods in the right places.
 
-#### Track Opened App Inbox Message
+#### Track opened App Inbox message
 
 Use the `Exponea.shared.trackAppInboxOpened(MessageItem)` method to track opening of App Inbox messages.
 
-The behavior of `trackAppInboxOpened` may be affected by the tracking consent feature, which, when enabled, requires explicit consent for tracking. Refer to [Tracking Consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) for details.
+The behavior of `trackAppInboxOpened` may be affected by the tracking consent feature, which, when enabled, requires explicit consent for tracking. Refer to [Tracking consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) for details.
 
 If you want to ignore tracking consent, use `Exponea.shared.trackAppInboxOpenedWithoutTrackingConsent` instead. This method will track the event regardless of consent.
 
-#### Track Clicked App Inbox Message Action
+#### Track clicked App Inbox message action
 
 Use the `Exponea.shared.trackAppInboxClick(MessageItemAction, MessageItem)` method to track action invocations in App Inbox messages.
 
-The behavior of `trackAppInboxClick` may be affected by the tracking consent feature, which, when enabled, requires explicit consent for tracking. Refer to [Tracking Consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) for details.
+The behavior of `trackAppInboxClick` may be affected by the tracking consent feature, which, when enabled, requires explicit consent for tracking. Refer to [Tracking consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) for details.
 
 If you want to ignore tracking consent, use `Exponea.shared.trackAppInboxClickWithoutTrackingConsent` instead. This method will track the event regardless of consent.
 
-### Override Button Action Type in HTML Message
+### Override button action type in HTML message
 
 The SDK automatically processes button action URLs as follows:
 

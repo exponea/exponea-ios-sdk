@@ -395,14 +395,14 @@ class InAppMessagesManagerSpec: QuickSpec {
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
-                presenter.presentedMessages[0].dismissCallback(false)
+                presenter.presentedMessages[0].dismissCallback(false, nil)
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     ),
                     MockTrackingManager.CallData(
-                        event: .close,
+                        event: .close(buttonLabel: nil),
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
                 ]))
@@ -453,14 +453,14 @@ class InAppMessagesManagerSpec: QuickSpec {
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
-                presenter.presentedMessages[0].dismissCallback(false)
+                presenter.presentedMessages[0].dismissCallback(false, nil)
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
                 ]))
-                expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
+                expect(inAppDelegate.inAppMessageCloseCalled).to(equal(true))
             }
 
             it("should track dismiss event when delegate is setup with tracking") {
@@ -473,18 +473,18 @@ class InAppMessagesManagerSpec: QuickSpec {
                 waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
-                presenter.presentedMessages[0].dismissCallback(false)
+                presenter.presentedMessages[0].dismissCallback(false, nil)
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
                         event: .show,
                         message: SampleInAppMessage.getSampleInAppMessage()
                     ),
                     MockTrackingManager.CallData(
-                        event: .close,
+                        event: .close(buttonLabel: nil),
                         message: SampleInAppMessage.getSampleInAppMessage()
                     )
                 ]))
-                expect(inAppDelegate.inAppMessageActionCalled).to(equal(true))
+                expect(inAppDelegate.inAppMessageCloseCalled).to(equal(true))
             }
 
             it("should not track action event when delegate is setup without tracking") {

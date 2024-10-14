@@ -10,6 +10,9 @@ import UIKit
 import ExponeaSDK
 
 class TrackEventViewController: UIViewController {
+    
+    private let DEFAULT_EVENT_TYPE = "event_name"
+    private let DEFAULT_PROP_KEY = "property"
 
     @IBOutlet var eventTypeField: UITextField!
 
@@ -25,8 +28,8 @@ class TrackEventViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        eventTypeField.placeholder = "default = \"custom_event\""
-        keyField1.placeholder = "custom_key_1"
+        eventTypeField.placeholder = "default = \"\(DEFAULT_EVENT_TYPE)\""
+        keyField1.placeholder = "default = \"\(DEFAULT_PROP_KEY)\""
         keyField2.placeholder = "custom_key_2"
         keyField3.placeholder = "custom_key_3"
         
@@ -52,13 +55,17 @@ class TrackEventViewController: UIViewController {
             if let text = eventTypeField.text, !text.isEmpty {
                 return text
             }
-            return "custom_event"
+            return DEFAULT_EVENT_TYPE
         }()
 
         var properties: [String: JSONConvertible] = [:]
 
-        if let key1 = keyField1.text, !key1.isEmpty {
-            properties[key1] = valueField1.text ?? ""
+        if let value1 = valueField1.text, !value1.isEmpty {
+            var key1 = keyField1.text ?? DEFAULT_PROP_KEY
+            if key1.isEmpty {
+                key1 = DEFAULT_PROP_KEY
+            }
+            properties[key1] = value1
         }
 
         if let key2 = keyField2.text, !key2.isEmpty {

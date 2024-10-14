@@ -59,7 +59,8 @@ public protocol ExponeaType: AnyObject {
         inAppContentBlocksPlaceholders: [String]?,
         flushingSetup: Exponea.FlushingSetup,
         allowDefaultCustomerProperties: Bool?,
-        advancedAuthEnabled: Bool?
+        advancedAuthEnabled: Bool?,
+        manualSessionAutoClose: Bool
     )
 
     /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
@@ -80,7 +81,8 @@ public protocol ExponeaType: AnyObject {
         defaultProperties: [String: JSONConvertible]?,
         inAppContentBlocksPlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
-        advancedAuthEnabled: Bool?
+        advancedAuthEnabled: Bool?,
+        manualSessionAutoClose: Bool
     )
 
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
@@ -104,7 +106,8 @@ public protocol ExponeaType: AnyObject {
         defaultProperties: [String: JSONConvertible]?,
         inAppContentBlocksPlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
-        advancedAuthEnabled: Bool?
+        advancedAuthEnabled: Bool?,
+        manualSessionAutoClose: Bool
     )
 
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
@@ -219,7 +222,7 @@ public protocol ExponeaType: AnyObject {
     func trackInAppMessageClickWithoutTrackingConsent(message: InAppMessage, buttonText: String?, buttonLink: String?)
 
     /// Track in-app message banner close event
-    func trackInAppMessageCloseClickWithoutTrackingConsent(message: InAppMessage, isUserInteraction: Bool?)
+    func trackInAppMessageCloseClickWithoutTrackingConsent(message: InAppMessage, buttonText: String?, isUserInteraction: Bool?)
 
     /// Track AppInbox message detail opened event
     /// Event is tracked if parameter 'message' has TRUE value of 'hasTrackingConsent' property
@@ -243,8 +246,11 @@ public protocol ExponeaType: AnyObject {
     /// Retrieves Button for opening of AppInbox list
     func getAppInboxButton() -> UIButton
 
-    /// Retrieves UIViewController for AppInbox list
+    /// Retrieves UIViewController for AppInbox list with default behaviour
     func getAppInboxListViewController() -> UIViewController
+    
+    /// Retrieves UIViewController for AppInbox list with overriden onItemClicked behaviour
+    func getAppInboxListViewController(onItemClicked: @escaping (MessageItem, Int) -> Void) -> UIViewController
 
     /// Retrieves UIViewController for AppInbox message detail
     func getAppInboxDetailViewController(_ messageId: String) -> UIViewController
@@ -306,7 +312,7 @@ public protocol ExponeaType: AnyObject {
 
     func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?)
 
-    func trackInAppMessageClose(message: InAppMessage, isUserInteraction: Bool?)
+    func trackInAppMessageClose(message: InAppMessage, buttonText: String?, isUserInteraction: Bool?)
 
     /// Tracks 'click' event for given In-app content block action.
     /// Event is tracked if one or both conditions met:
@@ -369,5 +375,5 @@ public protocol ExponeaType: AnyObject {
         errorMessage: String
     )
 
-    func getSegments(category: SegmentCategory, successCallback: @escaping TypeBlock<[SegmentDTO]>)
+    func getSegments(force: Bool, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>)
 }

@@ -15,6 +15,9 @@ public enum InAppContentBlocksStatus: String, Codable {
 
 public struct Content: Codable {
     public var html: String
+    public init(html: String) {
+        self.html = html
+    }
 }
 
 public struct PersonalizedInAppContentBlockResponseData: Codable {
@@ -64,7 +67,7 @@ public struct PersonalizedInAppContentBlockResponse: Codable {
         self.content = try container.decodeIfPresent(Content.self, forKey: .content)
     }
 
-    init(
+    public init(
         id: String,
         status: InAppContentBlocksStatus,
         ttlSeconds: Int,

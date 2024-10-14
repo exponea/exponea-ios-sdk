@@ -56,6 +56,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                                 "platform": .string("mock platform"),
                                 "campaign_name": .string("mock campaign name"),
                                 "status": .string("delivered"),
+                                "state": .string("shown"),
                                 "language": .string("mock language"),
                                 "campaign_id": .string("mock campaign id"),
                                 "action_type": .string("mock action type"),
@@ -94,6 +95,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         dataTypes: [
                             .properties([
                                 "status": .string("delivered"),
+                                "state": .string("shown"),
                                 "default-prop": .string("default-value"),
                                 "platform": .string("ios")
                             ])
@@ -129,6 +131,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         dataTypes: [
                             .properties([
                                 "status": .string("delivered"),
+                                "state": .string("shown"),
                                 "platform": .string("ios")
                             ])
                         ]
@@ -170,6 +173,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         dataTypes: [
                             .properties([
                                 "status": .string("delivered"),
+                                "state": .string("shown"),
                                 "platform": .string("ios")
                             ])
                         ]
@@ -186,6 +190,7 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                         dataTypes: [
                             .properties([
                                 "status": .string("delivered"),
+                                "state": .string("shown"),
                                 "platform": .string("ios")
                             ])
                         ]

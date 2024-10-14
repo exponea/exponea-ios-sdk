@@ -94,14 +94,14 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
     }
 
     public func reload() {
-        getContent()
+        getContent(force: true)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func getContent() {
+    private func getContent(force: Bool = false) {
         guard !placeholder.isEmpty else {
             replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0) {
                 self.prepareContentReadyState(false)
@@ -111,7 +111,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         }
         let data = inAppContentBlocksManager.prepareInAppContentBlocksStaticView(placeholderId: placeholder)
         webview.tag = data.tag
-        if data.html.isEmpty {
+        if data.html.isEmpty || force {
             inAppContentBlocksManager.refreshStaticViewContent(staticQueueData: .init(tag: data.tag, placeholderId: placeholder) {
                 self.webview.tag = $0.tag
                 self.loadContent(html: $0.html, message: $0.message)
@@ -194,14 +194,8 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             return .browser
         case .deeplink:
             return .deeplink
-        case .unknown:
-            if action.actionUrl == "https://exponea.com/close_action" {
-                return .close
-            }
-            if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
-                return .browser
-            }
-            return .deeplink
+        case .close:
+            return .close
         }
     }
 
@@ -239,7 +233,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             // webView has to stop navigation, missing message data are internal issue
             return true
         }
-        let webAction: WebActionManager = .init {
+        let webAction: WebActionManager = .init { _ in
             InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
             self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
             self.reload()

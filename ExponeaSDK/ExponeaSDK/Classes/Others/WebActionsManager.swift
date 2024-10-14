@@ -15,7 +15,7 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
     
     var htmlPayload: NormalizedResult?
     
-    private var onCloseCallback: (() -> Void)?
+    private var onCloseCallback: ((ActionInfo?) -> Void)?
     private var onActionCallback: ((ActionInfo) -> Void)?
     private var onErrorCallback: ((ExponeaError) -> Void)?
     private var onActionTypeCallback: ((String) -> Void)?
@@ -23,7 +23,7 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
     // MARK: - Init
     
     init(
-        onCloseCallback: (() -> Void)? = nil,
+        onCloseCallback: ((ActionInfo?) -> Void)? = nil,
         onActionCallback: ((ActionInfo) -> Void)? = nil,
         onErrorCallback: ((ExponeaError) -> Void)? = nil
     ) {
@@ -48,31 +48,38 @@ final class WebActionManager: NSObject, WKNavigationDelegate {
             decisionHandler(.allow)
         }
     }
-    
+
     func handleActionClick(_ url: URL?) -> Bool {
         Exponea.logger.log(.verbose, message: "[HTML] action for \(String(describing: url))")
-        if isCloseAction(url) {
-            onCloseCallback?()
-            return true
-        } else if isActionUrl(url) {
-            guard let url = url,
-                  var action = findActionByUrl(url) else {
-                Exponea.logger.log(.error, message: "[HTML] Action URL \(url?.absoluteString ?? "<nil>") cannot be found as action")
-                onErrorCallback?(ExponeaError.unknownError("Invalid Action URL - not found"))
-                // anyway we define it as Action, so URL opening has to be prevented
-                return true
-            }
-            onActionCallback?(action)
-            return true
-        } else if isBlankNav(url) {
+        if isBlankNav(url) {
             // on first load
             // nothing to do, not need to continue loading
             return false
-        } else {
-            Exponea.logger.log(.warning, message: "[HTML] Unknown action URL: \(String(describing: url))")
-            onErrorCallback?(ExponeaError.unknownError("Invalid Action URL - unknown"))
+        }
+        guard let htmlPayload else {
+            Exponea.logger.log(.error, message: "[HTML] Html content not loaded for action URL: \(String(describing: url))")
+            onErrorCallback?(ExponeaError.unknownError("Invalid state - HTML content not loaded"))
             return false
         }
+        guard let url = url,
+              let action = htmlPayload.findActionByUrl(url) else {
+            Exponea.logger.log(.error, message: "[HTML] Action URL \(url?.absoluteString ?? "<nil>") cannot be found as action")
+            onErrorCallback?(ExponeaError.unknownError("Invalid Action URL - not found"))
+            // anyway we define it as Action, so URL opening has to be prevented
+            return true
+        }
+        if htmlPayload.isCloseAction(url) {
+            onCloseCallback?(action)
+            return true
+        }
+        if htmlPayload.isActionUrl(url) {
+            onActionCallback?(action)
+            return true
+        }
+        // else
+        Exponea.logger.log(.warning, message: "[HTML] Unknown action URL: \(String(describing: url))")
+        onErrorCallback?(ExponeaError.unknownError("Invalid Action URL - unknown"))
+        return false
     }
 }
 
@@ -80,52 +87,4 @@ private extension WebActionManager {
     func isBlankNav(_ url: URL?) -> Bool {
         url?.absoluteString == "about:blank"
     }
-
-    func isActionUrl(_ url: URL?) -> Bool {
-        guard let url = url else {
-            return false
-        }
-        return !isCloseAction(url) && findActionByUrl(url) != nil
-    }
-    
-    func isCloseAction(_ url: URL?) -> Bool {
-        guard let htmlPayload = htmlPayload else {
-            return false
-        }
-        return url?.absoluteString == htmlPayload.closeActionUrl
-    }
-    
-    func findActionByUrl(_ url: URL?) -> ActionInfo? {
-        guard let url = url,
-              let htmlPayload = htmlPayload else {
-            return nil
-        }
-        return htmlPayload.actions.first(where: { action in
-            areEqualAsURLs(action.actionUrl, url.absoluteString)
-        })
-    }
-    
-    /**
-     Put URL().absoluteString here.
-     WKWebView is returning a slash at the end of URL, so we need to compare it properly
-     */
-    func areEqualAsURLs(_ urlPath1: String, _ urlPath2: String) -> Bool {
-        let url1 = URL(safeString: urlPath1)
-        let scheme1 = url1?.scheme
-        let host1 = url1?.host
-        let path1 = url1?.path == "/" ? "" : url1?.path
-        let query1 = url1?.query
-        let url2 = urlPath2.cleanedURL()
-        let scheme2 = url2?.scheme
-        let host2 = url2?.host
-        let path2 = url2?.path == "/" ? "" : url2?.path
-        let query2 = url2?.query
-        return (
-            scheme1 == scheme2
-            && host1 == host2
-            && path1 == path2
-            && query1 == query2
-        )
-    }
-    
 }

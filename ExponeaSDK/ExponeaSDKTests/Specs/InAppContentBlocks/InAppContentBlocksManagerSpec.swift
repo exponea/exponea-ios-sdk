@@ -231,6 +231,41 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             expect(result.count).to(be(5))
         }
 
+        it("multipler") {
+            let view = CarouselInAppContentBlockView(placeholder: "")
+            let a = view.makeDuplicate(input: [.init(html: "a", tag: 1)])
+            expect(a.count).to(be(1))
+            let b = view.makeDuplicate(input: [.init(html: "a", tag: 1), .init(html: "a", tag: 2), .init(html: "b", tag: 3)])
+            expect(b.count).to(be(150))
+            expect(b.filter({ $0.html == "b" }).count).to(be(50))
+            let c = view.makeDuplicate(input: [
+                .init(html: "a", tag: 1),
+                .init(html: "a", tag: 2),
+                .init(html: "b", tag: 3),
+                .init(html: "b", tag: 4),
+                .init(html: "c", tag: 5),
+                .init(html: "c", tag: 6)
+            ])
+            expect(c.count).to(be(150))
+            expect(c.filter({ $0.tag == 6 }).count).to(be(25))
+            let d = view.makeDuplicate(input: [
+                .init(html: "a", tag: 1),
+                .init(html: "a", tag: 2),
+                .init(html: "b", tag: 3),
+                .init(html: "b", tag: 4),
+                .init(html: "c", tag: 5),
+                .init(html: "c", tag: 6),
+                .init(html: "d", tag: 7),
+                .init(html: "d", tag: 8),
+                .init(html: "e", tag: 9),
+                .init(html: "e", tag: 10),
+                .init(html: "f", tag: 11)
+            ])
+            expect(d.count).to(be(110))
+            expect(d.filter({ $0.tag == 6 }).count).to(be(10))
+            expect(d.filter({ $0.html == "c" }).count).to(be(20))
+        }
+
         it("is valid check") {
             let messageExpired: StaticReturnData = .init(
                 html: "",

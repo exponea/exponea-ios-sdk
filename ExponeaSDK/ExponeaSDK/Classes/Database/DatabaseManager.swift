@@ -332,7 +332,6 @@ extension DatabaseManager: DatabaseManagerType {
                 trackCustomer.addToProperties(tokenItem)
 
                 let authorizatedItem = KeyValueItem(context: context)
-                authorizatedItem.key = "apple_push_notification_authorized"
                 authorizatedItem.value = authorized as NSObject
                 trackCustomer.addToProperties(authorizatedItem)
 

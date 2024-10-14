@@ -1,5 +1,5 @@
 ---
-title: In-App Messages
+title: In-app messages
 excerpt: Display native in-app messages based on definitions set up in Engagement using the iOS SDK
 slug: ios-sdk-in-app-messages
 categorySlug: integrations
@@ -12,7 +12,11 @@ In-app messages work out-of-the-box once the [SDK is installed and configured](h
 
 > 📘
 >
-> Refer to the [In-App Messages](https://documentation.bloomreach.com/engagement/docs/in-app-messages) user guide for instructions on how to create in-app messages in the Engagement web app.
+> Refer to the [In-app messages](https://documentation.bloomreach.com/engagement/docs/in-app-messages) user guide for instructions on how to create in-app messages in the Engagement web app.
+
+> 📘
+>
+> Also see [In-app messages FAQ](https://support.bloomreach.com/hc/en-us/articles/18152718785437-In-App-Messages-FAQ) at Bloomreach Support Help Center.
 
 ## Tracking
 
@@ -23,7 +27,7 @@ The SDK automatically tracks `banner` events for in-app messages with the follow
 - `click`
   User clicked on action button inside in-app message. The event also contains the corresponding `text` and `link` properties.
 - `close`
-  User clicked on close button inside in-app message.
+  User clicked on close button inside in-app message or in-app message has been automatically closed by delay. The event also contains the corresponding `text` property if close button with label has been clicked.
 - `error`
   Displaying in-app message failed. The event contains an `error` property with an error message.
 
@@ -34,7 +38,7 @@ The SDK automatically tracks `banner` events for in-app messages with the follow
 
 ## Customization
 
-### Customize In-App Message Actions
+### Customize in-app message actions
 
 You can override the SDK's default behavior when an in-app message action (click button or close message) is performed by setting `inAppMessagesDelegate` on the `Exponea` instance.
 
@@ -49,10 +53,26 @@ class MyInAppDelegate: InAppMessageActionDelegate {
     let trackActions: Bool = false
 
     // This method will be called when an in-app message action is performed
-    func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
-       // Here goes your code
-       // On in-app click, the button contains button text and button URL and the interaction is true  
-       // On in-app close, the button is null, and the interaction is false.
+    func inAppMessageClickAction(message: InAppMessage, button: InAppMessageButton) {
+       // Here goes your code  
+       // Method called when action button has been clicked by user.
+       // The button contains button text and button URL
+    }
+
+    // This method will be called when an in-app message is closed
+    func inAppMessageCloseAction(message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
+        // Here goes your code
+        // Method called when in-app message has been closed.
+        // On in-app close by click on CANCEL button:
+        //  - the `button` is not null
+        //  - the `button` contains button text
+        //  - the `interaction` is true
+        // On in-app close with default interaction by user (close button, dismiss, etc...):
+        //  - the `button` is null
+        //  - the `interaction` is true
+        // On in-app close without interaction by user (in-app message timeout)
+        //  - the `button` is null
+        //  - the `interaction` is false
     }
 
     // Method called when in-app message is shown.
@@ -75,16 +95,18 @@ Then set the delegate:
 Exponea.shared.inAppMessagesDelegate = MyInAppDelegate()
 ```
 
-If you set `trackActions` to `false` but you still want to track click or close events under some circumstances, you can call the methods `trackInAppMessageClick` or `trackInAppMessageClose` in the `inAppMessageAction` method:
+If you set `trackActions` to `false` but you still want to track click or close events under some circumstances, you can call the methods `trackInAppMessageClick` or `trackInAppMessageClose` in the action methods:
 
 ```swift
-func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
+func inAppMessageClickAction(message: InAppMessage, button: InAppMessageButton) {
     if <your-special-condition>  { 
-        if interaction {
-            Exponea.shared.trackInAppMessageClick(message: message, buttonText: button?.text, buttonLink: button?.url)
-        } else {
-            Exponea.shared.trackInAppMessageClose(message: message)
-        }
+        Exponea.shared.trackInAppMessageClick(message: message, buttonText: button.text, buttonLink: button.url)
+    } 
+}
+
+func inAppMessageCloseAction(message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
+    if <your-special-condition>  { 
+        Exponea.shared.trackInAppMessageClose(message: message, buttonText: button?.text, isUserInteraction: interaction)
     } 
 }
 ```
@@ -95,7 +117,7 @@ The method `trackInAppMessageClose` will track a `close` event with the `interac
 >
 > The behaviour of `trackInAppMessageClick` and `trackInAppMessageClose` may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [Tracking Consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
 
-### Override Button Action Type in HTML Message
+### Override button action type in HTML message
 
 The SDK automatically processes button action URLs as follows:
 
@@ -140,11 +162,11 @@ This section provides helpful pointers for troubleshooting in-app message issues
 > 👍 Enable Verbose Logging
 > The SDK logs a lot of information in verbose mode while loading in-app messages. When troubleshooting in-app message issues, first ensure to [set the SDK's log level](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#log-level) to `.verbose`.
 
-### In-App Message Not Displayed
+### In-app message not displayed
 
 When troubleshooting why an in-app message did not display on your device, always first make sure that the in-app message was preloaded to the device, then troubleshoot message display.
 
-#### Troubleshoot In-App Messages Preloading Issues
+#### Troubleshoot in-app messages preloading issues
 
 - The SDK requests in-app messages from the Engagement platform any time one of the following occurs:
   - `Exponea.identifyCustomer` is called
@@ -161,7 +183,7 @@ When troubleshooting why an in-app message did not display on your device, alway
 >
 > Invoking `Exponea.anonymize` triggers fetching in-app messages immediately but `Exponea.identifyCustomer` needs to be flushed to the backend successfully first. This is because the backend must know the customer so it can assign the in-app messages with matching audience. If you have set `Exponea.flushMode` to anything other then `FlushMode.IMMEDIATE`, you must call `Exponea.flushData()` to finalize the `identifyCustomer` process and trigger an in-app messages fetch.
 
-#### Troubleshoot In-App Message Display Issues
+#### Troubleshoot in-app message display issues
 
 If your app is successfully requesting and receiving in-app messages but they are not displayed, consider the following:
 
@@ -176,15 +198,15 @@ If your app is successfully requesting and receiving in-app messages but they ar
 
 - Image downloads are limited to 10 seconds per image. If an in-app message contains a large image that cannot be downloaded within this time limit, the in-app message will not be displayed. For an HTML in-app message that contains multiple images, this restriction applies per image, but failure of any image download will prevent this HTML in-app message from being displayed.
 
-### In-App Message Shows Incorrect Image
+### In-app message shows incorrect image
 
 - To reduce the number of API calls and fetching time of in-app messages, the SDK caches the images contained in messages. Once the SDK downloads an image, an image with the same URL may not be downloaded again. If a message contains a new image with the same URL as a previously used image, the previous image is displayed since it was already cached. For this reason, we recommend always using different URLs for different images.
 
-### In-App Message Actions Not Tracked
+### In-app message actions not tracked
 
 - If you have implemented a custom `InAppMessageActionDelegate`, actions are only tracked automatically if `trackActions` is set to `true`. If `trackActions` is set to `false`, you must manually track the action in the `inAppMessageAction` method. Refer to [Customize In-App Message Actions](#customize-in-app-message-actions) above for details.
 
-### Log Messages
+### Log messages
 
 > Note: All logs assigned to In-app handling process are prefixed with `[InApp]` shortcut to bring easier search-ability to you. Bear in mind that some supporting processes (such as Image caching) are logging without this prefix. 
 
@@ -197,57 +219,61 @@ While troubleshooting in-app message issues, you can follow the process of reque
    ```
    Register request for in-app message to be shown for $eventType (not for identifyCustomer). Identify customer event will always download in app messages from backend.
 2. ```
+   Skipping messages process for {event} because app is not in foreground state
+   ```
+   The in-app message process was triggered while application UI is not visible to user therefore no in-app message could be shown anyway.
+3. ```
    Picking in-app message for eventType {eventType}. {X} messages available: [{message1 name}, {message2 name}, ...].
    ```
    In-app messages must be preloaded before they can be displayed. If the preload hasn't started or is still in progress, the SDK will wait until the preload is complete and only perform the logic to select an in-app message afterward.
    ```
-3. ```
+4. ```
    This log contains `eventType` for which the messages going to be searched. Then count of `X` messages and the names of **all** messages received from the server is listed in
    ```   
    Message '{message name}' failed event filter. Message filter: {"event_type":"session_start","filter":[]} Event type: payment properties: {price=2011.1, product_title=Item #1} timestamp: 1.59921557821E9
    ```  
    We show reasons why some messages are not picked. In this example, message failed event filter - the type was set for `session_start`, but `payment` was tracked.
    ```
-4. ``` 
+5. ``` 
    Got {X} messages with highest priority for eventType {eventType}. [{message1 name}, {message2 name}, ...]
    ```
    There may be a tie between a few messages with the same priority. All messages with same highest priority are listed.
    ```
-5. ``` 
+6. ``` 
    Picking top message '{message name}' for eventType {eventType}
    ```
    The single message is randomly picked from filtered messages with same highest priority for `eventType`
    ```
-6. ```
+7. ```
    Picking in-app message for eventTypes ["payment"]. 2 messages available: ["Payment in-app message", "App load in-app message"].
    ```
    This log message includes a list of **all** in-app messages received from the server and preloaded in the local cache. If you don't see your message here, it's possible it wasn't available yet the last time the SDK request in-app messages. If you have confirmed the message was available when the last preload occurred, the current user may not match the audience targeted by the in-app message. Check the in-app message set up in Engagement. 
-7.  ```
+8. ```
    Got {X} messages available to show. [{message1 name}, {message2 name}, ...].
    ```
    All `X` messages has been collected for registered 'show requests'. Process continues with selecting of message with highest priority.
    ```
-8. ```
+9. ```
     1 messages available after filtering. Picking highest priority message.
     ```
     After applying all the filters, there is one in-app message left that satisfies the criteria to be displayed. If more than one messages is eligible, the SDK will select the one that has the highest priority configured in Engagement.
     ```
-9. ```
-   Picking top message '{message name}' to be shown.
-   ```
-   The single message is randomly picked from all filtered messages. This message is going to be shown to user.
-   ```
 10. ```
+    Picking top message '{message name}' to be shown.
+    ```
+    The single message is randomly picked from all filtered messages. This message is going to be shown to user.
+    ```
+11. ```
    Only logging in-app message for control group '${message.name}'
    ```
    A/B testing In-app message or message without payload is not shown to user but 'show' event is tracked for your analysis.
    ```
-11. ```
+12. ```
    Attempting to show in-app message '{message name}'
    ```
    In-app message that meant to be show to user (not A/B testing) is going to be shown
    ```
-12. ```
+13. ```
    Posting show to main thread with delay {X}ms.
    ```
    Message display request is posted to the main thread with delay of `X` milliseconds. Delay is configured by `Display delay` in In-app message settings. Message will be displayed in the last resumed Activity. 

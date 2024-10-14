@@ -148,7 +148,8 @@ public extension ExponeaInternal {
         inAppContentBlocksPlaceholders: [String]? = nil,
         flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
         allowDefaultCustomerProperties: Bool? = nil,
-        advancedAuthEnabled: Bool? = nil
+        advancedAuthEnabled: Bool? = nil,
+        manualSessionAutoClose: Bool = true
     ) {
         do {
             let configuration = try Configuration(
@@ -166,7 +167,8 @@ public extension ExponeaInternal {
                 appGroup: automaticPushNotificationTracking.appGroup,
                 flushEventMaxRetries: flushingSetup.maxRetries,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                advancedAuthEnabled: advancedAuthEnabled
+                advancedAuthEnabled: advancedAuthEnabled,
+                manualSessionAutoClose: manualSessionAutoClose
             )
             self.configuration = configuration
             pushNotificationsDelegate = automaticPushNotificationTracking.delegate
@@ -185,7 +187,8 @@ public extension ExponeaInternal {
         inAppContentBlocksPlaceholders: [String]? = nil,
         flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
         allowDefaultCustomerProperties: Bool? = nil,
-        advancedAuthEnabled: Bool? = nil
+        advancedAuthEnabled: Bool? = nil,
+        manualSessionAutoClose: Bool = true
     ) {
         let taskBlock = { [weak self] in
             guard let self = self else { return }
@@ -211,9 +214,9 @@ public extension ExponeaInternal {
                     appGroup: pushNotificationTracking.appGroup,
                     flushEventMaxRetries: flushingSetup.maxRetries,
                     allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                    advancedAuthEnabled: advancedAuthEnabled
+                    advancedAuthEnabled: advancedAuthEnabled,
+                    manualSessionAutoClose: manualSessionAutoClose
                 )
-                
                 self.configure(with: configuration)
                 self.pushNotificationsDelegate = pushNotificationTracking.delegate
                 self.flushingMode = flushingSetup.mode
@@ -222,17 +225,17 @@ public extension ExponeaInternal {
                         self.pushNotificationSelfCheck = PushNotificationSelfCheck(
                             trackingManager: dependencies.trackingManager,
                             flushingManager: dependencies.flushingManager,
-                            repository: dependencies.repository
+                            repository: dependencies.repository,
+                            notificationsManager: dependencies.notificationsManager
                         )
                         self.pushNotificationSelfCheck?.start()
                     }
                 }
-                self.afterInit.setStatus(status: .configured)
             } catch {
                 Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
             }
         }
-        
+
         if onInitSucceededCallBack != nil {
             initializedQueue.addOperation {
                 taskBlock()

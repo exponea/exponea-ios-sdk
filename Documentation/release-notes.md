@@ -1,12 +1,71 @@
 ---
-title: Release Notes
-excerpt: Exponea iOS SDK Release Notes
+title: Release notes
+excerpt: Exponea iOS SDK release notes
 slug: ios-sdk-release-notes
 categorySlug: integrations
 parentDocSlug: ios-sdk
 ---
 
+> 📘
+>
+> Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
+
 ## Release Notes
+## Release Notes for 3.0.0
+#### October 11, 2024
+  * Added:
+    * Aligns GIF support across App Inbox, In-app messages, and In-app content blocks. 
+    * Removes tracking by the SDK of the apple_push_notification_authorized customer parameter. 
+    * Adds tracking of session end when calling anonymize() while auto session tracking is enabled. 
+    * Adds a manualSessionAutoClose configuration parameter to override automatic session end tracking for open sessions when sessionStart is called multiple times.
+    * Adds tracking of a new state parameter to push notification delivery events. 
+    * Updates the default session timeout to 60 seconds. 
+    * Improves In-app content block carousel documentation. 
+    * Improves the behavior of the Segmentation API’s getSegments method. 
+    * Adds the identification of Cancel button clicks in In-app message close events and inclusion of the button label in the tracked event. 
+    * Adds several minor documentation improvements. 
+  * Fixed:
+    * Fixes the Segmentation API linkIds log level and improves the log messages. 
+    * Fixes an issue where manual gestures caused an infinite loop in an In-app content block carousel. 
+    * Fixes an issue where afterInit was called twice for a specific configure() function. 
+    * Fixes an issue causing In-app content block carousel messages to flicker. 
+    * Fixes an issue where reloading In-app messages triggered an infinite loop. 
+    * Fixes an issue where multiple close events were tracked for HTML messages. 
+    * Fixes an issue where fetching App Inbox after calling identifyCustomer returned corrupt data. 
+    * Fixes incorrect URLs in the documentation. 
+    * Fixes an issue where the In-app message selector ignored the presentation state. 
+    * Fixes the InAppMesagePresenter log level. 
+    * Fixes refreshing of In-app content blocks after identifyCustomer. 
+    * Fixes incorrect Segmentation API category enum type from merchandise to merchandising. 
+    * Fixes incorrect handling and tracking of multiple close buttons in HTML messages. 
+    * Fixes case when segmentation callback do not return all data.
+
+
+## Release Notes for 2.28.0
+#### August 01, 2024
+* Added:
+  * ContentBlockCarouselCallback extended with additional callback methods.
+  * Adds an improvement ensuring that In-App Messages are only fetched while the app is in the foreground.
+  * InAppContentBlock.Content struct exposed to have public constructor.
+  * PersonalizedInAppContentBlockResponse struct exposed to have public constructor.
+  * Tracking of campaign/clicks event updated only for cases when xnpe_cmp is present, described more deeply in documentation.
+  * AppInboxListViewController extended with onItemClicked callback.
+  * Carousel documentation updated.
+* Fixed:
+  * Fixed: InAppContentBlock deserialisation now able to handle NIL.
+  * Fixed: Crash caused by calling track events for not configured SDK from multiple threads fixed by adding atomicity to actionBlocks array in ExpoInitManager.
+  * Fixed: Carousel timer inconsistency for next message after resuming from action.
+  * Fixed: Duplicity of App Inbox event_type in events - removed from show/click/etc. event.
+  * Fixed: Missing UTM params added for HTML App Inbox message markAsRead and trackOpen.
+  * Fixed: Possible runtime crash caused by not initialised Tracking manager fixed.
+
+
+## Release Notes for 2.27.1
+#### July 01, 2024
+* Fixed:
+  * Fixes an issue with wrong minimal iOS version (11 instead of 13 as should be) for SPM causing build error
+
+
 ## Release Notes for 2.27.0
 #### June 27, 2024
 * Added:

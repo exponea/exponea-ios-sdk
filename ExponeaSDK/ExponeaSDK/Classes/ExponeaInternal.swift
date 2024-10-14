@@ -75,9 +75,13 @@ public class ExponeaInternal: ExponeaType {
     /// Repository responsible for fetching or uploading data to the API.
     internal var repository: RepositoryType?
 
+    /// The manager for push registration and delivery tracking
+    internal var notificationsManager: PushNotificationManagerType?
+
     internal var telemetryManager: TelemetryManager?
     public var inAppContentBlocksManager: InAppContentBlocksManagerType?
     public var segmentationManager: SegmentationManagerType?
+    public var manualSegmentationManager: ManualSegmentationManagerType?
 
     /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
@@ -117,10 +121,10 @@ public class ExponeaInternal: ExponeaType {
     /// push tracking is enabled, otherwise will never get called.
     public var pushNotificationsDelegate: PushNotificationManagerDelegate? {
         get {
-            return trackingManager?.notificationsManager.delegate
+            return notificationsManager?.delegate
         }
         set {
-            guard let notificationsManager = trackingManager?.notificationsManager else {
+            guard let notificationsManager = notificationsManager else {
                 Exponea.logger.log(
                     .warning,
                     message: "Cannot set push notifications delegate. " + Constants.ErrorMessages.sdkNotConfigured
@@ -211,22 +215,26 @@ public class ExponeaInternal: ExponeaType {
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
-    
+
     internal lazy var inAppContentBlockStatusStore: InAppContentBlockDisplayStatusStore = {
         return InAppContentBlockDisplayStatusStore(userDefaults: userDefaults)
     }()
+
+    internal var isAppForeground: Bool = false
 
     // MARK: - Init -
 
     /// The initialiser is internal, so that only the singleton can exist when used in production.
     internal init() {
         Exponea.logger.logMessage("⚙️ Starting ExponeaSDK, version \(Exponea.version).")
+        registerApplicationStateListener()
     }
 
     deinit {
         if !Exponea.isBeingTested {
             Exponea.logger.log(.error, message: "Exponea has deallocated. This should never happen.")
         }
+        unregisterApplicationStateListener()
     }
 
     internal func sharedInitializer(configuration: Configuration) {
@@ -243,6 +251,7 @@ public class ExponeaInternal: ExponeaType {
         let exception = objc_tryCatch {
             do {
                 self.segmentationManager = SegmentationManager.shared
+                self.manualSegmentationManager = ManualSegmentationManager.shared
 
                 let database = try DatabaseManager()
                 if !Exponea.isBeingTested {
@@ -266,10 +275,9 @@ public class ExponeaInternal: ExponeaType {
                     repository: repository,
                     customerIdentifiedHandler: { [weak self] in
                         // reload in-app messages once customer identification is flushed - user may have been merged
-                        guard let trackingManager = self?.trackingManager,
-                                                let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
-                        if let placeholders = configuration.inAppContentBlocksPlaceholders {
-                            inAppContentBlocksManager.loadInAppContentBlockMessages {
+                        guard let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
+                        inAppContentBlocksManager.loadInAppContentBlockMessages {
+                            if let placeholders = configuration.inAppContentBlocksPlaceholders {
                                 inAppContentBlocksManager.prefetchPlaceholdersWithIds(ids: placeholders)
                             }
                         }
@@ -293,6 +301,18 @@ public class ExponeaInternal: ExponeaType {
                            trackingConsentManager: trackingConsentManager
                         )
                         self.inAppMessagesManager = inAppMessagesManager
+                        let notificationsManager = PushNotificationManager(
+                            trackingConsentManager: trackingConsentManager,
+                            trackingManager: trackingManager,
+                            swizzlingEnabled: repository.configuration.automaticPushNotificationTracking,
+                            requirePushAuthorization: repository.configuration.requirePushAuthorization,
+                            appGroup: repository.configuration.appGroup,
+                            tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
+                            currentPushToken: database.currentCustomer.pushToken,
+                            lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
+                            urlOpener: UrlOpener()
+                        )
+                        self.notificationsManager = notificationsManager
                     },
                     userDefaults: userDefaults,
                     onEventCallback: { type, event in
@@ -361,6 +381,7 @@ internal extension ExponeaInternal {
         let inAppMessagesManager: InAppMessagesManagerType
         let appInboxManager: AppInboxManagerType
         let inAppContentBlocksManager: InAppContentBlocksManagerType
+        let notificationsManager: PushNotificationManagerType
     }
 
     typealias CompletionHandler<T> = ((Result<T>) -> Void)
@@ -378,7 +399,8 @@ internal extension ExponeaInternal {
             let trackingConsentManager = trackingConsentManager,
             let inAppMessagesManager = inAppMessagesManager,
             let inAppContentBlocksManager = inAppContentBlocksManager,
-            let appInboxManager = appInboxManager else {
+            let appInboxManager = appInboxManager,
+            let notificationsManager = notificationsManager else {
                 Exponea.logger.log(.error, message: "Some dependencies are not configured")
                 throw ExponeaError.notConfigured
         }
@@ -390,7 +412,8 @@ internal extension ExponeaInternal {
             trackingConsentManager: trackingConsentManager,
             inAppMessagesManager: inAppMessagesManager,
             appInboxManager: appInboxManager,
-            inAppContentBlocksManager: inAppContentBlocksManager
+            inAppContentBlocksManager: inAppContentBlocksManager,
+            notificationsManager: notificationsManager
         )
     }
 
@@ -447,6 +470,47 @@ internal extension ExponeaInternal {
             }
         }
     }
+
+    func registerApplicationStateListener() {
+        onMain {
+            self.isAppForeground = UIApplication.shared.applicationState == .active
+        }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+
+    func unregisterApplicationStateListener() {
+        self.isAppForeground = false
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+    }
+
+    @objc func applicationDidBecomeActive() {
+        self.isAppForeground = true
+    }
+
+    @objc func applicationDidEnterBackground() {
+        self.isAppForeground = false
+    }
+
 }
 
 // MARK: - Public -
@@ -474,7 +538,8 @@ public extension ExponeaInternal {
                    defaultProperties: [String: JSONConvertible]? = nil,
                    inAppContentBlocksPlaceholders: [String]? = nil,
                    allowDefaultCustomerProperties: Bool? = nil,
-                   advancedAuthEnabled: Bool? = nil
+                   advancedAuthEnabled: Bool? = nil,
+                   manualSessionAutoClose: Bool = true
     ) {
         do {
             let configuration = try Configuration(
@@ -485,7 +550,8 @@ public extension ExponeaInternal {
                 defaultProperties: defaultProperties,
                 inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                advancedAuthEnabled: advancedAuthEnabled
+                advancedAuthEnabled: advancedAuthEnabled,
+                manualSessionAutoClose: manualSessionAutoClose
             )
             self.configuration = configuration
             self.afterInit.setStatus(status: .configured)
@@ -555,7 +621,8 @@ public extension ExponeaInternal {
                    defaultProperties: [String: JSONConvertible]? = nil,
                    inAppContentBlocksPlaceholders: [String]? = nil,
                    allowDefaultCustomerProperties: Bool? = nil,
-                   advancedAuthEnabled: Bool? = nil
+                   advancedAuthEnabled: Bool? = nil,
+                   manualSessionAutoClose: Bool = true
     ) {
         do {
             let configuration = try Configuration(
@@ -567,7 +634,8 @@ public extension ExponeaInternal {
                 defaultProperties: defaultProperties,
                 inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                advancedAuthEnabled: advancedAuthEnabled
+                advancedAuthEnabled: advancedAuthEnabled,
+                manualSessionAutoClose: manualSessionAutoClose
             )
             self.configuration = configuration
             self.afterInit.setStatus(status: .configured)
@@ -591,16 +659,9 @@ public extension ExponeaInternal {
         }
     }
 
-    func getSegments(category: SegmentCategory, successCallback: @escaping TypeBlock<[SegmentDTO]>) {
-        var callback: SegmentCallbackData?
-        callback = .init(category: category, isIncludeFirstLoad: true) { data in
-            successCallback(data)
-            if let callback {
-                self.segmentationManager?.removeCallback(callbackData: callback)
-            }
-        }
-        if let callback {
-            segmentationManager?.addCallback(callbackData: callback)
+    func getSegments(force: Bool = false, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>) {
+        executeSafelyWithDependencies { [weak self] _ in
+            self?.manualSegmentationManager?.getSegments(category: category, force: force, result: result)
         }
     }
 }

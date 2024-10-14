@@ -9,47 +9,19 @@
 import WebKit
 import UIKit
 import Combine
-import SwiftUI
-
-enum InAppCarouselStateType {
-    case idle
-    case startTimer
-    case stopTimer
-    case refresh
-    case shouldReload
-    case restart
-}
-
-public struct CarouselOnShowMessageData {
-    public let placeholderId: String
-    public let contentBlock: StaticReturnData
-    public let index: Int
-    public let count: Int
-
-    public init(placeholderId: String, contentBlock: StaticReturnData, index: Int, count: Int) {
-        self.placeholderId = placeholderId
-        self.contentBlock = contentBlock
-        self.index = index
-        self.count = count
-    }
-}
-
-public struct CarouselOnChangeData {
-    public let count: Int
-    public let messages: [StaticReturnData]
-
-    public init(count: Int, messages: [StaticReturnData]) {
-        self.count = count
-        self.messages = messages
-    }
-}
 
 open class CarouselInAppContentBlockView: UIView {
 
     var isFirstCellLoaded = false
     private var height: NSLayoutConstraint?
 
-    private lazy var collectionView: UICollectionView = {
+    func createCompositionalLayout() -> UICollectionViewLayout {
+        UICollectionViewCompositionalLayout { _, _ in
+            self.createHorizontalScrollLayoutSection()
+        }
+    }
+
+    func createHorizontalScrollLayoutSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0))
@@ -60,9 +32,11 @@ open class CarouselInAppContentBlockView: UIView {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
-        let config = UICollectionViewCompositionalLayoutConfiguration()
-        let layout = UICollectionViewCompositionalLayout(section: section, configuration: config)
-        let collectionView = UICollectionView(frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 0), collectionViewLayout: layout)
+        return section
+    }
+
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout())
         collectionView.delegate = self
         collectionView.backgroundColor = .clear
         collectionView.dataSource = self
@@ -85,17 +59,40 @@ open class CarouselInAppContentBlockView: UIView {
     private var customHeight: CGFloat?
     private var currentMessage: StaticReturnData?
     private var alreadyShowedMessages: [String] = []
+    private let defaultBehaviourCallback: DefaultContentBlockCarouselCallback!
     private var behaviourCallback: InAppContentBlockCallbackType = DefaultInAppContentBlockCallback()
+    private var shouSkipCollectionReload = false
+    private var didSet = false
 
-    private var data: [StaticReturnData] = []
+    @Atomic private var data: [StaticReturnData] = [] {
+        didSet {
+            if data.count > 1 && !didSet {
+                didSet = true
+                _data.changeValue(with: { $0.insert(data.last!, at: 0) })
+                _data.changeValue(with: { $0.append(data[1]) })
+            }
+            guard !shouSkipCollectionReload else { return }
+            onMain {
+                self.collectionView.reloadData()
+                self.collectionView.scrollToItem(at: IndexPath(item: self.data.count / 2, section: 0), at: .centeredHorizontally, animated: false)
+            }
+        }
+    }
     private var savedTimer: TimeInterval?
     private let placeholder: String
 
-    public init(placeholder: String, maxMessagesCount: Int = 0, customHeight: CGFloat? = nil, scrollDelay: TimeInterval = 3) {
+    public init(
+        placeholder: String,
+        maxMessagesCount: Int = 0,
+        customHeight: CGFloat? = nil,
+        scrollDelay: TimeInterval = 3,
+        behaviourCallback: DefaultContentBlockCarouselCallback? = nil
+    ) {
         self.placeholder = placeholder
         self.maxMessagesCount = maxMessagesCount
         self.customHeight = customHeight
         self.defaultRefreshInterval = scrollDelay
+        defaultBehaviourCallback = ContentBlockCarouselCallback(behaviourCallback: behaviourCallback)
         super.init(frame: .zero)
 
         listenToState()
@@ -150,13 +147,28 @@ open class CarouselInAppContentBlockView: UIView {
         state = .stopTimer
         inAppContentBlocksManager.loadMessagesForCarousel(placeholder: placeholder) { [weak self] in
             guard let self else { return }
+            self.inAppContentBlocksManager
+                .inAppContentBlockMessages
+                .filter { $0.placeholders.contains(self.placeholder) }
+                .filter { $0.personalizedMessage?.isCorruptedImage == true }
+                .forEach { message in
+                    self.defaultBehaviourCallback.onError(
+                        placeholderId: message.id,
+                        contentBlock: message,
+                        errorMessage: "Corrupted image for \(message.id)"
+                    )
+                }
             self.filterContentBlocks(placeholder: self.placeholder) { data in
+                if data.isEmpty {
+                    self.defaultBehaviourCallback.onNoMessageFound(placeholderId: self.placeholder)
+                }
                 let toReturn = data
                     .compactMap { response in
                         self.inAppContentBlocksManager.prepareCarouselStaticData(messages: response)
                     }
                 let sortedMessages = self.sortContentBlocks(data: toReturn)
-                self.data = self.maxMessagesCount > 0 ? Array(sortedMessages.prefix(self.maxMessagesCount)) : sortedMessages
+                let input = self.maxMessagesCount > 0 ? Array(sortedMessages.prefix(self.maxMessagesCount)) : sortedMessages
+                self._data.changeValue(with: { $0 = self.makeDuplicate(input: input) })
                 self.state = .refresh
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.startCarouseling()
@@ -169,12 +181,38 @@ open class CarouselInAppContentBlockView: UIView {
         }
     }
 
+    internal func makeDuplicate(input: [StaticReturnData]) -> [StaticReturnData] {
+        let multiplier: Int
+        switch true {
+        case input.count == 1:
+            multiplier = 1
+        case input.count <= 2:
+            multiplier = 100
+        case input.count <= 5:
+            multiplier = 50
+        case input.count <= 10:
+            multiplier = 25
+        default:
+            multiplier = 10
+        }
+        var copy: [StaticReturnData] = []
+        for _ in 0..<multiplier {
+            let updatedInput = input.map { data in
+                var beforeUpdate = data
+                beforeUpdate.id = UUID()
+                return beforeUpdate
+            }
+            copy.append(contentsOf: updatedInput)
+        }
+        return copy
+    }
+
     public func checkMessage(message: StaticReturnData, shouldBeReloaded: Bool = false) {
         guard let messageResponse = message.message else { return }
         inAppContentBlocksManager.isMessageValid(message: messageResponse) { [weak self] isValid in
             guard let self else { return }
             if !isValid {
-                self.data.removeAll(where: { $0.message?.id == message.message?.id })
+                self._data.changeValue(with: { $0.removeAll(where: { $0.message?.id == message.message?.id }) })
                 self.state = .refresh
             }
             if shouldBeReloaded {
@@ -183,10 +221,19 @@ open class CarouselInAppContentBlockView: UIView {
         } refreshCallback: { [weak self] in
             guard let self else { return }
             self.inAppContentBlocksManager.refreshMessage(message: messageResponse) { message in
-                if let index = self.data.firstIndex(where: { $0.message?.id == message.id }),
-                   let newData = self.inAppContentBlocksManager.prepareCarouselStaticData(messages: message) {
-                    if self.data[safeIndex: index] != nil {
-                        self.data[index] = newData
+                if let newData = self.inAppContentBlocksManager.prepareCarouselStaticData(messages: message) {
+                    var indexes: [Int] = []
+                    for message in self.data.filter({ $0.message?.id == message.id }) {
+                        if let index = self.data.firstIndex(where: { $0.id == message.id }) {
+                            indexes.append(index)
+                        }
+                    }
+                    indexes.forEach { index in
+                        if self.data[safeIndex: index] != nil {
+                            self.shouSkipCollectionReload = true
+                            self._data.changeValue(with: { $0[index] = newData })
+                            self.shouSkipCollectionReload = false
+                        }
                     }
                 }
             }
@@ -218,7 +265,13 @@ open class CarouselInAppContentBlockView: UIView {
         timer = Timer.publish(every: every, on: .main, in: .common)
             .autoconnect()
             .sink(receiveValue: { [weak self] _ in
-                self?.state = .shouldReload
+                guard let self else { return }
+                if every < self.defaultRefreshInterval {
+                    self.state = .restart
+                    self.state = .shouldReload
+                } else {
+                    self.state = .shouldReload
+                }
             })
     }
 
@@ -252,7 +305,9 @@ open class CarouselInAppContentBlockView: UIView {
     private func refreshContent() {
         if let visibleCell = collectionView.visibleCells.first, let indexPath = collectionView.indexPath(for: visibleCell) {
             if indexPath.row < data.count - 1 {
-                let nextIndexPath: IndexPath = .init(row: indexPath.row + 1, section: indexPath.section)
+                let newIndexPath = indexPath.row + 1
+                guard newIndexPath < data.count else { return }
+                let nextIndexPath: IndexPath = .init(row: newIndexPath, section: indexPath.section)
                 collectionView.scrollToItem(at: nextIndexPath, at: .right, animated: true)
             } else {
                 collectionView.scrollToItem(at: .init(row: 0, section: 0), at: .left, animated: false)
@@ -329,7 +384,7 @@ extension CarouselInAppContentBlockView: UICollectionViewDelegateFlowLayout {
         currentMessage = message
         if !alreadyShowedMessages.contains(id), let messageResponse = message.message {
             alreadyShowedMessages.append(id)
-            behaviourCallback.onMessageShown(placeholderId: placeholder, contentBlock: messageResponse)
+            defaultBehaviourCallback.onMessageShown(placeholderId: placeholder, contentBlock: messageResponse)
             Exponea.shared.telemetryManager?.report(
                 eventWithType: .showInAppMessage,
                 properties: ["messageType": InAppContentBlockType.carouselContentBlock.type]
@@ -350,6 +405,7 @@ extension CarouselInAppContentBlockView: UICollectionViewDelegateFlowLayout {
     }
 
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard data[safeIndex: indexPath.row] != nil else { return }
         ensureBackground { [weak self] in
             if let message = self?.data[safeIndex: indexPath.row] {
                 self?.checkMessage(message: message)
@@ -363,142 +419,6 @@ extension CarouselInAppContentBlockView: UICollectionViewDelegateFlowLayout {
     }
 }
 
-class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
-    private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
-    private let webview = WKWebView()
-    var assignedMessage: InAppContentBlockResponse?
-    public var behaviourCallback: InAppContentBlockCallbackType = DefaultInAppContentBlockCallback()
-    var placeholder: String = ""
-    var actionClicked: EmptyBlock?
-    var closeClicked: EmptyBlock?
-    var touchCallback: EmptyBlock?
-    var releaseCallback: EmptyBlock?
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        contentView.addSubview(webview)
-        webview.scrollView.showsVerticalScrollIndicator = false
-        webview.scrollView.bounces = false
-        webview.backgroundColor = .clear
-        webview.isOpaque = false
-        webview.translatesAutoresizingMaskIntoConstraints = false
-        webview.navigationDelegate = self
-        webview.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        webview.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        webview.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        webview.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        let userScript: WKUserScript = .init(source: inAppContentBlocksManager.disableZoomSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-        let configuration = webview.configuration
-        configuration.userContentController.addUserScript(userScript)
-        if let contentRuleList = inAppContentBlocksManager.contentRuleList {
-            configuration.userContentController.add(contentRuleList)
-        }
-        contentView.backgroundColor = .clear
-
-        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(checkAction))
-        webview.addGestureRecognizer(gesture)
-    }
-
-    @objc func checkAction(sender: UILongPressGestureRecognizer) {
-        switch sender.state {
-        case .began:
-            touchCallback?()
-        default:
-            releaseCallback?()
-        }
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func loadHtml(html: String, assignedMessage: InAppContentBlockResponse?, placeholder: String) {
-        self.assignedMessage = assignedMessage
-        self.placeholder = placeholder
-        webview.loadHTMLString(html, baseURL: nil)
-    }
-
-    public func webView(
-        _ webView: WKWebView,
-        decidePolicyFor navigationAction: WKNavigationAction,
-        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-    ) {
-        let handled = handleUrlClick(navigationAction.request.url)
-        decisionHandler(handled ? .cancel : .allow)
-    }
-
-    private func handleUrlClick(_ actionUrl: URL?) -> Bool {
-        guard let actionUrl else {
-            Exponea.logger.log(.warning, message: "InAppCB: Unknown action URL: \(String(describing: actionUrl))")
-            return false
-        }
-        if isBlankNav(actionUrl) {
-            // on first load
-            // nothing to do, not need to continue loading
-            return false
-        }
-        guard let message = assignedMessage else {
-            return true
-        }
-        let webAction: WebActionManager = .init { [weak self] in
-            guard let self else { return }
-            InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
-            self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
-            self.closeClicked?()
-        } onActionCallback: { [weak self] action in
-            guard let self else { return }
-            InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
-            let actionType = self.determineActionType(action)
-            if actionType == .close {
-                self.behaviourCallback.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
-            } else {
-                self.behaviourCallback.onActionClickedSafari(
-                    placeholderId: self.placeholder,
-                    contentBlock: message,
-                    action: .init(
-                        name: action.buttonText,
-                        url: action.actionUrl,
-                        type: actionType
-                    )
-                )
-            }
-            self.actionClicked?()
-        } onErrorCallback: { error in
-            Exponea.logger.log(.error, message: "WebActionManager error \(error.localizedDescription)")
-        }
-        webAction.htmlPayload = message.normalizedResult ?? message.personalizedMessage?.htmlPayload
-        let handled = webAction.handleActionClick(actionUrl)
-        if handled {
-            Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has been handled")
-        } else {
-            Exponea.logger.log(.verbose, message: "[HTML] Action \(actionUrl.absoluteString) has not been handled, continue")
-        }
-        return handled
-    }
-
-    private func isBlankNav(_ url: URL?) -> Bool {
-        url?.absoluteString == "about:blank"
-    }
-
-    private func determineActionType(_ action: ActionInfo) -> InAppContentBlockActionType {
-        switch action.actionType {
-        case .browser:
-            return .browser
-        case .deeplink:
-            return .deeplink
-        case .unknown:
-            if action.actionUrl == "https://exponea.com/close_action" {
-                return .close
-            }
-            if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
-                return .browser
-            }
-            return .deeplink
-        }
-    }
-}
-
 // MARK: - DataSource
 extension CarouselInAppContentBlockView: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -508,6 +428,7 @@ extension CarouselInAppContentBlockView: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let message = data[safeIndex: indexPath.row] else { return collectionView.dequeueReusableCell(withReuseIdentifier: "UICollectionViewCell", for: indexPath) }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CarouselContentBlockViewCell
+        cell.contentBlockCarouselCallback = defaultBehaviourCallback
         cell.actionClicked = { [weak self] in
             guard let message = self?.data[safeIndex: indexPath.row] else { return }
             let isMessageWithAlwayFrequency = message.message?.frequency == .always

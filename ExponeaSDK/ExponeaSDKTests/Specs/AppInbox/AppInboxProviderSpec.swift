@@ -82,5 +82,36 @@ class AppInboxProviderSpec: QuickSpec {
             expect(viewController.pushContainer.isHidden).to(beTrue())
             expect(viewController.htmlContainer.isHidden).to(beFalse())
         }
+        it("should trigger onItemClick override") {
+            let now = Date().timeIntervalSince1970.doubleValue
+            let message = AppInboxCacheSpec.getSampleMessage(
+                id: "id1",
+                read: true,
+                received: now - 20,
+                type: "html",
+                data: [
+                    "title": .string("Title"),
+                    "pre_header": .string("Message"),
+                    "message": .string(AppInboxManagerSpec.htmlAppInboxMessageContent)
+                ]
+            )
+            var overrideCalled = false
+            let onItemClickOverride = { (_: MessageItem, _: Int) in
+                overrideCalled = true
+            }
+            let viewController = appInboxProvider.getAppInboxListViewController() as? AppInboxListViewController
+            guard let viewController = viewController else {
+                XCTFail("View controller is not AppInboxListViewController")
+                return
+            }
+            viewController.onItemClickedOverride = onItemClickOverride
+            viewController.withData([message])
+            viewController.loadViewIfNeeded()
+            let tableView = viewController.tableView
+            let indexPath = IndexPath(row: 0, section: 0)
+            tableView.selectRow(at: indexPath, animated: false, scrollPosition: .middle)
+            tableView.delegate?.tableView?(tableView, didSelectRowAt: indexPath)
+            expect(overrideCalled).to(beTrue())
+        }
     }
 }

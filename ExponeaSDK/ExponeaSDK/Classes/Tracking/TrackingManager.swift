@@ -34,18 +34,6 @@ class TrackingManager {
         return database.currentCustomer.pushToken
     }
 
-    /// The manager for push registration and delivery tracking
-    lazy var notificationsManager: PushNotificationManagerType = PushNotificationManager(
-        trackingConsentManager: Exponea.shared.trackingConsentManager!,
-        trackingManager: self,
-        swizzlingEnabled: repository.configuration.automaticPushNotificationTracking,
-        requirePushAuthorization: repository.configuration.requirePushAuthorization,
-        appGroup: repository.configuration.appGroup,
-        tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
-        currentPushToken: database.currentCustomer.pushToken,
-        lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
-        urlOpener: UrlOpener()
-    )
     private var inAppMessageManager: InAppMessagesManagerType?
     private var flushingManager: FlushingManagerType
 
@@ -248,7 +236,7 @@ extension TrackingManager: TrackingManagerType {
         if canUseDefaultProperties(for: type) {
             payload = payload.addProperties(repository.configuration.defaultProperties)
         }
-        if (payload.customerIds.isEmpty) {
+        if payload.customerIds.isEmpty {
             payload = payload.withCustomerIds(customerIds)
         }
         return payload
@@ -347,8 +335,8 @@ extension TrackingManager: TrackingManagerType {
         track(.show, for: message, within: placeholderId, trackingAllowed: trackingAllowed)
     }
 
-    public func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
-        self.track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
+    public func trackInAppMessageClose(message: InAppMessage, closeButtonText: String?, trackingAllowed: Bool, isUserInteraction: Bool) {
+        self.track(.close(buttonLabel: closeButtonText), for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }
 
     public func trackInAppMessageError(message: InAppMessage, error: String, trackingAllowed: Bool) {
@@ -466,7 +454,6 @@ extension TrackingManager {
         }
 
         // Let the notification manager know the app has becom active
-        notificationsManager.applicationDidBecomeActive()
         flushingManager.applicationDidBecomeActive()
         sessionManager.applicationDidBecomeActive()
     }
@@ -557,8 +544,13 @@ extension TrackingManager: InAppMessageTrackingDelegate {
         if case .click(let text, let url) = event {
             eventData["text"] = .string(text)
             eventData["link"] = .string(url)
-            if (GdprTracking.isTrackForced(url)) {
+            if GdprTracking.isTrackForced(url) {
                 eventData["tracking_forced"] = .bool(true)
+            }
+        }
+        if case .close(let text) = event {
+            if let text {
+                eventData["text"] = .string(text)
             }
         }
         if case .error(let errorMessage) = event {

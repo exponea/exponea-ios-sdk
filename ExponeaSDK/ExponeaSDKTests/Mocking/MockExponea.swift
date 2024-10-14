@@ -61,6 +61,17 @@ final class MockExponeaImplementation: ExponeaInternal {
                         trackingManager: trackingManager,
                         database: database
                     )
+                    self.notificationsManager = PushNotificationManager(
+                        trackingConsentManager: trackingConsentManager!,
+                        trackingManager: trackingManager,
+                        swizzlingEnabled: repository.configuration.automaticPushNotificationTracking,
+                        requirePushAuthorization: repository.configuration.requirePushAuthorization,
+                        appGroup: repository.configuration.appGroup,
+                        tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
+                        currentPushToken: database.currentCustomer.pushToken,
+                        lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
+                        urlOpener: UrlOpener()
+                    )
                 },
                 userDefaults: userDefaults,
                 onEventCallback: { type, event in
