@@ -6,6 +6,8 @@
 //  Copyright © 2024 Exponea. All rights reserved.
 //
 
+import Foundation
+
 public struct ManualSegmentsCacheDTO {
     public let timestamp: Double
     public let data: SegmentDataDTO
