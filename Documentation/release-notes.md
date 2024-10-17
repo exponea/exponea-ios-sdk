@@ -11,6 +11,12 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.0.1
+#### October 17, 2024
+* Fixed:
+  * Fixes SPM compilation error for ManualSegmentationManager.swift due missing Foundation import.
+
+
 ## Release Notes for 3.0.0
 #### October 11, 2024
   * Added:
