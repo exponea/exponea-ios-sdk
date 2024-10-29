@@ -44,6 +44,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     var isPresented: Bool {
         return presentingViewController != nil
     }
+    var presentedW: UIWindow?
 
     init(
         payload: InAppMessagePayload,
@@ -69,7 +70,14 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     func present(in viewController: UIViewController, window: UIWindow?) {
-        viewController.present(self, animated: true)
+        guard let window = UIWindowScene.focused.map(UIWindow.init(windowScene:)) else {
+            fatalError()
+        }
+        let vc = UIViewController()
+        presentedW = window
+        window.rootViewController = vc
+        window.makeKeyAndVisible()
+        vc.present(self, animated: true)
     }
 
     func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?) {
@@ -83,10 +91,10 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     func dismissFromSuperView() {
-        guard presentingViewController != nil else {
-            return
+        dismiss(animated: true) {
+            self.presentedW?.removeFromSuperview()
+            self.presentedW = nil
         }
-        dismiss(animated: true)
     }
 
     override func loadView() {
@@ -381,5 +389,11 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
 extension InAppMessageDialogView: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         return touch.view?.isDescendant(of: self.view) == false
+    }
+}
+extension UIWindowScene {
+    static var focused: UIWindowScene? {
+        return UIApplication.shared.connectedScenes
+            .first { $0.activationState == .foregroundActive && $0 is UIWindowScene } as? UIWindowScene
     }
 }
