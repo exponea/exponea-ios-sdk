@@ -82,10 +82,12 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     }
 
     func dismissFromSuperView() {
-        guard superview != nil else {
-            return
+        DispatchQueue.main.async { [weak self] in
+            guard let self, superview != nil else {
+                return
+            }
+            removeFromSuperview()
         }
-        removeFromSuperview()
     }
 
     func actionButtonAction(_ sender: InAppMessageActionButton) {
