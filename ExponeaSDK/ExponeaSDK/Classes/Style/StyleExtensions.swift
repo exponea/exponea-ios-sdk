@@ -312,10 +312,10 @@ extension CGFloat {
             return nil
         }
         let numberString = source.trimmingCharacters(in: CharacterSet.decimalDigits.inverted)
-        guard let number = NumberFormatter().number(from: numberString) else {
+        guard let number = Float(numberString) else {
             return nil
         }
-        return CGFloat(truncating: number)
+        return CGFloat(number)
     }
 }
 
