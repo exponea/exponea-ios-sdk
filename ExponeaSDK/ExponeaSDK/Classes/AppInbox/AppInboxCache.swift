@@ -105,18 +105,8 @@ final class AppInboxCache: AppInboxCacheType {
         setMessages(messages: Array(uniqueMessages.values))
     }
 
-    private func getFileName(for imageUrl: String) -> String {
-        guard let data = imageUrl.data(using: .utf8) else {
-            return imageUrl
-        }
-        return data
-            .base64EncodedString()
-            .replacingOccurrences(of: "=", with: "")
-            .replacingOccurrences(of: "/", with: "")
-    }
-
     func deleteImages(except: [String]) {
-        let exceptFileNames = except.map { getFileName(for: $0) }
+        let exceptFileNames = except.map { FileUtils.getFileName(fileUrl: $0) }
         guard let directory = getCacheDirectoryURL() else {
             return
         }
@@ -138,7 +128,7 @@ final class AppInboxCache: AppInboxCacheType {
             Exponea.logger.log(.warning, message: "Unable to get AppInbox image cache directory")
             return false
         }
-        let fileUrl = directory.appendingPathComponent(getFileName(for: imageUrl))
+        let fileUrl = directory.appendingPathComponent(FileUtils.getFileName(fileUrl: imageUrl))
         let exists = fileManager.fileExists(atPath: fileUrl.path)
         if !exists {
             Exponea.logger.log(.verbose, message: "AppInbox image \(imageUrl) not found in cache.")
@@ -150,7 +140,7 @@ final class AppInboxCache: AppInboxCacheType {
         guard let directory = getCacheDirectoryURL() else {
             return
         }
-        let fileUrl = directory.appendingPathComponent(getFileName(for: imageUrl))
+        let fileUrl = directory.appendingPathComponent(FileUtils.getFileName(fileUrl: imageUrl))
         try? data.write(to: fileUrl, options: .atomic)
     }
 
@@ -158,7 +148,7 @@ final class AppInboxCache: AppInboxCacheType {
         guard let directory = getCacheDirectoryURL() else {
             return nil
         }
-        let fileUrl = directory.appendingPathComponent(getFileName(for: imageUrl))
+        let fileUrl = directory.appendingPathComponent(FileUtils.getFileName(fileUrl: imageUrl))
         return try? Data(contentsOf: fileUrl)
     }
 

@@ -70,18 +70,8 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         return modificationDate.timeIntervalSince1970
     }
 
-    private func getFileName(imageUrl: String) -> String {
-        guard let data = imageUrl.data(using: .utf8) else {
-            return imageUrl
-        }
-        return data
-            .base64EncodedString()
-            .replacingOccurrences(of: "=", with: "")
-            .replacingOccurrences(of: "/", with: "")
-    }
-
     func deleteImages(except: [String]) {
-        let exceptFileNames = except.map { getFileName(imageUrl: $0) }
+        let exceptFileNames = except.map { FileUtils.getFileName(fileUrl: $0) }
         guard let directory = getCacheDirectoryURL() else {
             return
         }
@@ -103,7 +93,7 @@ final class InAppMessagesCache: InAppMessagesCacheType {
             Exponea.logger.log(.warning, message: "Unable to get in-app message image cache directory")
             return false
         }
-        let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
+        let fileUrl = directory.appendingPathComponent(FileUtils.getFileName(fileUrl: imageUrl))
         let exists = fileManager.fileExists(atPath: fileUrl.path)
         if !exists {
             Exponea.logger.log(.verbose, message: "In-app message image \(imageUrl) not found in cache.")
@@ -115,15 +105,19 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         guard let directory = getCacheDirectoryURL() else {
             return
         }
-        let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
-        try? data.write(to: fileUrl, options: .atomic)
+        let fileUrl = directory.appendingPathComponent(FileUtils.getFileName(fileUrl: imageUrl))
+        do {
+            try data.write(to: fileUrl, options: .atomic)
+        } catch {
+            Exponea.logger.log(.error, message: "In-app message image \(imageUrl) failed to be stored: \(error)")
+        }
     }
 
     func getImageData(at imageUrl: String) -> Data? {
         guard let directory = getCacheDirectoryURL() else {
             return nil
         }
-        let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
+        let fileUrl = directory.appendingPathComponent(FileUtils.getFileName(fileUrl: imageUrl))
         return try? Data(contentsOf: fileUrl)
     }
 
