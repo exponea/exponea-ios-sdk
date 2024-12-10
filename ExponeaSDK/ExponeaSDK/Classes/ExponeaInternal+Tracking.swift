@@ -379,6 +379,7 @@ extension ExponeaInternal {
     /// Anonymizes the user and starts tracking as if the app was just installed.
     /// All customer identification (including cookie) will be permanently deleted.
     public func anonymize() {
+        Exponea.logger.log(.verbose, message: "Basic anonymisation requested")
         executeSafelyWithDependencies { dependencies in
             self.anonymize(
                 exponeaProject: dependencies.configuration.mainProject,
@@ -394,7 +395,9 @@ extension ExponeaInternal {
         exponeaProject: ExponeaProject,
         projectMapping: [EventType: [ExponeaProject]]?
     ) {
+        Exponea.logger.log(.verbose, message: "Anonymisation requested with \(exponeaProject) and \(String(describing: projectMapping))")
         executeSafelyWithDependencies { dependencies in
+            Exponea.logger.log(.verbose, message: "Anonymisation request proceeding")
             if dependencies.configuration.automaticSessionTracking {
                 try dependencies.trackingManager.track(.sessionEnd, with: [.timestamp(Date().timeIntervalSince1970)])
             }
@@ -407,6 +410,7 @@ extension ExponeaInternal {
             dependencies.inAppContentBlocksManager.anonymize()
             SegmentationManager.shared.anonymize()
             self.telemetryManager?.report(eventWithType: .anonymize, properties: [:])
+            Exponea.logger.log(.verbose, message: "Anonymisation request done")
         }
     }
 
