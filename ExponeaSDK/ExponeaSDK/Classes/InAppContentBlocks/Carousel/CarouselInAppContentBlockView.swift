@@ -115,6 +115,7 @@ open class CarouselInAppContentBlockView: UIView {
             guard let self else { return }
             let height = self.customHeight ?? height.height
             self.redrawWithNewHeight(inputView: self, loadedInAppContentBlocksView: collectionView, height: height)
+            defaultBehaviourCallback.onHeightUpdate(placeholderId: placeholder, height: height)
         }
     }
 

@@ -321,10 +321,10 @@ You can add your custom behavior by setting `customContentBlockCarouselCallback`
 CarouselInAppContentBlockView(placeholder: "example_carousel", customContentBlockCarouselCallback: CustomCarouselCallback())
 ```
 
-The callback behavior object must implement `ContentBlockCarouselCallbackType`.
+The callback behavior object must implement `DefaultContentBlockCarouselCallback`.
 
 ```swift
-public class CustomCarouselCallback: ContentBlockCarouselCallbackType {
+public class CustomCarouselCallback: DefaultContentBlockCarouselCallback {
 
     public var overrideDefaultBehavior: Bool = false
     public var trackActions: Bool = true
@@ -347,6 +347,10 @@ public class CustomCarouselCallback: ContentBlockCarouselCallbackType {
 
     public func onActionClickedSafari(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
         // space for custom implementation
+    }
+
+    public func onHeightUpdate(placeholderId: String, height: CGFloat) {
+        // Triggered when a carousel changed its height.
     }
 }
 ```

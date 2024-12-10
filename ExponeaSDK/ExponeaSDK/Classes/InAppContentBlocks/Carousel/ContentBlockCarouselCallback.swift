@@ -18,6 +18,7 @@ public protocol DefaultContentBlockCarouselCallback {
     func onError(placeholderId: String, contentBlock: InAppContentBlockResponse?, errorMessage: String)
     func onCloseClicked(placeholderId: String, contentBlock: InAppContentBlockResponse)
     func onActionClickedSafari(placeholderId: String, contentBlock: InAppContentBlockResponse, action: InAppContentBlockAction)
+    func onHeightUpdate(placeholderId: String, height: CGFloat)
 }
 
 internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallback {
@@ -101,6 +102,11 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
             }
         }
         behaviourCallback?.onActionClickedSafari(placeholderId: placeholderId, contentBlock: contentBlock, action: action)
+    }
+
+    func onHeightUpdate(placeholderId: String, height: CGFloat) {
+        Exponea.logger.log(.verbose, message: "Carousel Content Block \(placeholderId) height update: \(height)")
+        behaviourCallback?.onHeightUpdate(placeholderId: placeholderId, height: height)
     }
 
     private func invokeAction(_ action: InAppContentBlockAction, _ contentBlock: InAppContentBlockResponse) {

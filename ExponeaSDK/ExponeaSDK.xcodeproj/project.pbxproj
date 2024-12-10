@@ -252,7 +252,6 @@
 		31EBB8682A6AC3470003AAA5 /* SampleInappContentBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8672A6AC3470003AAA5 /* SampleInappContentBlocks.swift */; };
 		31EBB86B2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB86A2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift */; };
 		31EBB86D2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB86C2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift */; };
-		31EC20A02C528A0900CE7BE9 /* CustomCarouselCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EC209F2C528A0900CE7BE9 /* CustomCarouselCallback.swift */; };
 		3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */; };
 		3384EFC629965EEB009A5981 /* Execute+AfterInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */; };
 		3388E6D129E8475B00F28C46 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
@@ -782,7 +781,6 @@
 		31EBB8672A6AC3470003AAA5 /* SampleInappContentBlocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleInappContentBlocks.swift; sourceTree = "<group>"; };
 		31EBB86A2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppContentBlocksManagerSpec.swift; sourceTree = "<group>"; };
 		31EBB86C2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TrackManager+IdentifyCustomerSpec.swift"; sourceTree = "<group>"; };
-		31EC209F2C528A0900CE7BE9 /* CustomCarouselCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCarouselCallback.swift; sourceTree = "<group>"; };
 		3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpoInitManager.swift; sourceTree = "<group>"; };
 		3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Execute+AfterInit.swift"; sourceTree = "<group>"; };
 		33FC6CC129A90ED5001F113F /* OnMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnMain.swift; sourceTree = "<group>"; };
@@ -1581,7 +1579,6 @@
 				3189E2E22C4EBEFE00C4CD68 /* InAppCarouselStateType.swift */,
 				3189E2E42C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift */,
 				3189E2E62C4EBF2300C4CD68 /* CarouselOnChangeData.swift */,
-				31EC209F2C528A0900CE7BE9 /* CustomCarouselCallback.swift */,
 			);
 			path = Carousel;
 			sourceTree = "<group>";
@@ -3008,7 +3005,6 @@
 				05CDD837239114F700C7291A /* InAppMessagesManagerType.swift in Sources */,
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
 				053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */,
-				31EC20A02C528A0900CE7BE9 /* CustomCarouselCallback.swift in Sources */,
 				057D476723C87F0B00AEE902 /* UrlOpenerType.swift in Sources */,
 				317536882BD27DEB0062A5E5 /* SegmentCategory.swift in Sources */,
 				CCB87B7E2816A6A6005DFB8E /* GitHubReleaseResponse.swift in Sources */,
