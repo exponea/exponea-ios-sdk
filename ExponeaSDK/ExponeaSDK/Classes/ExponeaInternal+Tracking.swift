@@ -401,14 +401,14 @@ extension ExponeaInternal {
             if dependencies.configuration.automaticSessionTracking {
                 try dependencies.trackingManager.track(.sessionEnd, with: [.timestamp(Date().timeIntervalSince1970)])
             }
-            try dependencies.trackingManager.anonymize(
-                exponeaProject: exponeaProject,
-                projectMapping: projectMapping
-            )
             dependencies.inAppMessagesManager.anonymize()
             dependencies.appInboxManager.clear()
             dependencies.inAppContentBlocksManager.anonymize()
             SegmentationManager.shared.anonymize()
+            try dependencies.trackingManager.anonymize(
+                exponeaProject: exponeaProject,
+                projectMapping: projectMapping
+            )
             self.telemetryManager?.report(eventWithType: .anonymize, properties: [:])
             Exponea.logger.log(.verbose, message: "Anonymisation request done")
         }
