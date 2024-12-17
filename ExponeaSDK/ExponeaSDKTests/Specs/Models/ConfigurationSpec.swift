@@ -255,12 +255,12 @@ class ConfigurationSpec: QuickSpec {
                     ]],
                     authorization: .token("test"),
                     baseUrl: "https://some.base.url",
+                    appGroup: appGroup,
                     defaultProperties: ["prop": "value", "other-prop": "other-value"],
                     sessionTimeout: 1234,
                     automaticSessionTracking: false,
                     automaticPushNotificationTracking: false,
                     tokenTrackFrequency: .daily,
-                    appGroup: appGroup,
                     flushEventMaxRetries: 200,
                     allowDefaultCustomerProperties: true,
                     advancedAuthEnabled: false

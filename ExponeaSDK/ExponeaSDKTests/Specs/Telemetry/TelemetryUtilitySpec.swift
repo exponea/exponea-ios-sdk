@@ -74,12 +74,12 @@ final class TelemetryUtilitySpec: QuickSpec {
                     ]],
                     authorization: .token("mock-authorization"),
                     baseUrl: "http://mock-base-url.com",
+                    appGroup: "mock-app-group",
                     defaultProperties: ["default-property": "default-property-value"],
                     sessionTimeout: 12345,
                     automaticSessionTracking: false,
                     automaticPushNotificationTracking: false,
                     tokenTrackFrequency: TokenTrackFrequency.daily,
-                    appGroup: "mock-app-group",
                     flushEventMaxRetries: 123,
                     allowDefaultCustomerProperties: true,
                     advancedAuthEnabled: false

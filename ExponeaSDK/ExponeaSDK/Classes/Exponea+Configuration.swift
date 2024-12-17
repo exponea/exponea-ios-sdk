@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 // MARK: - Configuration -
 
@@ -138,6 +141,49 @@ public extension Exponea {
 }
 
 public extension ExponeaInternal {
+    var isConfigured: Bool {
+        return (try? getDependenciesIfConfigured(.none)) != nil
+    }
+    private func invokeSdkInitSafely(
+        _ initBlock: @escaping EmptyThrowsBlock
+    ) {
+        Exponea.logger.log(.verbose, message: "Request of SDK initialization registered")
+        if onInitSucceededCallBack != nil {
+            asyncSdkInitialisationQueue.addOperation {
+                self.sdkInitialisationBlockQueue.sync {
+                    guard !self.isConfigured else {
+                        Exponea.logger.log(.error, message: "Exponea SDK already configured.")
+                        return
+                    }
+                    do {
+                        Exponea.logger.log(.verbose, message: "SDK init starts asynchronously")
+                        try initBlock()
+                        self.afterInit.setStatus(status: .configured)
+                        onMain {
+                            self.onInitSucceededCallBack?()
+                        }
+                    } catch {
+                        Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
+                    }
+                }
+            }
+            return
+        }
+        self.sdkInitialisationBlockQueue.sync {
+            guard !self.isConfigured else {
+                Exponea.logger.log(.error, message: "Exponea SDK already configured.")
+                return
+            }
+            do {
+                Exponea.logger.log(.verbose, message: "SDK init starts synchronously")
+                try initBlock()
+                self.afterInit.setStatus(status: .configured)
+            } catch {
+                Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
+            }
+        }
+    }
+
     // swiftlint:disable:next line_length
     @available(*, deprecated, message: "Automatic push notification tracking is deprecated. Find more information in the documentation. https://github.com/exponea/exponea-ios-sdk/blob/main/Documentation/PUSH.md")
     func configure(
@@ -151,12 +197,13 @@ public extension ExponeaInternal {
         advancedAuthEnabled: Bool? = nil,
         manualSessionAutoClose: Bool = true
     ) {
-        do {
+        invokeSdkInitSafely({
             let configuration = try Configuration(
                 projectToken: projectSettings.projectToken,
                 projectMapping: projectSettings.projectMapping,
                 authorization: projectSettings.authorization,
                 baseUrl: projectSettings.baseUrl,
+                appGroup: automaticPushNotificationTracking.appGroup,
                 defaultProperties: defaultProperties,
                 inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
                 sessionTimeout: automaticSessionTracking.timeout,
@@ -164,21 +211,17 @@ public extension ExponeaInternal {
                 automaticPushNotificationTracking: automaticPushNotificationTracking.enabled,
                 requirePushAuthorization: automaticPushNotificationTracking.requirePushAuthorization,
                 tokenTrackFrequency: automaticPushNotificationTracking.tokenTrackFrequency,
-                appGroup: automaticPushNotificationTracking.appGroup,
                 flushEventMaxRetries: flushingSetup.maxRetries,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
                 advancedAuthEnabled: advancedAuthEnabled,
                 manualSessionAutoClose: manualSessionAutoClose
             )
             self.configuration = configuration
-            pushNotificationsDelegate = automaticPushNotificationTracking.delegate
-            flushingMode = flushingSetup.mode
-            afterInit.setStatus(status: .configured)
-        } catch {
-            Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
-        }
+            self.pushNotificationsDelegate = automaticPushNotificationTracking.delegate
+            self.flushingMode = flushingSetup.mode
+        })
     }
-    
+
     func configure(
         _ projectSettings: Exponea.ProjectSettings,
         pushNotificationTracking: Exponea.PushNotificationTracking,
@@ -190,73 +233,154 @@ public extension ExponeaInternal {
         advancedAuthEnabled: Bool? = nil,
         manualSessionAutoClose: Bool = true
     ) {
-        let taskBlock = { [weak self] in
-            guard let self = self else { return }
-            
-            do {
-                var willRunSelfCheck = false
-                if self.isDebugModeEnabled {
-                    willRunSelfCheck = self.checkPushSetup && pushNotificationTracking.isEnabled
-                }
-
-                let configuration = try Configuration(
-                    projectToken: projectSettings.projectToken,
-                    projectMapping: projectSettings.projectMapping,
-                    authorization: projectSettings.authorization,
-                    baseUrl: projectSettings.baseUrl,
-                    defaultProperties: defaultProperties,
-                    inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
-                    sessionTimeout: automaticSessionTracking.timeout,
-                    automaticSessionTracking: automaticSessionTracking.enabled,
-                    automaticPushNotificationTracking: false,
-                    requirePushAuthorization: pushNotificationTracking.requirePushAuthorization && !willRunSelfCheck,
-                    tokenTrackFrequency: pushNotificationTracking.tokenTrackFrequency,
-                    appGroup: pushNotificationTracking.appGroup,
-                    flushEventMaxRetries: flushingSetup.maxRetries,
-                    allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                    advancedAuthEnabled: advancedAuthEnabled,
-                    manualSessionAutoClose: manualSessionAutoClose
-                )
-                self.configure(with: configuration)
-                self.pushNotificationsDelegate = pushNotificationTracking.delegate
-                self.flushingMode = flushingSetup.mode
-                if willRunSelfCheck {
-                    self.executeSafelyWithDependencies { dependencies in
-                        self.pushNotificationSelfCheck = PushNotificationSelfCheck(
-                            trackingManager: dependencies.trackingManager,
-                            flushingManager: dependencies.flushingManager,
-                            repository: dependencies.repository,
-                            notificationsManager: dependencies.notificationsManager
-                        )
-                        self.pushNotificationSelfCheck?.start()
-                    }
-                }
-            } catch {
-                Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
+        invokeSdkInitSafely {
+            var willRunSelfCheck = false
+            if self.isDebugModeEnabled {
+                willRunSelfCheck = self.checkPushSetup && pushNotificationTracking.isEnabled
             }
-        }
-
-        if onInitSucceededCallBack != nil {
-            initializedQueue.addOperation {
-                taskBlock()
-                onMain {
-                    self.onInitSucceededCallBack?()
+            let configuration = try Configuration(
+                projectToken: projectSettings.projectToken,
+                projectMapping: projectSettings.projectMapping,
+                authorization: projectSettings.authorization,
+                baseUrl: projectSettings.baseUrl,
+                appGroup: pushNotificationTracking.appGroup,
+                defaultProperties: defaultProperties,
+                inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
+                sessionTimeout: automaticSessionTracking.timeout,
+                automaticSessionTracking: automaticSessionTracking.enabled,
+                automaticPushNotificationTracking: false,
+                requirePushAuthorization: pushNotificationTracking.requirePushAuthorization && !willRunSelfCheck,
+                tokenTrackFrequency: pushNotificationTracking.tokenTrackFrequency,
+                flushEventMaxRetries: flushingSetup.maxRetries,
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
+                advancedAuthEnabled: advancedAuthEnabled,
+                manualSessionAutoClose: manualSessionAutoClose
+            )
+            self.configuration = configuration
+            self.pushNotificationsDelegate = pushNotificationTracking.delegate
+            self.flushingMode = flushingSetup.mode
+            if willRunSelfCheck {
+                self.executeSafelyWithDependencies { dependencies in
+                    self.pushNotificationSelfCheck = PushNotificationSelfCheck(
+                        trackingManager: dependencies.trackingManager,
+                        flushingManager: dependencies.flushingManager,
+                        repository: dependencies.repository,
+                        notificationsManager: dependencies.notificationsManager
+                    )
+                    self.pushNotificationSelfCheck?.start()
                 }
             }
-        } else {
-            taskBlock()
         }
     }
 
-    func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
-        guard let repository = repository else {
-            Exponea.logger.log(
-                .warning, message: "Cannot set automaticSessionTracking before Exponea is configured."
+    /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token to be used through the SDK.
+    ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
+    ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
+    @available(*, deprecated)
+    func configure(
+        projectToken: String,
+        authorization: Authorization,
+        baseUrl: String? = nil,
+        appGroup: String? = nil,
+        defaultProperties: [String: JSONConvertible]? = nil,
+        inAppContentBlocksPlaceholders: [String]? = nil,
+        allowDefaultCustomerProperties: Bool? = nil,
+        advancedAuthEnabled: Bool? = nil,
+        manualSessionAutoClose: Bool = true
+    ) {
+        invokeSdkInitSafely {
+            let configuration = try Configuration(
+                projectToken: projectToken,
+                authorization: authorization,
+                baseUrl: baseUrl,
+                appGroup: appGroup,
+                defaultProperties: defaultProperties,
+                inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
+                advancedAuthEnabled: advancedAuthEnabled,
+                manualSessionAutoClose: manualSessionAutoClose
             )
-            return
+            self.configuration = configuration
+            self.afterInit.setStatus(status: .configured)
         }
-        repository.configuration.automaticSessionTracking = automaticSessionTracking.enabled
-        repository.configuration.sessionTimeout = automaticSessionTracking.timeout
-        trackingManager?.setAutomaticSessionTracking(automaticSessionTracking: automaticSessionTracking)
+    }
+
+    /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
+    ///
+    /// - Parameters:
+    ///   - plistName: Property list name containing the SDK setup keys
+    ///
+    /// Mandatory keys:
+    ///  - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
+    ///  - authorization: The authorization type used to authenticate with some Exponea endpoints.
+    func configure(plistName: String) {
+        invokeSdkInitSafely {
+            let configuration = try Configuration(plistName: plistName)
+            self.configuration = configuration
+        }
+    }
+
+    func configure(with configuration: Configuration) {
+        invokeSdkInitSafely {
+            self.configuration = configuration
+        }
+    }
+
+    /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
+    /// you to track events to multiple projects, even the same event to more project at once.
+    ///
+    /// - Parameters:
+    ///   - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
+    ///   - projectMapping: The project mapping dictionary providing all the tokens.
+    ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
+    ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
+    @available(*, deprecated)
+    func configure(
+        projectToken: String,
+        projectMapping: [EventType: [ExponeaProject]],
+        authorization: Authorization,
+        baseUrl: String? = nil,
+        appGroup: String? = nil,
+        defaultProperties: [String: JSONConvertible]? = nil,
+        inAppContentBlocksPlaceholders: [String]? = nil,
+        allowDefaultCustomerProperties: Bool? = nil,
+        advancedAuthEnabled: Bool? = nil,
+        manualSessionAutoClose: Bool = true
+    ) {
+        invokeSdkInitSafely {
+            let configuration = try Configuration(
+                projectToken: projectToken,
+                projectMapping: projectMapping,
+                authorization: authorization,
+                baseUrl: baseUrl,
+                appGroup: appGroup,
+                defaultProperties: defaultProperties,
+                inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
+                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
+                advancedAuthEnabled: advancedAuthEnabled,
+                manualSessionAutoClose: manualSessionAutoClose
+            )
+            self.configuration = configuration
+        }
+    }
+
+    func onInitSucceeded(callback completion: @escaping (() -> Void)) -> Self {
+        if isConfigured {
+            completion()
+        } else {
+            onInitSucceededCallBack = completion
+        }
+        return self
+    }
+
+    func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
+        executeSafelyWithDependencies { dependencies in
+            dependencies.repository.configuration.automaticSessionTracking = automaticSessionTracking.enabled
+            dependencies.repository.configuration.sessionTimeout = automaticSessionTracking.timeout
+            dependencies.trackingManager.setAutomaticSessionTracking(automaticSessionTracking: automaticSessionTracking)
+        }
     }
 }
