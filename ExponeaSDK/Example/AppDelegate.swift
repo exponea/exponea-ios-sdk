@@ -116,6 +116,15 @@ class AppDelegate: ExponeaAppDelegate {
             }.joined() + "]"
         )
     }
+    
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)
+    {
+        // Show push notification in foreground app state
+        completionHandler([.alert, .sound])
+    }
 }
 
 extension AppDelegate {
@@ -149,10 +158,10 @@ extension AppDelegate: PushNotificationManagerDelegate {
             message: "Alert push opened, " +
                 "action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))"
         )
-        showAlert(
+        onMain(self.showAlert(
             "Push notification opened",
             "action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))"
-        )
+        ))
     }
 
     func silentPushNotificationReceived(extraData: [AnyHashable: Any]?) {

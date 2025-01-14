@@ -50,6 +50,7 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                     inAppMessageManager: nil,
                     trackManagerInitializator: { _ in },
                     userDefaults: userDefaults,
+                    campaignRepository: CampaignRepository(userDefaults: userDefaults),
                     onEventCallback: { _, _ in
                     }
                 )

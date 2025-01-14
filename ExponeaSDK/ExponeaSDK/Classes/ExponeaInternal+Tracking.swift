@@ -221,50 +221,6 @@ extension ExponeaInternal {
 
     // MARK: Campaign data
 
-    internal func processSavedCampaignData() {
-        guard var events = self.userDefaults.array(forKey: Constants.General.savedCampaignClickEvent) as? [Data] else {
-            return
-        }
-        trackLastCampaignEvent(events.popLast())
-        trackOtherCampaignEvents(events)
-        // remove all stored events if processed
-        userDefaults.removeObject(forKey: Constants.General.savedCampaignClickEvent)
-    }
-
-    // last registered campaign click should be appended to session start event
-    private func trackLastCampaignEvent(_ lastEvent: Data?) {
-        if let lastEvent = lastEvent,
-            let campaignData = try? JSONDecoder().decode(CampaignData.self, from: lastEvent) {
-            trackCampaignData(data: campaignData, timestamp: nil)
-        }
-    }
-
-    // older events will not update session
-    private func trackOtherCampaignEvents(_ events: [Data]) {
-        executeSafelyWithDependencies { dependencies in
-            try events.forEach { event in
-                guard let campaignData = try? JSONDecoder().decode(CampaignData.self, from: event) else {
-                    return
-                }
-                var properties = campaignData.trackingData
-                properties["platform"] = .string("ios")
-                // url and payload is required for campaigns, but missing in notifications
-                if campaignData.url != nil && campaignData.payload != nil {
-                    try dependencies.trackingManager.track(.campaignClick, with: [.properties(properties)])
-                }
-            }
-        }
-    }
-
-    private func saveCampaignData(campaignData: CampaignData) {
-        var events = userDefaults.array(forKey: Constants.General.savedCampaignClickEvent) ?? []
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(campaignData) {
-            events.append(encoded)
-        }
-        userDefaults.set(events, forKey: Constants.General.savedCampaignClickEvent)
-    }
-
     public func trackCampaignClick(url: URL, timestamp: Double?) {
         trackCampaignData(data: CampaignData(url: url), timestamp: timestamp)
     }
@@ -294,6 +250,9 @@ extension ExponeaInternal {
                         ofType: Constants.EventTypes.sessionStart,
                         with: .properties(data.trackingData)
                     )
+                } else {
+                    // store campaign click for upcoming session track
+                    dependencies.campaignRepository.set(data)
                 }
             }
         }
@@ -405,6 +364,7 @@ extension ExponeaInternal {
             dependencies.appInboxManager.clear()
             dependencies.inAppContentBlocksManager.anonymize()
             SegmentationManager.shared.anonymize()
+            dependencies.campaignRepository.clear()
             try dependencies.trackingManager.anonymize(
                 exponeaProject: exponeaProject,
                 projectMapping: projectMapping

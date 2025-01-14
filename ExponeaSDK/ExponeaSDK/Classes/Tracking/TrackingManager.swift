@@ -36,6 +36,7 @@ class TrackingManager {
 
     private var inAppMessageManager: InAppMessagesManagerType?
     private var flushingManager: FlushingManagerType
+    private var campaignRepository: CampaignRepositoryType
 
     // Manager for  session tracking
     private lazy var sessionManager: SessionManagerType = SessionManager(
@@ -76,12 +77,14 @@ class TrackingManager {
          inAppMessageManager: InAppMessagesManagerType?,
          trackManagerInitializator: (TrackingManager) -> (Void),
          userDefaults: UserDefaults,
+         campaignRepository: CampaignRepositoryType,
          onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) throws {
         self.repository = repository
         self.database = database
         self.device = device
         self.userDefaults = userDefaults
+        self.campaignRepository = campaignRepository
 
         self.flushingManager = flushingManager
         self.inAppMessageManager = inAppMessageManager
@@ -412,14 +415,18 @@ extension TrackingManager: TrackingManagerType {
 extension TrackingManager: SessionTrackingDelegate {
     func trackSessionStart(at timestamp: TimeInterval) {
         do {
+            var sessionEventData: [DataType] = [
+                .eventType(EventType.sessionStart.rawValue),
+                .customerIds(customerIds),
+                .properties(device.properties),
+                .timestamp(timestamp)
+            ]
+            if let campaignData = campaignRepository.popValid() {
+                sessionEventData.append(.properties(campaignData.trackingData))
+            }
             try track(
                 .sessionStart,
-                with: [
-                    .eventType(EventType.sessionStart.rawValue),
-                    .customerIds(customerIds),
-                    .properties(device.properties),
-                    .timestamp(timestamp)
-                ]
+                with: sessionEventData
             )
         } catch {
             Exponea.logger.log(.error, message: "Session start tracking error: \(error.localizedDescription)")

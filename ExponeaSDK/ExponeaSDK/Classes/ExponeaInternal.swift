@@ -81,6 +81,9 @@ public class ExponeaInternal: ExponeaType {
     internal var notificationsManager: PushNotificationManagerType?
 
     internal var telemetryManager: TelemetryManager?
+
+    internal var campaignRepository: CampaignRepositoryType?
+
     public var inAppContentBlocksManager: InAppContentBlocksManagerType?
     public var segmentationManager: SegmentationManagerType?
     public var manualSegmentationManager: ManualSegmentationManagerType?
@@ -217,7 +220,7 @@ public class ExponeaInternal: ExponeaType {
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
-    
+
     internal lazy var sdkInitialisationBlockQueue: DispatchQueue = {
         return DispatchQueue(label: "com.exponea.ExponeaSDK.BlockInitQueue", attributes: .concurrent)
     }()
@@ -291,6 +294,11 @@ public class ExponeaInternal: ExponeaType {
                 )
                 self.flushingManager = flushingManager
 
+                let campaignRepository = CampaignRepository(
+                    userDefaults: self.userDefaults
+                )
+                self.campaignRepository = campaignRepository
+
                 let trackingManager = try TrackingManager(
                     repository: repository,
                     database: database,
@@ -321,6 +329,7 @@ public class ExponeaInternal: ExponeaType {
                         self.notificationsManager = notificationsManager
                     },
                     userDefaults: userDefaults,
+                    campaignRepository: campaignRepository,
                     onEventCallback: { type, event in
                         self.inAppMessagesManager?.onEventOccurred(of: type, for: event, triggerCompletion: nil)
                         self.appInboxManager?.onEventOccurred(of: type, for: event)
@@ -338,7 +347,6 @@ public class ExponeaInternal: ExponeaType {
                     database: database
                 )
 
-                processSavedCampaignData()
                 configuration.saveToUserDefaults()
 
                 self.inAppContentBlocksManager = InAppContentBlocksManager.manager
@@ -388,6 +396,7 @@ internal extension ExponeaInternal {
         let appInboxManager: AppInboxManagerType
         let inAppContentBlocksManager: InAppContentBlocksManagerType
         let notificationsManager: PushNotificationManagerType
+        let campaignRepository: CampaignRepositoryType
     }
 
     typealias CompletionHandler<T> = ((Result<T>) -> Void)
@@ -406,7 +415,8 @@ internal extension ExponeaInternal {
             let inAppMessagesManager = inAppMessagesManager,
             let inAppContentBlocksManager = inAppContentBlocksManager,
             let appInboxManager = appInboxManager,
-            let notificationsManager = notificationsManager else {
+            let notificationsManager = notificationsManager,
+            let campaignRepository = campaignRepository else {
                 Exponea.logger.log(logLevel, message: "Some dependencies are not configured")
                 throw ExponeaError.notConfigured
         }
@@ -419,7 +429,8 @@ internal extension ExponeaInternal {
             inAppMessagesManager: inAppMessagesManager,
             appInboxManager: appInboxManager,
             inAppContentBlocksManager: inAppContentBlocksManager,
-            notificationsManager: notificationsManager
+            notificationsManager: notificationsManager,
+            campaignRepository: campaignRepository
         )
     }
 

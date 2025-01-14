@@ -71,7 +71,7 @@ public struct CampaignData {
         if let payload = payload { data["xnpe_cmp"] = .string(payload) }
         return data
     }
-    
+
     public var isValid: Bool {
         // url and xnpe_cmp is required
         url?.isEmpty == false && payload?.isEmpty == false
@@ -81,13 +81,14 @@ public struct CampaignData {
 extension CampaignData: Codable {
     // since we use snake case conversion, these need to be camelCase
     enum CodingKeys: String, CodingKey {
-        case url = "url"
         case source = "utmSource"
         case campaign = "utmCampaign"
         case content = "utmContent"
         case medium = "utmMedium"
         case term = "utmTerm"
         case payload = "xnpeCmp"
+        case timestamp = "timestamp"
+        case url = "url"
     }
 
     public init(from decoder: Decoder) throws {
@@ -99,7 +100,7 @@ extension CampaignData: Codable {
         medium = try? data.decode(String.self, forKey: .medium)
         term = try? data.decode(String.self, forKey: .term)
         payload = try? data.decode(String.self, forKey: .payload)
-        timestamp = Date().timeIntervalSince1970
+        timestamp = (try? data.decodeIfPresent(TimeInterval.self, forKey: .timestamp)) ?? Date().timeIntervalSince1970
     }
 }
 
