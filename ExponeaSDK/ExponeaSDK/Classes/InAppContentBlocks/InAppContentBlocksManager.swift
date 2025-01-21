@@ -1030,6 +1030,7 @@ extension InAppContentBlocksManager {
         if !isStaticUpdating {
             isStaticUpdating = true
             guard !staticQueueData.placeholderId.isEmpty, let ids = try? DatabaseManager().currentCustomer.ids else {
+                isStaticUpdating = false
                 staticQueueData.completion?(.init(html: "", tag: 0, message: nil))
                 Exponea.logger.log(.verbose, message: "In-app Content Blocks cant refresh static content staticQueueData.placeholderId: \(staticQueueData.placeholderId), ids: \(String(describing: try? DatabaseManager().currentCustomer.ids))")
                 return
