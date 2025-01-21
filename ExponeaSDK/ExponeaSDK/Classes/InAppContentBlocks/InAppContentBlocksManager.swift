@@ -324,7 +324,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         }
     }
 
-    func getFilteredMessage(message: InAppContentBlockResponse) -> Bool {
+    func getFilteredMessage(message: InAppContentBlockResponse) -> Bool {        
         let displayState = getDisplayState(of: message.id)
         switch message.frequency {
         case .oncePerVisit:
@@ -640,12 +640,29 @@ private extension InAppContentBlocksManager {
         }
     }
 
+    internal func applyDateFilter(message: InAppContentBlockResponse) -> Bool {
+        guard message.dateFilter.enabled else {
+            return true
+        }
+        if let start = message.dateFilter.fromDate, start > Date() {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks '\(message.name)' outside of date range.")
+            return false
+        }
+        if let end = message.dateFilter.toDate, end < Date() {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks '\(message.name)' outside of date range.")
+            return false
+        }
+        return true
+    }
+
     func filterPersonalizedMessages(input: [InAppContentBlockResponse]) -> InAppContentBlockResponse? {
         Exponea.logger.log(
             .verbose,
             message: "In-app Content Blocks filterPersonalizedMessages filtering: \(input.map { $0.describe() })"
         )
-        let filtered = input.filter { inAppContentBlocksPlaceholder in
+        let filtered = input
+            .filter { applyDateFilter(message: $0) }
+            .filter { inAppContentBlocksPlaceholder in
             if inAppContentBlocksPlaceholder.personalizedMessage?.status == .ok && inAppContentBlocksPlaceholder.personalizedMessage?.isCorruptedImage == false {
                 return self.getFilteredMessage(message: inAppContentBlocksPlaceholder)
             } else {

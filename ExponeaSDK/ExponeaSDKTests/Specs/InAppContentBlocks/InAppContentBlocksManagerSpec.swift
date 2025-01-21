@@ -24,6 +24,21 @@ class InAppContentBlocksManagerSpec: QuickSpec {
         Exponea.shared.configure(with: configuration)
         let manager: InAppContentBlocksManagerType = Exponea.shared.inAppContentBlocksManager!
         
+        it("date filter") {
+            let date = Date()
+            let bigDate = Date().addingTimeInterval(5)
+            let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(dateFilter: .init(enabled: true, fromDate: date, toDate: bigDate))
+            var isIn = manager.applyDateFilter(message: firstInAppContentBlocks)
+            expect(isIn).to(beTrue())
+            waitUntil(timeout: .seconds(7)) { done in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+                    isIn = manager.applyDateFilter(message: firstInAppContentBlocks)
+                    done()
+                }
+            }
+            expect(isIn).to(beFalse())
+        }
+        
         it("Corrupted images") {
             let rawHtml = "<html>" +
             "<body>" +
