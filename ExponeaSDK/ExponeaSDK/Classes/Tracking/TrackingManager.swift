@@ -208,7 +208,7 @@ extension TrackingManager: TrackingManagerType {
                         try? self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
                         self.onEventCallback(type, payload)
                     }
-                    Exponea.shared.flushingManager?.flushData()
+                    Exponea.shared.flushingManager?.flushData(isFromIdentify: true)
                 default:
                     try storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
                     onEventCallback(type, payload)
