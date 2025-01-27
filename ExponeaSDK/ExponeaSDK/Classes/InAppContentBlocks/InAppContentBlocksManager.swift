@@ -286,8 +286,8 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
 
     func prefetchPlaceholdersWithIds(ids: [String]) {
         Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts.")
-        guard let customerIds = try? DatabaseManager().currentCustomer.ids else {
-            Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts failed due to customer ids are empty")
+        guard let customerIds = try? DatabaseManager().currentCustomer.ids, !ids.isEmpty else {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts failed due to customer ids or ids are empty")
             return
         }
         Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch ids \(ids)")
