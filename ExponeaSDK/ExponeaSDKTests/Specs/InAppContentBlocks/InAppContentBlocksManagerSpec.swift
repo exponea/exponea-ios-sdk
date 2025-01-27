@@ -12,6 +12,41 @@ import Nimble
 import Combine
 @testable import ExponeaSDK
 
+fileprivate class CustomCarouselCallback: DefaultContentBlockCarouselCallback {
+
+    var notFoundCallback: EmptyBlock?
+
+    var overrideDefaultBehavior: Bool = false
+    var trackActions: Bool = true
+
+    init() {}
+
+    func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    func onNoMessageFound(placeholderId: String) {
+        // space for custom implementation
+        notFoundCallback?()
+    }
+
+    func onError(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse?, errorMessage: String) {
+        // space for custom implementation
+    }
+
+    func onCloseClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    func onActionClickedSafari(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        // space for custom implementation
+    }
+
+    func onHeightUpdate(placeholderId: String, height: CGFloat) {
+        Exponea.logger.log(.verbose, message: "Placeholder \(placeholderId) got new height: \(height)")
+    }
+}
+
 class InAppContentBlocksManagerSpec: QuickSpec {
 
     let configuration = try! Configuration(
@@ -23,6 +58,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
     override func spec() {
         Exponea.shared.configure(with: configuration)
         let manager: InAppContentBlocksManagerType = Exponea.shared.inAppContentBlocksManager!
+        let callback = CustomCarouselCallback()
         
         it("date filter") {
             let date = Date()
@@ -68,7 +104,24 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             expect(result2).to(beTrue())
             expect(result3).to(beFalse())
         }
-        
+
+        it("check filtered") {
+            let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks()
+            var isDone = false
+            manager.addMessage(firstInAppContentBlocks)
+            manager.filterCarouselData(placeholder: "asdas") { response in
+                isDone = true
+            } expiredCompletion: {
+                
+            }
+            waitUntil(timeout: .seconds(3)) { done in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    done()
+                }
+            }
+            expect(isDone).to(beTrue())
+        }
+
         it("check inAppContentBlocks priority") {
             let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(loadPriority: 1)
             let secondInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(loadPriority: 2)

@@ -75,6 +75,10 @@ final class InAppContentBlocksManager: NSObject {
         _usedInAppContentBlocks.changeValue(with: { $0.removeAll() })
     }
 
+    internal func addMessage(_ message: InAppContentBlockResponse) {
+        inAppContentBlockMessages.append(message)
+    }
+
     func initBlocker() {
         onMain {
             WKContentRuleListStore.default().compileContentRuleList(
@@ -480,17 +484,23 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         let placeholdersNeedToRefresh = placehodlersToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
         let expiredMessages = inAppContentBlockMessages.filter { inAppContentBlocks in
             if let ttlSeen = inAppContentBlocks.personalizedMessage?.ttlSeen,
-               let ttl = inAppContentBlocks.personalizedMessage?.ttlSeconds,
-               inAppContentBlocks.content == nil {
+               let ttl = inAppContentBlocks.personalizedMessage?.ttlSeconds {
                 return Date() > ttlSeen.addingTimeInterval(TimeInterval(ttl))
             }
             return false
+        }
+        let notFoundPersonalizedMessages = inAppContentBlockMessages.filter { inAppContentBlocks in
+            inAppContentBlocks.personalizedMessage == nil
         }
         let expiredMessagesDescriptions = expiredMessages.map { $0.describe() }
         Exponea.logger.log(
             .verbose,
             message: "In-app Content Blocks prepareInAppContentBlocksStaticView expiredMessages \(expiredMessagesDescriptions)."
         )
+        if expiredMessages.isEmpty && !notFoundPersonalizedMessages.isEmpty && placehodlersToUse.isEmpty {
+            continueCallback?([])
+            return
+        }
         guard placeholdersNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
             expiredCompletion?()
             return

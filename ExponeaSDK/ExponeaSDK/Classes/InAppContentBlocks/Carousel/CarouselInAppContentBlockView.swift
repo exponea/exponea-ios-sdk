@@ -160,8 +160,9 @@ open class CarouselInAppContentBlockView: UIView {
                     )
                 }
             self.filterContentBlocks(placeholder: self.placeholder) { data in
-                if data.isEmpty {
+                guard !data.isEmpty else {
                     self.defaultBehaviourCallback.onNoMessageFound(placeholderId: self.placeholder)
+                    return
                 }
                 let toReturn = data
                     .compactMap { response in
