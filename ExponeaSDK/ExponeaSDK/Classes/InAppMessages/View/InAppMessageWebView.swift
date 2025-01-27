@@ -72,13 +72,17 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     }
 
     func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?) {
-        dismissCallback(isUserInteraction, cancelButton)
-        dismissFromSuperView()
+        onMain {
+            self.dismissCallback(isUserInteraction, cancelButton)
+            self.dismissFromSuperView()
+        }
     }
 
     func dismiss(actionButton: InAppMessagePayloadButton) {
-        actionCallback(actionButton)
-        dismissFromSuperView()
+        onMain {
+            self.actionCallback(actionButton)
+            self.dismissFromSuperView()
+        }
     }
 
     func dismissFromSuperView() {
@@ -107,13 +111,13 @@ final class InAppMessageWebView: UIView, InAppMessageView {
 
         DispatchQueue.global(qos: .background).async {
             self.normalizedPayload = HtmlNormalizer(self.payload).normalize()
-            if self.normalizedPayload!.valid {
-                self.actionManager?.htmlPayload = self.normalizedPayload
-                DispatchQueue.main.async {
+            onMain {
+                if self.normalizedPayload!.valid {
+                    self.actionManager?.htmlPayload = self.normalizedPayload
                     self.webView.loadHTMLString(self.normalizedPayload!.html!, baseURL: nil)
+                } else {
+                    self.dismiss(isUserInteraction: false, cancelButton: nil)
                 }
-            } else {
-                self.dismiss(isUserInteraction: false, cancelButton: nil)
             }
         }
     }
