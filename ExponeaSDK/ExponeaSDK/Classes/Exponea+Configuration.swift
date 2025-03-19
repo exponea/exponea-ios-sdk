@@ -159,6 +159,7 @@ public extension ExponeaInternal {
                         Exponea.logger.log(.verbose, message: "SDK init starts asynchronously")
                         try initBlock()
                         self.afterInit.setStatus(status: .configured)
+                        Exponea.logger.log(.verbose, message: "SDK init ends asynchronously")
                         onMain {
                             self.onInitSucceededCallBack?()
                         }
@@ -178,6 +179,7 @@ public extension ExponeaInternal {
                 Exponea.logger.log(.verbose, message: "SDK init starts synchronously")
                 try initBlock()
                 self.afterInit.setStatus(status: .configured)
+                Exponea.logger.log(.verbose, message: "SDK init ends synchronously")
             } catch {
                 Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
             }

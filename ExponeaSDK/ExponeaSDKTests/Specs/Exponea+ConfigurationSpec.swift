@@ -109,32 +109,47 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
             }
 
             it("should allow single initialisation") {
-                let exponea = ExponeaInternal()
-                var initsCount = 0
-                var tokenWinner = ""
-                let group = DispatchGroup()
-                waitUntil(timeout: .seconds(10)) { done in
-                    for i in 0..<20 {
-                        DispatchQueue.global(qos: .background).async(group: group) {
-                            exponea.configure(
-                                Exponea.ProjectSettings(
-                                    projectToken: "mock-project-token-\(i)",
-                                    authorization: .none
-                                ),
-                                pushNotificationTracking: .disabled
-                            )
-                            if let conf = exponea.configuration,
-                               conf.projectToken == "mock-project-token-\(i)" {
-                                tokenWinner = conf.projectToken
-                            }
-                            initsCount += 1
-                            if initsCount == 20 {
-                                done()
+                for run in 0..<200 {
+                    Exponea.logger.logLevel = .verbose
+                    var sdkInitMessageCount = 0
+                    Exponea.logger.addLogHook { message in
+                        if message.contains("SDK init starts synchronously") {
+                            sdkInitMessageCount += 1
+                        }
+                    }
+                    let exponea = ExponeaInternal()
+                    var initsCount = 0
+                    let maxInitsCount = 50
+                    var tokenWinner = ""
+                    let group = DispatchGroup()
+                    waitUntil(timeout: .seconds(10)) { done in
+                        for i in 0..<maxInitsCount {
+                            DispatchQueue.global(qos: .background).async(group: group) {
+                                exponea.configure(
+                                    Exponea.ProjectSettings(
+                                        projectToken: "mock-project-token-\(i)",
+                                        authorization: .none
+                                    ),
+                                    pushNotificationTracking: .disabled
+                                )
+                                if let conf = exponea.configuration,
+                                   conf.projectToken == "mock-project-token-\(i)",
+                                   tokenWinner == "" {
+                                    tokenWinner = conf.projectToken
+                                }
+                                initsCount += 1
+                                if initsCount == maxInitsCount {
+                                    done()
+                                }
                             }
                         }
                     }
+                    expect(exponea.configuration!.projectToken).to(equal(tokenWinner))
+                    expect(sdkInitMessageCount).to(equal(1))
+                    if sdkInitMessageCount != 1 {
+                        break
+                    }
                 }
-                expect(exponea.configuration!.projectToken).to(equal(tokenWinner))
             }
         }
     }

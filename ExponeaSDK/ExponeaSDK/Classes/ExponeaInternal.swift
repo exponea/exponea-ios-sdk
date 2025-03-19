@@ -221,9 +221,7 @@ public class ExponeaInternal: ExponeaType {
         return queue
     }()
 
-    internal lazy var sdkInitialisationBlockQueue: DispatchQueue = {
-        return DispatchQueue(label: "com.exponea.ExponeaSDK.BlockInitQueue", attributes: .concurrent)
-    }()
+    internal let sdkInitialisationBlockQueue = DispatchQueue(label: "com.exponea.ExponeaSDK.BlockInitQueue")
 
     internal lazy var inAppContentBlockStatusStore: InAppContentBlockDisplayStatusStore = {
         return InAppContentBlockDisplayStatusStore(userDefaults: userDefaults)
