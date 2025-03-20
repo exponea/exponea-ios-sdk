@@ -217,8 +217,6 @@
 		3189E2DF2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2DE2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift */; };
 		3189E2E12C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E02C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift */; };
 		3189E2E32C4EBEFE00C4CD68 /* InAppCarouselStateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E22C4EBEFE00C4CD68 /* InAppCarouselStateType.swift */; };
-		3189E2E52C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E42C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift */; };
-		3189E2E72C4EBF2300C4CD68 /* CarouselOnChangeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E62C4EBF2300C4CD68 /* CarouselOnChangeData.swift */; };
 		318B552A2A80E52B00934902 /* DeeplinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B55292A80E52B00934902 /* DeeplinkManager.swift */; };
 		319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */; };
 		31A1D21B2C6F8A6300606633 /* GiftHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A1D21A2C6F8A6300606633 /* GiftHelper.swift */; };
@@ -749,8 +747,6 @@
 		3189E2DE2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentBlockCarouselCallback.swift; sourceTree = "<group>"; };
 		3189E2E02C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselContentBlockViewCell.swift; sourceTree = "<group>"; };
 		3189E2E22C4EBEFE00C4CD68 /* InAppCarouselStateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppCarouselStateType.swift; sourceTree = "<group>"; };
-		3189E2E42C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselOnShowMessageData.swift; sourceTree = "<group>"; };
-		3189E2E62C4EBF2300C4CD68 /* CarouselOnChangeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselOnChangeData.swift; sourceTree = "<group>"; };
 		318B55292A80E52B00934902 /* DeeplinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeeplinkManager.swift; sourceTree = "<group>"; };
 		319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationStoring.swift; sourceTree = "<group>"; };
 		31A1D21A2C6F8A6300606633 /* GiftHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftHelper.swift; sourceTree = "<group>"; };
@@ -1583,8 +1579,6 @@
 				3189E2DE2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift */,
 				3189E2E02C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift */,
 				3189E2E22C4EBEFE00C4CD68 /* InAppCarouselStateType.swift */,
-				3189E2E42C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift */,
-				3189E2E62C4EBF2300C4CD68 /* CarouselOnChangeData.swift */,
 			);
 			path = Carousel;
 			sourceTree = "<group>";
@@ -2911,7 +2905,6 @@
 				05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */,
 				05BA5804250649F000E10994 /* PushOpenedData.swift in Sources */,
 				3189E2DF2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift in Sources */,
-				3189E2E72C4EBF2300C4CD68 /* CarouselOnChangeData.swift in Sources */,
 				3175368C2BD2AFF70062A5E5 /* Debouncer.swift in Sources */,
 				05CDD8392391193E00C7291A /* InAppMessagesCache.swift in Sources */,
 				0591905D23EC1A550037BD88 /* EventFilterConstraint.swift in Sources */,
@@ -2980,7 +2973,6 @@
 				31EBB85C2A6AC3020003AAA5 /* StaticReturnData.swift in Sources */,
 				315598082C09CAE500FBED42 /* CarouselInAppContentBlockView.swift in Sources */,
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
-				3189E2E52C4EBF1000C4CD68 /* CarouselOnShowMessageData.swift in Sources */,
 				3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */,
 				31A1D21B2C6F8A6300606633 /* GiftHelper.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,

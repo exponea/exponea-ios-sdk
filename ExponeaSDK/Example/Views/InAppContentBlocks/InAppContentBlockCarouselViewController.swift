@@ -35,7 +35,11 @@ class CustomCarouselCallback: DefaultContentBlockCarouselCallback {
 
     public init() {}
 
-    public func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+    public func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, index: Int, count: Int) {
+        // space for custom implementation
+    }
+
+    public func onMessagesChanged(count: Int, messages: [ExponeaSDK.InAppContentBlockResponse]) {
         // space for custom implementation
     }
 
@@ -83,14 +87,6 @@ class InAppContentBlockCarouselViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        carousel.onMessageShown = { message in
-            print("ON MESSAGE SHOW \(message.placeholderId)")
-        }
-
-        carousel.onMessageChanged = { changed in
-            print("ON MESSAGE CHANGED \(changed.count)")
-        }
 
         carousel.reload()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in

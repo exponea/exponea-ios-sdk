@@ -13,7 +13,8 @@ public protocol DefaultContentBlockCarouselCallback {
     var overrideDefaultBehavior: Bool { get set }
     var trackActions: Bool { get set }
 
-    func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse)
+    func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse, index: Int, count: Int)
+    func onMessagesChanged(count: Int, messages: [InAppContentBlockResponse])
     func onNoMessageFound(placeholderId: String)
     func onError(placeholderId: String, contentBlock: InAppContentBlockResponse?, errorMessage: String)
     func onCloseClicked(placeholderId: String, contentBlock: InAppContentBlockResponse)
@@ -33,13 +34,17 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
         self.behaviourCallback = behaviourCallback
     }
 
-    func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse) {
+    func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse, index: Int, count: Int) {
         Exponea.logger.log(
             .verbose,
             message: "Tracking of Carousel Content Block \(contentBlock) show"
         )
         Exponea.shared.trackInAppContentBlockShown(placeholderId: placeholderId, message: contentBlock)
-        behaviourCallback?.onMessageShown(placeholderId: placeholderId, contentBlock: contentBlock)
+        behaviourCallback?.onMessageShown(placeholderId: placeholderId, contentBlock: contentBlock, index: index, count: count)
+    }
+
+    func onMessagesChanged(count: Int, messages: [InAppContentBlockResponse]) {
+        behaviourCallback?.onMessagesChanged(count: count, messages: messages)
     }
 
     func onNoMessageFound(placeholderId: String) {
