@@ -11,7 +11,7 @@ import Foundation
 public enum SegmentCategory: Hashable, Codable {
 
     case discovery(data: [SegmentDTO] = [])
-    case merchandise(data: [SegmentDTO] = [])
+    case merchandising(data: [SegmentDTO] = [])
     case content(data: [SegmentDTO] = [])
     case other
 
@@ -19,8 +19,8 @@ public enum SegmentCategory: Hashable, Codable {
         switch self {
         case .discovery:
             return "discovery_id"
-        case .merchandise:
-            return "merchandise_id"
+        case .merchandising:
+            return "merchandising_id"
         case .other:
             return "other_id"
         case .content:
@@ -32,8 +32,8 @@ public enum SegmentCategory: Hashable, Codable {
         switch self {
         case .discovery:
             return "discovery"
-        case .merchandise:
-            return "merchandise"
+        case .merchandising:
+            return "merchandising"
         case .other:
             return "other"
         case .content:
@@ -45,8 +45,8 @@ public enum SegmentCategory: Hashable, Codable {
         switch type.lowercased() {
         case "discovery":
             self = .discovery(data: data)
-        case "merchandise":
-            self = .merchandise(data: data)
+        case "merchandising":
+            self = .merchandising(data: data)
         case "content":
             self = .content(data: data)
         default:

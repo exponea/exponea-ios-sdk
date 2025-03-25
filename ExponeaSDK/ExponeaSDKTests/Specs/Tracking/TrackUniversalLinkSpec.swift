@@ -140,7 +140,6 @@ class TrackUniversalLinkSpec: QuickSpec {
                         exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
 
                         exponea.configure(plistName: "ExponeaConfig")
-                        exponea.processSavedCampaignData()
                         var trackEvents: [TrackEventProxy] = []
                         expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
                         expect { trackEvents.filter({ $0.eventType == "campaign_click" }).count }.to(equal(1))

@@ -74,14 +74,14 @@ final class MockExponeaImplementation: ExponeaInternal {
                     )
                 },
                 userDefaults: userDefaults,
+                campaignRepository: CampaignRepository(userDefaults: userDefaults),
                 onEventCallback: { type, event in
                     self.inAppMessagesManager?.onEventOccurred(of: type, for: event, triggerCompletion: nil)
                 }
             )
 
             self.inAppContentBlocksManager = InAppContentBlocksManager()
-
-            processSavedCampaignData()
+            self.campaignRepository = CampaignRepository(userDefaults: userDefaults)
         } catch {
             // Failing gracefully, if setup failed
             Exponea.logger.log(.error, message: """

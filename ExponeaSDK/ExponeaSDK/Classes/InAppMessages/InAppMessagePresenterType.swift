@@ -18,7 +18,7 @@ protocol InAppMessagePresenterType {
         timeout: TimeInterval?,
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
-        dismissCallback: @escaping TypeBlock<Bool>,
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void,
         presentedCallback: ((InAppMessageView?, String?) -> Void)?
     )
 }

@@ -36,7 +36,7 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.actions.contains(where: { $0.actionType == .unknown })).to(beTrue())
+            expect(result.actions.contains(where: { $0.actionType == .browser })).to(beTrue())
         }
 
         it("should find data link type - unknown") {
@@ -47,7 +47,7 @@ final class HtmlNormalizerSpec: QuickSpec {
             let result = HtmlNormalizer(rawHtml).normalize()
             expect(result.actions.contains(where: { $0.actionType == .deeplink })).to(beTrue())
         }
-        
+
         it("should find data link type - browser and deep-link") {
             let rawHtml = "<html><body>" +
                     "<div data-actiontype=\"browser\" data-link=\"https://example.com/1\">Action 1</div>" +
@@ -56,15 +56,16 @@ final class HtmlNormalizerSpec: QuickSpec {
             let result = HtmlNormalizer(rawHtml).normalize()
             expect(result.actions.filter({ $0.actionType == .deeplink || $0.actionType == .browser }).count).to(equal(2))
         }
-        
+
         it("should find Close and Action url") {
             let rawHtml = "<html><body>" +
                     "<div data-actiontype='close'>Close</div>" +
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.closeActionUrl).toNot(beNil())
-            expect(result.actions.count).to(equal(1))
+            expect(result.actions.count).to(equal(2))
+            expect(result.isActionUrl("https://example.com/1".cleanedURL())).to(beTrue())
+            expect(result.actions.contains { $0.actionType == .close }).to(beTrue())
         }
 
         it("should find Action url by datalink and ahref for same action") {
@@ -75,8 +76,9 @@ final class HtmlNormalizerSpec: QuickSpec {
             let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: false, ensureCloseButton: false)
             )
-            expect(result.closeActionUrl).to(beNil())
             expect(result.actions.count).to(equal(1))
+            expect(result.isActionUrl("https://example.com/1".cleanedURL())).to(beTrue())
+            expect(result.actions.contains { $0.actionType == .close }).to(beFalse())
         }
 
         it("should find Action url by datalink and ahref for multiple actions") {
@@ -87,8 +89,10 @@ final class HtmlNormalizerSpec: QuickSpec {
             let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: false, ensureCloseButton: false)
             )
-            expect(result.closeActionUrl).to(beNil())
             expect(result.actions.count).to(equal(2))
+            expect(result.isActionUrl("https://example.com/1".cleanedURL())).to(beTrue())
+            expect(result.isActionUrl("https://example.com/2".cleanedURL())).to(beTrue())
+            expect(result.actions.contains { $0.actionType == .close }).to(beFalse())
         }
 
         it("should remove target from ahref even if ahref accepted") {
@@ -98,13 +102,13 @@ final class HtmlNormalizerSpec: QuickSpec {
             let result = HtmlNormalizer(rawHtml).normalize(HtmlNormalizerConfig(
                 makeResourcesOffline: false, ensureCloseButton: false)
             )
-            expect(result.closeActionUrl).to(beNil())
             expect(result.actions.count).to(equal(1))
             guard let normalizedHtml = result.html else {
                 fail("Normalized HTML missing")
                 return
             }
             expect(normalizedHtml.contains("target")).to(beFalse())
+            expect(result.actions.contains { $0.actionType == .close }).to(beFalse())
         }
 
         it("should find Close and multiple Action url") {
@@ -114,8 +118,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/2'>Action 2</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.closeActionUrl).toNot(beNil())
-            expect(result.actions.count).to(equal(2))
+            expect(result.actions.count).to(equal(3))
+            expect(result.actions.contains { $0.actionType == .close }).to(beTrue())
         }
 
         it("should find browser action") {
@@ -123,8 +127,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.actions.count).to(equal(1))
-            expect(result.actions[0].actionUrl).to(equal("https://example.com/1"))
+            expect(result.actions.count).to(equal(2))
+            expect(result.actions.first { $0.actionType == .browser }?.actionUrl).to(equal("https://example.com/1"))
         }
 
         it("should find deeplink action") {
@@ -132,8 +136,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='message:%3C3358921718340173851@unknownmsgid%3E'>Action 1</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.actions.count).to(equal(1))
-            expect(result.actions[0].actionUrl).to(equal("message:%3C3358921718340173851@unknownmsgid%3E"))
+            expect(result.actions.count).to(equal(2))
+            expect(result.actions.first { $0.actionType == .deeplink }?.actionUrl).to(equal("message:%3C3358921718340173851@unknownmsgid%3E"))
         }
 
         it("should find Close and no Action url") {
@@ -141,8 +145,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-actiontype='close'>Close</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.closeActionUrl).toNot(beNil())
-            expect(result.actions.count).to(equal(0))
+            expect(result.actions.first { $0.actionType == .close }).toNot(beNil())
+            expect(result.actions.count).to(equal(1))
         }
 
         it("should find default Close and Action url") {
@@ -150,8 +154,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/1'>Action 1</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.closeActionUrl).toNot(beNil())    // default close
-            expect(result.actions.count).to(equal(1))
+            expect(result.actions.first { $0.actionType == .close }).toNot(beNil())    // default close
+            expect(result.actions.count).to(equal(2))
         }
 
         it("should find default Close and multiple Action url") {
@@ -160,8 +164,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div data-link='https://example.com/2'>Action 2</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.closeActionUrl).toNot(beNil())    // default close
-            expect(result.actions.count).to(equal(2))
+            expect(result.actions.first { $0.actionType == .close }).toNot(beNil())    // default close
+            expect(result.actions.count).to(equal(3))
         }
 
         it("should find default Close and no Action url") {
@@ -169,8 +173,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                     "<div>Hello world</div>" +
                     "</body></html>"
             let result = HtmlNormalizer(rawHtml).normalize()
-            expect(result.closeActionUrl).toNot(beNil())    // default close
-            expect(result.actions.count).to(equal(0))
+            expect(result.actions.first { $0.actionType == .close }).toNot(beNil())    // default close
+            expect(result.actions.count).to(equal(1))
         }
 
         it("should remove Javascript") {
@@ -223,7 +227,7 @@ final class HtmlNormalizerSpec: QuickSpec {
                 return
             }
             expect(normalizedHtml.contains("onclick")).to(equal(false))
-            expect(result.closeActionUrl).toNot(beNil())
+            expect(result.actions.first { $0.actionType == .close }).toNot(beNil())
         }
 
         it("should remove Title") {
@@ -313,8 +317,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                 return
             }
             expect(normalizedHtml.contains("https://example/hreftoremove")).to(equal(false))
-            expect(result.closeActionUrl).toNot(beNil())
-            expect(result.actions.count).to(equal(3))
+            expect(result.actions.first { $0.actionType == .close }).toNot(beNil())
+            expect(result.actions.count).to(equal(4))
         }
 
         it("should remove any Href attribute but keep anchor with data-link") {
@@ -341,8 +345,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                 return
             }
             expect(normalizedHtml.contains("https://example/hreftoremove")).to(equal(false))
-            expect(result.closeActionUrl).toNot(beNil())
-            expect(result.actions.count).to(equal(3))
+            expect(result.actions.first { $0.actionType == .close }).toNot(beNil())
+            expect(result.actions.count).to(equal(4))
         }
 
         it("should remove any Href attribute but keep anchor with data-link as prior") {
@@ -369,8 +373,8 @@ final class HtmlNormalizerSpec: QuickSpec {
                 return
             }
             expect(normalizedHtml.contains("https://example/hreftoremove")).to(equal(false))
-            expect(result.closeActionUrl).toNot(beNil())
-            expect(result.actions.count).to(equal(3))
+            expect(result.actions.first { $0.actionType == .close }).toNot(beNil())
+            expect(result.actions.count).to(equal(4))
             expect(result.actions.contains { $0.actionUrl == "https://example.com/anchor2" }).to(beTrue())
             expect(result.actions.contains { $0.actionUrl == "https://example.com/anchor" }).to(beFalse())
         }

@@ -97,11 +97,11 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             payloadHtml: nil,
                             image: UIImage()
                         ) { _ in }
-                        dismissCallback: { isUserInteraction in
+                        dismissCallback: { isUserInteraction, _ in
                             expect(isUserInteraction).to(beTrue())
                         }
                         if let inAppMessageDialogView = view as? InAppMessageDialogView {
-                            inAppMessageDialogView.simulateClick()
+                            inAppMessageDialogView.closeButtonAction(InAppMessageActionButton())
                         }
                         presenter.presentInAppMessage(
                             messageType: messageType,
@@ -111,7 +111,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             timeout: nil,
                             imageData: lenaImageData,
                             actionCallback: { _ in },
-                            dismissCallback: { _ in },
+                            dismissCallback: { _, _ in },
                             presentedCallback: { presented, error in
                                 expect(presented).notTo(beNil())
                                 done()
@@ -130,7 +130,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             timeout: nil,
                             imageData: lenaImageData,
                             actionCallback: { _ in },
-                            dismissCallback: { _ in },
+                            dismissCallback: { _, _ in },
                             presentedCallback: { presented, error in
                                 expect(presented).to(beNil())
                                 done()
@@ -150,7 +150,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             timeout: nil,
                             imageData: "something".data(using: .utf8)!,
                             actionCallback: { _ in },
-                            dismissCallback: { _ in },
+                            dismissCallback: { _, _ in },
                             presentedCallback: { presented, error in
                                 expect(presented).to(beNil())
                                 done()
@@ -171,7 +171,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             timeout: nil,
                             imageData: lenaImageData,
                             actionCallback: { _ in },
-                            dismissCallback: { _ in},
+                            dismissCallback: { _, _ in },
                             presentedCallback: callback)
                     }
                     var presentedDialog: InAppMessageView?
@@ -188,7 +188,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             done()
                         })
                     }
-                    presentedDialog?.dismissCallback(false)
+                    presentedDialog?.dismissCallback(false, nil)
                     waitUntil(timeout: .seconds(5)) { done in
                         present({ presented, error in
                             expect(presented).notTo(beNil())

@@ -107,6 +107,35 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                 expect(period).to(equal(111))
                 expect(exponea.pushNotificationsDelegate).notTo(beNil())
             }
+
+            it("should allow single initialisation") {
+                let exponea = ExponeaInternal()
+                var initsCount = 0
+                var tokenWinner = ""
+                let group = DispatchGroup()
+                waitUntil(timeout: .seconds(10)) { done in
+                    for i in 0..<20 {
+                        DispatchQueue.global(qos: .background).async(group: group) {
+                            exponea.configure(
+                                Exponea.ProjectSettings(
+                                    projectToken: "mock-project-token-\(i)",
+                                    authorization: .none
+                                ),
+                                pushNotificationTracking: .disabled
+                            )
+                            if let conf = exponea.configuration,
+                               conf.projectToken == "mock-project-token-\(i)" {
+                                tokenWinner = conf.projectToken
+                            }
+                            initsCount += 1
+                            if initsCount == 20 {
+                                done()
+                            }
+                        }
+                    }
+                }
+                expect(exponea.configuration!.projectToken).to(equal(tokenWinner))
+            }
         }
     }
 }

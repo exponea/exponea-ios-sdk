@@ -130,15 +130,20 @@ public extension MessageItemCell {
             messageImage.isHidden = false
             DispatchQueue.global().async { [weak self] in
                 guard let self = self else { return }
-                guard let imageData = ImageUtils.tryDownloadImage(imageUrl),
-                    let image = ImageUtils.createImage(imageData: imageData, maxDimensionInPixels: 80) else {
+                let finalImage: UIImage
+                if let giftImage = UIImage.gifImageWithURL(imageUrl) {
+                    finalImage = giftImage
+                } else if let imageData = ImageUtils.tryDownloadImage(imageUrl),
+                    let image = ImageUtils.createImage(imageData: imageData, maxDimensionInPixels: 80) {
+                    finalImage = image
+                } else {
                     Exponea.logger.log(.error, message: "Image cannot be shown correctly")
                     onMain {
                         self.messageImage.isHidden = true
                     }
                     return
                 }
-                onMain(self.messageImage.image = image)
+                onMain(self.messageImage.image = finalImage)
             }
         } else {
             messageImage.isHidden = true

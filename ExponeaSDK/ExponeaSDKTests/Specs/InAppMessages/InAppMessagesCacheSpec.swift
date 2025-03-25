@@ -63,6 +63,15 @@ class InAppMessagesCacheSpec: QuickSpec {
                 expect(cache.hasImageData(at: "http://domain.com/image.jpg")).to(beTrue())
             }
 
+            it("should save image with long url") {
+                let cache = InAppMessagesCache()
+                let imageUrl = "https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/ae52a6e2-ca6a-4d8e-8944-532f952aae85/89b9944a-bad2-11ea-b5db-72089e4e0fc1/Cawila%20A-Champs%20Kamgane%202024/nl-teaser-a-champs-kampagne-800x800.jpg"
+                cache.saveImageData(at: imageUrl, data: "data".data(using: .utf8)!)
+                expect(cache.getImageData(at: imageUrl))
+                    .to(equal("data".data(using: .utf8)))
+                expect(cache.hasImageData(at: imageUrl)).to(beTrue())
+            }
+
             it("should delete images") {
                 let cache = InAppMessagesCache()
                 cache.saveImageData(at: "http://domain.com/image1.jpg", data: "data1".data(using: .utf8)!)

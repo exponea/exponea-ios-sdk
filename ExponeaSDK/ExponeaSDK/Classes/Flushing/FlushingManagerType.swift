@@ -12,7 +12,7 @@ protocol FlushingManagerType {
     var flushingMode: FlushingMode { get set }
 
     /// This method can be used to manually flush all available data to Exponea.
-    func flushData(completion: ((FlushResult) -> Void)?)
+    func flushData(isFromIdentify: Bool, completion: ((FlushResult) -> Void)?)
 
     func flushDataWith(delay: Double, completion: ((FlushResult) -> Void)?)
 
@@ -39,7 +39,11 @@ public enum FlushResult {
 
 extension FlushingManagerType {
     func flushData() {
-        flushData(completion: nil)
+        flushData(isFromIdentify: false, completion: nil)
+    }
+    
+    func flushData(isFromIdentify: Bool = false, completion: ((FlushResult) -> Void)? = nil) {
+        flushData(isFromIdentify: isFromIdentify, completion: completion)
     }
 
     func flushDataWith(delay: Double) {

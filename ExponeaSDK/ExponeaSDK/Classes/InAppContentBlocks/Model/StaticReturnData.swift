@@ -9,6 +9,7 @@
 import Foundation
 
 public struct StaticReturnData {
+    public var id = UUID()
     public let html: String
     public let tag: Int
     public var message: InAppContentBlockResponse?

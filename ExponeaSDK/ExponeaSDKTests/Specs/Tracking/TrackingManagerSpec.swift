@@ -49,6 +49,7 @@ class TrackingManagerSpec: QuickSpec {
                     inAppMessageManager: nil,
                     trackManagerInitializator: { _ in },
                     userDefaults: userDefaults,
+                    campaignRepository: CampaignRepository(userDefaults: userDefaults),
                     onEventCallback: { type, event in
                         
                     }
@@ -283,7 +284,7 @@ class TrackingManagerSpec: QuickSpec {
 
                 it("should track close in-app message event") {
                     trackingManager.track(
-                        .close,
+                        .close(buttonLabel: nil),
                         for: SampleInAppMessage.getSampleInAppMessage(),
                         trackingAllowed: true
                     )

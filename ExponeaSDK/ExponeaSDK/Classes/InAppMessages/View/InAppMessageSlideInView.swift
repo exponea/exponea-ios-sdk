@@ -13,7 +13,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     private let payload: InAppMessagePayload
     private let image: UIImage
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: TypeBlock<Bool>
+    let dismissCallback: (Bool, InAppMessagePayloadButton?) -> Void
 
     private let imageView: UIImageView = UIImageView()
 
@@ -31,12 +31,16 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     private var animationStartY: CGFloat {
         return (displayOnBottom ? 1 : -1 ) * 2 * frame.height
     }
+    
+    var isPresented: Bool {
+        return superview != nil
+    }
 
     init(
         payload: InAppMessagePayload,
         image: UIImage,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping TypeBlock<Bool>
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void
     ) {
         self.payload = payload
         self.image = image
@@ -80,8 +84,17 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
         animateIn()
     }
 
-    func dismiss(isUserInteraction: Bool) {
-        self.dismissCallback(isUserInteraction)
+    func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?) {
+        dismissCallback(isUserInteraction, cancelButton)
+        dismissFromSuperView()
+    }
+    
+    func dismiss(actionButton: InAppMessagePayloadButton) {
+        actionCallback(actionButton)
+        dismissFromSuperView()
+    }
+    
+    func dismissFromSuperView() {
         guard superview != nil else {
             return
         }
@@ -91,25 +104,21 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     }
 
     @objc func handleSwipe(gesture: UISwipeGestureRecognizer) {
-        self.dismissCallback(true)
-        animateOut {
-            self.removeFromSuperview()
-        }
+        dismiss(isUserInteraction: true, cancelButton: nil)
     }
 
     @objc func actionButtonAction(_ sender: InAppMessageActionButton) {
         guard let payload = sender.payload else {
             return
         }
-        removeFromSuperview()
-        actionCallback(payload)
+        dismiss(actionButton: payload)
     }
 
-    @objc func cancelButtonAction(_ sender: Any) {
-        self.dismissCallback(true)
-        animateOut {
-            self.removeFromSuperview()
+    @objc func cancelButtonAction(_ sender: InAppMessageActionButton) {
+        guard let cancelButtonPayload = sender.payload else {
+            return
         }
+        dismiss(isUserInteraction: true, cancelButton: cancelButtonPayload)
     }
 
     func animateIn(completion: (() -> Void)? = nil) {

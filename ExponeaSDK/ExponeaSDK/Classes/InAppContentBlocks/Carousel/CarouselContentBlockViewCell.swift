@@ -11,7 +11,7 @@ import WebKit
 
 class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
-    private let webview = WKWebView()
+    var webview = WKWebView()
     var assignedMessage: InAppContentBlockResponse?
     var placeholder: String = ""
     var actionClicked: EmptyBlock?
@@ -22,7 +22,7 @@ class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        
+
         contentBlockCarouselCallback = nil
         assignedMessage = nil
     }
@@ -97,7 +97,7 @@ class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
         guard let message = assignedMessage else {
             return true
         }
-        let webAction: WebActionManager = .init { [weak self] in
+        let webAction: WebActionManager = .init { [weak self] _ in
             guard let self else { return }
             InAppContentBlocksManager.manager.updateInteractedState(for: message.id)
             self.contentBlockCarouselCallback?.onCloseClicked(placeholderId: self.placeholder, contentBlock: message)
@@ -143,14 +143,8 @@ class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
             return .browser
         case .deeplink:
             return .deeplink
-        case .unknown:
-            if action.actionUrl == "https://exponea.com/close_action" {
-                return .close
-            }
-            if action.actionUrl.starts(with: "http://") || action.actionUrl.starts(with: "https://") {
-                return .browser
-            }
-            return .deeplink
+        case .close:
+            return .close
         }
     }
 }
