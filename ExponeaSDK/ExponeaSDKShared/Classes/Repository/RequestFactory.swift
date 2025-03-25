@@ -30,7 +30,7 @@ public struct RequestFactory {
         case .campaignClick:
             return baseUrl + "/track/v2/projects/\(projectToken)/campaigns/clicks"
         case .inAppMessages:
-            return baseUrl + "/webxp/s/\(projectToken)/inappmessages?v=1"
+            return baseUrl + "/webxp/s/\(projectToken)/inappmessages?compatibility=3"
         case .pushSelfCheck:
             return baseUrl + "/campaigns/send-self-check-notification?project_id=\(projectToken)"
         case .appInbox:

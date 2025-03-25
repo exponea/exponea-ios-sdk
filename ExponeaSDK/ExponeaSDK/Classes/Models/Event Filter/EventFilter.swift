@@ -32,7 +32,7 @@ public enum EventFilterError: LocalizedError {
     }
 }
 
-public struct EventFilter: Codable, Equatable {
+public struct EventFilter: Codable, Equatable, Sendable {
     internal static let anyOperatorCount: Int = -1
 
     public let eventType: String
@@ -56,7 +56,7 @@ public struct EventFilter: Codable, Equatable {
     }
 }
 
-public struct EventPropertyFilter: Equatable {
+public struct EventPropertyFilter: Equatable, Sendable {
     let attribute: EventFilterAttribute
     let constraint: EventFilterConstraint
 

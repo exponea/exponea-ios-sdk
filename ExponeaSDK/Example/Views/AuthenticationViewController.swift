@@ -8,6 +8,7 @@
 
 import UIKit
 import ExponeaSDK
+import SwiftUI
 
 class AuthenticationViewController: UIViewController {
 

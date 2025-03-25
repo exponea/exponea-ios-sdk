@@ -161,21 +161,22 @@ class ExponeaSpec: QuickSpec {
 
             context("Setting automaticSessionTracking after configuration") {
                 let initExpectation = self.expectation(description: "Exponea automaticSessionTracking init")
-                
                 let exponea = ExponeaInternal().onInitSucceeded {
                     initExpectation.fulfill()
                 }
                 Exponea.shared = exponea
                 Exponea.shared.configure(plistName: "ExponeaConfig")
                 wait(for: [initExpectation], timeout: 10)
-                expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
-                exponea.setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking.disabled)
-                expect(exponea.configuration?.automaticSessionTracking).to(equal(false))
-                exponea.setAutomaticSessionTracking(
-                    automaticSessionTracking: Exponea.AutomaticSessionTracking.enabled(timeout: 30.0)
-                )
-                expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
-                expect(exponea.configuration?.sessionTimeout).to(equal(30))
+                it("should configure automaticSessionTracking correctly") {
+                    expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
+                    exponea.setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking.disabled)
+                    expect(exponea.configuration?.automaticSessionTracking).to(equal(false))
+                    exponea.setAutomaticSessionTracking(
+                        automaticSessionTracking: Exponea.AutomaticSessionTracking.enabled(timeout: 30.0)
+                    )
+                    expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
+                    expect(exponea.configuration?.sessionTimeout).to(equal(30))
+                }
             }
 
             context("Setting pushNotificationsDelegate") {

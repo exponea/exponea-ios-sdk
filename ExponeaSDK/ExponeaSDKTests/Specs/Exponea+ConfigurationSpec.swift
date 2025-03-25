@@ -29,16 +29,20 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                     ),
                     pushNotificationTracking: .disabled
                 )
-                expect(exponea.configuration!.projectMapping).to(beNil())
-                expect(exponea.configuration!.projectToken).to(equal("mock-project-token"))
-                expect(exponea.configuration!.baseUrl).to(equal(Constants.Repository.baseUrl))
-                expect(exponea.configuration!.defaultProperties).to(beNil())
-                expect(exponea.configuration!.sessionTimeout).to(equal(Constants.Session.defaultTimeout))
-                expect(exponea.configuration!.automaticSessionTracking).to(equal(true))
-                expect(exponea.configuration!.automaticPushNotificationTracking).to(equal(false))
-                expect(exponea.configuration!.tokenTrackFrequency).to(equal(.onTokenChange))
-                expect(exponea.configuration!.appGroup).to(beNil())
-                expect(exponea.configuration!.flushEventMaxRetries).to(equal(Constants.Session.maxRetries))
+                guard let configuration = exponea.configuration else {
+                    XCTFail("Nil configuration")
+                    return
+                }
+                expect(configuration.projectMapping).to(beNil())
+                expect(configuration.projectToken).to(equal("mock-project-token"))
+                expect(configuration.baseUrl).to(equal(Constants.Repository.baseUrl))
+                expect(configuration.defaultProperties).to(beNil())
+                expect(configuration.sessionTimeout).to(equal(Constants.Session.defaultTimeout))
+                expect(configuration.automaticSessionTracking).to(equal(true))
+                expect(configuration.automaticPushNotificationTracking).to(equal(false))
+                expect(configuration.tokenTrackFrequency).to(equal(.onTokenChange))
+                expect(configuration.appGroup).to(beNil())
+                expect(configuration.flushEventMaxRetries).to(equal(Constants.Session.maxRetries))
                 guard case .immediate = exponea.flushingMode else {
                     XCTFail("Incorect flushing mode")
                     return
@@ -148,6 +152,17 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                     expect(sdkInitMessageCount).to(equal(1))
                     if sdkInitMessageCount != 1 {
                         break
+                    }
+                    if let conf = exponea.configuration {
+                        expect(conf.projectToken).to(equal(tokenWinner))
+                        expect(exponea.configuration!.projectToken).to(equal(tokenWinner))
+                        expect(sdkInitMessageCount).to(equal(1))
+                        if sdkInitMessageCount != 1 {
+                            break
+                        }
+                        if let conf = exponea.configuration {
+                            expect(conf.projectToken).to(equal(tokenWinner))
+                        }
                     }
                 }
             }

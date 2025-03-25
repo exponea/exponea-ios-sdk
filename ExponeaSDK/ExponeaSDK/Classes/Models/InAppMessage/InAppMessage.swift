@@ -9,6 +9,10 @@
 import Foundation
 
 public struct InAppMessage: Codable, Equatable {
+    public static func == (lhs: InAppMessage, rhs: InAppMessage) -> Bool {
+        lhs.id == rhs.id
+    }
+
     public let id: String
     public let name: String
     public let rawMessageType: String?
@@ -23,10 +27,12 @@ public struct InAppMessage: Codable, Equatable {
     }
     public var rawFrequency: String
     public var frequency: InAppMessageFrequency? { return InAppMessageFrequency(rawValue: rawFrequency) }
-    public let payload: InAppMessagePayload?
+    public var payload: RichInAppMessagePayload?
+    public var oldPayload: InAppMessagePayload?
     public let payloadHtml: String?
     public let isHtml: Bool
     public let variantId: Int
+    private let isRichText: Bool
     public let variantName: String
     public let trigger: EventFilter
     public let dateFilter: DateFilter
@@ -40,13 +46,15 @@ public struct InAppMessage: Codable, Equatable {
         return rawHasTrackingConsent ?? true
     }
     public var consentCategoryTracking: String?
+    public var downloadedImage: UIImage?
 
     public init(
         id: String,
         name: String,
         rawMessageType: String?,
         rawFrequency: String,
-        payload: InAppMessagePayload? = nil,
+        payload: RichInAppMessagePayload? = nil,
+        oldPayload: InAppMessagePayload? = nil,
         variantId: Int,
         variantName: String,
         trigger: EventFilter,
@@ -57,7 +65,8 @@ public struct InAppMessage: Codable, Equatable {
         payloadHtml: String?,
         isHtml: Bool?,
         hasTrackingConsent: Bool?,
-        consentCategoryTracking: String?
+        consentCategoryTracking: String?,
+        isRichText: Bool
     ) {
         self.id = id
         self.name = name
@@ -71,10 +80,59 @@ public struct InAppMessage: Codable, Equatable {
         self.delayMS = delayMS
         self.timeoutMS = timeoutMS
         self.payload = payload
+        self.oldPayload = oldPayload
         self.payloadHtml = payloadHtml
         self.isHtml = isHtml ?? false
         self.rawHasTrackingConsent = hasTrackingConsent
         self.consentCategoryTracking = consentCategoryTracking
+        self.isRichText = isRichText
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.rawMessageType = try container.decodeIfPresent(String.self, forKey: .rawMessageType)
+        self.rawFrequency = try container.decode(String.self, forKey: .rawFrequency)
+        self.isRichText = try container.decode(Bool.self, forKey: .isRichText)
+        if let isRichText = try? container.decodeIfPresent(Bool.self, forKey: .isRichText), isRichText {
+            self.payload = try container.decodeIfPresent(RichInAppMessagePayload.self, forKey: .payload)
+        } else {
+            self.oldPayload = try container.decodeIfPresent(InAppMessagePayload.self, forKey: .payload)
+        }
+        self.variantId = try container.decode(Int.self, forKey: .variantId)
+        self.variantName = try container.decode(String.self, forKey: .variantName)
+        self.trigger = try container.decode(EventFilter.self, forKey: .trigger)
+        self.dateFilter = try container.decode(DateFilter.self, forKey: .dateFilter)
+        self.priority = try container.decodeIfPresent(Int.self, forKey: .priority)
+        self.delayMS = try container.decodeIfPresent(Int.self, forKey: .delayMS)
+        self.timeoutMS = try container.decodeIfPresent(Int.self, forKey: .timeoutMS)
+        self.payloadHtml = try container.decodeIfPresent(String.self, forKey: .payloadHtml)
+        self.isHtml = try container.decode(Bool.self, forKey: .isHtml)
+        self.rawHasTrackingConsent = try container.decodeIfPresent(Bool.self, forKey: .rawHasTrackingConsent)
+        self.consentCategoryTracking = try container.decodeIfPresent(String.self, forKey: .consentCategoryTracking)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.id, forKey: .id)
+        try container.encode(self.name, forKey: .name)
+        try container.encodeIfPresent(self.rawMessageType, forKey: .rawMessageType)
+        try container.encode(self.rawFrequency, forKey: .rawFrequency)
+        try container.encodeIfPresent(self.payload, forKey: .payload)
+        try container.encodeIfPresent(self.oldPayload, forKey: .payload)
+        try container.encode(self.isRichText, forKey: .isRichText)
+        try container.encode(self.variantId, forKey: .variantId)
+        try container.encode(self.variantName, forKey: .variantName)
+        try container.encode(self.trigger, forKey: .trigger)
+        try container.encode(self.dateFilter, forKey: .dateFilter)
+        try container.encodeIfPresent(self.priority, forKey: .priority)
+        try container.encodeIfPresent(self.delayMS, forKey: .delayMS)
+        try container.encodeIfPresent(self.timeoutMS, forKey: .timeoutMS)
+        try container.encodeIfPresent(self.payloadHtml, forKey: .payloadHtml)
+        try container.encode(self.isHtml, forKey: .isHtml)
+        try container.encodeIfPresent(self.rawHasTrackingConsent, forKey: .rawHasTrackingConsent)
+        try container.encodeIfPresent(self.consentCategoryTracking, forKey: .consentCategoryTracking)
     }
 
     enum CodingKeys: String, CodingKey {
@@ -83,6 +141,7 @@ public struct InAppMessage: Codable, Equatable {
         case rawMessageType = "message_type"
         case rawFrequency = "frequency"
         case payload
+        case isRichText = "is_rich_text"
         case variantId = "variant_id"
         case variantName = "variant_name"
         case trigger
@@ -166,7 +225,7 @@ public struct InAppMessage: Codable, Equatable {
     }
 
     func hasPayload() -> Bool {
-        payload != nil || (isHtml && payloadHtml != nil)
+        payload != nil || oldPayload != nil || (isHtml && payloadHtml != nil)
     }
 }
 

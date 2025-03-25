@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct InAppMessagesResponse: Codable {
+struct InAppMessagesResponse: Decodable {
     public let success: Bool
     public let data: [InAppMessage]?
 }

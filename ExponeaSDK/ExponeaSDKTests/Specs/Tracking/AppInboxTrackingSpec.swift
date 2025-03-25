@@ -16,6 +16,7 @@ import Quick
 
 final class AppInboxTrackingSpec: QuickSpec {
 
+    private let semaphore = DispatchSemaphore(value: 1)
     let configuration = try! Configuration(
         projectToken: "token",
         authorization: Authorization.none,
@@ -161,6 +162,8 @@ final class AppInboxTrackingSpec: QuickSpec {
 
         /// Creates a test message and goes through 'fetch process' to gain syncToken and customerId to be usable for next handling
         func fetchTestMessage(id: String, syncToken: String?) throws -> MessageItem {
+            semaphore.wait()
+            defer { semaphore.signal() }
             let response = AppInboxResponse(
                 success: true,
                 messages: [
@@ -170,7 +173,7 @@ final class AppInboxTrackingSpec: QuickSpec {
             )
             repository.fetchAppInboxResult = Result.success(response)
             var fetchedMessage: MessageItem?
-            waitUntil(timeout: .seconds(30)) { done in
+            waitUntil(timeout: .seconds(5)) { done in
                 appInboxManager.fetchAppInbox { result in
                     fetchedMessage = result.value?.first
                     done()

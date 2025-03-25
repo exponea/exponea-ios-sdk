@@ -13,7 +13,7 @@ import Foundation
 class MockLogger: Logger {
     public var messages: [String] = []
     override open func logMessage(_ message: String) {
-        messages.append(message)
         super.logMessage(message)
+        messages.append(message)
     }
 }

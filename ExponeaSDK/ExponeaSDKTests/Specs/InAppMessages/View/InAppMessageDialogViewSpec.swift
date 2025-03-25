@@ -13,7 +13,7 @@ import Quick
 
 final class InAppMessageDialogViewSpec: QuickSpec {
     override func spec() {
-        let payload = SampleInAppMessage.getSampleInAppMessage().payload
+        let payload = SampleInAppMessage.getSampleInAppMessage().oldPayload
         var image: UIImage!
 
         beforeEach {

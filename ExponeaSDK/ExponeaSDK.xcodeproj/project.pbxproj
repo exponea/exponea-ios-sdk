@@ -52,11 +52,7 @@
 		054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */; };
 		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */; };
-		055EAD242417CE3100E2F364 /* mock_notification_request.h in Headers */ = {isa = PBXBuildFile; fileRef = 05B97D302417CD4A00FE9309 /* mock_notification_request.h */; };
 		055EAD252417CE7900E2F364 /* ExponeaSDKTests.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */; };
-		055EAD262417CE9D00E2F364 /* mock_notification_response.h in Headers */ = {isa = PBXBuildFile; fileRef = 05A931ED2375A4EE00D45200 /* mock_notification_response.h */; };
-		055EAD272417CF3C00E2F364 /* mock_notification_response.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A931EE2375A50100D45200 /* mock_notification_response.m */; };
-		055EAD282417CF4700E2F364 /* mock_notification_request.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D252417B55400FE9309 /* mock_notification_request.m */; };
 		0561829B25AD959C001E30A3 /* ExponeaSDKShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 0561829925AD959C001E30A3 /* ExponeaSDKShared.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		056182AD25AD97E4001E30A3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757DF207CF99E00FE8C21 /* Constants.swift */; };
 		056182E725AD9E05001E30A3 /* ExponeaError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D9B07C20A3B24A0066FB1E /* ExponeaError.swift */; };
@@ -205,6 +201,17 @@
 		05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */; };
 		05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */; };
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
+		311268DB2CD10E9C00C38394 /* InAppButtonContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311268DA2CD10E9C00C38394 /* InAppButtonContainer.swift */; };
+		311268DD2CD1135900C38394 /* InAppButtonConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311268DC2CD1135900C38394 /* InAppButtonConfig.swift */; };
+		311268DF2CD1158100C38394 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 311268DE2CD1158100C38394 /* SwiftSoup */; };
+		311268E12CD1158900C38394 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 311268E02CD1158900C38394 /* SwiftSoup */; };
+		311557BF2CE9DEBD0027B481 /* InAppLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311557BD2CE9DEBD0027B481 /* InAppLabel.swift */; };
+		311557C22CE9DF070027B481 /* InAppImageComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311557C12CE9DF070027B481 /* InAppImageComponent.swift */; };
+		311557C42CEB3EE30027B481 /* InAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311557C32CEB3EE30027B481 /* InAppView.swift */; };
+		313444972CDA65B500931147 /* InAppCloseButtonComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313444962CDA65B500931147 /* InAppCloseButtonComponent.swift */; };
+		313C07042CD4EB8F0020DE64 /* InAppButtonContainerSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313C07032CD4EB8F0020DE64 /* InAppButtonContainerSwiftUI.swift */; };
+		313C07062CD4EBC10020DE64 /* InAppButtonSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313C07052CD4EBC10020DE64 /* InAppButtonSwiftUI.swift */; };
+		313C07082CD4EBDD0020DE64 /* InAppButtonContainerSwiftUIViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313C07072CD4EBDD0020DE64 /* InAppButtonContainerSwiftUIViewModel.swift */; };
 		313E30682C22B21200375D4B /* InAppContentBlockCarouselViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313E30672C22B21200375D4B /* InAppContentBlockCarouselViewController.swift */; };
 		314CF9272BD8F2820000EFD9 /* SegmentationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314CF9262BD8F2820000EFD9 /* SegmentationSpec.swift */; };
 		31513E292CA97F4700A975F8 /* ManualSegmentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31513E282CA97F4700A975F8 /* ManualSegmentationManager.swift */; };
@@ -218,9 +225,28 @@
 		3189E2E12C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E02C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift */; };
 		3189E2E32C4EBEFE00C4CD68 /* InAppCarouselStateType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189E2E22C4EBEFE00C4CD68 /* InAppCarouselStateType.swift */; };
 		318B552A2A80E52B00934902 /* DeeplinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B55292A80E52B00934902 /* DeeplinkManager.swift */; };
+		318EFF442D898984004C5E1F /* InAppImageComponentConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF432D898984004C5E1F /* InAppImageComponentConfig.swift */; };
+		318EFF462D8989EA004C5E1F /* SlideInAppImageComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF452D8989EA004C5E1F /* SlideInAppImageComponent.swift */; };
+		318EFF482D898A1E004C5E1F /* InAppLabelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF472D898A1E004C5E1F /* InAppLabelConfig.swift */; };
+		318EFF4A2D898A5A004C5E1F /* Sttring+calculatePaddings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF492D898A5A004C5E1F /* Sttring+calculatePaddings.swift */; };
+		318EFF4C2D898A74004C5E1F /* ButtonTextWithAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF4B2D898A74004C5E1F /* ButtonTextWithAttributedString.swift */; };
+		318EFF4E2D898A97004C5E1F /* UIFont+styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF4D2D898A97004C5E1F /* UIFont+styles.swift */; };
+		318EFF502D898AA7004C5E1F /* TextWithAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF4F2D898AA7004C5E1F /* TextWithAttributedString.swift */; };
+		318EFF522D898B30004C5E1F /* InAppButtonLayoutType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF512D898B30004C5E1F /* InAppButtonLayoutType.swift */; };
+		318EFF542D898B3C004C5E1F /* InAppButtonAlignmentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF532D898B3C004C5E1F /* InAppButtonAlignmentType.swift */; };
+		318EFF562D898B46004C5E1F /* InAppButtonMarginType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF552D898B46004C5E1F /* InAppButtonMarginType.swift */; };
+		318EFF582D898B53004C5E1F /* InAppButtonEdge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF572D898B53004C5E1F /* InAppButtonEdge.swift */; };
+		318EFF5A2D898B5F004C5E1F /* InAppButtonFontData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF592D898B5F004C5E1F /* InAppButtonFontData.swift */; };
+		318EFF5C2D898B9E004C5E1F /* InAppCloseButtonConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF5B2D898B9E004C5E1F /* InAppCloseButtonConfig.swift */; };
+		318EFF5E2D898BB2004C5E1F /* InAppModalTypeConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF5D2D898BB2004C5E1F /* InAppModalTypeConfig.swift */; };
+		318EFF602D898BC0004C5E1F /* MessagePosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF5F2D898BC0004C5E1F /* MessagePosition.swift */; };
+		318EFF622D898BE4004C5E1F /* InAppLayoutConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF612D898BE4004C5E1F /* InAppLayoutConfig.swift */; };
+		318EFF642D898BF1004C5E1F /* InAppViewConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF632D898BF1004C5E1F /* InAppViewConfig.swift */; };
 		319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */; };
 		31A1D21B2C6F8A6300606633 /* GiftHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A1D21A2C6F8A6300606633 /* GiftHelper.swift */; };
 		31A277DD2C74E08E00354CD2 /* GIFTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A277DC2C74E08E00354CD2 /* GIFTest.swift */; };
+		31B689542CEF4DE500C45E44 /* InAppDialogContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B689532CEF4DE500C45E44 /* InAppDialogContainerView.swift */; };
+		31B689562CEF537E00C45E44 /* ExponeaAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B689552CEF537E00C45E44 /* ExponeaAsyncImage.swift */; };
 		31C7B4242A822848001BA5E2 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4232A822848001BA5E2 /* Coordinator.swift */; };
 		31C7B4262A822FE7001BA5E2 /* ExponeaTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */; };
 		31CC0B742BD2519000608057 /* SegmentationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B732BD2519000608057 /* SegmentationManager.swift */; };
@@ -252,8 +278,6 @@
 		31EBB86D2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB86C2A6AC3570003AAA5 /* TrackManager+IdentifyCustomerSpec.swift */; };
 		3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3377ABFB29897F4C00E530FB /* ExpoInitManager.swift */; };
 		3384EFC629965EEB009A5981 /* Execute+AfterInit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3384EFC529965EEB009A5981 /* Execute+AfterInit.swift */; };
-		3388E6D129E8475B00F28C46 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
-		3388E6D229E8475C00F28C46 /* SwiftSoup.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33FC6CC229A90ED5001F113F /* OnMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC129A90ED5001F113F /* OnMain.swift */; };
 		33FC6CC429A910BA001F113F /* SafeIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC329A910BA001F113F /* SafeIndex.swift */; };
 		33FC6CC629A9123E001F113F /* Autolayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33FC6CC529A9123E001F113F /* Autolayout.swift */; };
@@ -269,7 +293,6 @@
 		55130C4B28DDCA6800B4FE77 /* TrackingConsentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4A28DDCA6800B4FE77 /* TrackingConsentManager.swift */; };
 		55130C4F28E3C50D00B4FE77 /* GdprTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C4E28E3C50D00B4FE77 /* GdprTrackingSpec.swift */; };
 		55130C5128E425D600B4FE77 /* TrackConsentManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */; };
-		551F651A2BAAD0FC0072B980 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
 		5524BD662B2B5DBE005CF699 /* ExponeaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EB5D9E20BB530000F1031F /* ExponeaType.swift */; };
 		552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */; };
 		552772CB28EDAF3A000ACFD5 /* AppInboxListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */; };
@@ -532,7 +555,6 @@
 			files = (
 				05F33B1B25C16DEF00CFD60A /* ExponeaSDKShared.framework in Embed Frameworks */,
 				05F33B1C25C16DEF00CFD60A /* ExponeaSDKObjC.framework in Embed Frameworks */,
-				3388E6D229E8475C00F28C46 /* SwiftSoup.xcframework in Embed Frameworks */,
 				C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */,
 				C0ED33BC21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Embed Frameworks */,
 			);
@@ -671,8 +693,6 @@
 		059A7A6B2581128100A53BAF /* InputStream+readFully.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InputStream+readFully.swift"; sourceTree = "<group>"; };
 		05A6A3EA23954654008475E7 /* InAppMessageDialogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDialogView.swift; sourceTree = "<group>"; };
 		05A7BB4E243B0DBE00680B2E /* DatabaseModel v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v5.xcdatamodel"; sourceTree = "<group>"; };
-		05A931ED2375A4EE00D45200 /* mock_notification_response.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mock_notification_response.h; sourceTree = "<group>"; };
-		05A931EE2375A50100D45200 /* mock_notification_response.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mock_notification_response.m; sourceTree = "<group>"; };
 		05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExponeaSDKTests.h; sourceTree = "<group>"; };
 		05AA63BB2342362B00D78452 /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
 		05AA63BD2342413E00D78452 /* NetworkStubbing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStubbing.swift; sourceTree = "<group>"; };
@@ -685,9 +705,7 @@
 		05B4D657238FF6DC00F5010F /* InAppMessageSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageSpec.swift; sourceTree = "<group>"; };
 		05B78B1D2355CAFA0055077A /* NSManagedObjectWithContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSManagedObjectWithContext.swift; sourceTree = "<group>"; };
 		05B97D202417B2C300FE9309 /* DeliveredNotificationTrackerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveredNotificationTrackerSpec.swift; sourceTree = "<group>"; };
-		05B97D252417B55400FE9309 /* mock_notification_request.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mock_notification_request.m; sourceTree = "<group>"; };
 		05B97D2C2417C95200FE9309 /* JSONConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONConvertible.swift; sourceTree = "<group>"; };
-		05B97D302417CD4A00FE9309 /* mock_notification_request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mock_notification_request.h; sourceTree = "<group>"; };
 		05BA5803250649F000E10994 /* PushOpenedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushOpenedData.swift; sourceTree = "<group>"; };
 		05BA580525064E4600E10994 /* PushOpenedDataSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushOpenedDataSpec.swift; sourceTree = "<group>"; };
 		05BA58072506542400E10994 /* DataType+Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataType+Codable.swift"; sourceTree = "<group>"; };
@@ -735,6 +753,15 @@
 		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		311268DA2CD10E9C00C38394 /* InAppButtonContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonContainer.swift; sourceTree = "<group>"; };
+		311268DC2CD1135900C38394 /* InAppButtonConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonConfig.swift; sourceTree = "<group>"; };
+		311557BD2CE9DEBD0027B481 /* InAppLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppLabel.swift; sourceTree = "<group>"; };
+		311557C12CE9DF070027B481 /* InAppImageComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppImageComponent.swift; sourceTree = "<group>"; };
+		311557C32CEB3EE30027B481 /* InAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppView.swift; sourceTree = "<group>"; };
+		313444962CDA65B500931147 /* InAppCloseButtonComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppCloseButtonComponent.swift; sourceTree = "<group>"; };
+		313C07032CD4EB8F0020DE64 /* InAppButtonContainerSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonContainerSwiftUI.swift; sourceTree = "<group>"; };
+		313C07052CD4EBC10020DE64 /* InAppButtonSwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonSwiftUI.swift; sourceTree = "<group>"; };
+		313C07072CD4EBDD0020DE64 /* InAppButtonContainerSwiftUIViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonContainerSwiftUIViewModel.swift; sourceTree = "<group>"; };
 		313E30672C22B21200375D4B /* InAppContentBlockCarouselViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockCarouselViewController.swift; sourceTree = "<group>"; };
 		314CF9262BD8F2820000EFD9 /* SegmentationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationSpec.swift; sourceTree = "<group>"; };
 		31513E282CA97F4700A975F8 /* ManualSegmentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualSegmentationManager.swift; sourceTree = "<group>"; };
@@ -748,9 +775,28 @@
 		3189E2E02C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselContentBlockViewCell.swift; sourceTree = "<group>"; };
 		3189E2E22C4EBEFE00C4CD68 /* InAppCarouselStateType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppCarouselStateType.swift; sourceTree = "<group>"; };
 		318B55292A80E52B00934902 /* DeeplinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeeplinkManager.swift; sourceTree = "<group>"; };
+		318EFF432D898984004C5E1F /* InAppImageComponentConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppImageComponentConfig.swift; sourceTree = "<group>"; };
+		318EFF452D8989EA004C5E1F /* SlideInAppImageComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideInAppImageComponent.swift; sourceTree = "<group>"; };
+		318EFF472D898A1E004C5E1F /* InAppLabelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppLabelConfig.swift; sourceTree = "<group>"; };
+		318EFF492D898A5A004C5E1F /* Sttring+calculatePaddings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sttring+calculatePaddings.swift"; sourceTree = "<group>"; };
+		318EFF4B2D898A74004C5E1F /* ButtonTextWithAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTextWithAttributedString.swift; sourceTree = "<group>"; };
+		318EFF4D2D898A97004C5E1F /* UIFont+styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+styles.swift"; sourceTree = "<group>"; };
+		318EFF4F2D898AA7004C5E1F /* TextWithAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWithAttributedString.swift; sourceTree = "<group>"; };
+		318EFF512D898B30004C5E1F /* InAppButtonLayoutType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonLayoutType.swift; sourceTree = "<group>"; };
+		318EFF532D898B3C004C5E1F /* InAppButtonAlignmentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonAlignmentType.swift; sourceTree = "<group>"; };
+		318EFF552D898B46004C5E1F /* InAppButtonMarginType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonMarginType.swift; sourceTree = "<group>"; };
+		318EFF572D898B53004C5E1F /* InAppButtonEdge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonEdge.swift; sourceTree = "<group>"; };
+		318EFF592D898B5F004C5E1F /* InAppButtonFontData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonFontData.swift; sourceTree = "<group>"; };
+		318EFF5B2D898B9E004C5E1F /* InAppCloseButtonConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppCloseButtonConfig.swift; sourceTree = "<group>"; };
+		318EFF5D2D898BB2004C5E1F /* InAppModalTypeConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppModalTypeConfig.swift; sourceTree = "<group>"; };
+		318EFF5F2D898BC0004C5E1F /* MessagePosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePosition.swift; sourceTree = "<group>"; };
+		318EFF612D898BE4004C5E1F /* InAppLayoutConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppLayoutConfig.swift; sourceTree = "<group>"; };
+		318EFF632D898BF1004C5E1F /* InAppViewConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppViewConfig.swift; sourceTree = "<group>"; };
 		319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationStoring.swift; sourceTree = "<group>"; };
 		31A1D21A2C6F8A6300606633 /* GiftHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftHelper.swift; sourceTree = "<group>"; };
 		31A277DC2C74E08E00354CD2 /* GIFTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFTest.swift; sourceTree = "<group>"; };
+		31B689532CEF4DE500C45E44 /* InAppDialogContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppDialogContainerView.swift; sourceTree = "<group>"; };
+		31B689552CEF537E00C45E44 /* ExponeaAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaAsyncImage.swift; sourceTree = "<group>"; };
 		31C7B4232A822848001BA5E2 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		31C7B4252A822FE7001BA5E2 /* ExponeaTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaTabBarController.swift; sourceTree = "<group>"; };
 		31CC0B732BD2519000608057 /* SegmentationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationManager.swift; sourceTree = "<group>"; };
@@ -1025,8 +1071,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */,
-				3388E6D129E8475B00F28C46 /* SwiftSoup.xcframework in Frameworks */,
 				C0ED33BB21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Frameworks */,
+				311268E12CD1158900C38394 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1034,8 +1080,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				551F651A2BAAD0FC0072B980 /* SwiftSoup.xcframework in Frameworks */,
 				55C08DCD2A4ED5EE000BA66A /* (null) in Frameworks */,
+				311268DF2CD1158100C38394 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1075,10 +1121,6 @@
 			children = (
 				05A931F22375AB1F00D45200 /* ExponeaSDKTests.h */,
 				F021E869206CF10200788ABC /* Info.plist */,
-				05B97D302417CD4A00FE9309 /* mock_notification_request.h */,
-				05B97D252417B55400FE9309 /* mock_notification_request.m */,
-				05A931ED2375A4EE00D45200 /* mock_notification_response.h */,
-				05A931EE2375A50100D45200 /* mock_notification_response.m */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -1434,6 +1476,7 @@
 		05CDD8332391147E00C7291A /* InAppMessages */ = {
 			isa = PBXGroup;
 			children = (
+				311268D92CD10E4D00C38394 /* Style */,
 				05D2D39D23DF023C00E3E79A /* View */,
 				053EC59A23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift */,
 				0580BBC823969D1F0058323D /* InAppMessagePresenter.swift */,
@@ -1562,6 +1605,41 @@
 				05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		311268D92CD10E4D00C38394 /* Style */ = {
+			isa = PBXGroup;
+			children = (
+				311557C12CE9DF070027B481 /* InAppImageComponent.swift */,
+				31B689552CEF537E00C45E44 /* ExponeaAsyncImage.swift */,
+				311557BD2CE9DEBD0027B481 /* InAppLabel.swift */,
+				318EFF4F2D898AA7004C5E1F /* TextWithAttributedString.swift */,
+				318EFF4B2D898A74004C5E1F /* ButtonTextWithAttributedString.swift */,
+				318EFF472D898A1E004C5E1F /* InAppLabelConfig.swift */,
+				311268DA2CD10E9C00C38394 /* InAppButtonContainer.swift */,
+				311268DC2CD1135900C38394 /* InAppButtonConfig.swift */,
+				318EFF592D898B5F004C5E1F /* InAppButtonFontData.swift */,
+				318EFF572D898B53004C5E1F /* InAppButtonEdge.swift */,
+				318EFF552D898B46004C5E1F /* InAppButtonMarginType.swift */,
+				318EFF532D898B3C004C5E1F /* InAppButtonAlignmentType.swift */,
+				318EFF512D898B30004C5E1F /* InAppButtonLayoutType.swift */,
+				313C07032CD4EB8F0020DE64 /* InAppButtonContainerSwiftUI.swift */,
+				313C07052CD4EBC10020DE64 /* InAppButtonSwiftUI.swift */,
+				313C07072CD4EBDD0020DE64 /* InAppButtonContainerSwiftUIViewModel.swift */,
+				313444962CDA65B500931147 /* InAppCloseButtonComponent.swift */,
+				318EFF5B2D898B9E004C5E1F /* InAppCloseButtonConfig.swift */,
+				311557C32CEB3EE30027B481 /* InAppView.swift */,
+				318EFF632D898BF1004C5E1F /* InAppViewConfig.swift */,
+				318EFF612D898BE4004C5E1F /* InAppLayoutConfig.swift */,
+				318EFF5F2D898BC0004C5E1F /* MessagePosition.swift */,
+				318EFF5D2D898BB2004C5E1F /* InAppModalTypeConfig.swift */,
+				31B689532CEF4DE500C45E44 /* InAppDialogContainerView.swift */,
+				318EFF432D898984004C5E1F /* InAppImageComponentConfig.swift */,
+				318EFF452D8989EA004C5E1F /* SlideInAppImageComponent.swift */,
+				318EFF492D898A5A004C5E1F /* Sttring+calculatePaddings.swift */,
+				318EFF4D2D898A97004C5E1F /* UIFont+styles.swift */,
+			);
+			path = Style;
 			sourceTree = "<group>";
 		};
 		314CF9252BD8F2620000EFD9 /* Segmentation */ = {
@@ -2358,8 +2436,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				055EAD252417CE7900E2F364 /* ExponeaSDKTests.h in Headers */,
-				055EAD262417CE9D00E2F364 /* mock_notification_response.h in Headers */,
-				055EAD242417CE3100E2F364 /* mock_notification_request.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2902,6 +2978,7 @@
 				C0F2406C20BC50A000CAF7CE /* ExponeaInternal+Fetching.swift in Sources */,
 				0567723B237462FB0082167C /* UIApplication+UIApplicationDelegating.swift in Sources */,
 				C0A6DEAE20EAC32700C5F744 /* DatabaseManager+DataType.swift in Sources */,
+				318EFF442D898984004C5E1F /* InAppImageComponentConfig.swift in Sources */,
 				05FEBDC023A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift in Sources */,
 				05BA5804250649F000E10994 /* PushOpenedData.swift in Sources */,
 				3189E2DF2C4B965100C4CD68 /* ContentBlockCarouselCallback.swift in Sources */,
@@ -2915,6 +2992,7 @@
 				31513E292CA97F4700A975F8 /* ManualSegmentationManager.swift in Sources */,
 				6BA73FED29B6377E009F92DF /* AtomicValue.swift in Sources */,
 				053E12CD23A26187009CEF03 /* RecommendationOptions.swift in Sources */,
+				318EFF622D898BE4004C5E1F /* InAppLayoutConfig.swift in Sources */,
 				01EC2DBD207E68BF0031BFEB /* DatabaseManager.swift in Sources */,
 				5568874C2A17598000498B40 /* ProgressBarStyle.swift in Sources */,
 				55C08DD32A568C74000BA66A /* FileUtils.swift in Sources */,
@@ -2923,6 +3001,7 @@
 				C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */,
 				5568874A2A17574A00498B40 /* ListScreenStyle.swift in Sources */,
 				5567C09629091B8E00318E68 /* AppInboxRequest.swift in Sources */,
+				318EFF462D8989EA004C5E1F /* SlideInAppImageComponent.swift in Sources */,
 				05F3EFF12382C757006E83F4 /* VSAppCenterAPIModel.swift in Sources */,
 				23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */,
 				31EBB85A2A6AC3020003AAA5 /* UsedInAppContentBlocks.swift in Sources */,
@@ -2935,6 +3014,7 @@
 				05F3EFDA237E9415006E83F4 /* ErrorData.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
 				05880538241682F8001AAE8A /* ExponeaInternal.swift in Sources */,
+				313C07042CD4EB8F0020DE64 /* InAppButtonContainerSwiftUI.swift in Sources */,
 				0564D14225ADE46300FDCAE5 /* ExponeaSharedExports.swift in Sources */,
 				31EBB8622A6AC3020003AAA5 /* InappContentBlocksDataProvider.swift in Sources */,
 				05F3EFCF237E926B006E83F4 /* CrashManager.swift in Sources */,
@@ -2948,18 +3028,22 @@
 				5567C092290809EB00318E68 /* MessageItemAction.swift in Sources */,
 				05B4D64C238FEB9200F5010F /* InAppMessagesResponse.swift in Sources */,
 				556887462A17570100498B40 /* TextViewStyle.swift in Sources */,
+				311557C42CEB3EE30027B481 /* InAppView.swift in Sources */,
 				C0A6DEA820EAC16900C5F744 /* Customer.swift in Sources */,
 				5568874E2A1759A000498B40 /* AppInboxListViewStyle.swift in Sources */,
 				B42DA68922B03F7700BBA225 /* Consent.swift in Sources */,
 				0591905B23EC1A170037BD88 /* EventFilterAttribute.swift in Sources */,
 				01EC2DBF207E68BF0031BFEB /* DatabaseModel.xcdatamodeld in Sources */,
+				318EFF642D898BF1004C5E1F /* InAppViewConfig.swift in Sources */,
 				05F3EFD3237E9291006E83F4 /* TelemetryStorage.swift in Sources */,
 				056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */,
 				05F3EFCD237E9260006E83F4 /* TelemetryManager.swift in Sources */,
+				318EFF5C2D898B9E004C5E1F /* InAppCloseButtonConfig.swift in Sources */,
 				3189E2E12C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift in Sources */,
 				55DA6EBE290AD5E900B5B285 /* AppInboxCacheType.swift in Sources */,
 				C0D9B07F20A3B8070066FB1E /* DatabaseManagerError.swift in Sources */,
 				31EBB85B2A6AC3020003AAA5 /* PersonalizedInAppContentBlockResponse.swift in Sources */,
+				31B689562CEF537E00C45E44 /* ExponeaAsyncImage.swift in Sources */,
 				31EBB8592A6AC3020003AAA5 /* InAppContentBlocksManager.swift in Sources */,
 				05CDD83B23911A1400C7291A /* InAppMessagesCacheType.swift in Sources */,
 				31EBB85E2A6AC3020003AAA5 /* CalculatorData.swift in Sources */,
@@ -2969,6 +3053,7 @@
 				552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */,
 				55DA6EBA290ABD4800B5B285 /* AppInboxManagerType.swift in Sources */,
 				55C08DCF2A5689F4000BA66A /* FileCacheType.swift in Sources */,
+				318EFF542D898B3C004C5E1F /* InAppButtonAlignmentType.swift in Sources */,
 				556887502A175A0900498B40 /* AppInboxListItemStyle.swift in Sources */,
 				31EBB85C2A6AC3020003AAA5 /* StaticReturnData.swift in Sources */,
 				315598082C09CAE500FBED42 /* CarouselInAppContentBlockView.swift in Sources */,
@@ -2980,6 +3065,7 @@
 				31EBB8572A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
 				CCB87B7828169C6C005DFB8E /* VersionChecker.swift in Sources */,
+				318EFF582D898B53004C5E1F /* InAppButtonEdge.swift in Sources */,
 				CC0C484D281935BC003E8BF8 /* ExponeaVersion.swift in Sources */,
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				559D97082962FCF0006D4499 /* ImageUtils.swift in Sources */,
@@ -2987,10 +3073,12 @@
 				05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */,
 				31EBB8562A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift in Sources */,
 				05F3EFE62382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift in Sources */,
+				318EFF5A2D898B5F004C5E1F /* InAppButtonFontData.swift in Sources */,
 				55A468D0296F154C00E62438 /* WebActionsManager.swift in Sources */,
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
 				B42DA68C22B03FBF00BBA225 /* ConsentSources.swift in Sources */,
 				5567C0942909196C00318E68 /* AppInboxResponse.swift in Sources */,
+				318EFF502D898AA7004C5E1F /* TextWithAttributedString.swift in Sources */,
 				C0A6DEA520EAC16900C5F744 /* TrackCustomer.swift in Sources */,
 				05B4D651238FEF3900F5010F /* InAppMessagePayload.swift in Sources */,
 				556887442A1756E500498B40 /* DetailViewStyle.swift in Sources */,
@@ -3006,9 +3094,11 @@
 				05CDD837239114F700C7291A /* InAppMessagesManagerType.swift in Sources */,
 				05BF1C7A23A1139B00FDC101 /* RecommendationResponse.swift in Sources */,
 				053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */,
+				313C07062CD4EBC10020DE64 /* InAppButtonSwiftUI.swift in Sources */,
 				057D476723C87F0B00AEE902 /* UrlOpenerType.swift in Sources */,
 				317536882BD27DEB0062A5E5 /* SegmentCategory.swift in Sources */,
 				CCB87B7E2816A6A6005DFB8E /* GitHubReleaseResponse.swift in Sources */,
+				318EFF562D898B46004C5E1F /* InAppButtonMarginType.swift in Sources */,
 				05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */,
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */,
@@ -3033,14 +3123,20 @@
 				CCB87B7A28169F4B005DFB8E /* VersionCheckRepository.swift in Sources */,
 				31EBB8602A6AC3020003AAA5 /* StaticQueueData.swift in Sources */,
 				053E12CB23A26098009CEF03 /* Recommendation.swift in Sources */,
+				31B689542CEF4DE500C45E44 /* InAppDialogContainerView.swift in Sources */,
+				313444972CDA65B500931147 /* InAppCloseButtonComponent.swift in Sources */,
+				318EFF4A2D898A5A004C5E1F /* Sttring+calculatePaddings.swift in Sources */,
 				31CC0B792BD255D300608057 /* SegmentationRequests.swift in Sources */,
+				318EFF5E2D898BB2004C5E1F /* InAppModalTypeConfig.swift in Sources */,
 				052979782419224500A90526 /* UNAuthorizationStatusProvider.swift in Sources */,
 				33FC6CCA29A9158F001F113F /* Reusable.swift in Sources */,
+				311557C22CE9DF070027B481 /* InAppImageComponent.swift in Sources */,
 				0591906223EC1CEC0037BD88 /* GenericOperators.swift in Sources */,
 				058DD92524112F5600E5BF91 /* FetchRepository.swift in Sources */,
 				F0E757EB207CFA9700FE8C21 /* RepositoryType.swift in Sources */,
 				319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */,
 				01EC2DBE207E68BF0031BFEB /* DatabaseManagerType.swift in Sources */,
+				318EFF482D898A1E004C5E1F /* InAppLabelConfig.swift in Sources */,
 				5524BD662B2B5DBE005CF699 /* ExponeaType.swift in Sources */,
 				55DA6EC0290AD65200B5B285 /* AppInboxCache.swift in Sources */,
 				0567723D237463650082167C /* UNUserNotificationCenter+UNUserNotificationCenterDelegating.swift in Sources */,
@@ -3058,14 +3154,19 @@
 				05F3EFD5237E92A4006E83F4 /* TelemetryUpload.swift in Sources */,
 				C0EB5D8E20B710A900F1031F /* Data+TokenString.swift in Sources */,
 				551301372D072338005C71C8 /* CampaignRepositoryType.swift in Sources */,
+				311268DB2CD10E9C00C38394 /* InAppButtonContainer.swift in Sources */,
 				C030AF4A216F4910004413F0 /* PushNotificationManager+UIResponder.swift in Sources */,
 				F0CA58F6207F612200C89A7F /* DeviceProperties.swift in Sources */,
 				C0F2407420BDA42600CAF7CE /* ExportFormat.swift in Sources */,
+				318EFF4E2D898A97004C5E1F /* UIFont+styles.swift in Sources */,
 				556887402A17564800498B40 /* AppInboxStyle.swift in Sources */,
 				0591906823EC1D2C0037BD88 /* BooleanOperators.swift in Sources */,
 				55D0543C2B2351A000BC773A /* InAppContentBlockAction.swift in Sources */,
 				05735EA323A3975100DA0FA9 /* FlushingManagerType.swift in Sources */,
+				318EFF4C2D898A74004C5E1F /* ButtonTextWithAttributedString.swift in Sources */,
+				313C07082CD4EBDD0020DE64 /* InAppButtonContainerSwiftUIViewModel.swift in Sources */,
 				0591906423EC1D030037BD88 /* StringOperators.swift in Sources */,
+				311557BF2CE9DEBD0027B481 /* InAppLabel.swift in Sources */,
 				31E9CBA22AE9494B00A333C8 /* URL+Init.swift in Sources */,
 				31EBB8552A6AC3020003AAA5 /* StaticInAppContentBlockView.swift in Sources */,
 				C0753E9720A5808C00A779FF /* NSPersistentContainer+Bundle.swift in Sources */,
@@ -3074,9 +3175,12 @@
 				C0A6DEA920EAC16900C5F744 /* TrackEvent.swift in Sources */,
 				31CC0B772BD251E200608057 /* SegmentationDataProvider.swift in Sources */,
 				0580BBC923969D1F0058323D /* InAppMessagePresenter.swift in Sources */,
+				318EFF602D898BC0004C5E1F /* MessagePosition.swift in Sources */,
 				33FC6CC229A90ED5001F113F /* OnMain.swift in Sources */,
+				311268DD2CD1135900C38394 /* InAppButtonConfig.swift in Sources */,
 				0580BBC7239698E60058323D /* UIColor+FromHexString.swift in Sources */,
 				31EBB8612A6AC3020003AAA5 /* InAppContentBlockContentType.swift in Sources */,
+				318EFF522D898B30004C5E1F /* InAppButtonLayoutType.swift in Sources */,
 				55EFD79F29224FFF002569FB /* AppInboxProvider.swift in Sources */,
 				05D2D39A23DEE60200E3E79A /* InAppMessageView.swift in Sources */,
 				C0EB5D9020B7F8A900F1031F /* DispatchQueue+OnceTracker.swift in Sources */,
@@ -3090,7 +3194,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				057F447F239908650070DF30 /* InAppMessagesManagerSpec.swift in Sources */,
-				055EAD272417CF3C00E2F364 /* mock_notification_response.m in Sources */,
 				05324BF023D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift in Sources */,
 				05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */,
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
@@ -3171,7 +3274,6 @@
 				05BB22B7236B300F0098C406 /* MockTrackingManager.swift in Sources */,
 				05B97D212417B2C400FE9309 /* DeliveredNotificationTrackerSpec.swift in Sources */,
 				05D2D3A023DF07E800E3E79A /* InAppMessageAlertViewSpec.swift in Sources */,
-				055EAD282417CF4700E2F364 /* mock_notification_request.m in Sources */,
 				0565CE0523F4216C0003FEA6 /* DataTypeSpec.swift in Sources */,
 				0591907723EC5F5A0037BD88 /* EventFilterConstraintSpec.swift in Sources */,
 				0591906D23EC45050037BD88 /* StringOperatorsSpec.swift in Sources */,
@@ -3988,6 +4090,19 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		311268DE2CD1158100C38394 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 552F73BC2A56E7ED0006659D /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
+		};
+		311268E02CD1158900C38394 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 552F73BC2A56E7ED0006659D /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */ = {

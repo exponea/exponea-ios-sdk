@@ -9,6 +9,9 @@
 import UIKit
 
 final class InAppMessageDialogView: UIViewController, InAppMessageView {
+    var showCallback: EmptyBlock?
+    
+    
     enum TextPosition {
         case top
         case bottom
@@ -17,7 +20,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     let payload: InAppMessagePayload
     let image: UIImage
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: (Bool, InAppMessagePayloadButton?) -> Void
+    var dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)>
     let fullscreen: Bool
 
     let dialogContainerView: UIView = UIView() // whole dialog
@@ -49,7 +52,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         payload: InAppMessagePayload,
         image: UIImage,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void,
+        dismissCallback: @escaping TypeBlock<(Bool, InAppMessagePayloadButton?)>,
         fullscreen: Bool
     ) {
         self.payload = payload
@@ -73,7 +76,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?) {
-        dismissCallback(isUserInteraction, cancelButton)
+        dismissCallback((isUserInteraction, cancelButton))
         dismissFromSuperView()
     }
 

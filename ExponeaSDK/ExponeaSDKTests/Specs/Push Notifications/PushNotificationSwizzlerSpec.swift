@@ -75,6 +75,51 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
             self.original = original
         }
     }
+    
+    fileprivate class TestNotificationCoder: NSCoder {
+
+        private enum FieldKey: String {
+            case date, request, sourceIdentifier, intentIdentifiers, notification, actionIdentifier, originIdentifier, targetConnectionEndpoint, targetSceneIdentifier
+        }
+        private let testIdentifier = "testIdentifier"
+        private let request: UNNotificationRequest
+        override var allowsKeyedCoding: Bool { true }
+
+        init(with request: UNNotificationRequest) {
+            self.request = request
+        }
+
+        override func decodeObject(forKey key: String) -> Any? {
+            let fieldKey = FieldKey(rawValue: key)
+            switch fieldKey {
+            case .date:
+                return Date()
+            case .request:
+                return request
+            case .sourceIdentifier, .actionIdentifier, .originIdentifier:
+                return testIdentifier
+            case .notification:
+                return UNNotification(coder: self)
+            default:
+                return nil
+            }
+        }
+    }
+    
+    private func mock_notification_response() -> UNNotificationResponse {
+        let content = UNMutableNotificationContent()
+        content.userInfo = [:]
+
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: content,
+            trigger: nil
+        )
+
+        let response = UNNotificationResponse(coder: TestNotificationCoder(with: request))!
+
+        return response
+    }
 
     // This simulates system calling notification opened
     // When app is opened use notification center delegate, otherwise app delegate
@@ -89,7 +134,7 @@ final class PushNotificationSwizzlerSpec: QuickSpec {
                class_getInstanceMethod(type(of: notificationDelegate), notificationDelegateSelector) != nil {
                 notificationCenter.delegate?.userNotificationCenter?(
                     UNUserNotificationCenter.current(),
-                    didReceive: mock_notification_response([:]),
+                    didReceive: mock_notification_response(),
                     withCompletionHandler: {}
                 )
                 return

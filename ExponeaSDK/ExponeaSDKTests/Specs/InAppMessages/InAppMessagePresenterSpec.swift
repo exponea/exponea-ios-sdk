@@ -93,9 +93,11 @@ final class InAppMessagePresenterSpec: QuickSpec {
                         let presenter = InAppMessagePresenter(window: window)
                         let view = try? presenter.createInAppMessageView(
                             messageType: .modal,
-                            payload: .init(imageUrl: "", title: "", titleTextColor: "", titleTextSize: "", bodyText: "", bodyTextColor: "", bodyTextSize: "", buttons: [], backgroundColor: "", closeButtonColor: "", messagePosition: "", textPosition: "", textOverImage: false),
+                            payload: nil,
+                            oldPayload: .init(imageUrl: "", title: "", titleTextColor: "", titleTextSize: "", bodyText: "", bodyTextColor: "", bodyTextSize: "", buttons: [], backgroundColor: "", closeButtonColor: "", messagePosition: "", textPosition: "", textOverImage: false),
                             payloadHtml: nil,
-                            image: UIImage()
+                            image: UIImage(),
+                            timeout: nil
                         ) { _ in }
                         dismissCallback: { isUserInteraction, _ in
                             expect(isUserInteraction).to(beTrue())
@@ -105,7 +107,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                         }
                         presenter.presentInAppMessage(
                             messageType: messageType,
-                            payload: message.payload,
+                            payload: nil,
+                            oldPayload: message.oldPayload,
                             payloadHtml: message.payloadHtml,
                             delay: 0,
                             timeout: nil,
@@ -124,7 +127,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                         let presenter = InAppMessagePresenter()
                         presenter.presentInAppMessage(
                             messageType: messageType,
-                            payload: message.payload,
+                            payload: nil,
+                            oldPayload: message.oldPayload,
                             payloadHtml: message.payloadHtml,
                             delay: 0,
                             timeout: nil,
@@ -144,7 +148,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                     waitUntil(timeout: .seconds(5)) { done in
                         InAppMessagePresenter().presentInAppMessage(
                             messageType: messageType,
-                            payload: message.payload,
+                            payload: nil,
+                            oldPayload: message.oldPayload,
                             payloadHtml: message.payloadHtml,
                             delay: 0,
                             timeout: nil,
@@ -165,7 +170,8 @@ final class InAppMessagePresenterSpec: QuickSpec {
                     let present = { callback in
                         presenter.presentInAppMessage(
                             messageType: messageType,
-                            payload: message.payload,
+                            payload: nil,
+                            oldPayload: message.oldPayload,
                             payloadHtml: message.payloadHtml,
                             delay: 0,
                             timeout: nil,
@@ -188,7 +194,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             done()
                         })
                     }
-                    presentedDialog?.dismissCallback(false, nil)
+                    presentedDialog?.dismissCallback((false, nil))
                     waitUntil(timeout: .seconds(5)) { done in
                         present({ presented, error in
                             expect(presented).notTo(beNil())
@@ -202,7 +208,7 @@ final class InAppMessagePresenterSpec: QuickSpec {
                             done()
                         })
                     }
-                    presentedDialog?.actionCallback(message.payload!.buttons![0])
+                    presentedDialog?.actionCallback(message.oldPayload!.buttons![0])
                     waitUntil(timeout: .seconds(5)) { done in
                         present({ presented, error in
                             expect(presented).notTo(beNil())

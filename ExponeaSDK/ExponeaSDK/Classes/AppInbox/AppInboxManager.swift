@@ -60,13 +60,15 @@ final class AppInboxManager: AppInboxManagerType {
             ) { result in
                 switch result {
                 case .success(let response):
-                    guard self.savedCustomerIds.last == nil ||
-                            Exponea.shared.trackingManager?.customerIds == self.savedCustomerIds.last
-                    else {
+                    guard self.savedCustomerIds.last == nil || Exponea.shared.trackingManager?.customerIds == self.savedCustomerIds.last else {
                         self.clear()
-                        let newCustomerIds = self.savedCustomerIds.last ?? [:]
+                        let newCustomerIds = self.savedCustomerIds.last
                         self.savedCustomerIds.removeAll()
-                        self.fetchAppInbox(customerIds: newCustomerIds, completion: completion)
+                        if let newCustomerIds {
+                            self.fetchAppInbox(customerIds: newCustomerIds, completion: completion)
+                        } else {
+                            completion(.failure(ExponeaError.stoppedProcess))
+                        }
                         return
                     }
                     self.savedCustomerIds.removeAll()

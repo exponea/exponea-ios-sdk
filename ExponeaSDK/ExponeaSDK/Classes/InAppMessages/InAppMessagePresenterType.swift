@@ -12,7 +12,8 @@ protocol InAppMessagePresenterType {
     var presenting: Bool { get set }
     func presentInAppMessage(
         messageType: InAppMessageType,
-        payload: InAppMessagePayload?,
+        payload: RichInAppMessagePayload?,
+        oldPayload: InAppMessagePayload?,
         payloadHtml: String?,
         delay: TimeInterval,
         timeout: TimeInterval?,

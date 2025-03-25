@@ -49,13 +49,35 @@ final class InAppMessagesCache: InAppMessagesCacheType {
 
     func getInAppMessages() -> [InAppMessage] {
         if let directory = getCacheDirectoryURL(),
-            let data = try? Data(
-                contentsOf: directory.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName)
-            ),
-            let inAppMessages = try? JSONDecoder().decode([InAppMessage].self, from: data) {
-            return inAppMessages
+           let data = try? Data(contentsOf: directory.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName)) {
+            do {
+                return try JSONDecoder().decode([InAppMessage].self, from: data)
+            } catch {
+                return []
+            }
         }
         return []
+    }
+
+    private func extractFont(base64: String?, size: CGFloat?) -> UIFont? {
+        if let base64 = base64,
+           let data = Data(base64Encoded: base64),
+           let dataProvider = CGDataProvider(data: data as CFData),
+           let cgFont = CGFont(dataProvider) {
+            var error: Unmanaged<CFError>?
+            if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
+                var fontToReturn: UIFont?
+                if let fontName = cgFont.postScriptName as? String {
+                    fontToReturn = UIFont(name: fontName, size: size ?? 13)
+                }
+                CTFontManagerUnregisterGraphicsFont(cgFont, &error)
+                return fontToReturn
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
     }
 
     func getInAppMessagesTimestamp() -> TimeInterval {
