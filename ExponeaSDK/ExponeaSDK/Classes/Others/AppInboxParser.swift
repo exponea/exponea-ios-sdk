@@ -80,18 +80,16 @@ final class AppInboxParser {
                         actionType = .browser
                     case .deeplink:
                         actionType = .deeplink
-                    case .unknown:
-                        if htmlAction.actionUrl.hasPrefix("http://") || htmlAction.actionUrl.hasPrefix("https://") {
-                            actionType = .browser
-                        } else {
-                            actionType = .deeplink
-                        }
+                    case .close:
+                        actionType = .noAction
                     }
-                    actions.append(MessageItemAction(
-                        action: actionType.rawValue,
-                        title: htmlAction.buttonText,
-                        url: htmlAction.actionUrl
-                    ))
+                    if actionType != .noAction {
+                        actions.append(MessageItemAction(
+                            action: actionType.rawValue,
+                            title: htmlAction.buttonText,
+                            url: htmlAction.actionUrl
+                        ))
+                    }
                 }
             }
             var trackingData: [String: JSONValue] = [:]

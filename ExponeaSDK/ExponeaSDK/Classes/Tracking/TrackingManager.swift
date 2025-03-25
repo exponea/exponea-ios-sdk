@@ -36,6 +36,7 @@ class TrackingManager {
 
     private var inAppMessageManager: InAppMessagesManagerType?
     private var flushingManager: FlushingManagerType
+    private var campaignRepository: CampaignRepositoryType
 
     // Manager for  session tracking
     private lazy var sessionManager: SessionManagerType = SessionManager(
@@ -76,12 +77,14 @@ class TrackingManager {
          inAppMessageManager: InAppMessagesManagerType?,
          trackManagerInitializator: (TrackingManager) -> (Void),
          userDefaults: UserDefaults,
+         campaignRepository: CampaignRepositoryType,
          onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) throws {
         self.repository = repository
         self.database = database
         self.device = device
         self.userDefaults = userDefaults
+        self.campaignRepository = campaignRepository
 
         self.flushingManager = flushingManager
         self.inAppMessageManager = inAppMessageManager
@@ -205,7 +208,7 @@ extension TrackingManager: TrackingManagerType {
                         try? self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
                         self.onEventCallback(type, payload)
                     }
-                    Exponea.shared.flushingManager?.flushData()
+                    Exponea.shared.flushingManager?.flushData(isFromIdentify: true)
                 default:
                     try storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
                     onEventCallback(type, payload)
@@ -335,8 +338,8 @@ extension TrackingManager: TrackingManagerType {
         track(.show, for: message, within: placeholderId, trackingAllowed: trackingAllowed)
     }
 
-    public func trackInAppMessageClose(message: InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
-        self.track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
+    public func trackInAppMessageClose(message: InAppMessage, closeButtonText: String?, trackingAllowed: Bool, isUserInteraction: Bool) {
+        self.track(.close(buttonLabel: closeButtonText), for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }
 
     public func trackInAppMessageError(message: InAppMessage, error: String, trackingAllowed: Bool) {
@@ -412,14 +415,18 @@ extension TrackingManager: TrackingManagerType {
 extension TrackingManager: SessionTrackingDelegate {
     func trackSessionStart(at timestamp: TimeInterval) {
         do {
+            var sessionEventData: [DataType] = [
+                .eventType(EventType.sessionStart.rawValue),
+                .customerIds(customerIds),
+                .properties(device.properties),
+                .timestamp(timestamp)
+            ]
+            if let campaignData = campaignRepository.popValid() {
+                sessionEventData.append(.properties(campaignData.trackingData))
+            }
             try track(
                 .sessionStart,
-                with: [
-                    .eventType(EventType.sessionStart.rawValue),
-                    .customerIds(customerIds),
-                    .properties(device.properties),
-                    .timestamp(timestamp)
-                ]
+                with: sessionEventData
             )
         } catch {
             Exponea.logger.log(.error, message: "Session start tracking error: \(error.localizedDescription)")
@@ -544,8 +551,13 @@ extension TrackingManager: InAppMessageTrackingDelegate {
         if case .click(let text, let url) = event {
             eventData["text"] = .string(text)
             eventData["link"] = .string(url)
-            if (GdprTracking.isTrackForced(url)) {
+            if GdprTracking.isTrackForced(url) {
                 eventData["tracking_forced"] = .bool(true)
+            }
+        }
+        if case .close(let text) = event {
+            if let text {
+                eventData["text"] = .string(text)
             }
         }
         if case .error(let errorMessage) = event {

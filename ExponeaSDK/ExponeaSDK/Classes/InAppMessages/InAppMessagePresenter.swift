@@ -29,7 +29,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         timeout: TimeInterval?,
         imageData: Data?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
-        dismissCallback: @escaping TypeBlock<Bool>,
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void,
         presentedCallback: ((InAppMessageView?, String?) -> Void)? = nil
     ) {
         Exponea.logger.log(
@@ -46,7 +46,9 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     }
                     var image: UIImage?
                     if let imageData = imageData {
-                        if let createdImage = self.createImage(
+                        if let gifImage = UIImage.gifImageWithData(imageData) {
+                            image = gifImage
+                        } else if let createdImage = self.createImage(
                             imageData: imageData,
                             maxDimensionInPixels: self.getMaxScreenDimension()
                         ) {
@@ -74,9 +76,9 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                                 self.presenting = false
                                 actionCallback(button)
                             },
-                            dismissCallback: { isUserInteraction in
+                            dismissCallback: { isUserInteraction, cancelButtonPayload in
                                 self.presenting = false
-                                dismissCallback(isUserInteraction)
+                                dismissCallback(isUserInteraction, cancelButtonPayload)
                             }
                         )
                         try inAppMessageView.present(
@@ -84,7 +86,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                             window: self.window ?? UIApplication.shared.keyWindow
                         )
                         self.presenting = true
-                        Exponea.logger.log(.error, message: "In-app message presented.")
+                        Exponea.logger.log(.verbose, message: "In-app message presented.")
                         self.setMessageTimeout(inAppMessageView: inAppMessageView, timeout: timeout)
                         presentedCallback?(inAppMessageView, nil)
                     } catch {
@@ -104,7 +106,14 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         }
         if let messageTimeout = messageTimeout {
             DispatchQueue.main.asyncAfter(deadline: .now() + messageTimeout) {
-                inAppMessageView.dismiss(isUserInteraction: false)
+                if !inAppMessageView.isPresented {
+                    Exponea.logger.log(
+                        .verbose,
+                        message: "In-app delayed close is skipped because view is not presented"
+                    )
+                    return
+                }
+                inAppMessageView.dismiss(isUserInteraction: false, cancelButton: nil)
             }
         }
     }
@@ -115,7 +124,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         payloadHtml: String?,
         image: UIImage?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
-        dismissCallback: @escaping TypeBlock<Bool>
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void
     ) throws -> InAppMessageView {
         switch messageType {
         case .alert:

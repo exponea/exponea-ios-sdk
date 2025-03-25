@@ -19,7 +19,7 @@ final class InAppMessageAlertViewSpec: QuickSpec {
             let alertController = try! InAppMessageAlertView(
                 payload: payload!,
                 actionCallback: { _ in },
-                dismissCallback: { _ in }
+                dismissCallback: { _, _ in }
             ).alertController
             expect(alertController.title).to(equal(payload?.title))
             expect(alertController.message).to(equal(payload?.bodyText))

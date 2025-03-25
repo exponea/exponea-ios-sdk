@@ -9,7 +9,7 @@
 import Foundation
 
 enum InAppMessageEvent: Equatable {
-    case close
+    case close(buttonLabel: String?)
     case show
     case click(buttonLabel: String, url: String)
     case error(message: String)

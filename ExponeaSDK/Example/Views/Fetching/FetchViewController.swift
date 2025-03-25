@@ -35,6 +35,18 @@ class FetchViewController: UIViewController {
 
     typealias MyRecommendationResponse = RecommendationResponse<MyRecommendation>
 
+    @IBAction func segment(_ sender: Any) {
+        Exponea.shared.getSegments(force: true, category: .content()) { data in
+            DispatchQueue.main.async {
+                let alertController = UIAlertController(title: "Segment", message: data.map { segment in
+                    "id: \(segment.id), segmentationId: \(segment.segmentationId)\n"
+                }.joined(), preferredStyle: .alert)
+                alertController.addAction(.init(title: "Ok", style: .default))
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
+    }
+
     @IBAction func fetchRecommendation(_ sender: Any) {
         let alertController = UIAlertController(title: "Input Recommendation ID", message: "", preferredStyle: .alert)
         alertController.addTextField { (textField: UITextField!) -> Void in

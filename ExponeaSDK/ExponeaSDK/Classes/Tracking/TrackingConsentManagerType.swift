@@ -10,7 +10,7 @@ import Foundation
 
 protocol TrackingConsentManagerType {
     func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?, mode: MODE, isUserInteraction: Bool)
-    func trackInAppMessageClose(message: InAppMessage, mode: MODE, isUserInteraction: Bool)
+    func trackInAppMessageClose(message: InAppMessage, buttonText: String?, mode: MODE, isUserInteraction: Bool)
     func trackInAppMessageShown(message: InAppMessage, mode: MODE)
     func trackInAppMessageError(message: InAppMessage, error: String, mode: MODE)
     func trackClickedPush(data: AnyObject?, mode: MODE)

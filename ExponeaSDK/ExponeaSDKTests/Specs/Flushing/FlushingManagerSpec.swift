@@ -218,6 +218,82 @@ class FlushingManagerSpec: QuickSpec {
                     flushingManager.flushData()
                 }
             }
+
+            it("should invoke inAppRefreshCallback when isFromIdentify is true and database is empty") {
+                var inAppRefreshCallbackInvoked = false
+                flushingManager.inAppRefreshCallback = {
+                    inAppRefreshCallbackInvoked = true
+                }
+                waitUntil(timeout: .seconds(5)) { done in
+                    NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 200)
+                    flushingManager.flushData(isFromIdentify: true, completion: { _ in done() })
+                }
+                expect(inAppRefreshCallbackInvoked).to(beTrue())
+            }
+
+            it("should invoke inAppRefreshCallback when isFromIdentify is true and database contains event") {
+                var inAppRefreshCallbackInvoked = false
+                flushingManager.inAppRefreshCallback = {
+                    inAppRefreshCallbackInvoked = true
+                }
+                try! database.trackEvent(with: eventData, into: configuration.mainProject)
+                waitUntil(timeout: .seconds(5)) { done in
+                    NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 200)
+                    flushingManager.flushData(isFromIdentify: true, completion: { _ in done() })
+                }
+                expect(inAppRefreshCallbackInvoked).to(beTrue())
+            }
+
+            it("should invoke inAppRefreshCallback when isFromIdentify is true and database contains customer update event") {
+                var inAppRefreshCallbackInvoked = false
+                flushingManager.inAppRefreshCallback = {
+                    inAppRefreshCallbackInvoked = true
+                }
+                try! database.identifyCustomer(with: [.properties(["id": .int(1)])], into: configuration.mainProject)
+                waitUntil(timeout: .seconds(5)) { done in
+                    NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 200)
+                    flushingManager.flushData(isFromIdentify: true, completion: { _ in done() })
+                }
+                expect(inAppRefreshCallbackInvoked).to(beTrue())
+            }
+
+            it("shouldn't invoke inAppRefreshCallback when isFromIdentify is false and database is empty") {
+                var inAppRefreshCallbackInvoked = false
+                flushingManager.inAppRefreshCallback = {
+                    inAppRefreshCallbackInvoked = true
+                }
+                waitUntil(timeout: .seconds(5)) { done in
+                    NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 200)
+                    flushingManager.flushData(isFromIdentify: false, completion: { _ in done() })
+                }
+                expect(inAppRefreshCallbackInvoked).to(beFalse())
+            }
+
+            it("shouldn't invoke inAppRefreshCallback when isFromIdentify is false and database contains event") {
+                var inAppRefreshCallbackInvoked = false
+                flushingManager.inAppRefreshCallback = {
+                    inAppRefreshCallbackInvoked = true
+                }
+                try! database.trackEvent(with: eventData, into: configuration.mainProject)
+                waitUntil(timeout: .seconds(5)) { done in
+                    NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 200)
+                    flushingManager.flushData(isFromIdentify: false, completion: { _ in done() })
+                }
+                expect(inAppRefreshCallbackInvoked).to(beFalse())
+            }
+
+            it("hould invoke inAppRefreshCallback when isFromIdentify is true and database contains customer update event") {
+                var inAppRefreshCallbackInvoked = false
+                flushingManager.inAppRefreshCallback = {
+                    inAppRefreshCallbackInvoked = true
+                }
+                try! database.identifyCustomer(with: [.properties(["id": .int(1)])], into: configuration.mainProject)
+                waitUntil(timeout: .seconds(5)) { done in
+                    NetworkStubbing.stubNetwork(forProjectToken: configuration.projectToken, withStatusCode: 200)
+                    flushingManager.flushData(isFromIdentify: false, completion: { _ in done() })
+                }
+                expect(inAppRefreshCallbackInvoked).to(beTrue())
+            }
         }
     }
 }

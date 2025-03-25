@@ -41,7 +41,7 @@ This page provides an overview of all configuration parameters for the SDK and s
 * `sessionTimeout`
   * The session is the actual time spent in the app. It starts when the app is launched and ends when the app goes to background.
   * This value is used to calculate the session timing.
-  * Default value: `6.0` seconds.
+  * Default value: `60.0` seconds.
   * The minimum value is `5.0` seconds.
   * The **recommended** maximum value is `120.0` seconds, but the **absolute** max is `180.0` seconds. Higher will cause iOS to kill the session.
   * Read more about [Tracking Sessions](tracking#session)
@@ -84,9 +84,13 @@ This page provides an overview of all configuration parameters for the SDK and s
 * `inAppContentBlocksPlaceholders`
   * If set, all [In-app content blocks](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks) will be prefetched right after the SDK is initialized.
 
+* `manualSessionAutoClose`
+  * Determines whether the SDK automatically tracks `session_end` for sessions that remain open when `Exponea.shared.trackSessionStart()` is called multiple times in manual session tracking mode.
+  * Default value: `true`
+
 ## Configure the SDK
 
-### Configure the SDK Programmatically
+### Configure the SDK programmatically
 Configuration is split into several objects that are passed into the `Exponea.shared.configure()` function.
 ``` swift
 func configure(
@@ -171,7 +175,7 @@ Exponea.shared.configure(
 ```
 
 
-### Using a Configuration File - LEGACY
+### Using a configuration file - LEGACY
 > ❗️ 
 > 
 > Configuring the SDK using a `plist` file is deprecated but still supported for backward compatibility.

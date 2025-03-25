@@ -21,7 +21,25 @@ class AppDelegate: ExponeaAppDelegate {
     static let memoryLogger = MemoryLogger()
     var window: UIWindow?
     var alertWindow: UIWindow?
-    
+    let discoverySegmentsCallback = SegmentCallbackData(
+        category: .discovery(),
+        isIncludeFirstLoad: false
+    ) { newSegments in
+        notifyNewSegments(categoryName: "discovery", segments: newSegments)
+    }
+    let contentSegmentsCallback = SegmentCallbackData(
+        category: .content(),
+        isIncludeFirstLoad: false
+    ) { newSegments in
+        notifyNewSegments(categoryName: "content", segments: newSegments)
+    }
+    let merchandisingSegmentsCallback = SegmentCallbackData(
+        category: .merchandising(),
+        isIncludeFirstLoad: false
+    ) { newSegments in
+        notifyNewSegments(categoryName: "merchandising", segments: newSegments)
+    }
+
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -29,6 +47,9 @@ class AppDelegate: ExponeaAppDelegate {
         super.application(application, didFinishLaunchingWithOptions: launchOptions)
         Exponea.logger = AppDelegate.memoryLogger
         Exponea.logger.logLevel = .verbose
+        SegmentationManager.shared.addCallback(callbackData: discoverySegmentsCallback)
+        SegmentationManager.shared.addCallback(callbackData: contentSegmentsCallback)
+        SegmentationManager.shared.addCallback(callbackData: merchandisingSegmentsCallback)
 
         UITabBar.appearance().tintColor = UIColor(red: 28/255, green: 23/255, blue: 50/255, alpha: 1.0)
         UINavigationBar.appearance().backgroundColor = UIColor(red: 249/255, green: 249/255, blue: 249/255, alpha: 0.94)
@@ -86,6 +107,24 @@ class AppDelegate: ExponeaAppDelegate {
         }
         return false
     }
+
+    private static func notifyNewSegments(categoryName: String, segments: [SegmentDTO]) {
+        Exponea.logger.log(
+            .verbose,
+            message: "Segments: New for category \(categoryName) with IDs: [" + segments.map {
+                return "{ segmentation_id=\($0.segmentationId), id=\($0.id) }"
+            }.joined() + "]"
+        )
+    }
+    
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)
+    {
+        // Show push notification in foreground app state
+        completionHandler([.alert, .sound])
+    }
 }
 
 extension AppDelegate {
@@ -119,10 +158,10 @@ extension AppDelegate: PushNotificationManagerDelegate {
             message: "Alert push opened, " +
                 "action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))"
         )
-        showAlert(
+        onMain(self.showAlert(
             "Push notification opened",
             "action \(action), value: \(String(describing: value)), extraData \(String(describing: extraData))"
-        )
+        ))
     }
 
     func silentPushNotificationReceived(extraData: [AnyHashable: Any]?) {
@@ -151,7 +190,19 @@ class InAppDelegate: InAppMessageActionDelegate {
         self.trackActions = trackActions
     }
 
-    func inAppMessageAction(with message: InAppMessage, button: InAppMessageButton?, interaction: Bool) {
+    func inAppMessageClickAction(message: ExponeaSDK.InAppMessage, button: ExponeaSDK.InAppMessageButton) {
+        Exponea.logger.log(
+            .verbose,
+            message: "In app action performed, messageId: \(message.id), button: \(String(describing: button))"
+        )
+        (UIApplication.shared.delegate as? AppDelegate)?.showAlert(
+            "In app action performed",
+            "messageId: \(message.id), button: \(String(describing: button))"
+        )
+        Exponea.shared.trackInAppMessageClick(message: message, buttonText: button.text, buttonLink: button.url)
+    }
+
+    func inAppMessageCloseAction(message: ExponeaSDK.InAppMessage, button: ExponeaSDK.InAppMessageButton?, interaction: Bool) {
         Exponea.logger.log(
             .verbose,
             message: "In app action performed, messageId: \(message.id),"
@@ -161,12 +212,7 @@ class InAppDelegate: InAppMessageActionDelegate {
             "In app action performed",
             "messageId: \(message.id), interaction: \(interaction), button: \(String(describing: button))"
         )
-
-        if interaction {
-            Exponea.shared.trackInAppMessageClick(message: message, buttonText: button?.text, buttonLink: button?.url)
-        } else {
-            Exponea.shared.trackInAppMessageClose(message: message, isUserInteraction: false)
-        }
+        Exponea.shared.trackInAppMessageClose(message: message, buttonText: button?.text, isUserInteraction: false)
     }
 
     func inAppMessageShown(message: ExponeaSDK.InAppMessage) {

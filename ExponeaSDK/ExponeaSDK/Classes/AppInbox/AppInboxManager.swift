@@ -15,6 +15,8 @@ final class AppInboxManager: AppInboxManagerType {
     private let trackingManager: TrackingManagerType
     private let appInboxCache: AppInboxCacheType
     private let databaseManager: DatabaseManagerType
+    private var isFetching = false
+    private var savedCustomerIds: [[String: String]] = []
 
     private let SUPPORTED_MESSAGE_TYPES: [String] = [
         "push", "html"
@@ -33,27 +35,41 @@ final class AppInboxManager: AppInboxManagerType {
     }
 
     func onEventOccurred(of type: EventType, for event: [DataType]) {
+        guard !isFetching else {
+            savedCustomerIds.append(trackingManager.customerIds)
+            return
+        }
         if type == .identifyCustomer {
             Exponea.logger.log(.verbose, message: "CustomerIDs are updated, clearing AppInbox messages")
             clear()
         }
     }
 
-    func fetchAppInbox(completion: @escaping (Result<[MessageItem]>) -> Void) {
+    func fetchAppInbox(customerIds: [String: String]?, completion: @escaping (Result<[MessageItem]>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else {
                 Exponea.logger.log(.error, message: "Fetching AppInbox stops due to obsolete thread")
                 completion(.failure(ExponeaError.stoppedProcess))
                 return
             }
-            let customerIds = self.trackingManager.customerIds
-            let customerId = self.trackingManager.customerCookie
+            self.isFetching = true
+            let customerIds = customerIds ?? self.trackingManager.customerIds
             self.repository.fetchAppInbox(
                 for: customerIds,
                 with: self.appInboxCache.getSyncToken()
             ) { result in
                 switch result {
                 case .success(let response):
+                    guard self.savedCustomerIds.last == nil ||
+                            Exponea.shared.trackingManager?.customerIds == self.savedCustomerIds.last
+                    else {
+                        self.clear()
+                        let newCustomerIds = self.savedCustomerIds.last ?? [:]
+                        self.savedCustomerIds.removeAll()
+                        self.fetchAppInbox(customerIds: newCustomerIds, completion: completion)
+                        return
+                    }
+                    self.savedCustomerIds.removeAll()
                     Exponea.logger.log(.verbose, message: "AppInbox loaded successfully")
                     let enhancedMessages = self.enhanceMessages(response.messages, response.syncToken, customerIds: customerIds)
                     self.onAppInboxDataLoaded(enhancedMessages, response.syncToken, completion)
@@ -174,6 +190,7 @@ final class AppInboxManager: AppInboxManagerType {
         let allMessages = appInboxCache.getMessages()
         if imageUrls.isEmpty {
             DispatchQueue.main.async {
+                self.isFetching = false
                 completion(Result.success(allMessages))
             }
             return
@@ -189,6 +206,7 @@ final class AppInboxManager: AppInboxManagerType {
             appInboxCache.saveImageData(at: imageUrlString, data: imageData!)
         }
         DispatchQueue.main.async {
+            self.isFetching = false
             completion(Result.success(allMessages))
         }
     }

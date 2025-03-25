@@ -12,6 +12,41 @@ import Nimble
 import Combine
 @testable import ExponeaSDK
 
+fileprivate class CustomCarouselCallback: DefaultContentBlockCarouselCallback {
+
+    var notFoundCallback: EmptyBlock?
+
+    var overrideDefaultBehavior: Bool = false
+    var trackActions: Bool = true
+
+    init() {}
+
+    func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    func onNoMessageFound(placeholderId: String) {
+        // space for custom implementation
+        notFoundCallback?()
+    }
+
+    func onError(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse?, errorMessage: String) {
+        // space for custom implementation
+    }
+
+    func onCloseClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    func onActionClickedSafari(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        // space for custom implementation
+    }
+
+    func onHeightUpdate(placeholderId: String, height: CGFloat) {
+        Exponea.logger.log(.verbose, message: "Placeholder \(placeholderId) got new height: \(height)")
+    }
+}
+
 class InAppContentBlocksManagerSpec: QuickSpec {
 
     let configuration = try! Configuration(
@@ -23,6 +58,22 @@ class InAppContentBlocksManagerSpec: QuickSpec {
     override func spec() {
         Exponea.shared.configure(with: configuration)
         let manager: InAppContentBlocksManagerType = Exponea.shared.inAppContentBlocksManager!
+        let callback = CustomCarouselCallback()
+        
+        it("date filter") {
+            let date = Date()
+            let bigDate = Date().addingTimeInterval(5)
+            let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(dateFilter: .init(enabled: true, fromDate: date, toDate: bigDate))
+            var isIn = manager.applyDateFilter(message: firstInAppContentBlocks)
+            expect(isIn).to(beTrue())
+            waitUntil(timeout: .seconds(7)) { done in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+                    isIn = manager.applyDateFilter(message: firstInAppContentBlocks)
+                    done()
+                }
+            }
+            expect(isIn).to(beFalse())
+        }
         
         it("Corrupted images") {
             let rawHtml = "<html>" +
@@ -53,7 +104,24 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             expect(result2).to(beTrue())
             expect(result3).to(beFalse())
         }
-        
+
+        it("check filtered") {
+            let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks()
+            var isDone = false
+            manager.addMessage(firstInAppContentBlocks)
+            manager.filterCarouselData(placeholder: "asdas") { response in
+                isDone = true
+            } expiredCompletion: {
+                
+            }
+            waitUntil(timeout: .seconds(3)) { done in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    done()
+                }
+            }
+            expect(isDone).to(beTrue())
+        }
+
         it("check inAppContentBlocks priority") {
             let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(loadPriority: 1)
             let secondInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(loadPriority: 2)
@@ -229,6 +297,41 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             let maxOverLimit = 10
             let result = array.prefix(maxOverLimit)
             expect(result.count).to(be(5))
+        }
+
+        it("multipler") {
+            let view = CarouselInAppContentBlockView(placeholder: "")
+            let a = view.makeDuplicate(input: [.init(html: "a", tag: 1)])
+            expect(a.count).to(be(1))
+            let b = view.makeDuplicate(input: [.init(html: "a", tag: 1), .init(html: "a", tag: 2), .init(html: "b", tag: 3)])
+            expect(b.count).to(be(150))
+            expect(b.filter({ $0.html == "b" }).count).to(be(50))
+            let c = view.makeDuplicate(input: [
+                .init(html: "a", tag: 1),
+                .init(html: "a", tag: 2),
+                .init(html: "b", tag: 3),
+                .init(html: "b", tag: 4),
+                .init(html: "c", tag: 5),
+                .init(html: "c", tag: 6)
+            ])
+            expect(c.count).to(be(150))
+            expect(c.filter({ $0.tag == 6 }).count).to(be(25))
+            let d = view.makeDuplicate(input: [
+                .init(html: "a", tag: 1),
+                .init(html: "a", tag: 2),
+                .init(html: "b", tag: 3),
+                .init(html: "b", tag: 4),
+                .init(html: "c", tag: 5),
+                .init(html: "c", tag: 6),
+                .init(html: "d", tag: 7),
+                .init(html: "d", tag: 8),
+                .init(html: "e", tag: 9),
+                .init(html: "e", tag: 10),
+                .init(html: "f", tag: 11)
+            ])
+            expect(d.count).to(be(110))
+            expect(d.filter({ $0.tag == 6 }).count).to(be(10))
+            expect(d.filter({ $0.html == "c" }).count).to(be(20))
         }
 
         it("is valid check") {

@@ -20,7 +20,7 @@ public struct SegmentStore {
             var dataKey: [Any] = []
             switch category {
             case let .discovery(data),
-                let .merchandise(data),
+                let .merchandising(data),
                 let .content(data):
                 data.forEach { segment in
                     var categoryData: [String: String] = [:]

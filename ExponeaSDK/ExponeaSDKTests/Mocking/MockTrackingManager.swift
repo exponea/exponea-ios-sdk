@@ -226,8 +226,8 @@ internal class MockTrackingManager: TrackingManagerType {
     func trackInAppContentBlocksClose(message: InAppContentBlockResponse, trackingAllowed: Bool) {}
     func trackInAppContentBlocksShow(message: InAppContentBlockResponse, trackingAllowed: Bool) {}
 
-    func trackInAppMessageClose(message: ExponeaSDK.InAppMessage, trackingAllowed: Bool, isUserInteraction: Bool) {
-        self.track(.close, for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
+    func trackInAppMessageClose(message: ExponeaSDK.InAppMessage, closeButtonText: String?, trackingAllowed: Bool, isUserInteraction: Bool) {
+        self.track(.close(buttonLabel: closeButtonText), for: message, trackingAllowed: trackingAllowed, isUserInteraction: isUserInteraction)
     }
 
     func trackInAppMessageShown(message: ExponeaSDK.InAppMessage, trackingAllowed: Bool) {

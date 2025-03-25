@@ -72,7 +72,7 @@ public enum Constants {
 
     /// Default session values represented in seconds
     public enum Session {
-        public static let defaultTimeout = 6.0
+        public static let defaultTimeout = 60.0
         public static let maxRetries = 5
         public static let sessionUpdateThreshold = 3.0
     }

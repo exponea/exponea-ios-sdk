@@ -114,11 +114,16 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: true,
                             consentCategoryTracking: "I have consent"
                         )
-                        manager.trackInAppMessageClose(message: message, mode: mode, isUserInteraction: true)
+                        manager.trackInAppMessageClose(
+                            message: message,
+                            buttonText: nil,
+                            mode: mode,
+                            isUserInteraction: true
+                        )
                     },
                     expectingConsentCategory: "I have consent",
                     expectingTrackType: .banner,
-                    expectedInapEventType: .close
+                    expectedInapEventType: .close(buttonLabel: nil)
                 ),
                 TestCaseSetup(
                     expectTrackEvent: true,
@@ -129,11 +134,16 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: true,
                             consentCategoryTracking: "I have consent"
                         )
-                        manager.trackInAppMessageClose(message: message, mode: mode, isUserInteraction: true)
+                        manager.trackInAppMessageClose(
+                            message: message,
+                            buttonText: nil,
+                            mode: mode,
+                            isUserInteraction: true
+                        )
                     },
                     expectingConsentCategory: "I have consent",
                     expectingTrackType: .banner,
-                    expectedInapEventType: .close
+                    expectedInapEventType: .close(buttonLabel: nil)
                 ),
                 TestCaseSetup(
                     expectTrackEvent: false,
@@ -144,7 +154,12 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: false,
                             consentCategoryTracking: "I have consent"
                         )
-                        manager.trackInAppMessageClose(message: message, mode: mode, isUserInteraction: true)
+                        manager.trackInAppMessageClose(
+                            message: message,
+                            buttonText: nil,
+                            mode: mode,
+                            isUserInteraction: true
+                        )
                     },
                     expectingConsentCategory: nil,
                     expectingTrackType: nil,
@@ -159,11 +174,16 @@ final class TrackConsentManagerSpec: QuickSpec {
                             hasTrackingConsent: false,
                             consentCategoryTracking: "I have consent"
                         )
-                        manager.trackInAppMessageClose(message: message, mode: mode, isUserInteraction: true)
+                        manager.trackInAppMessageClose(
+                            message: message,
+                            buttonText: nil,
+                            mode: mode,
+                            isUserInteraction: true
+                        )
                     },
                     expectingConsentCategory: "I have consent",
                     expectingTrackType: .banner,
-                    expectedInapEventType: .close
+                    expectedInapEventType: .close(buttonLabel: nil)
                 ),
                 // INAPP Error
                 TestCaseSetup(
@@ -756,10 +776,15 @@ final class TrackConsentManagerSpec: QuickSpec {
                 checkForEventWithoutForceTrack()
             }
             it("Should not contains track_forced field for closed inapp") {
-                trackingConsentManager.trackInAppMessageClose(message: SampleInAppMessage.getSampleInAppMessage(
-                    hasTrackingConsent: true,
-                    consentCategoryTracking: "I have consent"
-                ), mode: .IGNORE_CONSENT, isUserInteraction: true)
+                trackingConsentManager.trackInAppMessageClose(
+                    message: SampleInAppMessage.getSampleInAppMessage(
+                        hasTrackingConsent: true,
+                        consentCategoryTracking: "I have consent"
+                    ),
+                    buttonText: nil,
+                    mode: .IGNORE_CONSENT,
+                    isUserInteraction: true
+                )
                 checkForEventWithoutForceTrack()
             }
             it("Should not contains track_forced field for error inapp") {

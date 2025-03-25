@@ -8,7 +8,7 @@ parentDocSlug: ios-sdk-setup
 
 The SDK exchanges data with the Engagement APIs through authorized HTTP/HTTPS communication. The SDK supports two authorization modes: the default **token authorization** for public API access and the more secure **customer token authorization** for private API access. Developers can choose the appropriate authorization mode for the required level of security.
 
-## Token Authorization
+## Token authorization
 
 The default token authorization mode provides [public API access](https://documentation.bloomreach.com/engagement/reference/authentication#public-api-access) using an API key as a token. 
 
@@ -33,7 +33,7 @@ Exponea.shared.configure(
 )
 ```
 
-## Customer Token Authorization
+## Customer token authorization
 
 Customer token authorization is optional and provides [private API access](https://documentation.bloomreach.com/engagement/reference/authentication#private-api-access) to select Engagement API endpoints. The [customer token](https://documentation.bloomreach.com/engagement/docs/customer-token) contains encoded customer IDs and a signature. When the Bloomreach Engagement API receives a customer token, it first verifies the signature and only processes the request if the signature is valid.
 
@@ -84,7 +84,7 @@ If you define `ExponeaAuthProvider` but it is not working as expected, check the
 2. The registered class must conform to `AuthorizationProviderType`. If it doesn't, you'll see the following log message:
 `Class ExponeaAuthProvider does not conform to AuthorizationProviderType`
 
-### Asynchronous Implementation of AuthorizationProvider
+### Asynchronous implementation of AuthorizationProvider
 
 The customer token value is requested for every HTTP call at runtime. The method `getAuthorizationToken()` is written for synchronous usage but is invoked in a background thread. Therefore, you are able to block any asynchronous token retrieval (i.e. other HTTP call) and wait for the result by blocking this thread. If the token retrieval fails, you may return a NULL value but the request will automatically fail.
 
@@ -110,7 +110,7 @@ public class ExampleAuthProvider: NSObject, AuthorizationProviderType {
 >
 > Different network libraries support different approaches but the principle stays same - feel free to block the invocation of the `getAuthorizationToken` method.
 
-### Customer Token Retrieval Policy
+### Customer token retrieval policy
 
 The customer token value is requested for every HTTP call that requires it.
 

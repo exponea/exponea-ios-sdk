@@ -1,5 +1,5 @@
 ---
-title: Fetch Data
+title: Fetch data
 excerpt: Fetch data from Bloomreach Engagement using the iOS SDK
 slug: ios-sdk-fetch-data
 categorySlug: integrations
@@ -8,7 +8,7 @@ parentDocSlug: ios-sdk
 
 The SDK provides methods to retrieve data from the Engagement platform. Responses are available in a completion handler closure.
 
-## Fetch Recommendations
+## Fetch recommendations
 
 Use the `fetchRecommendation` method to get personalized recommendations for the current customer from an Engagement [recommendation model](https://documentation.bloomreach.com/engagement/docs/recommendations).
 
@@ -61,7 +61,7 @@ Exponea.shared.fetchRecommendation(with: recommendationOptions) { (result: Resul
 }
 ```
 
-### Return Object
+### Return object
 
 #### RecommendationResponse
 
@@ -87,7 +87,7 @@ Exponea.shared.fetchRecommendation(with: recommendationOptions) { (result: Resul
 | recommendationId        | String | ID of the recommendation engine (model) used. |
 | recommendationVariantId | String | ID of the recommendation engine variant used. |
 
-## Fetch Consent Categories
+## Fetch consent categories
 
 Use the `fetchConsents` method to get a list of your consent categories and their definitions.
 
@@ -110,7 +110,7 @@ Exponea.shared.fetchConsents { (result) in
 }
 ```
 
-### Result Object
+### Result object
 
 #### ConsentsResponse
 

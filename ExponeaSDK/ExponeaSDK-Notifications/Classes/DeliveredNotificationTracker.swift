@@ -68,6 +68,7 @@ final class DeliveredNotificationTracker {
         var properties = configuration.defaultProperties?.mapValues { $0.jsonValue } ?? [:]
         properties = properties.merging(notification.properties, uniquingKeysWith: { (_, new) in new })
         properties["status"] = .string("delivered")
+        properties["state"] = .string("shown")
         if notification.consentCategoryTracking != nil {
             properties["consent_category_tracking"] = .string(notification.consentCategoryTracking!)
         }

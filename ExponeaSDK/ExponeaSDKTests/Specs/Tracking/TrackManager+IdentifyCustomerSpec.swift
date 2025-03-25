@@ -50,6 +50,7 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                     inAppMessageManager: nil,
                     trackManagerInitializator: { _ in },
                     userDefaults: userDefaults,
+                    campaignRepository: CampaignRepository(userDefaults: userDefaults),
                     onEventCallback: { _, _ in
                     }
                 )
@@ -103,7 +104,6 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
                         "default_prop": .string("default_value"),
-                        "apple_push_notification_authorized": .bool(true),
                         "apple_push_notification_id": .string("abcd")
                     ])
                 ]))
@@ -120,7 +120,6 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
                         "default_prop": .string("default_value"),
-                        "apple_push_notification_authorized": .bool(true),
                         "apple_push_notification_id": .string("abcd")
                     ])
                 ]))
@@ -136,7 +135,6 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 }.notTo(raiseException())
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
-                        "apple_push_notification_authorized": .bool(true),
                         "apple_push_notification_id": .string("abcd")
                     ])
                 ]))

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CryptoKit
 
 struct FileUtils {
     /// Downloads file from given URL.
@@ -34,5 +35,14 @@ struct FileUtils {
             dataTask.cancel()
         }
         return fileData
+    }
+
+    public static func getFileName(fileUrl: String) -> String {
+        guard let urlAsData = fileUrl.data(using: .utf8) else {
+            return fileUrl
+        }
+        return SHA512.hash(data: urlAsData)
+            .compactMap { String(format: "%02x", $0) }
+            .joined()
     }
 }

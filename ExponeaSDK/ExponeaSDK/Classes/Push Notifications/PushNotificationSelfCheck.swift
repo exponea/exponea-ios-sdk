@@ -165,7 +165,7 @@ final class PushNotificationSelfCheck {
         )
     }
 
-    func waitForSelfCheckPush(delay: TimeInterval, retries: Int, completion: @escaping() -> Void) {
+    func waitForSelfCheckPush(delay: TimeInterval, retries: Int, completion: @escaping () -> Void) {
         Exponea.shared.telemetryManager?.report(eventWithType: .selfCheck, properties: ["step": "6"])
         guard retries > 0 else {
             self.showResult(

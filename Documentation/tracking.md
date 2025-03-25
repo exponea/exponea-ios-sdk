@@ -16,15 +16,19 @@ By default, the SDK tracks certain events automatically, including:
 
 Additionally, you can track any custom event relevant to your business.
 
+> 📘
+>
+> Also see [Mobile SDK tracking FAQ](https://support.bloomreach.com/hc/en-us/articles/18153058904733-Mobile-SDK-tracking-FAQ) at Bloomreach Support Help Center.
+
 ## Events
 
-### Track Event
+### Track event
 
 Use the `trackEvent()` method to track any custom event type relevant to your business.
 
 You can use any name for a custom event type. We recommended using a descriptive and human-readable name.
 
-Refer to the [Custom Events](https://documentation.bloomreach.com/engagement/docs/custom-events) documentation for an overview of commonly used custom events.
+Refer to the [Custom events](https://documentation.bloomreach.com/engagement/docs/custom-events) documentation for an overview of commonly used custom events.
 
 #### Arguments
 
@@ -182,9 +186,9 @@ The SDK tracks sessions automatically by default, producing two events: `session
 
 The session represents the actual time spent in the app. It starts when the application is launched and ends when it goes into the background. If the user returns to the app before the session times out, the application will continue the current session.
 
-The default session timeout is 6.0 seconds. Set `sessionTimeout` in the [SDK configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) to specify a different timeout.
+The default session timeout is 60 seconds. Set `sessionTimeout` in the [SDK configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) to specify a different timeout.
 
-### Track Session Manually
+### Track session manually
 
 To disable automatic session tracking, set `automaticSessionTracking` to `false` in the [SDK configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration).
 
@@ -196,19 +200,30 @@ Use the `trackSessionStart()` and `trackSessionEnd()` methods to track sessions 
 Exponea.shared.trackSessionStart()
 ```
 
+> 👍
+>
+> The default behavior for manually calling `Exponea.shared.trackSessionStart()` multiple times can be controlled by the `manualSessionAutoClose` flag in the `Configuration`, which is set to `true` by default. If a previous session is still open (i.e., it hasn’t been manually closed with `Exponea.shared.trackSessionEnd()`) before `Exponea.shared.trackSessionStart()` is called again, the SDK will automatically track a `sessionEnd` for the previous session and then trigger a new `sessionStart` event. To prevent this behavior, set the `manualSessionAutoClose` flag in the `Configuration` to `false`.   
+
+
 ``` swift
 Exponea.shared.trackSessionEnd()
-```
+``` 
 
-## Push Notifications
+## Push notifications
 
 If developers [integrate push notification functionality](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications#integration) in their app, the SDK automatically tracks the push notification token by default.
 
-### Track Token Manually
+In the [SDK configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration), you can disable automatic push notification tracking by setting the Boolean value of the `pushNotificationTracking` property to `false`. It is then up to the developer to manually track push notifications.
+
+> ❗️
+>
+> The behavior of push notification tracking may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [consent documentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) for details.
+
+### Track token manually
 
 Use the `trackPushToken()` method to manually track the token for receiving push notifications. The token is assigned to the currently logged-in customer (with the `identifyCustomer` method).
 
-Invoking this method will track a push token immediately regardless of the value of 'tokenTrackFrequency' (refer to the [Configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) documentation for details).
+Invoking this method will track a push token immediately regardless of the value of `tokenTrackFrequency` (refer to the [Configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) documentation for details).
 
 Each time the app becomes active, the SDK calls `verifyPushStatusAndTrackPushToken` and tracks the token.
 
@@ -228,11 +243,177 @@ Exponea.shared.trackPushToken("value-of-push-token")
 >
 > Remember to invoke [anonymize](#anonymize) whenever the user signs out to ensure the push notification token is removed from the user's customer profile. Failing to do this may cause multiple customer profiles share the same token, resulting in duplicate push notifications.
 
+### Track push notification delivery manually
+
+Use the `trackPushReceived()` method to manually track push notification delivery.
+
+You can pass either the notification data or the user info as argument.
+
+#### Arguments
+
+| Name                   | Type                                   | Description |
+| -----------------------| -------------------------------------- | ----------- |
+| content **(required)** | [UNNotificationContent](https://developer.apple.com/documentation/usernotifications/unnotificationcontent) | Notification data. |
+
+or:
+
+| Name                    | Type                 | Description |
+| ------------------------| ---------------------| ----------- |
+| userInfo **(required)** | \[AnyHashable: Any\] | User info object from the notification data. |
+
+
+#### Example
+
+Passing notification data as argument:
+
+```swift
+func trackPushNotifReceived() {
+    let notifContent = UNMutableNotificationContent()
+    notifContent.title = "Example title"
+    // ... and anything you need, but only `userInfo` is required for tracking
+    notifContent.userInfo = [
+        "url": "https://example.com/ios",
+        "title": "iOS Title",
+        "action": "app",
+        "message": "iOS Message",
+        "image": "https://example.com/image.jpg",
+        "actions": [
+            ["title": "Action 1", "action": "app", "url": "https://example.com/action1/ios"],
+            ["title": "Action 2", "action": "browser", "url": "https://example.com/action2/ios"]
+        ],
+        "sound": "default",
+        "aps": [
+            "alert": ["title": "iOS Alert Title", "body": "iOS Alert Body"],
+            "mutable-content": 1
+        ],
+        "attributes": [
+            "event_type": "campaign",
+            "campaign_id": "123456",
+            "campaign_name": "iOS Campaign",
+            "action_id": 1,
+            "action_type": "mobile notification",
+            "action_name": "iOS Action",
+            "campaign_policy": "policy",
+            "consent_category": "General consent",
+            "subject": "iOS Subject",
+            "language": "en",
+            "platform": "ios",
+            "sent_timestamp": 1631234567.89,
+            "recipient": "ios@example.com"
+        ],
+        "url_params": ["param1": "value1", "param2": "value2"],
+        "source": "xnpe_platform",
+        "silent": false,
+        "has_tracking_consent": true,
+        "consent_category_tracking": "iOS Consent"
+    ]
+    Exponea.shared.trackPushReceived(content: notifContent)
+}
+```
+
+Passing user info as argument:
+
+```swift
+func trackPushNotifReceived() {
+    let userInfo: [AnyHashable: Any] = [
+        "url": "https://example.com/ios",
+        "title": "iOS Title",
+        "action": "app",
+        "message": "iOS Message",
+        "image": "https://example.com/image.jpg",
+        "actions": [
+            ["title": "Action 1", "action": "app", "url": "https://example.com/action1/ios"],
+            ["title": "Action 2", "action": "browser", "url": "https://example.com/action2/ios"]
+        ],
+        "sound": "default",
+        "aps": [
+            "alert": ["title": "iOS Alert Title", "body": "iOS Alert Body"],
+            "mutable-content": 1
+        ],
+        "attributes": [
+            "event_type": "campaign",
+            "campaign_id": "123456",
+            "campaign_name": "iOS Campaign",
+            "action_id": 1,
+            "action_type": "mobile notification",
+            "action_name": "iOS Action",
+            "campaign_policy": "policy",
+            "consent_category": "General consent",
+            "subject": "iOS Subject",
+            "language": "en",
+            "platform": "ios",
+            "sent_timestamp": 1631234567.89,
+            "recipient": "ios@example.com"
+        ],
+        "url_params": ["param1": "value1", "param2": "value2"],
+        "source": "xnpe_platform",
+        "silent": false,
+        "has_tracking_consent": true,
+        "consent_category_tracking": "iOS Consent"
+    ]
+    Exponea.shared.trackPushReceived(userInfo: userInfo)
+}
+```
+
+### Track push notification click manually
+
+Use the `trackPushOpened()` method to manually track push notification clicks.
+
+#### Arguments
+
+| Name                     | Type                 | Description |
+| -------------------------| ---------------------| ----------- |
+| userInfo **(required)**  | \[AnyHashable: Any\] | User info object from the notification data. |
+
+#### Example
+
+```swift
+func trackPushNotifClick() {
+    let userInfo: [AnyHashable: Any] = [
+        "url": "https://example.com/ios",
+        "title": "iOS Title",
+        "action": "app",
+        "message": "iOS Message",
+        "image": "https://example.com/image.jpg",
+        "actions": [
+            ["title": "Action 1", "action": "app", "url": "https://example.com/action1/ios"],
+            ["title": "Action 2", "action": "browser", "url": "https://example.com/action2/ios"]
+        ],
+        "sound": "default",
+        "aps": [
+            "alert": ["title": "iOS Alert Title", "body": "iOS Alert Body"],
+            "mutable-content": 1
+        ],
+        "attributes": [
+            "event_type": "campaign",
+            "campaign_id": "123456",
+            "campaign_name": "iOS Campaign",
+            "action_id": 1,
+            "action_type": "mobile notification",
+            "action_name": "iOS Action",
+            "campaign_policy": "policy",
+            "consent_category": "General consent",
+            "subject": "iOS Subject",
+            "language": "en",
+            "platform": "ios",
+            "sent_timestamp": 1631234567.89,
+            "recipient": "ios@example.com"
+        ],
+        "url_params": ["param1": "value1", "param2": "value2"],
+        "source": "xnpe_platform",
+        "silent": false,
+        "has_tracking_consent": true,
+        "consent_category_tracking": "iOS Consent"
+    ]
+    Exponea.shared.trackPushOpened(with: userInfo)
+}
+```
+
 ## Payments
 
 The SDK tracks in-app purchases automatically.
 
-### Track Payment
+### Track payment
 
 Use the `trackPayment()` method to track payments manually.
 
@@ -257,7 +438,7 @@ Exponea.shared.trackPayment(
 )
 ```
 
-## Default Properties
+## Default properties
 
 You can configure default properties to be tracked with every event. Note that the value of a default property will be overwritten if the tracking event has a property with the same key.
 

@@ -28,11 +28,48 @@ class CustomCarouselView: CarouselInAppContentBlockView {
     }
 }
 
+class CustomCarouselCallback: DefaultContentBlockCarouselCallback {
+
+    public var overrideDefaultBehavior: Bool = false
+    public var trackActions: Bool = true
+
+    public init() {}
+
+    public func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    public func onNoMessageFound(placeholderId: String) {
+        // space for custom implementation
+    }
+
+    public func onError(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse?, errorMessage: String) {
+        // space for custom implementation
+    }
+
+    public func onCloseClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    public func onActionClickedSafari(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        // space for custom implementation
+    }
+
+    public func onHeightUpdate(placeholderId: String, height: CGFloat) {
+        Exponea.logger.log(.verbose, message: "Placeholder \(placeholderId) got new height: \(height)")
+    }
+}
+
 class InAppContentBlockCarouselViewController: UIViewController {
 
-    let carousel = CarouselInAppContentBlockView(placeholder: "example_carousel", behaviourCallback: CustomCarouselCallback())
-    let carousel2 = CustomCarouselView(placeholder: "example_carousel", maxMessagesCount: 5, scrollDelay: 10)
-    let carousel3 = CustomCarouselView(placeholder: "example_carousel_ios")
+    let carousel = CarouselInAppContentBlockView(placeholder: "example_carousel")
+    let carousel2 = CustomCarouselView(
+        placeholder: "example_carousel",
+        maxMessagesCount: 5,
+        scrollDelay: 10,
+        behaviourCallback: CustomCarouselCallback()
+    )
+    let carousel3 = CustomCarouselView(placeholder: "example_carousel_ios", scrollDelay: 1000)
 
     @objc func endEditing() {
         view.endEditing(true)
@@ -48,14 +85,11 @@ class InAppContentBlockCarouselViewController: UIViewController {
         super.viewDidLoad()
 
         carousel.onMessageShown = { message in
-            print("ON MESSAGE SHOW")
-            print(message.index)
-            print(message.placeholderId)
+            print("ON MESSAGE SHOW \(message.placeholderId)")
         }
 
-        carousel.onMessageChanged = { chagned in
-            print("ON MESSAGE CHANGED")
-            print(chagned)
+        carousel.onMessageChanged = { changed in
+            print("ON MESSAGE CHANGED \(changed.count)")
         }
 
         carousel.reload()

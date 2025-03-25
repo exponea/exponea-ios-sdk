@@ -35,13 +35,15 @@ final class AppInboxTrackingSpec: QuickSpec {
                 repository = MockRepository(configuration: self.configuration)
                 flushManager = MockFlushingManager()
                 database = try! MockDatabaseManager()
+                let userDefaults = UserDefaults()
                 trackingManager = try! TrackingManager(
                     repository: repository,
                     database: database,
                     flushingManager: flushManager,
                     inAppMessageManager: nil,
                     trackManagerInitializator: { _ in },
-                    userDefaults: UserDefaults(),
+                    userDefaults: userDefaults,
+                    campaignRepository: CampaignRepository(userDefaults: userDefaults),
                     onEventCallback: { _, _ in
                         // nothing
                     })
