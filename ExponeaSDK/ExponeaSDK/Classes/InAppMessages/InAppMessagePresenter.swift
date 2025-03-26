@@ -91,7 +91,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                         )
                         self.presenting = true
                         Exponea.logger.log(.verbose, message: "In-app message presented.")
-                        if oldPayload != nil { // old inapp
+                        if oldPayload != nil || payloadHtml != nil { // old inapp
                             self.setMessageTimeout(inAppMessageView: inAppMessageView, timeout: timeout)
                         }
                         presentedCallback?(inAppMessageView, nil)

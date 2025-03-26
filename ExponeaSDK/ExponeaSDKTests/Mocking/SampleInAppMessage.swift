@@ -186,7 +186,8 @@ struct SampleInAppMessage {
         hasTrackingConsent: Bool? = nil,
         consentCategoryTracking: String? = nil,
         messageType: String? = "modal",
-        isHtml: Bool? = false
+        isHtml: Bool? = false,
+        htmlPayload: String? = "<html></html>"
     ) -> InAppMessage {
         return InAppMessage(
             id: id ?? "5dd86f44511946ea55132f29",
@@ -228,7 +229,7 @@ struct SampleInAppMessage {
             priority: priority,
             delayMS: delayMS,
             timeoutMS: timeoutMS,
-            payloadHtml: "<html></html>",
+            payloadHtml: htmlPayload,
             isHtml: isHtml,
             hasTrackingConsent: hasTrackingConsent,
             consentCategoryTracking: consentCategoryTracking,
@@ -239,7 +240,9 @@ struct SampleInAppMessage {
     static func getSampleInAppMessage(
         payload: InAppMessagePayload?,
         variantName: String,
-        variantId: Int
+        variantId: Int,
+        isHtml: Bool = false,
+        htmlPayload: String? = "<html></html>"
     ) -> InAppMessage {
         return InAppMessage(
             id: "5dd86f44511946ea55132f29",
@@ -259,8 +262,8 @@ struct SampleInAppMessage {
             priority: nil,
             delayMS: nil,
             timeoutMS: nil,
-            payloadHtml: "<html></html>",
-            isHtml: false,
+            payloadHtml: htmlPayload,
+            isHtml: isHtml,
             hasTrackingConsent: nil,
             consentCategoryTracking: nil,
             isRichText: false

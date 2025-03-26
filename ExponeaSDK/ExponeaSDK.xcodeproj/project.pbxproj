@@ -203,8 +203,6 @@
 		23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E725E3214AA7A900B552B8 /* Reachability.swift */; };
 		311268DB2CD10E9C00C38394 /* InAppButtonContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311268DA2CD10E9C00C38394 /* InAppButtonContainer.swift */; };
 		311268DD2CD1135900C38394 /* InAppButtonConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311268DC2CD1135900C38394 /* InAppButtonConfig.swift */; };
-		311268DF2CD1158100C38394 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 311268DE2CD1158100C38394 /* SwiftSoup */; };
-		311268E12CD1158900C38394 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 311268E02CD1158900C38394 /* SwiftSoup */; };
 		311557BF2CE9DEBD0027B481 /* InAppLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311557BD2CE9DEBD0027B481 /* InAppLabel.swift */; };
 		311557C22CE9DF070027B481 /* InAppImageComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311557C12CE9DF070027B481 /* InAppImageComponent.swift */; };
 		311557C42CEB3EE30027B481 /* InAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311557C32CEB3EE30027B481 /* InAppView.swift */; };
@@ -300,6 +298,9 @@
 		55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D482953051E001D95B8 /* AppInboxParser.swift */; };
 		55391D4B295342C7001D95B8 /* AppInboxManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */; };
 		55391D4D295497A7001D95B8 /* AppInboxProviderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D4C295497A7001D95B8 /* AppInboxProviderSpec.swift */; };
+		554C7E2A2D92C78D003B8E46 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
+		554C7E2F2D92C7AD003B8E46 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
+		554C7E302D92C7AD003B8E46 /* SwiftSoup.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		555A10E82B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555A10E72B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift */; };
 		5567C090290808F600318E68 /* MessageItemContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C08F290808F600318E68 /* MessageItemContent.swift */; };
 		5567C092290809EB00318E68 /* MessageItemAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C091290809EB00318E68 /* MessageItemAction.swift */; };
@@ -555,6 +556,7 @@
 			files = (
 				05F33B1B25C16DEF00CFD60A /* ExponeaSDKShared.framework in Embed Frameworks */,
 				05F33B1C25C16DEF00CFD60A /* ExponeaSDKObjC.framework in Embed Frameworks */,
+				554C7E302D92C7AD003B8E46 /* SwiftSoup.xcframework in Embed Frameworks */,
 				C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */,
 				C0ED33BC21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Embed Frameworks */,
 			);
@@ -1071,8 +1073,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */,
+				554C7E2F2D92C7AD003B8E46 /* SwiftSoup.xcframework in Frameworks */,
 				C0ED33BB21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Frameworks */,
-				311268E12CD1158900C38394 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1080,8 +1082,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				554C7E2A2D92C78D003B8E46 /* SwiftSoup.xcframework in Frameworks */,
 				55C08DCD2A4ED5EE000BA66A /* (null) in Frameworks */,
-				311268DF2CD1158100C38394 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4090,19 +4092,6 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		311268DE2CD1158100C38394 /* SwiftSoup */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 552F73BC2A56E7ED0006659D /* XCRemoteSwiftPackageReference "SwiftSoup" */;
-			productName = SwiftSoup;
-		};
-		311268E02CD1158900C38394 /* SwiftSoup */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 552F73BC2A56E7ED0006659D /* XCRemoteSwiftPackageReference "SwiftSoup" */;
-			productName = SwiftSoup;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */ = {
