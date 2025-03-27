@@ -11,6 +11,17 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.2.0
+#### March 27, 2025
+* Added:
+  * Adds rich styling support for native in-app messages.
+  * Improves how in-app personalizations are processed.
+* Fixed:
+  * Removes incorrectly listed customer attributes endpoint from documentation.
+  * Fixes possible dual init case caused by lazy property.
+  * Fixes and updates in-app message carousel type callback inconsistency.
+
+
 ## Release Notes for 3.1.0
 #### January 28, 2025
 * Added:
