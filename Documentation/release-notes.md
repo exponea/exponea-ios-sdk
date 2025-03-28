@@ -11,6 +11,12 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.2.1
+#### March 28, 2025
+* Fixed:
+  * Fixed incorect import of Foundation instead of UIKit which cause compilation errors
+
+
 ## Release Notes for 3.2.0
 #### March 27, 2025
 * Added:
