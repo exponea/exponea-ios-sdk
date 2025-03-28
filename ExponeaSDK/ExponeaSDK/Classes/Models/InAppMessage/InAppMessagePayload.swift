@@ -6,7 +6,7 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public struct InAppButtonPayload: Codable {
     public var id = UUID()

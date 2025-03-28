@@ -6,7 +6,7 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-import Foundation
+import UIKit
 #if canImport(ExponeaSDKShared)
 import ExponeaSDKShared
 #endif

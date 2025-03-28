@@ -6,7 +6,7 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public struct InAppMessage: Codable, Equatable {
     public static func == (lhs: InAppMessage, rhs: InAppMessage) -> Bool {

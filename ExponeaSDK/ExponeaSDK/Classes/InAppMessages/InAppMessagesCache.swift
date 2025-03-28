@@ -6,7 +6,7 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 final class InAppMessagesCache: InAppMessagesCacheType {
     static let inAppMessagesFolder = "exponeasdk_in_app_messages"

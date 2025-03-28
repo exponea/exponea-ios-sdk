@@ -6,7 +6,7 @@
 //  Copyright © 2025 Exponea. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 extension UIFont {
     static func fromStyle(style: String?, size: Int) -> UIFont {
