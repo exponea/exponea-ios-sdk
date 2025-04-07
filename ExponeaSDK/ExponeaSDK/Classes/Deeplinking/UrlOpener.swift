@@ -25,15 +25,13 @@ final class UrlOpener: UrlOpenerType {
         }
 
         self.openUniversalLink(url, application: UIApplication.shared) { result in
-            guard let unwrapped = result, !unwrapped else {
-                return
+            if !result {
+                self.openURLSchemeDeeplink(url, application: UIApplication.shared)
             }
-
-            self.openURLSchemeDeeplink(url, application: UIApplication.shared)
         }
     }
 
-    private func openUniversalLink(_ url: URL, application: UIApplication, callBackHandler: @escaping (Bool?) -> Void) {
+    private func openUniversalLink(_ url: URL, application: UIApplication, callBackHandler: @escaping (Bool) -> Void) {
         // Validate this is a valid URL, prevents NSUserActivity crash with invalid URL
         // only http/https is allowed
         // https://developer.apple.com/documentation/foundation/nsuseractivity/1418086-webpageurl
@@ -49,7 +47,7 @@ final class UrlOpener: UrlOpenerType {
         if application.delegate?.application?(application, continue: userActivity, restorationHandler: { _ in }) ?? false {
             callBackHandler(true)
         } else {
-            callBackHandler(nil)
+            callBackHandler(false)
         }
     }
 
