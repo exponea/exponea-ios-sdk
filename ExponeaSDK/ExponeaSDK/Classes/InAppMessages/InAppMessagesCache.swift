@@ -30,6 +30,13 @@ final class InAppMessagesCache: InAppMessagesCacheType {
     }
 
     func saveInAppMessages(inAppMessages: [InAppMessage]) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(
+                .error,
+                message: "In-app UI is unavailable, SDK is stopping"
+            )
+            return
+        }
         guard let jsonData = try? JSONEncoder().encode(inAppMessages),
             let jsonString = String(data: jsonData, encoding: .utf8),
             let directory = getCacheDirectoryURL() else {
@@ -45,6 +52,14 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         } catch {
             Exponea.logger.log(.warning, message: "Saving in-app messages to file failed.")
         }
+    }
+
+    func deleteAllMessages() {
+        guard let directory = getCacheDirectoryURL()?.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName) else {
+                Exponea.logger.log(.warning, message: "Unable to serialize in-app messages data.")
+                return
+        }
+        try? fileManager.removeItem(at: directory)
     }
 
     func getInAppMessages() -> [InAppMessage] {
@@ -145,6 +160,6 @@ final class InAppMessagesCache: InAppMessagesCacheType {
 
     func clear() {
         deleteImages(except: [])
-        saveInAppMessages(inAppMessages: [])
+        deleteAllMessages()
     }
 }

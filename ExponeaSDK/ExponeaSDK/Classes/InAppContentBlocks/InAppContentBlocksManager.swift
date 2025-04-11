@@ -73,6 +73,21 @@ final class InAppContentBlocksManager: NSObject {
         super.init()
         
         _usedInAppContentBlocks.changeValue(with: { $0.removeAll() })
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.usedInAppContentBlocks.forEach { key, value in
+                let content = self.usedInAppContentBlocks[key] ?? []
+                let updatedMessages = content.map { content in
+                    var copy = content
+                    copy.height = 0
+                    return copy
+                }
+                self.usedInAppContentBlocks[key] = updatedMessages
+            }
+            self._inAppContentBlockMessages.changeValue(with: { $0.removeAll() })
+            self.usedInAppContentBlocks.removeAll()
+        }
     }
 
     internal func addMessage(_ message: InAppContentBlockResponse) {
@@ -146,7 +161,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     }
 
     func getUsedInAppContentBlocks(placeholder: String, indexPath: IndexPath) -> UsedInAppContentBlocks? {
-        usedInAppContentBlocks[placeholder]?.first(where: { $0.indexPath == indexPath && $0.isActive })
+        return usedInAppContentBlocks[placeholder]?.first(where: { $0.indexPath == indexPath && $0.isActive })
     }
 
     func anonymize() {
@@ -403,6 +418,10 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     }
 
     func prepareInAppContentBlockView(placeholderId: String, indexPath: IndexPath) -> UIView {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.verbose, message: "In-app content blocks fetch failed: SDK is stopping")
+            return .init()
+        }
         let messagesToUse = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholderId) }
         let messagesNeedToRefresh = messagesToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
         let expiredMessages = messagesToUse.filter { inAppContentBlocks in

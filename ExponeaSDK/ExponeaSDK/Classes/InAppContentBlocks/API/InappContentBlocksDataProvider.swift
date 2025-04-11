@@ -55,11 +55,19 @@ extension InAppContentBlocksDataProvider: InAppContentBlocksDataProviderType {
         inAppContentBlocksIds: [String],
         completion: @escaping TypeBlock<ResponseData<D>>
     ) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.verbose, message: "In-app content blocks fetch failed: SDK is stopping")
+            return
+        }
         guard let serverRepository = serverRepository else { return }
         serverRepository.personalizedInAppContentBlocks(
             customerIds: customerIds,
             inAppContentBlocksIds: inAppContentBlocksIds
         ) { response in
+            guard !IntegrationManager.shared.isStopped else {
+                Exponea.logger.log(.verbose, message: "In-app content blocks fetch failed: SDK is stopping")
+                return
+            }
             guard response.error == nil, let data = response.value as? D else {
                 completion(.init(error: response.error))
                 return

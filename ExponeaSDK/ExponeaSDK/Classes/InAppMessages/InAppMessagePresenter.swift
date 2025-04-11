@@ -17,9 +17,23 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
 
     private let window: UIWindow?
     internal var presenting = false
+    private var inAppController: UIViewController?
 
     init(window: UIWindow? = nil) {
         self.window = window
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            if let last = (self.inAppController as? UINavigationController)?.viewControllers.last as? InAppDialogContainerView {
+                last.view.removeFromSuperview()
+                last.removeFromParent()
+            } else if let vc = self.inAppController as? InAppDialogContainerView {
+                vc.view.removeFromSuperview()
+                vc.removeFromParent()
+            } else {
+                (self.inAppController as? UINavigationController)?.removeFromParent()
+            }
+        }
     }
 
     func presentInAppMessage(
@@ -67,7 +81,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                         presentedCallback?(nil, "Unable to present in-app message - no view controller")
                         return
                     }
-
+                    self.inAppController = viewController
                     do {
                         var inAppMessageView = try self.createInAppMessageView(
                             messageType: messageType,

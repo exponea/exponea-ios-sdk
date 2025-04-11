@@ -20,7 +20,8 @@ final class AppInboxTrackingSpec: QuickSpec {
     let configuration = try! Configuration(
         projectToken: "token",
         authorization: Authorization.none,
-        baseUrl: "baseUrl"
+        baseUrl: "baseUrl",
+        appGroup: "group"
     )
 
     override func spec() {
@@ -33,6 +34,7 @@ final class AppInboxTrackingSpec: QuickSpec {
 
         describe("AppInbox tracking") {
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 repository = MockRepository(configuration: self.configuration)
                 flushManager = MockFlushingManager()
                 database = try! MockDatabaseManager()
@@ -81,6 +83,12 @@ final class AppInboxTrackingSpec: QuickSpec {
                 let customerIds = try identifyCustomer(["registered": "test@example.com"]).ids
                 let testMessage = try fetchTestMessage(id: "id1", syncToken: "sync123")
                 trackingConsentManager.trackAppInboxOpened(message: testMessage, mode: .IGNORE_CONSENT)
+                let trackedEvents = try fetchTrackEvents()
+                expect(trackedEvents.count).to(equal(1))
+                Exponea.shared.stopIntegration()
+                let trackedEventsAfter = try fetchTrackEvents()
+                expect(trackedEventsAfter.count).to(equal(0))
+                IntegrationManager.shared.isStopped = false
             }
 
             it("should track clicked AppInbox") {
@@ -94,6 +102,12 @@ final class AppInboxTrackingSpec: QuickSpec {
                     buttonLink: actionUrl,
                     mode: .IGNORE_CONSENT
                 )
+                let trackedEvents = try fetchTrackEvents()
+                expect(trackedEvents.count).to(equal(1))
+                Exponea.shared.stopIntegration()
+                let trackedEventsAfter = try fetchTrackEvents()
+                expect(trackedEventsAfter.count).to(equal(0))
+                IntegrationManager.shared.isStopped = false
             }
 
             it("should NOT track opened Message without assignment") {
@@ -145,6 +159,12 @@ final class AppInboxTrackingSpec: QuickSpec {
                     buttonLink: actionUrl,
                     mode: .IGNORE_CONSENT
                 )
+                let trackedEvents = try fetchTrackEvents()
+                expect(trackedEvents.count).to(equal(1))
+                Exponea.shared.stopIntegration()
+                let trackedEventsAfter = try fetchTrackEvents()
+                expect(trackedEventsAfter.count).to(equal(0))
+                IntegrationManager.shared.isStopped = false
             }
         }
 

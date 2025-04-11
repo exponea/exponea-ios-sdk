@@ -52,12 +52,12 @@ For more information, refer to [Specifying pod versions](https://guides.cocoapod
     carthage update exponea-ios-sdk --use-xcframeworks --platform iOS
     ```
 5. Open your Xcode project and navigate to your application target's settings. On the `General` tab, find the `Frameworks, Libraries, and Embedded Content` section.
-6. Open Finder, navigate to the `Carthage/Build` folder inside your project folder, and drag and drop every `*.xcframework` folder inside it to the `Frameworks, Libraries, and Embedded Content` section in Xcode.
+6. Open Finder, navigate to the `Carthage/Build` folder inside your project folder and drag and drop every `*.xcframework` folder inside it to the `Frameworks, Libraries, and Embedded Content` section in Xcode.
    ![XCFRameworks added to Frameworks, Libraries, and Embedded Content](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/carthage-xcframeworks.png)
 
 ### Swift Package Manager
 
-1. In Xcode, navigate to `Xcode -> Settings -> Accounts` and add your GitHub account if you haven't done so yet. 
+1. In Xcode, navigate to `Xcode -> Settings -> Accounts` and add your GitHub account if you haven't already. 
 2. Open `File -> Add Package Dependencies...`
 3. In the dialog that appears, enter the Exponia iOS SDK repository URL `https://github.com/exponea/exponea-ios-sdk` in the search box.
 4. In the `Dependency Rule` section, select the SDK version.
@@ -70,6 +70,19 @@ For more information, refer to [Specifying pod versions](https://guides.cocoapod
 ## Initialize the SDK
 
 Now that you have installed the SDK in your project, you must import, configure, and initialize the SDK in your application code.
+
+> ❗️ Protect the privacy of your customers
+ >
+ > Make sure you have obtained and stored tracking consent from your customer before initializing Exponea iOS SDK.
+ >
+ > To ensure you're not tracking events without the customer's consent, you can use `Exponea.shared.clearLocalCustomerData(appGroup: String)` when a customer opts out from tracking (this applies to new users or returning customers who have previously opted out). This will bring the SDK to a state as if it was never initialized. This option also prevents reusing existing cookies for returning customers.
+ >
+ > Refer to [Clear local customer data](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking#clear-local-customer-data) for details.
+ >
+ > If the customer denies tracking consent after Exponea iOS SDK is initialized, you can use `Exponea.shared.stopIntegration()` to stop SDK integration and remove all locally stored data.
+ >
+ > Refer to [Stop SDK integration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking#stop-sdk-integration) for details.
+
 
 The required configuration parameters are `projectToken`, `authorization.token`, and `baseUrl`. You can find these as `Project token`, `API Token`, and `API Base URL` in the Bloomreach Engagement webapp under `Project settings` > `Access management` > `API`:
 

@@ -25,6 +25,7 @@ class FlushingManagerSpec: QuickSpec {
             var eventData: [DataType]!
 
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 configuration = try! Configuration(
                     projectToken: UUID().uuidString,
                     authorization: .token("mock-token"),

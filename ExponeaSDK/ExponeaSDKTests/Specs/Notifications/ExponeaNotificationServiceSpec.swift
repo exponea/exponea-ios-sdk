@@ -45,6 +45,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
     override func spec() {
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             UserDefaults.standard.removePersistentDomain(forName: "mock-app-group")
         }
         describe("saving notifications for later") {

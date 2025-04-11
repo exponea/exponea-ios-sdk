@@ -25,6 +25,7 @@ final class FileTelemetryStorageSpec: QuickSpec {
 
     override func spec() {
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             let cacheURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
             let directoryContents = try? FileManager.default.contentsOfDirectory(
                 at: cacheURL,

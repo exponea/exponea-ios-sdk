@@ -17,6 +17,7 @@ final class InAppMessageDialogViewSpec: QuickSpec {
         var image: UIImage!
 
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             let bundle = Bundle(for: InAppMessageDialogViewSpec.self)
             image = UIImage(contentsOfFile: bundle.path(forResource: "lena", ofType: "jpeg")!)
         }

@@ -32,6 +32,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         let event: DataType = .customerIds(Exponea.shared.trackingManager?.customerIds ?? customer1)
 
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             cache = MockInAppMessagesCache()
             repository = MockRepository(configuration: self.configuration)
             let message = SampleInAppMessage.getSampleInAppMessage()

@@ -26,11 +26,19 @@ final class MockTelemetryUpload: TelemetryUpload {
         completionHandler(result)
     }
 
+    func removeAll() {
+        uploadedEvents.removeAll()
+        uploadedCrashLogs.removeAll()
+    }
+
     func upload(
         eventWithName name: String,
         properties: [String: String],
         completionHandler: @escaping (Bool) -> Void
     ) {
+        guard !IntegrationManager.shared.isStopped else {
+            return
+        }
         uploadedEvents.append(UploadedEvent(name: name, properties: properties))
         completionHandler(result)
     }

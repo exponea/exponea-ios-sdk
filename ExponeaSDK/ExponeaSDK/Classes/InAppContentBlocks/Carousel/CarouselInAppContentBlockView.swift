@@ -116,6 +116,13 @@ open class CarouselInAppContentBlockView: UIView {
             self.redrawWithNewHeight(inputView: self, loadedInAppContentBlocksView: collectionView, height: height)
             defaultBehaviourCallback.onHeightUpdate(placeholderId: placeholder, height: height)
         }
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.height?.constant = 0
+            self.stopTimer()
+            self.layoutIfNeeded()
+        }
     }
 
     open func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?) {
@@ -145,6 +152,10 @@ open class CarouselInAppContentBlockView: UIView {
         alreadyShowedMessages.removeAll()
         savedTimer = nil
         state = .stopTimer
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "In-app reload failed: SDK is stopping")
+            return
+        }
         inAppContentBlocksManager.loadMessagesForCarousel(placeholder: placeholder) { [weak self] in
             guard let self else { return }
             self.inAppContentBlocksManager
@@ -326,6 +337,11 @@ open class CarouselInAppContentBlockView: UIView {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
+                guard !IntegrationManager.shared.isStopped else {
+                    Exponea.logger.log(.error, message: "In-app content blocks fetch failed: SDK is stopping")
+                    stopTimer()
+                    return
+                }
                 switch state {
                 case .restart:
                     self.savedTimer = nil

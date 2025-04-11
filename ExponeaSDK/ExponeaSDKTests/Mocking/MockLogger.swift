@@ -11,9 +11,9 @@ import Foundation
 @testable import ExponeaSDK
 
 class MockLogger: Logger {
-    public var messages: [String] = []
+    @Atomic public var messages: [String] = []
     override open func logMessage(_ message: String) {
         super.logMessage(message)
-        messages.append(message)
+        _messages.changeValue(with: { $0.append(message) })
     }
 }

@@ -127,6 +127,7 @@ class ConfigurationSpec: QuickSpec {
             context("getting project tokens", {
                 var logger: MockLogger!
                 beforeEach {
+                    IntegrationManager.shared.isStopped = false
                     logger = MockLogger()
                     Exponea.logger = logger
                 }
@@ -201,6 +202,7 @@ class ConfigurationSpec: QuickSpec {
         describe("saving to user defaults") {
             let appGroup = "appgroup"
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 let defaults = UserDefaults(suiteName: appGroup)!
                 defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
                 defaults.removeObject(forKey: Constants.General.deliveredPushEventUserDefaultsKey)

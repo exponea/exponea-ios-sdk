@@ -55,6 +55,13 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     }
 
     func upload(sessionStartWithRunId runId: String) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(
+                .error,
+                message: "upload telemtry skipped, SDK is stopping"
+            )
+            return
+        }
         let startSession = VSAppCenterAPILog.startSession(
             VSAppCenterAPIStartSession(
                 id: UUID().uuidString,
@@ -102,6 +109,13 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
     }
 
     func upload(data: VSAppCenterAPIRequestData, completionHandler: @escaping (Bool) -> Void) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(
+                .error,
+                message: "upload telemtry skipped, SDK is stopping"
+            )
+            return
+        }
         guard let url = URL(safeString: defaultUploadURL),
               let payload = try? JSONEncoder().encode(data) else {
             completionHandler(false)
@@ -130,6 +144,9 @@ final class VSAppCenterTelemetryUpload: TelemetryUpload {
         }
         task.resume()
     }
+
+    // for test only
+    func removeAll() {}
 
     func getVSAppCenterAPIErrorReport(_ log: CrashLog) -> VSAppCenterAPILog {
         if log.isFatal {

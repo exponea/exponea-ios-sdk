@@ -81,4 +81,4 @@ Universal Link parameters are automatically tracked in `session_start` events wh
 
 > ❗️
 >
-> The SDK might not be initialized when `.trackCampaingClick()` is called. In this case, the event will be sent to the Engagement backend **after** the SDK is [initialized](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk) with `Exponea.shared.configure()`. 
+> The SDK might not be initialized when `.trackCampaignClick()` is called. In this case, the event will be sent to the Engagement backend **after** the SDK is [initialized](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk) with `Exponea.shared.configure()`. 

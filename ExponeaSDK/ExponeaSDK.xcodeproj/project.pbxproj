@@ -251,6 +251,7 @@
 		31CC0B772BD251E200608057 /* SegmentationDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B762BD251E200608057 /* SegmentationDataProvider.swift */; };
 		31CC0B792BD255D300608057 /* SegmentationRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B782BD255D300608057 /* SegmentationRequests.swift */; };
 		31CC0B7B2BD2562000608057 /* LinkIdsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CC0B7A2BD2562000608057 /* LinkIdsRequest.swift */; };
+		31CD7B862D81C5E4006DE6E5 /* IntegrationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CD7B852D81C5E4006DE6E5 /* IntegrationManager.swift */; };
 		31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */; };
 		31CFEF6F2A66940E005402E5 /* SequenceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6E2A66940E005402E5 /* SequenceTest.swift */; };
 		31E9CBA22AE9494B00A333C8 /* URL+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E9CBA12AE9494B00A333C8 /* URL+Init.swift */; };
@@ -805,6 +806,7 @@
 		31CC0B762BD251E200608057 /* SegmentationDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationDataProvider.swift; sourceTree = "<group>"; };
 		31CC0B782BD255D300608057 /* SegmentationRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationRequests.swift; sourceTree = "<group>"; };
 		31CC0B7A2BD2562000608057 /* LinkIdsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkIdsRequest.swift; sourceTree = "<group>"; };
+		31CD7B852D81C5E4006DE6E5 /* IntegrationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationManager.swift; sourceTree = "<group>"; };
 		31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+RemoveNil.swift"; sourceTree = "<group>"; };
 		31CFEF6E2A66940E005402E5 /* SequenceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceTest.swift; sourceTree = "<group>"; };
 		31E9CBA12AE9494B00A333C8 /* URL+Init.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Init.swift"; sourceTree = "<group>"; };
@@ -2200,6 +2202,7 @@
 			children = (
 				F0E757EC207D023A00FE8C21 /* Classes */,
 				F021E873206CFADF00788ABC /* Supporting Files */,
+				31CD7B852D81C5E4006DE6E5 /* IntegrationManager.swift */,
 			);
 			path = ExponeaSDK;
 			sourceTree = "<group>";
@@ -3000,6 +3003,7 @@
 				55C08DD32A568C74000BA66A /* FileUtils.swift in Sources */,
 				55130C4928DDC81600B4FE77 /* TrackingConsentManagerType.swift in Sources */,
 				55DA6EC2290AE44300B5B285 /* AppInboxMarkReadRequest.swift in Sources */,
+				31CD7B862D81C5E4006DE6E5 /* IntegrationManager.swift in Sources */,
 				C0A6DEA120EAC16900C5F744 /* KeyValueItem.swift in Sources */,
 				5568874A2A17574A00498B40 /* ListScreenStyle.swift in Sources */,
 				5567C09629091B8E00318E68 /* AppInboxRequest.swift in Sources */,

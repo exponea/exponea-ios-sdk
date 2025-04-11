@@ -88,6 +88,11 @@ class FlushingManager: FlushingManagerType {
     ///
     /// - Parameter completion: A completion that is called after all calls succeed or fail.
     func flushData(isFromIdentify: Bool = false, completion: ((FlushResult) -> Void)?) {
+        guard !IntegrationManager.shared.isStopped else {
+            stopPeriodicFlushTimer()
+            Exponea.logger.log(.error, message: "Flushing has been denied, SDK is stopping")
+            return
+        }
         do {
             // Check if flush is in progress
             flushingSemaphore.wait()

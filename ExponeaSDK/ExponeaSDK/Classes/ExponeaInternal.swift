@@ -96,6 +96,18 @@ public class ExponeaInternal: ExponeaType {
         return UserDefaults(suiteName: Constants.General.userDefaultsSuite)!
     }()
 
+    fileprivate func clearAllDependencies() {
+        repository = nil
+        trackingManager = nil
+        flushingManager = nil
+        trackingConsentManager = nil
+        inAppMessagesManager = nil
+        inAppContentBlocksManager = nil
+        appInboxManager = nil
+        notificationsManager = nil
+        campaignRepository = nil
+    }
+
     /// Sets the flushing mode for usage
     public var flushingMode: FlushingMode {
         get {
@@ -198,6 +210,7 @@ public class ExponeaInternal: ExponeaType {
 
     /// Once ExponeaSDK runs into a NSException, all further calls will be disabled
     internal var nsExceptionRaised: Bool = false
+    fileprivate var databaeManagerCopy: DatabaseManager?
 
     internal var pushNotificationSelfCheck: PushNotificationSelfCheck?
 
@@ -257,10 +270,15 @@ public class ExponeaInternal: ExponeaType {
     private func initialize(with configuration: Configuration) {
         let exception = objc_tryCatch {
             do {
+                IntegrationManager.shared.isStopped = false
+                if let defaults = UserDefaults(suiteName: configuration.appGroup ?? Constants.General.userDefaultsSuite) {
+                    defaults.set(false, forKey: "isStopped")
+                }
                 self.segmentationManager = SegmentationManager.shared
                 self.manualSegmentationManager = ManualSegmentationManager.shared
 
                 let database = try DatabaseManager()
+                databaeManagerCopy = database
                 if !Exponea.isBeingTested {
                     telemetryManager = TelemetryManager(
                         userDefaults: userDefaults,
@@ -525,7 +543,6 @@ internal extension ExponeaInternal {
     @objc func applicationDidEnterBackground() {
         self.isAppForeground = false
     }
-
 }
 
 // MARK: - Public -
@@ -549,6 +566,65 @@ public extension ExponeaInternal {
     func getSegments(force: Bool = false, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>) {
         executeSafelyWithDependencies { [weak self] _ in
             self?.manualSegmentationManager?.getSegments(category: category, force: force, result: result)
+        }
+    }
+
+    func stopIntegration() {
+        IntegrationManager.shared.isStopped = true
+        afterInit.actionBlocks.removeAll()
+        afterInit.setStatus(status: .notInitialized)
+        afterInit.clean()
+        clearUserData(appGroup: repository?.configuration.appGroup)
+    }
+
+    private func clearUserData(appGroup: String?) {
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.removeAll()
+        notificationsManager?.handlePushTokenRegistered(token: "")
+        campaignRepository?.clear()
+        databaeManagerCopy?.removeAllEvents()
+        trackingManager?.clearSessionManager()
+        InAppMessagesCache().clear()
+        clearUserDefaults(appGroup: appGroup)
+        clearAllDependencies()
+    }
+
+    func clearLocalCustomerData(appGroup: String) {
+        guard !isConfigured && Configuration.loadFromUserDefaults(appGroup: appGroup) != nil else {
+            Exponea.logger.log(.error, message: "This functionality is unavailable without initialization of SDK")
+            return
+        }
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.removeAll()
+        notificationsManager?.handlePushTokenRegistered(token: "")
+        clearUserDefaults(appGroup: appGroup)
+        InAppMessagesCache().clear()
+        try? DatabaseManager().removeAllEvents()
+        CampaignRepository(userDefaults: userDefaults).clear()
+        clearAllDependencies()
+    }
+
+    private func clearUserDefaults(appGroup: String?) {
+        if let appGroup, let defaults = UserDefaults(suiteName: appGroup) {
+            for key in defaults.dictionaryRepresentation().keys where key != "isStopped" {
+                defaults.removeObject(forKey: key)
+            }
+            defaults.removeObject(forKey: Constants.Keys.sessionEnded)
+            defaults.removeObject(forKey: Constants.Keys.sessionStarted)
+            defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+            Configuration.deleteLastKnownConfig(appGroup: appGroup)
+            defaults.synchronize()
+        } else {
+            if let defaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite) {
+                for key in defaults.dictionaryRepresentation().keys where key != "isStopped" {
+                    defaults.removeObject(forKey: key)
+                }
+                defaults.removeObject(forKey: Constants.Keys.sessionEnded)
+                defaults.removeObject(forKey: Constants.Keys.sessionStarted)
+                defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+                Configuration.deleteLastKnownConfig(appGroup: Constants.General.userDefaultsSuite)
+                defaults.synchronize()
+            }
         }
     }
 }

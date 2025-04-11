@@ -81,6 +81,13 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
         self.displayStatusStore = displayStatusStore
         self.urlOpener = urlOpener
         self.trackingConsentManager = trackingConsentManager
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.pendingShowRequests.removeAll()
+            self.cache.clear()
+            self.displayStatusStore.clear()
+        }
     }
 
     // MARK: - Methods
@@ -207,6 +214,13 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
         _ message: InAppMessage,
         callback: ((InAppMessageView?) -> Void)? = nil
     ) async {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(
+                .error,
+                message: "In-app UI is unavailable, SDK is stopping"
+            )
+            return
+        }
         await withCheckedContinuation { [weak self] continuation in
             guard let self else { return }
             guard message.hasPayload() && message.variantId != -1 else {
@@ -417,7 +431,21 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
     }
 
     func fetchInAppMessages(for event: [DataType], completion: EmptyBlock? = nil) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(
+                .error,
+                message: "In-app fetch failed, SDK is stopping"
+            )
+            return
+        }
         repository.fetchInAppMessages(for: event.customerIds) { [weak self] result in
+            guard !IntegrationManager.shared.isStopped else {
+                Exponea.logger.log(
+                    .error,
+                    message: "In-app fetch failed, SDK is stopping"
+                )
+                return
+            }
             self?.isIdentifyFlowInProcess = false
             guard case let .success(response) = result,
                     let self,

@@ -12,7 +12,7 @@ Push notifications can also be silent, used only to update the app’s interface
 
 > 📘
 >
-> Refer to [Mobile push notifications](https://documentation.bloomreach.com/engagement/docs/mobile-push-notifications#creating-a-new-notification) to learn how to create push notifications in the Engagement web app.
+> To learn how to create push notifications in the Engagement web app, refer to [Mobile push notifications](https://documentation.bloomreach.com/engagement/docs/mobile-push-notifications#creating-a-new-notification).
 
 > 📘
 >
@@ -20,7 +20,7 @@ Push notifications can also be silent, used only to update the app’s interface
 
 > ❗️ Deprecation of automatic push notifications
 >
-> Previous versions of the SDK used method swizzling to automatically register for push notifications. This sometimes caused issues and therefore is no longer supported. Refer to [Implement application delegate methods](#implement-application-delegate-methods) below for a list of delegate methods your application needs to implement in order to properly process push notifications.
+> Previous versions of the SDK used method swizzling to register for push notifications automatically. This sometimes caused issues and, therefore, is no longer supported. Refer to [Implement application delegate methods](#implement-application-delegate-methods) below for a list of delegate methods your application needs to implement to process push notifications properly.
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ To be able to send push notifications from Engagement, you must:
 
 > 📘
 >
-> Follow the instructions in [Configure Apple Push Notification Service](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configure-apns) if you haven't set this up yet.
+> If you haven't set this up yet, Follow the instructions in [Configure Apple Push Notification Service](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configure-apns).
 
 ## Integration
 
@@ -50,7 +50,7 @@ Select your application target in Xcode, and on the `Signing & Capabilities` tab
 
 > ❗️
 >
-> An Apple developer account with a paid membership is required to add the `Push Notifications` capability.
+> An Apple developer account with a paid membership must add the `Push Notifications` capability.
 
 
 ### Step 2: Configure the SDK
@@ -101,7 +101,7 @@ class AppDelegate: ExponeaAppDelegate {
 }
 ```
 
-If, for some reason, you don't want to or are not able to extend `ExponeaAppDelegate`, you can use it as a reference for implementing the three delegate methods yourself.
+If you don't want to or are unable to extend `ExponeaAppDelegate`, you can use it as a reference for implementing the three delegate methods yourself.
 
 #### Checklist
 
@@ -112,11 +112,11 @@ Make sure that:
  - [ ] You call `UNUserNotificationCenter.current().delegate = self`
  - [ ] When you start your application, self-check should be able to receive and track the push notification token.
 
-### Step 4: Register for receiving push notifications
+### Step 4: Register to receive push notifications
 
 Your app needs to register to receive push notifications. It’s important to ensure you have the correct authorization to receive push notifications. You require explicit permission from the user to receive "alert" notifications visible to the user. You don't need authorization to receive [silent push notifications](#silent-push-notifications) (background updates).
 
-You can request authorization and subsequently register for receiving notifications using the following code:
+You can request authorization and subsequently register to receive notifications using the following code:
 
 ``` swift 
 UNUserNotificationCenter.current()
@@ -131,10 +131,10 @@ UNUserNotificationCenter.current()
 
 If the user hasn't granted permission yet, this code will trigger an alert asking the user to allow push notifications. If the user previously granted permission, the `granted` property will be `true`, and the code will directly execute the closure and register the app for receiving notifications.
 
-By default, the SDK only tracks the push notification token if the app is authorized (unless the [push setup check](#configure-the-sdk) is enabled). Refer to [Silent Push Notifications](#silent-push-notifications) below to learn how to track the push token even when the app is not authorized.
+By default, the SDK only tracks the push notification token if the app is authorized (unless the [push setup check](#configure-the-sdk) is enabled). Refer to [Silent Push Notifications](#silent-push-notifications) below to learn how to track the push token even when the app isn't authorized.
 
 #### Checklist: 
- - [ ] Engagement should now be able to send push notifications to your device. Refer to the [Creating a new notification](https://documentation.bloomreach.com/engagement/docs/mobile-push-notifications#creating-a-new-notification) guide for instructions.
+ - [ ] Engagement should now be able to send push notifications to your device. For instructions, refer to the [Creating a new notification](https://documentation.bloomreach.com/engagement/docs/mobile-push-notifications#creating-a-new-notification) guide.
 
 ## Customization
 
@@ -144,7 +144,7 @@ This section describes the customizations you can implement once you have integr
 
 To handle incoming push notifications, you must specify a delegate to be called when the user opens a push notification or when a [silent push notification](#silent-push-notifications) is received.
 
-The delegate must implement `PushNotificationManagerDelegate` and have the `pushNotificationOpened` method. The notification [payload](#payload-example) and the action the user selected are passed as arguments. Optionally, you can also implement the `silentPushNotificationReceived` method to handle [silent push notifications](#silent-push-notifications).
+The delegate must implement `PushNotificationManagerDelegate` and have the `pushNotificationOpened` method. The notification [payload](#payload-example) and the user's selected action are passed as arguments. Optionally, you can also implement the `silentPushNotificationReceived` method to handle [silent push notifications](#silent-push-notifications).
 
 You can set the delegate by setting `Exponea.shared.pushNotificationsDelegate` directly or by specifying the `delegate` parameter on `pushNotificationTracking: .enabled`.
 
@@ -208,9 +208,9 @@ extension AppDelegate: PushNotificationManagerDelegate {
 
 Silent push notifications don't trigger any visible or audible notifications on the device but wake up the application to allow it to perform tasks in the background.
 
-The app must track the push token to the Engagement backend to receive push notifications. The SDK does this automatically only if push notification tracking is enabled and properly implemented, and the app is [authorized](#register-for-receiving-push-notifications) to receive alert push notifications.
+To receive push notifications, the app must track the push token to the Engagement backend. The SDK does this automatically only if push notification tracking is enabled and properly implemented and the app is [authorized](#register-for-receiving-push-notifications) to receive alert push notifications.
 
-Silent push notifications don't require authorization. To track the push token even when the app is not authorized, set the configuration variable `requirePushAuthorization` to `false`. This causes the SDK to register for push notifications and track the push token at application startup.
+Silent push notifications don't require authorization. To track the push token even when the app isn't authorized, set the configuration variable `requirePushAuthorization` to `false`. This causes the SDK to register for push notifications and track the push token at application startup.
 
 ``` swift
     Exponea.shared.configure(
@@ -230,7 +230,7 @@ To respond to silent push notifications, set the `Exponea.shared.pushNotificatio
 
 > 👍
 >
-> Silent push notifications require `Background Modes` `Remote notifications` capability.
+> Silent push notifications require `Background Modes` and `Remote notifications` capabilities.
 
 > ❗️
 >
@@ -242,7 +242,7 @@ Rich push notifications can contain images, buttons, and audio. To enable this f
 
 For each extension, follow the instructions in [Notification Extensions](https://documentation.bloomreach.com/engagement/docs/ios-sdk-notification-extensions) to set it up correctly to use the Exponea Notification Service included in the SDK.
 
-Using of `ExponeaNotificationContentService.didReceive()` method will enhance notification body with image and actions that are delivered within UNNotification payload. Notification actions shown by `ExponeaNotificationContentService` are registered with configurations to open your application with required information and to handle campaign click automatically.
+Using the `ExponeaNotificationContentService.didReceive()` method will enhance the notification body with an image and actions delivered within the UNNotification payload. The notification actions shown by `ExponeaNotificationContentService` are registered with configurations to open your application with the required information and handle campaign clicks automatically.
 
 #### Checklist:
  - [ ] Check that push notifications with images and buttons sent from Engagement are correctly displayed on your device. Push delivery tracking should work.
@@ -256,12 +256,12 @@ Using of `ExponeaNotificationContentService.didReceive()` method will enhance no
 
 Received push notifications handled by `ExponeaNotificationService.process()` can play a default or customized sound when the notification is displayed.
 
-To use the default sound for a notification, enter `default` as value for `Media > Sound` in your push notification scenario in the Engagement web app.
+To use the default sound for a notification, enter `default` as the value for `Media > Sound` in your push notification scenario in the Engagement web app.
 ![Configure sound for a push notification in Engagement](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/push-sound-config.png)
 
 To use a custom sound for a notification, you must create a sound file that [iOS supports](https://developer.apple.com/documentation/usernotifications/unnotificationsound#2943048). Include the sound file in your Xcode project and add it to the app's target.
 
-Once the custom sound is in place in your app, enter the file name of the sound file as value for `Media > Sound` in your push notification scenario in the Engagement web app. Ensure that you enter the exact file name (case sensitive) without extension.
+Once the custom sound is in place in your app, enter the sound file's file name as the value for `Media > Sound` in your push notification scenario in the Engagement web app. Ensure that you enter the exact file name (case sensitive) without an extension.
 
 ### Track delivered notifications
 
@@ -271,28 +271,17 @@ Calling `ExponeaNotificationService.process` in `didReceive` will track the noti
 
 ### Retrieve push notification token manually
 
-Sometimes, your application may need to retrieve the current push token while running. You can do this using the `Exponea.shared.trackPushToken` method.
+Sometimes, your application may need to retrieve the current push token while running. You can do this using the `Exponea.shared.trackPushToken` method. Refer to [Tracking](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking#track-token-manually) for details.
 
-A common use case is when the `Exponea.shared.anonymize()` method is called. Invoking `anonymize` removes the push notification token from local storage. Hence, it needs to be updated right after `anonymize`, or before or after `identifyCustomer`, depending on your push notifications usage.
-
-``` swift
-class YourClass {
-    func signOutAndSignIn() {
-        Exponea.shared.anonymize()
-        // anonymize removed Push token, so another identifyCustomer will not be assigned to push notifications
-        Exponea.shared.identifyCustomer(...)
-        Messaging.messaging().token { token, error in
-          if let token = token {
-            Exponea.shared.trackPushToken(token)
-          }
-        }
-    }
-}
-```
+> ❗️
+>
+> Note that tracking the push notification token manually isn't necessary after calling the `Exponea.shared.anonymize()` method. In this case, the push notification token is automatically transferred to the new anonymous customer profile and the app will continue to receive push notifications.
+>
+> When subsequently calling `Exponea.shared.identifyCustomer`, always use a [hard ID](https://documentation.bloomreach.com/engagement/docs/customer-identification#hard-id).  Using a soft ID could unintentionally cause the push notification token to be associated with an incorrect customer profile.
 
 ### Show foreground notifications
 
-By default, if an iOS app gets a notification while the app is in the foreground, the notification banner won't be displayed.
+By default, if an iOS app receives a notification while the app is in the foreground, the notification banner is not displayed.
 
 In iOS 10 and later, you can show foreground notifications by implementing a `UNUserNotificationCenterDelegate` and telling iOS to display the banner.
 

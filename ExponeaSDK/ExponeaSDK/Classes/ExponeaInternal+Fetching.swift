@@ -32,6 +32,9 @@ extension ExponeaInternal {
     public func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void) {
         executeSafelyWithDependencies({
             guard $0.configuration.authorization != Authorization.none else {
+                if IntegrationManager.shared.isStopped {
+                    completion(.failure(ExponeaError.isStopped))
+                }
                 throw ExponeaError.authorizationInsufficient
             }
 
@@ -44,6 +47,9 @@ extension ExponeaInternal {
     public func fetchAppInbox(completion: @escaping (Result<[MessageItem]>) -> Void) {
         executeSafelyWithDependencies({
             guard $0.configuration.authorization != Authorization.none else {
+                if IntegrationManager.shared.isStopped {
+                    completion(.failure(ExponeaError.isStopped))
+                }
                 throw ExponeaError.authorizationInsufficient
             }
             $0.appInboxManager.fetchAppInbox(completion: $1)
@@ -54,6 +60,9 @@ extension ExponeaInternal {
     public func fetchAppInboxItem(_ messageId: String, completion: @escaping (Result<MessageItem>) -> Void) {
         executeSafelyWithDependencies({
             guard $0.configuration.authorization != Authorization.none else {
+                if IntegrationManager.shared.isStopped {
+                    completion(.failure(ExponeaError.isStopped))
+                }
                 throw ExponeaError.authorizationInsufficient
             }
             $0.appInboxManager.fetchAppInboxItem(messageId, completion: $1)
