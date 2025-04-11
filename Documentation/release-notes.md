@@ -11,6 +11,13 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.3.0
+#### April 11, 2025
+* Added:
+  * Adds a new stopIntegration method for improved SDK integration management and clears all locally stored data.
+  * Minor documentation improvements about using identifyCustomer with soft ID
+
+
 ## Release Notes for 3.2.1
 #### March 28, 2025
 * Fixed:
