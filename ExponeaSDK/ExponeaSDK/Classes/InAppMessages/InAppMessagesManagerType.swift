@@ -11,8 +11,8 @@ import Foundation
 protocol InAppMessagesManagerType {
     var pendingShowRequests: [String: InAppMessagesManager.InAppMessageShowRequest] { get set }
     var sessionStartDate: Date { get set }
-    func addToPendingShowRequest(event: [DataType])
-    func fetchInAppMessages(for event: [DataType], completion: EmptyBlock?)
+    func addToPendingShowRequest(event: [DataType]) async
+    func isFetchInAppMessagesDone(for event: [DataType]) async throws -> Bool
     func anonymize()
     func loadMessageToShow(for event: [DataType]) -> InAppMessage?
     func onEventOccurred(of type: EventType, for event: [DataType], triggerCompletion: TypeBlock<IdentifyTriggerState>?)
@@ -22,10 +22,10 @@ protocol InAppMessagesManagerType {
         isFetchDisabled: Bool,
         isAnonymized: Bool,
         triggerCompletion: TypeBlock<IdentifyTriggerState>?
-    )
+    ) async
     func showInAppMessage(
         for type: [DataType],
         callback: ((InAppMessageView?) -> Void)?
-    )
+    ) async
     func loadMessagesToShow(for event: [DataType]) -> [InAppMessage]
 }

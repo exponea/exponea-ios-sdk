@@ -26,6 +26,7 @@ final class CampaignRepositorySpec: QuickSpec {
             return mutableCampaign
         }
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             UserDefaults.standard.removePersistentDomain(forName: userDefaultsSuiteName)
         }
         it("should migrate old campaign data filled array") {

@@ -42,6 +42,10 @@ class FileTelemetryStorage: TelemetryStorage {
     }
 
     func saveCrashLog(_ log: CrashLog) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "saveCrashLog skipped, SDK is stopped")
+            return
+        }
         guard let jsonData = try? JSONEncoder().encode(log),
             let jsonString = String(data: jsonData, encoding: .utf8),
             let fileURL = getFileURL(log) else {
@@ -58,6 +62,10 @@ class FileTelemetryStorage: TelemetryStorage {
     }
 
     func getAllCrashLogs() -> [CrashLog] {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "getAllCrashLogs skipped, SDK is stopped")
+            return []
+        }
         guard let dir = makeCacheDirectory() else {
             return []
         }

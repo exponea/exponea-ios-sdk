@@ -24,9 +24,13 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
     public var presentedMessages: [PresentedMessageData] = []
 
     public var presentResult: Bool = true
+    
+    
+    
     func presentInAppMessage(
         messageType: InAppMessageType,
-        payload: InAppMessagePayload?,
+        payload: RichInAppMessagePayload?,
+        oldPayload: InAppMessagePayload?,
         payloadHtml: String?,
         delay: TimeInterval,
         timeout: TimeInterval?,
@@ -39,7 +43,7 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
             presentedMessages.append(
                 PresentedMessageData(
                     messageType: messageType,
-                    payload: payload,
+                    payload: oldPayload,
                     payloadHtml: payloadHtml,
                     imageData: imageData,
                     actionCallback: actionCallback,
@@ -50,7 +54,7 @@ class MockInAppMessagePresenter: InAppMessagePresenterType {
             DispatchQueue.main.async {
                 presentedCallback?(
                     InAppMessageDialogView(
-                        payload: payload!,
+                        payload: oldPayload!,
                         image: UIImage(),
                         actionCallback: actionCallback,
                         dismissCallback: dismissCallback,

@@ -12,6 +12,8 @@ public enum DeeplinkType {
     case flush
     case anonymize
     case inappcb
+    case stopAndContinue
+    case stopAndRestart
 
     init?(input: String) {
         switch true {
@@ -25,6 +27,10 @@ public enum DeeplinkType {
             self = .anonymize
         case input.contains("inappcb"):
             self = .inappcb
+        case input.contains("stopAndContinue"):
+            self = .stopAndContinue
+        case input.contains("stopAndRestart"):
+            self = .stopAndRestart
         default:
             return nil
         }

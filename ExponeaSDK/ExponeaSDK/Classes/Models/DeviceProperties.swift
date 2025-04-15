@@ -36,7 +36,11 @@ struct DeviceProperties {
     }
 
     /// Returns an array with all device properties.
-    internal var properties: [String: JSONValue] {
+    internal var properties: [String: JSONValue] = [:]
+
+    internal init(bundle: Bundle = Bundle.main) {
+        self.bundle = bundle
+        
         var data = [String: JSONValue]()
 
         data["os_name"] = .string(osName)
@@ -48,11 +52,7 @@ struct DeviceProperties {
         data["device_type"] = .string(deviceType)
         data["app_version"] = .string(appVersion)
 
-        return data
-    }
-
-    internal init(bundle: Bundle = Bundle.main) {
-        self.bundle = bundle
+        properties = data
     }
 }
 

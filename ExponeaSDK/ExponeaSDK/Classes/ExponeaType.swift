@@ -376,4 +376,6 @@ public protocol ExponeaType: AnyObject {
     )
 
     func getSegments(force: Bool, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>)
+    func stopIntegration()
+    func clearLocalCustomerData(appGroup: String)
 }

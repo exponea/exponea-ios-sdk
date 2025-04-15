@@ -54,8 +54,6 @@ open class CarouselInAppContentBlockView: UIView {
     private var timer: AnyCancellable?
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
     private let maxMessagesCount: Int
-    public var onMessageShown: TypeBlock<CarouselOnShowMessageData>?
-    public var onMessageChanged: TypeBlock<CarouselOnChangeData>?
     private var customHeight: CGFloat?
     private var currentMessage: StaticReturnData?
     private var alreadyShowedMessages: [String] = []
@@ -64,6 +62,7 @@ open class CarouselInAppContentBlockView: UIView {
     private var shouSkipCollectionReload = false
     private var didSet = false
 
+    @Atomic private var messages: [StaticReturnData] = []
     @Atomic private var data: [StaticReturnData] = [] {
         didSet {
             if data.count > 1 && !didSet {
@@ -117,6 +116,13 @@ open class CarouselInAppContentBlockView: UIView {
             self.redrawWithNewHeight(inputView: self, loadedInAppContentBlocksView: collectionView, height: height)
             defaultBehaviourCallback.onHeightUpdate(placeholderId: placeholder, height: height)
         }
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.height?.constant = 0
+            self.stopTimer()
+            self.layoutIfNeeded()
+        }
     }
 
     open func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?) {
@@ -146,6 +152,10 @@ open class CarouselInAppContentBlockView: UIView {
         alreadyShowedMessages.removeAll()
         savedTimer = nil
         state = .stopTimer
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "In-app reload failed: SDK is stopping")
+            return
+        }
         inAppContentBlocksManager.loadMessagesForCarousel(placeholder: placeholder) { [weak self] in
             guard let self else { return }
             self.inAppContentBlocksManager
@@ -170,6 +180,7 @@ open class CarouselInAppContentBlockView: UIView {
                     }
                 let sortedMessages = self.sortContentBlocks(data: toReturn)
                 let input = self.maxMessagesCount > 0 ? Array(sortedMessages.prefix(self.maxMessagesCount)) : sortedMessages
+                self.messages = input.filter { $0.message != nil }
                 self._data.changeValue(with: { $0 = self.makeDuplicate(input: input) })
                 self.state = .refresh
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -326,6 +337,11 @@ open class CarouselInAppContentBlockView: UIView {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
+                guard !IntegrationManager.shared.isStopped else {
+                    Exponea.logger.log(.error, message: "In-app content blocks fetch failed: SDK is stopping")
+                    stopTimer()
+                    return
+                }
                 switch state {
                 case .restart:
                     self.savedTimer = nil
@@ -337,7 +353,7 @@ open class CarouselInAppContentBlockView: UIView {
                     self.stopTimer()
                 case .idle: break
                 case .refresh:
-                    self.onMessageChanged?(.init(count: self.data.count, messages: self.data))
+                    defaultBehaviourCallback.onMessagesChanged(count: self.messages.count, messages: self.messages.map { $0.message! })
                     self.collectionView.reloadData()
                 case .startTimer:
                     self.startTimer()
@@ -379,21 +395,24 @@ open class CarouselInAppContentBlockView: UIView {
 
 extension CarouselInAppContentBlockView: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let message = data[safeIndex: indexPath.row], let id = message.message?.id else {
+        guard let message = data[safeIndex: indexPath.row], let messageResponse = message.message, let id = message.message?.id else {
             currentMessage = nil
             return
         }
         currentMessage = message
-        if !alreadyShowedMessages.contains(id), let messageResponse = message.message {
+        if !alreadyShowedMessages.contains(id) {
             alreadyShowedMessages.append(id)
-            defaultBehaviourCallback.onMessageShown(placeholderId: placeholder, contentBlock: messageResponse)
             Exponea.shared.telemetryManager?.report(
                 eventWithType: .showInAppMessage,
                 properties: ["messageType": InAppContentBlockType.carouselContentBlock.type]
             )
         }
         inAppContentBlocksManager.updateDisplayedState(for: id)
-        onMessageShown?(.init(placeholderId: placeholder, contentBlock: message, index: indexPath.row, count: data.count))
+        if let index = messages.firstIndex(where: { $0.message?.id == messageResponse.id }) {
+            defaultBehaviourCallback.onMessageShown(placeholderId: placeholder, contentBlock: messageResponse, index: index, count: messages.count)
+        } else {
+            Exponea.logger.log(.error, message: "Error while calling onMessageShown callback, index of message not found")
+        }
         let maxLimitSeconds: Double = defaultRefreshInterval
         let tolerant: Double = 0.3
         let currentTimeStampWithLimit = lastScrollTimestamp + (maxLimitSeconds - tolerant)

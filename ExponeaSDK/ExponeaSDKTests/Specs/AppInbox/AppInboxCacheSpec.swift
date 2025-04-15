@@ -40,6 +40,7 @@ class AppInboxCacheSpec: QuickSpec {
 
     override func spec() {
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
             try? FileManager.default.removeItem(
                 at: documentsDir!.appendingPathComponent(AppInboxCache.appInboxFolder, isDirectory: true)

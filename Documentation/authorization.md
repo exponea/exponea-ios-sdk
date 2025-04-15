@@ -17,7 +17,6 @@ Token authorization is used for the following API endpoints by default:
 * `POST /track/v2/projects/<projectToken>/customers` for tracking of customer data
 * `POST /track/v2/projects/<projectToken>/customers/events` for tracking of event data
 * `POST /track/v2/projects/<projectToken>/campaigns/clicks` for tracking campaign events
-* `POST /data/v2/projects/<projectToken>/customers/attributes` for fetching customer attributes
 * `POST /data/v2/projects/<projectToken>/consent/categories` for fetching consents
 * `POST /webxp/s/<projectToken>/inappmessages?v=1` for fetching InApp messages
 * `POST /webxp/projects/<projectToken>/appinbox/fetch` for fetching of AppInbox data

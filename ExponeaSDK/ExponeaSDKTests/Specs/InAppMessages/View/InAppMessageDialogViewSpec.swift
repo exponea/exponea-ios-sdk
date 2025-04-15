@@ -13,10 +13,11 @@ import Quick
 
 final class InAppMessageDialogViewSpec: QuickSpec {
     override func spec() {
-        let payload = SampleInAppMessage.getSampleInAppMessage().payload
+        let payload = SampleInAppMessage.getSampleInAppMessage().oldPayload
         var image: UIImage!
 
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             let bundle = Bundle(for: InAppMessageDialogViewSpec.self)
             image = UIImage(contentsOfFile: bundle.path(forResource: "lena", ofType: "jpeg")!)
         }

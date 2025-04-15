@@ -35,6 +35,7 @@ final class TrackConsentManagerSpec: QuickSpec {
             var trackingManager: MockTrackingManager!
             var trackingConsentManager: TrackingConsentManagerType!
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 onEventOccuredCalls = 0
                 trackingManager = MockTrackingManager(onEventCallback: { _, _ in
                     onEventOccuredCalls += 1

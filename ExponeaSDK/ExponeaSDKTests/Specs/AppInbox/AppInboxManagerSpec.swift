@@ -193,6 +193,7 @@ class AppInboxManagerSpec: QuickSpec {
         var database: MockDatabaseManager!
 
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             repository = MockRepository(configuration: self.configuration)
             trackingManager = MockTrackingManager(onEventCallback: { _, _ in
                 // nothing yet

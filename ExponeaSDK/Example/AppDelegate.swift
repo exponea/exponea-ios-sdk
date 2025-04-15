@@ -116,14 +116,13 @@ class AppDelegate: ExponeaAppDelegate {
             }.joined() + "]"
         )
     }
-    
-    func userNotificationCenter(
+
+    override func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)
     {
-        // Show push notification in foreground app state
-        completionHandler([.alert, .sound])
+        super.userNotificationCenter(center, willPresent: notification, withCompletionHandler: completionHandler)
     }
 }
 

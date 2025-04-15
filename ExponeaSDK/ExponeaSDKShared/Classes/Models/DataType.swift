@@ -14,7 +14,7 @@ import Foundation
 /// - properties
 /// - timestamp
 /// - eventType
-public enum DataType: Equatable {
+public enum DataType: Equatable, Sendable {
     /// Identifier of your customer, can be anything from an email to UUIDs.
     case customerIds([String: String])
 

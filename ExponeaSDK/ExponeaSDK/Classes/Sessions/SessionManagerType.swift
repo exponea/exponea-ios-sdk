@@ -18,6 +18,7 @@ protocol SessionManagerType {
 
     func manualSessionStart(at date: TimeInterval)
     func manualSessionEnd(at date: TimeInterval)
+    func clearSessionManager()
 
     func clear()
 }

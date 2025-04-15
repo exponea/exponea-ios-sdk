@@ -80,6 +80,8 @@ class ExampleInAppContentBlockCallback: InAppContentBlockCallbackType {
                 }
             case .close:
                 Exponea.logger.log(.error, message: "In-app content block close has to be handled elsewhere")
+            case .unknown:
+                Exponea.logger.log(.error, message: "In-app content block unknown operation")
             }
         } else {
             actionClickBounce = true
@@ -105,6 +107,8 @@ class ExampleInAppContentBlockCallback: InAppContentBlockCallbackType {
                 }
             case .close:
                 Exponea.logger.log(.error, message: "In-app content block close has to be handled elsewhere")
+            case .unknown:
+                Exponea.logger.log(.error, message: "In-app content block unknown operation")
             }
         } else {
             actionClickBounce = true

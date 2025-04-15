@@ -29,6 +29,10 @@ class CampaignRepository: CampaignRepositoryType {
         }
     }
     func popValid() -> CampaignData? {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Campaign event not tracked, SDK is stopping")
+            return nil
+        }
         return CampaignRepository.accessQueue.sync {
             guard let lastCampaignData = userDefaults.data(forKey: Constants.General.savedCampaignClickEvent),
                   let lastCampaign = parseCampaingData(lastCampaignData) else {

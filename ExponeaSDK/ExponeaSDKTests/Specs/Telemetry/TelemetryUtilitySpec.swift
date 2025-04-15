@@ -13,6 +13,9 @@ import Nimble
 
 final class TelemetryUtilitySpec: QuickSpec {
     override func spec() {
+        beforeEach {
+            IntegrationManager.shared.isStopped = false
+        }
         describe("checking if exception stack trace is SDK related") {
             it("should return true for sdk related exception") {
                 expect(

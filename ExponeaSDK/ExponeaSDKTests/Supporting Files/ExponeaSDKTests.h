@@ -7,5 +7,3 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "mock_notification_response.h"
-#import "mock_notification_request.h"

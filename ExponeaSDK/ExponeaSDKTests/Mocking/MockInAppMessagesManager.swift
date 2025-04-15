@@ -9,6 +9,10 @@
 @testable import ExponeaSDK
 
 final class MockInAppMessagesManager: InAppMessagesManagerType {
+    func isFetchInAppMessagesDone(for event: [ExponeaSDK.DataType]) async throws -> Bool {
+        true
+    }
+    
     func startIdentifyCustomerFlow(for event: [ExponeaSDK.DataType], isFromIdentifyCustomer: Bool, isFetchDisabled: Bool, isAnonymized: Bool, triggerCompletion: ExponeaSDK.TypeBlock<ExponeaSDK.IdentifyTriggerState>?) {
         
     }

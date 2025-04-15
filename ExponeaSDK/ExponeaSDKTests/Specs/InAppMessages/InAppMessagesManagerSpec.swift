@@ -11,6 +11,7 @@ import Nimble
 
 @testable import ExponeaSDK
 
+@MainActor
 class InAppMessagesManagerSpec: QuickSpec {
     let configuration = try! Configuration(
         projectToken: "token",
@@ -31,10 +32,12 @@ class InAppMessagesManagerSpec: QuickSpec {
         let event: DataType = .customerIds(Exponea.shared.trackingManager?.customerIds ?? customer1)
 
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             cache = MockInAppMessagesCache()
             repository = MockRepository(configuration: self.configuration)
+            let message = SampleInAppMessage.getSampleInAppMessage()
             repository.fetchInAppMessagesResult = Result.success(
-                InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
+                InAppMessagesResponse(success: true, data: [message])
             )
             presenter = MockInAppMessagePresenter()
             displayStore = InAppMessageDisplayStatusStore(userDefaults: MockUserDefaults())
@@ -58,13 +61,19 @@ class InAppMessagesManagerSpec: QuickSpec {
 
         describe("Load") {
             it("Try to append pending request during identify customer") {
-                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
-                expect(manager.pendingShowRequests.count).to(equal(0))
-                manager.addToPendingShowRequest(event: [.eventType("session_start"), .customerIds(customer1)])
-                manager.addToPendingShowRequest(event: [.eventType("session_start"), .customerIds(customer1)])
-                expect(manager.pendingShowRequests.count).to(equal(1))
-                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
-                expect(manager.pendingShowRequests.count).to(equal(0))
+                waitUntil(timeout: .seconds(3), action: { done in
+                    Task {
+                        manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                        expect(manager.pendingShowRequests.count).to(equal(0))
+                        try await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+                        await manager.addToPendingShowRequest(event: [.eventType("session_start"), .customerIds(customer1)])
+                        await manager.addToPendingShowRequest(event: [.eventType("session_start"), .customerIds(customer1)])
+                        expect(manager.pendingShowRequests.count).to(equal(1))
+                        manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                        expect(manager.pendingShowRequests.count).to(equal(1))
+                        done()
+                    }
+                })
             }
             it("Check if pendingShowRequests are removed after identify customer") {
                 manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
@@ -132,7 +141,14 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in
+                Task {
+                    do {
+                        try await manager.isFetchInAppMessagesDone(for: [])
+                        done()
+                    } catch { done() }
+                }
+            }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
         }
 
@@ -140,9 +156,27 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in
+                Task {
+                    do {
+                        try await manager.isFetchInAppMessagesDone(for: [])
+                        done()
+                    } catch {
+                        done()
+                    }
+                }
+            }
             repository.fetchInAppMessagesResult = Result.failure(ExponeaError.unknownError(""))
-            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in
+                Task {
+                    do {
+                        try await manager.isFetchInAppMessagesDone(for: [])
+                        done()
+                    } catch {
+                        done()
+                    }
+                }
+            }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage()]))
         }
 
@@ -150,11 +184,27 @@ class InAppMessagesManagerSpec: QuickSpec {
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage()])
             )
-            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in
+                Task {
+                    do {
+                        try await manager.isFetchInAppMessagesDone(for: [])
+                        done()
+                    } catch {
+                        done()
+                    }
+                }
+            }
             repository.fetchInAppMessagesResult = Result.success(
                 InAppMessagesResponse(success: true, data: [SampleInAppMessage.getSampleInAppMessage(id: "new-id")])
             )
-            waitUntil(timeout: .seconds(3)) { done in manager.fetchInAppMessages(for: []) { done() } }
+            waitUntil(timeout: .seconds(3)) { done in
+                Task {
+                    do {
+                        try await manager.isFetchInAppMessagesDone(for: [])
+                        done()
+                    } catch { done() }
+                }
+            }
             expect(cache.getInAppMessages()).to(equal([SampleInAppMessage.getSampleInAppMessage(id: "new-id")]))
         }
 
@@ -165,7 +215,7 @@ class InAppMessagesManagerSpec: QuickSpec {
         it("should get in-app messages from cache if image is needed and precached") {
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
-                at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
+                at: SampleInAppMessage.getSampleInAppMessage().oldPayload!.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
             expect(manager.loadMessageToShow(for: [.eventType("session_start")]))
@@ -184,7 +234,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                         inAppMessages: [SampleInAppMessage.getSampleInAppMessage(dateFilter: dateFilter)]
                     )
                     cache.saveImageData(
-                        at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
+                        at: SampleInAppMessage.getSampleInAppMessage().oldPayload!.imageUrl!,
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
@@ -209,7 +259,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                         inAppMessages: [SampleInAppMessage.getSampleInAppMessage(trigger: trigger)]
                     )
                     cache.saveImageData(
-                        at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
+                        at: SampleInAppMessage.getSampleInAppMessage().oldPayload!.imageUrl!,
                         data: "mock data".data(using: .utf8)!
                     )
                     if included {
@@ -245,12 +295,19 @@ class InAppMessagesManagerSpec: QuickSpec {
 
             context("with frequency filter") {
                 beforeEach {
-                    waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
+                    waitUntil(timeout: .seconds(5)) { done in
+                        Task {
+                            do {
+                                try await manager.isFetchInAppMessagesDone(for: [])
+                                done()
+                            } catch { done() }
+                        }
+                    }
                 }
                 let createMessage = { (frequency: InAppMessageFrequency) in
                     let message = SampleInAppMessage.getSampleInAppMessage(frequency: frequency)
                     cache.saveInAppMessages(inAppMessages: [message])
-                    cache.saveImageData(at: message.payload!.imageUrl!, data: "mock data".data(using: .utf8)!)
+                    cache.saveImageData(at: message.oldPayload!.imageUrl!, data: "mock data".data(using: .utf8)!)
                 }
                 it("should apply always filter") {
                     createMessage(.always)
@@ -269,7 +326,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     waitUntil(timeout: .seconds(5)) { done in manager.showInAppMessage(for: [.eventType("session_start")]) { _ in done() } }
                     expect(manager.loadMessageToShow(for: [.eventType("session_start")])).notTo(beNil())
                     presenter.presentedMessages[0].actionCallback(
-                        SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                        SampleInAppMessage.getSampleInAppMessage().oldPayload!.buttons![0]
                     )
                     expect(manager.loadMessageToShow(for: [.eventType("session_start")])).to(beNil())
                 }
@@ -285,7 +342,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 let runTest = { (allMessages: [InAppMessage], expectedMessages: [InAppMessage]) -> Void in
                     cache.saveInAppMessages(inAppMessages: allMessages)
                     allMessages.forEach {
-                        cache.saveImageData(at: $0.payload!.imageUrl!, data: "mock data".data(using: .utf8)!)
+                        cache.saveImageData(at: $0.oldPayload!.imageUrl!, data: "mock data".data(using: .utf8)!)
                     }
                     expect(
                         manager.loadMessagesToShow(for: [.eventType("session_start")])
@@ -329,10 +386,17 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         it("should show dialog") {
-            waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in
+                Task {
+                    do {
+                        try await manager.isFetchInAppMessagesDone(for: [])
+                        done()
+                    } catch { done() }
+                }
+            }
             cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
             cache.saveImageData(
-                at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
+                at: SampleInAppMessage.getSampleInAppMessage().oldPayload!.imageUrl!,
                 data: "mock data".data(using: .utf8)!
             )
             waitUntil(timeout: .seconds(5)) { done in
@@ -344,7 +408,14 @@ class InAppMessagesManagerSpec: QuickSpec {
         }
 
         it("should not show dialog without messages") {
-            waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in
+                Task {
+                    do {
+                        try await manager.isFetchInAppMessagesDone(for: [])
+                        done()
+                    } catch { done() }
+                }
+            }
             cache.saveInAppMessages(inAppMessages: [])
             waitUntil(timeout: .seconds(5)) { done in
                 manager.showInAppMessage(for: [.eventType("session_start")]) { viewController in
@@ -356,11 +427,18 @@ class InAppMessagesManagerSpec: QuickSpec {
 
         context("tracking events") {
             beforeEach {
-                waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
+                waitUntil(timeout: .seconds(5)) { done in
+                    Task {
+                        do {
+                            try await manager.isFetchInAppMessagesDone(for: [])
+                            done()
+                        } catch { done() }
+                    }
+                }
                 trackingManager.clearCalls()
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
-                    at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
+                    at: SampleInAppMessage.getSampleInAppMessage().oldPayload!.imageUrl!,
                     data: "mock data".data(using: .utf8)!
                 )
             }
@@ -419,7 +497,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
-                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                    SampleInAppMessage.getSampleInAppMessage().oldPayload!.buttons![0]
                 )
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
@@ -436,10 +514,15 @@ class InAppMessagesManagerSpec: QuickSpec {
             it("should show in-app message after preload is complete") {
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
-                    at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
+                    at: SampleInAppMessage.getSampleInAppMessage().oldPayload!.imageUrl!,
                     data: "mock data".data(using: .utf8)!
                 )
                 manager.onEventOccurred(of: .sessionStart, for: [.eventType("session_start")])
+                waitUntil(timeout: .seconds(2)) { done in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        done()
+                    }
+                }
                 expect(presenter.presentedMessages.count).to(equal(1))
             }
 
@@ -498,7 +581,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
-                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                    SampleInAppMessage.getSampleInAppMessage().oldPayload!.buttons![0]
                 )
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
@@ -521,7 +604,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 ) { _ in done() } }
                 if !presenter.presentedMessages.isEmpty {
                     presenter.presentedMessages[0].actionCallback(
-                        SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                        SampleInAppMessage.getSampleInAppMessage().oldPayload!.buttons![0]
                     )
                 }
                 expect(trackingManager.trackedInappEvents).to(equal([
@@ -550,7 +633,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
-                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                    SampleInAppMessage.getSampleInAppMessage().oldPayload!.buttons![0]
                 )
                 expect(trackingManager.trackedInappEvents).to(equal([
                     MockTrackingManager.CallData(
@@ -662,10 +745,17 @@ class InAppMessagesManagerSpec: QuickSpec {
 
         context("default action performing") {
             beforeEach {
-                waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
+                waitUntil(timeout: .seconds(5)) { done in
+                    Task {
+                        do {
+                            try await manager.isFetchInAppMessagesDone(for: [])
+                            done()
+                        } catch { done() }
+                    }
+                }
                 cache.saveInAppMessages(inAppMessages: [SampleInAppMessage.getSampleInAppMessage()])
                 cache.saveImageData(
-                    at: SampleInAppMessage.getSampleInAppMessage().payload!.imageUrl!,
+                    at: SampleInAppMessage.getSampleInAppMessage().oldPayload!.imageUrl!,
                     data: "mock data".data(using: .utf8)!
                 )
             }
@@ -682,7 +772,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                     }
                 }
                 presenter.presentedMessages[0].actionCallback(
-                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                    SampleInAppMessage.getSampleInAppMessage().oldPayload!.buttons![0]
                 )
                 expect(urlOpener.openedDeeplinks.count).to(equal(1))
             }
@@ -693,17 +783,24 @@ class InAppMessagesManagerSpec: QuickSpec {
                     for: [.eventType("session_start")]
                 ) { _ in done() } }
                 presenter.presentedMessages[0].actionCallback(
-                    SampleInAppMessage.getSampleInAppMessage().payload!.buttons![0]
+                    SampleInAppMessage.getSampleInAppMessage().oldPayload!.buttons![0]
                 )
                 expect(urlOpener.openedDeeplinks.count).to(equal(0))
             }
         }
 
         it("should track control group message without showing it") {
-            waitUntil(timeout: .seconds(5)) { done in manager.fetchInAppMessages(for: [], completion: done) }
+            waitUntil(timeout: .seconds(5)) { done in
+                Task {
+                    do {
+                        try await manager.isFetchInAppMessagesDone(for: [])
+                        done()
+                    } catch { done() }
+                }
+            }
             trackingManager.clearCalls()
             let message = SampleInAppMessage.getSampleInAppMessage(
-                payload: SampleInAppMessage.getSampleInAppMessage().payload!,
+                payload: SampleInAppMessage.getSampleInAppMessage().oldPayload!,
                 variantName: "Control group",
                 variantId: -1)
             cache.saveInAppMessages(inAppMessages: [message])

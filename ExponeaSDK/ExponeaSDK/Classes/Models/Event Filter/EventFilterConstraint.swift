@@ -6,7 +6,7 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
-protocol EventFilterConstraint: Codable {
+protocol EventFilterConstraint: Codable, Sendable {
     var type: String { get }
     var filterOperator: EventFilterOperator.Type { get }
 
@@ -64,7 +64,7 @@ struct EventFilterConstraintCoder: Codable, Equatable {
     }
 }
 
-struct StringConstraint: EventFilterConstraint, Equatable {
+struct StringConstraint: EventFilterConstraint, Equatable, Sendable {
     let type: String = "string"
     let filterOperator: EventFilterOperator.Type
     let operands: [EventFilterOperand]
