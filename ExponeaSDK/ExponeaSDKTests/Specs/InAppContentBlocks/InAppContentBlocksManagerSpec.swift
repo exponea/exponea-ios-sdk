@@ -15,14 +15,20 @@ import Combine
 fileprivate class CustomCarouselCallback: DefaultContentBlockCarouselCallback {
 
     var notFoundCallback: EmptyBlock?
+    var onMessageChangedCallback: EmptyBlock?
 
     var overrideDefaultBehavior: Bool = false
     var trackActions: Bool = true
 
     init() {}
 
-    func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+    func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, index: Int, count: Int) {
         // space for custom implementation
+    }
+    
+    func onMessagesChanged(count: Int, messages: [ExponeaSDK.InAppContentBlockResponse]) {
+        // space for custom implementation
+        onMessageChangedCallback?()
     }
 
     func onNoMessageFound(placeholderId: String) {
@@ -279,12 +285,14 @@ class InAppContentBlocksManagerSpec: QuickSpec {
         
         it("message changed") {
             var wasMessageChanged = false
-            let view = CarouselInAppContentBlockView(placeholder: "placeholder")
+            let callback = CustomCarouselCallback()
+            let view = CarouselInAppContentBlockView(placeholder: "placeholder", behaviourCallback: callback)
+                
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 view.state = .refresh
             }
             waitUntil(timeout: .seconds(2)) { done in
-                view.onMessageChanged = { _ in
+                callback.onMessageChangedCallback = {
                     wasMessageChanged = true
                     done()
                 }

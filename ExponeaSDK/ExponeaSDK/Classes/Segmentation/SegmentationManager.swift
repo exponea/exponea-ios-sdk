@@ -83,14 +83,19 @@ public final class SegmentationManager: SegmentationManagerType {
         areCustomerIdsEqual && !externalIds.isEmpty
     }
 
-    private init() {}
+    private init() {
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.callbacks.removeAll()
+            self.anonymize()
+        }
+    }
 }
 
 // MARK: Methods
 extension SegmentationManager {
     // Just for test purpose
     public func removeAll() {
-
         callbacks.removeAll()
         newbieCallbacks.removeAll()
         debouncer.stop()
@@ -172,8 +177,16 @@ extension SegmentationManager {
     }
 
     private func getSegments(customerIds: [String: String], newbies: [SegmentCallbackData]) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Segments fetch failed, SDK is stopping")
+            return
+        }
         guard let cookie = customerIds["cookie"] else { return }
         dataProvider.getSegmentations(data: SegmentDataDTO.self, cookie: cookie) { [weak self] response in
+            guard !IntegrationManager.shared.isStopped else {
+                Exponea.logger.log(.error, message: "Segments fetch failed, SDK is stopping")
+                return
+            }
             guard let self,
                   let result = response.data,
                   self.areCustomerIdsEqual else {

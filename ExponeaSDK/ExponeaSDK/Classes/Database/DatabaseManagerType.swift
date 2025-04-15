@@ -30,4 +30,5 @@ protocol DatabaseManagerType: AnyObject {
     /// Creates new clear customer object. Useful for anonymizing the user.
     /// Existing events are tied to customer that was most recent when the event was created
     func makeNewCustomer()
+    func removeAllEvents()
 }

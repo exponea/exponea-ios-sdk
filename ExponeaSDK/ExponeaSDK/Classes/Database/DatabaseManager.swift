@@ -13,6 +13,7 @@ import CoreData
 /// Persisted data will be used to interact with the Exponea API.
 class DatabaseManager {
     internal let persistentContainer: NSPersistentContainer
+    private static let databaseName = "DatabaseModel"
 
     private lazy var context: NSManagedObjectContext = {
         let backgroundContext = persistentContainer.newBackgroundContext()
@@ -22,13 +23,17 @@ class DatabaseManager {
     }()
 
     internal init(persistentStoreDescriptions: [NSPersistentStoreDescription]? = nil) throws {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Init database, SDK is stopped")
+            throw DatabaseManagerError.unableToCreatePersistentContainer
+        }
         #if SWIFT_PACKAGE
         let bundle = Bundle.module
         #else
         let bundle = Bundle(for: DatabaseManager.self)
         #endif
 
-        guard let container = NSPersistentContainer(name: "DatabaseModel", bundle: bundle) else {
+        guard let container = NSPersistentContainer(name: Self.databaseName, bundle: bundle) else {
             throw DatabaseManagerError.unableToCreatePersistentContainer
         }
         var loadError: Error?
@@ -202,7 +207,61 @@ extension DatabaseManager {
 }
 
 extension DatabaseManager: DatabaseManagerType {
+    func removeAllEvents() {
+        if Exponea.isBeingTested {
+            context.performAndWait { [weak self] in
+                guard let self else { return }
+                let trackEvents: [TrackEvent] = try! context.fetch(TrackEvent.fetchRequest())
+                trackEvents.forEach { event in
+                    self.context.delete(event)
+                }
+                try? self.context.save()
+            }
+        } else {
+            context.performAndWait { [weak self] in
+                guard let self else { return }
+                do {
+                    let events: [TrackEvent] = try context.fetch(TrackEvent.fetchRequest())
+                    try events.forEach { item in
+                        try self.delete(item.objectID)
+                    }
+                    let trackCustomers: [TrackCustomer] = try context.fetch(TrackCustomer.fetchRequest())
+                    try trackCustomers.forEach { item in
+                        try self.delete(item.objectID)
+                    }
+                    let customers: [Customer] = try context.fetch(Customer.fetchRequest())
+                    try customers.forEach { item in
+                        try self.delete(item.objectID)
+                    }
+                    let keyValueItems: [KeyValueItem] = try context.fetch(KeyValueItem.fetchRequest())
+                    try keyValueItems.forEach { item in
+                        try self.delete(item.objectID)
+                    }
+                    let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Customer")
+                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                    try self.context.execute(deleteRequest)
+                    try self.context.save()
+                } catch let error as NSError {
+                    Exponea.logger.log(.error, message: "removeAllEvents failed: \(error)")
+                }
+            }
+        }
+    }
+
+    private func removeCustomer() {
+        context.performAndWait { [weak self] in
+            guard let self else { return }
+            let currentCustomer = self.currentCustomerManagedObject
+            self.context.delete(currentCustomer)
+            try? self.context.save()
+        }
+    }
+
     func updateEvent(withId id: NSManagedObjectID, withData data: DataType) throws {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Event \(data) has not been tracked, SDK is stopping")
+            return
+        }
         try context.performAndWait {
             guard let object = try? context.existingObject(with: id) else {
                 throw DatabaseManagerError.objectDoesNotExist
@@ -233,6 +292,12 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `timestamp`
     ///     - `eventType`
     func trackEvent(with data: [DataType], into project: ExponeaProject) throws {
+        guard !IntegrationManager.shared.isStopped else {
+            data.forEach { type in
+                Exponea.logger.log(.error, message: "Event \(data) has not been tracked, SDK is stopping")
+            }
+            return
+        }
         try context.performAndWait {
             let trackEvent = TrackEvent(context: context)
             if data.customerIds.isEmpty {

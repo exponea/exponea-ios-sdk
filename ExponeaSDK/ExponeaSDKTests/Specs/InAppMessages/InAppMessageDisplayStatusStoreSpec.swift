@@ -19,6 +19,7 @@ class InAppMessageDisplayStatusStoreSpec: QuickSpec {
         var displayStore: InAppMessageDisplayStatusStore!
 
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             userDefaults = MockUserDefaults()
             displayStore = InAppMessageDisplayStatusStore(userDefaults: userDefaults)
         }

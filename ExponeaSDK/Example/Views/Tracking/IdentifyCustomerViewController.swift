@@ -73,6 +73,6 @@ class IdentifyCustomerViewController: UIViewController {
         CustomerTokenStorage.shared.configure(customerIds: ids)
         Exponea.shared.identifyCustomer(customerIds: ids, properties: properties, timestamp: nil)
         dismiss(animated: true, completion: nil)
+        
     }
-
 }

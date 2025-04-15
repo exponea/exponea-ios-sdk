@@ -17,7 +17,7 @@ import ExponeaSDKShared
 class TrackingManager {
     let database: DatabaseManagerType
     let repository: RepositoryType
-    let device: DeviceProperties
+    var device: DeviceProperties
     let onEventCallback: (EventType, [DataType]) -> Void
 
     /// The identifiers of the the current customer.
@@ -103,6 +103,15 @@ class TrackingManager {
 
         trackManagerInitializator(self)
         initialSetup()
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.flushingManager.flushingMode = .periodic(0)
+            self.database.removeAllEvents()
+            NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+            self.device.properties.removeAll()
+        }
     }
 
     deinit {
@@ -123,6 +132,10 @@ class TrackingManager {
     /// Installation event is fired only once for the whole lifetime of the app on one
     /// device when the app is launched for the first time.
     internal func trackInstallEvent() {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Install event not tracked, SDK is stopping.")
+            return
+        }
         /// Checking if the APP was launched before.
         /// If the key value is false, means that the event was not fired before.
         let key = Constants.Keys.installTracked + database.currentCustomer.uuid.uuidString
@@ -186,6 +199,10 @@ extension TrackingManager: TrackingManagerType {
         with data: [DataType]?,
         trackingAllowed: Bool
     ) throws {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "track internal failed, Exponea is stopped")
+            return
+        }
         /// Get token mapping or fail if no token provided.
         let projects = repository.configuration.projects(for: type)
         if projects.isEmpty {
@@ -373,6 +390,10 @@ extension TrackingManager: TrackingManagerType {
 
     func manualSessionEnd() {
         sessionManager.manualSessionEnd()
+    }
+
+    func clearSessionManager() {
+        sessionManager.clearSessionManager()
     }
 
     func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {

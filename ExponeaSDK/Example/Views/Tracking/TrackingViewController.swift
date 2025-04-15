@@ -23,7 +23,7 @@ class TrackingViewController: UIViewController {
             sessionStartButton.isEnabled = !config.automaticSessionTracking
             sessionEndButton.isEnabled = !config.automaticSessionTracking
         }
-        
+
         SegmentationManager.shared.addCallback(
             callbackData: .init(
                 category: .discovery(),

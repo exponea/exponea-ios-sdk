@@ -6,7 +6,7 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 final class InAppMessagesCache: InAppMessagesCacheType {
     static let inAppMessagesFolder = "exponeasdk_in_app_messages"
@@ -30,6 +30,13 @@ final class InAppMessagesCache: InAppMessagesCacheType {
     }
 
     func saveInAppMessages(inAppMessages: [InAppMessage]) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(
+                .error,
+                message: "In-app UI is unavailable, SDK is stopping"
+            )
+            return
+        }
         guard let jsonData = try? JSONEncoder().encode(inAppMessages),
             let jsonString = String(data: jsonData, encoding: .utf8),
             let directory = getCacheDirectoryURL() else {
@@ -47,15 +54,45 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         }
     }
 
+    func deleteAllMessages() {
+        guard let directory = getCacheDirectoryURL()?.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName) else {
+                Exponea.logger.log(.warning, message: "Unable to serialize in-app messages data.")
+                return
+        }
+        try? fileManager.removeItem(at: directory)
+    }
+
     func getInAppMessages() -> [InAppMessage] {
         if let directory = getCacheDirectoryURL(),
-            let data = try? Data(
-                contentsOf: directory.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName)
-            ),
-            let inAppMessages = try? JSONDecoder().decode([InAppMessage].self, from: data) {
-            return inAppMessages
+           let data = try? Data(contentsOf: directory.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName)) {
+            do {
+                return try JSONDecoder().decode([InAppMessage].self, from: data)
+            } catch {
+                return []
+            }
         }
         return []
+    }
+
+    private func extractFont(base64: String?, size: CGFloat?) -> UIFont? {
+        if let base64 = base64,
+           let data = Data(base64Encoded: base64),
+           let dataProvider = CGDataProvider(data: data as CFData),
+           let cgFont = CGFont(dataProvider) {
+            var error: Unmanaged<CFError>?
+            if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
+                var fontToReturn: UIFont?
+                if let fontName = cgFont.postScriptName as? String {
+                    fontToReturn = UIFont(name: fontName, size: size ?? 13)
+                }
+                CTFontManagerUnregisterGraphicsFont(cgFont, &error)
+                return fontToReturn
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
     }
 
     func getInAppMessagesTimestamp() -> TimeInterval {
@@ -123,6 +160,6 @@ final class InAppMessagesCache: InAppMessagesCacheType {
 
     func clear() {
         deleteImages(except: [])
-        saveInAppMessages(inAppMessages: [])
+        deleteAllMessages()
     }
 }

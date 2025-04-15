@@ -12,10 +12,14 @@ import ExponeaSDK
 class FetchViewController: UIViewController {
 
     @IBOutlet var buttonsStack: UIStackView!
+    let button = Exponea.shared.getAppInboxButton()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let button = Exponea.shared.getAppInboxButton()
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            self?.button.removeFromSuperview()
+            self?.view.layoutIfNeeded()
+        }
         self.buttonsStack.addArrangedSubview(button)
         let widthConstraint = button.widthAnchor.constraint(equalToConstant: 48)
         let heightConstraint = button.heightAnchor.constraint(equalToConstant: 48)

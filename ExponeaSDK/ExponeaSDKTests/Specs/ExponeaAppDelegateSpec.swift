@@ -30,6 +30,7 @@ final class ExponeaAppDelegateSpec: QuickSpec {
         describe("Push token tracking") {
             context("when push notifications are not authorized") {
                 beforeEach {
+                    IntegrationManager.shared.isStopped = false
                     UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .notDetermined)
                 }
                 it("should not track token if authorization required") {
@@ -57,6 +58,7 @@ final class ExponeaAppDelegateSpec: QuickSpec {
 
             context("when push notifications are authorized") {
                 beforeEach {
+                    IntegrationManager.shared.isStopped = false
                     UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .authorized)
                 }
                 it("should track token if authorization required") {

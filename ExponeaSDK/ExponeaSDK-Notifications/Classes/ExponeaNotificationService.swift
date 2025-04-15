@@ -15,6 +15,9 @@ import ExponeaSDKShared
 public class ExponeaNotificationService {
 
     private let appGroup: String?
+    private var isSDKStopped: Bool {
+        UserDefaults(suiteName: appGroup ?? "ExponeaSDK")?.value(forKey: "isStopped") as? Bool ?? false
+    }
 
     var request: UNNotificationRequest?
     var contentHandler: ((UNNotificationContent) -> Void)?
@@ -36,10 +39,17 @@ public class ExponeaNotificationService {
     }
 
     public func process(request: UNNotificationRequest, contentHandler: @escaping (UNNotificationContent) -> Void) {
+        NSLog("=== ExponeaNotificationService: process ===")
         guard Exponea.isExponeaNotification(userInfo: request.content.userInfo) else {
             Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
             return
         }
+        guard !isSDKStopped else {
+            NSLog("=== ExponeaNotificationService: STOPPED ===")
+            contentHandler(request.content)
+            return
+        }
+        NSLog("=== ExponeaNotificationService: TRACKING ===")
         self.request = request
         self.contentHandler = contentHandler
 

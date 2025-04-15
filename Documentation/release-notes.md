@@ -11,6 +11,30 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.3.0
+#### April 11, 2025
+* Added:
+  * Adds a new stopIntegration method for improved SDK integration management and clears all locally stored data.
+  * Minor documentation improvements about using identifyCustomer with soft ID
+
+
+## Release Notes for 3.2.1
+#### March 28, 2025
+* Fixed:
+  * Fixed incorect import of Foundation instead of UIKit which cause compilation errors
+
+
+## Release Notes for 3.2.0
+#### March 27, 2025
+* Added:
+  * Adds rich styling support for native in-app messages.
+  * Improves how in-app personalizations are processed.
+* Fixed:
+  * Removes incorrectly listed customer attributes endpoint from documentation.
+  * Fixes possible dual init case caused by lazy property.
+  * Fixes and updates in-app message carousel type callback inconsistency.
+
+
 ## Release Notes for 3.1.0
 #### January 28, 2025
 * Added:

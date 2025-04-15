@@ -20,4 +20,19 @@ class AnonymizeViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
+
+    @IBAction func stopIntegration(_ sender: Any) {
+        let alert = UIAlertController(
+            title: "SDK stopped!",
+            message: "SDK has been de-integrated from your app. You may return app 'Back to Auth' to re-integrate. You may 'Continue' in using app without initialised SDK.",
+            preferredStyle: .alert
+        )
+        alert.addAction(.init(title: "Back to auth", style: .default, handler: { _ in
+            DeeplinkManager.manager.setDeeplinkType(type: .stopAndRestart)
+        }))
+        alert.addAction(.init(title: "Continue", style: .default, handler: { _ in
+            DeeplinkManager.manager.setDeeplinkType(type: .stopAndContinue)
+        }))
+        present(alert, animated: true)
+    }
 }

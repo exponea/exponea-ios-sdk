@@ -226,6 +226,10 @@ extension ExponeaInternal {
     }
 
     func trackCampaignData(data: CampaignData, timestamp: Double?) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Campaign event not tracked, SDK is stopping")
+            return
+        }
         Exponea.logger.log(.verbose, message: "Tracking campaign data: \(data.description)")
         executeSafelyWithDependencies { dependencies in
             // Create initial data
@@ -275,6 +279,10 @@ extension ExponeaInternal {
     public func handlePushNotificationOpened(userInfo: [AnyHashable: Any], actionIdentifier: String? = nil) {
         guard Exponea.isExponeaNotification(userInfo: userInfo) else {
             Exponea.logger.log(.verbose, message: "Skipping non-Exponea notification")
+            return
+        }
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.verbose, message: "Skipping notification, SDK is stopping")
             return
         }
         executeSafelyWithDependencies { dependencies in

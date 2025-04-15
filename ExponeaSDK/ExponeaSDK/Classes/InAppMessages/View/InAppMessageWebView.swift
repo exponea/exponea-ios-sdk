@@ -3,9 +3,11 @@ import UIKit
 import WebKit
 
 final class InAppMessageWebView: UIView, InAppMessageView {
+    var showCallback: EmptyBlock?
+    
     private let payload: String
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: (Bool, InAppMessagePayloadButton?) -> Void
+    let dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)>
 
     var webView: WKWebView!
     private var inAppContentBlocksManager: InAppContentBlocksManagerType = InAppContentBlocksManager.manager
@@ -13,7 +15,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     var normalizedPayload: NormalizedResult?
 
     var actionManager: WebActionManager?
-    
+
     var isPresented: Bool {
         return superview != nil
     }
@@ -21,7 +23,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     required init(
         payload: String,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void
+        dismissCallback: @escaping TypeBlock<(Bool, InAppMessagePayloadButton?)>
     ) {
         self.payload = payload
         self.actionCallback = actionCallback
@@ -73,7 +75,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
 
     func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?) {
         onMain {
-            self.dismissCallback(isUserInteraction, cancelButton)
+            self.dismissCallback((isUserInteraction, cancelButton))
             self.dismissFromSuperView()
         }
     }

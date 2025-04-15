@@ -46,4 +46,18 @@ open class ExponeaAppDelegate: NSObject, UNUserNotificationCenterDelegate, UIApp
         Exponea.shared.handlePushNotificationOpened(response: response)
         completionHandler()
     }
+
+    open func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        if IntegrationManager.shared.isStopped && Exponea.isExponeaNotification(userInfo: notification.request.content.userInfo) {
+            Exponea.logger.log(.error, message: "Will present wont finish, SDK is stopping")
+            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [notification.request.identifier])
+            completionHandler([])
+        } else {
+            completionHandler([.alert, .sound])
+        }
+    }
 }

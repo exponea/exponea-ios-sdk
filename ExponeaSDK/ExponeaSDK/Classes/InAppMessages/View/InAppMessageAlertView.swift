@@ -9,17 +9,18 @@
 import UIKit
 
 final class InAppMessageAlertView: InAppMessageView {
+    var showCallback: EmptyBlock?
     var isPresented: Bool {
         return alertController.presentingViewController != nil
     }
     let alertController: UIAlertController
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: (Bool, InAppMessagePayloadButton?) -> Void
+    let dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)>
 
     init(
         payload: InAppMessagePayload,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void
+        dismissCallback: @escaping TypeBlock<(Bool, InAppMessagePayloadButton?)>
     ) throws {
         guard let buttons = payload.buttons else {
             throw InAppMessagePresenter.InAppMessagePresenterError.unableToCreateView
@@ -73,7 +74,7 @@ final class InAppMessageAlertView: InAppMessageView {
     }
 
     func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?) {
-        dismissCallback(isUserInteraction, cancelButton)
+        dismissCallback((isUserInteraction, cancelButton))
         dismissFromSuperView()
     }
 

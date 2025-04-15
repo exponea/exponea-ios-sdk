@@ -57,7 +57,7 @@ extension Array: JSONConvertible where Element == JSONConvertible {
     }
 }
 
-public indirect enum JSONValue {
+public indirect enum JSONValue: Sendable {
     case string(String)
     case bool(Bool)
     case int(Int)

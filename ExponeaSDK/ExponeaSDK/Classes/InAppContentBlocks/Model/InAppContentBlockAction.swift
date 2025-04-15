@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct InAppContentBlockAction {
+public struct InAppContentBlockAction: Codable {
     public let name: String?
     public let url: String?
     public let type: InAppContentBlockActionType
@@ -20,8 +20,22 @@ public struct InAppContentBlockAction {
     }
 }
 
-public enum InAppContentBlockActionType {
+public enum InAppContentBlockActionType: String, Codable {
     case deeplink
     case browser
     case close
+    case unknown
+
+    init(input: String?) {
+        switch input?.lowercased() {
+        case "cancel":
+            self = .close
+        case "deep-link":
+            self = .deeplink
+        case "browser":
+            self = .browser
+        default:
+            self = .unknown
+        }
+    }
 }
