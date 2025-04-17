@@ -195,7 +195,6 @@ You may want to render your app's UI differently depending on whether an in-app 
 
 In such use cases you can use the `contentReadyCompletion` on the placeholder view to get notified when an in-app content block has been successfully loaded or no content was found.
 
-
 ```swift
 let placeholderView = StaticInAppContentBlockView(placeholder: "placeholder")
 placeholderView.contentReadyCompletion = { [weak self] contentLoaded in
@@ -208,6 +207,15 @@ placeholderView.contentReadyCompletion = { [weak self] contentLoaded in
         // you can hide this view because no In-app content block is available now
         placeholderView.isHidden = true
     }
+}
+```
+
+In such use cases you can use the `calculator.heightUpdate` callback on the placeholder view to get notified when an in-app content block changed its height.
+
+```swift
+lazy var placeholder = StaticInAppContentBlockView(placeholder: "example_top", deferredLoad: true)
+placeholder.calculator.heightUpdate = { calculator in
+    print(calculator.height)
 }
 ```
 

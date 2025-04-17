@@ -129,6 +129,9 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
 
         view.addSubview(placeholder)
 
+        placeholder.calculator.heightUpdate = { calculator in
+            print(calculator.height)
+        }
         placeholder.contentReadyCompletion = { [weak self] contentLoaded in
             guard let self else {
                 Exponea.logger.log(.error, message: "In-app content block has been loaded but deattached from view controller")

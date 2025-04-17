@@ -44,7 +44,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     private let placeholder: String
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
-    private lazy var calculator: WKWebViewHeightCalculator = .init()
+    public lazy var calculator: WKWebViewHeightCalculator = .init()
     private var html: String = ""
     private var height: NSLayoutConstraint?
     private var contentReadyFlag: Bool?

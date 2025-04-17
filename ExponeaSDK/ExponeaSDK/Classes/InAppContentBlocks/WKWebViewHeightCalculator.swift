@@ -14,7 +14,7 @@ public final class WKWebViewHeightCalculator: WKWebView, WKNavigationDelegate {
 
     // MARK: - Properties
     var defaultPadding: CGFloat = 20
-    var heightUpdate: TypeBlock<CalculatorData>?
+    public var heightUpdate: TypeBlock<CalculatorData>?
     var height: CGFloat?
     var id: String = ""
 
