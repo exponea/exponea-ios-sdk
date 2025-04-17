@@ -1115,6 +1115,7 @@ extension InAppContentBlocksManager {
             Exponea.logger.log(.verbose, message: "In-app Content Blocks prepareInAppContentBlocksStaticView message not found.")
             return nil
         }
+        message.status = getDisplayState(of: message.id)
         Exponea.logger.log(
             .verbose,
             message: "In-app Content Blocks prepareInAppContentBlocksStaticView message \(message.describe())."

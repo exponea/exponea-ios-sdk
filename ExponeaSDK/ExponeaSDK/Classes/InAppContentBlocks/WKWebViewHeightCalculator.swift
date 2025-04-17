@@ -29,13 +29,13 @@ public final class WKWebViewHeightCalculator: WKWebView, WKNavigationDelegate {
 
     public func webView(
         _ webView: WKWebView,
-        decidePolicyFor navigationAction: WKNavigationAction,
-        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+        didFinish navigation: WKNavigation!
     ) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.heightUpdate?(.init(height: webView.scrollView.contentSize.height + self.defaultPadding, placeholderId: self.id))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            guard let self else { return }
+            let height = webView.scrollView.contentSize.height + self.defaultPadding
+            self.heightUpdate?(.init(height: height, placeholderId: self.id))
         }
-        decisionHandler(.allow)
     }
 }
 

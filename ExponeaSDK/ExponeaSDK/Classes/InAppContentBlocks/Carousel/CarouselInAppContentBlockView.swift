@@ -108,8 +108,6 @@ open class CarouselInAppContentBlockView: UIView {
             }
             .store(in: &cancellables)
 
-        redrawWithNewHeight(inputView: self, loadedInAppContentBlocksView: collectionView, height: 1)
-
         calculator.heightUpdate = { [weak self] height in
             guard let self else { return }
             let height = self.customHeight ?? height.height
@@ -123,6 +121,8 @@ open class CarouselInAppContentBlockView: UIView {
             self.stopTimer()
             self.layoutIfNeeded()
         }
+
+        redrawWithNewHeight(inputView: self, loadedInAppContentBlocksView: collectionView, height: 1)
     }
 
     open func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?) {
@@ -182,6 +182,9 @@ open class CarouselInAppContentBlockView: UIView {
                 let input = self.maxMessagesCount > 0 ? Array(sortedMessages.prefix(self.maxMessagesCount)) : sortedMessages
                 self.messages = input.filter { $0.message != nil }
                 self._data.changeValue(with: { $0 = self.makeDuplicate(input: input) })
+                if let first = self.data.first?.html {
+                    self.calculator.loadHtml(placedholderId: self.placeholder, html: first)
+                }
                 self.state = .refresh
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.startCarouseling()
@@ -312,7 +315,12 @@ open class CarouselInAppContentBlockView: UIView {
     }
 
     public func getShownCount() -> Int {
-        data.filter { $0.message?.status?.displayed != nil }.count
+        let data = data.filter { $0.message?.status?.displayed != nil }
+        var messages: Set<StaticReturnData> = .init()
+        data.forEach { item in
+            messages.insert(item)
+        }
+        return messages.count
     }
 
     private func refreshContent() {
