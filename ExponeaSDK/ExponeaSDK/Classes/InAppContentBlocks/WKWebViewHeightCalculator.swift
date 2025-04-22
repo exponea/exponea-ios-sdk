@@ -14,7 +14,8 @@ public final class WKWebViewHeightCalculator: WKWebView, WKNavigationDelegate {
 
     // MARK: - Properties
     var defaultPadding: CGFloat = 20
-    public var heightUpdate: TypeBlock<CalculatorData>?
+    var heightUpdate: TypeBlock<CalculatorData>?
+    public var publicHeightUpdate: TypeBlock<CalculatorData>?
     var height: CGFloat?
     var id: String = ""
 
@@ -31,10 +32,16 @@ public final class WKWebViewHeightCalculator: WKWebView, WKNavigationDelegate {
         _ webView: WKWebView,
         didFinish navigation: WKNavigation!
     ) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Method has not been invoked, SDK is stopping")
+            self.publicHeightUpdate?(.init(height: 0, placeholderId: ""))
+            return
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             guard let self else { return }
             let height = webView.scrollView.contentSize.height + self.defaultPadding
             self.heightUpdate?(.init(height: height, placeholderId: self.id))
+            self.publicHeightUpdate?(.init(height: height, placeholderId: self.id))
         }
     }
 }
@@ -44,6 +51,7 @@ public extension WKWebViewHeightCalculator {
         onMain {
             guard !html.isEmpty else {
                 self.heightUpdate?(.init(height: 0, placeholderId: placedholderId))
+                self.publicHeightUpdate?(.init(height: 0, placeholderId: self.id))
                 return
             }
             self.id = placedholderId

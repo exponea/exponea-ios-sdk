@@ -210,11 +210,11 @@ placeholderView.contentReadyCompletion = { [weak self] contentLoaded in
 }
 ```
 
-In such use cases you can use the `calculator.heightUpdate` callback on the placeholder view to get notified when an in-app content block changed its height.
+In such use cases you can use the `calculator.publicHeightUpdate` callback on the placeholder view to get notified when an in-app content block changed its height.
 
 ```swift
 lazy var placeholder = StaticInAppContentBlockView(placeholder: "example_top", deferredLoad: true)
-placeholder.calculator.heightUpdate = { calculator in
+placeholder.calculator.publicHeightUpdate = { calculator in
     print(calculator.height)
 }
 ```

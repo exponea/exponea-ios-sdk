@@ -18,21 +18,26 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
     private let window: UIWindow?
     internal var presenting = false
     private var inAppController: UIViewController?
+    private var inAppMessageView: InAppMessageView?
 
     init(window: UIWindow? = nil) {
         self.window = window
 
         IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
             guard let self else { return }
-            if let last = (self.inAppController as? UINavigationController)?.viewControllers.last as? InAppDialogContainerView {
-                last.view.removeFromSuperview()
-                last.removeFromParent()
-            } else if let vc = self.inAppController as? InAppDialogContainerView {
-                vc.view.removeFromSuperview()
-                vc.removeFromParent()
-            } else {
-                (self.inAppController as? UINavigationController)?.removeFromParent()
-            }
+            self.closeInApp()
+        }
+    }
+
+    private func closeInApp() {
+        if let last = (inAppController as? UINavigationController)?.viewControllers.last as? InAppDialogContainerView {
+            last.view.removeFromSuperview()
+            last.removeFromParent()
+        } else if let vc = inAppController as? InAppDialogContainerView {
+            vc.view.removeFromSuperview()
+            vc.removeFromParent()
+        } else {
+            inAppMessageView?.dismissFromSuperView()
         }
     }
 
@@ -83,7 +88,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     }
                     self.inAppController = viewController
                     do {
-                        var inAppMessageView = try self.createInAppMessageView(
+                        self.inAppMessageView = try self.createInAppMessageView(
                             messageType: messageType,
                             payload: payload,
                             oldPayload: oldPayload,
@@ -99,7 +104,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                                 dismissCallback(isUserInteraction, cancelButtonPayload)
                             }
                         )
-                        try inAppMessageView.present(
+                        guard let inAppMessageView = self.inAppMessageView else {
+                            return
+                        }
+                        try self.inAppMessageView?.present(
                             in: viewController,
                             window: self.window ?? UIApplication.shared.keyWindow
                         )
@@ -169,11 +177,12 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 fullscreen = true
             }
             if var payload {
-                let updatedConfigs = payload.buttons.map { payload in
+                let updatedConfigs = payload.buttons.map { [weak self] payload in
                     var updatedPayload = payload
                     updatedPayload.buttonConfig?.actionCallback = { type in
                         if let type {
                             actionCallback(type)
+                            self?.closeInApp()
                         }
                     }
                     return updatedPayload
