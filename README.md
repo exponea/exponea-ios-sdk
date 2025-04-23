@@ -21,11 +21,11 @@ It has been written 100% in Swift with ❤️
 
 ```ruby
 # Add this under your main application target
-pod "ExponeaSDK", "~> 3.3.0"
+pod "ExponeaSDK", "~> 3.4.0"
 
 # If you also use rich push notifications,
 # add this line to your notification service extension target.
-pod "ExponeaSDK-Notifications", "~> 3.3.0"
+pod "ExponeaSDK-Notifications", "~> 3.4.0"
 ```
 
 ### Carthage
@@ -33,7 +33,7 @@ pod "ExponeaSDK-Notifications", "~> 3.3.0"
 > Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks. The latter one is only supposed to be used in a notification service extension if you wish to support rich push notifications. Read more about rich push notifications [here](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications#rich-push-notifications).
 
 ```
-github "exponea/exponea-ios-sdk" ~> 3.3.0
+github "exponea/exponea-ios-sdk" ~> 3.4.0
 ```
 > And then in your Command line tool type ```carthage update --use-xcframeworks --platform ios```
 

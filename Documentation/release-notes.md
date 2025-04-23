@@ -11,6 +11,16 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.4.0
+#### April 22, 2025
+* Added:
+  * Height Calculator: The height calculator of content block has been made accessible for improved height calculations within the SDK.
+* Fixed:
+  * Carousel Freezing Issue: Fixed a bug causing the carousel to freeze under certain conditions.
+  * Carousel Bug Fixes: Multiple issues in the carousel component have been resolved, including inaccuracies in the getShownCount method and performance enhancements.
+  * Banner Count Return Fixes: Specific bug fixes related to the accurate returning of banner counts in the carousel.
+
+
 ## Release Notes for 3.3.0
 #### April 11, 2025
 * Added:
