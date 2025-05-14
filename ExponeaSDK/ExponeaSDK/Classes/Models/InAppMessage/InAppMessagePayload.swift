@@ -176,7 +176,7 @@ public struct InAppButtonPayload: Codable {
         case buttonTextAlignment = "button_align"
         case buttonFontUrl = "button_font_url"
         case buttonLink = "button_link"
-        case buttonStyle = "button_format"
+        case buttonStyle = "button_font_format"
         case buttonEnabled = "button_enabled"
         case buttonType = "button_type"
         case buttonHasBorder = "button_has_border"
