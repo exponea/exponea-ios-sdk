@@ -139,6 +139,19 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                     ])
                 ]))
             }
+            it("should store all customer tracks") {
+                prepareEnvironment(true)
+                Exponea.shared.flushingMode = .immediate
+                for i in 0...2 {
+                    DispatchQueue.global().async {
+                        try? trackingManager.track(EventType.identifyCustomer, with: [
+                            .properties(["prop\(i)": .string("value")])
+                        ])
+                    }
+                }
+                Thread.sleep(forTimeInterval: 1)
+                expect { try database.fetchTrackCustomer().count }.to(equal(3))
+            }
         }
     }
 }

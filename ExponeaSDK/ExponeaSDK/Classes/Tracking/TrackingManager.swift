@@ -220,9 +220,9 @@ extension TrackingManager: TrackingManagerType {
                 inAppMessageManager?.pendingShowRequests.removeAll()
                 switch Exponea.shared.flushingMode {
                 case .immediate:
+                    try? self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
                     Exponea.shared.flushingManager?.inAppRefreshCallback = {
                         Exponea.shared.flushingManager?.inAppRefreshCallback = nil
-                        try? self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
                         self.onEventCallback(type, payload)
                     }
                     Exponea.shared.flushingManager?.flushData(isFromIdentify: true)
