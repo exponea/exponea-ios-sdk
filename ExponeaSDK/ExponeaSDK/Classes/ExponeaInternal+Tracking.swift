@@ -373,6 +373,7 @@ extension ExponeaInternal {
             dependencies.inAppContentBlocksManager.anonymize()
             SegmentationManager.shared.anonymize()
             dependencies.campaignRepository.clear()
+            FileCache.shared.clear()
             try dependencies.trackingManager.anonymize(
                 exponeaProject: exponeaProject,
                 projectMapping: projectMapping

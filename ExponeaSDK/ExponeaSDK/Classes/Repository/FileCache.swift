@@ -9,6 +9,8 @@
 import Foundation
 
 final class FileCache: FileCacheType {
+    
+    static let shared = FileCache()
 
     static let inAppMessagesFolder = "exponeasdk_files_cache"
 
@@ -78,5 +80,19 @@ final class FileCache: FileCacheType {
 
     func clear() {
         deleteFiles(except: [])
+    }
+
+    func getOrDownloadFile(at fileUrl: String) -> Data? {
+        if fileUrl.isEmpty {
+            return nil
+        }
+        var fileData = getFileData(at: fileUrl)
+        if fileData == nil {
+            fileData = FileUtils.tryDownloadFile(fileUrl)
+            if let fileData = fileData {
+                saveFileData(at: fileUrl, data: fileData)
+            }
+        }
+        return fileData
     }
 }

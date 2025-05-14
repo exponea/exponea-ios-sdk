@@ -587,6 +587,7 @@ public extension ExponeaInternal {
         InAppMessagesCache().clear()
         clearUserDefaults(appGroup: appGroup)
         clearAllDependencies()
+        FileCache.shared.clear()
     }
 
     func clearLocalCustomerData(appGroup: String) {
@@ -602,6 +603,7 @@ public extension ExponeaInternal {
         try? DatabaseManager().removeAllEvents()
         CampaignRepository(userDefaults: userDefaults).clear()
         clearAllDependencies()
+        FileCache.shared.clear()
     }
 
     private func clearUserDefaults(appGroup: String?) {
