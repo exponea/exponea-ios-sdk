@@ -32,7 +32,7 @@ public struct InAppMessage: Codable, Equatable {
     public let payloadHtml: String?
     public let isHtml: Bool
     public let variantId: Int
-    private let isRichText: Bool
+    public let isRichText: Bool
     public let variantName: String
     public let trigger: EventFilter
     public let dateFilter: DateFilter
