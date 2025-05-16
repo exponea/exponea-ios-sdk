@@ -11,6 +11,9 @@ import Foundation
 
 internal class MockTrackingManager: TrackingManagerType {
 
+    func clearSessionManager() {
+        
+    }
     public struct TrackedEvent: Equatable {
         let type: EventType
         let data: [DataType]?

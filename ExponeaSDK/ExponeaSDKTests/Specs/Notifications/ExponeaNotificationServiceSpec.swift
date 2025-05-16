@@ -13,6 +13,18 @@ import Nimble
 @testable import ExponeaSDKNotifications
 
 final class ExponeaNotificationServiceSpec: QuickSpec {
+
+    private func mock_notification_request(userInfo: [AnyHashable : Any]?) -> UNNotificationRequest {
+        let content = UNNotificationContent()
+        content.setValue(userInfo, forKey: "userInfo")
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: content,
+            trigger: nil
+        )
+        return request
+    }
+
     private func getRecordedNotifications() -> [Data]? {
         let userDefaults = UserDefaults(suiteName: "mock-app-group")!
         if let delivered = userDefaults.array(forKey: ExponeaSDK.Constants.General.deliveredPushUserDefaultsKey)
@@ -33,6 +45,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
     override func spec() {
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             UserDefaults.standard.removePersistentDomain(forName: "mock-app-group")
         }
         describe("saving notifications for later") {
@@ -150,12 +163,12 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             let userInfo = try! JSONSerialization.jsonObject(
                 with: PushNotificationsTestData().deliveredCustomActionsNotification.data(using: .utf8)!, options: []
             ) as? [AnyHashable: Any]
-            let request = mock_notification_request(userInfo)
+            let request = mock_notification_request(userInfo: userInfo)
 
             it("should create content") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 waitUntil(timeout: .seconds(5)) { done in
-                    service.process(request: request!) { content in
+                    service.process(request: request) { content in
                         expect(content.title).to(equal("Test push notification title"))
                         expect(content.body).to(equal("test push notification message"))
                         done()
@@ -166,7 +179,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             it("should save notification for later when unable to track") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 waitUntil(timeout: .seconds(5)) { done in
-                    service.process(request: request!) { _ in
+                    service.process(request: request) { _ in
                         // for missing SDK conf, only raw NotifPayload should be stored
                         let delivered = self.getRecordedNotifications()!
                         expect(delivered.count).to(equal(1))
@@ -195,7 +208,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 500)
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 waitUntil(timeout: .seconds(5)) { done in
-                    service.process(request: request!) { _ in
+                    service.process(request: request) { _ in
                         // for existing SDK conf, raw NotifPayloads are meaningless to be stored
                         expect(self.getRecordedNotifications()).to(beNil())
                         // for existing SDK conf, delivered events has to be created and stored
@@ -223,7 +236,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 200)
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
                 waitUntil(timeout: .seconds(5)) { done in
-                    service.process(request: request!) { _ in
+                    service.process(request: request) { _ in
                         expect(self.getRecordedNotifications()).to(beNil())
                         expect(self.getRecordedNotificationEvents()).to(beNil())
                         done()

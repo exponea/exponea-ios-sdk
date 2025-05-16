@@ -29,5 +29,8 @@ public protocol InAppContentBlocksManagerType {
     func prefetchPlaceholdersWithIds(input: [InAppContentBlockResponse], ids: [String]) -> [InAppContentBlockResponse]
     func filterPriority(input: [InAppContentBlockResponse]) -> [Int: [InAppContentBlockResponse]]
     func refreshStaticViewContent(staticQueueData: StaticQueueData)
-    func isMessageValid(message: InAppContentBlockResponse, isValidCompletion: TypeBlock<Bool>?, refreshCallback: EmptyBlock?) 
+    func isMessageValid(message: InAppContentBlockResponse, isValidCompletion: TypeBlock<Bool>?, refreshCallback: EmptyBlock?)
+    func applyDateFilter(message: InAppContentBlockResponse) -> Bool
+    func filterCarouselData(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?)
+    func addMessage(_ message: InAppContentBlockResponse)
 }

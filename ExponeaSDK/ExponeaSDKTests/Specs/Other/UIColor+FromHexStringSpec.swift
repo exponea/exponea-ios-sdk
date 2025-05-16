@@ -31,5 +31,10 @@ final class UIColorFromHexStringSpec: QuickSpec {
             expect(UIColor(fromHexString: "random string"))
                 .to(equal(UIColor(red: 0, green: 0, blue: 0, alpha: 1)))
         }
+        it("should parse rgba colors") {
+            expect(UIColor.parse("rgba(255, 0, 255, 1.0)")).toNot(beNil())
+            expect(UIColor.parse("rgba(0, 0, 0, 0.44)")).toNot(beNil())
+            expect(UIColor.parse("rgba(0,0,0,0.44)")).toNot(beNil())
+        }
     }
 }

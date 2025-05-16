@@ -73,6 +73,25 @@ final class InAppContentBlocksManager: NSObject {
         super.init()
         
         _usedInAppContentBlocks.changeValue(with: { $0.removeAll() })
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.usedInAppContentBlocks.forEach { key, value in
+                let content = self.usedInAppContentBlocks[key] ?? []
+                let updatedMessages = content.map { content in
+                    var copy = content
+                    copy.height = 0
+                    return copy
+                }
+                self.usedInAppContentBlocks[key] = updatedMessages
+            }
+            self._inAppContentBlockMessages.changeValue(with: { $0.removeAll() })
+            self.usedInAppContentBlocks.removeAll()
+        }
+    }
+
+    internal func addMessage(_ message: InAppContentBlockResponse) {
+        inAppContentBlockMessages.append(message)
     }
 
     func initBlocker() {
@@ -142,7 +161,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     }
 
     func getUsedInAppContentBlocks(placeholder: String, indexPath: IndexPath) -> UsedInAppContentBlocks? {
-        usedInAppContentBlocks[placeholder]?.first(where: { $0.indexPath == indexPath && $0.isActive })
+        return usedInAppContentBlocks[placeholder]?.first(where: { $0.indexPath == indexPath && $0.isActive })
     }
 
     func anonymize() {
@@ -286,8 +305,8 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
 
     func prefetchPlaceholdersWithIds(ids: [String]) {
         Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts.")
-        guard let customerIds = try? DatabaseManager().currentCustomer.ids else {
-            Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts failed due to customer ids are empty")
+        guard let customerIds = try? DatabaseManager().currentCustomer.ids, !ids.isEmpty else {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts failed due to customer ids or ids are empty")
             return
         }
         Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch ids \(ids)")
@@ -324,7 +343,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         }
     }
 
-    func getFilteredMessage(message: InAppContentBlockResponse) -> Bool {
+    func getFilteredMessage(message: InAppContentBlockResponse) -> Bool {        
         let displayState = getDisplayState(of: message.id)
         switch message.frequency {
         case .oncePerVisit:
@@ -399,6 +418,10 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     }
 
     func prepareInAppContentBlockView(placeholderId: String, indexPath: IndexPath) -> UIView {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.verbose, message: "In-app content blocks fetch failed: SDK is stopping")
+            return .init()
+        }
         let messagesToUse = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholderId) }
         let messagesNeedToRefresh = messagesToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
         let expiredMessages = messagesToUse.filter { inAppContentBlocks in
@@ -480,17 +503,23 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         let placeholdersNeedToRefresh = placehodlersToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
         let expiredMessages = inAppContentBlockMessages.filter { inAppContentBlocks in
             if let ttlSeen = inAppContentBlocks.personalizedMessage?.ttlSeen,
-               let ttl = inAppContentBlocks.personalizedMessage?.ttlSeconds,
-               inAppContentBlocks.content == nil {
+               let ttl = inAppContentBlocks.personalizedMessage?.ttlSeconds {
                 return Date() > ttlSeen.addingTimeInterval(TimeInterval(ttl))
             }
             return false
+        }
+        let notFoundPersonalizedMessages = inAppContentBlockMessages.filter { inAppContentBlocks in
+            inAppContentBlocks.personalizedMessage == nil
         }
         let expiredMessagesDescriptions = expiredMessages.map { $0.describe() }
         Exponea.logger.log(
             .verbose,
             message: "In-app Content Blocks prepareInAppContentBlocksStaticView expiredMessages \(expiredMessagesDescriptions)."
         )
+        if expiredMessages.isEmpty && !notFoundPersonalizedMessages.isEmpty && placehodlersToUse.isEmpty {
+            continueCallback?([])
+            return
+        }
         guard placeholdersNeedToRefresh.isEmpty && expiredMessages.isEmpty else {
             expiredCompletion?()
             return
@@ -640,12 +669,29 @@ private extension InAppContentBlocksManager {
         }
     }
 
+    internal func applyDateFilter(message: InAppContentBlockResponse) -> Bool {
+        guard message.dateFilter.enabled else {
+            return true
+        }
+        if let start = message.dateFilter.fromDate, start > Date() {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks '\(message.name)' outside of date range.")
+            return false
+        }
+        if let end = message.dateFilter.toDate, end < Date() {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks '\(message.name)' outside of date range.")
+            return false
+        }
+        return true
+    }
+
     func filterPersonalizedMessages(input: [InAppContentBlockResponse]) -> InAppContentBlockResponse? {
         Exponea.logger.log(
             .verbose,
             message: "In-app Content Blocks filterPersonalizedMessages filtering: \(input.map { $0.describe() })"
         )
-        let filtered = input.filter { inAppContentBlocksPlaceholder in
+        let filtered = input
+            .filter { applyDateFilter(message: $0) }
+            .filter { inAppContentBlocksPlaceholder in
             if inAppContentBlocksPlaceholder.personalizedMessage?.status == .ok && inAppContentBlocksPlaceholder.personalizedMessage?.isCorruptedImage == false {
                 return self.getFilteredMessage(message: inAppContentBlocksPlaceholder)
             } else {
@@ -1013,8 +1059,10 @@ extension InAppContentBlocksManager {
         if !isStaticUpdating {
             isStaticUpdating = true
             guard !staticQueueData.placeholderId.isEmpty, let ids = try? DatabaseManager().currentCustomer.ids else {
+                isStaticUpdating = false
                 staticQueueData.completion?(.init(html: "", tag: 0, message: nil))
                 Exponea.logger.log(.verbose, message: "In-app Content Blocks cant refresh static content staticQueueData.placeholderId: \(staticQueueData.placeholderId), ids: \(String(describing: try? DatabaseManager().currentCustomer.ids))")
+                isStaticUpdating = false
                 return
             }
             let idsForDownload = inAppContentBlockMessages.filter { $0.placeholders.contains(staticQueueData.placeholderId) }.map { $0.id }
@@ -1067,6 +1115,7 @@ extension InAppContentBlocksManager {
             Exponea.logger.log(.verbose, message: "In-app Content Blocks prepareInAppContentBlocksStaticView message not found.")
             return nil
         }
+        message.status = getDisplayState(of: message.id)
         Exponea.logger.log(
             .verbose,
             message: "In-app Content Blocks prepareInAppContentBlocksStaticView message \(message.describe())."

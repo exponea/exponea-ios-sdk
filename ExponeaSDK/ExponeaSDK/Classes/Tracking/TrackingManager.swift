@@ -17,7 +17,7 @@ import ExponeaSDKShared
 class TrackingManager {
     let database: DatabaseManagerType
     let repository: RepositoryType
-    let device: DeviceProperties
+    var device: DeviceProperties
     let onEventCallback: (EventType, [DataType]) -> Void
 
     /// The identifiers of the the current customer.
@@ -36,6 +36,7 @@ class TrackingManager {
 
     private var inAppMessageManager: InAppMessagesManagerType?
     private var flushingManager: FlushingManagerType
+    private var campaignRepository: CampaignRepositoryType
 
     // Manager for  session tracking
     private lazy var sessionManager: SessionManagerType = SessionManager(
@@ -76,12 +77,14 @@ class TrackingManager {
          inAppMessageManager: InAppMessagesManagerType?,
          trackManagerInitializator: (TrackingManager) -> (Void),
          userDefaults: UserDefaults,
+         campaignRepository: CampaignRepositoryType,
          onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) throws {
         self.repository = repository
         self.database = database
         self.device = device
         self.userDefaults = userDefaults
+        self.campaignRepository = campaignRepository
 
         self.flushingManager = flushingManager
         self.inAppMessageManager = inAppMessageManager
@@ -100,6 +103,15 @@ class TrackingManager {
 
         trackManagerInitializator(self)
         initialSetup()
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.flushingManager.flushingMode = .periodic(0)
+            self.database.removeAllEvents()
+            NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+            self.device.properties.removeAll()
+        }
     }
 
     deinit {
@@ -120,6 +132,10 @@ class TrackingManager {
     /// Installation event is fired only once for the whole lifetime of the app on one
     /// device when the app is launched for the first time.
     internal func trackInstallEvent() {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Install event not tracked, SDK is stopping.")
+            return
+        }
         /// Checking if the APP was launched before.
         /// If the key value is false, means that the event was not fired before.
         let key = Constants.Keys.installTracked + database.currentCustomer.uuid.uuidString
@@ -183,6 +199,10 @@ extension TrackingManager: TrackingManagerType {
         with data: [DataType]?,
         trackingAllowed: Bool
     ) throws {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "track internal failed, Exponea is stopped")
+            return
+        }
         /// Get token mapping or fail if no token provided.
         let projects = repository.configuration.projects(for: type)
         if projects.isEmpty {
@@ -205,7 +225,7 @@ extension TrackingManager: TrackingManagerType {
                         try? self.storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
                         self.onEventCallback(type, payload)
                     }
-                    Exponea.shared.flushingManager?.flushData()
+                    Exponea.shared.flushingManager?.flushData(isFromIdentify: true)
                 default:
                     try storeTrackEvent(of: type, with: payload, trackingAllowed, within: project)
                     onEventCallback(type, payload)
@@ -372,6 +392,10 @@ extension TrackingManager: TrackingManagerType {
         sessionManager.manualSessionEnd()
     }
 
+    func clearSessionManager() {
+        sessionManager.clearSessionManager()
+    }
+
     func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking) {
         repository.configuration.automaticSessionTracking = automaticSessionTracking.enabled
         repository.configuration.sessionTimeout = automaticSessionTracking.timeout
@@ -412,14 +436,18 @@ extension TrackingManager: TrackingManagerType {
 extension TrackingManager: SessionTrackingDelegate {
     func trackSessionStart(at timestamp: TimeInterval) {
         do {
+            var sessionEventData: [DataType] = [
+                .eventType(EventType.sessionStart.rawValue),
+                .customerIds(customerIds),
+                .properties(device.properties),
+                .timestamp(timestamp)
+            ]
+            if let campaignData = campaignRepository.popValid() {
+                sessionEventData.append(.properties(campaignData.trackingData))
+            }
             try track(
                 .sessionStart,
-                with: [
-                    .eventType(EventType.sessionStart.rawValue),
-                    .customerIds(customerIds),
-                    .properties(device.properties),
-                    .timestamp(timestamp)
-                ]
+                with: sessionEventData
             )
         } catch {
             Exponea.logger.log(.error, message: "Session start tracking error: \(error.localizedDescription)")

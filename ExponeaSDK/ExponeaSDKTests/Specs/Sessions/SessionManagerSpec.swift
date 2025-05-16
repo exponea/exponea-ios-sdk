@@ -51,6 +51,7 @@ class SessionManagerSpec: QuickSpec {
 
         describe("automatic session tracking") {
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 setup(automaticSessionTracking: true)
             }
 
@@ -119,6 +120,7 @@ class SessionManagerSpec: QuickSpec {
 
         describe("manual session tracking") {
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 setup(automaticSessionTracking: false)
             }
 
@@ -150,6 +152,7 @@ class SessionManagerSpec: QuickSpec {
 
         describe("manual autoclose false") {
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 setup(automaticSessionTracking: false, manualSessionAutoClose: false)
             }
 
@@ -164,6 +167,7 @@ class SessionManagerSpec: QuickSpec {
 
         describe("manual autoclose true") {
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 setup(automaticSessionTracking: false, manualSessionAutoClose: true)
             }
 

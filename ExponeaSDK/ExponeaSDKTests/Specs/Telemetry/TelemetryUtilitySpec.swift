@@ -13,6 +13,9 @@ import Nimble
 
 final class TelemetryUtilitySpec: QuickSpec {
     override func spec() {
+        beforeEach {
+            IntegrationManager.shared.isStopped = false
+        }
         describe("checking if exception stack trace is SDK related") {
             it("should return true for sdk related exception") {
                 expect(
@@ -74,12 +77,12 @@ final class TelemetryUtilitySpec: QuickSpec {
                     ]],
                     authorization: .token("mock-authorization"),
                     baseUrl: "http://mock-base-url.com",
+                    appGroup: "mock-app-group",
                     defaultProperties: ["default-property": "default-property-value"],
                     sessionTimeout: 12345,
                     automaticSessionTracking: false,
                     automaticPushNotificationTracking: false,
                     tokenTrackFrequency: TokenTrackFrequency.daily,
-                    appGroup: "mock-app-group",
                     flushEventMaxRetries: 123,
                     allowDefaultCustomerProperties: true,
                     advancedAuthEnabled: false

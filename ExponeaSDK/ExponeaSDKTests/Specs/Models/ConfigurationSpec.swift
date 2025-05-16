@@ -127,6 +127,7 @@ class ConfigurationSpec: QuickSpec {
             context("getting project tokens", {
                 var logger: MockLogger!
                 beforeEach {
+                    IntegrationManager.shared.isStopped = false
                     logger = MockLogger()
                     Exponea.logger = logger
                 }
@@ -201,6 +202,7 @@ class ConfigurationSpec: QuickSpec {
         describe("saving to user defaults") {
             let appGroup = "appgroup"
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 let defaults = UserDefaults(suiteName: appGroup)!
                 defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
                 defaults.removeObject(forKey: Constants.General.deliveredPushEventUserDefaultsKey)
@@ -255,12 +257,12 @@ class ConfigurationSpec: QuickSpec {
                     ]],
                     authorization: .token("test"),
                     baseUrl: "https://some.base.url",
+                    appGroup: appGroup,
                     defaultProperties: ["prop": "value", "other-prop": "other-value"],
                     sessionTimeout: 1234,
                     automaticSessionTracking: false,
                     automaticPushNotificationTracking: false,
                     tokenTrackFrequency: .daily,
-                    appGroup: appGroup,
                     flushEventMaxRetries: 200,
                     allowDefaultCustomerProperties: true,
                     advancedAuthEnabled: false

@@ -18,9 +18,31 @@ class ExponeaSpec: QuickSpec {
 
     override func spec() {
         describe("Exponea SDK") {
+            context("Setting automaticSessionTracking after configuration") {
+                IntegrationManager.shared.isStopped = false
+                let initExpectation = self.expectation(description: "Exponea automaticSessionTracking init")
+                let exponea = ExponeaInternal().onInitSucceeded {
+                    initExpectation.fulfill()
+                }
+                Exponea.shared = exponea
+                Exponea.shared.configure(plistName: "ExponeaConfig")
+                wait(for: [initExpectation], timeout: 10)
+                it("should configure automaticSessionTracking correctly") {
+                    expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
+                    exponea.setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking.disabled)
+                    expect(exponea.configuration?.automaticSessionTracking).to(equal(false))
+                    exponea.setAutomaticSessionTracking(
+                        automaticSessionTracking: Exponea.AutomaticSessionTracking.enabled(timeout: 30.0)
+                    )
+                    expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
+                    expect(exponea.configuration?.sessionTimeout).to(equal(30))
+                }
+            }
+
             context("Before being configured") {
                 var exponea = ExponeaInternal()
                 beforeEach {
+                    IntegrationManager.shared.isStopped = false
                     exponea = ExponeaInternal()
                 }
 
@@ -144,43 +166,17 @@ class ExponeaSpec: QuickSpec {
                 exponea.configuration?.projectToken = "NewProjectToken"
                 exponea.configuration?.baseUrl = "NewBaseURL"
                 exponea.configuration?.sessionTimeout = 25.0
-                it("Should return the new token") {
-                    expect(exponea.configuration?.projectToken).to(equal("NewProjectToken"))
-                }
-                it("Should return true for auto tracking") {
-                    exponea.configuration?.automaticSessionTracking = true
-                    expect(exponea.configuration?.automaticSessionTracking).to(beTrue())
-                }
-                it("Should change the base url") {
-                    expect(exponea.configuration?.baseUrl).to(equal("NewBaseURL"))
-                }
-                it("Should change the session timeout") {
-                    expect(exponea.configuration?.sessionTimeout).to(equal(25))
-                }
-            }
-
-            context("Setting automaticSessionTracking after configuration") {
-                let initExpectation = self.expectation(description: "Exponea automaticSessionTracking init")
-                
-                let exponea = ExponeaInternal().onInitSucceeded {
-                    initExpectation.fulfill()
-                }
-                Exponea.shared = exponea
-                Exponea.shared.configure(plistName: "ExponeaConfig")
-                wait(for: [initExpectation], timeout: 10)
-                expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
-                exponea.setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking.disabled)
-                expect(exponea.configuration?.automaticSessionTracking).to(equal(false))
-                exponea.setAutomaticSessionTracking(
-                    automaticSessionTracking: Exponea.AutomaticSessionTracking.enabled(timeout: 30.0)
-                )
-                expect(exponea.configuration?.automaticSessionTracking).to(equal(true))
-                expect(exponea.configuration?.sessionTimeout).to(equal(30))
+                expect(exponea.configuration?.projectToken).to(equal("NewProjectToken"))
+                exponea.configuration?.automaticSessionTracking = true
+                expect(exponea.configuration?.automaticSessionTracking).to(beTrue())
+                expect(exponea.configuration?.baseUrl).to(equal("NewBaseURL"))
+                expect(exponea.configuration?.sessionTimeout).to(equal(25))
             }
 
             context("Setting pushNotificationsDelegate") {
                 var logger: MockLogger!
                 beforeEach {
+                    IntegrationManager.shared.isStopped = false
                     logger = MockLogger()
                     Exponea.logger = logger
                 }

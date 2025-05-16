@@ -123,6 +123,16 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             name: UIApplication.didBecomeActiveNotification,
             object: nil
         )
+        
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.pushNotificationSwizzler?.removeAutomaticPushTracking()
+            NotificationCenter.default.removeObserver(
+                self,
+                name: UIApplication.didBecomeActiveNotification,
+                object: nil
+            )
+        }
     }
 
     deinit {
@@ -375,6 +385,10 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     }
 
     private func trackCurrentPushToken(isAuthorized authorized: Bool) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "trackCurrentPushToken failed, Exponea is stopped")
+            return
+        }
         do {
             try trackingManager.track(
                 .registerPushToken,

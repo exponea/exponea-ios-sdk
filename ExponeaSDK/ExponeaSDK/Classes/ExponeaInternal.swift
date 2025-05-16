@@ -50,6 +50,8 @@ public class ExponeaInternal: ExponeaType {
         }
     }
 
+    // Non-nil callback hook activates async SDK init process.
+    // Callback will be triggered on successful initialisation.
     internal var onInitSucceededCallBack: EmptyBlock?
 
     /// Cookie of the current customer. Nil before the SDK is configured
@@ -79,6 +81,9 @@ public class ExponeaInternal: ExponeaType {
     internal var notificationsManager: PushNotificationManagerType?
 
     internal var telemetryManager: TelemetryManager?
+
+    internal var campaignRepository: CampaignRepositoryType?
+
     public var inAppContentBlocksManager: InAppContentBlocksManagerType?
     public var segmentationManager: SegmentationManagerType?
     public var manualSegmentationManager: ManualSegmentationManagerType?
@@ -90,6 +95,18 @@ public class ExponeaInternal: ExponeaType {
         }
         return UserDefaults(suiteName: Constants.General.userDefaultsSuite)!
     }()
+
+    fileprivate func clearAllDependencies() {
+        repository = nil
+        trackingManager = nil
+        flushingManager = nil
+        trackingConsentManager = nil
+        inAppMessagesManager = nil
+        inAppContentBlocksManager = nil
+        appInboxManager = nil
+        notificationsManager = nil
+        campaignRepository = nil
+    }
 
     /// Sets the flushing mode for usage
     public var flushingMode: FlushingMode {
@@ -193,6 +210,7 @@ public class ExponeaInternal: ExponeaType {
 
     /// Once ExponeaSDK runs into a NSException, all further calls will be disabled
     internal var nsExceptionRaised: Bool = false
+    fileprivate var databaeManagerCopy: DatabaseManager?
 
     internal var pushNotificationSelfCheck: PushNotificationSelfCheck?
 
@@ -208,13 +226,15 @@ public class ExponeaInternal: ExponeaType {
 
     /// OperationQueue that is used upon SDK initialization
     /// This queue allows only 1 max concurrent operation
-    internal lazy var initializedQueue: OperationQueue = {
+    internal lazy var asyncSdkInitialisationQueue: OperationQueue = {
         let queue = OperationQueue()
         queue.qualityOfService = .background
-        queue.name = "com.exponea.ExponeaSDK.initializedQueue"
+        queue.name = "com.exponea.ExponeaSDK.asyncInitQueue"
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
+
+    internal let sdkInitialisationBlockQueue = DispatchQueue(label: "com.exponea.ExponeaSDK.BlockInitQueue")
 
     internal lazy var inAppContentBlockStatusStore: InAppContentBlockDisplayStatusStore = {
         return InAppContentBlockDisplayStatusStore(userDefaults: userDefaults)
@@ -250,10 +270,15 @@ public class ExponeaInternal: ExponeaType {
     private func initialize(with configuration: Configuration) {
         let exception = objc_tryCatch {
             do {
+                IntegrationManager.shared.isStopped = false
+                if let defaults = UserDefaults(suiteName: configuration.appGroup ?? Constants.General.userDefaultsSuite) {
+                    defaults.set(false, forKey: "isStopped")
+                }
                 self.segmentationManager = SegmentationManager.shared
                 self.manualSegmentationManager = ManualSegmentationManager.shared
 
                 let database = try DatabaseManager()
+                databaeManagerCopy = database
                 if !Exponea.isBeingTested {
                     telemetryManager = TelemetryManager(
                         userDefaults: userDefaults,
@@ -285,6 +310,11 @@ public class ExponeaInternal: ExponeaType {
                 )
                 self.flushingManager = flushingManager
 
+                let campaignRepository = CampaignRepository(
+                    userDefaults: self.userDefaults
+                )
+                self.campaignRepository = campaignRepository
+
                 let trackingManager = try TrackingManager(
                     repository: repository,
                     database: database,
@@ -315,6 +345,7 @@ public class ExponeaInternal: ExponeaType {
                         self.notificationsManager = notificationsManager
                     },
                     userDefaults: userDefaults,
+                    campaignRepository: campaignRepository,
                     onEventCallback: { type, event in
                         self.inAppMessagesManager?.onEventOccurred(of: type, for: event, triggerCompletion: nil)
                         self.appInboxManager?.onEventOccurred(of: type, for: event)
@@ -332,7 +363,6 @@ public class ExponeaInternal: ExponeaType {
                     database: database
                 )
 
-                processSavedCampaignData()
                 configuration.saveToUserDefaults()
 
                 self.inAppContentBlocksManager = InAppContentBlocksManager.manager
@@ -382,6 +412,7 @@ internal extension ExponeaInternal {
         let appInboxManager: AppInboxManagerType
         let inAppContentBlocksManager: InAppContentBlocksManagerType
         let notificationsManager: PushNotificationManagerType
+        let campaignRepository: CampaignRepositoryType
     }
 
     typealias CompletionHandler<T> = ((Result<T>) -> Void)
@@ -391,7 +422,7 @@ internal extension ExponeaInternal {
     ///
     /// - Returns: The dependencies required to perform any actions.
     /// - Throws: A not configured error in case Exponea wasn't configured beforehand.
-    func getDependenciesIfConfigured() throws -> Dependencies {
+    func getDependenciesIfConfigured(_ logLevel: LogLevel = .error) throws -> Dependencies {
         guard let configuration = configuration,
             let repository = repository,
             let trackingManager = trackingManager,
@@ -400,8 +431,9 @@ internal extension ExponeaInternal {
             let inAppMessagesManager = inAppMessagesManager,
             let inAppContentBlocksManager = inAppContentBlocksManager,
             let appInboxManager = appInboxManager,
-            let notificationsManager = notificationsManager else {
-                Exponea.logger.log(.error, message: "Some dependencies are not configured")
+            let notificationsManager = notificationsManager,
+            let campaignRepository = campaignRepository else {
+                Exponea.logger.log(logLevel, message: "Some dependencies are not configured")
                 throw ExponeaError.notConfigured
         }
         return Dependencies(
@@ -413,7 +445,8 @@ internal extension ExponeaInternal {
             inAppMessagesManager: inAppMessagesManager,
             appInboxManager: appInboxManager,
             inAppContentBlocksManager: inAppContentBlocksManager,
-            notificationsManager: notificationsManager
+            notificationsManager: notificationsManager,
+            campaignRepository: campaignRepository
         )
     }
 
@@ -510,140 +543,11 @@ internal extension ExponeaInternal {
     @objc func applicationDidEnterBackground() {
         self.isAppForeground = false
     }
-
 }
 
 // MARK: - Public -
 
 public extension ExponeaInternal {
-
-    // MARK: - Configure -
-
-    var isConfigured: Bool {
-        return configuration != nil
-        && repository != nil
-        && trackingManager != nil
-    }
-    /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
-    ///
-    /// - Parameters:
-    ///   - projectToken: Project token to be used through the SDK.
-    ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
-    ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
-    @available(*, deprecated)
-    func configure(projectToken: String,
-                   authorization: Authorization,
-                   baseUrl: String? = nil,
-                   appGroup: String? = nil,
-                   defaultProperties: [String: JSONConvertible]? = nil,
-                   inAppContentBlocksPlaceholders: [String]? = nil,
-                   allowDefaultCustomerProperties: Bool? = nil,
-                   advancedAuthEnabled: Bool? = nil,
-                   manualSessionAutoClose: Bool = true
-    ) {
-        do {
-            let configuration = try Configuration(
-                projectToken: projectToken,
-                authorization: authorization,
-                baseUrl: baseUrl,
-                appGroup: appGroup,
-                defaultProperties: defaultProperties,
-                inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
-                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                advancedAuthEnabled: advancedAuthEnabled,
-                manualSessionAutoClose: manualSessionAutoClose
-            )
-            self.configuration = configuration
-            self.afterInit.setStatus(status: .configured)
-        } catch {
-            Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
-        }
-    }
-
-    /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
-    ///
-    /// - Parameters:
-    ///   - plistName: Property list name containing the SDK setup keys
-    ///
-    /// Mandatory keys:
-    ///  - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
-    ///  - authorization: The authorization type used to authenticate with some Exponea endpoints.
-    func configure(plistName: String) {
-        if onInitSucceededCallBack != nil {
-            initializedQueue.addOperation {
-                self.doTaskConfiguration(plistName: plistName)
-                onMain {
-                    self.onInitSucceededCallBack?()
-                }
-            }
-        } else {
-            doTaskConfiguration(plistName: plistName)
-        }
-    }
-
-    private func doTaskConfiguration(plistName: String) {
-        do {
-            let configuration = try Configuration(plistName: plistName)
-            self.configuration = configuration
-            // Initialise everything
-            self.afterInit.setStatus(status: .configured)
-        } catch {
-            Exponea.logger.log(.error, message: """
-                Can't parse Configuration from file \(plistName): \(error.localizedDescription).
-                """)
-        }
-    }
-
-    func configure(with configuration: Configuration) {
-        self.configuration = configuration
-        afterInit.setStatus(status: .configured)
-    }
-
-    func onInitSucceeded(callback completion: @escaping (() -> Void)) -> Self {
-        onInitSucceededCallBack = completion
-        return self
-    }
-
-    /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
-    /// you to track events to multiple projects, even the same event to more project at once.
-    ///
-    /// - Parameters:
-    ///   - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
-    ///   - projectMapping: The project mapping dictionary providing all the tokens.
-    ///   - authorization: The authorization type used to authenticate with some Exponea endpoints.
-    ///   - baseUrl: Base URL used for the project, for example if you use a custom domain with your Exponea setup.
-    @available(*, deprecated)
-    func configure(projectToken: String,
-                   projectMapping: [EventType: [ExponeaProject]],
-                   authorization: Authorization,
-                   baseUrl: String? = nil,
-                   appGroup: String? = nil,
-                   defaultProperties: [String: JSONConvertible]? = nil,
-                   inAppContentBlocksPlaceholders: [String]? = nil,
-                   allowDefaultCustomerProperties: Bool? = nil,
-                   advancedAuthEnabled: Bool? = nil,
-                   manualSessionAutoClose: Bool = true
-    ) {
-        do {
-            let configuration = try Configuration(
-                projectToken: projectToken,
-                projectMapping: projectMapping,
-                authorization: authorization,
-                baseUrl: baseUrl,
-                appGroup: appGroup,
-                defaultProperties: defaultProperties,
-                inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
-                allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
-                advancedAuthEnabled: advancedAuthEnabled,
-                manualSessionAutoClose: manualSessionAutoClose
-            )
-            self.configuration = configuration
-            self.afterInit.setStatus(status: .configured)
-        } catch {
-            Exponea.logger.log(.error, message: "Can't create configuration: \(error.localizedDescription)")
-        }
-    }
-
     @objc
     func openAppInboxList(sender: UIButton!) {
         onMain {
@@ -662,6 +566,65 @@ public extension ExponeaInternal {
     func getSegments(force: Bool = false, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>) {
         executeSafelyWithDependencies { [weak self] _ in
             self?.manualSegmentationManager?.getSegments(category: category, force: force, result: result)
+        }
+    }
+
+    func stopIntegration() {
+        IntegrationManager.shared.isStopped = true
+        afterInit.actionBlocks.removeAll()
+        afterInit.setStatus(status: .notInitialized)
+        afterInit.clean()
+        clearUserData(appGroup: repository?.configuration.appGroup)
+    }
+
+    private func clearUserData(appGroup: String?) {
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.removeAll()
+        notificationsManager?.handlePushTokenRegistered(token: "")
+        campaignRepository?.clear()
+        databaeManagerCopy?.removeAllEvents()
+        trackingManager?.clearSessionManager()
+        InAppMessagesCache().clear()
+        clearUserDefaults(appGroup: appGroup)
+        clearAllDependencies()
+    }
+
+    func clearLocalCustomerData(appGroup: String) {
+        guard !isConfigured && Configuration.loadFromUserDefaults(appGroup: appGroup) != nil else {
+            Exponea.logger.log(.error, message: "This functionality is unavailable without initialization of SDK")
+            return
+        }
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.removeAll()
+        notificationsManager?.handlePushTokenRegistered(token: "")
+        clearUserDefaults(appGroup: appGroup)
+        InAppMessagesCache().clear()
+        try? DatabaseManager().removeAllEvents()
+        CampaignRepository(userDefaults: userDefaults).clear()
+        clearAllDependencies()
+    }
+
+    private func clearUserDefaults(appGroup: String?) {
+        if let appGroup, let defaults = UserDefaults(suiteName: appGroup) {
+            for key in defaults.dictionaryRepresentation().keys where key != "isStopped" {
+                defaults.removeObject(forKey: key)
+            }
+            defaults.removeObject(forKey: Constants.Keys.sessionEnded)
+            defaults.removeObject(forKey: Constants.Keys.sessionStarted)
+            defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+            Configuration.deleteLastKnownConfig(appGroup: appGroup)
+            defaults.synchronize()
+        } else {
+            if let defaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite) {
+                for key in defaults.dictionaryRepresentation().keys where key != "isStopped" {
+                    defaults.removeObject(forKey: key)
+                }
+                defaults.removeObject(forKey: Constants.Keys.sessionEnded)
+                defaults.removeObject(forKey: Constants.Keys.sessionStarted)
+                defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+                Configuration.deleteLastKnownConfig(appGroup: Constants.General.userDefaultsSuite)
+                defaults.synchronize()
+            }
         }
     }
 }

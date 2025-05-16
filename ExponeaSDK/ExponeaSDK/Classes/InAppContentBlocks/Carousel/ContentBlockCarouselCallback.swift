@@ -13,11 +13,13 @@ public protocol DefaultContentBlockCarouselCallback {
     var overrideDefaultBehavior: Bool { get set }
     var trackActions: Bool { get set }
 
-    func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse)
+    func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse, index: Int, count: Int)
+    func onMessagesChanged(count: Int, messages: [InAppContentBlockResponse])
     func onNoMessageFound(placeholderId: String)
     func onError(placeholderId: String, contentBlock: InAppContentBlockResponse?, errorMessage: String)
     func onCloseClicked(placeholderId: String, contentBlock: InAppContentBlockResponse)
     func onActionClickedSafari(placeholderId: String, contentBlock: InAppContentBlockResponse, action: InAppContentBlockAction)
+    func onHeightUpdate(placeholderId: String, height: CGFloat)
 }
 
 internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallback {
@@ -32,13 +34,17 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
         self.behaviourCallback = behaviourCallback
     }
 
-    func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse) {
+    func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse, index: Int, count: Int) {
         Exponea.logger.log(
             .verbose,
             message: "Tracking of Carousel Content Block \(contentBlock) show"
         )
         Exponea.shared.trackInAppContentBlockShown(placeholderId: placeholderId, message: contentBlock)
-        behaviourCallback?.onMessageShown(placeholderId: placeholderId, contentBlock: contentBlock)
+        behaviourCallback?.onMessageShown(placeholderId: placeholderId, contentBlock: contentBlock, index: index, count: count)
+    }
+
+    func onMessagesChanged(count: Int, messages: [InAppContentBlockResponse]) {
+        behaviourCallback?.onMessagesChanged(count: count, messages: messages)
     }
 
     func onNoMessageFound(placeholderId: String) {
@@ -103,6 +109,11 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
         behaviourCallback?.onActionClickedSafari(placeholderId: placeholderId, contentBlock: contentBlock, action: action)
     }
 
+    func onHeightUpdate(placeholderId: String, height: CGFloat) {
+        Exponea.logger.log(.verbose, message: "Carousel Content Block \(placeholderId) height update: \(height)")
+        behaviourCallback?.onHeightUpdate(placeholderId: placeholderId, height: height)
+    }
+
     private func invokeAction(_ action: InAppContentBlockAction, _ contentBlock: InAppContentBlockResponse) {
         Exponea.logger.log(.verbose, message: "Invoking Carousel Content Block \(contentBlock.id) action '\(action.name ?? "")'")
         guard let actionUrl = action.url,
@@ -117,6 +128,8 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
             urlOpener.openBrowserLink(actionUrl)
         case .close:
             break
+        case .unknown:
+            Exponea.logger.log(.error, message: "Invoking invalid type \(contentBlock.id) action '\(action.name ?? "")'")
         }
     }
 }

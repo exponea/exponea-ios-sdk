@@ -28,10 +28,51 @@ class CustomCarouselView: CarouselInAppContentBlockView {
     }
 }
 
+class CustomCarouselCallback: DefaultContentBlockCarouselCallback {
+
+    public var overrideDefaultBehavior: Bool = false
+    public var trackActions: Bool = true
+
+    public init() {}
+
+    public func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, index: Int, count: Int) {
+        // space for custom implementation
+    }
+
+    public func onMessagesChanged(count: Int, messages: [ExponeaSDK.InAppContentBlockResponse]) {
+        // space for custom implementation
+    }
+
+    public func onNoMessageFound(placeholderId: String) {
+        // space for custom implementation
+    }
+
+    public func onError(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse?, errorMessage: String) {
+        // space for custom implementation
+    }
+
+    public func onCloseClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    public func onActionClickedSafari(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        // space for custom implementation
+    }
+
+    public func onHeightUpdate(placeholderId: String, height: CGFloat) {
+        Exponea.logger.log(.verbose, message: "Placeholder \(placeholderId) got new height: \(height)")
+    }
+}
+
 class InAppContentBlockCarouselViewController: UIViewController {
 
-    let carousel = CarouselInAppContentBlockView(placeholder: "example_carousel", behaviourCallback: CustomCarouselCallback())
-    let carousel2 = CustomCarouselView(placeholder: "example_carousel", maxMessagesCount: 5, scrollDelay: 10)
+    let carousel = CarouselInAppContentBlockView(placeholder: "example_carousel")
+    let carousel2 = CustomCarouselView(
+        placeholder: "example_carousel",
+        maxMessagesCount: 5,
+        scrollDelay: 10,
+        behaviourCallback: CustomCarouselCallback()
+    )
     let carousel3 = CustomCarouselView(placeholder: "example_carousel_ios", scrollDelay: 1000)
 
     @objc func endEditing() {
@@ -47,45 +88,34 @@ class InAppContentBlockCarouselViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        carousel.onMessageShown = { message in
-            print("ON MESSAGE SHOW \(message.placeholderId)")
-        }
-
-        carousel.onMessageChanged = { changed in
-            print("ON MESSAGE CHANGED \(changed.count)")
-        }
-
-        carousel.reload()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.carousel2.reload()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            self?.carousel3.reload()
-        }
-
         view.backgroundColor = .white
-
-        view.addSubview(carousel)
-        carousel.translatesAutoresizingMaskIntoConstraints = false
-        carousel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80).isActive = true
-        carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
-        carousel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
-
-        view.addSubview(carousel2)
-        carousel2.translatesAutoresizingMaskIntoConstraints = false
-        carousel2.topAnchor.constraint(equalTo: carousel.bottomAnchor, constant: 20).isActive = true
-        carousel2.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
-        carousel2.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
-
-        view.addSubview(carousel3)
-        carousel3.translatesAutoresizingMaskIntoConstraints = false
-        carousel3.topAnchor.constraint(equalTo: carousel2.bottomAnchor, constant: 20).isActive = true
-        carousel3.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
-        carousel3.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
+        addCarousel(carousel, topAnchor: view.safeAreaLayoutGuide.topAnchor)
+        addCarousel(carousel2, topAnchor: carousel.bottomAnchor)
+        addCarousel(carousel3, topAnchor: carousel2.bottomAnchor)
 
         navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .refresh, target: self, action: #selector(reloadCarousels))
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.navigationItem.title = "\(self.carousel.getShownCount()) / \(self.carousel2.getShownCount()) / \(self.carousel3.getShownCount())"
+        }
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.view.layoutIfNeeded()
+            self.carousel.reload()
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.carousel2.reload()
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.carousel3.reload()
+                }
+            }
+        }
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -98,5 +128,13 @@ class InAppContentBlockCarouselViewController: UIViewController {
         carousel.reload()
         carousel2.reload()
         carousel3.reload()
+    }
+
+    private func addCarousel(_ carousel: CarouselInAppContentBlockView, topAnchor: NSLayoutYAxisAnchor) {
+        view.addSubview(carousel)
+        carousel.translatesAutoresizingMaskIntoConstraints = false
+        carousel.topAnchor.constraint(equalTo: topAnchor, constant: 20).isActive = true
+        carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
+        carousel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
     }
 }

@@ -18,7 +18,6 @@ public class ExponeaNotificationContentService {
     private let decoder: JSONDecoder = JSONDecoder.snakeCase
 
     private var attachmentUrl: URL?
-
     weak private var context: NSExtensionContext?
 
     public init() { }

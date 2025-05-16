@@ -11,6 +11,65 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.4.0
+#### April 22, 2025
+* Added:
+  * Height Calculator: The height calculator of content block has been made accessible for improved height calculations within the SDK.
+* Fixed:
+  * Carousel Freezing Issue: Fixed a bug causing the carousel to freeze under certain conditions.
+  * Carousel Bug Fixes: Multiple issues in the carousel component have been resolved, including inaccuracies in the getShownCount method and performance enhancements.
+  * Banner Count Return Fixes: Specific bug fixes related to the accurate returning of banner counts in the carousel.
+
+
+## Release Notes for 3.3.0
+#### April 11, 2025
+* Added:
+  * Adds a new stopIntegration method for improved SDK integration management and clears all locally stored data.
+  * Minor documentation improvements about using identifyCustomer with soft ID
+
+
+## Release Notes for 3.2.1
+#### March 28, 2025
+* Fixed:
+  * Fixed incorect import of Foundation instead of UIKit which cause compilation errors
+
+
+## Release Notes for 3.2.0
+#### March 27, 2025
+* Added:
+  * Adds rich styling support for native in-app messages.
+  * Improves how in-app personalizations are processed.
+* Fixed:
+  * Removes incorrectly listed customer attributes endpoint from documentation.
+  * Fixes possible dual init case caused by lazy property.
+  * Fixes and updates in-app message carousel type callback inconsistency.
+
+
+## Release Notes for 3.1.0
+#### January 28, 2025
+* Added:
+  * Defines an empty action on tap for an empty App Inbox.
+  * Improves the documentation about manual tracking of push notifications.
+  * Adds support for the iPhone 16 line and new tablets to be correctly identified in tracking events.
+  * Improves logging for the anonymize() method.
+  * Adds in-app content block carousel view updates required by wrappers SDKs.
+* Fixed:
+  * Fixes the invalid parsing of a float number required for an App Inbox style setting.
+  * Fixes an issue with an empty image source for an HTML in-app message by dismissing the HTML in-app view in the main thread.
+  * Fixes an issue where a long URL in an in-app action would cause an error.
+  * Fixes an issue with an empty App Inbox causing "invisible" space around.
+  * Fixes an issue that caused an in-app message to be displayed while the user is anonymized.
+  * Fixes an issue that could cause multiple invocations and initializations of the SDK from multiple threads and adds a sync and check to prevent this from happening.
+  * Fixes an issue where a date filter was not applied and evaluated for in-app content blocks.
+  * Fixes a case in which an in-app content block fetch could be zombied by unlocking refresh inside a guard.
+  * Fixes an issue that caused infinite fetch repeats for zero in-app content blocks without calling onNoMessageFound.
+  * Fixes an issue where dismiss was not handled on the main thread for InAppMessageWebView.
+  * Fixes an issue where in some cases customer IDs and attributes were not tracked correctly and missing when using immediate flush mode.
+  * Fixes an issue where campaign data were not inserted in the session event triggered by a push notification for session_start.
+  * Fixes an incorrect swiftSoup version in .xcodeproj.
+  * Removes unnecessary fetch for in-app content block personalized content in case of zero messages.
+
+
 ## Release Notes for 3.0.1
 #### October 17, 2024
 * Fixed:

@@ -44,7 +44,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     private let placeholder: String
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
-    private lazy var calculator: WKWebViewHeightCalculator = .init()
+    public lazy var calculator: WKWebViewHeightCalculator = .init()
     private var html: String = ""
     private var height: NSLayoutConstraint?
     private var contentReadyFlag: Bool?
@@ -91,6 +91,13 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         if !deferredLoad {
             getContent()
         }
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.height?.constant = 0
+            self.sizeToFit()
+            self.layoutIfNeeded()
+        }
     }
 
     public func reload() {
@@ -102,6 +109,10 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
     }
 
     private func getContent(force: Bool = false) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.verbose, message: "In-app content blocks UI is unavailable, SDK is stopping")
+            return
+        }
         guard !placeholder.isEmpty else {
             replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0) {
                 self.prepareContentReadyState(false)

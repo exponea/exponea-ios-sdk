@@ -53,6 +53,10 @@ extension ExpoInitManager {
     }
 
     internal func notifyListenerIfNeeded() {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Method has not been invoked, SDK is stopping")
+            return
+        }
         guard isConfigured, status == .configured, !actionBlocks.isEmpty else { return }
         for action in actionBlocks {
             Exponea.shared.logOnException(action, errorHandler: nil)
@@ -62,6 +66,10 @@ extension ExpoInitManager {
 
     // This will be visible only - rest private
     func doActionAfterExponeaInit(_ action: @escaping EmptyThrowsBlock) rethrows {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "Method has not been invoked, SDK is stopping")
+            return
+        }
         if isConfigured && status == .configured {
             try action()
         } else {

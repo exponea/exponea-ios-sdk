@@ -129,6 +129,8 @@ internal struct DefaultInAppContentBlockCallback: InAppContentBlockCallbackType 
             urlOpener.openBrowserLink(actionUrl)
         case .close:
             break
+        case .unknown:
+            Exponea.logger.log(.error, message: "Invoking invalid type \(contentBlock.id) action '\(action.name ?? "")'")
         }
     }
 }

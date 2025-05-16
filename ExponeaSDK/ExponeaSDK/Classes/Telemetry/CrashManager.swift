@@ -32,6 +32,14 @@ final class CrashManager {
         self.upload = upload
         self.launchDate = launchDate
         self.runId = runId
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            self?.logMessages.removeAll()
+            self?.storage.getAllCrashLogs().forEach({ log in
+                self?.storage.deleteCrashLog(log)
+            })
+            self?.upload.removeAll()
+        }
     }
 
     deinit {
@@ -93,6 +101,10 @@ final class CrashManager {
     }
 
     func uploadCaughtCrashLog(_ crashLog: CrashLog) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "uploadCaughtCrashLog skipped, SDK is stopped")
+            return
+        }
         upload.upload(crashLog: crashLog) { result in
             if !result {
                 Exponea.logger.log(.error, message: "Uploading crash log failed")
@@ -105,7 +117,7 @@ final class CrashManager {
         logsQueue.sync { [weak self] in
             self?.logMessages.append(message)
             if self?.logMessages.count ?? 0 > CrashManager.maxLogMessages {
-                self?.logMessages.removeFirst()
+                
             }
         }
     }
@@ -117,6 +129,10 @@ final class CrashManager {
     }
 
     func uploadCrashLogs() {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "uploadCrashLogs skipped, SDK is stopped")
+            return
+        }
         storage.getAllCrashLogs().forEach { crashLog in
             if crashLog.timestamp > Date().timeIntervalSince1970 - CrashManager.logRetention {
                 upload.upload(crashLog: crashLog) { result in

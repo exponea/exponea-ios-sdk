@@ -12,6 +12,47 @@ import Nimble
 import Combine
 @testable import ExponeaSDK
 
+fileprivate class CustomCarouselCallback: DefaultContentBlockCarouselCallback {
+
+    var notFoundCallback: EmptyBlock?
+    var onMessageChangedCallback: EmptyBlock?
+
+    var overrideDefaultBehavior: Bool = false
+    var trackActions: Bool = true
+
+    init() {}
+
+    func onMessageShown(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, index: Int, count: Int) {
+        // space for custom implementation
+    }
+    
+    func onMessagesChanged(count: Int, messages: [ExponeaSDK.InAppContentBlockResponse]) {
+        // space for custom implementation
+        onMessageChangedCallback?()
+    }
+
+    func onNoMessageFound(placeholderId: String) {
+        // space for custom implementation
+        notFoundCallback?()
+    }
+
+    func onError(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse?, errorMessage: String) {
+        // space for custom implementation
+    }
+
+    func onCloseClicked(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse) {
+        // space for custom implementation
+    }
+
+    func onActionClickedSafari(placeholderId: String, contentBlock: ExponeaSDK.InAppContentBlockResponse, action: ExponeaSDK.InAppContentBlockAction) {
+        // space for custom implementation
+    }
+
+    func onHeightUpdate(placeholderId: String, height: CGFloat) {
+        Exponea.logger.log(.verbose, message: "Placeholder \(placeholderId) got new height: \(height)")
+    }
+}
+
 class InAppContentBlocksManagerSpec: QuickSpec {
 
     let configuration = try! Configuration(
@@ -23,6 +64,22 @@ class InAppContentBlocksManagerSpec: QuickSpec {
     override func spec() {
         Exponea.shared.configure(with: configuration)
         let manager: InAppContentBlocksManagerType = Exponea.shared.inAppContentBlocksManager!
+        let callback = CustomCarouselCallback()
+        
+        it("date filter") {
+            let date = Date()
+            let bigDate = Date().addingTimeInterval(5)
+            let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(dateFilter: .init(enabled: true, fromDate: date, toDate: bigDate))
+            var isIn = manager.applyDateFilter(message: firstInAppContentBlocks)
+            expect(isIn).to(beTrue())
+            waitUntil(timeout: .seconds(7)) { done in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+                    isIn = manager.applyDateFilter(message: firstInAppContentBlocks)
+                    done()
+                }
+            }
+            expect(isIn).to(beFalse())
+        }
         
         it("Corrupted images") {
             let rawHtml = "<html>" +
@@ -53,7 +110,24 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             expect(result2).to(beTrue())
             expect(result3).to(beFalse())
         }
-        
+
+        it("check filtered") {
+            let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks()
+            var isDone = false
+            manager.addMessage(firstInAppContentBlocks)
+            manager.filterCarouselData(placeholder: "asdas") { response in
+                isDone = true
+            } expiredCompletion: {
+                
+            }
+            waitUntil(timeout: .seconds(3)) { done in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    done()
+                }
+            }
+            expect(isDone).to(beTrue())
+        }
+
         it("check inAppContentBlocks priority") {
             let firstInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(loadPriority: 1)
             let secondInAppContentBlocks = SampleInAppContentBlocks.getSampleIninAppContentBlocks(loadPriority: 2)
@@ -211,12 +285,14 @@ class InAppContentBlocksManagerSpec: QuickSpec {
         
         it("message changed") {
             var wasMessageChanged = false
-            let view = CarouselInAppContentBlockView(placeholder: "placeholder")
+            let callback = CustomCarouselCallback()
+            let view = CarouselInAppContentBlockView(placeholder: "placeholder", behaviourCallback: callback)
+                
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 view.state = .refresh
             }
             waitUntil(timeout: .seconds(2)) { done in
-                view.onMessageChanged = { _ in
+                callback.onMessageChangedCallback = {
                     wasMessageChanged = true
                     done()
                 }

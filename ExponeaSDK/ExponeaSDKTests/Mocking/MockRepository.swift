@@ -44,6 +44,7 @@ final class MockRepository: RepositoryType {
     var fetchInAppContentBlocksResult: Result<PersonalizedInAppContentBlockResponseData> = Result.failure(RepositoryError.connectionError)
 
     init(configuration: Configuration) {
+        IntegrationManager.shared.isStopped = false
         self.configuration = configuration
     }
 

@@ -17,8 +17,16 @@ extension Configuration {
         return try? JSONDecoder().decode(Configuration.self, from: data)
     }
 
+    public static func deleteLastKnownConfig(appGroup: String) {
+        guard let userDefaults = UserDefaults(suiteName: appGroup) else {
+            UserDefaults(suiteName: Constants.General.userDefaultsSuite)?.removeObject(forKey: Constants.General.lastKnownConfiguration)
+            return
+        }
+        userDefaults.removeObject(forKey: Constants.General.lastKnownConfiguration)
+    }
+
     public func saveToUserDefaults() {
-        guard let userDefaults = UserDefaults(suiteName: appGroup),
+        guard let userDefaults = UserDefaults(suiteName: appGroup ?? Constants.General.userDefaultsSuite),
               let data = try? JSONEncoder().encode(self) else {
             return
         }

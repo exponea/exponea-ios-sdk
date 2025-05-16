@@ -17,6 +17,7 @@ final class TelemetryManagerSpec: QuickSpec {
     var manager: TelemetryManager!
     override func spec() {
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             self.storage = MockTelemetryStorage()
             self.upload = MockTelemetryUpload()
             self.manager = TelemetryManager(
@@ -89,6 +90,13 @@ final class TelemetryManagerSpec: QuickSpec {
             expect(self.upload.uploadedEvents[0].properties["property"]).to(equal("value"))
             expect(self.upload.uploadedEvents[0].properties["other_property"]).to(equal("other_value"))
             expect(self.upload.uploadedEvents[0].properties.count).to(equal(7))
+            Exponea.shared.stopIntegration()
+            self.manager.report(
+                eventWithType: .fetchRecommendation,
+                properties: ["property": "value", "other_property": "other_value"]
+            )
+            expect(self.upload.uploadedEvents.isEmpty).to(beTrue())
+            IntegrationManager.shared.isStopped = false
         }
 
         it("should report init event") {

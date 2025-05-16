@@ -48,6 +48,7 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
     override func spec() {
         var upload: VSAppCenterTelemetryUpload!
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             upload = VSAppCenterTelemetryUpload(
                 installId: UUID().uuidString,
                 userId: "mock_user_id",

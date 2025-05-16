@@ -8,6 +8,7 @@ open class AppInboxListViewController: UIViewController {
     public let XMARK_ICON_DATA = "iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAAITgAACE4AUWWMWAAAAA8UExURUdwTCAgICcnJygoKCYmJisrKycnJyYmJigoKCYmJigoKCYmJiYmJicnJycnJyYmJiYmJiUlJScnJyYmJkI9m2kAAAATdFJOUwAQv2DvMN+AIN9Az5+vj1CgYHCbPG4RAAABKklEQVRYw+3YyQ7DIAwE0Owhe9v5/3/tpVUWDIxNDz3EV6MnJMTEpCjuuuu3NdabYnU51qPYcBWAwbFO2wGYS6EzAwqpbQAAq7BTQCF9HDT+lhwU0tcBhMUNL+3OIHRfYKXdQS/1e1JKOayUdjiJcRiJc9IS66Qk3olLGicm6ZywpHVCkt6RJYsjSTbHl6zOVbI7ZynHOUlZzlHKcwTJ6HiS2blIGU5RPHZnzXEO5674msedHOns2KWrY5V8xyYd71efIZ3vqV263ner5OeGTZLyxyLJOaaXQnmolcK5qpNcJFc1kuti+cNLcYeXUg4rpR1OYhxG4py0xDpJabLMmVX4maWcMyPPLN2cWQafWbo5U3pmbZY5sxWPbZmqJ59+ddUt7f1r4q4/rTd0Akh/Hha2MQAAAABJRU5ErkJggg=="
 
     // MARK: - Properties
+    public let viewContainer =  UIStackView()
     public let statusContainer =  UIStackView()
     public let statusProgress = UIActivityIndicatorView()
     public let statusEmptyTitle = UILabel()
@@ -69,6 +70,11 @@ private extension AppInboxListViewController {
         tableView.delegate = self
         tableView.register(MessageItemCell.self)
 
+        viewContainer.axis = .horizontal
+        viewContainer.alignment = .center
+        viewContainer.distribution = .fill
+        viewContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: nil))
+
         statusContainer.axis = .vertical
         statusContainer.alignment = .center
         statusContainer.distribution = .fillProportionally
@@ -91,7 +97,8 @@ private extension AppInboxListViewController {
     }
 
     func addElementsToView() {
-        view.addSubviews(tableView, statusContainer)
+        view.addSubviews(tableView, viewContainer)
+        viewContainer.addSubview(statusContainer)
         [   statusProgress,
             statusEmptyTitle,
             statusEmptyMessage,
@@ -102,6 +109,8 @@ private extension AppInboxListViewController {
 
     func setupLayout() {
         tableView
+            .padding()
+        viewContainer
             .padding()
         statusContainer
             .centerY()
@@ -137,6 +146,7 @@ private extension AppInboxListViewController {
     }
 
     func showLoading() {
+        viewContainer.isHidden = false
         statusContainer.isHidden = false
         statusProgress.isHidden = false
         statusEmptyTitle.isHidden = true
@@ -147,11 +157,13 @@ private extension AppInboxListViewController {
     }
 
     func stopLoading() {
+        viewContainer.isHidden = true
         statusContainer.isHidden = true
         tableView.isHidden = false
     }
 
     func showEmptyState() {
+        viewContainer.isHidden = false
         statusContainer.isHidden = false
         statusProgress.isHidden = true
         statusEmptyTitle.isHidden = false
@@ -162,6 +174,7 @@ private extension AppInboxListViewController {
     }
 
     func showErrorState() {
+        viewContainer.isHidden = false
         statusContainer.isHidden = false
         statusProgress.isHidden = true
         statusEmptyTitle.isHidden = true

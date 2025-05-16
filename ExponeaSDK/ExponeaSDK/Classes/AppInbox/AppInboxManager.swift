@@ -32,6 +32,11 @@ final class AppInboxManager: AppInboxManagerType {
         self.trackingManager = trackingManager
         self.appInboxCache = cache
         self.databaseManager = database
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.clear()
+        }
     }
 
     func onEventOccurred(of type: EventType, for event: [DataType]) {
@@ -42,6 +47,8 @@ final class AppInboxManager: AppInboxManagerType {
         if type == .identifyCustomer {
             Exponea.logger.log(.verbose, message: "CustomerIDs are updated, clearing AppInbox messages")
             clear()
+            self.appInboxCache.setSyncToken(token: nil)
+            self.appInboxCache.deleteImages(except: [])
         }
     }
 
@@ -54,19 +61,31 @@ final class AppInboxManager: AppInboxManagerType {
             }
             self.isFetching = true
             let customerIds = customerIds ?? self.trackingManager.customerIds
+            guard !IntegrationManager.shared.isStopped else {
+                Exponea.logger.log(.error, message: "AppInbox fetch failed, SDK is stopping")
+                completion(.failure(ExponeaError.stoppedProcess))
+                return
+            }
             self.repository.fetchAppInbox(
                 for: customerIds,
                 with: self.appInboxCache.getSyncToken()
             ) { result in
+                guard !IntegrationManager.shared.isStopped else {
+                    Exponea.logger.log(.error, message: "AppInbox fetch failed, SDK is stopping")
+                    completion(.failure(ExponeaError.stoppedProcess))
+                    return
+                }
                 switch result {
                 case .success(let response):
-                    guard self.savedCustomerIds.last == nil ||
-                            Exponea.shared.trackingManager?.customerIds == self.savedCustomerIds.last
-                    else {
+                    guard self.savedCustomerIds.last == nil || Exponea.shared.trackingManager?.customerIds == self.savedCustomerIds.last else {
                         self.clear()
-                        let newCustomerIds = self.savedCustomerIds.last ?? [:]
+                        let newCustomerIds = self.savedCustomerIds.last
                         self.savedCustomerIds.removeAll()
-                        self.fetchAppInbox(customerIds: newCustomerIds, completion: completion)
+                        if let newCustomerIds {
+                            self.fetchAppInbox(customerIds: newCustomerIds, completion: completion)
+                        } else {
+                            completion(.failure(ExponeaError.stoppedProcess))
+                        }
                         return
                     }
                     self.savedCustomerIds.removeAll()
@@ -85,6 +104,10 @@ final class AppInboxManager: AppInboxManagerType {
     }
 
     func fetchAppInboxItem(_ messageId: String, completion: @escaping (Result<MessageItem>) -> Void) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "AppInbox fetch failed, SDK is stopping")
+            return
+        }
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else {
                 Exponea.logger.log(.error, message: "Fetch AppInbox item stops due to obsolete thread")
@@ -115,6 +138,10 @@ final class AppInboxManager: AppInboxManagerType {
     }
 
     func markMessageAsRead(_ message: MessageItem, _ customerIdsCheck: TypeBlock<Bool>? = nil, _ completition: ((Bool) -> Void)?) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "AppInbox message \(message.id) not read, SDK is stopping")
+            return
+        }
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else {
                 Exponea.logger.log(.error, message: "MarkAsRead AppInbox stops due to obsolete thread")

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import ExponeaSDK
 
 enum CoordinatorType {
     case fetch
@@ -14,6 +15,8 @@ enum CoordinatorType {
     case flush
     case anonymize
     case inappcb
+    case stopAndContinue
+    case stopAndRestart
 
     init(deeplinkType: DeeplinkType) {
         switch deeplinkType {
@@ -27,6 +30,10 @@ enum CoordinatorType {
             self = .anonymize
         case .inappcb:
             self = .inappcb
+        case .stopAndContinue:
+            self = .stopAndContinue
+        case .stopAndRestart:
+            self = .stopAndRestart
         }
     }
 }
@@ -50,15 +57,13 @@ final class Coordinator {
     }
 
     func start() {
-        let sb = UIStoryboard(name: "Main", bundle: nil)
         guard let tabbar else { return }
         tabbar.coordinator = self
         navigationController?.pushViewController(tabbar, animated: true)
     }
 
     func navigate(type: CoordinatorType) {
-        guard let navigationController,
-              let tabbar else {
+        guard let tabbar else {
             return
         }
         switch type {
@@ -72,7 +77,14 @@ final class Coordinator {
             tabbar.selectedIndex = TabbarItem.tracking.index
         case .inappcb:
             tabbar.selectedIndex = TabbarItem.contentBlocks.index
+        case .stopAndContinue:
+            Exponea.shared.stopIntegration()
+        case .stopAndRestart:
+            Exponea.shared.stopIntegration()
+            if let window = UIApplication.shared.windows.first,
+               let auth: UINavigationController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "authnav") as? UINavigationController {
+                window.rootViewController = auth
+            }
         }
-        navigationController.dismiss(animated: true)
     }
 }

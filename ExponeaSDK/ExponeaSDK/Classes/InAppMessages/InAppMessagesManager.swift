@@ -6,7 +6,7 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-import Foundation
+import UIKit
 #if canImport(ExponeaSDKShared)
 import ExponeaSDKShared
 #endif
@@ -30,7 +30,7 @@ internal enum IdentifyTriggerState {
     case storedFetch
 }
 
-final class InAppMessagesManager: InAppMessagesManagerType {
+final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable {
 
     struct InAppMessageShowRequest {
         let event: [DataType]
@@ -41,6 +41,12 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     struct PendingMessageData {
         let request: InAppMessagesManager.InAppMessageShowRequest
         let message: InAppMessage?
+    }
+
+    enum InAppMessageError: Error {
+        case diferrentCustomers
+        case fetchInAppMessagesFailed
+        case imageNotFound
     }
 
     private let repository: RepositoryType
@@ -55,6 +61,11 @@ final class InAppMessagesManager: InAppMessagesManagerType {
     private static let refreshCacheAfter: TimeInterval = 60 * 30 // refresh on session start if cache is older than this
     private static let maxPendingMessageAge: TimeInterval = 3 // time window to show pending message after preloading
     @Atomic internal var pendingShowRequests: [String: InAppMessageShowRequest] = [:]
+    private lazy var identifyFlowQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.name = "identify flow"
+        return queue
+    }()
 
     init(
         repository: RepositoryType,
@@ -70,6 +81,13 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         self.displayStatusStore = displayStatusStore
         self.urlOpener = urlOpener
         self.trackingConsentManager = trackingConsentManager
+
+        IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+            guard let self else { return }
+            self.pendingShowRequests.removeAll()
+            self.cache.clear()
+            self.displayStatusStore.clear()
+        }
     }
 
     // MARK: - Methods
@@ -83,36 +101,44 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         cache.clear()
         displayStatusStore.clear()
         if let cookie = Exponea.shared.trackingManager?.customerIds {
-            startIdentifyCustomerFlow(for: [.customerIds(cookie)], isAnonymized: true)
+            Task { [weak self] in
+                await self?.startIdentifyCustomerFlow(for: [.customerIds(cookie)], isAnonymized: true)
+            }
         }
     }
 
-    @discardableResult private func preloadImage(for message: InAppMessage) -> Bool {
+    @_disfavoredOverload
+    private func preloadImage(for message: InAppMessage) -> Bool {
+        preloadImage(for: message) != nil
+    }
+
+    @discardableResult private func preloadImage(for message: InAppMessage) -> UIImage? {
         var imageUrlStrings: [String] = []
         if message.isHtml && message.payloadHtml != nil {
             imageUrlStrings.append(contentsOf: HtmlNormalizer(message.payloadHtml!).collectImages())
-        } else if message.payload?.imageUrl?.isEmpty == false {
-            imageUrlStrings.append(message.payload!.imageUrl!)
+        } else if let imageUrl = message.payload?.imageConfig.url {
+            imageUrlStrings.append(imageUrl.absoluteString)
+        } else if let imageUrl = message.oldPayload?.imageUrl {
+            imageUrlStrings.append(imageUrl)
         }
         if imageUrlStrings.isEmpty {
             Exponea.logger.log(
                 .verbose,
                 message: "[InApp] There is no image, call preload successful"
             )
-            return true // there is no image, call preload successful
+            return .init() // there is no image, call preload successful
         }
         for imageUrlString in imageUrlStrings {
             if cache.hasImageData(at: imageUrlString) {
                 continue
             }
-            let imageData: Data? = ImageUtils.tryDownloadImage(imageUrlString)
-            guard imageData != nil else {
-                return false
+            guard let imageData = ImageUtils.tryDownloadImage(imageUrlString) else {
+                return nil
             }
-            cache.saveImageData(at: imageUrlString, data: imageData!)
-            return false
+            cache.saveImageData(at: imageUrlString, data: imageData)
+            return .init(data: imageData)
         }
-        return true
+        return .init()
     }
 
     private var pickPendingMessage: InAppMessage? {
@@ -131,6 +157,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             .filter { $0.value.timestamp + InAppMessagesManager.maxPendingMessageAge > Date().timeIntervalSince1970 }
             .filter { $0.value.event.customerIds.compareWith(other: currentCustomerIds) }
             .map { PendingMessageData(request: $0.value, message: loadMessageToShow(for: $0.value.event)) }
+        _pendingShowRequests.changeValue(with: { $0.removeAll() })
         Exponea.logger.log(
             .verbose,
             message: "[InApp] Filtered pending messages \(pendingMessages)"
@@ -152,12 +179,14 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             self.trackInAppMessageShown(message)
             callback?(nil)
         } else {
-            self.showInAppMessage(message, callback: callback)
+            Task { [weak self] in
+                await self?.showInAppMessage(message, callback: callback)
+            }
         }
     }
 
     private func getImageData(for message: InAppMessage) -> Data? {
-        guard let imageUrl = message.payload?.imageUrl else {
+        guard let imageUrl = message.oldPayload?.imageUrl ?? message.payload?.imageConfig.url?.absoluteString else {
             return nil
         }
         Exponea.logger.log(
@@ -176,94 +205,116 @@ final class InAppMessagesManager: InAppMessagesManagerType {
             .verbose,
             message: "[InApp] Show InAppMessage \(message)"
         )
-        showInAppMessage(message, callback: callback)
+        Task { @MainActor [weak self] in
+            await self?.showInAppMessage(message, callback: callback)
+        }
     }
 
     private func showInAppMessage(
         _ message: InAppMessage,
         callback: ((InAppMessageView?) -> Void)? = nil
-    ) {
-        guard message.hasPayload() && message.variantId != -1 else {
+    ) async {
+        guard !IntegrationManager.shared.isStopped else {
             Exponea.logger.log(
-                .verbose,
-                message: "[InApp] Only logging in-app message for control group '\(message.name)'"
+                .error,
+                message: "In-app UI is unavailable, SDK is stopping"
             )
-            self.trackInAppMessageShown(message)
-            callback?(nil)
             return
         }
-        Exponea.logger.log(.verbose, message: "[InApp] Attempting to show in-app message '\(message.name)'")
-        var imageData: Data?
-        if !(message.payload?.imageUrl ?? "").isEmpty {
-            guard let createdImageData = self.getImageData(for: message) else {
+        await withCheckedContinuation { [weak self] continuation in
+            guard let self else { return }
+            guard message.hasPayload() && message.variantId != -1 else {
+                Exponea.logger.log(
+                    .verbose,
+                    message: "[InApp] Only logging in-app message for control group '\(message.name)'"
+                )
+                self.trackInAppMessageShown(message)
                 callback?(nil)
+                continuation.resume()
                 return
             }
-            imageData = createdImageData
-        }
-
-        self.presenter.presentInAppMessage(
-            messageType: message.messageType,
-            payload: message.payload,
-            payloadHtml: message.payloadHtml,
-            delay: message.delay,
-            timeout: message.timeout,
-            imageData: imageData,
-            actionCallback: { button in
-                self.displayStatusStore.didInteract(with: message, at: Date())
-                if Exponea.shared.inAppMessagesDelegate.trackActions {
-                    self.trackingConsentManager.trackInAppMessageClick(
-                        message: message,
-                        buttonText: button.buttonText,
-                        buttonLink: button.buttonLink,
-                        mode: .CONSIDER_CONSENT,
-                        isUserInteraction: true
-                    )
+            Exponea.logger.log(.verbose, message: "[InApp] Attempting to show in-app message '\(message.name)'")
+            var imageData: Data?
+            if !(message.payload?.imageUrl ?? "").isEmpty {
+                guard let createdImageData = self.getImageData(for: message) else {
+                    callback?(nil)
+                    return
                 }
-                Exponea.shared.inAppMessagesDelegate.inAppMessageClickAction(
-                    message: message,
-                    button: InAppMessageButton(
-                        text: button.buttonText,
-                        url: button.buttonLink
-                    )
-                )
-
-                if !Exponea.shared.inAppMessagesDelegate.overrideDefaultBehavior {
-                    self.processInAppMessageAction(button: button)
-                }
-            },
-            dismissCallback: { isUserInteraction, cancelButtonPayload in
-                if Exponea.shared.inAppMessagesDelegate.trackActions {
-                    self.trackingConsentManager.trackInAppMessageClose(
-                        message: message,
-                        buttonText: cancelButtonPayload?.buttonText,
-                        mode: .CONSIDER_CONSENT,
-                        isUserInteraction: isUserInteraction
-                    )
-                }
-                var cancelButton: InAppMessageButton?
-                if let cancelButtonPayload {
-                    cancelButton = InAppMessageButton(
-                        text: cancelButtonPayload.buttonText, url: cancelButtonPayload.buttonLink
-                    )
-                }
-                Exponea.shared.inAppMessagesDelegate.inAppMessageCloseAction(
-                    message: message,
-                    button: cancelButton,
-                    interaction: isUserInteraction
-                )
-            },
-            presentedCallback: { presented, error in
-                if presented == nil && error != nil {
-                    self.trackInAppMessageError(message, error!)
-                } else if presented != nil {
-                    self.trackInAppMessageShown(message)
-                }
-                callback?(presented)
+                imageData = createdImageData
             }
-        )
+            if !(message.oldPayload?.imageUrl ?? "").isEmpty {
+                guard let createdImageData = self.getImageData(for: message) else {
+                    callback?(nil)
+                    return
+                }
+                imageData = createdImageData
+            }
+
+            self.presenter.presentInAppMessage(
+                messageType: message.messageType,
+                payload: message.payload,
+                oldPayload: message.oldPayload,
+                payloadHtml: message.payloadHtml,
+                delay: message.delay,
+                timeout: message.timeout,
+                imageData: imageData,
+                actionCallback: { button in
+                    self.displayStatusStore.didInteract(with: message, at: Date())
+                    if Exponea.shared.inAppMessagesDelegate.trackActions {
+                        self.trackingConsentManager.trackInAppMessageClick(
+                            message: message,
+                            buttonText: button.buttonText,
+                            buttonLink: button.buttonLink,
+                            mode: .CONSIDER_CONSENT,
+                            isUserInteraction: true
+                        )
+                    }
+                    Exponea.shared.inAppMessagesDelegate.inAppMessageClickAction(
+                        message: message,
+                        button: InAppMessageButton(
+                            text: button.buttonText,
+                            url: button.buttonLink
+                        )
+                    )
+
+                    if !Exponea.shared.inAppMessagesDelegate.overrideDefaultBehavior {
+                        self.processInAppMessageAction(button: button)
+                    }
+                },
+                dismissCallback: { isUserInteraction, cancelButtonPayload in
+                    if Exponea.shared.inAppMessagesDelegate.trackActions {
+                        self.trackingConsentManager.trackInAppMessageClose(
+                            message: message,
+                            buttonText: cancelButtonPayload?.buttonText,
+                            mode: .CONSIDER_CONSENT,
+                            isUserInteraction: isUserInteraction
+                        )
+                    }
+                    var cancelButton: InAppMessageButton?
+                    if let cancelButtonPayload {
+                        cancelButton = InAppMessageButton(
+                            text: cancelButtonPayload.buttonText, url: cancelButtonPayload.buttonLink
+                        )
+                    }
+                    Exponea.shared.inAppMessagesDelegate.inAppMessageCloseAction(
+                        message: message,
+                        button: cancelButton,
+                        interaction: isUserInteraction
+                    )
+                },
+                presentedCallback: { presented, error in
+                    if presented == nil && error != nil {
+                        self.trackInAppMessageError(message, error!)
+                    } else if presented != nil {
+                        self.trackInAppMessageShown(message)
+                    }
+                    callback?(presented)
+                }
+            )
+            continuation.resume()
+        }
     }
-    
+
     private func trackInAppMessageError(
         _ message: InAppMessage,
         _ error: String
@@ -312,8 +363,89 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         return []
     }
 
+    let semaphore = DispatchSemaphore(value: 0)
+
+    private func extractFont(url: URL, fontSize: String?, size: CGFloat?) async -> InAppButtonFontData? {
+        await withCheckedContinuation { continuation in
+            if let data = try? Data(contentsOf: url),
+               let dataProvider = CGDataProvider(data: data as CFData),
+               let cgFont = CGFont(dataProvider) {
+                var fontData: InAppButtonFontData = .init()
+                var error: Unmanaged<CFError>?
+                if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
+                    fontData.fontName = cgFont.postScriptName as? String
+                    CTFontManagerUnregisterGraphicsFont(cgFont, &error)
+                    let size = size ?? fontSize?.convertPxToFloatWithDefaultValue() ?? 13
+                    fontData.fontSize = size
+                    fontData.fontData = data.base64EncodedString()
+                } else {
+                    Exponea.logger.log(
+                        .error,
+                        message: "[InApp] Cant download custom font from url"
+                    )
+                }
+                continuation.resume(returning: fontData)
+            }
+        }
+    }
+
+    private func fetchImagesAndFonts(inAppMessages: [InAppMessage]) async -> [InAppMessage] {
+        await withCheckedContinuation { [weak self] continuation in
+            guard let self else {
+                continuation.resume(returning: [])
+                return
+            }
+            Task(priority: .background) { @MainActor in
+                var messagesToReturn: [InAppMessage] = []
+                for message in inAppMessages {
+                    var copy = message
+                    self.preloadImage(for: copy)
+                    if let titleConfig = copy.payload?.titleConfig, let customFont = titleConfig.customFont, let url = URL(string: customFont) {
+                        copy.payload?.titleFontData = await self.extractFont(url: url, fontSize: nil, size: titleConfig.size)
+                    }
+                    if let bodyConfig = copy.payload?.bodyConfig, let customFont = bodyConfig.customFont, let url = URL(string: customFont) {
+                        copy.payload?.bodyFontData = await self.extractFont(url: url, fontSize: nil, size: bodyConfig.size)
+                    }
+                    let buttons: [InAppButtonPayload] = copy.payload?.buttons ?? []
+                    var updatedButtons: [InAppButtonPayload] = []
+                    for button in buttons {
+                        var copyButton = button
+                        if let buttonConfig = copyButton.buttonConfig, let customFont = buttonConfig.fontURL {
+                            copyButton.fontData = await self.extractFont(url: customFont, fontSize: nil, size: CGFloat(buttonConfig.size))
+                        }
+                        updatedButtons.append(copyButton)
+                    }
+                    copy.payload?.buttons = updatedButtons
+                    messagesToReturn.append(copy)
+                }
+                continuation.resume(returning: messagesToReturn)
+            }
+        }
+    }
+
+    private func checkAndClearCustomerIdsIfNeeded(event: [DataType], currentCustomerIds: inout [String: String]) {
+        // For test purpose only
+        if event.customerIds.isEmpty {
+            currentCustomerIds.removeAll()
+        }
+    }
+
     func fetchInAppMessages(for event: [DataType], completion: EmptyBlock? = nil) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(
+                .error,
+                message: "In-app fetch failed, SDK is stopping"
+            )
+            return
+        }
         repository.fetchInAppMessages(for: event.customerIds) { [weak self] result in
+            guard !IntegrationManager.shared.isStopped else {
+                Exponea.logger.log(
+                    .error,
+                    message: "In-app fetch failed, SDK is stopping"
+                )
+                return
+            }
             self?.isIdentifyFlowInProcess = false
             guard case let .success(response) = result,
                     let self,
@@ -342,20 +474,97 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 message: "[InApp] Fetch completed \(response.data ?? []), total messages: \(response.data?.count ?? 0)"
             )
             self.cache.saveInAppMessages(inAppMessages: response.data ?? [])
-            self.cache.deleteImages(except: response.data?.compactMap { $0.payload?.imageUrl } ?? [])
+            self.cache.deleteImages(except: response.data?.compactMap { message in
+                if message.oldPayload != nil {
+                    return message.oldPayload?.imageUrl
+                } else {
+                    return message.payload?.imageUrl
+                }
+            } ?? [])
             completion?()
         }
     }
 
-    internal func addToPendingShowRequest(event: [DataType]) {
-        _pendingShowRequests.changeValue { value in
-            let newRequest = InAppMessageShowRequest(
-                event: event,
-                callback: nil,
-                timestamp: Date().timeIntervalSince1970
-            )
-            if let eventType = newRequest.event.eventTypes.last {
-                value[eventType] = newRequest
+    @discardableResult
+    internal func isFetchInAppMessagesDone(for event: [DataType]) async throws -> Bool {
+        try await withCheckedThrowingContinuation { [weak self] continuation in
+            guard let self else { return }
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.repository.fetchInAppMessages(for: event.customerIds) { result in
+                    Task {
+                        self.isIdentifyFlowInProcess = false
+                        switch result {
+                        case let .success(response):
+                            if var currentCustomerIds = Exponea.shared.trackingManager?.customerIds, !currentCustomerIds.isEmpty {
+                                var messages = response.data ?? []
+                                messages = await self.fetchImagesAndFonts(inAppMessages: messages)
+                                self.checkAndClearCustomerIdsIfNeeded(event: event, currentCustomerIds: &currentCustomerIds)
+                                if !event.customerIds.compareWith(other: currentCustomerIds) {
+                                    Exponea.logger.log(
+                                        .verbose,
+                                        message: "[InApp] Fetch InAppMessages - different customer ids"
+                                    )
+                                    continuation.resume(returning: true)
+                                } else {
+                                    Exponea.logger.log(
+                                        .verbose,
+                                        message: "[InApp] Fetch completed \(messages), total messages: \(messages.count)"
+                                    )
+                                    self.cache.saveInAppMessages(inAppMessages: messages)
+                                    self.cache.deleteImages(except: response.data?.compactMap { message in
+                                        if message.oldPayload != nil {
+                                            return message.oldPayload?.imageUrl
+                                        } else {
+                                            return message.payload?.imageUrl
+                                        }
+                                    } ?? [])
+                                    continuation.resume(returning: true)
+                                }
+                            } else {
+                                Exponea.logger.log(
+                                    .verbose,
+                                    message: "[InApp] fetchInAppMessages failed '\(result)', current customer: '\(Exponea.shared.trackingManager?.customerIds ?? [:])'"
+                                )
+                                continuation.resume(throwing: InAppMessageError.fetchInAppMessagesFailed)
+                            }
+                        case let .failure(error):
+                            continuation.resume(throwing: error)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func clearImagesAndFonts() {
+        cache.deleteImages(except: [])
+    }
+
+    internal func addToPendingShowRequest(event: [DataType]) async {
+        await withCheckedContinuation { continuation in
+            _pendingShowRequests.changeValue { value in
+                let newRequest = InAppMessageShowRequest(
+                    event: event,
+                    callback: nil,
+                    timestamp: Date().timeIntervalSince1970
+                )
+                if let eventType = newRequest.event.eventTypes.last {
+                    value[eventType] = newRequest
+                }
+                continuation.resume()
+            }
+        }
+    }
+
+    @discardableResult
+    private func isFlushDone() async -> Bool {
+        await withCheckedContinuation { continuation in
+            switch Exponea.shared.flushingMode {
+            case .immediate:
+                Exponea.shared.flushingManager?.flushData()
+                continuation.resume(returning: true)
+            default:
+                continuation.resume(returning: true)
             }
         }
     }
@@ -366,15 +575,7 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         isFetchDisabled: Bool = false,
         isAnonymized: Bool = false,
         triggerCompletion: TypeBlock<IdentifyTriggerState>? = nil
-    ) {
-        // Register pending request if event is not identify customer
-        if !isFromIdentifyCustomer {
-            Exponea.logger.log(
-                .verbose,
-                message: "[InApp] Add event - \(event) to pending requests"
-            )
-            addToPendingShowRequest(event: event)
-        }
+    ) async {
         guard Exponea.shared.isAppForeground else {
             Exponea.logger.log(
                 .verbose,
@@ -389,28 +590,55 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 .verbose,
                 message: "[InApp] Identify customer in progress"
             )
-            pendingShowRequests.removeAll()
+            _pendingShowRequests.changeValue(with: { $0.removeAll() })
+            clearImagesAndFonts()
             isIdentifyFlowInProcess = true
+            await isFlushDone()
+            await addToPendingShowRequest(event: event)
             if triggerCompletion != nil {
                 isIdentifyFlowInProcess = false
                 triggerCompletion?(.identifyFetch)
             }
-            fetchInAppMessages(for: event) {
-                loadMessageIfNeeded(event: event)
+            guard Exponea.shared.isAppForeground else { return }
+            do {
+                try await isFetchInAppMessagesDone(for: event)
+                let message = try await loadMessageIfNeeded(event: event)
+                await showInAppMessage(message)
+            } catch {
+                Exponea.logger.log(
+                    .error,
+                    message: "[InApp] fetchInAppMessages error \(error)"
+                )
             }
         case isAnonymized:
             Exponea.logger.log(
                 .verbose,
                 message: "[InApp] Fetch in app messages, because 'isAnonymized'"
             )
-            fetchInAppMessages(for: event)
+            _pendingShowRequests.changeValue(with: { $0.removeAll() })
+            clearImagesAndFonts()
+            do {
+                try await isFetchInAppMessagesDone(for: event)
+            } catch {
+                Exponea.logger.log(
+                    .error,
+                    message: "[InApp] fetchInAppMessages error \(error)"
+                )
+            }
         case shouldReload(timestamp: event.latestTimestamp ?? Date().timeIntervalSince1970) && !isFetchDisabled:
             Exponea.logger.log(
                 .verbose,
                 message: "[InApp] Reloading in app messages, because 'shouldReload'"
             )
-            fetchInAppMessages(for: event) {
-                loadMessageIfNeeded(event: event)
+            do {
+                try await isFetchInAppMessagesDone(for: event)
+                let message = try await loadMessageIfNeeded(event: event)
+                await showInAppMessage(message)
+            } catch {
+                Exponea.logger.log(
+                    .error,
+                    message: "[InApp] fetchInAppMessages error \(error)"
+                )
             }
             // For test purposes. Initialized only inside test
             if triggerCompletion != nil {
@@ -431,7 +659,16 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                     .verbose,
                     message: "[InApp] ShoulReload is false. Just load messages'"
                 )
-                loadMessageIfNeeded(event: event)
+                do {
+                    let message = try await loadMessageIfNeeded(event: event)
+                    await showInAppMessage(message)
+                } catch {
+                    Exponea.logger.log(
+                        .error,
+                        message: "[InApp] loadMessageIfNeeded error \(error)"
+                    )
+                }
+
                 // For test purposes. Initialized only inside test
                 if triggerCompletion != nil {
                     isIdentifyFlowInProcess = false
@@ -439,41 +676,84 @@ final class InAppMessagesManager: InAppMessagesManagerType {
                 }
             }
         }
-        func loadMessageIfNeeded(event: [DataType]) {
-            if let message = pickPendingMessage {
-                if !presenter.presenting &&
-                    event.customerIds.compareWith(
-                        other: Exponea.shared.trackingManager?.customerIds ?? [:]
-                ) {
-                    Exponea.logger.log(
-                        .verbose,
-                        message: """
-                            [InApp] Show pending InAppMessage for event \(event)
-                            presenter.presenting is \(presenter.presenting)
-                            compareWith is \(event.customerIds.compareWith(
-                                other: Exponea.shared.trackingManager?.customerIds ?? [:]
-                            ))
-                        """
-                    )
-                    if preloadImage(for: message) {
-                        isIdentifyFlowInProcess = false
-                        onMain(self.showInAppMessage(message))
+    }
+
+    private func loadMessageIfNeeded(event: [DataType]) async throws -> InAppMessage {
+        try await withCheckedThrowingContinuation { [weak self] continuation in
+            guard let self else { return }
+            DispatchQueue.global(qos: .userInitiated).async {
+                if var message = self.pickPendingMessage {
+                    self.pendingShowRequests.removeAll()
+                    if !self.presenter.presenting &&
+                        event.customerIds.compareWith(
+                            other: Exponea.shared.trackingManager?.customerIds ?? [:]
+                    ) {
+                        Exponea.logger.log(
+                            .verbose,
+                            message: """
+                                [InApp] Show pending InAppMessage for event \(event)
+                                presenter.presenting is \(self.presenter.presenting)
+                                compareWith is \(event.customerIds.compareWith(
+                                    other: Exponea.shared.trackingManager?.customerIds ?? [:]
+                                ))
+                            """
+                        )
+                        self.isIdentifyFlowInProcess = false
+                        if message.downloadedImage == nil, let image = self.preloadImage(for: message) {
+                            message.downloadedImage = image
+                            onMain {
+                                continuation.resume(returning: message)
+                            }
+                        } else {
+                            onMain {
+                                if message.downloadedImage == nil {
+                                    Exponea.logger.log(
+                                        .verbose,
+                                        message: "[InApp] Fetch InAppMessages - no download image found for message (\(message.id))"
+                                    )
+                                    continuation.resume(throwing: InAppMessageError.imageNotFound)
+                                } else {
+                                    continuation.resume(returning: message)
+                                }
+                            }
+                        }
+                    } else {
+                        Exponea.logger.log(
+                            .verbose,
+                            message: "[InApp] Fetch InAppMessages - different customer ids"
+                        )
+                        onMain {
+                            continuation.resume(throwing: InAppMessageError.fetchInAppMessagesFailed)
+                        }
                     }
                 } else {
-                    Exponea.logger.log(
-                        .verbose,
-                        message: "[InApp] Fetch InAppMessages - different customer ids"
-                    )
-                }
-            } else {
-                if let message = loadMessageToShow(for: event) {
-                    if preloadImage(for: message) {
-                        isIdentifyFlowInProcess = false
-                        onMain(self.showInAppMessage(message))
+                    if var message = self.loadMessageToShow(for: event) {
+                        self.isIdentifyFlowInProcess = false
+                        if message.downloadedImage == nil, let image = self.preloadImage(for: message) {
+                            message.downloadedImage = image
+                            onMain {
+                                continuation.resume(returning: message)
+                            }
+                        } else {
+                            onMain {
+                                if message.downloadedImage == nil {
+                                    Exponea.logger.log(
+                                        .verbose,
+                                        message: "[InApp] Fetch InAppMessages - no download image found for message (\(message.id))"
+                                    )
+                                    continuation.resume(throwing: InAppMessageError.imageNotFound)
+                                } else {
+                                    continuation.resume(returning: message)
+                                }
+                            }
+                        }
+                    } else {
+                        onMain {
+                            continuation.resume(throwing: InAppMessageError.fetchInAppMessagesFailed)
+                        }
                     }
                 }
             }
-            pendingShowRequests.removeAll()
         }
     }
 
@@ -506,32 +786,77 @@ final class InAppMessagesManager: InAppMessagesManagerType {
         return messages
     }
 
+    func extractFontNew(url: URL, fontSize: String?, size: CGFloat?) -> InAppButtonFontData? {
+        if let data = try? Data(contentsOf: url),
+           let dataProvider = CGDataProvider(data: data as CFData),
+           let cgFont = CGFont(dataProvider) {
+            var fontData: InAppButtonFontData = .init()
+            var error: Unmanaged<CFError>?
+            if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
+                let size = size ?? fontSize?.convertPxToFloatWithDefaultValue() ?? 13
+                fontData.fontName = cgFont.postScriptName as? String
+                CTFontManagerUnregisterGraphicsFont(cgFont, &error)
+                fontData.fontSize = size
+                fontData.fontData = data.base64EncodedString()
+                if let fontName = cgFont.postScriptName as? String {
+                    fontData.loadedFont = UIFont(name: fontName, size: size)
+                }
+            }
+            return fontData
+        }
+        return nil
+    }
+    
+    private func extractFont(base64: String?, size: CGFloat?) -> UIFont? {
+        if let base64 = base64,
+           let data = Data(base64Encoded: base64),
+           let dataProvider = CGDataProvider(data: data as CFData),
+           let cgFont = CGFont(dataProvider) {
+            var error: Unmanaged<CFError>?
+            if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
+                var font: UIFont?
+                if let fontName = cgFont.postScriptName as? String {
+                    font = UIFont(name: fontName, size: size ?? 13)
+                }
+                CTFontManagerUnregisterGraphicsFont(cgFont, &error)
+                return font
+            }
+        }
+        return nil
+    }
+
+    
     @discardableResult
     func loadMessageToShow(for event: [DataType]) -> InAppMessage? {
         loadMessagesToShow(for: event).randomElement()
     }
 
     internal func onEventOccurred(of type: EventType, for event: [DataType], triggerCompletion: TypeBlock<IdentifyTriggerState>? = nil) {
-        switch type {
-        case .sessionStart:
-            Exponea.logger.log(
-                .verbose,
-                message: "[InApp] Session start"
-            )
-            sessionStartDate = Date(timeIntervalSince1970: event.latestTimestamp ?? Date().timeIntervalSince1970)
-            startIdentifyCustomerFlow(for: event, triggerCompletion: triggerCompletion)
-        case .sessionEnd, .pushDelivered, .pushOpened:
-            Exponea.logger.log(
-                .verbose,
-                message: "[InApp] Event type - \(type)"
-            )
-            startIdentifyCustomerFlow(for: event, isFetchDisabled: true)
-        default:
-            Exponea.logger.log(
-                .verbose,
-                message: "[InApp] Event type - \(type)"
-            )
-            startIdentifyCustomerFlow(for: event, isFromIdentifyCustomer: type == .identifyCustomer, triggerCompletion: triggerCompletion)
+        identifyFlowQueue.addOperation { [weak self] in
+            Task {
+                guard let self else { return }
+                switch type {
+                case .sessionStart:
+                    Exponea.logger.log(
+                        .verbose,
+                        message: "[InApp] Session start"
+                    )
+                    self.sessionStartDate = Date(timeIntervalSince1970: event.latestTimestamp ?? Date().timeIntervalSince1970)
+                    await self.startIdentifyCustomerFlow(for: event, triggerCompletion: triggerCompletion)
+                case .sessionEnd, .pushDelivered, .pushOpened:
+                    Exponea.logger.log(
+                        .verbose,
+                        message: "[InApp] Event type - \(type)"
+                    )
+                    await self.startIdentifyCustomerFlow(for: event, isFetchDisabled: true)
+                default:
+                    Exponea.logger.log(
+                        .verbose,
+                        message: "[InApp] Event type - \(type)"
+                    )
+                    await self.startIdentifyCustomerFlow(for: event, isFromIdentifyCustomer: type == .identifyCustomer, triggerCompletion: triggerCompletion)
+                }
+            }
         }
     }
 }

@@ -23,6 +23,8 @@ class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
     override func prepareForReuse() {
         super.prepareForReuse()
 
+        webview.stopLoading()
+        webview.loadHTMLString("", baseURL: nil)
         contentBlockCarouselCallback = nil
         assignedMessage = nil
     }

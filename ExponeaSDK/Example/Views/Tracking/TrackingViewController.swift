@@ -23,7 +23,7 @@ class TrackingViewController: UIViewController {
             sessionStartButton.isEnabled = !config.automaticSessionTracking
             sessionEndButton.isEnabled = !config.automaticSessionTracking
         }
-        
+
         SegmentationManager.shared.addCallback(
             callbackData: .init(
                 category: .discovery(),
@@ -67,6 +67,86 @@ class TrackingViewController: UIViewController {
         if let url = URL(safeString: "https://panaxeo.com/exponea/product.html?iitt=VuU9RM4lhMPshFWladJLVZ8ARMWsVuegnkU7VkichfYcbdiA&utm_campaign=Test%20direct%20links&utm_source=exponea&utm_medium=email&xnpe_cmp=EiAHASXwhARMc-4pi3HQKTynsFBXa54EjBjb-qh2HAv3kSEpscfCI2HXQQ.XlWYaES2X-r8Nlv4J22eO0M3Rgk") {
         Exponea.shared.trackCampaignClick(url: url, timestamp: nil)
         }
+    }
+
+    @IBAction func trackPushNotifReceived(_ sender: Any) {
+        let userInfo: [AnyHashable: Any] = [
+            "url": "https://example.com/ios",
+            "title": "iOS Title",
+            "action": "app",
+            "message": "iOS Message",
+            "image": "https://example.com/image.jpg",
+            "actions": [
+                ["title": "Action 1", "action": "app", "url": "https://example.com/action1/ios"],
+                ["title": "Action 2", "action": "browser", "url": "https://example.com/action2/ios"]
+            ],
+            "sound": "default",
+            "aps": [
+                "alert": ["title": "iOS Alert Title", "body": "iOS Alert Body"],
+                "mutable-content": 1
+            ],
+            "attributes": [
+                "event_type": "campaign",
+                "campaign_id": "123456",
+                "campaign_name": "iOS Campaign",
+                "action_id": 1,
+                "action_type": "mobile notification",
+                "action_name": "iOS Action",
+                "campaign_policy": "policy",
+                "consent_category": "General consent",
+                "subject": "iOS Subject",
+                "language": "en",
+                "platform": "ios",
+                "sent_timestamp": 1631234567.89,
+                "recipient": "ios@example.com"
+            ],
+            "url_params": ["param1": "value1", "param2": "value2"],
+            "source": "xnpe_platform",
+            "silent": false,
+            "has_tracking_consent": true,
+            "consent_category_tracking": "iOS Consent"
+        ]
+        Exponea.shared.trackPushReceived(userInfo: userInfo)
+    }
+
+    @IBAction func trackPushNotifClick(_ sender: Any) {
+        let userInfo: [AnyHashable: Any] = [
+            "url": "https://example.com/ios",
+            "title": "iOS Title",
+            "action": "app",
+            "message": "iOS Message",
+            "image": "https://example.com/image.jpg",
+            "actions": [
+                ["title": "Action 1", "action": "app", "url": "https://example.com/action1/ios"],
+                ["title": "Action 2", "action": "browser", "url": "https://example.com/action2/ios"]
+            ],
+            "sound": "default",
+            "aps": [
+                "alert": ["title": "iOS Alert Title", "body": "iOS Alert Body"],
+                "mutable-content": 1
+            ],
+            "attributes": [
+                "event_type": "campaign",
+                "campaign_id": "123456",
+                "campaign_name": "iOS Campaign",
+                "action_id": 1,
+                "action_type": "mobile notification",
+                "action_name": "iOS Action",
+                "campaign_policy": "policy",
+                "consent_category": "General consent",
+                "subject": "iOS Subject",
+                "language": "en",
+                "platform": "ios",
+                "sent_timestamp": 1631234567.89,
+                "recipient": "ios@example.com"
+            ],
+            "url_params": ["param1": "value1", "param2": "value2"],
+            "source": "xnpe_platform",
+            "silent": false,
+            "has_tracking_consent": true,
+            "consent_category_tracking": "iOS Consent"
+        ]
+        Exponea.shared.trackPushOpened(with: userInfo)
     }
 
     @IBAction func automaticSessionTrackingChanged(_ sender: UISwitch) {

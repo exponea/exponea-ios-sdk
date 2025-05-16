@@ -6,7 +6,7 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 final class InAppMessagesCache: InAppMessagesCacheType {
     static let inAppMessagesFolder = "exponeasdk_in_app_messages"
@@ -30,6 +30,13 @@ final class InAppMessagesCache: InAppMessagesCacheType {
     }
 
     func saveInAppMessages(inAppMessages: [InAppMessage]) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(
+                .error,
+                message: "In-app UI is unavailable, SDK is stopping"
+            )
+            return
+        }
         guard let jsonData = try? JSONEncoder().encode(inAppMessages),
             let jsonString = String(data: jsonData, encoding: .utf8),
             let directory = getCacheDirectoryURL() else {
@@ -47,15 +54,45 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         }
     }
 
+    func deleteAllMessages() {
+        guard let directory = getCacheDirectoryURL()?.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName) else {
+                Exponea.logger.log(.warning, message: "Unable to serialize in-app messages data.")
+                return
+        }
+        try? fileManager.removeItem(at: directory)
+    }
+
     func getInAppMessages() -> [InAppMessage] {
         if let directory = getCacheDirectoryURL(),
-            let data = try? Data(
-                contentsOf: directory.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName)
-            ),
-            let inAppMessages = try? JSONDecoder().decode([InAppMessage].self, from: data) {
-            return inAppMessages
+           let data = try? Data(contentsOf: directory.appendingPathComponent(InAppMessagesCache.inAppMessagesFileName)) {
+            do {
+                return try JSONDecoder().decode([InAppMessage].self, from: data)
+            } catch {
+                return []
+            }
         }
         return []
+    }
+
+    private func extractFont(base64: String?, size: CGFloat?) -> UIFont? {
+        if let base64 = base64,
+           let data = Data(base64Encoded: base64),
+           let dataProvider = CGDataProvider(data: data as CFData),
+           let cgFont = CGFont(dataProvider) {
+            var error: Unmanaged<CFError>?
+            if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
+                var fontToReturn: UIFont?
+                if let fontName = cgFont.postScriptName as? String {
+                    fontToReturn = UIFont(name: fontName, size: size ?? 13)
+                }
+                CTFontManagerUnregisterGraphicsFont(cgFont, &error)
+                return fontToReturn
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
     }
 
     func getInAppMessagesTimestamp() -> TimeInterval {
@@ -70,18 +107,8 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         return modificationDate.timeIntervalSince1970
     }
 
-    private func getFileName(imageUrl: String) -> String {
-        guard let data = imageUrl.data(using: .utf8) else {
-            return imageUrl
-        }
-        return data
-            .base64EncodedString()
-            .replacingOccurrences(of: "=", with: "")
-            .replacingOccurrences(of: "/", with: "")
-    }
-
     func deleteImages(except: [String]) {
-        let exceptFileNames = except.map { getFileName(imageUrl: $0) }
+        let exceptFileNames = except.map { FileUtils.getFileName(fileUrl: $0) }
         guard let directory = getCacheDirectoryURL() else {
             return
         }
@@ -103,7 +130,7 @@ final class InAppMessagesCache: InAppMessagesCacheType {
             Exponea.logger.log(.warning, message: "Unable to get in-app message image cache directory")
             return false
         }
-        let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
+        let fileUrl = directory.appendingPathComponent(FileUtils.getFileName(fileUrl: imageUrl))
         let exists = fileManager.fileExists(atPath: fileUrl.path)
         if !exists {
             Exponea.logger.log(.verbose, message: "In-app message image \(imageUrl) not found in cache.")
@@ -115,20 +142,24 @@ final class InAppMessagesCache: InAppMessagesCacheType {
         guard let directory = getCacheDirectoryURL() else {
             return
         }
-        let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
-        try? data.write(to: fileUrl, options: .atomic)
+        let fileUrl = directory.appendingPathComponent(FileUtils.getFileName(fileUrl: imageUrl))
+        do {
+            try data.write(to: fileUrl, options: .atomic)
+        } catch {
+            Exponea.logger.log(.error, message: "In-app message image \(imageUrl) failed to be stored: \(error)")
+        }
     }
 
     func getImageData(at imageUrl: String) -> Data? {
         guard let directory = getCacheDirectoryURL() else {
             return nil
         }
-        let fileUrl = directory.appendingPathComponent(getFileName(imageUrl: imageUrl))
+        let fileUrl = directory.appendingPathComponent(FileUtils.getFileName(fileUrl: imageUrl))
         return try? Data(contentsOf: fileUrl)
     }
 
     func clear() {
         deleteImages(except: [])
-        saveInAppMessages(inAppMessages: [])
+        deleteAllMessages()
     }
 }

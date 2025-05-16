@@ -3,9 +3,11 @@ import UIKit
 import WebKit
 
 final class InAppMessageWebView: UIView, InAppMessageView {
+    var showCallback: EmptyBlock?
+    
     private let payload: String
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
-    let dismissCallback: (Bool, InAppMessagePayloadButton?) -> Void
+    let dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)>
 
     var webView: WKWebView!
     private var inAppContentBlocksManager: InAppContentBlocksManagerType = InAppContentBlocksManager.manager
@@ -13,7 +15,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     var normalizedPayload: NormalizedResult?
 
     var actionManager: WebActionManager?
-    
+
     var isPresented: Bool {
         return superview != nil
     }
@@ -21,7 +23,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     required init(
         payload: String,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void
+        dismissCallback: @escaping TypeBlock<(Bool, InAppMessagePayloadButton?)>
     ) {
         self.payload = payload
         self.actionCallback = actionCallback
@@ -72,20 +74,26 @@ final class InAppMessageWebView: UIView, InAppMessageView {
     }
 
     func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?) {
-        dismissCallback(isUserInteraction, cancelButton)
-        dismissFromSuperView()
+        onMain {
+            self.dismissCallback((isUserInteraction, cancelButton))
+            self.dismissFromSuperView()
+        }
     }
 
     func dismiss(actionButton: InAppMessagePayloadButton) {
-        actionCallback(actionButton)
-        dismissFromSuperView()
+        onMain {
+            self.actionCallback(actionButton)
+            self.dismissFromSuperView()
+        }
     }
 
     func dismissFromSuperView() {
-        guard superview != nil else {
-            return
+        DispatchQueue.main.async { [weak self] in
+            guard let self, superview != nil else {
+                return
+            }
+            removeFromSuperview()
         }
-        removeFromSuperview()
     }
 
     func actionButtonAction(_ sender: InAppMessageActionButton) {
@@ -105,13 +113,13 @@ final class InAppMessageWebView: UIView, InAppMessageView {
 
         DispatchQueue.global(qos: .background).async {
             self.normalizedPayload = HtmlNormalizer(self.payload).normalize()
-            if self.normalizedPayload!.valid {
-                self.actionManager?.htmlPayload = self.normalizedPayload
-                DispatchQueue.main.async {
+            onMain {
+                if self.normalizedPayload!.valid {
+                    self.actionManager?.htmlPayload = self.normalizedPayload
                     self.webView.loadHTMLString(self.normalizedPayload!.html!, baseURL: nil)
+                } else {
+                    self.dismiss(isUserInteraction: false, cancelButton: nil)
                 }
-            } else {
-                self.dismiss(isUserInteraction: false, cancelButton: nil)
             }
         }
     }

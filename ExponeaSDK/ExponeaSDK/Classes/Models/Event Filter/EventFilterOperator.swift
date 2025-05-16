@@ -17,7 +17,7 @@ public protocol EventFilterOperator: Encodable {
     ) -> Bool
 }
 
-public struct EventFilterOperand: Codable, Equatable {
+public struct EventFilterOperand: Codable, Equatable, Sendable {
     var type: String = "constant"
     let value: String
 }

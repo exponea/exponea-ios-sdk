@@ -30,6 +30,8 @@ public enum ExponeaError: LocalizedError {
     case invalidType(for: String)
     /// Property is found but given value is invalid
     case invalidValue(for: String)
+    /// SDK is stopped
+    case isStopped
 
     public var errorDescription: String? {
         switch self {
@@ -62,6 +64,7 @@ public enum ExponeaError: LocalizedError {
         case .missingProperty(let property): return "Property \(property) is required."
         case .invalidType(let name): return "Invalid type for \(name)."
         case .invalidValue(let name): return "Invalid value for \(name)."
+        case .isStopped: return "SDK is stopped."
         }
     }
 }

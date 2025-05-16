@@ -53,9 +53,9 @@ public struct InAppContentBlockResponse: Codable {
 
     public struct DateFilter: Codable {
         public let enabled: Bool
-        public let fromDate: UInt?
-        public let toDate: UInt?
-        public init(enabled: Bool, fromDate: UInt?, toDate: UInt?) {
+        public let fromDate: Date?
+        public let toDate: Date?
+        public init(enabled: Bool, fromDate: Date?, toDate: Date?) {
             self.enabled = enabled
             self.fromDate = fromDate
             self.toDate = toDate

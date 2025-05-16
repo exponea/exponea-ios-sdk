@@ -23,6 +23,7 @@ class AppInboxProviderSpec: QuickSpec {
     override func spec() {
         var appInboxProvider: AppInboxProvider!
         beforeEach {
+            IntegrationManager.shared.isStopped = false
             appInboxProvider = DefaultAppInboxProvider()
         }
         it("should show empty view for missing message") {

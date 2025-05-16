@@ -36,7 +36,11 @@ struct DeviceProperties {
     }
 
     /// Returns an array with all device properties.
-    internal var properties: [String: JSONValue] {
+    internal var properties: [String: JSONValue] = [:]
+
+    internal init(bundle: Bundle = Bundle.main) {
+        self.bundle = bundle
+        
         var data = [String: JSONValue]()
 
         data["os_name"] = .string(osName)
@@ -48,11 +52,7 @@ struct DeviceProperties {
         data["device_type"] = .string(deviceType)
         data["app_version"] = .string(appVersion)
 
-        return data
-    }
-
-    internal init(bundle: Bundle = Bundle.main) {
-        self.bundle = bundle
+        properties = data
     }
 }
 
@@ -112,6 +112,10 @@ public extension UIDevice {
             case "iPhone15,5":                                      return "iPhone 15 Plus"
             case "iPhone16,1":                                      return "iPhone 15 Pro"
             case "iPhone16,2":                                      return "iPhone 15 Pro Max"
+            case "iPhone17,3":                                      return "iPhone 16"
+            case "iPhone17,4":                                      return "iPhone 16 Plus"
+            case "iPhone17,1":                                      return "iPhone 16 Pro"
+            case "iPhone17,2":                                      return "iPhone 16 Pro Max"
             // source of truth: https://theapplewiki.com/wiki/List_of_iPads
             case "iPad1,1":                                         return "iPad"
             case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":        return "iPad (2nd generation)"
@@ -138,6 +142,7 @@ public extension UIDevice {
             case "iPad5,1", "iPad5,2":                              return "iPad mini (4th generation)"
             case "iPad11,1", "iPad11,2":                            return "iPad mini (5th generation)"
             case "iPad14,1", "iPad14,2":                            return "iPad mini (6th generation)"
+            case "iPad16,1", "iPad16,2":                            return "iPad mini (A17 Pro)"
             // source of truth: https://theapplewiki.com/wiki/List_of_iPad_Pros
             case "iPad6,3", "iPad6,4":                              return "iPad Pro (9.7-inch)"
             case "iPad7,3", "iPad7,4":                              return "iPad Pro (10.5-inch)"

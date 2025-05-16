@@ -25,6 +25,7 @@ class DatabaseManagerSpec: QuickSpec {
 
         context("A database manager") {
             beforeEach {
+                IntegrationManager.shared.isStopped = false
                 db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
             }
 

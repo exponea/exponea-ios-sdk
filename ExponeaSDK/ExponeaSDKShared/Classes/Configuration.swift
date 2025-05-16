@@ -79,92 +79,48 @@ public struct Configuration: Codable, Equatable {
     }
 
     /// Creates the configuration object with the provided properties.
-    ///
-    /// - Parameters:
-    ///   - projectToken: The project token used for connecting with Exponea.
-    ///   - projectMapping: Optional project mapping if you wish to send events to different projects.
-    ///   - authorization: The authorization you want to use when tracking events.
-    ///   - baseUrl: Your API base URL that the SDK will connect to.
-    ///   - defaultProperties: Custom properties to be tracked in every event.
-    ///   - advancedAuthEnabled: Flag if advanced authorization used for communication with BE
-    public init(projectToken: String?,
-                projectMapping: [EventType: [ExponeaProject]]? = nil,
-                authorization: Authorization,
-                baseUrl: String?,
-                appGroup: String? = nil,
-                defaultProperties: [String: JSONConvertible]? = nil,
-                inAppContentBlocksPlaceholders: [String]? = nil,
-                allowDefaultCustomerProperties: Bool? = nil,
-                advancedAuthEnabled: Bool? = nil,
-                isDarkModeEnabled: Bool? = nil,
-                appInboxDetailImageInset: CGFloat? = 56,
-                manualSessionAutoClose: Bool = true
-    ) throws {
-        guard let projectToken = projectToken else {
-            throw ExponeaError.configurationError("No project token provided.")
-        }
-        self.projectToken = projectToken
-        self.projectMapping = projectMapping
-        self.authorization = authorization
-        self.appGroup = appGroup
-        self.defaultProperties = defaultProperties
-        self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
-        self.advancedAuthEnabled = advancedAuthEnabled ?? false
-        self.inAppContentBlocksPlaceholders = inAppContentBlocksPlaceholders
-        self.appInboxDetailImageInset = appInboxDetailImageInset
-        self.manualSessionAutoClose = manualSessionAutoClose
-        if let url = baseUrl {
-            self.baseUrl = url
-        }
-        if (self.advancedAuthEnabled) {
-            self.customAuthProvider = try loadCustomAuthProvider()
-        }
-        try self.validate()
-        self.isDarkModeEnabled = isDarkModeEnabled ?? false
-    }
-
     public init(
         projectToken: String,
-        projectMapping: [EventType: [ExponeaProject]]?,
-        authorization: Authorization = .none,
-        baseUrl: String,
-        defaultProperties: [String: JSONConvertible]?,
+        projectMapping: [EventType: [ExponeaProject]]? = nil,
+        authorization: Authorization? = nil,
+        baseUrl: String? = nil,
+        appGroup: String? = nil,
+        defaultProperties: [String: JSONConvertible]? = nil,
         inAppContentBlocksPlaceholders: [String]? = nil,
-        sessionTimeout: Double,
-        automaticSessionTracking: Bool = true,
-        automaticPushNotificationTracking: Bool,
-        requirePushAuthorization: Bool = true,
-        tokenTrackFrequency: TokenTrackFrequency,
-        appGroup: String?,
-        flushEventMaxRetries: Int,
-        allowDefaultCustomerProperties: Bool?,
-        advancedAuthEnabled: Bool?,
+        sessionTimeout: Double? = nil,
+        automaticSessionTracking: Bool? = nil,
+        automaticPushNotificationTracking: Bool? = nil,
+        requirePushAuthorization: Bool? = nil,
+        tokenTrackFrequency: TokenTrackFrequency? = nil,
+        flushEventMaxRetries: Int? = nil,
+        allowDefaultCustomerProperties: Bool? = nil,
+        advancedAuthEnabled: Bool? = nil,
         isDarkModeEnabled: Bool? = nil,
-        appInboxDetailImageInset: CGFloat? = 56,
-        manualSessionAutoClose: Bool = true
+        appInboxDetailImageInset: CGFloat? = nil,
+        manualSessionAutoClose: Bool? = nil
     ) throws {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
-        self.authorization = authorization
-        self.baseUrl = baseUrl
-        self.defaultProperties = defaultProperties
-        self.inAppContentBlocksPlaceholders = inAppContentBlocksPlaceholders
-        self.sessionTimeout = sessionTimeout
-        self.automaticSessionTracking = automaticSessionTracking
-        self.automaticPushNotificationTracking = automaticPushNotificationTracking
-        self.requirePushAuthorization = requirePushAuthorization
-        self.tokenTrackFrequency = tokenTrackFrequency
+        self.authorization = authorization ?? .none
         self.appGroup = appGroup
-        self.flushEventMaxRetries = flushEventMaxRetries
+        self.defaultProperties = defaultProperties
         self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
         self.advancedAuthEnabled = advancedAuthEnabled ?? false
-        self.appInboxDetailImageInset = appInboxDetailImageInset
-        self.manualSessionAutoClose = manualSessionAutoClose
-        if (self.advancedAuthEnabled) {
+        self.inAppContentBlocksPlaceholders = inAppContentBlocksPlaceholders
+        self.appInboxDetailImageInset = appInboxDetailImageInset ?? 56
+        self.manualSessionAutoClose = manualSessionAutoClose ?? true
+        self.baseUrl = baseUrl ?? Constants.Repository.baseUrl
+        if self.advancedAuthEnabled {
             self.customAuthProvider = try loadCustomAuthProvider()
         }
-        try self.validate()
         self.isDarkModeEnabled = isDarkModeEnabled ?? false
+        self.sessionTimeout = sessionTimeout ?? Constants.Session.defaultTimeout
+        self.automaticSessionTracking = automaticSessionTracking ?? true
+        self.automaticPushNotificationTracking = automaticPushNotificationTracking ?? true
+        self.requirePushAuthorization = requirePushAuthorization ?? true
+        self.tokenTrackFrequency = tokenTrackFrequency ?? .onTokenChange
+        self.flushEventMaxRetries = flushEventMaxRetries ?? Constants.Session.maxRetries
+        try self.validate()
     }
 
     /// Creates the Configuration object from a plist file.
@@ -186,7 +142,7 @@ public struct Configuration: Codable, Equatable {
 
             // Decode from plist
             self = try PropertyListDecoder().decode(Configuration.self, from: data)
-            if (self.advancedAuthEnabled) {
+            if self.advancedAuthEnabled {
                 self.customAuthProvider = try loadCustomAuthProvider()
             }
             try self.validate()
@@ -263,13 +219,13 @@ public struct Configuration: Codable, Equatable {
             Int.self, forKey: .flushEventMaxRetries) {
             self.flushEventMaxRetries = flushEventMaxRetries
         }
-        
+
         // isDarkModeEnabled
         if let isDarkModeEnabled = try container.decodeIfPresent(
             Bool.self, forKey: .isDarkModeEnabled) {
             self.isDarkModeEnabled = isDarkModeEnabled
         }
-        
+    
         // appInboxDetailImageInset
         if let appInboxDetailImageInset = try container.decodeIfPresent(
             CGFloat.self, forKey: .appInboxDetailImageInset) {
