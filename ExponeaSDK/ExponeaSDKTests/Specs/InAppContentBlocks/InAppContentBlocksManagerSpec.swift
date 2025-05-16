@@ -474,5 +474,104 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             }
             expect(isMessageValid).to(beTrue())
         }
+        
+        describe("InAppContentBlockResponse") {
+            let json: [String: Any] = [
+                "id": "test-id",
+                "name": "Test Name",
+                "date_filter": [
+                    "enabled": true,
+                    "from_date": "2024-01-01T00:00:00Z",
+                    "to_date": "2024-12-31T23:59:59Z"
+                ],
+                "placeholders": ["a", "b"],
+                "frequency": "only_once",
+                "load_priority": 5,
+                "content_type": "html",
+                "consent_category_tracking": "analytics"
+            ]
+            it("should decode and allow mutation of extra properties") {
+                let json: [String: Any] = [
+                    "id": "test-id",
+                    "name": "Test Name",
+                    "date_filter": [
+                        "enabled": true,
+                        "from_date": "2025-01-01T00:00:00Z",
+                        "to_date": "2025-12-31T23:59:59Z"
+                    ],
+                    "frequency": "only_once",
+                    "load_priority": 5,
+                    "content_type": "html",
+                    "consent_category_tracking": "analytics",
+                    "placeholders": ["a", "b"]
+                ]
+
+                let data = try! JSONSerialization.data(withJSONObject: json)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+
+                var block = try! decoder.decode(InAppContentBlockResponse.self, from: data)
+
+                expect(block.id) == "test-id"
+                expect(block.name) == "Test Name"
+                expect(block.dateFilter.enabled) == true
+                expect(block.dateFilter.fromDate).toNot(beNil())
+                expect(block.placeholders).to(equal(["a", "b"]))
+                expect(block.frequency) == .onlyOnce
+                expect(block.loadPriority) == 5
+                expect(block.contentType) == .html
+                expect(block.trackingConsentCategory) == "analytics"
+
+                expect(block.tags).to(equal([]))
+                expect(block.sessionStart).toNot(beNil())
+                expect(block.indexPath).to(beNil())
+                expect(block.isCorruptedImage) == false
+                expect(block.status).to(beNil())
+
+                let now = Date()
+                block.tags = [1, 2, 3]
+                block.sessionStart = now
+                block.indexPath = IndexPath(row: 4, section: 2)
+                block.isCorruptedImage = true
+                block.status = InAppContentBlocksDisplayStatus(displayed: now, interacted: now.addingTimeInterval(5))
+
+                expect(block.tags).to(equal([1, 2, 3]))
+                expect(block.sessionStart).to(equal(now))
+                expect(block.indexPath).to(equal(IndexPath(row: 4, section: 2)))
+                expect(block.isCorruptedImage).to(beTrue())
+                expect(block.status?.displayed).to(equal(now))
+                expect(block.status?.interacted).to(equal(now.addingTimeInterval(5)))
+            }
+            it("decodes and encodes properly including optional and extra attributes") {
+                let data = try! JSONSerialization.data(withJSONObject: json)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                let block = try! decoder.decode(InAppContentBlockResponse.self, from: data)
+                
+                expect(block.id) == "test-id"
+                expect(block.name) == "Test Name"
+                expect(block.dateFilter.enabled) == true
+                expect(block.dateFilter.fromDate).toNot(beNil())
+                expect(block.placeholders).to(equal(["a", "b"]))
+                expect(block.frequency) == .onlyOnce
+                expect(block.loadPriority) == 5
+                expect(block.contentType) == .html
+                expect(block.trackingConsentCategory) == "analytics"
+                
+                expect(block.tags).to(equal([]))
+                expect(block.sessionStart).toNot(beNil())
+                expect(block.indexPath).to(beNil())
+                expect(block.isCorruptedImage) == false
+                expect(block.status).to(beNil())
+                
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .prettyPrinted
+                encoder.dateEncodingStrategy = .iso8601
+                let encoded = try! encoder.encode(block)
+                let roundTrip = try! decoder.decode(InAppContentBlockResponse.self, from: encoded)
+                expect(roundTrip.id) == "test-id"
+                expect(roundTrip.placeholders) == ["a", "b"]
+            }
+        }
     }
 }
