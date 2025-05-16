@@ -17,7 +17,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.6.1")
+        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.7.5")
     ],
     targets: [
         // Main library
