@@ -56,7 +56,7 @@ This page provides an overview of all configuration parameters for the SDK and s
   * Default value: `true`
 
 * `appGroup`
-  * **Required** for the SDK to track delivered push notifications automatically. Refer to the [Push Notifications](https://documentation.bloomreach.com/engagement/docs/io-sdk-push-notifications) documentation for details.
+  * **Required** for the SDK to track delivered push notifications automatically. Refer to the [Push Notifications](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications) documentation for details.
 
 * `requirePushAuthorization`
   * The SDK can check push notification authorization status ([Apple documentation](https://developer.apple.com/documentation/usernotifications/unnotificationsettings/1648391-authorizationstatus)) and only track the push token if the user is authorized to receive push notifications.
