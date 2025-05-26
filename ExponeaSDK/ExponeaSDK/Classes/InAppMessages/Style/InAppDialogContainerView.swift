@@ -163,53 +163,57 @@ public final class InAppDialogContainerView: UIViewController, InAppMessageView 
             dialogStackView.trailingAnchor.constraint(equalTo: dialogContainerView.trailingAnchor),
             dialogStackView.topAnchor.constraint(equalTo: dialogContainerView.topAnchor),
             dialogStackView.bottomAnchor.constraint(equalTo: dialogContainerView.bottomAnchor),
-            dialogContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: view.layoutMarginsGuide.leadingAnchor),
-            dialogContainerView.trailingAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.trailingAnchor)
+            dialogContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.leadingAnchor),
+            dialogContainerView.trailingAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor)
         ]
-        let leading = payLoad.layoutConfig.margin.first(where: { $0.edge == .trailing })?.value ?? 0
-        let trailing = payLoad.layoutConfig.margin.first(where: { $0.edge == .leading })?.value ?? 0
+        let leading = payLoad.layoutConfig.margin.first(where: { $0.edge == .leading })?.value ?? 0
+        let trailing = payLoad.layoutConfig.margin.first(where: { $0.edge == .trailing })?.value ?? 0
         let top = payLoad.layoutConfig.margin.first(where: { $0.edge == .top })?.value ?? 0
         let bottom = payLoad.layoutConfig.margin.first(where: { $0.edge == .bottom })?.value ?? 0
         if isFullscreen {
-            var top: CGFloat = 0
-            var bottom: CGFloat = 0
-            if let window = UIApplication.shared.windows.first {
-                top = window.safeAreaInsets.top
-                bottom = window.safeAreaInsets.bottom
+            var safeTop: CGFloat = 0
+            var safeBottom: CGFloat = 0
+            if !isReactNativeSDK() && !isFlutterSDK() {
+                if let window = UIApplication.shared.windows.first {
+                    safeTop = window.safeAreaInsets.top
+                    safeBottom = window.safeAreaInsets.bottom
+                }
             }
             constraints.append(
                 contentsOf: [
-                    dialogContainerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: leading),
-                    dialogContainerView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailing),
+                    dialogContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: leading),
+                    dialogContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -trailing),
                     dialogContainerView.topAnchor.constraint(
-                        equalTo: view.layoutMarginsGuide.topAnchor,
-                        constant: top
+                        equalTo: view.safeAreaLayoutGuide.topAnchor,
+                        constant: top + safeTop
                     ),
                     dialogContainerView.bottomAnchor.constraint(
-                        equalTo: view.layoutMarginsGuide.bottomAnchor,
-                        constant: -bottom
+                        equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                        constant: -(bottom + safeBottom)
                     )
                 ]
             )
         } else {
             var safeTop: CGFloat = 0
             var safeBottom: CGFloat = 0
-            if let window = UIApplication.shared.windows.first {
-                safeTop = window.safeAreaInsets.top
-                safeBottom = window.safeAreaInsets.bottom
+            if !isReactNativeSDK() && !isFlutterSDK() {
+                if let window = UIApplication.shared.windows.first {
+                    safeTop = window.safeAreaInsets.top
+                    safeBottom = window.safeAreaInsets.bottom
+                }
             }
             constraints.append(
                 contentsOf: [
                     dialogContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
                     dialogContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                    dialogContainerView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: leading),
-                    dialogContainerView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -trailing),
+                    dialogContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: leading),
+                    dialogContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -trailing),
                     dialogContainerView.topAnchor.constraint(
-                        greaterThanOrEqualTo: view.layoutMarginsGuide.topAnchor,
+                        greaterThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor,
                         constant: top + safeTop
                     ),
                     dialogContainerView.bottomAnchor.constraint(
-                        lessThanOrEqualTo: view.layoutMarginsGuide.bottomAnchor,
+                        lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor,
                         constant: -(bottom + safeBottom)
                     )
                 ]

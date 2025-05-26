@@ -213,7 +213,15 @@ struct InAppMessageSlideInViewSwiftUI: View {
     }
 
     public var body: some View {
+        let topMargin = viewModel.layouConfig.margin.first(where: { $0.edge == .top })?.value ?? 0
+        let bottomMargin = viewModel.layouConfig.margin.first(where: { $0.edge == .bottom })?.value ?? 0
+        let trailingMargin = viewModel.layouConfig.margin.first(where: { $0.edge == .trailing })?.value ?? 0
+        let leadingMargin = viewModel.layouConfig.margin.first(where: { $0.edge == .leading })?.value ?? 0
         VStack(spacing: 0) {
+            let bottomPadding = viewModel.layouConfig.padding.first(where: { $0.edge == .bottom })?.value ?? 0
+            let topPadding = viewModel.layouConfig.padding.first(where: { $0.edge == .top })?.value ?? 0
+            let trailingPadding = viewModel.layouConfig.padding.first(where: { $0.edge == .trailing })?.value ?? 0
+            let leadingPadding = viewModel.layouConfig.padding.first(where: { $0.edge == .leading })?.value ?? 0
             switch true {
             case viewModel.imageConfig.size == .fullscreen && viewModel.imageConfig.isVisible:
                 VStack(spacing: 0) {
@@ -235,10 +243,10 @@ struct InAppMessageSlideInViewSwiftUI: View {
                             footer
                         }
                         .zIndex(3)
-                        .padding(.bottom, viewModel.layouConfig.padding.first(where: { $0.edge == .bottom })?.value ?? 0)
-                        .padding(.top, viewModel.layouConfig.padding.first(where: { $0.edge == .top })?.value ?? 0)
-                        .padding(.trailing, viewModel.layouConfig.padding.first(where: { $0.edge == .trailing })?.value ?? 0)
-                        .padding(.leading, viewModel.layouConfig.padding.first(where: { $0.edge == .leading })?.value ?? 0)
+                        .padding(.bottom, bottomPadding)
+                        .padding(.top, topPadding)
+                        .padding(.trailing, trailingPadding)
+                        .padding(.leading, leadingPadding)
                     }
                 }
                 .overlay(
@@ -271,6 +279,7 @@ struct InAppMessageSlideInViewSwiftUI: View {
             }
         }
         .background(Color(UIColor.parse(viewModel.layouConfig.backgroundColor) ?? .clear))
+        .clipped(antialiased: true)
         .clipShape(RoundedRectangle(cornerRadius: viewModel.layouConfig.cornerRadius))
         .frame(maxWidth: .infinity)
         .readHeight { height in
@@ -279,6 +288,10 @@ struct InAppMessageSlideInViewSwiftUI: View {
             }
         }
         .frame(height: viewModel.height)
+        .padding(.bottom, bottomMargin)
+        .padding(.top, topMargin)
+        .padding(.trailing, trailingMargin)
+        .padding(.leading, leadingMargin)
     }
 }
 
@@ -422,8 +435,8 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
 
         addSubview(view)
         NSLayoutConstraint.activate([
-            leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 10),
-            trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -10),
+            leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 0),
+            trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: 0),
             view.topAnchor.constraint(equalTo: topAnchor, constant: 0),
             view.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0),
             view.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0),
