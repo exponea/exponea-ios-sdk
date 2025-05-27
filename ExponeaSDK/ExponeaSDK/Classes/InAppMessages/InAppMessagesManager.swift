@@ -396,36 +396,46 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
         }
     }
 
+    private func processMessages(_ inAppMessages: [InAppMessage]) async -> [InAppMessage] {
+        var output: [InAppMessage] = []
+        for message in inAppMessages {
+            var copy = message
+            preloadImage(for: copy)
+            if let titleConfig = copy.payload?.titleConfig,
+               let customFont = titleConfig.customFont {
+                copy.payload?.titleFontData = await extractFont(url: customFont, fontSize: nil, size: titleConfig.size)
+            }
+            if let bodyConfig = copy.payload?.bodyConfig,
+               let customFont = bodyConfig.customFont {
+                copy.payload?.bodyFontData = await extractFont(url: customFont, fontSize: nil, size: bodyConfig.size)
+            }
+            let buttons = copy.payload?.buttons ?? []
+            var updatedButtons: [InAppButtonPayload] = []
+            for button in buttons {
+                var copyButton = button
+                if let buttonConfig = copyButton.buttonConfig,
+                   let customFont = buttonConfig.fontURL {
+                    copyButton.fontData = await extractFont(url: customFont, fontSize: nil, size: CGFloat(buttonConfig.size))
+                }
+                updatedButtons.append(copyButton)
+            }
+            copy.payload?.buttons = updatedButtons
+            output.append(copy)
+        }
+        return output
+    }
+
     private func fetchImagesAndFonts(inAppMessages: [InAppMessage]) async -> [InAppMessage] {
         await withCheckedContinuation { [weak self] continuation in
             guard let self else {
                 continuation.resume(returning: [])
                 return
             }
-            Task(priority: .background) { @MainActor in
-                var messagesToReturn: [InAppMessage] = []
-                for message in inAppMessages {
-                    var copy = message
-                    self.preloadImage(for: copy)
-                    if let titleConfig = copy.payload?.titleConfig, let customFont = titleConfig.customFont {
-                        copy.payload?.titleFontData = await self.extractFont(url: customFont, fontSize: nil, size: titleConfig.size)
-                    }
-                    if let bodyConfig = copy.payload?.bodyConfig, let customFont = bodyConfig.customFont {
-                        copy.payload?.bodyFontData = await self.extractFont(url: customFont, fontSize: nil, size: bodyConfig.size)
-                    }
-                    let buttons: [InAppButtonPayload] = copy.payload?.buttons ?? []
-                    var updatedButtons: [InAppButtonPayload] = []
-                    for button in buttons {
-                        var copyButton = button
-                        if let buttonConfig = copyButton.buttonConfig, let customFont = buttonConfig.fontURL {
-                            copyButton.fontData = await self.extractFont(url: customFont, fontSize: nil, size: CGFloat(buttonConfig.size))
-                        }
-                        updatedButtons.append(copyButton)
-                    }
-                    copy.payload?.buttons = updatedButtons
-                    messagesToReturn.append(copy)
+            Task(priority: .background) {
+                let result: [InAppMessage] = await self.processMessages(inAppMessages)
+                await MainActor.run {
+                    continuation.resume(returning: result)
                 }
-                continuation.resume(returning: messagesToReturn)
             }
         }
     }
