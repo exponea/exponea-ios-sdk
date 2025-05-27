@@ -11,6 +11,14 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.5.1
+#### May 27, 2025
+* Fixed:
+  * Fixes SafeArea insets usage for In-app dialog showing to accept app layout paddings
+  * Fixes and updates some links in the documentation
+  * Moves caching of In-app images to the background thread to not block the main UI thread
+
+
 ## Release Notes for 3.5.0
 #### May 20, 2025
 * Added:
