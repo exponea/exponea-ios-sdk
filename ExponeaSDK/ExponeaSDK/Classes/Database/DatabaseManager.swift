@@ -66,6 +66,7 @@ extension DatabaseManager {
      In case of a full disk, there is nothing we can do, so just log error.
      */
     private func saveContext(_ context: NSManagedObjectContext) throws {
+        guard context.hasChanges else { return }
         do {
             try context.save()
         } catch let diskError as NSError // SQLITE code 13 means full disk http://www.sqlite.org/c3ref/c_abort.html

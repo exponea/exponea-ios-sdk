@@ -24,6 +24,7 @@ final class CrashManager {
     static let maxLogMessages = 100
     private var logMessages: [String] = []
     private var logHookId: String?
+    private var isStarted = false
 
     var oldHandler: NSUncaughtExceptionHandler?
 
@@ -49,6 +50,8 @@ final class CrashManager {
     }
 
     func start() {
+        guard !isStarted else { return }
+        isStarted = true
         logHookId = Exponea.logger.addLogHook(self.reportLog(_:))
         uploadCrashLogs()
         oldHandler = NSGetUncaughtExceptionHandler()
