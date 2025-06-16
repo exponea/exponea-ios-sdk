@@ -11,6 +11,14 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.5.2
+#### June 16, 2025
+* Fixed:
+  * Event Storage Optimization: Event updates are now stored to the local database only when the context changes, improving performance.
+  * Flush Execution Check: Fixed an issue to ensure the flush process is executed only once, preventing event duplication.
+  * In-app Image Handling: Fixed an issue where an empty URL in in-app message images could cause unexpected crashes.
+
+
 ## Release Notes for 3.5.1
 #### May 27, 2025
 * Fixed:
