@@ -96,7 +96,7 @@ class FlushingManager: FlushingManagerType {
         do {
             // Check if flush is in progress
             flushingSemaphore.wait()
-            guard !isFlushingData || isFromIdentify else {
+            guard !isFlushingData else {
                 Exponea.logger.log(.warning, message: "Data flushing in progress, ignoring another flush call.")
                 flushingSemaphore.signal()
                 completion?(.flushAlreadyInProgress)
@@ -104,7 +104,7 @@ class FlushingManager: FlushingManagerType {
             }
             isFlushingData = true
             flushingSemaphore.signal()
-            
+
             // Check if we have an internet connection otherwise bail
             guard reachability.connection != .none else {
                 Exponea.logger.log(.warning, message: "Connection issues when flushing data, not flushing.")
@@ -112,7 +112,7 @@ class FlushingManager: FlushingManagerType {
                 completion?(.noInternetConnection)
                 return
             }
-            
+
             // Pull from db
             let events = try database.fetchTrackEvent()
             let customers = try database.fetchTrackCustomer()
@@ -126,7 +126,7 @@ class FlushingManager: FlushingManagerType {
                 completion?(.success(0))
                 return
             }
-            
+
             Exponea.logger.log(
                 .verbose,
                 message: """

@@ -23,7 +23,13 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
             var database: DatabaseManagerType!
             var userDefaults: UserDefaults!
             var configuration: ExponeaSDK.Configuration!
-            
+            var flushingManager: FlushingManager!
+            var networkRequests: [URLRequest] = []
+
+            beforeEach {
+                IntegrationManager.shared.isStopped = false
+            }
+
             func prepareEnvironment(_ allowDefaultProperties: Bool?) {
                 configuration = try! Configuration(
                     projectToken: UUID().uuidString,
@@ -36,17 +42,27 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 configuration.flushEventMaxRetries = 5
                 repository = ServerRepository(configuration: configuration)
                 database = try! MockDatabaseManager()
+                database.removeAllEvents()
                 userDefaults = MockUserDefaults()
-
+                networkRequests.removeAll()
+                NetworkStubbing.stubNetwork(
+                    forProjectToken: configuration.projectToken,
+                    withStatusCode: 200,
+                    withRequestHook: { req in networkRequests.append(req) }
+                )
                 // Mark install event as already tracked
                 // - otherwise it's automatically tracked with immediate flushing, which makes testing difficult
                 let key = Constants.Keys.installTracked + database.currentCustomer.uuid.uuidString
                 userDefaults.set(true, forKey: key)
-
+                flushingManager = try! FlushingManager(
+                    database: database,
+                    repository: repository,
+                    customerIdentifiedHandler: {}
+                )
                 trackingManager = try! TrackingManager(
                     repository: repository,
                     database: database,
-                    flushingManager: MockFlushingManager(),
+                    flushingManager: flushingManager,
                     inAppMessageManager: nil,
                     trackManagerInitializator: { _ in },
                     userDefaults: userDefaults,
@@ -151,6 +167,39 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 }
                 Thread.sleep(forTimeInterval: 1)
                 expect { try database.fetchTrackCustomer().count }.to(equal(3))
+            }
+            it("should not duplicate events") {
+                if Exponea.shared.flushingManager != nil && Exponea.shared.flushingManager!.hasPendingData() {
+                    Exponea.shared.stopIntegration()
+                    Thread.sleep(forTimeInterval: 1)
+                    IntegrationManager.shared.isStopped = false
+                }
+                if Exponea.shared.flushingManager != nil && Exponea.shared.flushingManager!.hasPendingData() {
+                    fail("SDK should be stopped and flush manager cleared")
+                    return
+                }
+                prepareEnvironment(true)
+                if flushingManager.hasPendingData() {
+                    fail("FlushinManager for testing should be inactive")
+                    return
+                }
+                let threadRunsMaxCount = 10
+                var threadRunsCounter = threadRunsMaxCount
+                waitUntil { trackingDone in
+                    for i in 0..<threadRunsMaxCount {
+                        DispatchQueue.global().async {
+                            try? trackingManager.track(EventType.identifyCustomer, with: [
+                                .properties(["prop\(i)": .string("value")])
+                            ])
+                            threadRunsCounter -= 1
+                            if threadRunsCounter <= 0 {
+                                trackingDone()
+                            }
+                        }
+                    }
+                }
+                Thread.sleep(forTimeInterval: 10)
+                expect { networkRequests.count }.to(equal(threadRunsMaxCount))
             }
         }
     }
