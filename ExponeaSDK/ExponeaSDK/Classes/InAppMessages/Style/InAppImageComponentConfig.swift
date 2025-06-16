@@ -88,15 +88,15 @@ public struct InAppImageComponentConfig: Identifiable, Codable {
         self.cornerRadius = cornerRadius
         self.isVisible = isVisible
         self.isOverlay = isOverlay
-        if let data = try? Data(contentsOf: url ?? URL(string: "")!) {
-            imageSize = getImageSize(from: data) ?? .zero
-        }
+        self.imageSize = getImageSize(from: url)
     }
 
-    func getImageSize(from data: Data) -> CGSize? {
-        if let image = UIImage(data: data) {
+    func getImageSize(from url: URL?) -> CGSize {
+        if let url,
+           let data = try? Data(contentsOf: url),
+           let image = UIImage(data: data) {
             return image.size
         }
-        return nil
+        return .zero
     }
 }

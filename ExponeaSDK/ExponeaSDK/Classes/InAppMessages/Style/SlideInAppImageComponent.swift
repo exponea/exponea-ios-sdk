@@ -43,7 +43,7 @@ public struct SlideInAppImageComponent: View {
     }
 
     public var body: some View {
-        if config.isVisible {
+        if config.isVisible && config.url != nil {
             VStack(spacing: 0) {
                 ExponeaAsyncImage(url: config.url) { image in
                     switch config.size {

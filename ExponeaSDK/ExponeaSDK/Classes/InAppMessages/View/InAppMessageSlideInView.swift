@@ -298,7 +298,7 @@ struct InAppMessageSlideInViewSwiftUI: View {
 final class InAppMessageSlideInView: UIView, InAppMessageView {
     var showCallback: EmptyBlock?
     private let payload: RichInAppMessagePayload
-    private let image: UIImage
+    private let image: UIImage?
     private let debouncer = Debouncer(delay: 2)
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
     let dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)>
@@ -364,7 +364,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
 
     init(
         payload: RichInAppMessagePayload,
-        image: UIImage,
+        image: UIImage?,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
         dismissCallback: @escaping TypeBlock<(Bool, InAppMessagePayloadButton?)>
     ) {

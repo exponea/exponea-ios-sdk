@@ -168,10 +168,6 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 )
             }
         case .modal, .fullscreen:
-            guard let image = image else {
-                Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
-                throw InAppMessagePresenterError.unableToCreateView
-            }
             var fullscreen = false
             if case .fullscreen = messageType {
                 fullscreen = true
@@ -203,6 +199,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 }
                 return view
             } else if let oldPayload {
+                guard let image = image else {
+                    Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
+                    throw InAppMessagePresenterError.unableToCreateView
+                }
                 return InAppMessageDialogView(
                     payload: oldPayload,
                     image: image,
@@ -218,10 +218,6 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 )
             }
         case .slideIn:
-            guard let image = image else {
-                Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
-                throw InAppMessagePresenterError.unableToCreateView
-            }
             if var payload {
                 let updatedConfigs = payload.buttons.map { payload in
                     var updatedPayload = payload
@@ -248,6 +244,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 }
                 return slideInView
             } else if let oldPayload {
+                guard let image = image else {
+                    Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
+                    throw InAppMessagePresenterError.unableToCreateView
+                }
                 return OldInAppMessageSlideInView(
                     payload: oldPayload,
                     image: image,
