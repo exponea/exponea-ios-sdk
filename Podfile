@@ -6,17 +6,22 @@ platform :ios, '13.0'
 
 use_frameworks!
 
+target 'ExponeaSDK' do
+  pod 'SwiftSoup', '2.7.6'
+end
+target 'Example' do
+    pod 'SwiftSoup', '2.7.6'
+end
+
 target 'ExponeaSDKTests' do
-    inherit! :search_paths
+  inherit! :search_paths
+  inhibit_all_warnings!
 
-    inhibit_all_warnings!
-
-
-    # Pods for testing
-    pod 'Quick'
-    pod 'Nimble', '~>9.2.0'
-    pod 'SwiftLint'
-    pod 'Mockingjay', :git => 'https://github.com/kylef/Mockingjay.git', :branch => 'master'
+  # Pods for testing
+  pod 'Quick', '5.0.1'
+  pod 'Nimble', '9.2.1'
+  pod 'SwiftLint', '0.51.0'
+  pod 'Mockingjay', :git => 'https://github.com/kylef/Mockingjay.git', :branch => 'master'
 end
 
 

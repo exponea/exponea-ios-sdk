@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -299,9 +299,6 @@
 		55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D482953051E001D95B8 /* AppInboxParser.swift */; };
 		55391D4B295342C7001D95B8 /* AppInboxManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */; };
 		55391D4D295497A7001D95B8 /* AppInboxProviderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55391D4C295497A7001D95B8 /* AppInboxProviderSpec.swift */; };
-		554C7E2A2D92C78D003B8E46 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
-		554C7E2F2D92C7AD003B8E46 /* SwiftSoup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; };
-		554C7E302D92C7AD003B8E46 /* SwiftSoup.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		555A10E82B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555A10E72B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift */; };
 		5567C090290808F600318E68 /* MessageItemContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C08F290808F600318E68 /* MessageItemContent.swift */; };
 		5567C092290809EB00318E68 /* MessageItemAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5567C091290809EB00318E68 /* MessageItemAction.swift */; };
@@ -332,7 +329,6 @@
 		55B6E6CA2C359FE70052FC2B /* AnonymizeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B6E6C92C359FE70052FC2B /* AnonymizeViewController.swift */; };
 		55BB0E1A28F4126100D6243A /* MessageItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BB0E1928F4126100D6243A /* MessageItem.swift */; };
 		55BB0E1E28F44EDA00D6243A /* AppInboxDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BB0E1D28F44EDA00D6243A /* AppInboxDetailViewController.swift */; };
-		55C08DCD2A4ED5EE000BA66A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		55C08DCF2A5689F4000BA66A /* FileCacheType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DCE2A5689F4000BA66A /* FileCacheType.swift */; };
 		55C08DD12A568A55000BA66A /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD02A568A55000BA66A /* FileCache.swift */; };
 		55C08DD32A568C74000BA66A /* FileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD22A568C74000BA66A /* FileUtils.swift */; };
@@ -351,12 +347,15 @@
 		55F5F23D2C3E89070094B558 /* ArrayComparisonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F5F23C2C3E89070094B558 /* ArrayComparisonTests.swift */; };
 		55F6A41829891F130029D628 /* ExampleAuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6A41729891F130029D628 /* ExampleAuthProvider.swift */; };
 		55F6A41A29891F710029D628 /* CustomerTokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55F6A41929891F710029D628 /* CustomerTokenStorage.swift */; };
+		576C22ACED554D0D7372B5E1 /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 719B0B82B310EE3E7FEC5428 /* Pods_ExponeaSDKTests.framework */; };
 		6BA73FED29B6377E009F92DF /* AtomicValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA73FEC29B6377E009F92DF /* AtomicValue.swift */; };
 		6BA73FF029B63A14009F92DF /* AtomicValueSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA73FEF29B63A14009F92DF /* AtomicValueSpec.swift */; };
-		792F2F886D9F14542DF0E97D /* Pods_ExponeaSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64D92FEFD20D8844C3C3BF9 /* Pods_ExponeaSDKTests.framework */; };
 		7F41714B094CAC0DA9B38776 /* HtmlNormalizerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */; };
 		7F417221332DEC81DB050230 /* HtmlNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */; };
 		7F41777390316561CE4482DB /* InAppMessageWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F417D6738618D5F30397815 /* InAppMessageWebView.swift */; };
+		A33A77012E02E5C900EA9145 /* Pods_ExponeaSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1834092C0840A684D9848A58 /* Pods_ExponeaSDK.framework */; };
+		A33A77022E02E5C900EA9145 /* Pods_ExponeaSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1834092C0840A684D9848A58 /* Pods_ExponeaSDK.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AC8C40ED947A60A1F0B36644 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE2C0B168D360B2154ACA5 /* Pods_Example.framework */; };
 		B42DA68922B03F7700BBA225 /* Consent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68822B03F7700BBA225 /* Consent.swift */; };
 		B42DA68C22B03FBF00BBA225 /* ConsentSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68B22B03FBF00BBA225 /* ConsentSources.swift */; };
 		B42DA68E22B0556100BBA225 /* ConsentsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42DA68D22B0556100BBA225 /* ConsentsResponse.swift */; };
@@ -549,6 +548,17 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A33A77032E02E5C900EA9145 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A33A77022E02E5C900EA9145 /* Pods_ExponeaSDK.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0843CF320B6E7CA00FAF0CB /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -557,7 +567,6 @@
 			files = (
 				05F33B1B25C16DEF00CFD60A /* ExponeaSDKShared.framework in Embed Frameworks */,
 				05F33B1C25C16DEF00CFD60A /* ExponeaSDKObjC.framework in Embed Frameworks */,
-				554C7E302D92C7AD003B8E46 /* SwiftSoup.xcframework in Embed Frameworks */,
 				C0843CF220B6E7C900FAF0CB /* ExponeaSDK.framework in Embed Frameworks */,
 				C0ED33BC21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Embed Frameworks */,
 			);
@@ -755,6 +764,7 @@
 		05FD178E2403C4CC003A799B /* BuildConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildConfiguration.swift; sourceTree = "<group>"; };
 		05FEBDBF23A7BA2A007C2372 /* InAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
 		05FEBDC123A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessageTrackingDelegate.swift; sourceTree = "<group>"; };
+		1834092C0840A684D9848A58 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		311268DA2CD10E9C00C38394 /* InAppButtonContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonContainer.swift; sourceTree = "<group>"; };
 		311268DC2CD1135900C38394 /* InAppButtonConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonConfig.swift; sourceTree = "<group>"; };
@@ -838,7 +848,7 @@
 		33FC6CC729A912CC001F113F /* Extension+UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+UIView.swift"; sourceTree = "<group>"; };
 		33FC6CC929A9158F001F113F /* Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
 		33FC6CCB29A9195B001F113F /* Typealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typealiases.swift; sourceTree = "<group>"; };
-		486299A97905BE77A09EC216 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		459AF2F44CB7570664A3FC4D /* Pods-ExponeaSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.debug.xcconfig"; path = "Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		4C169E3022B6524C00C425DA /* TrackUniversalLinkSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackUniversalLinkSpec.swift; sourceTree = "<group>"; };
 		4C3F5F2C22DF98C00069E71D /* MockExponea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExponea.swift; sourceTree = "<group>"; };
 		4C6BD13522ABA743004487A8 /* CampaignData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignData.swift; sourceTree = "<group>"; };
@@ -849,7 +859,6 @@
 		55130C4A28DDCA6800B4FE77 /* TrackingConsentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingConsentManager.swift; sourceTree = "<group>"; };
 		55130C4E28E3C50D00B4FE77 /* GdprTrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTrackingSpec.swift; sourceTree = "<group>"; };
 		55130C5028E425D600B4FE77 /* TrackConsentManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackConsentManagerSpec.swift; sourceTree = "<group>"; };
-		551F65192BAAD0F60072B980 /* Build */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Build; path = ../Carthage/Build; sourceTree = "<group>"; };
 		552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ExponeaInternal+AppInbox.swift"; sourceTree = "<group>"; };
 		552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxListViewController.swift; sourceTree = "<group>"; };
 		5527979C28D98C15002B2B77 /* GdprTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTracking.swift; sourceTree = "<group>"; };
@@ -904,13 +913,14 @@
 		55F5F23C2C3E89070094B558 /* ArrayComparisonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayComparisonTests.swift; sourceTree = "<group>"; };
 		55F6A41729891F130029D628 /* ExampleAuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAuthProvider.swift; sourceTree = "<group>"; };
 		55F6A41929891F710029D628 /* CustomerTokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerTokenStorage.swift; sourceTree = "<group>"; };
-		6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftSoup.xcframework; path = ../Carthage/Build/SwiftSoup.xcframework; sourceTree = "<group>"; };
+		5C2B1E5FFF8D1D6FBBC6C981 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		6BA73FEC29B6377E009F92DF /* AtomicValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicValue.swift; sourceTree = "<group>"; };
 		6BA73FEF29B63A14009F92DF /* AtomicValueSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicValueSpec.swift; sourceTree = "<group>"; };
+		719B0B82B310EE3E7FEC5428 /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F417D6738618D5F30397815 /* InAppMessageWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageWebView.swift; sourceTree = "<group>"; };
 		7F417E0EA9B478FEF72999D9 /* HtmlNormalizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HtmlNormalizer.swift; sourceTree = "<group>"; };
 		7F417FBE26AB2DD5FE31707E /* HtmlNormalizerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HtmlNormalizerSpec.swift; sourceTree = "<group>"; };
-		A64D92FEFD20D8844C3C3BF9 /* Pods_ExponeaSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9AE5764CF33A9235B3D5051E /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTrackFrequency.swift; sourceTree = "<group>"; };
 		B40E9F5E22FAD58E0085B8A1 /* DatabaseModel v4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v4.xcdatamodel"; sourceTree = "<group>"; };
 		B42DA68822B03F7700BBA225 /* Consent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consent.swift; sourceTree = "<group>"; };
@@ -920,6 +930,7 @@
 		B42DA69122B05A0100BBA225 /* get-consents.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "get-consents.json"; sourceTree = "<group>"; };
 		B4AF83BA22C6108200061350 /* String+URLValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+URLValidation.swift"; sourceTree = "<group>"; };
 		B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = "ExponeaSDK-Notifications.podspec"; path = "../ExponeaSDK-Notifications.podspec"; sourceTree = "<group>"; };
+		BDEE2C0B168D360B2154ACA5 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C01E19E920C02A4D00DF64F9 /* MultipleErrorResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleErrorResponse.swift; sourceTree = "<group>"; };
 		C028C3A12110980600B03ED4 /* JSONValueSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueSpec.swift; sourceTree = "<group>"; };
 		C02C562821C9B71D0087A990 /* ExponeaNotificationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationAction.swift; sourceTree = "<group>"; };
@@ -977,7 +988,7 @@
 		C0ED33B621A6FB10003649C3 /* ExponeaSDKNotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExponeaSDKNotifications.h; sourceTree = "<group>"; };
 		C0ED33B721A6FB10003649C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C0ED33C021A6FB6B003649C3 /* ExponeaNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaNotificationService.swift; sourceTree = "<group>"; };
-		C0ED33C621A72EE6003649C3 /* ExponeaSDK.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = ExponeaSDK.podspec; path = ../ExponeaSDK.podspec; sourceTree = "<group>"; };
+		C0ED33C621A72EE6003649C3 /* ExponeaSDK.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; name = ExponeaSDK.podspec; path = ../ExponeaSDK.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		C0F2406920BC38EC00CAF7CE /* Swizzle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Swizzle.swift; sourceTree = "<group>"; };
 		C0F2406B20BC50A000CAF7CE /* ExponeaInternal+Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExponeaInternal+Fetching.swift"; sourceTree = "<group>"; };
 		C0F2406D20BC511500CAF7CE /* ExponeaInternal+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExponeaInternal+Tracking.swift"; sourceTree = "<group>"; };
@@ -992,7 +1003,6 @@
 		C0F6C4EC2098A1AC00834E21 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C0F6C4EE2098A1AC00834E21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C0F7A59C21AE921300BA392F /* NotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationData.swift; sourceTree = "<group>"; };
-		C9BB6439F5B63A6520815A14 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CC06F95025FA037800F38D93 /* RequestFactorySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestFactorySpec.swift; sourceTree = "<group>"; };
 		CC0C484C281935BC003E8BF8 /* ExponeaVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaVersion.swift; sourceTree = "<group>"; };
 		CC80290427ABF04F00187887 /* InAppMessageDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDelegate.swift; sourceTree = "<group>"; };
@@ -1026,7 +1036,9 @@
 		F0E757EF207D027300FE8C21 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSpec.swift; sourceTree = "<group>"; };
 		F0E757F4207D032500FE8C21 /* ExponeaConfig.plist */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; path = ExponeaConfig.plist; sourceTree = "<group>"; };
-		F61795D2F1CCFF97A40ED80E /* Pods-ExponeaSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.release.xcconfig"; path = "Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.release.xcconfig"; sourceTree = "<group>"; };
+		F13968EA8462C6BF9B18AC43 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
+		F1EBB4AA67FF97A56D6B8EE2 /* Pods-ExponeaSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDK.release.xcconfig"; path = "Target Support Files/Pods-ExponeaSDK/Pods-ExponeaSDK.release.xcconfig"; sourceTree = "<group>"; };
+		F7D1B75F2134960EE05ED518 /* Pods-ExponeaSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExponeaSDKTests.debug.xcconfig"; path = "Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1075,8 +1087,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0843CF120B6E7C900FAF0CB /* ExponeaSDK.framework in Frameworks */,
-				554C7E2F2D92C7AD003B8E46 /* SwiftSoup.xcframework in Frameworks */,
 				C0ED33BB21A6FB10003649C3 /* ExponeaSDKNotifications.framework in Frameworks */,
+				AC8C40ED947A60A1F0B36644 /* Pods_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1084,8 +1096,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				554C7E2A2D92C78D003B8E46 /* SwiftSoup.xcframework in Frameworks */,
-				55C08DCD2A4ED5EE000BA66A /* (null) in Frameworks */,
+				A33A77012E02E5C900EA9145 /* Pods_ExponeaSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1095,7 +1106,7 @@
 			files = (
 				05BB22B3236B1F740098C406 /* ExponeaSDKNotifications.framework in Frameworks */,
 				F021E863206CF10200788ABC /* ExponeaSDK.framework in Frameworks */,
-				792F2F886D9F14542DF0E97D /* Pods_ExponeaSDKTests.framework in Frameworks */,
+				576C22ACED554D0D7372B5E1 /* Pods_ExponeaSDKTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1883,15 +1894,28 @@
 			path = Attomicity;
 			sourceTree = "<group>";
 		};
+		72E416FFD03ACFCEE7851858 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				459AF2F44CB7570664A3FC4D /* Pods-ExponeaSDK.debug.xcconfig */,
+				F1EBB4AA67FF97A56D6B8EE2 /* Pods-ExponeaSDK.release.xcconfig */,
+				F7D1B75F2134960EE05ED518 /* Pods-ExponeaSDKTests.debug.xcconfig */,
+				9AE5764CF33A9235B3D5051E /* Pods-ExponeaSDKTests.release.xcconfig */,
+				F13968EA8462C6BF9B18AC43 /* Pods-Example.debug.xcconfig */,
+				5C2B1E5FFF8D1D6FBBC6C981 /* Pods-Example.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
+			sourceTree = "<group>";
+		};
 		A3613BD1E2C1D4616B6A9767 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				551F65192BAAD0F60072B980 /* Build */,
-				6B72A7E229C068BC00E1A1F9 /* SwiftSoup.xcframework */,
 				C08D53CE21B9474E00EA2C13 /* UserNotifications.framework */,
 				C08D53D021B9474E00EA2C13 /* UserNotificationsUI.framework */,
-				486299A97905BE77A09EC216 /* Pods_ExponeaSDK.framework */,
-				A64D92FEFD20D8844C3C3BF9 /* Pods_ExponeaSDKTests.framework */,
+				1834092C0840A684D9848A58 /* Pods_ExponeaSDK.framework */,
+				719B0B82B310EE3E7FEC5428 /* Pods_ExponeaSDKTests.framework */,
+				BDEE2C0B168D360B2154ACA5 /* Pods_Example.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1903,16 +1927,6 @@
 				B42DA68B22B03FBF00BBA225 /* ConsentSources.swift */,
 			);
 			path = Consents;
-			sourceTree = "<group>";
-		};
-		B6A4CF01E198F01B4A325F3A /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				C9BB6439F5B63A6520815A14 /* Pods-ExponeaSDKTests.debug.xcconfig */,
-				F61795D2F1CCFF97A40ED80E /* Pods-ExponeaSDKTests.release.xcconfig */,
-			);
-			name = Pods;
-			path = ../Pods;
 			sourceTree = "<group>";
 		};
 		C028C3A0211097D500B03ED4 /* Other */ = {
@@ -2174,11 +2188,11 @@
 				0561829825AD959C001E30A3 /* ExponeaSDKShared */,
 				F021E866206CF10200788ABC /* ExponeaSDKTests */,
 				A3613BD1E2C1D4616B6A9767 /* Frameworks */,
-				B6A4CF01E198F01B4A325F3A /* Pods */,
 				F021E85A206CF10200788ABC /* Products */,
 				05E1A3802359B3A500E5EDDE /* .swiftlint.yml */,
 				B4C957CA2267800400F8EC19 /* ExponeaSDK-Notifications.podspec */,
 				C0ED33C621A72EE6003649C3 /* ExponeaSDK.podspec */,
+				72E416FFD03ACFCEE7851858 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2559,11 +2573,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C0F6C4F12098A1AC00834E21 /* Build configuration list for PBXNativeTarget "Example" */;
 			buildPhases = (
+				26BD233C36A18A4063B0EA56 /* [CP] Check Pods Manifest.lock */,
 				C0F6C4DC2098A1AB00834E21 /* Sources */,
 				C0F6C4DD2098A1AB00834E21 /* Frameworks */,
 				C0F6C4DE2098A1AB00834E21 /* Resources */,
 				C0843CF320B6E7CA00FAF0CB /* Embed Frameworks */,
 				C0ED33AE21A6FA31003649C3 /* Embed App Extensions */,
+				A5CEEF5DF0CE87C9AECE86D0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2582,11 +2598,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F021E86D206CF10200788ABC /* Build configuration list for PBXNativeTarget "ExponeaSDK" */;
 			buildPhases = (
+				9A4FF9ADB27E77ADC6786223 /* [CP] Check Pods Manifest.lock */,
 				F021E856206CF10200788ABC /* Headers */,
 				F021E854206CF10200788ABC /* Sources */,
 				F021E855206CF10200788ABC /* Frameworks */,
 				F021E857206CF10200788ABC /* Resources */,
-				052F68602327EF53002DDCD4 /* ShellScript */,
+				052F68602327EF53002DDCD4 /* Run Script */,
+				A33A77032E02E5C900EA9145 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2603,12 +2621,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F021E870206CF10200788ABC /* Build configuration list for PBXNativeTarget "ExponeaSDKTests" */;
 			buildPhases = (
-				7CD73E495AE7E437F9149C47 /* [CP] Check Pods Manifest.lock */,
+				A025228BE32EDA621A751EAB /* [CP] Check Pods Manifest.lock */,
 				05B97D3A2417CE0D00FE9309 /* Headers */,
 				F021E85E206CF10200788ABC /* Sources */,
 				F021E85F206CF10200788ABC /* Frameworks */,
 				F021E860206CF10200788ABC /* Resources */,
-				1DEFD40D4828D9528A7AABB6 /* [CP] Embed Pods Frameworks */,
+				94A12B35F1A9372D93AB64A6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2644,10 +2662,12 @@
 					C08D53CC21B9474E00EA2C13 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1020;
+						ProvisioningStyle = Manual;
 					};
 					C0ED33A221A6FA31003649C3 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1020;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -2662,6 +2682,7 @@
 					C0F6C4DF2098A1AB00834E21 = {
 						CreatedOnToolsVersion = 9.3;
 						LastSwiftMigration = 1020;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -2695,9 +2716,6 @@
 				Base,
 			);
 			mainGroup = F021E84F206CF10200788ABC;
-			packageReferences = (
-				552F73BC2A56E7ED0006659D /* XCRemoteSwiftPackageReference "SwiftSoup" */,
-			);
 			productRefGroup = F021E85A206CF10200788ABC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2790,7 +2808,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		052F68602327EF53002DDCD4 /* ShellScript */ = {
+		052F68602327EF53002DDCD4 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2799,6 +2817,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -2807,7 +2826,29 @@
 			shellPath = /bin/sh;
 			shellScript = "if which ../Pods/SwiftLint/swiftlint >/dev/null; then\ncd ..\n./Pods/SwiftLint/swiftlint lint --reporter xcode\nelse\necho \"warning: SwiftLint not installed run `pod install`\"\nfi\n";
 		};
-		1DEFD40D4828D9528A7AABB6 /* [CP] Embed Pods Frameworks */ = {
+		26BD233C36A18A4063B0EA56 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Example-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		94A12B35F1A9372D93AB64A6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2818,6 +2859,7 @@
 				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
 				"${BUILT_PRODUCTS_DIR}/Quick/Quick.framework",
 				"${BUILT_PRODUCTS_DIR}/URITemplate/URITemplate.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -2825,13 +2867,36 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nimble.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Quick.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/URITemplate.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSoup.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ExponeaSDKTests/Pods-ExponeaSDKTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7CD73E495AE7E437F9149C47 /* [CP] Check Pods Manifest.lock */ = {
+		9A4FF9ADB27E77ADC6786223 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ExponeaSDK-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A025228BE32EDA621A751EAB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2851,6 +2916,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A5CEEF5DF0CE87C9AECE86D0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SwiftSoup/SwiftSoup.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSoup.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -3413,11 +3496,7 @@
 				INFOPLIST_FILE = "ExponeaSDKShared/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKShared;
@@ -3444,11 +3523,7 @@
 				INFOPLIST_FILE = "ExponeaSDKShared/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKShared;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -3474,11 +3549,7 @@
 				INFOPLIST_FILE = ExponeaSDKObjC/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKObjC;
@@ -3504,11 +3575,7 @@
 				INFOPLIST_FILE = ExponeaSDKObjC/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKObjC;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -3531,11 +3598,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationContent/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 2.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -3561,11 +3624,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationContent/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 2.2.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2.ExampleNotificationContent";
@@ -3591,11 +3650,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationService/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 2.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -3622,11 +3677,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = ExampleNotificationService/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MARKETING_VERSION = 2.2.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2.ExampleNotificationService";
@@ -3657,11 +3708,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK-Notifications/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MARKETING_VERSION = 2.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -3691,11 +3738,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK-Notifications/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MARKETING_VERSION = 2.2.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKNotifications;
@@ -3709,6 +3752,7 @@
 		};
 		C0F6C4EF2098A1AC00834E21 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F13968EA8462C6BF9B18AC43 /* Pods-Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -3721,10 +3765,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3737,6 +3778,7 @@
 		};
 		C0F6C4F02098A1AC00834E21 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C2B1E5FFF8D1D6FBBC6C981 /* Pods-Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -3749,10 +3791,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = UVDCL7YSZS;
 				INFOPLIST_FILE = "$(SRCROOT)/Example/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.exponea.ExponeaSDK-Example2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3879,8 +3918,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -3890,6 +3928,7 @@
 		};
 		F021E86E206CF10200788ABC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 459AF2F44CB7570664A3FC4D /* Pods-ExponeaSDK.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -3900,15 +3939,11 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDK;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -3923,6 +3958,7 @@
 		};
 		F021E86F206CF10200788ABC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F1EBB4AA67FF97A56D6B8EE2 /* Pods-ExponeaSDK.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -3933,16 +3969,12 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/ExponeaSDK/Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDK;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -3955,18 +3987,14 @@
 		};
 		F021E871206CF10200788ABC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C9BB6439F5B63A6520815A14 /* Pods-ExponeaSDKTests.debug.xcconfig */;
+			baseConfigurationReference = F7D1B75F2134960EE05ED518 /* Pods-ExponeaSDKTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3979,18 +4007,14 @@
 		};
 		F021E872206CF10200788ABC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F61795D2F1CCFF97A40ED80E /* Pods-ExponeaSDKTests.release.xcconfig */;
+			baseConfigurationReference = 9AE5764CF33A9235B3D5051E /* Pods-ExponeaSDKTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = UVDCL7YSZS;
 				INFOPLIST_FILE = "ExponeaSDKTests/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.exponea.ExponeaSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4085,17 +4109,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		552F73BC2A56E7ED0006659D /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
-			requirement = {
-				kind = exactVersion;
-				version = 2.6.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCVersionGroup section */
 		01EC2DBB207E68BF0031BFEB /* DatabaseModel.xcdatamodeld */ = {

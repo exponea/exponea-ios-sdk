@@ -41,7 +41,3 @@ excluded:
     - ExponeaSDK/ExponeaSDK/Classes/Others/Reachability.swift
     # Code from web
     - ExponeaSDK/ExponeaSDK/Classes/Others/NSManagedObjectContext+Perform.swift
-    # Carthage checkouts
-    - Carthage
-    # SwiftSoup
-    - SwiftSoup
