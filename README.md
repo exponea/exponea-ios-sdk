@@ -28,17 +28,6 @@ pod "ExponeaSDK", "~> 3.5.2"
 pod "ExponeaSDK-Notifications", "~> 3.5.2"
 ```
 
-### Carthage
-
-> Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks. The latter one is only supposed to be used in a notification service extension if you wish to support rich push notifications. Read more about rich push notifications [here](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications#rich-push-notifications).
-
-```
-github "exponea/exponea-ios-sdk" ~> 3.5.2
-```
-> And then in your Command line tool type ```carthage update --use-xcframeworks --platform ios```
-
-> In your Target's General tab, under section Frameworks, Libraries and Embeeded Content, add the carthage built xcfw into it and set to them 'Embed & Sign'.
-
 ## 📱 Example Application
 
 Check out our [example app](https://github.com/exponea/exponea-ios-sdk/tree/master/ExponeaSDK/Example) to try it yourself! 😉

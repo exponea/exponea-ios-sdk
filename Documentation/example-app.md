@@ -14,7 +14,6 @@ You must have the following software installed to be able to build and run the e
 
 - Xcode
 - [CocoaPods](https://cocoapods.org/)
-- [Carthage](https://github.com/Carthage/Carthage)
 
 In Xcode, navigate to `Xcode` > `Preferences` > `Locations` and make sure `Command Line Tools` is set to your Xcode version.
 
@@ -28,17 +27,12 @@ In Xcode, navigate to `Xcode` > `Preferences` > `Locations` and make sure `Comma
    ```shell
    pod install
    ```
-3. Run the following Carthage command:
-   ```shell
-   carthage update --use-xcframeworks --platform iOS
-   ```
-4. Open the `ExponeaSDK.xcworkspace` file to open the project in Xcode.
-5. In the Project navigator in Xcode, select the `ExponeaSDK` project.
-6. Navigate to the `Example` application target's settings. On the `General` tab, find the `Frameworks, Libraries, and Embedded Content` section.
-7. Open Finder, navigate to the `Carthage/Build` folder inside the `exponea-ios-sdk` folder, and drag and drop every `*.xcframework` folder inside it to the `Frameworks, Libraries, and Embedded Content` section in Xcode.
-8. Navigate to `Product` > `Scheme` and select `Example`.
-9. Select `Product` > `Build` (Cmd + B).
-10. Select `Product` > `Run` (Cmd + R) to run the example app in the simulator.
+3. Open the `ExponeaSDK.xcworkspace` file to open the project in Xcode.
+4. In the Project navigator in Xcode, select the `ExponeaSDK` project.
+5. Navigate to the `Example` application target's settings. On the `General` tab, find the `Frameworks, Libraries, and Embedded Content` section.
+6. Navigate to `Product` > `Scheme` and select `Example`.
+7. Select `Product` > `Build` (Cmd + B).
+8. Select `Product` > `Run` (Cmd + R) to run the example app in the simulator.
 
 > 📘
 >
@@ -88,5 +82,4 @@ Once you use `Identify Customer` in the app to set the `registered` hard ID (use
 If you encounter any issues building the example app, the following may help:
 
 - Remove the `Pods` folder and the `Podfile.lock` file from the project folder and rerun the `pod install` command.
-- Remove the `Carthage` folder and the `Cartfile.resolved` file from the project folder and rerun the full `carthage update` command above.
 - In Xcode, select `Product` > `Clean Build Folder` (Cmd + Shift + K), then `Product` > `Build` (Cmd + B).

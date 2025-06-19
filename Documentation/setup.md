@@ -8,7 +8,7 @@ parentDocSlug: ios-sdk
 
 ## Install the SDK
 
-The Exponea iOS SDK can be installed or updated using [CocoaPods](https://cocoapods.org/), [Carthage](https://github.com/Carthage/Carthage), or [Swift Package Manager](https://www.swift.org/package-manager/).
+The Exponea iOS SDK can be installed or updated using [CocoaPods](https://cocoapods.org/) or [Swift Package Manager](https://www.swift.org/package-manager/).
 
 The instructions below are for Xcode 15.1 and may differ if you use a different Xcode version.
 
@@ -38,22 +38,6 @@ Optionally, you can specify the `ExponeaSDK` version as follows to let `pod` aut
 pod "ExponeaSDK", "~> 3.5.2"
 ```
 For more information, refer to [Specifying pod versions](https://guides.cocoapods.org/using/the-podfile.html#specifying-pod-versions) in the Cocoapods documentation.
-
-### Carthage
-
-1. Install [Carthage](https://github.com/Carthage/Carthage) if you haven't done so yet.
-2. Create a file named `Cartfile` in your Xcode project folder.
-3. Add the following line to your `Cartfile`
-    ```
-    github "exponea/exponea-ios-sdk"
-    ```
-4. In a terminal window, navigate to your Xcode project folder and run the following command:
-    ```
-    carthage update exponea-ios-sdk --use-xcframeworks --platform iOS
-    ```
-5. Open your Xcode project and navigate to your application target's settings. On the `General` tab, find the `Frameworks, Libraries, and Embedded Content` section.
-6. Open Finder, navigate to the `Carthage/Build` folder inside your project folder and drag and drop every `*.xcframework` folder inside it to the `Frameworks, Libraries, and Embedded Content` section in Xcode.
-   ![XCFRameworks added to Frameworks, Libraries, and Embedded Content](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/carthage-xcframeworks.png)
 
 ### Swift Package Manager
 

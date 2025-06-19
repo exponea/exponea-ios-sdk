@@ -52,17 +52,6 @@ Optionally, you can specify the ExponeaSDK version as follows to let `pod` autom
 pod "ExponeaSDK-Notifications", "~> 3.5.2"
 ```
 
-### Carthage
-
-Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks.
-
-1. In a terminal window, navigate to your Xcode project folder and run the following command:
-    ```
-    carthage update --use-xcframeworks —platform iOS
-    ```
-2. In your Xcode project, navigate to your app extension target's settings. 
-3. On the `General` tab, in the `Frameworks, Libraries, and Embedded Content` section, click on `+` and add `ExponeaSDKNotifications.xcframework`.
-
 ### Swift Package Manager
 
 1. In your Xcode project, navigate to your app extension target's settings.
