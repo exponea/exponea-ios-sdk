@@ -29,7 +29,6 @@
 		0529797A241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05297979241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift */; };
 		052F685D2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */; };
 		052F685F2327D404002DDCD4 /* ExponeaErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */; };
-		05324BF023D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05324BEF23D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift */; };
 		053BC75E25ADD16B007D70D4 /* Configuration+UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05835C9124124830002F4571 /* Configuration+UserDefaults.swift */; };
 		053BC75F25ADD16B007D70D4 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E757EF207D027300FE8C21 /* Configuration.swift */; };
 		053BC76025ADD16B007D70D4 /* Configuration+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EB8B6B2344F4D700AAC98B /* Configuration+Validation.swift */; };
@@ -48,7 +47,6 @@
 		053EC59923AA32A7004D1C8B /* InAppMessageDisplayStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59823AA32A7004D1C8B /* InAppMessageDisplayStatus.swift */; };
 		053EC59B23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59A23AA3309004D1C8B /* InAppMessageDisplayStateStore.swift */; };
 		053EC59F23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053EC59E23AA61DC004D1C8B /* InAppMessageDisplayStatusStoreSpec.swift */; };
-		05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05457FAD241BCFF30067226F /* TelemetryEventType.swift */; };
 		054B7E5123F2D71A00026543 /* InAppMessageActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054B7E5023F2D71A00026543 /* InAppMessageActionButton.swift */; };
 		05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9A23603BA900F7084E /* PushNotificationParser.swift */; };
 		05583E9E23608AE400F7084E /* PushNotificationParserSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05583E9D23608AE400F7084E /* PushNotificationParserSpec.swift */; };
@@ -180,21 +178,14 @@
 		05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E81631247555DD00AA28E3 /* ExponeaAppDelegate.swift */; };
 		05F33B1B25C16DEF00CFD60A /* ExponeaSDKShared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		05F33B1C25C16DEF00CFD60A /* ExponeaSDKObjC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0563750C25AF030A00AB68DA /* ExponeaSDKObjC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		05F3EFCD237E9260006E83F4 /* TelemetryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFCC237E9260006E83F4 /* TelemetryManager.swift */; };
 		05F3EFCF237E926B006E83F4 /* CrashManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFCE237E926B006E83F4 /* CrashManager.swift */; };
 		05F3EFD3237E9291006E83F4 /* TelemetryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFD2237E9291006E83F4 /* TelemetryStorage.swift */; };
-		05F3EFD5237E92A4006E83F4 /* TelemetryUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFD4237E92A4006E83F4 /* TelemetryUpload.swift */; };
-		05F3EFD8237E938D006E83F4 /* CrashLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFD7237E938D006E83F4 /* CrashLog.swift */; };
-		05F3EFDA237E9415006E83F4 /* ErrorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFD9237E9415006E83F4 /* ErrorData.swift */; };
 		05F3EFDC237E96FA006E83F4 /* FileTelemetryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFDB237E96FA006E83F4 /* FileTelemetryStorage.swift */; };
 		05F3EFE0237E99FE006E83F4 /* FileTelemetryStorageSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFDF237E99FE006E83F4 /* FileTelemetryStorageSpec.swift */; };
 		05F3EFE22382A814006E83F4 /* CrashManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFE12382A814006E83F4 /* CrashManagerSpec.swift */; };
-		05F3EFE42382BAB6006E83F4 /* TelemetryUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFE32382BAB6006E83F4 /* TelemetryUtility.swift */; };
-		05F3EFE62382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFE52382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift */; };
 		05F3EFEA2382BC4C006E83F4 /* MockTelemetryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFE92382BC4C006E83F4 /* MockTelemetryStorage.swift */; };
 		05F3EFED2382BD08006E83F4 /* MockTelemetryUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFEC2382BD08006E83F4 /* MockTelemetryUpload.swift */; };
 		05F3EFEF2382C192006E83F4 /* TelemetryUtilitySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFEE2382C192006E83F4 /* TelemetryUtilitySpec.swift */; };
-		05F3EFF12382C757006E83F4 /* VSAppCenterAPIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFF02382C757006E83F4 /* VSAppCenterAPIModel.swift */; };
 		05FB1BB7236AE9220089C529 /* NotificationDataSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */; };
 		05FBB15D244709C500BDF234 /* DatabaseManager+Clear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FBB15C244709C500BDF234 /* DatabaseManager+Clear.swift */; };
 		05FD178F2403C4CC003A799B /* BuildConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FD178E2403C4CC003A799B /* BuildConfiguration.swift */; };
@@ -332,6 +323,19 @@
 		55C08DCF2A5689F4000BA66A /* FileCacheType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DCE2A5689F4000BA66A /* FileCacheType.swift */; };
 		55C08DD12A568A55000BA66A /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD02A568A55000BA66A /* FileCache.swift */; };
 		55C08DD32A568C74000BA66A /* FileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD22A568C74000BA66A /* FileUtils.swift */; };
+		55CD47542E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD47532E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift */; };
+		55CD47572E29236600E8BF3F /* TelemetryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFCC237E9260006E83F4 /* TelemetryManager.swift */; };
+		55CD47582E292D9100E8BF3F /* TelemetryUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFD4237E92A4006E83F4 /* TelemetryUpload.swift */; };
+		55CD47592E292D9600E8BF3F /* SentryTelemetryUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5529AE972E13BC44007FB0C8 /* SentryTelemetryUpload.swift */; };
+		55CD475A2E292D9D00E8BF3F /* TelemetryUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFE32382BAB6006E83F4 /* TelemetryUtility.swift */; };
+		55CD475B2E292DA900E8BF3F /* CrashLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFD7237E938D006E83F4 /* CrashLog.swift */; };
+		55CD475C2E292DAE00E8BF3F /* ErrorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFD9237E9415006E83F4 /* ErrorData.swift */; };
+		55CD475D2E292DB200E8BF3F /* TelemetryEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05457FAD241BCFF30067226F /* TelemetryEventType.swift */; };
+		55CD475E2E292DB600E8BF3F /* ExponeaSentryEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C7817A2E0EA75700B1DEF3 /* ExponeaSentryEnvelope.swift */; };
+		55CD475F2E292DBA00E8BF3F /* ThreadInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C269B32E0FECB5004CB427 /* ThreadInfo.swift */; };
+		55CD47602E292DBE00E8BF3F /* ErrorStackTraceElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C269B52E0FED20004CB427 /* ErrorStackTraceElement.swift */; };
+		55CD47612E292DC200E8BF3F /* EventLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5529AE952E13BBD6007FB0C8 /* EventLog.swift */; };
+		55CD47632E29310300E8BF3F /* BuildConfigurationShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD47622E29310300E8BF3F /* BuildConfigurationShared.swift */; };
 		55D0543A2B230C9600BC773A /* InAppContentBlockCallbackType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D054392B230C9600BC773A /* InAppContentBlockCallbackType.swift */; };
 		55D0543C2B2351A000BC773A /* InAppContentBlockAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D0543B2B2351A000BC773A /* InAppContentBlockAction.swift */; };
 		55DA6EBA290ABD4800B5B285 /* AppInboxManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EB9290ABD4800B5B285 /* AppInboxManagerType.swift */; };
@@ -617,7 +621,6 @@
 		05297979241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUNAuthorizationStatusProviding.swift; sourceTree = "<group>"; };
 		052F685C2327D3DF002DDCD4 /* DatabaseManagerErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManagerErrorSpec.swift; sourceTree = "<group>"; };
 		052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExponeaErrorSpec.swift; sourceTree = "<group>"; };
-		05324BEF23D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSAppCenterTelemetryUploadSpec.swift; sourceTree = "<group>"; };
 		053BC76725ADD27F007D70D4 /* Configuration+Anonymize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Configuration+Anonymize.swift"; sourceTree = "<group>"; };
 		053CA1F9247D4944003B699C /* PushSelfCheckRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSelfCheckRequest.swift; sourceTree = "<group>"; };
 		053CA1FD247D4A0F003B699C /* SelfCheckRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfCheckRepository.swift; sourceTree = "<group>"; };
@@ -754,11 +757,9 @@
 		05F3EFDF237E99FE006E83F4 /* FileTelemetryStorageSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTelemetryStorageSpec.swift; sourceTree = "<group>"; };
 		05F3EFE12382A814006E83F4 /* CrashManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrashManagerSpec.swift; sourceTree = "<group>"; };
 		05F3EFE32382BAB6006E83F4 /* TelemetryUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryUtility.swift; sourceTree = "<group>"; };
-		05F3EFE52382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSAppCenterTelemetryUpload.swift; sourceTree = "<group>"; };
 		05F3EFE92382BC4C006E83F4 /* MockTelemetryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTelemetryStorage.swift; sourceTree = "<group>"; };
 		05F3EFEC2382BD08006E83F4 /* MockTelemetryUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTelemetryUpload.swift; sourceTree = "<group>"; };
 		05F3EFEE2382C192006E83F4 /* TelemetryUtilitySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryUtilitySpec.swift; sourceTree = "<group>"; };
-		05F3EFF02382C757006E83F4 /* VSAppCenterAPIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSAppCenterAPIModel.swift; sourceTree = "<group>"; };
 		05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDataSpec.swift; sourceTree = "<group>"; };
 		05FBB15C244709C500BDF234 /* DatabaseManager+Clear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseManager+Clear.swift"; sourceTree = "<group>"; };
 		05FD178E2403C4CC003A799B /* BuildConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildConfiguration.swift; sourceTree = "<group>"; };
@@ -862,6 +863,8 @@
 		552772C628ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ExponeaInternal+AppInbox.swift"; sourceTree = "<group>"; };
 		552772CA28EDAF3A000ACFD5 /* AppInboxListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxListViewController.swift; sourceTree = "<group>"; };
 		5527979C28D98C15002B2B77 /* GdprTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GdprTracking.swift; sourceTree = "<group>"; };
+		5529AE952E13BBD6007FB0C8 /* EventLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLog.swift; sourceTree = "<group>"; };
+		5529AE972E13BC44007FB0C8 /* SentryTelemetryUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentryTelemetryUpload.swift; sourceTree = "<group>"; };
 		55391D482953051E001D95B8 /* AppInboxParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxParser.swift; sourceTree = "<group>"; };
 		55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxManagerSpec.swift; sourceTree = "<group>"; };
 		55391D4C295497A7001D95B8 /* AppInboxProviderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxProviderSpec.swift; sourceTree = "<group>"; };
@@ -897,6 +900,11 @@
 		55C08DCE2A5689F4000BA66A /* FileCacheType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCacheType.swift; sourceTree = "<group>"; };
 		55C08DD02A568A55000BA66A /* FileCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCache.swift; sourceTree = "<group>"; };
 		55C08DD22A568C74000BA66A /* FileUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUtils.swift; sourceTree = "<group>"; };
+		55C269B32E0FECB5004CB427 /* ThreadInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadInfo.swift; sourceTree = "<group>"; };
+		55C269B52E0FED20004CB427 /* ErrorStackTraceElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorStackTraceElement.swift; sourceTree = "<group>"; };
+		55C7817A2E0EA75700B1DEF3 /* ExponeaSentryEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSentryEnvelope.swift; sourceTree = "<group>"; };
+		55CD47532E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentryTelemetryUploadSpec.swift; sourceTree = "<group>"; };
+		55CD47622E29310300E8BF3F /* BuildConfigurationShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildConfigurationShared.swift; sourceTree = "<group>"; };
 		55D054392B230C9600BC773A /* InAppContentBlockCallbackType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockCallbackType.swift; sourceTree = "<group>"; };
 		55D0543B2B2351A000BC773A /* InAppContentBlockAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockAction.swift; sourceTree = "<group>"; };
 		55D0543D2B29BE2200BC773A /* ExtensionUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUtils.swift; sourceTree = "<group>"; };
@@ -1210,7 +1218,7 @@
 		05324BEE23D19F7B00AE91D9 /* Upload */ = {
 			isa = PBXGroup;
 			children = (
-				05324BEF23D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift */,
+				55CD47532E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift */,
 			);
 			path = Upload;
 			sourceTree = "<group>";
@@ -1249,6 +1257,7 @@
 		056182A525AD95B3001E30A3 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				55CD47552E29234400E8BF3F /* Telemetry */,
 				0191639D207E14C9005FD174 /* Logging */,
 				058DD8E12411189300E5BF91 /* Models */,
 				058DD937241131F400E5BF91 /* Other */,
@@ -1407,6 +1416,7 @@
 				0570E76A246EBE7400E92ACF /* UIImage+Gif.swift */,
 				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
+				55CD47622E29310300E8BF3F /* BuildConfigurationShared.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -1530,12 +1540,9 @@
 		05F3EFCB237E9237006E83F4 /* Telemetry */ = {
 			isa = PBXGroup;
 			children = (
-				05F3EFD6237E9381006E83F4 /* Model */,
 				05F3EFD1237E9283006E83F4 /* Storage */,
-				05F3EFD0237E927C006E83F4 /* Upload */,
 				05F3EFCE237E926B006E83F4 /* CrashManager.swift */,
 				05F3EFCC237E9260006E83F4 /* TelemetryManager.swift */,
-				05F3EFE32382BAB6006E83F4 /* TelemetryUtility.swift */,
 			);
 			path = Telemetry;
 			sourceTree = "<group>";
@@ -1544,8 +1551,7 @@
 			isa = PBXGroup;
 			children = (
 				05F3EFD4237E92A4006E83F4 /* TelemetryUpload.swift */,
-				05F3EFF02382C757006E83F4 /* VSAppCenterAPIModel.swift */,
-				05F3EFE52382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift */,
+				5529AE972E13BC44007FB0C8 /* SentryTelemetryUpload.swift */,
 			);
 			path = Upload;
 			sourceTree = "<group>";
@@ -1565,6 +1571,10 @@
 				05F3EFD7237E938D006E83F4 /* CrashLog.swift */,
 				05F3EFD9237E9415006E83F4 /* ErrorData.swift */,
 				05457FAD241BCFF30067226F /* TelemetryEventType.swift */,
+				55C7817A2E0EA75700B1DEF3 /* ExponeaSentryEnvelope.swift */,
+				55C269B32E0FECB5004CB427 /* ThreadInfo.swift */,
+				55C269B52E0FED20004CB427 /* ErrorStackTraceElement.swift */,
+				5529AE952E13BBD6007FB0C8 /* EventLog.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1874,6 +1884,16 @@
 				5567C08F290808F600318E68 /* MessageItemContent.swift */,
 			);
 			path = MessageInbox;
+			sourceTree = "<group>";
+		};
+		55CD47552E29234400E8BF3F /* Telemetry */ = {
+			isa = PBXGroup;
+			children = (
+				05F3EFD6237E9381006E83F4 /* Model */,
+				05F3EFD0237E927C006E83F4 /* Upload */,
+				05F3EFE32382BAB6006E83F4 /* TelemetryUtility.swift */,
+			);
+			path = Telemetry;
 			sourceTree = "<group>";
 		};
 		55EFD790291A6C08002569FB /* AppInbox */ = {
@@ -2956,6 +2976,8 @@
 				053BC79F25ADDDCB007D70D4 /* TrackingRepository.swift in Sources */,
 				056182E825AD9E05001E30A3 /* Exponea.swift in Sources */,
 				0561833025ADB1BD001E30A3 /* DataType.swift in Sources */,
+				55CD47582E292D9100E8BF3F /* TelemetryUpload.swift in Sources */,
+				55CD475D2E292DB200E8BF3F /* TelemetryEventType.swift in Sources */,
 				0561832325ADB1BC001E30A3 /* Result.swift in Sources */,
 				0561832E25ADB1BD001E30A3 /* TrackingParameters.swift in Sources */,
 				053BC75E25ADD16B007D70D4 /* Configuration+UserDefaults.swift in Sources */,
@@ -2971,15 +2993,24 @@
 				053BC76825ADD27F007D70D4 /* Configuration+Anonymize.swift in Sources */,
 				053BC79D25ADDDCB007D70D4 /* ServerRepository.swift in Sources */,
 				056182EF25AD9E22001E30A3 /* LogLevel.swift in Sources */,
+				55CD475A2E292D9D00E8BF3F /* TelemetryUtility.swift in Sources */,
+				55CD475F2E292DBA00E8BF3F /* ThreadInfo.swift in Sources */,
 				5527979D28D98C15002B2B77 /* GdprTracking.swift in Sources */,
 				0561832D25ADB1BD001E30A3 /* Authorization.swift in Sources */,
+				55CD475E2E292DB600E8BF3F /* ExponeaSentryEnvelope.swift in Sources */,
 				0561831125AD9EEB001E30A3 /* URLResponse+Debug.swift in Sources */,
+				55CD475C2E292DAE00E8BF3F /* ErrorData.swift in Sources */,
 				0561831325AD9EEB001E30A3 /* UIImage+Gif.swift in Sources */,
 				0561832125ADB1BC001E30A3 /* EventType.swift in Sources */,
 				0561832A25ADB1BC001E30A3 /* ExponeaProject.swift in Sources */,
+				55CD47602E292DBE00E8BF3F /* ErrorStackTraceElement.swift in Sources */,
+				55CD47632E29310300E8BF3F /* BuildConfigurationShared.swift in Sources */,
+				55CD47612E292DC200E8BF3F /* EventLog.swift in Sources */,
 				31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */,
 				0561832B25ADB1BD001E30A3 /* Routes.swift in Sources */,
+				55CD47592E292D9600E8BF3F /* SentryTelemetryUpload.swift in Sources */,
 				0561832C25ADB1BD001E30A3 /* NotificationData.swift in Sources */,
+				55CD475B2E292DA900E8BF3F /* CrashLog.swift in Sources */,
 				0561831025AD9EEB001E30A3 /* JSON+SnakeCase.swift in Sources */,
 				053BC79C25ADDDCB007D70D4 /* RepositoryError.swift in Sources */,
 				0561832525ADB1BC001E30A3 /* ExponeaNotificationAction.swift in Sources */,
@@ -3091,16 +3122,12 @@
 				5568874A2A17574A00498B40 /* ListScreenStyle.swift in Sources */,
 				5567C09629091B8E00318E68 /* AppInboxRequest.swift in Sources */,
 				318EFF462D8989EA004C5E1F /* SlideInAppImageComponent.swift in Sources */,
-				05F3EFF12382C757006E83F4 /* VSAppCenterAPIModel.swift in Sources */,
 				23E725E4214AA7A900B552B8 /* Reachability.swift in Sources */,
 				31EBB85A2A6AC3020003AAA5 /* UsedInAppContentBlocks.swift in Sources */,
-				05F3EFE42382BAB6006E83F4 /* TelemetryUtility.swift in Sources */,
 				55DA6EBC290ABD7500B5B285 /* AppInboxManager.swift in Sources */,
 				05C289312428A13D0021220C /* SessionManager.swift in Sources */,
-				05F3EFD8237E938D006E83F4 /* CrashLog.swift in Sources */,
 				05F3EFDC237E96FA006E83F4 /* FileTelemetryStorage.swift in Sources */,
 				B42DA68E22B0556100BBA225 /* ConsentsResponse.swift in Sources */,
-				05F3EFDA237E9415006E83F4 /* ErrorData.swift in Sources */,
 				01EC2DB6207E5F600031BFEB /* TrackingManagerType.swift in Sources */,
 				05880538241682F8001AAE8A /* ExponeaInternal.swift in Sources */,
 				313C07042CD4EB8F0020DE64 /* InAppButtonContainerSwiftUI.swift in Sources */,
@@ -3126,7 +3153,6 @@
 				318EFF642D898BF1004C5E1F /* InAppViewConfig.swift in Sources */,
 				05F3EFD3237E9291006E83F4 /* TelemetryStorage.swift in Sources */,
 				056772452374703B0082167C /* PushNotificationManagerType.swift in Sources */,
-				05F3EFCD237E9260006E83F4 /* TelemetryManager.swift in Sources */,
 				318EFF5C2D898B9E004C5E1F /* InAppCloseButtonConfig.swift in Sources */,
 				3189E2E12C4EBEC300C4CD68 /* CarouselContentBlockViewCell.swift in Sources */,
 				55DA6EBE290AD5E900B5B285 /* AppInboxCacheType.swift in Sources */,
@@ -3136,6 +3162,7 @@
 				31EBB8592A6AC3020003AAA5 /* InAppContentBlocksManager.swift in Sources */,
 				05CDD83B23911A1400C7291A /* InAppMessagesCacheType.swift in Sources */,
 				31EBB85E2A6AC3020003AAA5 /* CalculatorData.swift in Sources */,
+				55CD47572E29236600E8BF3F /* TelemetryManager.swift in Sources */,
 				C030AF4C216F96F3004413F0 /* PushNotificationManager+NSObject.swift in Sources */,
 				33FC6CC629A9123E001F113F /* Autolayout.swift in Sources */,
 				053CA1FE247D4A0F003B699C /* SelfCheckRepository.swift in Sources */,
@@ -3159,9 +3186,7 @@
 				01EC2DB2207E55CB0031BFEB /* TrackingManager.swift in Sources */,
 				559D97082962FCF0006D4499 /* ImageUtils.swift in Sources */,
 				55C08DD12A568A55000BA66A /* FileCache.swift in Sources */,
-				05457FAE241BCFF30067226F /* TelemetryEventType.swift in Sources */,
 				31EBB8562A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift in Sources */,
-				05F3EFE62382BB88006E83F4 /* VSAppCenterTelemetryUpload.swift in Sources */,
 				318EFF5A2D898B5F004C5E1F /* InAppButtonFontData.swift in Sources */,
 				55A468D0296F154C00E62438 /* WebActionsManager.swift in Sources */,
 				01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */,
@@ -3240,7 +3265,6 @@
 				55BB0E1E28F44EDA00D6243A /* AppInboxDetailViewController.swift in Sources */,
 				C09A6499212D871600DCAC06 /* NSManagedObjectContext+Perform.swift in Sources */,
 				C030AF4E216FA154004413F0 /* PushNotificationDelegateObserver.swift in Sources */,
-				05F3EFD5237E92A4006E83F4 /* TelemetryUpload.swift in Sources */,
 				C0EB5D8E20B710A900F1031F /* Data+TokenString.swift in Sources */,
 				551301372D072338005C71C8 /* CampaignRepositoryType.swift in Sources */,
 				311268DB2CD10E9C00C38394 /* InAppButtonContainer.swift in Sources */,
@@ -3283,7 +3307,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				057F447F239908650070DF30 /* InAppMessagesManagerSpec.swift in Sources */,
-				05324BF023D19F8C00AE91D9 /* VSAppCenterTelemetryUploadSpec.swift in Sources */,
 				05AA63BC2342362B00D78452 /* ServerRepository.swift in Sources */,
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
 				05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */,
@@ -3292,6 +3315,7 @@
 				0529797A241925DB00A90526 /* MockUNAuthorizationStatusProviding.swift in Sources */,
 				559E7609296E0E5C00F27BC9 /* MessageItemSpec.swift in Sources */,
 				057F448323990E320070DF30 /* MockInAppMessagesCache.swift in Sources */,
+				55CD47542E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift in Sources */,
 				F0BE6105211080F30082ABD8 /* MockData.swift in Sources */,
 				31EBB8682A6AC3470003AAA5 /* SampleInappContentBlocks.swift in Sources */,
 				31EBB86B2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift in Sources */,

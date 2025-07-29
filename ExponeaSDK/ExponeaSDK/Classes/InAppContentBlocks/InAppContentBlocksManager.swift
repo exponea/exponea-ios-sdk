@@ -9,6 +9,9 @@
 import Foundation
 import AppTrackingTransparency
 import WebKit
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 final class InAppContentBlocksManager: NSObject {
 
@@ -282,17 +285,34 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                 return newInAppContentBlocks
             } ?? []
             var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
+            var updatedContentBlocksForTelemetry: [InAppContentBlockResponse] = []
             for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
                 if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
                     personalized.ttlSeen = Date()
                     updatedPlaceholders[index].personalizedMessage = personalized
+                    updatedContentBlocksForTelemetry.append(updatedPlaceholders[index])
                 }
             }
             self.inAppContentBlockMessages = updatedPlaceholders
+            self.trackTelemetryForFetch(.contentBlockPersonalisedFetch, updatedContentBlocksForTelemetry)
             onMain {
                 completion?()
             }
         }
+    }
+    
+    private func trackTelemetryForFetch(_ fetchType: TelemetryEventType, _ info: [InAppContentBlockResponse]) {
+        Exponea.shared.telemetryManager?.report(
+            eventWithType: fetchType,
+            properties: [
+                "count": String(info.count),
+                "data": TelemetryUtility.toJson(info.map { [
+                    "messageId": $0.id,
+                    "placeholders": TelemetryUtility.toJson($0.placeholders),
+                    "type": ($0.content == nil ? "personal" : "static")
+                ] })
+            ]
+        )
     }
 
     func prefetchPlaceholdersWithIds(input: [InAppContentBlockResponse], ids: [String]) -> [InAppContentBlockResponse] {
@@ -332,13 +352,16 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                     return newInAppContentBlocks
                 }
                 var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
+                var updatedContentBlocksForTelemetry: [InAppContentBlockResponse] = []
                 for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
                     if var personalized = personalizedWithPayload?.first(where: { $0.id == inAppContentBlocks.id }) {
                         personalized.ttlSeen = Date()
                         updatedPlaceholders[index].personalizedMessage = personalized
+                        updatedContentBlocksForTelemetry.append(updatedPlaceholders[index])
                     }
                 }
                 self.inAppContentBlockMessages = updatedPlaceholders
+                self.trackTelemetryForFetch(.contentBlockPersonalisedFetch, updatedContentBlocksForTelemetry)
             }
         }
     }
@@ -628,6 +651,7 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                     .verbose,
                     message: "In-app Content Blocks loadInAppContentBlockMessages done with \(loadedMessagesDescriptions)."
                 )
+                self?.trackTelemetryForFetch(.contentBlockInitFetch, messages)
                 completion?()
             }
         }
@@ -1034,13 +1058,16 @@ extension InAppContentBlocksManager {
                         return newInAppContentBlocks
                     } ?? []
                     var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
+                    var updatedContentBlocksForTelemetry: [InAppContentBlockResponse] = []
                     for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
                         if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
                             personalized.ttlSeen = Date()
                             updatedPlaceholders[index].personalizedMessage = personalized
+                            updatedContentBlocksForTelemetry.append(updatedPlaceholders[index])
                         }
                     }
                     self.inAppContentBlockMessages = updatedPlaceholders
+                    self.trackTelemetryForFetch(.contentBlockPersonalisedFetch, updatedContentBlocksForTelemetry)
                     let toReturn = updatedPlaceholders.filter { $0.placeholders.contains(placeholder) }
                         .compactMap { response in
                             self.prepareCarouselStaticData(messages: response)
@@ -1088,13 +1115,16 @@ extension InAppContentBlocksManager {
                         return newInAppContentBlocks
                     } ?? []
                     var updatedPlaceholders: [InAppContentBlockResponse] = self.inAppContentBlockMessages
+                    var updatedContentBlocksForTelemetry: [InAppContentBlockResponse] = []
                     for (index, inAppContentBlocks) in updatedPlaceholders.enumerated() {
                         if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
                             personalized.ttlSeen = Date()
                             updatedPlaceholders[index].personalizedMessage = personalized
+                            updatedContentBlocksForTelemetry.append(updatedPlaceholders[index])
                         }
                     }
                     self.inAppContentBlockMessages = updatedPlaceholders
+                    self.trackTelemetryForFetch(.contentBlockPersonalisedFetch, updatedContentBlocksForTelemetry)
                     let data = self.prepareInAppContentBlocksStaticView(placeholderId: staticQueueData.placeholderId)
                     onMain {
                         staticQueueData.completion?(data)

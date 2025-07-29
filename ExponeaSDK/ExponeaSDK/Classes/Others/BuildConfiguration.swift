@@ -7,37 +7,32 @@
 //
 
 import Foundation
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 func isReactNativeSDK() -> Bool {
-    // Our react native SDK contains a protocol IsExponeaReactNativeSDK. We only use it for this purpose.
-    return NSProtocolFromString("IsExponeaReactNativeSDK") != nil
-}
-
-func isCapacitorSDK() -> Bool {
-    // Our Capacitor SDK contains a protocol IsExponeaCapacitorSDK. We only use it for this purpose.
-    return NSProtocolFromString("IsExponeaCapacitorSDK") != nil
+    BuildConfigurationShared.isReactNativeSDK()
 }
 
 func isFlutterSDK() -> Bool {
-    // Our flutter SDK contains a protocol IsExponeaFlutterSDK. We only use it for this purpose.
-    return NSProtocolFromString("IsExponeaFlutterSDK") != nil
+    BuildConfigurationShared.isFlutterSDK()
 }
 
 func isXamarinSDK() -> Bool {
-    // Our Xamarin SDK contains a protocol IsExponeaFlutterSDK. We only use it for this purpose.
-    return NSProtocolFromString("IsExponeaXamarinSDK") != nil
+    BuildConfigurationShared.isXamarinSDK()
 }
 
 func isMauiSDK() -> Bool {
-    NSProtocolFromString("IsBloomreachMauiSDK") != nil
+    BuildConfigurationShared.isMauiSDK()
 }
 
 func isCalledFromExampleApp() -> Bool {
-    return NSProtocolFromString("IsExponeaExampleApp") != nil
+    BuildConfigurationShared.isCalledFromExampleApp()
 }
 
 func isCalledFromSDKTests() -> Bool {
-    return NSProtocolFromString("IsExponeaSDKTest") != nil
+    BuildConfigurationShared.isCalledFromSDKTests()
 }
 
 func getReactNativeSDKVersion() -> String? {

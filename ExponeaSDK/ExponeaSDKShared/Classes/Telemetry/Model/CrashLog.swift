@@ -8,59 +8,65 @@
 
 import Foundation
 
-final class CrashLog: Codable, Equatable {
-    let id: String
-    let isFatal: Bool
-    let errorData: ErrorData
-    let timestamp: Double
-    let launchTimestamp: Double
-    let runId: String
-    let logs: [String]
+public final class CrashLog: Codable, Equatable {
+    public let id: String
+    public let isFatal: Bool
+    public let errorData: ErrorData
+    public let timestamp: Double
+    public let launchTimestamp: Double
+    public let runId: String
+    public let logs: [String]
+    public let thread: ThreadInfo
 
-    init(
+    public init(
         exception: NSException,
         fatal: Bool,
         date: Date,
         launchDate: Date,
         runId: String,
-        logs: [String] = []
+        logs: [String] = [],
+        thread: ThreadInfo
     ) {
         id = UUID().uuidString
         errorData = ErrorData(
             type: exception.name.rawValue,
             message: exception.reason ?? "",
-            stackTrace: exception.callStackSymbols
+            stackTrace: TelemetryUtility.readStackTraceInfo(exception)
         )
         self.isFatal = fatal
         timestamp = date.timeIntervalSince1970
         launchTimestamp = launchDate.timeIntervalSince1970
         self.runId = runId
         self.logs = logs
+        self.thread = TelemetryUtility.updateThreadInfo(from: thread, with: exception.callStackSymbols)
     }
 
-    init(
+    public init(
         error: Error,
         stackTrace: [String],
         fatal: Bool,
         date: Date,
         launchDate: Date,
         runId: String,
-        logs: [String] = []
+        logs: [String] = [],
+        thread: ThreadInfo
     ) {
         id = UUID().uuidString
+        let nsError = (error as NSError)
         errorData = ErrorData(
             type: String(describing: type(of: error)),
-            message: "\((error as NSError).domain):\((error as NSError).code) \(error.localizedDescription)",
-            stackTrace: stackTrace
+            message: "\(nsError.domain):\(nsError.code) \(error.localizedDescription)",
+            stackTrace: TelemetryUtility.parseStackTrace(stackTrace)
         )
         self.isFatal = fatal
         timestamp = date.timeIntervalSince1970
         launchTimestamp = launchDate.timeIntervalSince1970
         self.runId = runId
         self.logs = logs
+        self.thread = TelemetryUtility.updateThreadInfo(from: thread, with: stackTrace)
     }
 
-    static func == (lhs: CrashLog, rhs: CrashLog) -> Bool {
+    public static func == (lhs: CrashLog, rhs: CrashLog) -> Bool {
         return lhs.id == rhs.id
             && lhs.isFatal == rhs.isFatal
             && lhs.errorData == rhs.errorData

@@ -18,12 +18,18 @@ public class ExponeaNotificationService {
     private var isSDKStopped: Bool {
         UserDefaults(suiteName: appGroup ?? "ExponeaSDK")?.value(forKey: "isStopped") as? Bool ?? false
     }
+    private let telemetry: TelemetryUpload?
 
     var request: UNNotificationRequest?
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
 
-    var notificationTracked: Bool = false {
+    var notificationDeliveryTracked: Bool = false {
+        didSet {
+            checkDone()
+        }
+    }
+    var deliveryTelemetryTracked: Bool = false {
         didSet {
             checkDone()
         }
@@ -36,6 +42,15 @@ public class ExponeaNotificationService {
 
     public init(appGroup: String? = nil) {
         self.appGroup = appGroup
+        if let appGroup {
+            let userDefaults = TelemetryUtility.getUserDefaults(appGroup: appGroup)
+            let installId = TelemetryUtility.getInstallId(userDefaults: userDefaults)
+            self.telemetry = SentryTelemetryUpload(installId: installId) {
+                Configuration.loadFromUserDefaults(appGroup: appGroup)
+            }
+        } else {
+            self.telemetry = nil
+        }
     }
 
     public func process(request: UNNotificationRequest, contentHandler: @escaping (UNNotificationContent) -> Void) {
@@ -57,7 +72,15 @@ public class ExponeaNotificationService {
            let appGroup = appGroup {
             trackDeliveredNotification(appGroup: appGroup, notificationData: notificationData)
             createContent(deliveredTimestamp: notificationData.timestamp)
+            trackDeliveredTelemetry(
+                notificationData: notificationData,
+                notificationId: readNotificationId(request)
+            )
         }
+    }
+
+    private func readNotificationId(_ request: UNNotificationRequest?) -> String {
+        request?.identifier ?? "none"
     }
 
     public func serviceExtensionTimeWillExpire() {
@@ -65,7 +88,7 @@ public class ExponeaNotificationService {
         defer { clean() }
 
         // we failed to track notification
-        if !notificationTracked {
+        if !notificationDeliveryTracked {
             if let userInfo = (request?.content.mutableCopy() as? UNMutableNotificationContent)?.userInfo {
             let notification = NotificationData.deserialize(
                 attributes: userInfo["attributes"] as? [String: Any] ?? [:],
@@ -76,11 +99,20 @@ public class ExponeaNotificationService {
             saveNotificationForLaterTracking(notification: notification)
             }
         }
-
-        // Try to call content handler with current content
-        if let content = bestAttemptContent {
-            contentHandler?(content)
+        if !deliveryTelemetryTracked {
+            // we failed to track telemetry for notification delivery
+            if let request,
+               let notificationData = prepareNotificationData(request: request) {
+                let deliveredEventLog = buildTelemetryEventLog(
+                    eventType: .pushNotificationDelivered,
+                    notificationData: notificationData,
+                    notificationId: readNotificationId(request)
+                )
+                saveTelemetryEventForLater(event: deliveredEventLog)
+            }
         }
+        // Try to call content handler with current content
+        showNotification(allowWaitForTrack: false)
     }
 
     internal func createContent(deliveredTimestamp: Double?) {
@@ -129,11 +161,11 @@ public class ExponeaNotificationService {
             let deliveredTracker = try DeliveredNotificationTracker(appGroup: appGroup, notificationData: notificationData)
             deliveredTracker.track(
                 onSuccess: {
-                    self.notificationTracked = true
+                    self.notificationDeliveryTracked = true
                 },
                 onFailure: {
                     self.saveNotificationEventsForLaterTracking(deliveredTracker.events)
-                    self.notificationTracked = true
+                    self.notificationDeliveryTracked = true
                 }
             )
         } catch {
@@ -142,8 +174,64 @@ public class ExponeaNotificationService {
                 message: "Failed to track delivered push notification: \(error.localizedDescription)"
             )
             self.saveNotificationForLaterTracking(notification: notificationData)
-            self.notificationTracked = true
+            self.notificationDeliveryTracked = true
         }
+    }
+
+    private func trackDeliveredTelemetry(notificationData: NotificationData, notificationId: String) {
+        let deliveredEventLog = buildTelemetryEventLog(
+            eventType: .pushNotificationDelivered,
+            notificationData: notificationData,
+            notificationId: notificationId
+        )
+        guard let telemetry = self.telemetry else {
+            self.saveTelemetryEventForLater(event: deliveredEventLog)
+            self.deliveryTelemetryTracked = true
+            return
+        }
+        telemetry.upload(eventLog: deliveredEventLog, completionHandler: { telemetryTracked in
+            if !telemetryTracked {
+                self.saveTelemetryEventForLater(event: deliveredEventLog)
+            }
+            self.deliveryTelemetryTracked = true
+        })
+    }
+    
+    private func trackShownTelemetry(_ done: @escaping () -> ()) {
+        guard
+            let request = self.request,
+            let notificationData = prepareNotificationData(request: request) else {
+            done()
+            return
+        }
+        let shownEventLog = buildTelemetryEventLog(
+            eventType: .pushNotificationShown,
+            notificationData: notificationData,
+            notificationId: readNotificationId(request)
+        )
+        guard let telemetry = self.telemetry else {
+            self.saveTelemetryEventForLater(event: shownEventLog)
+            done()
+            return
+        }
+        telemetry.upload(eventLog: shownEventLog) { telemetryTracked in
+            if !telemetryTracked {
+                self.saveTelemetryEventForLater(event: shownEventLog)
+            }
+            done()
+        }
+    }
+    
+    private func buildTelemetryEventLog(eventType: TelemetryEventType, notificationData: NotificationData, notificationId: String) -> EventLog {
+        return EventLog(
+            name: eventType.rawValue,
+            runId: UUID().uuidString,
+            properties: [
+                "notificationId": notificationId,
+                "actionId": TelemetryUtility.readAsString(notificationData.properties["action_id"]?.rawValue),
+                "campaignId": TelemetryUtility.readAsString(notificationData.properties["campaign_id"]?.rawValue)
+            ]
+        )
     }
 
     func prepareNotificationData(request: UNNotificationRequest) -> NotificationData? {
@@ -153,7 +241,7 @@ public class ExponeaNotificationService {
                 message: "Failed to prepare data for delivered push notification:" +
                     " Unable to get user info object from notification."
             )
-            self.notificationTracked = true
+            self.notificationDeliveryTracked = true
             return nil
         }
 
@@ -173,12 +261,38 @@ public class ExponeaNotificationService {
     }
 
     func checkDone() {
-        if notificationTracked && contentCreated {
-            if let content = bestAttemptContent {
-                contentHandler?(content)
-            }
+        if notificationDeliveryTracked && contentCreated && deliveryTelemetryTracked {
+            showNotification(allowWaitForTrack: true)
             clean()
         }
+    }
+    
+    private func showNotification(allowWaitForTrack: Bool) {
+        guard let content = bestAttemptContent else {
+            Exponea.logger.log(.error, message: "Notification content has not been build for show")
+            return
+        }
+        if allowWaitForTrack {
+            // keep contentHandler locally to avoid reset in clean()
+            let contentHandlerLocal = contentHandler
+            trackShownTelemetry {
+                contentHandlerLocal?(content)
+            }
+        } else {
+            // try track telemetry, it could not be finished, but ensure that contentHandler is called
+            trackShownTelemetry {}
+            contentHandler?(content)
+        }
+    }
+    
+    func saveTelemetryEventForLater(event: EventLog) {
+        guard let userDefaults = UserDefaults(suiteName: appGroup) else {
+            Exponea.logger.log(.error, message: "Unable to store telemetry data")
+            return
+        }
+        var telemetryEvents = TelemetryUtility.readTelemetryEvents(userDefaults)
+        telemetryEvents.append(event)
+        TelemetryUtility.saveTelemetryEvents(userDefaults, telemetryEvents)
     }
 
     func saveNotificationForLaterTracking(notification: NotificationData?) {

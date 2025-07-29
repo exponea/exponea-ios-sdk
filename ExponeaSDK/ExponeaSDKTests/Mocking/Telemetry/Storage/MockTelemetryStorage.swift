@@ -7,6 +7,7 @@
 //
 
 @testable import ExponeaSDK
+@testable import ExponeaSDKShared
 
 final class MockTelemetryStorage: TelemetryStorage {
     private var crashLogs: [CrashLog] = []

@@ -278,6 +278,11 @@ extension SegmentationManager {
     public func addCallback(callbackData: SegmentCallbackData) {
         _callbacks.changeValue(with: { $0.append(callbackData) })
         processTriggeredBy(type: .register(data: callbackData))
+        Exponea.shared.telemetryManager?.report(
+            eventWithType: .rtsCallbackRegistered, properties: [
+                "exposingCategory": callbackData.category.name
+            ]
+        )
     }
 
     public func removeCallback(callbackData: SegmentCallbackData) {

@@ -94,5 +94,6 @@ public enum Constants {
         public static let inAppContentBlockDisplayStatusUserDefaultsKey = "EXPONEA_IN_APP_CONTENT_BLOCK_DISPLAY_STATUS"
         public static let lastKnownConfiguration = "EXPONEA_LAST_KNOWN_CONFIGURATION"
         public static let lastKnownCustomerIds = "EXPONEA_LAST_KNOWN_CUSTOMER_IDS"
+        public static let telemetryEvents = "EXPONEA_TELEMETRY_EVENTS"
     }
 }

@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 class TrackingConsentManager: TrackingConsentManagerType {
     private let trackingManager: TrackingManagerType
@@ -223,6 +226,14 @@ class TrackingConsentManager: TrackingConsentManagerType {
         } catch {
             Exponea.logger.log(.error, message: "Error tracking AppInbox opened: \(error.localizedDescription)")
         }
+        Exponea.shared.telemetryManager?.report(
+            eventWithType: .appInboxMessageShown,
+            properties: [
+                "type": message.type,
+                "messageId": message.id,
+                "campaignId": TelemetryUtility.readAsString(message.content?.trackingData?["campaign_id"]?.rawValue)
+            ]
+        )
     }
 
     func trackInAppContentBlockClick(

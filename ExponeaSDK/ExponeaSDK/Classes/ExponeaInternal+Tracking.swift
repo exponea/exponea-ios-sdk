@@ -76,8 +76,8 @@ extension ExponeaInternal {
                 ids["cookie"] = dependencies.trackingManager.customerIds["cookie"]
                 data.append(.customerIds(ids))
             }
-
             try dependencies.trackingManager.track(.identifyCustomer, with: data)
+            Exponea.shared.telemetryManager?.report(eventWithType: .identifyCustomer, properties: [:])
         }
     }
 
@@ -378,7 +378,11 @@ extension ExponeaInternal {
                 exponeaProject: exponeaProject,
                 projectMapping: projectMapping
             )
-            self.telemetryManager?.report(eventWithType: .anonymize, properties: [:])
+            self.telemetryManager?.report(eventWithType: .anonymize, properties: [
+                "baseUrl": exponeaProject.baseUrl,
+                "projectToken": exponeaProject.projectToken,
+                "authorization": exponeaProject.authorization.description
+            ])
             Exponea.logger.log(.verbose, message: "Anonymisation request done")
         }
     }

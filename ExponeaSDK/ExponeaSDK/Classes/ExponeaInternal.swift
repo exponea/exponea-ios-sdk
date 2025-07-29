@@ -10,6 +10,9 @@ import Foundation
 #if canImport(ExponeaSDKObjC)
 import ExponeaSDKObjC
 #endif
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 import UIKit
 
 extension Exponea {
@@ -281,7 +284,7 @@ public class ExponeaInternal: ExponeaType {
                 databaeManagerCopy = database
                 if !Exponea.isBeingTested {
                     telemetryManager = TelemetryManager(
-                        userDefaults: userDefaults,
+                        appGroup: configuration.appGroup,
                         userId: database.currentCustomer.uuid.uuidString
                     )
                     telemetryManager?.start()
@@ -289,7 +292,15 @@ public class ExponeaInternal: ExponeaType {
                     let eventCount = try database.countTrackCustomer() + (try database.countTrackEvent())
                     telemetryManager?.report(
                         eventWithType: .eventCount,
-                        properties: ["count": String(describing: eventCount)])
+                        properties: ["count": String(describing: eventCount)]
+                    )
+                    segmentationManager?.getCallbacks().forEach({ rtsCallback in
+                        telemetryManager?.report(
+                            eventWithType: .rtsCallbackRegistered, properties: [
+                                "exposingCategory": rtsCallback.category.name
+                            ]
+                        )
+                    })
                 }
 
                 let repository = ServerRepository(configuration: configuration)
@@ -319,7 +330,7 @@ public class ExponeaInternal: ExponeaType {
                     repository: repository,
                     database: database,
                     flushingManager: flushingManager,
-                    inAppMessageManager: inAppMessagesManager,
+                    inAppMessageManager: self.inAppMessagesManager,
                     trackManagerInitializator: { trackingManager in
                         let trackingConsentManager = TrackingConsentManager(
                             trackingManager: trackingManager
@@ -379,7 +390,11 @@ public class ExponeaInternal: ExponeaType {
                     SegmentationManager.shared.processTriggeredBy(type: .`init`)
                 }
             } catch {
-                telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
+                telemetryManager?.report(
+                    error: error,
+                    stackTrace: Thread.callStackSymbols,
+                    thread: TelemetryUtility.getCurrentThreadInfo()
+                )
                 // Failing gracefully, if setup failed
                 Exponea.logger.log(.error, message: """
                     Error while creating dependencies, Exponea cannot be configured.\n\(error.localizedDescription)
@@ -388,7 +403,10 @@ public class ExponeaInternal: ExponeaType {
         }
         if let exception = exception {
             nsExceptionRaised = true
-            telemetryManager?.report(exception: exception)
+            telemetryManager?.report(
+                exception: exception,
+                thread: TelemetryUtility.getCurrentThreadInfo()
+            )
             Exponea.logger.log(.error, message: """
             Error while creating dependencies, Exponea cannot be configured.\n
             \(ExponeaError.nsExceptionRaised(exception).localizedDescription)
@@ -487,12 +505,19 @@ internal extension ExponeaInternal {
                 try closure()
             } catch {
                 Exponea.logger.log(.error, message: error.localizedDescription)
-                telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
+                telemetryManager?.report(
+                    error: error,
+                    stackTrace: Thread.callStackSymbols,
+                    thread: TelemetryUtility.getCurrentThreadInfo()
+                )
                 errorHandler?(error)
             }
         }
         if let exception = exception {
-            telemetryManager?.report(exception: exception)
+            telemetryManager?.report(
+                exception: exception,
+                thread: TelemetryUtility.getCurrentThreadInfo()
+            )
             Exponea.logger.log(.error, message: ExponeaError.nsExceptionRaised(exception).localizedDescription)
             if safeModeEnabled {
                 nsExceptionRaised = true
@@ -565,11 +590,19 @@ public extension ExponeaInternal {
 
     func getSegments(force: Bool = false, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>) {
         executeSafelyWithDependencies { [weak self] _ in
+            Exponea.shared.telemetryManager?.report(
+                eventWithType: .rtsGetSegments,
+                properties: [
+                    "exposingCategory": category.name,
+                    "forceFetch": String(describing: force)
+                ]
+            )
             self?.manualSegmentationManager?.getSegments(category: category, force: force, result: result)
         }
     }
 
     func stopIntegration() {
+        Exponea.shared.telemetryManager?.report(eventWithType: .integrationStopped, properties: [:])
         IntegrationManager.shared.isStopped = true
         afterInit.actionBlocks.removeAll()
         afterInit.setStatus(status: .notInitialized)
@@ -586,6 +619,7 @@ public extension ExponeaInternal {
         trackingManager?.clearSessionManager()
         InAppMessagesCache().clear()
         clearUserDefaults(appGroup: appGroup)
+        telemetryManager?.clear(appGroup)
         clearAllDependencies()
         FileCache.shared.clear()
     }
@@ -595,10 +629,17 @@ public extension ExponeaInternal {
             Exponea.logger.log(.error, message: "This functionality is unavailable without initialization of SDK")
             return
         }
+        Exponea.shared.telemetryManager?.report(
+            eventWithType: .localCustomerDataCleared,
+            properties: [
+                "appGroup": appGroup
+            ]
+        )
         IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
         IntegrationManager.shared.onIntegrationStoppedCallbacks.removeAll()
         notificationsManager?.handlePushTokenRegistered(token: "")
         clearUserDefaults(appGroup: appGroup)
+        telemetryManager?.clear(appGroup)
         InAppMessagesCache().clear()
         try? DatabaseManager().removeAllEvents()
         CampaignRepository(userDefaults: userDefaults).clear()

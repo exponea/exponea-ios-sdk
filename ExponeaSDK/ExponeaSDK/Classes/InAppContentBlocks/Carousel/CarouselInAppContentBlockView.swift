@@ -9,6 +9,9 @@
 import WebKit
 import UIKit
 import Combine
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 open class CarouselInAppContentBlockView: UIView {
 
@@ -411,8 +414,12 @@ extension CarouselInAppContentBlockView: UICollectionViewDelegateFlowLayout {
         if !alreadyShowedMessages.contains(id) {
             alreadyShowedMessages.append(id)
             Exponea.shared.telemetryManager?.report(
-                eventWithType: .showInAppMessage,
-                properties: ["messageType": InAppContentBlockType.carouselContentBlock.type]
+                eventWithType: .contentBlockShown,
+                properties: [
+                    "type": (messageResponse.content == nil ? "personal" : "static"),
+                    "messageId": id,
+                    "placeholders": TelemetryUtility.toJson(messageResponse.placeholders)
+                ]
             )
         }
         inAppContentBlocksManager.updateDisplayedState(for: id)

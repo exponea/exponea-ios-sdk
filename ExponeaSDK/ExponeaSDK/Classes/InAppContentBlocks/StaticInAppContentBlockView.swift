@@ -8,6 +8,9 @@
 
 import UIKit
 import WebKit
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
@@ -82,11 +85,15 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                     placeholderId: placeholder,
                     contentBlock: message
                 )
+                Exponea.shared.telemetryManager?.report(
+                    eventWithType: .contentBlockShown,
+                    properties: [
+                        "type": (message.content == nil ? "personal" : "static"),
+                        "messageId": message.id,
+                        "placeholders": TelemetryUtility.toJson(message.placeholders)
+                    ]
+                )
             }
-            Exponea.shared.telemetryManager?.report(
-                eventWithType: .showInAppMessage,
-                properties: ["messageType": InAppContentBlockType.contentBlock.type]
-            )
         }
         if !deferredLoad {
             getContent()

@@ -333,8 +333,12 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
         trackingConsentManager.trackInAppMessageShown(message: message, mode: .CONSIDER_CONSENT)
         Exponea.shared.inAppMessagesDelegate.inAppMessageShown(message: message)
         Exponea.shared.telemetryManager?.report(
-            eventWithType: .showInAppMessage,
-            properties: ["messageType": message.rawMessageType ?? "null"]
+            eventWithType: .inappMessageShown,
+            properties: [
+                "type": message.rawMessageType ?? "",
+                "isRichStyle": message.isRichText.description,
+                "messageId": message.id
+            ]
         )
     }
 
@@ -491,6 +495,7 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                 message: "[InApp] Fetch completed \(response.data ?? []), total messages: \(response.data?.count ?? 0)"
             )
             self.cache.saveInAppMessages(inAppMessages: response.data ?? [])
+            self.trackTelemetry(response.data ?? [])
             self.cache.deleteImages(except: response.data?.compactMap { message in
                 if message.oldPayload != nil {
                     return message.oldPayload?.imageUrl
@@ -528,6 +533,7 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                                         message: "[InApp] Fetch completed \(messages), total messages: \(messages.count)"
                                     )
                                     self.cache.saveInAppMessages(inAppMessages: messages)
+                                    self.trackTelemetry(messages)
                                     self.cache.deleteImages(except: response.data?.compactMap { message in
                                         if message.oldPayload != nil {
                                             return message.oldPayload?.imageUrl
@@ -551,6 +557,20 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                 }
             }
         }
+    }
+
+    private func trackTelemetry(_ messages: [InAppMessage]) {
+        Exponea.shared.telemetryManager?.report(
+            eventWithType: .inappMessageFetch,
+            properties: [
+                "count": String(messages.count),
+                "data": TelemetryUtility.toJson(messages.map { [
+                    "type": $0.rawMessageType ?? "",
+                    "isRichStyle": $0.isRichText.description,
+                    "messageId": $0.id
+                ] })
+            ]
+        )
     }
 
     private func clearImagesAndFonts() {

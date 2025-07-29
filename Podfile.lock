@@ -38,7 +38,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/kylef/Mockingjay.git
 
 SPEC CHECKSUMS:
-  Mockingjay: 2f6c88dc1487535fd46876be59e4d3ce298a78eb
+  Mockingjay: 97656c6f59879923976a0a52ef09da45756cca82
   Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 749aa754fd1e7d984f2000fe051e18a3a9809179
   SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5

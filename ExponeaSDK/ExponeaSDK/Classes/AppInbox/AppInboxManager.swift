@@ -8,6 +8,9 @@
 
 import Foundation
 import UIKit
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 final class AppInboxManager: AppInboxManagerType {
 
@@ -75,6 +78,7 @@ final class AppInboxManager: AppInboxManagerType {
                     completion(.failure(ExponeaError.stoppedProcess))
                     return
                 }
+                self.trackTelemetry(result)
                 switch result {
                 case .success(let response):
                     guard self.savedCustomerIds.last == nil || Exponea.shared.trackingManager?.customerIds == self.savedCustomerIds.last else {
@@ -101,6 +105,22 @@ final class AppInboxManager: AppInboxManagerType {
                 }
             }
         }
+    }
+    
+    private func trackTelemetry(_ result: Result<AppInboxResponse>) {
+        let isInitFetch = self.appInboxCache.getSyncToken() == nil
+        let messages = result.value?.messages ?? []
+        Exponea.shared.telemetryManager?.report(
+            eventWithType: isInitFetch ? .appInboxInitFetch : .appInboxSyncFetch,
+            properties: [
+                "count": String(messages.count),
+                "data": TelemetryUtility.toJson(messages.map { [
+                    "type": $0.type,
+                    "messageId": $0.id,
+                    "campaignId": TelemetryUtility.readAsString($0.content?.trackingData?["campaign_id"]?.rawValue)
+                ] })
+            ]
+        )
     }
 
     func fetchAppInboxItem(_ messageId: String, completion: @escaping (Result<MessageItem>) -> Void) {

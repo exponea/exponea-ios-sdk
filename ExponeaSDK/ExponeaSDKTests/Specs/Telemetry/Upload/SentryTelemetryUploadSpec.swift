@@ -1,18 +1,20 @@
 //
-//  VSAppCenterTelemetryUploadSpec.swift
+//  SentryTelemetryUploadSpec.swift
 //  ExponeaSDKTests
 //
-//  Created by Panaxeo on 17/01/2020.
-//  Copyright © 2020 Exponea. All rights reserved.
+//  Created by Adam Mihalik on 10/07/2025.
+//  Copyright © 2025 Exponea. All rights reserved.
 //
+
 import Quick
 import Nimble
 import Mockingjay
 import ExponeaSDKObjC
 
 @testable import ExponeaSDK
+@testable import ExponeaSDKShared
 
-final class VSAppCenterTelemetryUploadSpec: QuickSpec {
+final class SentryTelemetryUploadSpec: QuickSpec {
     var networkRequests: [URLRequest] = []
 
     func getRaisedException() -> NSException {
@@ -46,14 +48,12 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
     }
 
     override func spec() {
-        var upload: VSAppCenterTelemetryUpload!
+        var upload: SentryTelemetryUpload!
         beforeEach {
             IntegrationManager.shared.isStopped = false
-            upload = VSAppCenterTelemetryUpload(
-                installId: UUID().uuidString,
-                userId: "mock_user_id",
-                runId: "mock_run_id"
-            )
+            upload = SentryTelemetryUpload(installId: UUID().uuidString) {
+                try? Configuration(projectToken: "mock-token")
+            }
             self.stubNetwork(statusCode: 200)
         }
         afterEach {
@@ -67,15 +67,13 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                     fatal: true,
                     date: Date(),
                     launchDate: Date(),
-                    runId: "mock-run-id"
+                    runId: "mock-run-id",
+                    thread: TelemetryUtility.getCurrentThreadInfo()
                 )
-                if case .fatalError(let errorReport) = upload.getVSAppCenterAPIErrorReport(crashLog) {
-                    expect(errorReport.fatal).to(equal(true))
-                    expect(errorReport.exception.type).to(equal("name of test exception"))
-                    expect(errorReport.exception.message).to(equal("reason for test exception"))
-                } else {
-                    XCTFail("expected fatal error")
-                }
+                let errorReport = upload.buildEnvelope(crashLog: crashLog)
+                expect(errorReport.item.body.level).to(equal("fatal"))
+                expect(errorReport.item.body.exception.values.first!.type).to(equal("name of test exception"))
+                expect(errorReport.item.body.exception.values.first!.value).to(equal("reason for test exception"))
             }
             it("should format non-fatal crashlog") {
                 let crashLog = CrashLog(
@@ -83,15 +81,13 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                     fatal: false,
                     date: Date(),
                     launchDate: Date(),
-                    runId: "mock-run-id"
+                    runId: "mock-run-id",
+                    thread: TelemetryUtility.getCurrentThreadInfo()
                 )
-                if case .nonFatalError(let errorReport) = upload.getVSAppCenterAPIErrorReport(crashLog) {
-                    expect(errorReport.fatal).to(equal(false))
-                    expect(errorReport.exception.type).to(equal("name of test exception"))
-                    expect(errorReport.exception.message).to(equal("reason for test exception"))
-                } else {
-                    XCTFail("expected non-fatal error")
-                }
+                let errorReport = upload.buildEnvelope(crashLog: crashLog)
+                expect(errorReport.item.body.level).to(equal("error"))
+                expect(errorReport.item.body.exception.values.first!.type).to(equal("name of test exception"))
+                expect(errorReport.item.body.exception.values.first!.value).to(equal("reason for test exception"))
             }
 
             it("should format error attachment") {
@@ -101,15 +97,12 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                     date: Date(),
                     launchDate: Date(),
                     runId: "mock-run-id",
-                    logs: ["log1", "log2", "log3"]
+                    logs: ["log1", "log2", "log3"],
+                    thread: TelemetryUtility.getCurrentThreadInfo()
                 )
-                if case .errorAttachment(let errorAttachment) = upload.getVSAppCenterAPIErrorAttachment(crashLog) {
-                    expect(errorAttachment.errorId).to(equal(crashLog.id))
-                    expect(errorAttachment.data).to(equal("bG9nMQpsb2cyCmxvZzM="))
-                } else {
-                    XCTFail("expected error attachment")
-                }
-
+                let errorReport = upload.buildEnvelope(crashLog: crashLog)
+                expect(errorReport.item.body.exception.values.first!.type).to(equal("name of test exception"))
+                expect(errorReport.item.body.exception.values.first!.value).to(equal("reason for test exception"))
             }
 
             it("should successfully upload error log") {
@@ -119,7 +112,8 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                     fatal: true,
                     date: Date(),
                     launchDate: Date(),
-                    runId: "mock-run-id"
+                    runId: "mock-run-id",
+                    thread: TelemetryUtility.getCurrentThreadInfo()
                 )
                 waitUntil(timeout: .seconds(5)) { done in
                     upload.upload(crashLog: crashLog) { result in
@@ -136,7 +130,8 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
                     fatal: true,
                     date: Date(),
                     launchDate: Date(),
-                    runId: "mock-run-id"
+                    runId: "mock-run-id",
+                    thread: TelemetryUtility.getCurrentThreadInfo()
                 )
                 waitUntil(timeout: .seconds(5)) { done in
                     upload.upload(crashLog: crashLog) { result in
@@ -149,7 +144,11 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
             it("should successfully upload event log") {
                 self.stubNetwork(statusCode: 200)
                 waitUntil(timeout: .seconds(5)) { done in
-                    upload.upload(eventWithName: "mock-event-name", properties: ["mock-property": "value"]) { result in
+                    upload.upload(eventLog: EventLog(
+                        name: "mock-event-name",
+                        runId: "mock-run-id",
+                        properties: ["mock-property": "value"]
+                    )) { result in
                         expect(result).to(beTrue())
                         done()
                     }
@@ -159,7 +158,11 @@ final class VSAppCenterTelemetryUploadSpec: QuickSpec {
             it("should fail to upload event log on non-200 status code") {
                 self.stubNetwork(statusCode: 404)
                 waitUntil(timeout: .seconds(5)) { done in
-                    upload.upload(eventWithName: "mock-event-name", properties: ["mock-property": "value"]) { result in
+                    upload.upload(eventLog: EventLog(
+                        name: "mock-event-name",
+                        runId: "mock-run-id",
+                        properties: ["mock-property": "value"]
+                    )) { result in
                         expect(result).to(beFalse())
                         done()
                     }
