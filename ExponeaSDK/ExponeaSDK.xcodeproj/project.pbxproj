@@ -323,6 +323,7 @@
 		55C08DCF2A5689F4000BA66A /* FileCacheType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DCE2A5689F4000BA66A /* FileCacheType.swift */; };
 		55C08DD12A568A55000BA66A /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD02A568A55000BA66A /* FileCache.swift */; };
 		55C08DD32A568C74000BA66A /* FileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD22A568C74000BA66A /* FileUtils.swift */; };
+		55CD476B2E3905C500E8BF3F /* Sequence+RemoveInfinity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD476A2E3905C500E8BF3F /* Sequence+RemoveInfinity.swift */; };
 		55CD47542E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD47532E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift */; };
 		55CD47572E29236600E8BF3F /* TelemetryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFCC237E9260006E83F4 /* TelemetryManager.swift */; };
 		55CD47582E292D9100E8BF3F /* TelemetryUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFD4237E92A4006E83F4 /* TelemetryUpload.swift */; };
@@ -905,6 +906,7 @@
 		55C7817A2E0EA75700B1DEF3 /* ExponeaSentryEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSentryEnvelope.swift; sourceTree = "<group>"; };
 		55CD47532E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentryTelemetryUploadSpec.swift; sourceTree = "<group>"; };
 		55CD47622E29310300E8BF3F /* BuildConfigurationShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildConfigurationShared.swift; sourceTree = "<group>"; };
+		55CD476A2E3905C500E8BF3F /* Sequence+RemoveInfinity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+RemoveInfinity.swift"; sourceTree = "<group>"; };
 		55D054392B230C9600BC773A /* InAppContentBlockCallbackType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockCallbackType.swift; sourceTree = "<group>"; };
 		55D0543B2B2351A000BC773A /* InAppContentBlockAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockAction.swift; sourceTree = "<group>"; };
 		55D0543D2B29BE2200BC773A /* ExtensionUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionUtils.swift; sourceTree = "<group>"; };
@@ -1417,6 +1419,7 @@
 				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
 				55CD47622E29310300E8BF3F /* BuildConfigurationShared.swift */,
+				55CD476A2E3905C500E8BF3F /* Sequence+RemoveInfinity.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -2980,6 +2983,7 @@
 				55CD475D2E292DB200E8BF3F /* TelemetryEventType.swift in Sources */,
 				0561832325ADB1BC001E30A3 /* Result.swift in Sources */,
 				0561832E25ADB1BD001E30A3 /* TrackingParameters.swift in Sources */,
+				55CD476B2E3905C500E8BF3F /* Sequence+RemoveInfinity.swift in Sources */,
 				053BC75E25ADD16B007D70D4 /* Configuration+UserDefaults.swift in Sources */,
 				0561830F25AD9EEB001E30A3 /* URLRequest+Debug.swift in Sources */,
 				31EBB8662A6AC3330003AAA5 /* Extension+CleanURL.swift in Sources */,

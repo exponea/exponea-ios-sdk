@@ -84,7 +84,10 @@ public extension RequestFactory {
             }
 
             do {
-                request.httpBody = try JSONSerialization.data(withJSONObject: params.removeNill(), options: [])
+                request.httpBody = try JSONSerialization.data(
+                    withJSONObject: params.removeNill().removeInfinity(),
+                    options: []
+                )
             } catch {
                 Exponea.logger.log(.error,
                                    message: "Failed to serialise request body into JSON: \(error.localizedDescription)")
