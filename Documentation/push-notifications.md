@@ -83,6 +83,8 @@ For your application to be able to respond to push notification-related events, 
 
 The [`ExponeaAppDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/ExponeaSDK/Classes/ExponeaAppDelegate.swift) class in the SDK provides default implementations of these methods. We recommend that you extend `ExponeaAppDelegate` in your `AppDelegate`. 
 
+For applications using the UIKit lifecycle, ensure that your AppDelegate class subclasses ExponeaAppDelegate:
+
 ```swift
 @UIApplicationMain
 class AppDelegate: ExponeaAppDelegate {
@@ -97,6 +99,38 @@ class AppDelegate: ExponeaAppDelegate {
         )
         Exponea.shared.checkPushSetup = true
         Exponea.shared.configure(...)
+        return true
+    }
+}
+```
+
+For applications using the SwiftUI lifecycle, register an UIApplicationDelegateAdaptor referencing an AppDelegate that subclasses ExponeaAppDelegate.
+
+```swift
+// YourApp.swift
+@main
+struct YourApp: App {
+    @UIApplicationDelegateAdaptor(YourAppDelegate.self) var appDelegate
+    init() {
+        // ... your app init here
+        // you may init SDK here or in AppDelegate implementation
+    }
+}
+
+// YourAppDelegate.swift
+class YourAppDelegate: ExponeaAppDelegate {
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        // don't forget to call the super method!!
+        super.application(
+            application,
+            didFinishLaunchingWithOptions: launchOptions
+        )
+        Exponea.shared.checkPushSetup = true
+        Exponea.shared.configure(...)
+        return true
     }
 }
 ```
