@@ -11,6 +11,19 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.6.0
+#### July 31, 2025
+* Added:
+  * Sentry integration for telemetry (replacing AppCenter)
+  * SwiftSoup library updated to version 2.7.6
+* Removed:
+  * Carthage package manager distribution
+  * AppCenter telemetry integration
+* Fixed:
+  * Removes Infinity double and float values from event payload before flush, as they aren't supported in JSON
+  * Updates validation steps of PushSelfCheck to support SwiftUI app delegate
+
+
 ## Release Notes for 3.5.2
 #### June 16, 2025
 * Fixed:
