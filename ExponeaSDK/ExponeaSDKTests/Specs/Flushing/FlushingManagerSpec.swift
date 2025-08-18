@@ -186,9 +186,8 @@ class FlushingManagerSpec: QuickSpec {
                                 with: request.httpBodyStream!.readFully(),
                                 options: []
                             ) as? NSDictionary ?? NSDictionary()
-                            expect(payload["age"] as? Double).notTo(beNil())
-                            expect(payload["timestamp"] as? Double).to(beNil())
-                            expect(payload["age"] as? Double).to(beGreaterThan(0))
+                            expect(payload["timestamp"] as? Double).notTo(beNil())
+                            expect(payload["timestamp"] as? Double).to(beGreaterThan(0))
                             done()
                         }
                     )
@@ -219,7 +218,6 @@ class FlushingManagerSpec: QuickSpec {
                                 with: request.httpBodyStream!.readFully(),
                                 options: []
                             ) as? NSDictionary ?? NSDictionary()
-                            expect(payload["age"] as? Double).to(beNil())
                             expect(payload["timestamp"] as? Double).notTo(beNil())
                             expect(payload["timestamp"] as? Double).to(equal(timestamp))
                             done()
