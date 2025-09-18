@@ -31,7 +31,7 @@ class TrackEvent: NSManagedObjectWithContext, DatabaseObject {
 extension TrackEvent {
 
     var dataTypes: [DataType] {
-        let data: [DataType]? = managedObjectContext?.performAndWait {
+        let data: [DataType]? = managedObjectContext?.performAndWaitSafely {
             var data: [DataType] = []
 
             // Convert all properties to key value items.

@@ -27,7 +27,7 @@ class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
     @NSManaged public var retries: NSNumber
 
     var dataTypes: [DataType] {
-        let data: [DataType]? = managedObjectContext?.performAndWait {
+        let data: [DataType]? = managedObjectContext?.performAndWaitSafely {
             var data: [DataType] = []
             // Convert all properties to key value items.
             if let properties = properties as? Set<KeyValueItem> {

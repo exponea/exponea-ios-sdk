@@ -77,13 +77,13 @@ extension DatabaseManager {
     }
 
     public var currentCustomer: CustomerThreadSafe {
-        return context.performAndWait {
+        return context.performAndWaitSafely {
             return CustomerThreadSafe(currentCustomerManagedObject)
         }
     }
 
     private var currentCustomerManagedObject: Customer {
-        return context.performAndWait {
+        return context.performAndWaitSafely {
             do {
                 let customers: [Customer] = try context.fetch(Customer.fetchRequest())
                 // If we have customer return it, otherwise create a new one
@@ -105,7 +105,7 @@ extension DatabaseManager {
     }
 
     private func makeNewCustomerInternal() -> Customer {
-        return context.performAndWait {
+        return context.performAndWaitSafely {
             let customer = Customer(uuid: UUID(), context: context)
             context.insert(customer)
 
@@ -129,7 +129,7 @@ extension DatabaseManager {
 
     /// Just list all customers in db. Mainly for debugging and testing
     var customers: [CustomerThreadSafe] {
-        return context.performAndWait {
+        return context.performAndWaitSafely {
             do {
                 let customers: [Customer] = try context.fetch(Customer.fetchRequest())
                 return customers.map { CustomerThreadSafe($0) }
@@ -141,7 +141,7 @@ extension DatabaseManager {
     }
 
     private func fetchCurrentCustomerAndUpdate(with ids: [String: String]) -> Customer {
-        return context.performAndWait {
+        return context.performAndWaitSafely {
             let customer = self.currentCustomerManagedObject
 
             // Add the ids to the customer entity
@@ -185,7 +185,7 @@ extension DatabaseManager {
     }
 
     private func fetchCurrentCustomerAndUpdate(pushToken: String?) -> Customer {
-        return context.performAndWait {
+        return context.performAndWaitSafely {
             let customer = self.currentCustomerManagedObject
 
             // Update push token and last token track date
@@ -263,7 +263,7 @@ extension DatabaseManager: DatabaseManagerType {
             Exponea.logger.log(.error, message: "Event \(data) has not been tracked, SDK is stopping")
             return
         }
-        try context.performAndWait {
+        try context.performAndWaitSafely {
             guard let object = try? context.existingObject(with: id) else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
@@ -299,7 +299,7 @@ extension DatabaseManager: DatabaseManagerType {
             }
             return
         }
-        try context.performAndWait {
+        try context.performAndWaitSafely {
             let trackEvent = TrackEvent(context: context)
             if data.customerIds.isEmpty {
                 Exponea.logger.log(.error, message: "Event track with no customer IDs occured, fallback to current")
@@ -356,7 +356,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `timestamp`
     /// - Throws: <#throws value description#>
     func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws {
-        try context.performAndWait {
+        try context.performAndWaitSafely {
             loadTrackingCustomer(context: context, with: data, into: project)
             // Save the customer properties into CoreData
             try saveContext(context)
@@ -436,20 +436,20 @@ extension DatabaseManager: DatabaseManagerType {
     ///
     /// - Returns: An array of tracking customer updates, if any are stored in the database.
     func fetchTrackCustomer() throws -> [TrackCustomerProxy] {
-        return try context.performAndWait {
+        return try context.performAndWaitSafely {
             let trackCustomerEvents: [TrackCustomer] = try context.fetch(TrackCustomer.fetchRequest())
             return trackCustomerEvents.map { TrackCustomerProxy($0) }
         }
     }
     
     func fetchCustomer(_ uuid: UUID) throws -> Customer? {
-        return try context.performAndWait {
+        return try context.performAndWaitSafely {
             return try context.fetch(Customer.fetchRequest(uuid: uuid)).first
         }
     }
 
     func countTrackCustomer() throws -> Int {
-        return try context.performAndWait {
+        return try context.performAndWaitSafely {
             try context.count(for: TrackCustomer.fetchRequest())
         }
     }
@@ -458,20 +458,20 @@ extension DatabaseManager: DatabaseManagerType {
     ///
     /// - Returns: An array of tracking events, if any are stored in the database.
     func fetchTrackEvent() throws -> [TrackEventProxy] {
-        return try context.performAndWait {
+        return try context.performAndWaitSafely {
             let trackEvents: [TrackEvent] = try context.fetch(TrackEvent.fetchRequest())
             return trackEvents.map { TrackEventProxy($0) }
         }
     }
 
     func countTrackEvent() throws -> Int {
-        return try context.performAndWait {
+        return try context.performAndWaitSafely {
             try context.count(for: TrackEvent.fetchRequest())
         }
     }
 
     func addRetry(_ databaseObjectProxy: DatabaseObjectProxy) throws {
-        try context.performAndWait {
+        try context.performAndWaitSafely {
             guard let object = try? context.existingObject(with: databaseObjectProxy.objectID) else {
                 throw DatabaseManagerError.objectDoesNotExist
             }
@@ -488,7 +488,7 @@ extension DatabaseManager: DatabaseManagerType {
     }
 
     private func delete(_ objectID: NSManagedObjectID) throws {
-        try context.performAndWait {
+        try context.performAndWaitSafely {
             guard let object = try? context.existingObject(with: objectID) else {
                 return
             }
