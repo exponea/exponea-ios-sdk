@@ -7,10 +7,10 @@ platform :ios, '13.0'
 use_frameworks!
 
 target 'ExponeaSDK' do
-  pod 'SwiftSoup', '2.7.6'
+  pod 'SwiftSoup', '>= 2.7.6', '< 3.0'
 end
 target 'Example' do
-    pod 'SwiftSoup', '2.7.6'
+    pod 'SwiftSoup', '>= 2.7.6', '< 3.0'
 end
 
 target 'ExponeaSDKTests' do
