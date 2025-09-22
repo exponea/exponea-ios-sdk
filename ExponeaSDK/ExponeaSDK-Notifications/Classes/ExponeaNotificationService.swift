@@ -18,7 +18,7 @@ public class ExponeaNotificationService {
     private var isSDKStopped: Bool {
         UserDefaults(suiteName: appGroup ?? "ExponeaSDK")?.value(forKey: "isStopped") as? Bool ?? false
     }
-    private let telemetry: TelemetryUpload?
+    internal var telemetry: TelemetryUpload?
 
     var request: UNNotificationRequest?
     var contentHandler: ((UNNotificationContent) -> Void)?

@@ -51,6 +51,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
         describe("saving notifications for later") {
             it("should record notification into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                service.telemetry = nil
                 service.saveNotificationForLaterTracking(
                     notification: NotificationData( attributes: ["campaign_name": .string("mock campaign name")])
                 )
@@ -62,6 +63,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
             
             it("should record notification event into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                service.telemetry = nil
                 let notification = NotificationData( attributes: ["campaign_name": .string("mock campaign name")])
                 let configuration = try! Configuration(
                     projectToken: "mock-project-token",
@@ -85,6 +87,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
             it("should record notification without tracking info into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                service.telemetry = nil
                 service.saveNotificationForLaterTracking(
                     notification: NotificationData()
                 )
@@ -94,6 +97,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
             it("should record multiple notifications into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                service.telemetry = nil
                 service.saveNotificationForLaterTracking(
                     notification: NotificationData( attributes: ["campaign_name": .string("mock campaign name")])
                 )
@@ -118,6 +122,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
             it("should record multiple notification events into user defaults") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                service.telemetry = nil
                 let configuration = try! Configuration(
                     projectToken: "mock-project-token",
                     projectMapping: nil,
@@ -167,6 +172,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
             it("should create content") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                service.telemetry = nil
                 waitUntil(timeout: .seconds(10)) { done in
                     service.process(request: request) { content in
                         expect(content.title).to(equal("Test push notification title"))
@@ -178,6 +184,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
 
             it("should save notification for later when unable to track") {
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                service.telemetry = nil
                 waitUntil(timeout: .seconds(10)) { done in
                     service.process(request: request) { _ in
                         // for missing SDK conf, only raw NotifPayload should be stored
@@ -207,6 +214,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
                 userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 500)
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                service.telemetry = nil
                 waitUntil(timeout: .seconds(10)) { done in
                     service.process(request: request) { _ in
                         // for existing SDK conf, raw NotifPayloads are meaningless to be stored
@@ -235,6 +243,7 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
                 userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
                 NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 200)
                 let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                service.telemetry = nil
                 waitUntil(timeout: .seconds(5)) { done in
                     service.process(request: request) { _ in
                         expect(self.getRecordedNotifications()).to(beNil())
