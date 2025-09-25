@@ -49,7 +49,7 @@ Follow the instructions in the relevant section for the dependency manager you u
 
 Optionally, you can specify the ExponeaSDK version as follows to let `pod` automatically any smaller than minor version updates:
 ```
-pod "ExponeaSDK-Notifications", "~> 3.6.0"
+pod "ExponeaSDK-Notifications", "~> 3.7.0"
 ```
 
 ### Swift Package Manager
