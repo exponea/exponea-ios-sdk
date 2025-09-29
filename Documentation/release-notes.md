@@ -15,6 +15,7 @@ parentDocSlug: ios-sdk
 #### September 25, 2025
 * Added:
   * Updates SwiftSoup library to next major version (from 2.7.6).
+  * Replace age with timestamp for tracked Engagement events.
 * Fixed:
   * Fixes Xcode 26 build issues related to 'performAndWait' method.
 
