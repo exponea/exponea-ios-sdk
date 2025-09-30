@@ -17,7 +17,7 @@ final class AppInboxCache: AppInboxCacheType {
     private var data: AppInboxData!
 
     init() {
-        data = loadDataFromLocalStorage()
+        self.data = loadDataFromLocalStorage()
     }
 
     private func getCacheDirectoryURL() -> URL? {

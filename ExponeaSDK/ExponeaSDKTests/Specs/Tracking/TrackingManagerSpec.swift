@@ -78,7 +78,11 @@ class TrackingManagerSpec: QuickSpec {
                 ]
                 expect { try trackingManager.track(EventType.customEvent, with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent()[0].dataTypes }.to(equal([
-                    .properties(["prop": .string("value"), "default_prop": .string("default_value")]),
+                    .properties([
+                        "prop": .string("value"),
+                        "default_prop": .string("default_value"),
+                        "application_id": .string("default-application")
+                    ]),
                     .timestamp(123456)
                 ]))
             }
@@ -87,7 +91,10 @@ class TrackingManagerSpec: QuickSpec {
                 let data: [DataType] = [.timestamp(123456)]
                 expect { try trackingManager.track(EventType.customEvent, with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackEvent()[0].dataTypes }.to(equal([
-                    .properties(["default_prop": .string("default_value")]),
+                    .properties([
+                        "default_prop": .string("default_value"),
+                        "application_id": .string("default-application")
+                    ]),
                     .timestamp(123456)
                 ]))
             }

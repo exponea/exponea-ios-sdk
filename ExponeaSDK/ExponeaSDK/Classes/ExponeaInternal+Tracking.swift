@@ -100,10 +100,13 @@ extension ExponeaInternal {
                 throw ExponeaError.authorizationInsufficient
             }
             UNAuthorizationStatusProvider.current.isAuthorized { authorized in
-                let data: [DataType] = [.pushNotificationToken(token: token, authorized: authorized)]
                 // Do the actual tracking
                 self.executeSafely {
-                    try dependencies.trackingManager.track(.registerPushToken, with: data)
+                    try dependencies.trackingManager.trackNotificationState(
+                        pushToken: token,
+                        isValid: authorized,
+                        description: authorized ? "Permission granted" : "Permission denied"
+                    )
                 }
             }
         }
@@ -322,6 +325,12 @@ extension ExponeaInternal {
             dependencies.notificationsManager.handlePushTokenRegistered(
                 dataObject: deviceToken as AnyObject?
             )
+        }
+    }
+
+    public func trackCurrentPushNotificationToken() {
+        executeSafelyWithDependencies { dependencies in
+            dependencies.notificationsManager.trackCurrentPushToken()
         }
     }
 

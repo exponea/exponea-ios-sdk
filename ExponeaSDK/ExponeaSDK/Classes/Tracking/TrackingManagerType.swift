@@ -42,6 +42,13 @@ protocol TrackingManagerType: AnyObject {
         isUserInteraction: Bool
     )
     
+    /// This function is used to track the current push notification token
+    ///  - Parameters:
+    ///    - pushToken: current push notification token
+    ///    - isValid: boolean value that is responsible to remove or move push notification token from one customer to another
+    ///    - description: providing information about the state of device's push notification permission
+    func trackNotificationState(pushToken: String?, isValid: Bool, description: String) throws
+    
     // Function used to track inAppContentBlocks message banner click event
     func trackInAppContentBlockClick(
         placeholderId: String,

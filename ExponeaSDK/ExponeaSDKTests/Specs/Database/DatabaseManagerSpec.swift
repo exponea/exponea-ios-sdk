@@ -33,15 +33,13 @@ class DatabaseManagerSpec: QuickSpec {
                 let customerData: [DataType] = [
                     .timestamp(100),
                     .customerIds(["registered": "myemail"]),
-                    .properties(["customprop": .string("customval")]),
-                    .pushNotificationToken(token: "pushtoken", authorized: true)
+                    .properties(["customprop": .string("customval")])
                 ]
 
                 let eventData: [DataType] = [
                     .timestamp(100),
                     .properties(["customprop": .string("customval")]),
-                    .eventType("myevent"),
-                    .pushNotificationToken(token: "tokenthatisgoingtobeignored", authorized: true)
+                    .eventType("myevent")
                 ]
 
                 describe("customer handling") {
@@ -102,10 +100,9 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(db.currentCustomer.ids["registered"]).to(equal("myemail"))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
-                    expect(props.count).to(equal(2))
+                    expect(props.count).to(equal(1))
 
                     expect(props["customprop"] as? String).to(equal("customval"))
-                    expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
 
                     expect(object.timestamp).to(equal(100))
 
@@ -276,10 +273,10 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(db.currentCustomer.ids["registered"]).to(equal("myemail"))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
-                    expect(props.count).to(equal(2))
+                    expect(props.count).to(equal(3))
 
                     expect(props["customprop"] as? String).to(equal("customval"))
-                    expect(props["apple_push_notification_id"] as? String).to(equal("pushtoken"))
+                    expect(props["push_notification_token"] as? String).notTo(beEmpty())
 
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.5))
 
@@ -347,14 +344,12 @@ class DatabaseManagerSpec: QuickSpec {
             describe("when stressed", {
                 let customerData: [DataType] = [
                     .customerIds(["registered": "myemail"]),
-                    .properties(["customprop": .string("customval")]),
-                    .pushNotificationToken(token: "pushtoken", authorized: true)
+                    .properties(["customprop": .string("customval")])
                 ]
 
                 let eventData: [DataType] = [
                     .properties(["customprop": .string("customval")]),
-                    .eventType("myevent"),
-                    .pushNotificationToken(token: "tokenthatisgoingtobeignored", authorized: true)
+                    .eventType("myevent")
                 ]
 
                 it("should not crash when tracking event", closure: {

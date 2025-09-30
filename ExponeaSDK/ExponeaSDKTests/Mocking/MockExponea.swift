@@ -59,6 +59,7 @@ final class MockExponeaImplementation: ExponeaInternal {
                     self.appInboxManager = AppInboxManager(
                         repository: repository,
                         trackingManager: trackingManager,
+                        cache: AppInboxCache(),
                         database: database
                     )
                     self.notificationsManager = PushNotificationManager(

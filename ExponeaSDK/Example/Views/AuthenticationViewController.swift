@@ -43,6 +43,12 @@ class AuthenticationViewController: UIViewController {
             urlField.text = UserDefaults.standard.string(forKey: "savedUrl") ?? ""
         }
     }
+    
+    @IBOutlet weak var applicationIDField: UITextField! {
+        didSet {
+            applicationIDField.delegate = self
+        }
+    }
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var clearDataButton: UIButton!
 
@@ -51,6 +57,7 @@ class AuthenticationViewController: UIViewController {
         tokenField.attributedPlaceholder = makePlaceholderText(text: tokenField.placeholder)
         authField.attributedPlaceholder = makePlaceholderText(text: authField.placeholder)
         urlField.attributedPlaceholder = makePlaceholderText(text: urlField.placeholder)
+        applicationIDField.attributedPlaceholder = makePlaceholderText(text: applicationIDField.placeholder)
         advancedPublicKeyField.attributedPlaceholder = makePlaceholderText(text: advancedPublicKeyField.placeholder)
         tokenUpdated()
     }
@@ -93,6 +100,11 @@ class AuthenticationViewController: UIViewController {
             publicKey: advancedAuthPubKey,
             expiration: nil
         )
+        
+        var applicationID: String?
+        if let text = applicationIDField.text {
+            applicationID = text
+        }
 
         let exponea = Exponea.shared.onInitSucceeded {
             Exponea.logger.log(.verbose, message: "Configuration initialization succeeded")
@@ -117,7 +129,8 @@ class AuthenticationViewController: UIViewController {
                 "Property01": "String value",
                 "Property02": 123
             ],
-            advancedAuthEnabled: advancedAuthPubKey?.isEmpty == false
+            advancedAuthEnabled: advancedAuthPubKey?.isEmpty == false,
+            applicationID: applicationID
         )
         exponea.inAppMessagesDelegate = TestDefaultInAppDelegate()
         Exponea.logger.log(.verbose, message: "After Configuration call")
@@ -145,7 +158,6 @@ extension AuthenticationViewController: UITextFieldDelegate {
 
         case urlField where urlField.text?.isEmpty == false:
             UserDefaults.standard.set(textField.text, forKey: "savedUrl")
-
         default:
             break
         }

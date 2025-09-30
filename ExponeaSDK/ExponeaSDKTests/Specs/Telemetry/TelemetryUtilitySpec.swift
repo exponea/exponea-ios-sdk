@@ -73,6 +73,7 @@ final class TelemetryUtilitySpec: QuickSpec {
                         "automaticSessionTracking": "true [default]",
                         "projectMapping": "",
                         "sessionTimeout": "60.0 [default]",
+                        "application_id": Constants.General.applicationID,
                         "appGroup": "nil",
                         "automaticPushNotificationTracking": "true [default]"
                     ])
@@ -107,6 +108,7 @@ final class TelemetryUtilitySpec: QuickSpec {
                         "tokenTrackFrequency": "daily",
                         "flushEventMaxRetries": "123",
                         "automaticPushNotificationTracking": "false",
+                        "application_id": Constants.General.applicationID,
                         "baseUrl": "http://mock-base-url.com",
                         "inAppContentBlocksPlaceholders": "[default]",
                         "allowDefaultCustomerProperties": "true [default]",

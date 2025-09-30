@@ -29,12 +29,18 @@ final class AppInboxManager: AppInboxManagerType {
         repository: RepositoryType,
         trackingManager: TrackingManagerType,
         cache: AppInboxCacheType = AppInboxCache(),
-        database: DatabaseManagerType
+        database: DatabaseManagerType,
+        cachedAppId: String = Constants.General.applicationID
     ) {
+        
         self.repository = repository
         self.trackingManager = trackingManager
         self.appInboxCache = cache
         self.databaseManager = database
+        
+        if cachedAppId != repository.configuration.applicationID {
+            clear()
+        }
 
         IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
             guard let self else { return }
@@ -106,7 +112,7 @@ final class AppInboxManager: AppInboxManagerType {
             }
         }
     }
-    
+
     private func trackTelemetry(_ result: Result<AppInboxResponse>) {
         let isInitFetch = self.appInboxCache.getSyncToken() == nil
         let messages = result.value?.messages ?? []

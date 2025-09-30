@@ -379,6 +379,7 @@ class ExponeaSpec: QuickSpec {
                     try! database.clear()
 
                     let firstCustomer = database.currentCustomer
+                    Exponea.shared.userDefaults.set("device-id", forKey: "EXPONEA_TELEMETRY_INSTALL_ID")
                     let exponea = ExponeaInternal()
                     Exponea.shared = exponea
                     Exponea.shared.configure(
@@ -386,6 +387,7 @@ class ExponeaSpec: QuickSpec {
                         pushNotificationTracking: .disabled,
                         flushingSetup: Exponea.FlushingSetup(mode: .manual)
                     )
+
                     Exponea.shared.trackPushToken("token")
                     Exponea.shared.trackEvent(properties: [:], timestamp: nil, eventType: "test")
                     Exponea.shared.anonymize(
@@ -398,48 +400,81 @@ class ExponeaSpec: QuickSpec {
                     let secondCustomer = database.currentCustomer
 
                     let events = try! database.fetchTrackEvent()
-                    expect(events.count).to(equal(5))
+                    expect(events.count).to(equal(8))
                     expect(events[0].eventType).to(equal("installation"))
                     expect(events[0].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(events[0].projectToken).to(equal("mock-token"))
 
-                    expect(events[1].eventType).to(equal("test"))
+                    expect(events[1].eventType).to(equal("notification_state"))
                     expect(events[1].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(events[1].projectToken).to(equal("mock-token"))
 
-                    expect(events[2].eventType).to(equal("session_end"))
+                    expect(events[2].eventType).to(equal("test"))
                     expect(events[2].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(events[2].projectToken).to(equal("mock-token"))
 
-                    expect(events[3].eventType).to(equal("installation"))
-                    expect(events[3].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
-                    expect(events[3].projectToken).to(equal("other-mock-token"))
+                    expect(events[3].eventType).to(equal("session_end"))
+                    expect(events[3].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
+                    expect(events[3].projectToken).to(equal("mock-token"))
 
-                    expect(events[4].eventType).to(equal("session_start"))
-                    expect(events[4].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
-                    expect(events[4].projectToken).to(equal("other-mock-token"))
+                    expect(events[4].eventType).to(equal("notification_state"))
+                    expect(events[4].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
+                    expect(events[4].projectToken).to(equal("mock-token"))
+
+                    expect(events[5].eventType).to(equal("notification_state"))
+                    expect(events[5].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
+                    expect(events[5].projectToken).to(equal("other-mock-token"))
+
+                    expect(events[6].eventType).to(equal("installation"))
+                    expect(events[6].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
+                    expect(events[6].projectToken).to(equal("other-mock-token"))
+
+                    expect(events[7].eventType).to(equal("session_start"))
+                    expect(events[7].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
+                    expect(events[7].projectToken).to(equal("other-mock-token"))
 
                     let customerUpdates = try! database.fetchTrackCustomer()
                     expect(customerUpdates.count).to(equal(3))
                     expect(customerUpdates[0].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(customerUpdates[0].dataTypes)
-                        .to(equal([.properties([
-                            "apple_push_notification_id": .string("token")
-                        ])]))
+                        .to(equal([
+                            .properties([
+                                "platform": .string("iOS"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults)),
+                                "description": .string("Permission granted"),
+                                "push_notification_token": .string("token"),
+                                "valid": .bool(true)
+                            ])
+                        ]))
                     expect(customerUpdates[0].projectToken).to(equal("mock-token"))
 
                     expect(customerUpdates[1].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
                     expect(customerUpdates[1].dataTypes)
-                        .to(equal([.properties([
-                            "apple_push_notification_id": .string("")
-                        ])]))
+                        .to(equal([
+                            .properties([
+                                "platform": .string("iOS"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults)),
+                                "description": .string("Invalidated"),
+                                "push_notification_token": .string("token"),
+                                "valid": .bool(false)
+                            ])
+                        ]))
                     expect(customerUpdates[1].projectToken).to(equal("mock-token"))
 
                     expect(customerUpdates[2].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
                     expect(customerUpdates[2].dataTypes)
-                        .to(equal([.properties([
-                            "apple_push_notification_id": .string("token")
-                        ])]))
+                        .to(equal([
+                            .properties([
+                                "platform": .string("iOS"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults)),
+                                "description": .string("Permission granted"),
+                                "push_notification_token": .string("token"),
+                                "valid": .bool(true)
+                            ])
+                        ]))
                     expect(customerUpdates[2].projectToken).to(equal("other-mock-token"))
                 }
 

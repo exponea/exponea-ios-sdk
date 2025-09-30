@@ -12,7 +12,20 @@ This page provides an overview of all configuration parameters for the SDK and s
 
 * `projectToken` **(required)**
    * Your project token. You can find this in the Engagement web app under `Project settings` > `Access management` > `API`.
-
+   
+* `applicationId`
+  * This `applicationId` defines a unique identifier for the mobile app within the Engagement project. Change this value only if your Engagement project contains and supports multiple mobile apps.
+  * This identifier distinguishes between different apps in the same project.
+  * Your `applicationId` value must be the same as the one defined in your Engagement project settings.
+  * If your Engagement project supports only one app, skip the `applicationId` configuration. The SDK will use the default value automatically.
+  * Must be in a specific format, see rules:
+    * Starts with one or more lowercase letters or digits
+    * Additional words are separated by single hyphens or dots
+    * No leading or trailing hyphens or dots
+    * No consecutive hyphens or dots
+    * Maximum length is 50 characters
+  * Default value: `default-application`
+  
 * `authorization` **(required)**
    * Options are `.none` or `.token(token)`.
    * The token must be an Engagement **public** key. See [Mobile SDKs API Access Management](https://documentation.bloomreach.com/engagement/docs/mobile-sdks-api-access-management) for details.
@@ -98,7 +111,8 @@ func configure(
         pushNotificationTracking: PushNotificationTracking,
         automaticSessionTracking: AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
-        flushingSetup: FlushingSetup = FlushingSetup.default
+        flushingSetup: FlushingSetup = FlushingSetup.default,
+        applicationId: String = "default-application"
     )
 ```
 
@@ -170,7 +184,8 @@ Exponea.shared.configure(
 	automaticSessionTracking: .enabled(timeout: 123),
 	defaultProperties: ["prop-1": "value-1", "prop-2": 123],
 	flushingSetup: Exponea.FlushingSetup(mode: .periodic(100), maxRetries: 5),
-	advancedAuthEnabled: true
+	advancedAuthEnabled: true,
+    applicationId: "com.yourApplication.org"
 )
 ```
 
@@ -204,6 +219,8 @@ Exponea.shared.configure(plistName: "ExampleConfig.plist")
 	<string>testToken</string>
 	<key>sessionTimeout</key>
 	<integer>20</integer>
+    <key>applicationId</>
+    <string>com.yourApplication.org</>
 	<key>projectMapping</key>
 	<dict>
 		<key>INSTALL</key>

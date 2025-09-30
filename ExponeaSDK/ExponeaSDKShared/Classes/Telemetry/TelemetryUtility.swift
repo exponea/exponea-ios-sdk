@@ -82,7 +82,8 @@ public final class TelemetryUtility {
             + "\(config.appInboxDetailImageInset == defaultConfig.appInboxDetailImageInset ? " [default]" : "")",
             "manualSessionAutoClose":
                 "\(config.manualSessionAutoClose)"
-            + "\(config.manualSessionAutoClose == defaultConfig.manualSessionAutoClose ? " [default]" : "")"
+            + "\(config.manualSessionAutoClose == defaultConfig.manualSessionAutoClose ? " [default]" : "")",
+            "application_id": Constants.General.applicationID
         ]
     }
     

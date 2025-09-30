@@ -99,6 +99,22 @@ Your `AppDelegate`'s `application:didFinishLaunchingWithOptions` method is typic
 
 At this point, the SDK is active and should now be tracking customers and events in your app.
 
+####Configure application ID
+*Multiple mobile apps:* If your Engagement project supports multiple mobile apps, specify the `applicationId` in your configuration. This helps distinguish between different apps in your project.
+
+```swift
+Exponea.shared.configure(
+    Exponea.ProjectSettings(
+        projectToken: "YOUR PROJECT TOKEN",
+        authorization: .token("YOUR API KEY"),
+        baseUrl: "https://api.exponea.com",
+        applicationId: "<Your application id>" 
+    ),
+    pushNotificationTracking: .disabled
+)
+```
+*Single mobile app:* If your Engagement project supports only one app, you can skip the `applicationId` configuration. The SDK will automatically use the default value "default-application".
+
 SDK initialization immediately creates a new customer profile with a new cookie [soft ID](https://documentation.bloomreach.com/engagement/docs/customer-identification#soft-id) unless the customer has been [identified](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking#identify) previously.
 
 > 📘

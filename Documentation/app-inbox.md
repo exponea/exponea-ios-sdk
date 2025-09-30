@@ -6,7 +6,11 @@ categorySlug: integrations
 parentDocSlug: ios-sdk
 ---
 
-The App Inbox feature adds a mobile communication channel directly in the app. The App Inbox can receive messages sent by campaigns and store mobile push notifications for a defined period. Note that the SDK can only fetch App Inbox messages if the current app user has a customer profile identified by a [hard ID](https://documentation.bloomreach.com/engagement/docs/customer-identification#hard-id).
+The App Inbox feature creates a mobile communication channel that lives directly in your app. This inbox can receive messages from marketing campaigns and stores mobile push notifications for a set time period.
+You can configure the inbox to receive messages from multiple projects by setting the `applicationId` parameter during setup.
+❗️Important
+The SDK can only retrieve App Inbox messages when the current app user has a customer profile with a [hard ID](https://documentation.bloomreach.com/engagement/docs/customer-identification#hard-id). 
+Without this identification, the feature won't work.
 
 Refer to the [App Inbox](https://documentation.bloomreach.com/engagement/docs/app-inbox) documentation for information on creating and sending App Inbox messages in the Engagement web app.
 

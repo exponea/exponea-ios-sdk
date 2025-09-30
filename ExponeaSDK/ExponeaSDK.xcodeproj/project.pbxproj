@@ -323,7 +323,6 @@
 		55C08DCF2A5689F4000BA66A /* FileCacheType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DCE2A5689F4000BA66A /* FileCacheType.swift */; };
 		55C08DD12A568A55000BA66A /* FileCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD02A568A55000BA66A /* FileCache.swift */; };
 		55C08DD32A568C74000BA66A /* FileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C08DD22A568C74000BA66A /* FileUtils.swift */; };
-		55CD476B2E3905C500E8BF3F /* Sequence+RemoveInfinity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD476A2E3905C500E8BF3F /* Sequence+RemoveInfinity.swift */; };
 		55CD47542E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD47532E2013F700E8BF3F /* SentryTelemetryUploadSpec.swift */; };
 		55CD47572E29236600E8BF3F /* TelemetryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFCC237E9260006E83F4 /* TelemetryManager.swift */; };
 		55CD47582E292D9100E8BF3F /* TelemetryUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F3EFD4237E92A4006E83F4 /* TelemetryUpload.swift */; };
@@ -337,6 +336,7 @@
 		55CD47602E292DBE00E8BF3F /* ErrorStackTraceElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C269B52E0FED20004CB427 /* ErrorStackTraceElement.swift */; };
 		55CD47612E292DC200E8BF3F /* EventLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5529AE952E13BBD6007FB0C8 /* EventLog.swift */; };
 		55CD47632E29310300E8BF3F /* BuildConfigurationShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD47622E29310300E8BF3F /* BuildConfigurationShared.swift */; };
+		55CD476B2E3905C500E8BF3F /* Sequence+RemoveInfinity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD476A2E3905C500E8BF3F /* Sequence+RemoveInfinity.swift */; };
 		55D0543A2B230C9600BC773A /* InAppContentBlockCallbackType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D054392B230C9600BC773A /* InAppContentBlockCallbackType.swift */; };
 		55D0543C2B2351A000BC773A /* InAppContentBlockAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D0543B2B2351A000BC773A /* InAppContentBlockAction.swift */; };
 		55DA6EBA290ABD4800B5B285 /* AppInboxManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DA6EB9290ABD4800B5B285 /* AppInboxManagerType.swift */; };

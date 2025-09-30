@@ -193,6 +193,27 @@ extension TrackingManager: TrackingManagerType {
     public func track(_ type: EventType, with data: [DataType]?) throws {
         try trackInternal(type, with: data, trackingAllowed: true)
     }
+    
+    public func trackNotificationState(pushToken: String?, isValid: Bool, description: String) throws {
+        if let pushToken {
+            let data: [String: JSONValue] = [
+                "platform": .string("iOS"),
+                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults)),
+                "description": .string(description)
+            ]
+            try trackInternal(
+                .notificationState,
+                with: [
+                    .properties(data),
+                    .pushNotificationToken(
+                        token: pushToken,
+                        authorized: isValid
+                    )
+                ],
+                trackingAllowed: true
+            )
+        }
+    }
 
     private func trackInternal(
         _ type: EventType,
@@ -213,8 +234,9 @@ extension TrackingManager: TrackingManagerType {
         } else {
             Exponea.logger.log(.verbose, message: "Processing event of type: \(type) with params \(data ?? []) with tracking \(trackingAllowed)")
         }
+        let newData = (data ?? []).addProperties(["application_id": repository.configuration.applicationID])
         /// For each project token we have, track the data.
-        let payload = populateTrackEventPayload(of: type, from: data)
+        let payload = populateTrackEventPayload(of: type, from: newData)
         for project in projects {
             if type == .identifyCustomer {
                 inAppMessageManager?.pendingShowRequests.removeAll()
@@ -270,7 +292,7 @@ extension TrackingManager: TrackingManagerType {
     ) throws {
         switch type {
         case .identifyCustomer,
-             .registerPushToken:
+             .registerPushToken: // We have manual flush - this is just to support older versions
             if let appGroup = repository.configuration.appGroup {
                 database.currentCustomer.saveIdsToUserDefaults(appGroup: appGroup)
             }
@@ -288,6 +310,9 @@ extension TrackingManager: TrackingManagerType {
             if trackingAllowed {
                 try database.trackEvent(with: payload, into: project)
             }
+        case .notificationState:
+            try database.identifyCustomer(with: payload, into: project)
+            try database.trackEvent(with: payload, into: project)
         }
     }
 
@@ -368,6 +393,7 @@ extension TrackingManager: TrackingManagerType {
         case .identifyCustomer: return nil
         case .registerPushToken: return nil
         case .customEvent: return nil
+        case .notificationState: return Constants.EventTypes.notificationState
         case .install: return Constants.EventTypes.installation
         case .sessionStart: return Constants.EventTypes.sessionStart
         case .sessionEnd: return Constants.EventTypes.sessionEnd
@@ -584,9 +610,9 @@ extension TrackingManager: InAppMessageTrackingDelegate {
         if case .error(let errorMessage) = event {
             eventData["error"] = .string(errorMessage)
         }
-        if (message.consentCategoryTracking != nil) {
+        if message.consentCategoryTracking != nil {
             eventData["consent_category_tracking"] = .string(message.consentCategoryTracking!)
-        }        
+        }
         do {
             try processTrack(
                 .banner,
@@ -662,7 +688,11 @@ extension TrackingManager: InAppContentBlocksTrackingDelegate {
 extension TrackingManager {
     public func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) throws {
         let pushToken = customerPushToken
-        try track(EventType.registerPushToken, with: [.pushNotificationToken(token: nil, authorized: false)])
+        try trackNotificationState(
+            pushToken: pushToken,
+            isValid: false,
+            description: "Invalidated"
+        )
         sessionManager.clear()
 
         repository.configuration.switchProjects(mainProject: exponeaProject, projectMapping: projectMapping)
@@ -670,10 +700,11 @@ extension TrackingManager {
 
         database.makeNewCustomer()
         UNAuthorizationStatusProvider.current.isAuthorized { authorized in
-            Exponea.shared.executeSafely {
-                try self.track(
-                    EventType.registerPushToken,
-                    with: [.pushNotificationToken(token: pushToken, authorized: authorized)]
+            Exponea.shared.executeSafely { [weak self] in
+                try self?.trackNotificationState(
+                    pushToken: pushToken,
+                    isValid: authorized,
+                    description: authorized ? "Permission granted" : "Permission denied"
                 )
             }
         }

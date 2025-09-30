@@ -49,6 +49,7 @@ public class ExponeaInternal: ExponeaType {
                 Exponea.logger.log(.error, message: "Exponea SDK already configured.")
                 return
             }
+
             sharedInitializer(configuration: newValue)
         }
     }
@@ -270,6 +271,7 @@ public class ExponeaInternal: ExponeaType {
     /// This method, used privatly, is called either from the current thread (backwards compatibility)
     /// or when using the new onInitSucceededCallBack, it will be called wihtin the initializedQueue OperationQueue
     /// - Parameter configuration: Configuration
+    /// - Parameter appIdDidChange: Boolean value that describes if the application ID changed between instances
     private func initialize(with configuration: Configuration) {
         let exception = objc_tryCatch {
             do {
@@ -371,9 +373,11 @@ public class ExponeaInternal: ExponeaType {
                 self.appInboxManager = AppInboxManager(
                     repository: repository,
                     trackingManager: trackingManager,
-                    database: database
+                    database: database,
+                    cachedAppId: Configuration
+                        .loadFromUserDefaults(appGroup: repository.configuration.appGroup ?? Constants.General.userDefaultsSuite)?.applicationID ?? Constants.General.applicationID
                 )
-
+                
                 configuration.saveToUserDefaults()
 
                 self.inAppContentBlocksManager = InAppContentBlocksManager.manager

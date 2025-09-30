@@ -332,7 +332,13 @@ extension DatabaseManager: DatabaseManagerType {
                 case .properties(let properties):
                     // Add the event properties to the events entity
                     processProperties(properties, into: trackEvent)
-
+                case .pushNotificationToken(token: let token, authorized: let authorized):
+                    processProperties(
+                        [
+                            "push_notification_token": .string(token ?? ""),
+                            "valid": .bool(authorized)
+                        ],
+                        into: trackEvent)
                 default:
                     break
                 }
@@ -393,11 +399,12 @@ extension DatabaseManager: DatabaseManagerType {
 
             case .pushNotificationToken(let token, let authorized):
                 let tokenItem = KeyValueItem(context: context)
-                tokenItem.key = "apple_push_notification_id"
+                tokenItem.key = "push_notification_token"
                 tokenItem.value = (token ?? "") as NSString
                 trackCustomer.addToProperties(tokenItem)
 
                 let authorizatedItem = KeyValueItem(context: context)
+                authorizatedItem.key = "valid"
                 authorizatedItem.value = authorized as NSObject
                 trackCustomer.addToProperties(authorizatedItem)
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NlS-1s-Oy5">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="NlS-1s-Oy5">
     <device id="retina4_7" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -41,32 +41,12 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Base (API) URL" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qHW-dd-hdr">
-                                <rect key="frame" x="20" y="328.5" width="335" height="40"/>
+                                <rect key="frame" x="20" y="333.5" width="335" height="40"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RmJ-xq-uRf">
-                                <rect key="frame" x="20" y="449" width="335" height="45"/>
-                                <color key="backgroundColor" systemColor="systemRedColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="L2o-Vc-cSX"/>
-                                    <constraint firstAttribute="height" constant="45" id="fuD-Tt-Kbo"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Clear local data">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="4"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="clearTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="xjI-9r-x3O"/>
-                                </connections>
-                            </button>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Advanced Auth (optional)" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Jkh-w6-4ME" userLabel="AdvancedAuth Field">
                                 <rect key="frame" x="20" y="273.5" width="335" height="40"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -77,8 +57,18 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Application ID" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="OEP-6p-Ys5">
+                                <rect key="frame" x="20" y="393.5" width="335" height="40"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="IVu-GK-DzI"/>
+                                </constraints>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6j4-no-XJU">
-                                <rect key="frame" x="20" y="382" width="335" height="45"/>
+                                <rect key="frame" x="20" y="453.5" width="335" height="45"/>
                                 <color key="backgroundColor" red="1" green="0.83529411760000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="5qM-m6-Eva"/>
@@ -97,6 +87,26 @@
                                     <action selector="startPressed" destination="BYZ-38-t0r" eventType="touchUpInside" id="YLE-n9-CvI"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RmJ-xq-uRf">
+                                <rect key="frame" x="20" y="520.5" width="335" height="45"/>
+                                <color key="backgroundColor" systemColor="systemRedColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="L2o-Vc-cSX"/>
+                                    <constraint firstAttribute="height" constant="45" id="fuD-Tt-Kbo"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Clear local data">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="clearTapped" destination="BYZ-38-t0r" eventType="touchUpInside" id="xjI-9r-x3O"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.96470588239999999" green="0.96470588239999999" blue="0.96470588239999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -105,15 +115,17 @@
                             <constraint firstItem="New-Sc-ct3" firstAttribute="trailing" secondItem="UdZ-x9-xZO" secondAttribute="trailing" id="3hk-xW-mPq"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="UdZ-x9-xZO" secondAttribute="trailing" constant="20" id="4j6-Hg-Yfo"/>
                             <constraint firstItem="RmJ-xq-uRf" firstAttribute="trailing" secondItem="New-Sc-ct3" secondAttribute="trailing" id="AdO-Ve-lCU"/>
-                            <constraint firstItem="6j4-no-XJU" firstAttribute="top" secondItem="qHW-dd-hdr" secondAttribute="bottom" constant="13.5" id="BCd-vY-gxf"/>
+                            <constraint firstItem="OEP-6p-Ys5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="B4e-8H-jRZ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="UdZ-x9-xZO" secondAttribute="trailing" constant="20" id="Cyk-9d-0Uo"/>
                             <constraint firstItem="qHW-dd-hdr" firstAttribute="leading" secondItem="New-Sc-ct3" secondAttribute="leading" id="EoR-aU-Gb5"/>
                             <constraint firstItem="RmJ-xq-uRf" firstAttribute="top" secondItem="6j4-no-XJU" secondAttribute="bottom" constant="22" id="FQn-Ce-fKX"/>
                             <constraint firstAttribute="trailing" secondItem="yhz-tc-rLC" secondAttribute="trailing" constant="50" id="Fo9-d4-db3"/>
                             <constraint firstItem="UdZ-x9-xZO" firstAttribute="top" secondItem="yhz-tc-rLC" secondAttribute="bottom" constant="10" id="HfD-uv-MZf"/>
                             <constraint firstItem="Jkh-w6-4ME" firstAttribute="trailing" secondItem="UdZ-x9-xZO" secondAttribute="trailing" id="KVy-7K-zux"/>
-                            <constraint firstItem="qHW-dd-hdr" firstAttribute="top" secondItem="Jkh-w6-4ME" secondAttribute="bottom" constant="15" id="Nw3-TR-oPq"/>
+                            <constraint firstItem="OEP-6p-Ys5" firstAttribute="top" secondItem="qHW-dd-hdr" secondAttribute="bottom" constant="20" id="KyV-PN-7J3"/>
+                            <constraint firstItem="qHW-dd-hdr" firstAttribute="top" secondItem="Jkh-w6-4ME" secondAttribute="bottom" constant="20" id="OQQ-JS-YoF"/>
                             <constraint firstItem="UdZ-x9-xZO" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="PrY-Em-lh5"/>
+                            <constraint firstItem="6j4-no-XJU" firstAttribute="top" secondItem="OEP-6p-Ys5" secondAttribute="bottom" constant="20" id="QdZ-aT-1dT"/>
                             <constraint firstItem="RmJ-xq-uRf" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="RAo-3D-08G"/>
                             <constraint firstItem="6j4-no-XJU" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="i5R-w1-hK0"/>
                             <constraint firstItem="yhz-tc-rLC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="lII-02-vdL"/>
@@ -124,6 +136,7 @@
                             <constraint firstItem="New-Sc-ct3" firstAttribute="top" secondItem="UdZ-x9-xZO" secondAttribute="bottom" constant="15" id="pwj-ss-dr5"/>
                             <constraint firstItem="yhz-tc-rLC" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="50" id="qAL-Sd-IZV"/>
                             <constraint firstItem="Jkh-w6-4ME" firstAttribute="leading" secondItem="UdZ-x9-xZO" secondAttribute="leading" id="tOK-aP-rzX"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="OEP-6p-Ys5" secondAttribute="trailing" constant="20" id="utM-j7-Z0C"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="6j4-no-XJU" secondAttribute="trailing" constant="20" id="vdc-ER-E46"/>
                             <constraint firstItem="qHW-dd-hdr" firstAttribute="height" secondItem="New-Sc-ct3" secondAttribute="height" id="yiV-jZ-o5e"/>
                             <constraint firstItem="New-Sc-ct3" firstAttribute="height" secondItem="UdZ-x9-xZO" secondAttribute="height" id="zwE-J6-vPd"/>
@@ -135,7 +148,9 @@
                     <navigationItem key="navigationItem" id="bWz-xp-YuW"/>
                     <connections>
                         <outlet property="advancedPublicKeyField" destination="Jkh-w6-4ME" id="3jf-2D-zAJ"/>
+                        <outlet property="applicationIDField" destination="OEP-6p-Ys5" id="fiH-eq-e8a"/>
                         <outlet property="authField" destination="New-Sc-ct3" id="Oa3-Y2-SNr"/>
+                        <outlet property="clearDataButton" destination="RmJ-xq-uRf" id="ef7-5Q-3Qk"/>
                         <outlet property="startButton" destination="RmJ-xq-uRf" id="BdW-lL-Mz3"/>
                         <outlet property="tokenField" destination="UdZ-x9-xZO" id="Yyz-pk-6EA"/>
                         <outlet property="urlField" destination="qHW-dd-hdr" id="V92-cx-ZXJ"/>
@@ -1243,7 +1258,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -16,6 +16,12 @@ import Foundation
 /// - trackEvent
 /// - trackCustomer
 /// - payment
+/// - pushDelivered
+/// - pushOpened
+/// - campaignClick
+/// - banner
+/// - appInbox
+/// - notificationState
 public enum EventType: String, Codable {
 
     /// Install event is fired only once when the app is first installed.
@@ -53,4 +59,7 @@ public enum EventType: String, Codable {
 
     // Tracking of AppInbox message related events
     case appInbox = "APP_INBOX"
+    
+    // Tracking of push notification token
+    case notificationState = "NOTIFICATION_STATE"
 }

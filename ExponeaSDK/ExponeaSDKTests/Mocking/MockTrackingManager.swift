@@ -10,6 +10,26 @@ import Foundation
 @testable import ExponeaSDK
 
 internal class MockTrackingManager: TrackingManagerType {
+    func trackNotificationState(pushToken: String?, isValid: Bool, description: String) throws {
+        if let pushToken {
+            let data: [String: JSONValue] = [
+                "platform": .string("iOS"),
+                "device_id": .string("device-id"),
+                "description": .string(description)
+            ]
+            try track(
+                .notificationState,
+                with: [
+                    .properties(data),
+                    .pushNotificationToken(
+                        token: pushToken,
+                        authorized: isValid
+                    )
+                ]
+            )
+        }
+    }
+    
 
     func clearSessionManager() {
         
@@ -106,7 +126,7 @@ internal class MockTrackingManager: TrackingManagerType {
     }
 
     func track(_ type: EventType, with data: [DataType]?) throws {
-        var payload: [DataType] = data ?? []
+        var payload: [DataType] = data?.addProperties(["application_id": "default-application"]) ?? []
         if let stringEventType = getEventTypeString(type: type) {
             payload.append(.eventType(stringEventType))
         }
@@ -297,6 +317,7 @@ internal class MockTrackingManager: TrackingManagerType {
         case .campaignClick: return Constants.EventTypes.campaignClick
         case .banner: return Constants.EventTypes.banner
         case .appInbox: return Constants.EventTypes.appInbox
+        case .notificationState: return Constants.EventTypes.notificationState
         }
     }
 

@@ -17,7 +17,7 @@ DEPENDENCIES:
   - Nimble (= 9.2.1)
   - Quick (= 5.0.1)
   - SwiftLint (= 0.51.0)
-  - SwiftSoup (= 2.7.6)
+  - SwiftSoup (< 3.0, >= 2.7.6)
 
 SPEC REPOS:
   trunk:
@@ -38,13 +38,13 @@ CHECKOUT OPTIONS:
     :git: https://github.com/kylef/Mockingjay.git
 
 SPEC CHECKSUMS:
-  Mockingjay: 97656c6f59879923976a0a52ef09da45756cca82
+  Mockingjay: 2f6c88dc1487535fd46876be59e4d3ce298a78eb
   Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 749aa754fd1e7d984f2000fe051e18a3a9809179
   SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
   SwiftSoup: 9ec2526c76ebc3fe5d3157c82b40b45a27eeb82d
   URITemplate: 5f5a79f3e384884102c4e6b3325d159c20a8035a
 
-PODFILE CHECKSUM: 7c1dca3ab132749de97b248a1bbdea7285004e14
+PODFILE CHECKSUM: f62680b4c0263bd2f9784bde4ef9493ec6db182a
 
 COCOAPODS: 1.16.2

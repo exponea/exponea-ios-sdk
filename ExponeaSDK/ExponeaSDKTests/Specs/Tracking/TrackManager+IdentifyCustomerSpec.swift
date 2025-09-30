@@ -83,7 +83,11 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 ]
                 expect { try trackingManager.track(EventType.identifyCustomer, with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
-                    .properties(["prop": .string("value"), "default_prop": .string("default_value")])
+                    .properties([
+                        "prop": .string("value"),
+                        "default_prop": .string("default_value"),
+                        "application_id": .string("default-application")
+                    ])
                 ]))
             }
 
@@ -94,7 +98,11 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 ]
                 expect { try trackingManager.track(EventType.identifyCustomer, with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
-                    .properties(["prop": .string("value"), "default_prop": .string("default_value")])
+                    .properties([
+                        "prop": .string("value"),
+                        "default_prop": .string("default_value"),
+                        "application_id": .string("default-application")
+                    ])
                 ]))
             }
 
@@ -105,7 +113,10 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 ]
                 expect { try trackingManager.track(EventType.identifyCustomer, with: data) }.notTo(raiseException())
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
-                    .properties(["prop": .string("value")])
+                    .properties([
+                        "prop": .string("value"),
+                        "application_id": .string("default-application")
+                    ])
                 ]))
             }
 
@@ -120,7 +131,9 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
                         "default_prop": .string("default_value"),
-                        "apple_push_notification_id": .string("abcd")
+                        "push_notification_token": .string("abcd"),
+                        "application_id": .string("default-application"),
+                        "valid": .bool(true)
                     ])
                 ]))
             }
@@ -136,7 +149,9 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
                         "default_prop": .string("default_value"),
-                        "apple_push_notification_id": .string("abcd")
+                        "push_notification_token": .string("abcd"),
+                        "application_id": .string("default-application"),
+                        "valid": .bool(true)
                     ])
                 ]))
             }
@@ -151,7 +166,9 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 }.notTo(raiseException())
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
-                        "apple_push_notification_id": .string("abcd")
+                        "push_notification_token": .string("abcd"),
+                        "application_id": .string("default-application"),
+                        "valid": .bool(true)
                     ])
                 ]))
             }
