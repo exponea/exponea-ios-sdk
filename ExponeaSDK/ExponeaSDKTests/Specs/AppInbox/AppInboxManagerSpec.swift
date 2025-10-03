@@ -204,7 +204,7 @@ class AppInboxManagerSpec: QuickSpec {
                 trackingManager: trackingManager,
                 database: database
             )
-            AppInboxCache().clear()
+            AppInboxCache.shared.clear()
         }
 
         it("should load only supported messages") {

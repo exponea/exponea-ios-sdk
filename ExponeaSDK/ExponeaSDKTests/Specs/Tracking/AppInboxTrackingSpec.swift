@@ -55,7 +55,7 @@ final class AppInboxTrackingSpec: QuickSpec {
                     trackingManager: trackingManager,
                     database: database
                 )
-                AppInboxCache().clear()
+                AppInboxCache.shared.clear()
                 trackingConsentManager = TrackingConsentManager(trackingManager: trackingManager)
             }
 

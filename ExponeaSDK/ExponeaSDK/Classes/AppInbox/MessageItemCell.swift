@@ -14,7 +14,7 @@ public class MessageItemCell: UITableViewCell {
     public let readFlag = UIView()
     public let receivedTime = UILabel()
     public let titleLabel = UILabel()
-    public let messageImage = UIImageView()
+    let messageImage = UIAnimatedImageView()
     public let messageLabel = UILabel()
     public let infoStackView = UIStackView()
     public let statusView = UIStackView()
@@ -26,8 +26,14 @@ public class MessageItemCell: UITableViewCell {
 
         receivedTime.text = nil
         titleLabel.text = nil
-        messageImage.image = nil
+        messageImage.clear()
         messageLabel.text = nil
+    }
+
+    public override func willMove(toSuperview newSuperview: UIView?) {
+        if newSuperview == nil {
+            messageImage.clear()
+        }
     }
 
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -127,26 +133,24 @@ public extension MessageItemCell {
         addTextToLabel(titleLabel, source.content?.title, 1.26)
         addTextToLabel(messageLabel, source.content?.message ?? "", 1.2)
         if let imageUrl = source.content?.imageUrl {
-            messageImage.isHidden = false
             DispatchQueue.global().async { [weak self] in
                 guard let self = self else { return }
-                let finalImage: UIImage
-                if let giftImage = UIImage.gifImageWithURL(imageUrl) {
-                    finalImage = giftImage
-                } else if let imageData = ImageUtils.tryDownloadImage(imageUrl),
-                    let image = ImageUtils.createImage(imageData: imageData, maxDimensionInPixels: 80) {
-                    finalImage = image
+                if let imageData = AppInboxCache.shared.tryGetImageData(at: imageUrl) {
+                    onMain {
+                        self.messageImage.loadImage(imageData: imageData)
+                        self.messageImage.isHidden = false
+                    }
                 } else {
                     Exponea.logger.log(.error, message: "Image cannot be shown correctly")
                     onMain {
                         self.messageImage.isHidden = true
+                        self.messageImage.clear()
                     }
-                    return
                 }
-                onMain(self.messageImage.image = finalImage)
             }
         } else {
-            messageImage.isHidden = true
+            self.messageImage.isHidden = true
+            self.messageImage.clear()
         }
     }
 

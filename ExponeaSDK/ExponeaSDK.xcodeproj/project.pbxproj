@@ -314,6 +314,7 @@
 		558453A1297E8D26000707E4 /* AppInboxTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558453A0297E8D26000707E4 /* AppInboxTrackingSpec.swift */; };
 		558DFADB2B2B350F00177800 /* ExtensionUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D0543D2B29BE2200BC773A /* ExtensionUtils.swift */; };
 		558DFADD2B2B442400177800 /* ExampleInAppContentBlockCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558DFADC2B2B442400177800 /* ExampleInAppContentBlockCallback.swift */; };
+		55977A172E8688950087F301 /* UIAnimatedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55977A162E8688790087F301 /* UIAnimatedImageView.swift */; };
 		559D97082962FCF0006D4499 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559D97072962FCF0006D4499 /* ImageUtils.swift */; };
 		559E7609296E0E5C00F27BC9 /* MessageItemSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559E7608296E0E5C00F27BC9 /* MessageItemSpec.swift */; };
 		55A468D0296F154C00E62438 /* WebActionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A468CF296F154C00E62438 /* WebActionsManager.swift */; };
@@ -892,6 +893,7 @@
 		557856022BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockDisplayStatusStore.swift; sourceTree = "<group>"; };
 		558453A0297E8D26000707E4 /* AppInboxTrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxTrackingSpec.swift; sourceTree = "<group>"; };
 		558DFADC2B2B442400177800 /* ExampleInAppContentBlockCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleInAppContentBlockCallback.swift; sourceTree = "<group>"; };
+		55977A162E8688790087F301 /* UIAnimatedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIAnimatedImageView.swift; sourceTree = "<group>"; };
 		559D97072962FCF0006D4499 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		559E7608296E0E5C00F27BC9 /* MessageItemSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageItemSpec.swift; sourceTree = "<group>"; };
 		55A468CF296F154C00E62438 /* WebActionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebActionsManager.swift; sourceTree = "<group>"; };
@@ -2378,6 +2380,7 @@
 		F0E757DE207CF98600FE8C21 /* Others */ = {
 			isa = PBXGroup;
 			children = (
+				55977A162E8688790087F301 /* UIAnimatedImageView.swift */,
 				31E9CBA12AE9494B00A333C8 /* URL+Init.swift */,
 				55391D482953051E001D95B8 /* AppInboxParser.swift */,
 				6BA73FEC29B6377E009F92DF /* AtomicValue.swift */,
@@ -3139,6 +3142,7 @@
 				31EBB8622A6AC3020003AAA5 /* InappContentBlocksDataProvider.swift in Sources */,
 				05F3EFCF237E926B006E83F4 /* CrashManager.swift in Sources */,
 				55734B022A5E9B9400F24427 /* RegExpExtensions.swift in Sources */,
+				55977A172E8688950087F301 /* UIAnimatedImageView.swift in Sources */,
 				05C289332428A1480021220C /* SessionManagerType.swift in Sources */,
 				556887562A176B0200498B40 /* NSDictionary+getSafely.swift in Sources */,
 				5567C090290808F600318E68 /* MessageItemContent.swift in Sources */,

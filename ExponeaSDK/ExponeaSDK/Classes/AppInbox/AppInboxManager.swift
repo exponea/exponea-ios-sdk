@@ -28,16 +28,16 @@ final class AppInboxManager: AppInboxManagerType {
     init(
         repository: RepositoryType,
         trackingManager: TrackingManagerType,
-        cache: AppInboxCacheType = AppInboxCache(),
+        cache: AppInboxCacheType = AppInboxCache.shared,
         database: DatabaseManagerType,
         cachedAppId: String = Constants.General.applicationID
     ) {
-        
+
         self.repository = repository
         self.trackingManager = trackingManager
         self.appInboxCache = cache
         self.databaseManager = database
-        
+
         if cachedAppId != repository.configuration.applicationID {
             clear()
         }
