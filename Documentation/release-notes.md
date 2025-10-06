@@ -15,8 +15,6 @@ parentDocSlug: ios-sdk
 #### October 01, 2025
 * Added:
   * Adds Multiple Mobile applications feature
-* Fixed:
-  * Fixes GIF image display using CADisplayLink for smoother animation
 
 
 ## Release Notes for 3.7.0
