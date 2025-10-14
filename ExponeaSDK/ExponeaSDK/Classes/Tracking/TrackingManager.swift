@@ -198,7 +198,6 @@ extension TrackingManager: TrackingManagerType {
         if let pushToken {
             let data: [String: JSONValue] = [
                 "platform": .string("iOS"),
-                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults)),
                 "description": .string(description)
             ]
             try trackInternal(
@@ -234,7 +233,10 @@ extension TrackingManager: TrackingManagerType {
         } else {
             Exponea.logger.log(.verbose, message: "Processing event of type: \(type) with params \(data ?? []) with tracking \(trackingAllowed)")
         }
-        let newData = (data ?? []).addProperties(["application_id": repository.configuration.applicationID])
+        let newData = (data ?? []).addProperties([
+            "application_id": repository.configuration.applicationID,
+            "device_id": TelemetryUtility.getInstallId(userDefaults: userDefaults)
+        ])
         /// For each project token we have, track the data.
         let payload = populateTrackEventPayload(of: type, from: newData)
         for project in projects {
@@ -320,6 +322,8 @@ extension TrackingManager: TrackingManagerType {
         switch eventType {
         case EventType.identifyCustomer, EventType.registerPushToken:
             return repository.configuration.allowDefaultCustomerProperties
+        case .notificationState:
+            return false
         default:
             return true
         }

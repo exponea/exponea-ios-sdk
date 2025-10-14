@@ -86,7 +86,8 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                     .properties([
                         "prop": .string("value"),
                         "default_prop": .string("default_value"),
-                        "application_id": .string("default-application")
+                        "application_id": .string("default-application"),
+                        "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ])
                 ]))
             }
@@ -101,7 +102,8 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                     .properties([
                         "prop": .string("value"),
                         "default_prop": .string("default_value"),
-                        "application_id": .string("default-application")
+                        "application_id": .string("default-application"),
+                        "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ])
                 ]))
             }
@@ -115,7 +117,8 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
                         "prop": .string("value"),
-                        "application_id": .string("default-application")
+                        "application_id": .string("default-application"),
+                        "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ])
                 ]))
             }
@@ -133,7 +136,8 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                         "default_prop": .string("default_value"),
                         "push_notification_token": .string("abcd"),
                         "application_id": .string("default-application"),
-                        "valid": .bool(true)
+                        "valid": .bool(true),
+                        "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ])
                 ]))
             }
@@ -151,7 +155,8 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                         "default_prop": .string("default_value"),
                         "push_notification_token": .string("abcd"),
                         "application_id": .string("default-application"),
-                        "valid": .bool(true)
+                        "valid": .bool(true),
+                        "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ])
                 ]))
             }
@@ -168,7 +173,8 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                     .properties([
                         "push_notification_token": .string("abcd"),
                         "application_id": .string("default-application"),
-                        "valid": .bool(true)
+                        "valid": .bool(true),
+                        "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ])
                 ]))
             }

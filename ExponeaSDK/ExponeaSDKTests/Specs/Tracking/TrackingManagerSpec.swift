@@ -81,7 +81,8 @@ class TrackingManagerSpec: QuickSpec {
                     .properties([
                         "prop": .string("value"),
                         "default_prop": .string("default_value"),
-                        "application_id": .string("default-application")
+                        "application_id": .string("default-application"),
+                        "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ]),
                     .timestamp(123456)
                 ]))
@@ -93,7 +94,8 @@ class TrackingManagerSpec: QuickSpec {
                 expect { try database.fetchTrackEvent()[0].dataTypes }.to(equal([
                     .properties([
                         "default_prop": .string("default_value"),
-                        "application_id": .string("default-application")
+                        "application_id": .string("default-application"),
+                        "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ]),
                     .timestamp(123456)
                 ]))

@@ -126,7 +126,10 @@ internal class MockTrackingManager: TrackingManagerType {
     }
 
     func track(_ type: EventType, with data: [DataType]?) throws {
-        var payload: [DataType] = data?.addProperties(["application_id": "default-application"]) ?? []
+        var payload: [DataType] = data?.addProperties([
+            "application_id": "default-application",
+            "device_id": "device-id"
+        ]) ?? []
         if let stringEventType = getEventTypeString(type: type) {
             payload.append(.eventType(stringEventType))
         }
@@ -165,7 +168,10 @@ internal class MockTrackingManager: TrackingManagerType {
         trackingAllowed: Bool,
         for customerId: String?
     ) throws {
-        var payload: [DataType] = data ?? []
+        var payload: [DataType] = data?.addProperties([
+            "application_id": "default-application",
+            "device_id": "device-id"
+        ]) ?? []
         if let stringEventType = getEventTypeString(type: type) {
             payload.append(.eventType(stringEventType))
         }
