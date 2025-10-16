@@ -593,7 +593,7 @@ public struct InAppMessagePayloadButton: Codable, Equatable, Sendable {
         self.buttonTextColor = buttonTextColor
         self.buttonBackgroundColor = buttonBackgroundColor
     }
-    
+
     public init(closeConfig: InAppCloseButtonConfig) {
         self.buttonText = "close"
         self.rawButtonType = "close"
@@ -607,4 +607,25 @@ public enum InAppMessageButtonType: String {
     case cancel
     case deeplink = "deep-link"
     case browser
+}
+
+public struct InAppEnvelope: Codable {
+    public let id: String
+    public let name: String
+    public let payload: RichInAppMessagePayload
+
+    public let is_html: Bool?
+    public let is_rich_text: Bool?
+    public let message_type: String?
+    public let variant_id: Int?
+    public let variant_name: String?
+}
+
+public extension RichInAppMessagePayload {
+    // Helper for JSON
+    static func decode(fromEnvelopeJSON data: Data) throws -> RichInAppMessagePayload {
+        let decoder = JSONDecoder()
+        let envelope = try decoder.decode(InAppEnvelope.self, from: data)
+        return envelope.payload
+    }
 }
