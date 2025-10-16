@@ -273,10 +273,10 @@ class DatabaseManagerSpec: QuickSpec {
                     expect(db.currentCustomer.ids["registered"]).to(equal("myemail"))
                     expect(object.projectToken).to(equal("mytoken"))
                     let props = object.dataTypes.properties
-                    expect(props.count).to(equal(3))
+                    expect(props.count).to(equal(1))
 
                     expect(props["customprop"] as? String).to(equal("customval"))
-                    expect(props["push_notification_token"] as? String).notTo(beEmpty())
+                    expect(props["push_notification_token"] as? String).to(beNil())
 
                     expect(object.timestamp).to(beCloseTo(expectedTimestamp, within: 0.5))
 

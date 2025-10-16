@@ -40,17 +40,11 @@ class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
                             """)
                         return
                     }
-
-                    props[key] = DatabaseManager.processObject(object)
+                    if !(key == "push_notification_token" || key == "valid" || key == "description") {
+                        props[key] = DatabaseManager.processObject(object)
+                    }
                 })
                 data.append(.properties(props))
-            }
-            // Filter out pushNotificationToken if any
-            data = data.filter {
-                guard case .pushNotificationToken = $0 else {
-                    return true
-                }
-                return false
             }
 
             return data

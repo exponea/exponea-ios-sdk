@@ -441,10 +441,7 @@ class ExponeaSpec: QuickSpec {
                             .properties([
                                 "platform": .string("iOS"),
                                 "application_id": .string("default-application"),
-                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults)),
-                                "description": .string("Permission granted"),
-                                "push_notification_token": .string("token"),
-                                "valid": .bool(true)
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
                             ])
                         ]))
                     expect(customerUpdates[0].projectToken).to(equal("mock-token"))
@@ -455,10 +452,7 @@ class ExponeaSpec: QuickSpec {
                             .properties([
                                 "platform": .string("iOS"),
                                 "application_id": .string("default-application"),
-                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults)),
-                                "description": .string("Invalidated"),
-                                "push_notification_token": .string("token"),
-                                "valid": .bool(false)
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
                             ])
                         ]))
                     expect(customerUpdates[1].projectToken).to(equal("mock-token"))
@@ -469,10 +463,7 @@ class ExponeaSpec: QuickSpec {
                             .properties([
                                 "platform": .string("iOS"),
                                 "application_id": .string("default-application"),
-                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults)),
-                                "description": .string("Permission not required"),
-                                "push_notification_token": .string("token"),
-                                "valid": .bool(true)
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
                             ])
                         ]))
                     expect(customerUpdates[2].projectToken).to(equal("other-mock-token"))

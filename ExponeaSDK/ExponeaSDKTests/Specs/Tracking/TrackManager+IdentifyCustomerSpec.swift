@@ -135,9 +135,7 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
                         "default_prop": .string("default_value"),
-                        "push_notification_token": .string("abcd"),
                         "application_id": .string("default-application"),
-                        "valid": .bool(true),
                         "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ])
                 ]))
@@ -154,9 +152,7 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
                         "default_prop": .string("default_value"),
-                        "push_notification_token": .string("abcd"),
                         "application_id": .string("default-application"),
-                        "valid": .bool(true),
                         "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ])
                 ]))
@@ -172,9 +168,7 @@ class TrackingManagerForIdentifyCustomerSpec: QuickSpec {
                 }.notTo(raiseException())
                 expect { try database.fetchTrackCustomer()[0].dataTypes }.to(equal([
                     .properties([
-                        "push_notification_token": .string("abcd"),
                         "application_id": .string("default-application"),
-                        "valid": .bool(true),
                         "device_id": .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
                     ])
                 ]))
