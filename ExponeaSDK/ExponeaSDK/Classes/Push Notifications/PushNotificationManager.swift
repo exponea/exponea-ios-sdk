@@ -263,23 +263,13 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         }
     }
 
-    func trackCurrentPushToken() {
-        Exponea.shared.executeSafely {
-            UNAuthorizationStatusProvider.current.isAuthorized { [weak self] authorized in
-                guard let self else { return }
-                self.currentPushToken?.isTokenValid = !self.requirePushAuthorization || authorized
-                self.trackCurrentPushToken(isAuthorized: authorized)
-            }
-        }
-    }
-
     func handlePushTokenRegistered(token: String) {
         Exponea.shared.executeSafely {
             self.handlePushTokenRegisteredUnsafe(token: token)
         }
     }
 
-    func handlePushTokenRegisteredUnsafe(token: String) {
+    private func handlePushTokenRegisteredUnsafe(token: String) {
         Exponea.shared.executeSafely {
             UNAuthorizationStatusProvider.current.isAuthorized { [weak self] authorized in
                 guard let self else { return }
@@ -399,14 +389,12 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     func verifyPushStatusAndTrackPushToken() {
         UNAuthorizationStatusProvider.current.isAuthorized { authorized in
             if self.requirePushAuthorization && !authorized {
-                if self.currentPushToken != nil {
-                    self.currentPushToken = nil
+                if self.currentPushToken?.isTokenValid == true {
+                    self.currentPushToken?.isTokenValid = false
                     self.trackCurrentPushToken(isAuthorized: authorized)
                 }
             } else {
-                if self.currentPushToken == nil {
-                    self.currentPushToken = self.lastKnownPushToken
-                }
+                self.currentPushToken?.isTokenValid = true
                 self.checkForPushTokenFrequency(isAuthorized: authorized)
             }
         }

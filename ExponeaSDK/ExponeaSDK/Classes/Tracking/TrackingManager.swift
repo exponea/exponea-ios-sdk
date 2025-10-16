@@ -37,6 +37,7 @@ class TrackingManager {
     private var inAppMessageManager: InAppMessagesManagerType?
     private var flushingManager: FlushingManagerType
     private var campaignRepository: CampaignRepositoryType
+    var requirePushAuthorization: Bool
 
     // Manager for  session tracking
     private lazy var sessionManager: SessionManagerType = SessionManager(
@@ -78,6 +79,7 @@ class TrackingManager {
          trackManagerInitializator: (TrackingManager) -> (Void),
          userDefaults: UserDefaults,
          campaignRepository: CampaignRepositoryType,
+         requirePushAuthorization: Bool,
          onEventCallback: @escaping (EventType, [DataType]) -> Void
     ) throws {
         self.repository = repository
@@ -89,6 +91,7 @@ class TrackingManager {
         self.flushingManager = flushingManager
         self.inAppMessageManager = inAppMessageManager
         self.onEventCallback = onEventCallback
+        self.requirePushAuthorization = requirePushAuthorization
 
         // Always track when we become active, enter background or terminate (used for both sessions and data flushing)
         NotificationCenter.default.addObserver(self,
@@ -705,10 +708,13 @@ extension TrackingManager {
         database.makeNewCustomer()
         UNAuthorizationStatusProvider.current.isAuthorized { authorized in
             Exponea.shared.executeSafely { [weak self] in
-                try self?.trackNotificationState(
+                guard let self else { return }
+                try self.trackNotificationState(
                     pushToken: pushToken,
                     isValid: authorized,
-                    description: authorized ? "Permission granted" : "Permission denied"
+                    description: self.requirePushAuthorization
+                    ? "Permission not required"
+                    : (authorized ? "Permission granted" : "Permission denied")
                 )
             }
         }

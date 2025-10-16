@@ -825,7 +825,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                 ]))
             }
 
-            it("should clear token if not authorized and authorization required") {
+            it("should track permission denied if not authorized and authorization required") {
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
                 createPushManager(
                     requirePushAuthorization: true,
@@ -833,7 +833,24 @@ final class PushNotificationManagerSpec: QuickSpec {
                     tokenTrackFrequency: .daily,
                     lastTokenTrackDate: Date(timeIntervalSince1970: 1)
                 )
-                expect(trackingManager.trackedEvents).to(equal([]))
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("iOS"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission denied")
+                            ]),
+                            .pushNotificationToken(
+                                token: "mock-token",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
+                    )
+                ]))
             }
 
             it("should track token if not authorized and authorization not required") {
@@ -912,7 +929,24 @@ final class PushNotificationManagerSpec: QuickSpec {
                 // second run, authorization is denied, app goes to foreground
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
                 pushManager.applicationDidBecomeActive()
-                expect(trackingManager.trackedEvents).to(equal([]))
+                expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("iOS"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission denied")
+                            ]),
+                            .pushNotificationToken(
+                                token: "authorized-token-1",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
+                    )
+                ]))
                 trackingManager.clearCalls()
                 // third run, authorization is given back, app goes to foreground again
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .authorized)

@@ -330,7 +330,7 @@ extension ExponeaInternal {
 
     public func trackCurrentPushNotificationToken() {
         executeSafelyWithDependencies { dependencies in
-            dependencies.notificationsManager.trackCurrentPushToken()
+            dependencies.notificationsManager.verifyPushStatusAndTrackPushToken()
         }
     }
 

@@ -29,10 +29,6 @@ open class ExponeaAppDelegate: NSObject, UNUserNotificationCenterDelegate, UIApp
         Exponea.shared.handlePushNotificationToken(deviceToken: deviceToken)
     }
 
-    open func applicationWillEnterForeground(_ application: UIApplication) {
-        Exponea.shared.trackCurrentPushNotificationToken()
-    }
-
     open func application(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],

@@ -51,6 +51,7 @@ class TrackingManagerSpec: QuickSpec {
                     trackManagerInitializator: { _ in },
                     userDefaults: userDefaults,
                     campaignRepository: CampaignRepository(userDefaults: userDefaults),
+                    requirePushAuthorization: repository.configuration.requirePushAuthorization,
                     onEventCallback: { type, event in
                         
                     }

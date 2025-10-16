@@ -47,6 +47,7 @@ final class AppInboxTrackingSpec: QuickSpec {
                     trackManagerInitializator: { _ in },
                     userDefaults: userDefaults,
                     campaignRepository: CampaignRepository(userDefaults: userDefaults),
+                    requirePushAuthorization: self.configuration.requirePushAuthorization,
                     onEventCallback: { _, _ in
                         // nothing
                     })

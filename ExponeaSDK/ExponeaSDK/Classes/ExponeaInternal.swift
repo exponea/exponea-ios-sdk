@@ -359,6 +359,7 @@ public class ExponeaInternal: ExponeaType {
                     },
                     userDefaults: userDefaults,
                     campaignRepository: campaignRepository,
+                    requirePushAuthorization: repository.configuration.requirePushAuthorization,
                     onEventCallback: { type, event in
                         self.inAppMessagesManager?.onEventOccurred(of: type, for: event, triggerCompletion: nil)
                         self.appInboxManager?.onEventOccurred(of: type, for: event)

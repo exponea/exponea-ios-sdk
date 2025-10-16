@@ -470,7 +470,7 @@ class ExponeaSpec: QuickSpec {
                                 "platform": .string("iOS"),
                                 "application_id": .string("default-application"),
                                 "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults)),
-                                "description": .string("Permission granted"),
+                                "description": .string("Permission not required"),
                                 "push_notification_token": .string("token"),
                                 "valid": .bool(true)
                             ])
