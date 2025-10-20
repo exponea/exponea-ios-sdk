@@ -873,7 +873,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                             ]),
                             .pushNotificationToken(
                                 token: "mock-token",
-                                authorized: true
+                                authorized: false
                             ),
                             .eventType("notification_state")
                         ]

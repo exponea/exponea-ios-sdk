@@ -394,7 +394,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                     self.trackCurrentPushToken(isAuthorized: authorized)
                 }
             } else {
-                self.currentPushToken?.isTokenValid = true
+                self.currentPushToken?.isTokenValid = authorized
                 self.checkForPushTokenFrequency(isAuthorized: authorized)
             }
         }
