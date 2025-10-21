@@ -40,7 +40,13 @@ class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
                             """)
                         return
                     }
-                    if !(key == "push_notification_token" || key == "valid" || key == "description") {
+                    if !(key == "push_notification_token"
+                         || key == "valid"
+                         || key == "description"
+                         || key == "platform"
+                         || key == "application_id"
+                         || key == "device_id"
+                    ) {
                         props[key] = DatabaseManager.processObject(object)
                     }
                 })

@@ -685,8 +685,23 @@ final class PushNotificationManagerSpec: QuickSpec {
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .authorized)
                 pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
                 expect(trackingManager.trackedEvents).to(
-                    equal(
-                        [
+                    equal([
+                            MockTrackingManager.TrackedEvent(
+                                type: .notificationState,
+                                data: [
+                                    .properties([
+                                        "platform": .string("iOS"),
+                                        "application_id": .string("default-application"),
+                                        "device_id": .string("device-id"),
+                                        "description": .string("Invalidated")
+                                    ]),
+                                    .pushNotificationToken(
+                                        token: "mock-push-token",
+                                        authorized: false
+                                    ),
+                                    .eventType("notification_state")
+                                ]
+                            ),
                             MockTrackingManager.TrackedEvent(
                                 type: .notificationState,
                                 data: [
@@ -703,8 +718,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     .eventType("notification_state")
                                 ]
                             )
-                        ]
-                    )
+                        ])
                 )
             }
 
@@ -712,6 +726,22 @@ final class PushNotificationManagerSpec: QuickSpec {
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
                 pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
                 expect(trackingManager.trackedEvents).to(equal([
+                    MockTrackingManager.TrackedEvent(
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("iOS"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Invalidated")
+                            ]),
+                            .pushNotificationToken(
+                                token: "mock-push-token",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
+                    ),
                     MockTrackingManager.TrackedEvent(
                         type: .notificationState,
                         data: [
@@ -749,7 +779,23 @@ final class PushNotificationManagerSpec: QuickSpec {
                                 "platform": .string("iOS"),
                                 "application_id": .string("default-application"),
                                 "device_id": .string("device-id"),
-                                "description": .string("Permission not required")
+                                "description": .string("Invalidated")
+                            ]),
+                            .pushNotificationToken(
+                                token: "mock-token",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
+                    ),
+                    MockTrackingManager.TrackedEvent(
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("iOS"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission denied")
                             ]),
                             .pushNotificationToken(
                                 token: "6D6F636B5F746F6B656E5F64617461",
@@ -869,7 +915,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                                 "platform": .string("iOS"),
                                 "application_id": .string("default-application"),
                                 "device_id": .string("device-id"),
-                                "description": .string("Permission not required")
+                                "description": .string("Permission denied")
                             ]),
                             .pushNotificationToken(
                                 token: "mock-token",

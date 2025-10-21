@@ -274,6 +274,10 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             UNAuthorizationStatusProvider.current.isAuthorized { [weak self] authorized in
                 guard let self else { return }
                 Exponea.shared.executeSafely {
+                    if let current = self.currentPushToken?.pushToken,
+                       current != token {
+                        self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: true)
+                    }
                     let pushTokenType = PushTokenType(
                         pushToken: token,
                         isTokenValid: !self.requirePushAuthorization || authorized
@@ -400,7 +404,7 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         }
     }
 
-    private func trackCurrentPushToken(isAuthorized: Bool) {
+    private func trackCurrentPushToken(isAuthorized: Bool, isCancelled: Bool = false) {
         guard !IntegrationManager.shared.isStopped else {
             Exponea.logger.log(.error, message: "trackCurrentPushToken failed, Exponea is stopped")
             return
@@ -408,9 +412,9 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         do {
             try trackingManager.trackNotificationState(
                 pushToken: currentPushToken?.pushToken,
-                isValid: currentPushToken?.isTokenValid ?? true,
-                description: !requirePushAuthorization
-                ? "Permission not required" : (
+                isValid: isCancelled ? false : (currentPushToken?.isTokenValid ?? true),
+                description: isCancelled ?
+                "Invalidated" : (
                     isAuthorized
                     ? "Permission granted"
                     : "Permission denied"

@@ -711,10 +711,8 @@ extension TrackingManager {
                 guard let self else { return }
                 try self.trackNotificationState(
                     pushToken: pushToken,
-                    isValid: authorized,
-                    description: self.requirePushAuthorization
-                    ? "Permission not required"
-                    : (authorized ? "Permission granted" : "Permission denied")
+                    isValid: !self.requirePushAuthorization || authorized,
+                    description: authorized ? "Permission granted" : "Permission denied"
                 )
             }
         }

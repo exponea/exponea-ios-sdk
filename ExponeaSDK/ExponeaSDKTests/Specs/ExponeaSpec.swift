@@ -436,36 +436,15 @@ class ExponeaSpec: QuickSpec {
                     let customerUpdates = try! database.fetchTrackCustomer()
                     expect(customerUpdates.count).to(equal(3))
                     expect(customerUpdates[0].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
-                    expect(customerUpdates[0].dataTypes)
-                        .to(equal([
-                            .properties([
-                                "platform": .string("iOS"),
-                                "application_id": .string("default-application"),
-                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
-                            ])
-                        ]))
+                    expect(customerUpdates[0].dataTypes).to(equal([.properties([:])]))
                     expect(customerUpdates[0].projectToken).to(equal("mock-token"))
 
                     expect(customerUpdates[1].customerIds["cookie"]).to(equal(firstCustomer.uuid.uuidString))
-                    expect(customerUpdates[1].dataTypes)
-                        .to(equal([
-                            .properties([
-                                "platform": .string("iOS"),
-                                "application_id": .string("default-application"),
-                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
-                            ])
-                        ]))
+                    expect(customerUpdates[1].dataTypes).to(equal([.properties([:])]))
                     expect(customerUpdates[1].projectToken).to(equal("mock-token"))
 
                     expect(customerUpdates[2].customerIds["cookie"]).to(equal(secondCustomer.uuid.uuidString))
-                    expect(customerUpdates[2].dataTypes)
-                        .to(equal([
-                            .properties([
-                                "platform": .string("iOS"),
-                                "application_id": .string("default-application"),
-                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
-                            ])
-                        ]))
+                    expect(customerUpdates[2].dataTypes).to(equal([.properties([:])]))
                     expect(customerUpdates[2].projectToken).to(equal("other-mock-token"))
                 }
 
