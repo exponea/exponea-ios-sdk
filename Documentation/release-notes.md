@@ -11,6 +11,20 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.8.2
+#### October 22, 2025
+* Added:
+  * Adds device_id parameter to all tracked events.
+  * Adds push notification token invalidation during manual token track and new token registration.
+* Fixed:
+  * Fixes notification_state event tracking not respecting token track frequency setup.
+  * Fixes missing application_id in push notification delivered event.
+  * Fixes in-app message display when alert is presented.
+  * Fixes notification_state event description messages.
+* Removed:
+  * Removes default properties from notification_state event.
+  * Removes push_notification_token, platform, description, device_id and application_id from customer properties.
+
 ## Release Notes for 3.8.1
 #### October 07, 2025
 * Fixed:
