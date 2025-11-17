@@ -13,6 +13,7 @@ By default, the SDK tracks certain events automatically, including:
 * Installation (after app installation and after invoking [anonymize](#anonymize))
 * User session start and end
 * Banner event for showing an in-app message or content block
+* `notification_state` event for push notification token tracking (SDK versions 3.8.0 and higher). [Learn more](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications#token-tracking-via-notification_state-event).
 
 Additionally, you can track any custom event relevant to your business.
 

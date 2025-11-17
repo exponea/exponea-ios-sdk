@@ -167,6 +167,10 @@ If the user hasn't granted permission yet, this code will trigger an alert askin
 
 By default, the SDK only tracks the push notification token if the app is authorized (unless the [push setup check](#configure-the-sdk) is enabled). Refer to [Silent Push Notifications](#silent-push-notifications) below to learn how to track the push token even when the app isn't authorized.
 
+> ❗️Important
+>
+> SDK versions 3.8.0 and higher use event-based token tracking to support multiple mobile applications per project. Learn more about [Token tracking via notification_state event](#token-tracking-via-notification_state-event).
+
 #### Checklist: 
  - [ ] Engagement should now be able to send push notifications to your device. For instructions, refer to the [Creating a new notification](https://documentation.bloomreach.com/engagement/docs/mobile-push-notifications#creating-a-new-notification) guide.
 
@@ -238,6 +242,10 @@ extension AppDelegate: PushNotificationManagerDelegate {
 >
 > Refer to [`AppDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/AppDelegate.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a basic example.
 
+> ❗️Important
+>
+> SDK versions 3.8.0 and higher use event-based token tracking to support multiple mobile applications per project. Learn more about [Token tracking via notification_state event](#token-tracking-via-notification_state-event).
+
 ### Silent push notifications
 
 Silent push notifications don't trigger any visible or audible notifications on the device but wake up the application to allow it to perform tasks in the background.
@@ -269,6 +277,10 @@ To respond to silent push notifications, set the `Exponea.shared.pushNotificatio
 > ❗️
 >
 > The [Official Apple documentation](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_background_updates_to_your_app) states that you should not try to send more than two or three notifications per hour.
+
+> ❗️Important
+>
+> SDK versions 3.8.0 and higher use event-based token tracking to support multiple mobile applications per project. Learn more about [Token tracking via notification_state event](#token-tracking-via-notification_state-event).
 
 ### Rich push notifications
 
@@ -326,6 +338,97 @@ In iOS 10 and later, you can show foreground notifications by implementing a `UN
 > 📘
 >
 > For an example see https://sarunw.com/posts/notification-in-foreground/.
+
+## Token tracking via notification_state event
+
+ Starting with SDK version 3.8.0, push notification tokens are tracked using `notification_state` events instead of customer
+profile properties. This change enables support for multiple mobile applications per project,
+allowing you to track multiple push tokens for the same customer across different apps and devices.
+
+### Token storage by SDK version
+
+#### SDK versions below 3.8.0:
+
+* Tokens are stored in customer profile properties: `apple_push_notification_id`
+* One token per customer profile
+* Single application per project
+
+#### SDK versions 3.8.0 and higher:
+
+* Tokens are stored as `notification_state` events
+* Multiple tokens per customer (grouped by Application ID)
+* Multiple applications per project supported
+* Backward compatibility maintained for Application ID `default-application`
+
+### When notification_state events are tracked
+
+The SDK automatically tracks `notification_state` events in the following scenarios:
+
+* SDK initialization
+* App transitions from background to foreground
+* New token received from Firebase
+* Manual token tracking using `Exponea.trackPushToken(...)`
+* User anonymization via `Exponea.anonymize()`
+* Notification permission requested via `UNAuthorizationStatusProvider.current.isAuthorized()`
+
+```swift
+UNAuthorizationStatusProvider.current.isAuthorized { granted ->
+    print("Push notifications are allowed: \(granted)")
+}
+```
+
+The frequency of `notification_state` event tracking depends on the `tokenTrackFrequency` configuration property. [See SDK configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration).
+
+### notification_state event properties
+
+| Property                | Description                              | Example values                          |
+|-------------------------|------------------------------------------|-----------------------------------------|
+| `push_notification_token` | Current push notification token          | Token string                            |
+| `platform`                | Mobile platform                          | `iOS`                       |
+| `valid`                   | Token validity status                    | `true` or `false`                           |
+| `description`             | Token state description                  | `Permission granted`, `Permission denied`, or `Invalidated` |
+| `application_id`          | Application identifier from SDK configuration | Custom ID or `default-application` (default) |
+| `device_id`               | Unique device identifier                 | UUID string                             |
+
+> 📘 Note
+>
+> If you don't specify an `application_id` in your SDK configuration, the default value `default-application` is used. [See SDK configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration).
+### Understanding token states
+
+The combination of `valid` and `description` properties indicates the token's current state:
+
+| Valid | Description         | When this occurs                                                        |
+|-------|---------------------|------------------------------------------------------------------------|
+| `false` | `Invalidated`         | New token received \(old token becomes invalid\) or `Exponea.anonymize()` called |
+| `false` | `Permission denied`   | [requirePushAuthorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) is `true` and user denied notification permission |
+| `true`  | `Permission granted`  | Valid token tracked successfully \(all other cases\)                     |
+
+### Configuring Application ID
+
+Each mobile app integrated with the SDK requires an `application_id` that matches the Application ID configured in Bloomreach Engagement. 
+
+For configuration instructions, see [Configure Application ID](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#configure-application-id).
+
+#### Event creation requirements
+
+The SDK automatically generates `notification_state` events. Before upgrading to SDK 3.8.0 or higher, ensure your Bloomreach Engagement project meets these requirements:
+
+- Event creation is enabled for your project
+- If your project uses custom event schemas or restricts event creation, add `notification_state` to the list of allowed events
+
+> ❗️ Important
+>
+> If your project blocks creation of new event types, push token registration will fail silently. No tokens will appear in customer profiles or the event stream after SDK initialization, and push notifications will not be delivered.
+### Verifying token tracking
+
+You can verify that tokens are being tracked correctly in the Bloomreach Engagement web application:
+
+1. Navigate to Data & Assets > Customers
+2. Locate the customer profile
+3. Check for `notification_state` events in the customer's event history
+4. Verify the `push_notification_token` property contains a valid token value 
+
+For SDK versions below 3.8.0, check the customer profile properties `apple_push_notification_id` instead.
 
 ## Advanced use cases
 

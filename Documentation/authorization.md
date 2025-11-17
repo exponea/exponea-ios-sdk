@@ -142,4 +142,20 @@ public class ExampleAuthProvider: NSObject, AuthorizationProviderType {
 
 > ❗️
 >
-> A customer token is valid until its expiration and is assigned to the current customer IDs. Bear in mind that if customer IDs change (due to invoking the `identifyCustomer` or `anonymize` methods), the customer token may become invalid for future HTTP requests invoked for new customer IDs.
+> A customer token is valid until expiration and is tied to the current customer IDs. If customer IDs change through `identifyCustomer` or `anonymize` methods, the customer token may become invalid for HTTP requests using the new customer IDs.
+
+## Configure application ID
+
+**Multiple mobile apps:** If your Engagement project supports multiple mobile apps, specify the `applicationID` in your configuration. This helps distinguish between different apps in your project.
+
+```swift
+Exponea.shared.configure(
+    ...,
+    applicationID = "<Your application id>",
+    ...
+)
+```
+
+Make sure your `applicationID` value matches exactly Application ID configured in your Bloomreach Engagement under **Project Settings > Campaigns > Channels > Push Notifications.**
+
+**Single mobile app:** If your Engagement project supports only one app, you can skip the `applicationID` configuration. The SDK will automatically use the default value "default-application".

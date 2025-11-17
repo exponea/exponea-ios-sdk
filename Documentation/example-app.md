@@ -44,7 +44,7 @@ In Xcode, navigate to `Xcode` > `Preferences` > `Locations` and make sure `Comma
 
 When you run the app in the simulator, you'll see the **Authentication** view. 
 1. Enter your [project token, API token, and API base URL](https://documentation.bloomreach.com/engagement/docs/mobile-sdks-api-access-management).
-2. **Optional**: Enter an `Application ID` if your Engagement project supports multiple mobile apps. If you leave this blank, the SDK uses the default value `default-application`. [Learn more about configuration](https://documentation.bloomreach.com/engagement/docs/android-sdk-configuration). 
+2. **Optional**: Enter an `Application ID` if your Engagement project supports multiple mobile apps. If you leave this blank, the SDK uses the default value `default-application`. [Learn more about configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration). 
 3. Click `Start` to [initialize the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk).
 > [`AuthenticationViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/AuthenticationViewController.swift)
 

@@ -13,11 +13,11 @@ This page provides an overview of all configuration parameters for the SDK and s
 * `projectToken` **(required)**
    * Your project token. You can find this in the Engagement web app under `Project settings` > `Access management` > `API`.
    
-* `applicationId`
-  * This `applicationId` defines a unique identifier for the mobile app within the Engagement project. Change this value only if your Engagement project contains and supports multiple mobile apps.
+* `applicationID`
+  * This `applicationID` defines a unique identifier for the mobile app within the Engagement project. Change this value only if your Engagement project contains and supports multiple mobile apps.
   * This identifier distinguishes between different apps in the same project.
-  * Your `applicationId` value must be the same as the one defined in your Engagement project settings.
-  * If your Engagement project supports only one app, skip the `applicationId` configuration. The SDK will use the default value automatically.
+  * Your `applicationID` value must be the same as the one defined in your Engagement project settings.
+  * If your Engagement project supports only one app, skip the `applicationID` configuration. The SDK will use the default value automatically.
   * Must be in a specific format, see rules:
     * Starts with one or more lowercase letters or digits
     * Additional words are separated by single hyphens or dots
@@ -112,7 +112,7 @@ func configure(
         automaticSessionTracking: AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
         flushingSetup: FlushingSetup = FlushingSetup.default,
-        applicationId: String = "default-application"
+        applicationID: String = "default-application"
     )
 ```
 
@@ -185,7 +185,7 @@ Exponea.shared.configure(
 	defaultProperties: ["prop-1": "value-1", "prop-2": 123],
 	flushingSetup: Exponea.FlushingSetup(mode: .periodic(100), maxRetries: 5),
 	advancedAuthEnabled: true,
-    applicationId: "com.yourApplication.org"
+    applicationID: "com.yourApplication.org"
 )
 ```
 
@@ -219,7 +219,7 @@ Exponea.shared.configure(plistName: "ExampleConfig.plist")
 	<string>testToken</string>
 	<key>sessionTimeout</key>
 	<integer>20</integer>
-    <key>applicationId</>
+    <key>applicationID</>
     <string>com.yourApplication.org</>
 	<key>projectMapping</key>
 	<dict>

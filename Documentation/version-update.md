@@ -8,6 +8,42 @@ parentDocSlug: ios-sdk-release-notes
 
 This guide will help you upgrade your Exponea SDK to the latest major version.
 
+## Update to version 3.8.0 or higher
+
+SDK versions 3.8.0 and higher support multiple mobile applications within a single Bloomreach Engagement project.
+
+This update introduces two major changes:
+
+ ### 1. **Application ID configuration**
+
+Each mobile application integrated with the SDK can now have its own unique `applicationID`. This identifier distinguishes between different applications within the same project.
+
+**When to configure Application ID:**
+
+- **Multiple mobile apps:** You must specify a unique `applicationID` for each app in the SDK configuration. The value must match the Application ID configured in Bloomreach Engagement under **Project Settings > Campaigns > Channels > Push Notifications.**
+- **Single mobile app:** If you use only one mobile application, you don't need to set `applicationID`. The SDK uses the default value `default-application` automatically.
+
+Learn more about [SDK configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) and [Configure Application ID](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#configure-application-id).
+
+### 2. **Push notification token tracking**
+
+Push notification tokens are now tracked using `notification_state` events instead of customer properties (`apple_push_notification_id`). This change enables tracking multiple push tokens for the same customer across different applications and devices.
+
+**Important prerequisites before upgrading:**
+
+The SDK automatically generates `notification_state` events. Before upgrading to version 3.8.0 or higher:
+
+- Ensure event creation is enabled for your Bloomreach Engagement project
+- If your project uses custom event schemas or restricts event creation, add `notification_state` to the list of allowed events
+- If your project blocks creation of new event types, push token registration will fail silently
+
+**Symptoms of blocked event creation:**
+
+- No new tokens appear in customer profiles or the event stream after SDK initialization
+- Push notifications are not delivered
+
+Learn more about [Token tracking via notification_state event](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications#token-tracking-via-notification_state-event).
+
 ## Update from version 2.x.x to 3.x.x
 
 Updating Exponea SDK to version 3 or higher requires making some changes related to in-app messages callback implementations.
