@@ -86,10 +86,12 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     func dismissFromSuperView() {
-        guard presentingViewController != nil else {
-            return
+        DispatchQueue.main.async { [weak self] in
+            guard self?.presentingViewController != nil else {
+                return
+            }
+            self?.dismiss(animated: true)
         }
-        dismiss(animated: true)
     }
 
     override func loadView() {
