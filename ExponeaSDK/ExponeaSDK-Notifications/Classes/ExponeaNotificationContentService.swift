@@ -34,12 +34,12 @@ public class ExponeaNotificationContentService {
             return
         }
         createActions(notification: notification, context: context)
-        // Add image if any
         if let first = notification.request.content.attachments.first,
-            first.url.startAccessingSecurityScopedResource() {
+           first.url.startAccessingSecurityScopedResource() {
             attachmentUrl = first.url
             self.context = context
             createImageView(on: viewController.view, with: first.url.path)
+            viewController.preferredContentSize = CGSize(width: 0, height: 300)
         }
     }
 
@@ -65,12 +65,14 @@ public class ExponeaNotificationContentService {
 
     private func createImageView(on view: UIView, with imagePath: String) {
         let url = URL(fileURLWithPath: imagePath)
-        guard let data = try? Data(contentsOf: url) else {
+        guard let data = try? Data(contentsOf: url),
+              let image = UIImage(data: data) else {
             Exponea.logger.log(.warning, message: "Unable to load image contents \(imagePath)")
             return
         }
-        let imageView = UIImageView(image: UIImage.gif(data: data))
+        let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.addGestureRecognizer(UITapGestureRecognizer(
             target: self,
@@ -79,22 +81,17 @@ public class ExponeaNotificationContentService {
         imageView.isUserInteractionEnabled = true
         view.addSubview(imageView)
 
-        // Constraints
-        imageView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        imageView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        imageView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        let aspect = image.size.height / max(image.size.width, 1)
+
+        imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         imageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: aspect).isActive = true
         imageView.heightAnchor.constraint(lessThanOrEqualToConstant: 300).isActive = true
     }
 
     @objc
     public func imageTapped(gesture: UITapGestureRecognizer) {
-        if #available(iOS 12.0, *) {
-            context?.performNotificationDefaultAction()
-        } else {
-            // Fallback on earlier versions
-        }
+        context?.performNotificationDefaultAction()
     }
-
 }
