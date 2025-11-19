@@ -70,52 +70,56 @@ final class InAppButtonContainerSwiftUIViewModel: ObservableObject {
     }
 
     func prepareData() {
-        let hugButtons = input.filter({ $0.layout == .hug })
+        data.removeAll()
+        let hugButtons = input.filter { $0.layout == .hug }
         if input.count == hugButtons.count {
             if isFitToScreenWidth(buttons: hugButtons) {
                 data.append(.init(stackType: .horizontal, buttons: hugButtons))
-            } else {
-                for (index, button) in input.enumerated() {
-                    var buttonsToCheck: [InAppButtonConfig] = [button]
-                    if let nextHugButton = input[safeIndex: index + 1] {
-                        buttonsToCheck.append(nextHugButton)
-                    }
-                    if let previousHugButton = input[safeIndex: index - 1] {
-                        buttonsToCheck.append(previousHugButton)
-                    }
-                    if isFitToScreenWidth(buttons: buttonsToCheck) {
-                        data.append(.init(stackType: .horizontal, buttons: Array(input[index...index + 1])))
-                    } else {
-                        var copy = button
-                        copy.isWiderThanScreen = true
-                        data.append(.init(stackType: .vertical, buttons: [copy]))
-                    }
-                }
+                return
             }
-        } else {
-            for (index, button) in input.enumerated() {
-                if data.map({ $0.buttons }).flatMap({ $0 }).map({ $0.id }).contains(button.id) { continue }
-                if button.layout == .fill {
-                    data.append(.init(stackType: .vertical, buttons: [button]))
-                } else if button.layout == .hug && (input[safeIndex: index + 1]?.layout == .hug || input[safeIndex: index - 1]?.layout == .hug) {
-                    var buttonsToCheck: [InAppButtonConfig] = [button]
-                    if let nextHugButton = input[safeIndex: index + 1], nextHugButton.layout == .hug {
-                        buttonsToCheck.append(nextHugButton)
-                    }
-                    if let previousHugButton = input[safeIndex: index - 1], previousHugButton.layout == .hug {
-                        buttonsToCheck.append(previousHugButton)
-                    }
-                    if isFitToScreenWidth(buttons: buttonsToCheck) {
-                        data.append(.init(stackType: .horizontal, buttons: Array(input[index...index + 1])))
-                    } else {
-                        var copy = button
-                        copy.isWiderThanScreen = true
-                        data.append(.init(stackType: .vertical, buttons: [copy]))
-                    }
+
+            var i = 0
+            while i < input.count {
+                let current = input[i]
+                if let next = input[safeIndex: i + 1],
+                   isFitToScreenWidth(buttons: [current, next]) {
+                    data.append(.init(stackType: .horizontal, buttons: [current, next]))
+                    i += 2
                 } else {
-                    data.append(.init(stackType: .vertical, buttons: [button]))
+                    var copy = current
+                    copy.isWiderThanScreen = true
+                    data.append(.init(stackType: .vertical, buttons: [copy]))
+                    i += 1
                 }
             }
+            return
+        }
+
+        var i = 0
+        while i < input.count {
+            let button = input[i]
+
+            if button.layout == .fill {
+                data.append(.init(stackType: .vertical, buttons: [button]))
+                i += 1
+                continue
+            }
+
+            if button.layout == .hug,
+               let next = input[safeIndex: i + 1],
+               next.layout == .hug,
+               isFitToScreenWidth(buttons: [button, next]) {
+                data.append(.init(stackType: .horizontal, buttons: [button, next]))
+                i += 2
+                continue
+            }
+
+            var copy = button
+            if !isFitToScreenWidth(buttons: [button]) {
+                copy.isWiderThanScreen = true
+            }
+            data.append(.init(stackType: .vertical, buttons: [copy]))
+            i += 1
         }
     }
 }
