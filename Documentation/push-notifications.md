@@ -366,7 +366,7 @@ The SDK automatically tracks `notification_state` events in the following scenar
 
 * SDK initialization
 * App transitions from background to foreground
-* New token received from Firebase
+* New token received from APNs
 * Manual token tracking using `Exponea.trackPushToken(...)`
 * User anonymization via `Exponea.anonymize()`
 * Notification permission requested via `UNAuthorizationStatusProvider.current.isAuthorized()`

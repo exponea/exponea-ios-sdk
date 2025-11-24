@@ -11,6 +11,16 @@ parentDocSlug: ios-sdk
 > Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.9.0
+#### November 19, 2025
+* Added:
+  * Documents [major push notification updates](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update): notification_state event as a new token tracking method, Application ID configuration, and migration requirements for the Multiple mobile apps feature.
+* Fixed:
+  * Fixes crash that occurs when in app message has 3 buttons.
+  * Fixes incorrect push notification's image aspect ratio.
+  * Fixes crash on wrappers when in app message with stop integration action is called.
+
+
 ## Release Notes for 3.8.2
 #### October 22, 2025
 * Added:
