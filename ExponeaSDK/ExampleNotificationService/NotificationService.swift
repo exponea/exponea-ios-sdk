@@ -11,7 +11,7 @@ import ExponeaSDKNotifications
 
 class NotificationService: UNNotificationServiceExtension {
 
-    let exponeaService = ExponeaNotificationService(appGroup: "group.com.exponea.ExponeaSDK-Example2")
+    let exponeaService = ExponeaNotificationService(appGroup: "group.com.exponea.sdk.example")
 
     override func didReceive(
         _ request: UNNotificationRequest,
