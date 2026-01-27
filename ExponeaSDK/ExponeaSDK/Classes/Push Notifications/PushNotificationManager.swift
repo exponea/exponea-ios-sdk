@@ -277,17 +277,27 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                     if let current = self.currentPushToken?.pushToken,
                        current != token {
                         self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: true)
+                        self.setPushTokenType(token: token, authorized: authorized)
+                        self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: false)
+                    } else if self.currentPushToken?.pushToken == nil {
+                        self.setPushTokenType(token: token, authorized: authorized)
+                        self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: false)
+                    } else {
+                        self.setPushTokenType(token: token, authorized: authorized)
+                        self.checkForPushTokenFrequency(isAuthorized: authorized)
                     }
-                    let pushTokenType = PushTokenType(
-                        pushToken: token,
-                        isTokenValid: !self.requirePushAuthorization || authorized
-                    )
-                    self.lastKnownPushToken = pushTokenType
-                    self.currentPushToken = pushTokenType
-                    self.trackCurrentPushToken(isAuthorized: authorized)
                 }
             }
         }
+    }
+    
+    private func setPushTokenType(token: String, authorized: Bool) {
+        let pushTokenType = PushTokenType(
+            pushToken: token,
+            isTokenValid: !self.requirePushAuthorization || authorized
+        )
+        self.lastKnownPushToken = pushTokenType
+        self.currentPushToken = pushTokenType
     }
 
     static func storePushOpened(userInfoObject: AnyObject?,

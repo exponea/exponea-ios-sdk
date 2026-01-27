@@ -760,6 +760,63 @@ final class PushNotificationManagerSpec: QuickSpec {
                     )
                 ]))
             }
+            
+            it("should track token in 'onTokenChange' frequency") {
+                createPushManager(
+                    requirePushAuthorization: true,
+                    currentToken: "new-mock-token",
+                    tokenTrackFrequency: .onTokenChange
+                )
+                expect(trackingManager.trackedEvents).to(
+                    equal([
+                        MockTrackingManager.TrackedEvent(
+                            type: .notificationState,
+                            data: [
+                                .properties([
+                                    "platform": .string("iOS"),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id"),
+                                    "description": .string("Permission granted")
+                                ]),
+                                .pushNotificationToken(
+                                    token: "new-mock-token",
+                                    authorized: true
+                                ),
+                                .eventType("notification_state")
+                            ]
+                        )
+                    ])
+                )
+            }
+            
+            it("should track token in 'onTokenChange' frequency if permission denied") {
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
+                createPushManager(
+                    requirePushAuthorization: true,
+                    currentToken: "new-mock-token",
+                    tokenTrackFrequency: .onTokenChange
+                )
+                expect(trackingManager.trackedEvents).to(
+                    equal([
+                        MockTrackingManager.TrackedEvent(
+                            type: .notificationState,
+                            data: [
+                                .properties([
+                                    "platform": .string("iOS"),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id"),
+                                    "description": .string("Permission denied")
+                                ]),
+                                .pushNotificationToken(
+                                    token: "new-mock-token",
+                                    authorized: false
+                                ),
+                                .eventType("notification_state")
+                            ]
+                        )
+                    ])
+                )
+            }
 
             it("should track push token if not authorized but authorization is not required") {
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
