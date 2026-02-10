@@ -6,8 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>webcredentials:old.panaxeo.com</string>
-		<string>applinks:old.panaxeo.com</string>
+		<string>applinks:mobile-sdk-example-apps.web.app</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>

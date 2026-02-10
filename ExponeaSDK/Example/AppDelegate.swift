@@ -89,7 +89,7 @@ class AppDelegate: ExponeaAppDelegate {
         if let type = DeeplinkType(input: incomingURL.absoluteString) {
             DeeplinkManager.manager.setDeeplinkType(type: type)
         }
-        return incomingURL.host == "old.panaxeo.com"
+        return incomingURL.host == "mobile-sdk-example-apps.web.app"
     }
 
     func application(
