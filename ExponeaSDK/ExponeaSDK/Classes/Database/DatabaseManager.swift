@@ -244,6 +244,10 @@ extension DatabaseManager: DatabaseManagerType {
                     try self.context.save()
                 } catch let error as NSError {
                     Exponea.logger.log(.error, message: "removeAllEvents failed: \(error)")
+                    // Persist any deletions we did complete so the store is not left with stale event data (e.g. old device_id).
+                    if context.hasChanges {
+                        try? self.context.save()
+                    }
                 }
             }
         }

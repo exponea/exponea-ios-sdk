@@ -92,7 +92,6 @@ public class ExponeaInternal: ExponeaType {
     public var segmentationManager: SegmentationManagerType?
     public var manualSegmentationManager: ManualSegmentationManagerType?
 
-    /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
         if UserDefaults(suiteName: Constants.General.userDefaultsSuite) == nil {
             UserDefaults.standard.addSuite(named: Constants.General.userDefaultsSuite)
@@ -616,6 +615,7 @@ public extension ExponeaInternal {
     }
 
     private func clearUserData(appGroup: String?) {
+        TelemetryUtility.clearInstallIdFromAllStores(appGroup: appGroup)
         IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
         IntegrationManager.shared.onIntegrationStoppedCallbacks.removeAll()
         notificationsManager?.handlePushTokenRegistered(token: "")
@@ -634,6 +634,7 @@ public extension ExponeaInternal {
             Exponea.logger.log(.error, message: "This functionality is unavailable without initialization of SDK")
             return
         }
+        TelemetryUtility.clearInstallIdFromAllStores(appGroup: appGroup)
         Exponea.shared.telemetryManager?.report(
             eventWithType: .localCustomerDataCleared,
             properties: [
@@ -652,6 +653,11 @@ public extension ExponeaInternal {
         FileCache.shared.clear()
     }
 
+    /// Clears SDK-related keys from UserDefaults (session, config, etc.).
+    /// Install ID is cleared by clearInstallIdFromAllStores, which callers invoke before this.
+    /// We also clear known SDK keys from UserDefaults.standard so that if the SDK ever used
+    /// standard as fallback (named suite was nil), no stale SDK data remains. We never clear
+    /// all of standard—only these keys—so app and other SDKs are unaffected.
     private func clearUserDefaults(appGroup: String?) {
         if let appGroup, let defaults = UserDefaults(suiteName: appGroup) {
             for key in defaults.dictionaryRepresentation().keys where key != "isStopped" {
@@ -660,6 +666,7 @@ public extension ExponeaInternal {
             defaults.removeObject(forKey: Constants.Keys.sessionEnded)
             defaults.removeObject(forKey: Constants.Keys.sessionStarted)
             defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+            defaults.removeObject(forKey: Constants.General.telemetryInstallId)
             Configuration.deleteLastKnownConfig(appGroup: appGroup)
             defaults.synchronize()
         } else {
@@ -670,9 +677,33 @@ public extension ExponeaInternal {
                 defaults.removeObject(forKey: Constants.Keys.sessionEnded)
                 defaults.removeObject(forKey: Constants.Keys.sessionStarted)
                 defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+                defaults.removeObject(forKey: Constants.General.telemetryInstallId)
                 Configuration.deleteLastKnownConfig(appGroup: Constants.General.userDefaultsSuite)
                 defaults.synchronize()
             }
         }
+        clearKnownSDKKeysFromStandard()
+    }
+
+    /// Removes only known Exponea SDK keys from UserDefaults.standard. Used when the canonical
+    /// store may have been standard (e.g. suite was nil). Does not clear other app data.
+    private func clearKnownSDKKeysFromStandard() {
+        let standard = UserDefaults.standard
+        standard.removeObject(forKey: Constants.General.telemetryInstallId)
+        standard.removeObject(forKey: Constants.Keys.sessionEnded)
+        standard.removeObject(forKey: Constants.Keys.sessionStarted)
+        standard.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.deliveredPushEventUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.openedPushUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.lastKnownConfiguration)
+        standard.removeObject(forKey: Constants.General.lastKnownCustomerIds)
+        standard.removeObject(forKey: Constants.General.savedCampaignClickEvent)
+        standard.removeObject(forKey: Constants.General.inAppMessageDisplayStatusUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.inAppContentBlockDisplayStatusUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.telemetryEvents)
+        for key in standard.dictionaryRepresentation().keys where key.hasPrefix(Constants.Keys.installTracked) {
+            standard.removeObject(forKey: key)
+        }
+        standard.synchronize()
     }
 }

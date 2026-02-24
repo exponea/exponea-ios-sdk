@@ -1,5 +1,5 @@
 ---
-title: In-app messages
+title: In-app messages for iOS SDK
 excerpt: Display native in-app messages based on definitions set up in Engagement using the iOS SDK
 slug: ios-sdk-in-app-messages
 categorySlug: integrations
@@ -8,7 +8,7 @@ parentDocSlug: ios-sdk-in-app-personalization
 
 The SDK enables you to display native in-app messages in your app based on definitions set up in Engagement. 
 
-In-app messages work out-of-the-box once the [SDK is installed and configured](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup) in your app; no development work is required. However, you can customize the behavior to meet your specific requirements.
+In-app messages work out-of-the-box once the [Initial setup for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup) is complete in your app; no development work is required. However, you can customize the behavior to meet your specific requirements.
 
 > 📘
 >
@@ -33,7 +33,7 @@ The SDK automatically tracks `banner` events for in-app messages with the follow
 
 > ❗️
 >
-> The behavior of in-app message tracking may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [consent documentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
+> The behavior of in-app message tracking may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [Tracking consent for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
 
 
 ## Customization
@@ -115,7 +115,7 @@ The method `trackInAppMessageClose` will track a `close` event with the `interac
 
 > ❗️
 >
-> The behaviour of `trackInAppMessageClick` and `trackInAppMessageClose` may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [Tracking Consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
+> The behaviour of `trackInAppMessageClick` and `trackInAppMessageClose` may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [Tracking consent for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
 
 ### Override button action type in HTML message
 

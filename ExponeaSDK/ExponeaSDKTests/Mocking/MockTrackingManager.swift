@@ -13,7 +13,7 @@ internal class MockTrackingManager: TrackingManagerType {
     func trackNotificationState(pushToken: String?, isValid: Bool, description: String) throws {
         if let pushToken {
             let data: [String: JSONValue] = [
-                "platform": .string("iOS"),
+                "platform": .string("ios"),
                 "device_id": .string("device-id"),
                 "description": .string(description)
             ]

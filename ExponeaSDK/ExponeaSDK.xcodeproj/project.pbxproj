@@ -20,6 +20,7 @@
 		01EC2DC1207F63970031BFEB /* FlushingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DC0207F63970031BFEB /* FlushingMode.swift */; };
 		050805732326510100BDA235 /* MockUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050805722326510100BDA235 /* MockUserDefaults.swift */; };
 		05080C3E23D736C400E4241B /* TelemetryManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05080C3D23D736C400E4241B /* TelemetryManagerSpec.swift */; };
+		A1B2C3D523E736C400E4241C /* InstallIdResetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D423E736C400E4241C /* InstallIdResetSpec.swift */; };
 		050961002321566000D59C01 /* TrackingManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050960FF2321566000D59C01 /* TrackingManagerSpec.swift */; };
 		0509610223216C7D00D59C01 /* TrackingManagerUpdate.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0509610123216C7D00D59C01 /* TrackingManagerUpdate.plist */; };
 		050961062322552300D59C01 /* MockLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050961052322552300D59C01 /* MockLogger.swift */; };
@@ -761,7 +762,8 @@
 		05F3EFE32382BAB6006E83F4 /* TelemetryUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryUtility.swift; sourceTree = "<group>"; };
 		05F3EFE92382BC4C006E83F4 /* MockTelemetryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTelemetryStorage.swift; sourceTree = "<group>"; };
 		05F3EFEC2382BD08006E83F4 /* MockTelemetryUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTelemetryUpload.swift; sourceTree = "<group>"; };
-		05F3EFEE2382C192006E83F4 /* TelemetryUtilitySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryUtilitySpec.swift; sourceTree = "<group>"; };
+				05F3EFEE2382C192006E83F4 /* TelemetryUtilitySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryUtilitySpec.swift; sourceTree = "<group>"; };
+				A1B2C3D423E736C400E4241C /* InstallIdResetSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallIdResetSpec.swift; sourceTree = "<group>"; };
 		05FB1BB6236AE9220089C529 /* NotificationDataSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDataSpec.swift; sourceTree = "<group>"; };
 		05FBB15C244709C500BDF234 /* DatabaseManager+Clear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseManager+Clear.swift"; sourceTree = "<group>"; };
 		05FD178E2403C4CC003A799B /* BuildConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildConfiguration.swift; sourceTree = "<group>"; };
@@ -1590,6 +1592,7 @@
 				05F3EFDE237E99ED006E83F4 /* Storage */,
 				05324BEE23D19F7B00AE91D9 /* Upload */,
 				05F3EFE12382A814006E83F4 /* CrashManagerSpec.swift */,
+				A1B2C3D423E736C400E4241C /* InstallIdResetSpec.swift */,
 				05080C3D23D736C400E4241B /* TelemetryManagerSpec.swift */,
 				05F3EFEE2382C192006E83F4 /* TelemetryUtilitySpec.swift */,
 			);
@@ -3333,6 +3336,7 @@
 				050961002321566000D59C01 /* TrackingManagerSpec.swift in Sources */,
 				55130C4F28E3C50D00B4FE77 /* GdprTrackingSpec.swift in Sources */,
 				05F3EFEF2382C192006E83F4 /* TelemetryUtilitySpec.swift in Sources */,
+				A1B2C3D523E736C400E4241C /* InstallIdResetSpec.swift in Sources */,
 				4C169E3122B6524C00C425DA /* TrackUniversalLinkSpec.swift in Sources */,
 				057D476D23C889BE00AEE902 /* PushNotificationsTestData.swift in Sources */,
 				C09A6497212D83E600DCAC06 /* DatabaseManagerSpec.swift in Sources */,

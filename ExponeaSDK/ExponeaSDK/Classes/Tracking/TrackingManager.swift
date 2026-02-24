@@ -200,7 +200,7 @@ extension TrackingManager: TrackingManagerType {
     public func trackNotificationState(pushToken: String?, isValid: Bool, description: String) throws {
         if let pushToken {
             let data: [String: JSONValue] = [
-                "platform": .string("iOS"),
+                "platform": .string("ios"),
                 "description": .string(description)
             ]
             try trackInternal(

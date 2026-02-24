@@ -1,5 +1,5 @@
 ---
-title: Segmentation
+title: Segmentation for iOS SDK
 excerpt: Implement real-time segments using the iOS SDK
 slug: ios-sdk-segmentation
 categorySlug: integrations

@@ -85,5 +85,6 @@ final class TelemetryManager {
     func clear(_ appGroup: String?) {
         let userDefaults = TelemetryUtility.getUserDefaults(appGroup: appGroup)
         TelemetryUtility.saveTelemetryEvents(userDefaults, [])
+        TelemetryUtility.clearInstallId(from: userDefaults)
     }
 }

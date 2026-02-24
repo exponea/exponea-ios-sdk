@@ -1,5 +1,5 @@
 ---
-title: Release notes
+title: Release notes for iOS SDK
 excerpt: Exponea iOS SDK release notes
 slug: ios-sdk-release-notes
 categorySlug: integrations
@@ -8,9 +8,21 @@ parentDocSlug: ios-sdk
 
 > 📘
 >
-> Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
+> Refer to the [SDK version update guide for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.10.0
+#### February 24, 2026
+* Added:
+  * Updates Example App's and their extensions bundle IDs.
+  * Updates Example App to handle App Links with the new domain.
+  * Clears device ID when calling stopIntegration() or clearLocalCustomerData().
+  * Updates documentation page titles with "iOS SDK" reference for improved searchability and navigation.
+* Fixed:
+  * Fixes tokenTrackFrequency method invocation.
+  * Fixes in-app message dismissal when user taps outside the dialog.
+
+
 ## Release Notes for 3.9.0
 #### November 19, 2025
 * Added:

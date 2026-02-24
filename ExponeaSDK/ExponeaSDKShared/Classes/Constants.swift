@@ -97,5 +97,6 @@ public enum Constants {
         public static let lastKnownCustomerIds = "EXPONEA_LAST_KNOWN_CUSTOMER_IDS"
         public static let applicationID = "default-application"
         public static let telemetryEvents = "EXPONEA_TELEMETRY_EVENTS"
+        public static let telemetryInstallId = "EXPONEA_TELEMETRY_INSTALL_ID"
     }
 }

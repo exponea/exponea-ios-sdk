@@ -379,7 +379,7 @@ class ExponeaSpec: QuickSpec {
                     try! database.clear()
 
                     let firstCustomer = database.currentCustomer
-                    Exponea.shared.userDefaults.set("device-id", forKey: "EXPONEA_TELEMETRY_INSTALL_ID")
+                    Exponea.shared.userDefaults.set("device-id", forKey: Constants.General.telemetryInstallId)
                     let exponea = ExponeaInternal()
                     Exponea.shared = exponea
                     Exponea.shared.configure(

@@ -1,5 +1,5 @@
 ---
-title: App Inbox
+title: App Inbox for iOS SDK
 excerpt: Add a message inbox to your app using the iOS SDK
 slug: ios-sdk-app-inbox
 categorySlug: integrations
@@ -59,7 +59,7 @@ That's all that's required to integrate the App Inbox. Optionally, you can [cust
 
 > 📘
 >
-> See [FetchViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Fetching/FetchViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> See [FetchViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Fetching/FetchViewController.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
 ## Default App Inbox behavior
 
@@ -128,7 +128,7 @@ Your `AppInboxProvider` instance must implement all App Inbox UI components. You
 
 > 📘
 >
-> Refer to [ExampleAppInboxProvider](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/ExampleAppInboxProvider.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> Refer to [ExampleAppInboxProvider](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/ExampleAppInboxProvider.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
 #### App Inbox button
 
@@ -300,7 +300,7 @@ The SDK tracks App Inbox events automatically by default. In case of a [custom i
 
 Use the `Exponea.shared.trackAppInboxOpened(MessageItem)` method to track opening of App Inbox messages.
 
-The behavior of `trackAppInboxOpened` may be affected by the tracking consent feature, which, when enabled, requires explicit consent for tracking. Refer to [Tracking consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) for details.
+The behavior of `trackAppInboxOpened` may be affected by the tracking consent feature, which, when enabled, requires explicit consent for tracking. Refer to [Tracking consent for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) for details.
 
 If you want to ignore tracking consent, use `Exponea.shared.trackAppInboxOpenedWithoutTrackingConsent` instead. This method will track the event regardless of consent.
 
@@ -308,7 +308,7 @@ If you want to ignore tracking consent, use `Exponea.shared.trackAppInboxOpenedW
 
 Use the `Exponea.shared.trackAppInboxClick(MessageItemAction, MessageItem)` method to track action invocations in App Inbox messages.
 
-The behavior of `trackAppInboxClick` may be affected by the tracking consent feature, which, when enabled, requires explicit consent for tracking. Refer to [Tracking consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) for details.
+The behavior of `trackAppInboxClick` may be affected by the tracking consent feature, which, when enabled, requires explicit consent for tracking. Refer to [Tracking consent for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) for details.
 
 If you want to ignore tracking consent, use `Exponea.shared.trackAppInboxClickWithoutTrackingConsent` instead. This method will track the event regardless of consent.
 

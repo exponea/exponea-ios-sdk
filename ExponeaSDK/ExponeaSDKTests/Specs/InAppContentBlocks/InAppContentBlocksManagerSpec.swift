@@ -62,10 +62,18 @@ class InAppContentBlocksManagerSpec: QuickSpec {
     )
 
     override func spec() {
-        Exponea.shared.configure(with: configuration)
-        let manager: InAppContentBlocksManagerType = Exponea.shared.inAppContentBlocksManager!
-        let callback = CustomCarouselCallback()
-        
+        var manager: InAppContentBlocksManagerType!
+        var callback: CustomCarouselCallback!
+
+        beforeEach {
+            Exponea.shared = ExponeaInternal()
+            IntegrationManager.shared.isStopped = false
+            Exponea.shared.configure(with: self.configuration)
+            manager = Exponea.shared.inAppContentBlocksManager!
+            callback = CustomCarouselCallback()
+            manager.anonymize()
+        }
+
         it("date filter") {
             let date = Date()
             let bigDate = Date().addingTimeInterval(5)
@@ -275,7 +283,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
                     manager.refreshStaticViewContent(staticQueueData: .init(tag: inAppContentBlocks.tags?.first ?? 0, placeholderId: inAppContentBlocks.name, completion: { _ in
                         completionValue = i
                         if i == 10 {
-                            done()
+                            DispatchQueue.main.async { done() }
                         }
                     }))
                 }
@@ -294,7 +302,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             waitUntil(timeout: .seconds(2)) { done in
                 callback.onMessageChangedCallback = {
                     wasMessageChanged = true
-                    done()
+                    DispatchQueue.main.async { done() }
                 }
             }
             expect(wasMessageChanged).to(beTrue())
@@ -439,7 +447,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
                 manager.isMessageValid(message: messageExpired.message!) { _ in
                 } refreshCallback: {
                     isMessageExpiredAndValid = true
-                    done()
+                    DispatchQueue.main.async { done() }
                 }
             }
             expect(isMessageExpiredAndValid).to(beTrue())
@@ -448,7 +456,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             waitUntil(timeout: .seconds(2)) { done in
                 manager.isMessageValid(message: messageInvalidInteracted.message!) { isValid in
                     isMessageInvalid = !isValid
-                    done()
+                    DispatchQueue.main.async { done() }
                 } refreshCallback: {
                 }
             }
@@ -458,7 +466,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             waitUntil(timeout: .seconds(2)) { done in
                 manager.isMessageValid(message: messageInvalidShowed.message!) { isValid in
                     isMessageInvalidShowed = !isValid
-                    done()
+                    DispatchQueue.main.async { done() }
                 } refreshCallback: {
                 }
             }
@@ -468,7 +476,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             waitUntil(timeout: .seconds(2)) { done in
                 manager.isMessageValid(message: messageValid.message!) { isValid in
                     isMessageValid = isValid
-                    done()
+                    DispatchQueue.main.async { done() }
                 } refreshCallback: {
                 }
             }

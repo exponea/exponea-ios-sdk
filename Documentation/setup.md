@@ -1,5 +1,5 @@
 ---
-title: Initial SDK setup
+title: Initial setup for iOS SDK
 excerpt: Install and configure the iOS SDK
 slug: ios-sdk-setup
 categorySlug: integrations
@@ -35,7 +35,7 @@ The instructions below are for Xcode 15.1 and may differ if you use a different 
 
 Optionally, you can specify the `ExponeaSDK` version as follows to let `pod` automatically any smaller than minor version updates:
 ```
-pod "ExponeaSDK", "~> 3.9.0"
+pod "ExponeaSDK", "~> 3.10.0"
 ```
 For more information, refer to [Specifying pod versions](https://guides.cocoapods.org/using/the-podfile.html#specifying-pod-versions) in the Cocoapods documentation.
 
@@ -122,7 +122,7 @@ SDK initialization immediately creates a new customer profile with a new cookie 
 
 > 📘
 >
-> Refer to [Tracking](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking) for details on which events are automatically tracked by the SDK.
+> Refer to [Tracking for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking) for details on which events are automatically tracked by the SDK.
 
 > ❗️ 
 > 
@@ -132,7 +132,7 @@ SDK initialization immediately creates a new customer profile with a new cookie 
 
 ### Advanced configuration
 
-The SDK can be further configured by providing additional parameters to the `configure` method. For a complete list of available configuration parameters, refer to the [Configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) documentation.
+The SDK can be further configured by providing additional parameters to the `configure` method. For a complete list of available configuration parameters, refer to the [Configuration for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) documentation.
 
 ### Log level
 
@@ -159,8 +159,8 @@ Exponea.logger.logLevel = .verbose
 
 ### Authorization
 
-Read [Authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization) to learn more about the different authorization modes supported by the SDK and how to use [customer token](https://documentation.bloomreach.com/engagement/docs/customer-token) authorization.
+Read [Authorization for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization) to learn more about the different authorization modes supported by the SDK and how to use [customer token](https://documentation.bloomreach.com/engagement/docs/customer-token) authorization.
 
 ### Data flushing
 
-Read [Data flushing](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing) to learn more about how the SDK uploads data to the Engagement API and how to customize this behavior.
+Read [Data flushing for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing) to learn more about how the SDK uploads data to the Engagement API and how to customize this behavior.

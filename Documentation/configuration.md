@@ -1,5 +1,5 @@
 ---
-title: Configuration
+title: Configuration for iOS SDK
 excerpt: Full configuration reference for the iOS SDK
 slug: ios-sdk-configuration
 categorySlug: integrations
@@ -61,7 +61,7 @@ This page provides an overview of all configuration parameters for the SDK and s
 
 * `automaticPushNotificationTracking` - DEPRECATED
   * Controls if the SDK will handle push notifications automatically using method swizzling. This feature has been deprecated since its use of method swizzling can cause issues in case the host application uses multiple SDKs that do the same.
-  * Replaced by `pushNotificationTracking`. With `pushNotificationTracking` you have more control over what's happening inside your app in addition to making debugging easier. When migrating from `automaticPushNotificationTracking`, some extra work is required. Refer to the [Push notifications](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications) documentation for more details.
+  * Replaced by `pushNotificationTracking`. With `pushNotificationTracking` you have more control over what's happening inside your app in addition to making debugging easier. When migrating from `automaticPushNotificationTracking`, some extra work is required. Refer to the [Push notifications for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications) documentation for more details.
   * Default value: `true`
 
 * `pushNotificationTracking`
@@ -69,7 +69,7 @@ This page provides an overview of all configuration parameters for the SDK and s
   * Default value: `true`
 
 * `appGroup`
-  * **Required** for the SDK to track delivered push notifications automatically. Refer to the [Push Notifications](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications) documentation for details.
+  * **Required** for the SDK to track delivered push notifications automatically. Refer to the [Push notifications for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications) documentation for details.
 
 * `requirePushAuthorization`
   * The SDK can check push notification authorization status ([Apple documentation](https://developer.apple.com/documentation/usernotifications/unnotificationsettings/1648391-authorizationstatus)) and only track the push token if the user is authorized to receive push notifications.
@@ -91,11 +91,11 @@ This page provides an overview of all configuration parameters for the SDK and s
 
 * `advancedAuthEnabled`
   * If set to `true`, the SDK uses [customer token](https://documentation.bloomreach.com/engagement/docs/customer-token) authorization for communication with the Engagement APIs listed in [Customer Token Authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#customer-token-authorization).
-  * Refer the [authorization documentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization) for details.
+  * Refer the [Authorization for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization) documentation for details.
   * Default value: `false`
 
 * `inAppContentBlocksPlaceholders`
-  * If set, all [In-app content blocks](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks) will be prefetched right after the SDK is initialized.
+  * If set, all [In-app content blocks for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks) will be prefetched right after the SDK is initialized.
 
 * `manualSessionAutoClose`
   * Determines whether the SDK automatically tracks `session_end` for sessions that remain open when `Exponea.shared.trackSessionStart()` is called multiple times in manual session tracking mode.
@@ -133,7 +133,7 @@ func configure(
 
 * `flushingSetup`
   * Allows you to set up `flushingMode` and `maxRetries`. By default, event flush happens as soon as you track an event(`.immediate`). You can change this behavior to one of `.manual`, `.automatic`, `periodic(period)`.
-  * See [Data Flushing](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing) for details.
+  * See [Data flushing for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing) for details.
 
 #### Examples
 Most common use case:

@@ -1,5 +1,5 @@
 ---
-title: Fetch data
+title: Fetch data for iOS SDK
 excerpt: Fetch data from Bloomreach Engagement using the iOS SDK
 slug: ios-sdk-fetch-data
 categorySlug: integrations

@@ -1,12 +1,12 @@
 ---
-title: In-app content blocks
+title: In-app content blocks for iOS SDK
 excerpt: Display native in-app content blocks based on definitions set up in Engagement using the iOS SDK
 slug: ios-sdk-in-app-content-blocks
 categorySlug: integrations
 parentDocSlug: ios-sdk-in-app-personalization
 ---
 
-In-app content blocks provide a way to display campaigns within your mobile applications that seamlessly blend with the overall app design. Unlike [in-app messages](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-messages) that appear as overlays or pop-ups demanding immediate attention, in-app content blocks display inline with the app's existing content.
+In-app content blocks provide a way to display campaigns within your mobile applications that seamlessly blend with the overall app design. Unlike [In-app messages for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-messages) that appear as overlays or pop-ups demanding immediate attention, in-app content blocks display inline with the app's existing content.
 
 You can strategically position placeholders for in-app content blocks within your app. You can customize the behavior and presentation to meet your specific requirements.
 
@@ -60,7 +60,7 @@ Exponea.shared.inAppContentBlocksManager?.refreshCallback = { [weak self] indexP
 
 > 📘
 >
-> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
 > 👍
 >
@@ -129,7 +129,7 @@ The SDK automatically tracks `banner` events for in-app content blocks with the 
 
 > ❗️
 >
-> The behavior of in-app content block tracking may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [consent documentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
+> The behavior of in-app content block tracking may be affected by the tracking consent feature, which in enabled mode requires explicit consent for tracking. Refer to the [Tracking consent for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation for details.
 
 ## Customization
 
@@ -301,7 +301,7 @@ class CustomInAppContentBlockCallback: InAppContentBlockCallbackType {
 
 > 📘
 >
-> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a working example.
+> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a working example.
 
 #### Carousel view
 
@@ -507,7 +507,7 @@ The order in which content blocks are displayed is determined by:
 1. By the `Priority` setting, descending
 2. By the `Name`, ascending (alphabetically)
 
-You can extend `CarouselInAppContentBlockView` to override methods like `func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?)` and `func sortContentBlocks(data: [StaticReturnData]) -> [StaticReturnData]`. Refer to [`InAppContentBlockCarouselViewController`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlockCarouselViewController.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for an example implementation ()`CustomCarouselView`).
+You can extend `CarouselInAppContentBlockView` to override methods like `func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?)` and `func sortContentBlocks(data: [StaticReturnData]) -> [StaticReturnData]`. Refer to [`InAppContentBlockCarouselViewController`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlockCarouselViewController.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for an example implementation ()`CustomCarouselView`).
 
 ```swift
 class CustomCarouselView: CarouselInAppContentBlockView {

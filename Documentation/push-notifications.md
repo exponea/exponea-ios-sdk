@@ -1,5 +1,5 @@
 ---
-title: Push notifications
+title: Push notifications for iOS SDK
 excerpt: Enable push notifications in your app using the iOS SDK
 slug: ios-sdk-push-notifications
 categorySlug: integrations
@@ -31,7 +31,7 @@ To be able to send push notifications from Engagement, you must:
 
 > 📘
 >
-> If you haven't set this up yet, Follow the instructions in [Configure Apple Push Notification Service](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configure-apns).
+> If you haven't set this up yet, Follow the instructions in [Configure Apple Push Notification Service for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configure-apns).
 
 ## Integration
 
@@ -240,7 +240,7 @@ extension AppDelegate: PushNotificationManagerDelegate {
 
 > 📘
 >
-> Refer to [`AppDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/AppDelegate.swift) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a basic example.
+> Refer to [`AppDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/AppDelegate.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a basic example.
 
 > ❗️Important
 >
@@ -286,7 +286,7 @@ To respond to silent push notifications, set the `Exponea.shared.pushNotificatio
 
 Rich push notifications can contain images, buttons, and audio. To enable this functionality, you must add two application extensions: a **Notification Service Extension** and a **Notification Content Extension**.
 
-For each extension, follow the instructions in [Notification Extensions](https://documentation.bloomreach.com/engagement/docs/ios-sdk-notification-extensions) to set it up correctly to use the Exponea Notification Service included in the SDK.
+For each extension, follow the instructions in [Notification extensions for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-notification-extensions) to set it up correctly to use the Exponea Notification Service included in the SDK.
 
 Using the `ExponeaNotificationContentService.didReceive()` method will enhance the notification body with an image and actions delivered within the UNNotification payload. The notification actions shown by `ExponeaNotificationContentService` are registered with configurations to open your application with the required information and handle campaign clicks automatically.
 
@@ -317,7 +317,7 @@ Calling `ExponeaNotificationService.process` in `didReceive` will track the noti
 
 ### Retrieve push notification token manually
 
-Sometimes, your application may need to retrieve the current push token while running. You can do this using the `Exponea.shared.trackPushToken` method. Refer to [Tracking](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking#track-token-manually) for details.
+Sometimes, your application may need to retrieve the current push token while running. You can do this using the `Exponea.shared.trackPushToken` method. Refer to [Tracking for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking#track-token-manually) for details.
 
 > ❗️
 >
@@ -445,7 +445,7 @@ You can completely disable notification tracking and use the methods `Exponea.sh
 
 > ❗️
 >
-> The behavior of `trackPushReceived` and `trackClickedPush` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in the [tracking consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation.
+> The behavior of `trackPushReceived` and `trackClickedPush` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in the [Tracking consent for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation.
 
 ### Custom notification actions in iOS 11 and lower
 

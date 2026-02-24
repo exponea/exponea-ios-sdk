@@ -8,6 +8,9 @@
 
 import Foundation
 import UserNotifications
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 extension ExponeaInternal {
     /// Adds new events to a customer. All events will be stored into coredata

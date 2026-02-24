@@ -9,21 +9,40 @@
 import Foundation
 
 public final class TelemetryUtility {
-    static let telemetryInstallId = "EXPONEA_TELEMETRY_INSTALL_ID"
-    
-    public static func isSDKRelated(stackTrace: [String]) -> Bool {
-        return stackTrace.joined().contains("Exponea") || stackTrace.joined().contains("exponea")
-    }
-    
+
+    /// Install ID (device_id) is stored in the given UserDefaults so it respects app group / suite (main app and extensions share the same identity when using app group).
+    /// We only read/write the canonical store here; we do not clear other stores from getInstallId, because on some systems suite and standard are merged and clearing one can affect the other and prevent the value from persisting.
     public static func getInstallId(userDefaults: UserDefaults) -> String {
-        if let installId = userDefaults.string(forKey: telemetryInstallId) {
+        if let installId = userDefaults.string(forKey: Constants.General.telemetryInstallId), !installId.isEmpty {
             return installId
         }
         let installId = UUID().uuidString
-        userDefaults.set(installId, forKey: telemetryInstallId)
+        userDefaults.set(installId, forKey: Constants.General.telemetryInstallId)
+        userDefaults.synchronize()
         return installId
     }
-    
+
+    /// Removes the stored install ID from the given UserDefaults (e.g. for TelemetryManager.clear).
+    public static func clearInstallId(from userDefaults: UserDefaults) {
+        userDefaults.removeObject(forKey: Constants.General.telemetryInstallId)
+        userDefaults.synchronize()
+    }
+
+    /// Clears the install ID from every store where it might persist (app group, ExponeaSDK suite, standard) so the next getInstallId returns a new value.
+    public static func clearInstallIdFromAllStores(appGroup: String?) {
+        if let appGroup, let defaults = UserDefaults(suiteName: appGroup) {
+            clearInstallId(from: defaults)
+        }
+        if let sdkSuite = UserDefaults(suiteName: Constants.General.userDefaultsSuite) {
+            clearInstallId(from: sdkSuite)
+        }
+        clearInstallId(from: UserDefaults.standard)
+    }
+
+    public static func isSDKRelated(stackTrace: [String]) -> Bool {
+        return stackTrace.joined().contains("Exponea") || stackTrace.joined().contains("exponea")
+    }
+
     public static func formatConfigurationForTracking(_ config: Configuration) -> [String: String] {
         guard let defaultConfig = try? Configuration(
             projectToken: "placeholder",
