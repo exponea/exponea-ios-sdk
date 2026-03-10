@@ -352,7 +352,9 @@ public class ExponeaInternal: ExponeaType {
                             tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
                             currentPushToken: database.currentCustomer.pushToken,
                             lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
-                            urlOpener: UrlOpener()
+                            urlOpener: UrlOpener(),
+                            userDefaults: userDefaults,
+                            currentApplicationID: repository.configuration.applicationID
                         )
                         self.notificationsManager = notificationsManager
                     },
@@ -667,6 +669,9 @@ public extension ExponeaInternal {
             defaults.removeObject(forKey: Constants.Keys.sessionStarted)
             defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
             defaults.removeObject(forKey: Constants.General.telemetryInstallId)
+            defaults.removeObject(forKey: Constants.General.notificationStateTracked)
+            defaults.removeObject(forKey: Constants.General.notificationStateAppVersion)
+            defaults.removeObject(forKey: Constants.General.notificationStateApplicationID)
             Configuration.deleteLastKnownConfig(appGroup: appGroup)
             defaults.synchronize()
         } else {
@@ -678,6 +683,9 @@ public extension ExponeaInternal {
                 defaults.removeObject(forKey: Constants.Keys.sessionStarted)
                 defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
                 defaults.removeObject(forKey: Constants.General.telemetryInstallId)
+                defaults.removeObject(forKey: Constants.General.notificationStateTracked)
+                defaults.removeObject(forKey: Constants.General.notificationStateAppVersion)
+                defaults.removeObject(forKey: Constants.General.notificationStateApplicationID)
                 Configuration.deleteLastKnownConfig(appGroup: Constants.General.userDefaultsSuite)
                 defaults.synchronize()
             }
@@ -700,7 +708,10 @@ public extension ExponeaInternal {
         standard.removeObject(forKey: Constants.General.savedCampaignClickEvent)
         standard.removeObject(forKey: Constants.General.inAppMessageDisplayStatusUserDefaultsKey)
         standard.removeObject(forKey: Constants.General.inAppContentBlockDisplayStatusUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.notificationStateApplicationID)
         standard.removeObject(forKey: Constants.General.telemetryEvents)
+        standard.removeObject(forKey: Constants.General.notificationStateTracked)
+        standard.removeObject(forKey: Constants.General.notificationStateAppVersion)
         for key in standard.dictionaryRepresentation().keys where key.hasPrefix(Constants.Keys.installTracked) {
             standard.removeObject(forKey: key)
         }

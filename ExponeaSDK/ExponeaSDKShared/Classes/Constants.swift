@@ -98,5 +98,8 @@ public enum Constants {
         public static let applicationID = "default-application"
         public static let telemetryEvents = "EXPONEA_TELEMETRY_EVENTS"
         public static let telemetryInstallId = "EXPONEA_TELEMETRY_INSTALL_ID"
+        public static let notificationStateTracked = "EXPONEA_NOTIFICATION_STATE_TRACKED"
+        public static let notificationStateAppVersion = "EXPONEA_NOTIFICATION_STATE_APP_VERSION"
+        public static let notificationStateApplicationID = "EXPONEA_NOTIFICATION_STATE_APPLICATION_ID"
     }
 }

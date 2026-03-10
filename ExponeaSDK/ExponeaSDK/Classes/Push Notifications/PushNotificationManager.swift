@@ -44,6 +44,12 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
     private var lastKnownPushToken: PushTokenType?
     private var lastTokenTrackDate: Date
     private var pushNotificationSwizzler: PushNotificationSwizzler?
+    private let userDefaults: UserDefaults?
+    private var isFirstNotificationStateTracking: Bool
+    private let appVersion: String?
+    private let currentApplicationID: String?
+    /// Serial queue for notification state and frequency checks to avoid races from auth callbacks.
+    private let stateQueue = DispatchQueue(label: "com.exponea.pushNotificationManager.state")
 
     // some push notification can be received before the delegate is set, we'll store them and call delegate once set
     internal var pendingOpenedPushes: [PushOpenedData] = []
@@ -85,12 +91,17 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         tokenTrackFrequency: TokenTrackFrequency,
         currentPushToken: String?,
         lastTokenTrackDate: Date?,
-        urlOpener: UrlOpenerType
+        urlOpener: UrlOpenerType,
+        userDefaults: UserDefaults? = UserDefaults(suiteName: Constants.General.userDefaultsSuite),
+        currentAppVersion: String? = Bundle.main.infoDictionary?[Constants.Keys.appVersion] as? String,
+        currentApplicationID: String? = nil
     ) {
         self.appGroup = appGroup
         self.trackingConsentManager = trackingConsentManager
         self.trackingManager = trackingManager
         self.tokenTrackFrequency = tokenTrackFrequency
+        self.userDefaults = userDefaults
+        self.currentApplicationID = currentApplicationID
 
         if let currentPushToken {
             let newToken = PushTokenType(
@@ -100,9 +111,29 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             self.currentPushToken = newToken
             self.lastKnownPushToken = newToken
         }
-        self.lastTokenTrackDate = lastTokenTrackDate ?? .distantPast
+        // appVersion is typically CFBundleShortVersionString (Constants.Keys.appVersion); used to force notification_state on version change.
+        self.appVersion = currentAppVersion
+        let hasTracked = userDefaults?.bool(forKey: Constants.General.notificationStateTracked) ?? false
+        let storedAppVersion = userDefaults?.string(forKey: Constants.General.notificationStateAppVersion)
+        let storedApplicationID = userDefaults?.string(forKey: Constants.General.notificationStateApplicationID)
+        
+        // appVersionChanged is true when:
+        //   • hasTracked = true (flag exists) AND
+        //   • we have a readable bundle version AND
+        //   • it differs from the stored one (including nil → means first run of this new code)
+        let appVersionChanged = hasTracked && currentAppVersion != nil && currentAppVersion != storedAppVersion
+        
+        // applicationIDChanged is true when we have tracked before and the application ID differs from the stored one
+        let applicationIDChanged = hasTracked && currentApplicationID != nil && currentApplicationID != storedApplicationID
+        
+        let shouldForceTracking = !hasTracked || appVersionChanged || applicationIDChanged
+        
+        self.lastTokenTrackDate = shouldForceTracking ? .distantPast : (lastTokenTrackDate ?? .distantPast)
+        self.isFirstNotificationStateTracking = shouldForceTracking
+        
         self.urlOpener = urlOpener
         self.requirePushAuthorization = requirePushAuthorization
+        
         super.init()
 
         if swizzlingEnabled {
@@ -274,17 +305,19 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
             UNAuthorizationStatusProvider.current.isAuthorized { [weak self] authorized in
                 guard let self else { return }
                 Exponea.shared.executeSafely {
-                    if let current = self.currentPushToken?.pushToken,
-                       current != token {
-                        self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: true)
-                        self.setPushTokenType(token: token, authorized: authorized)
-                        self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: false)
-                    } else if self.currentPushToken?.pushToken == nil {
-                        self.setPushTokenType(token: token, authorized: authorized)
-                        self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: false)
-                    } else {
-                        self.setPushTokenType(token: token, authorized: authorized)
-                        self.checkForPushTokenFrequency(isAuthorized: authorized)
+                    self.stateQueue.sync {
+                        if let current = self.currentPushToken?.pushToken,
+                           current != token {
+                            self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: true)
+                            self.setPushTokenType(token: token, authorized: authorized)
+                            self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: false)
+                        } else if self.currentPushToken?.pushToken == nil {
+                            self.setPushTokenType(token: token, authorized: authorized)
+                            self.trackCurrentPushToken(isAuthorized: authorized, isCancelled: false)
+                        } else {
+                            self.setPushTokenType(token: token, authorized: authorized)
+                            self.checkForPushTokenFrequency(isAuthorized: authorized)
+                        }
                     }
                 }
             }
@@ -402,26 +435,34 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
     func verifyPushStatusAndTrackPushToken() {
         UNAuthorizationStatusProvider.current.isAuthorized { authorized in
-            if self.requirePushAuthorization && !authorized {
-                if self.currentPushToken?.isTokenValid == true {
-                    self.currentPushToken?.isTokenValid = false
-                    self.trackCurrentPushToken(isAuthorized: authorized)
+            self.stateQueue.sync {
+                if self.requirePushAuthorization && !authorized {
+                    if self.currentPushToken?.isTokenValid == true {
+                        self.currentPushToken?.isTokenValid = false
+                        self.trackCurrentPushToken(isAuthorized: authorized)
+                    }
+                } else {
+                    self.currentPushToken?.isTokenValid = authorized
+                    self.checkForPushTokenFrequency(isAuthorized: authorized)
                 }
-            } else {
-                self.currentPushToken?.isTokenValid = authorized
-                self.checkForPushTokenFrequency(isAuthorized: authorized)
             }
         }
     }
 
-    private func trackCurrentPushToken(isAuthorized: Bool, isCancelled: Bool = false) {
+    private func trackCurrentPushToken(
+        isAuthorized: Bool,
+        isCancelled: Bool = false,
+        onSuccess: (() -> Void)? = nil
+    ) {
         guard !IntegrationManager.shared.isStopped else {
             Exponea.logger.log(.error, message: "trackCurrentPushToken failed, Exponea is stopped")
             return
         }
         do {
+            let pushToken = currentPushToken?.pushToken
+            
             try trackingManager.trackNotificationState(
-                pushToken: currentPushToken?.pushToken,
+                pushToken: pushToken,
                 isValid: isCancelled ? false : (currentPushToken?.isTokenValid ?? true),
                 description: isCancelled ?
                 "Invalidated" : (
@@ -430,31 +471,60 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                     : "Permission denied"
                 )
             )
+            // Only mark when we actually sent: trackNotificationState sends only when pushToken is non-nil.
+            if pushToken != nil {
+                onSuccess?()
+            }
         } catch {
             Exponea.logger.log(.error, message: "Error tracking current push token. \(error.localizedDescription)")
+        }
+    }
+
+    private func markNotificationStateTracked() {
+        guard isFirstNotificationStateTracking else { return }
+        isFirstNotificationStateTracking = false
+        userDefaults?.set(true, forKey: Constants.General.notificationStateTracked)
+        
+        // Only write version/applicationID when present; do not overwrite with nil.
+        if let version = appVersion {
+            userDefaults?.set(version, forKey: Constants.General.notificationStateAppVersion)
+            Exponea.logger.log(.verbose, message: "The notification state tracked - the app version has changed")
+        }
+        if let applicationID = currentApplicationID {
+            userDefaults?.set(applicationID, forKey: Constants.General.notificationStateApplicationID)
+            Exponea.logger.log(.verbose, message: "The notification state tracked - the appplication ID has changed")
         }
     }
 
     private func checkForPushTokenFrequency(isAuthorized authorized: Bool) {
         switch tokenTrackFrequency {
         case .everyLaunch:
-            // Track push token
+            // Track push token; mark state only after successful track so failed sends retry.
             lastTokenTrackDate = .init()
-            trackCurrentPushToken(isAuthorized: authorized)
+            trackCurrentPushToken(isAuthorized: authorized, onSuccess: { [weak self] in
+                self?.markNotificationStateTracked()
+            })
 
         case .daily:
             // Compare last track dates, if equal or more than a day, track
             let now = Date()
             if abs(lastTokenTrackDate.timeIntervalSince(now)) >= 60 * 60 * 24 {
                 lastTokenTrackDate = now
-                trackCurrentPushToken(isAuthorized: authorized)
+                trackCurrentPushToken(isAuthorized: authorized, onSuccess: { [weak self] in
+                    self?.markNotificationStateTracked()
+                })
             }
 
         case .onTokenChange:
-            // Track if changed from last tracked
-            if trackingManager.customerPushToken != currentPushToken?.pushToken {
+            // On first launch in new system treat stored CoreData token as nil to force tracking.
+            let effectiveLastToken = isFirstNotificationStateTracking
+                ? nil
+                : trackingManager.customerPushToken
+            if effectiveLastToken != currentPushToken?.pushToken {
                 lastTokenTrackDate = .init()
-                trackCurrentPushToken(isAuthorized: authorized)
+                trackCurrentPushToken(isAuthorized: authorized, onSuccess: { [weak self] in
+                    self?.markNotificationStateTracked()
+                })
             }
         }
     }

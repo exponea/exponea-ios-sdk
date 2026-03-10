@@ -214,6 +214,8 @@ extension TrackingManager: TrackingManagerType {
                 ],
                 trackingAllowed: true
             )
+        } else {
+            Exponea.logger.log(.error, message: "The trackNotificationState failed, pushToken is nil")
         }
     }
 
