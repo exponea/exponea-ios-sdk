@@ -123,30 +123,8 @@ public class SentryTelemetryUpload: TelemetryUpload {
     }
 
     public func upload(eventLog: EventLog, completionHandler: @escaping (Bool) -> Void) {
-        sendSentryEnvelope(buildEnvelope(eventLog: eventLog), completionHandler)
-    }
-
-    internal func buildEnvelope(eventLog: EventLog) -> ExponeaSentryEnvelope<ExponeaSentryMessage> {
-        let sentryEventId = eventLog.id.replacingOccurrences(of: "-", with: "").lowercased()
-        let sentAtString = dateFormat.string(from: Date(timeIntervalSince1970: eventLog.timestamp))
-        let envelopeHeader = ExponeaSentryEnvelopeHeader(
-            eventId: sentryEventId,
-            dsn: dsn,
-            sentAt: sentAtString
-        )
-        let itemBody = ExponeaSentryMessage(
-            timestamp: sentAtString,
-            message: ExponeaSentryMessageLog(formatted: eventLog.name),
-            eventId: sentryEventId,
-            contexts: buildContexts(),
-            tags: buildTags(eventLog.name),
-            release: buildSentryReleaseInfo(),
-            environment: environment,
-            extra: buildExtra(eventLog.properties)
-        )
-        let envelopeItem = ExponeaSentryEnvelopeItem(header: itemBody.prepareHeader(), body: itemBody)
-        let sentryEnvelope = ExponeaSentryEnvelope(header: envelopeHeader, item: envelopeItem)
-        return sentryEnvelope
+        // Custom events logging disabled - only crash logs and errors are sent to Sentry
+        completionHandler(true)
     }
     
     private func buildExtra(_ origin: [String: String]) -> [String: String] {
@@ -302,7 +280,7 @@ public class SentryTelemetryUpload: TelemetryUpload {
     private func buildRequestPayload<T: ExponeaSentryEnvelopeItemBody>(_ source:  ExponeaSentryEnvelope<T>) throws -> String {
         let messageHeaderJson = try toJson(source.header)
         let messageItemJson = try toJson(source.item.body)
-        let messageItemHeaderJson = try toJson(source.item.header.withLength(newLength: messageItemJson.count))
+        let messageItemHeaderJson = try toJson(source.item.header.withLength(newLength: messageItemJson.utf8.count)) // The length of the payload in bytes.
         let multilineJsonContent = [messageHeaderJson, messageItemHeaderJson, messageItemJson].joined(separator: "\n")
         return multilineJsonContent
     }

@@ -140,8 +140,9 @@ final class SentryTelemetryUploadSpec: QuickSpec {
                     }
                 }
             }
-
-            it("should successfully upload event log") {
+            
+            // Custom events logging disabled - only crash logs and errors are sent to Sentry
+            it("should call upload custom event log without sending event") {
                 self.stubNetwork(statusCode: 200)
                 waitUntil(timeout: .seconds(5)) { done in
                     upload.upload(eventLog: EventLog(
@@ -150,20 +151,6 @@ final class SentryTelemetryUploadSpec: QuickSpec {
                         properties: ["mock-property": "value"]
                     )) { result in
                         expect(result).to(beTrue())
-                        done()
-                    }
-                }
-            }
-
-            it("should fail to upload event log on non-200 status code") {
-                self.stubNetwork(statusCode: 404)
-                waitUntil(timeout: .seconds(5)) { done in
-                    upload.upload(eventLog: EventLog(
-                        name: "mock-event-name",
-                        runId: "mock-run-id",
-                        properties: ["mock-property": "value"]
-                    )) { result in
-                        expect(result).to(beFalse())
                         done()
                     }
                 }

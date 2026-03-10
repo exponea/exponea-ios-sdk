@@ -17,8 +17,6 @@ final class MockTelemetryUpload: SentryTelemetryUpload {
     // all logs we try to upload
     var uploadedCrashLogs: [CrashLog] = []
 
-    var uploadedEvents: [UploadedEvent] = []
-
     var uploadedSessionRuns: [String] = []
     
     var uploadedEnvelopes: [Any] = []
@@ -33,19 +31,14 @@ final class MockTelemetryUpload: SentryTelemetryUpload {
     }
 
     func removeAll() {
-        uploadedEvents.removeAll()
         uploadedCrashLogs.removeAll()
         uploadedSessionRuns.removeAll()
         uploadedEnvelopes.removeAll()
     }
-
+  
     override func upload(eventLog: ExponeaSDKShared.EventLog, completionHandler: @escaping (Bool) -> Void) {
-        guard !IntegrationManager.shared.isStopped else {
-            return
-        }
-        uploadedEvents.append(UploadedEvent(name: eventLog.name, properties: eventLog.properties))
-        uploadedEnvelopes.append(buildEnvelope(eventLog: eventLog))
-        completionHandler(result)
+        // Custom events logging disabled - only crash logs and errors are sent to Sentry
+        completionHandler(true)
     }
 
     override func uploadSessionStart(runId: String, completionHandler: @escaping (Bool) -> Void) {
