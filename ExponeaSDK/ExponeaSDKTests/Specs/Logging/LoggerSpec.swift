@@ -79,6 +79,69 @@ class LoggerSpec: QuickSpec {
                     logger.log(.warning, message: "test message")
                     expect(hookCalled).to(beFalse())
                 }
+
+                it("should handle concurrent log() calls without crashing") {
+                    let logger = Logger()
+                    logger.logLevel = .verbose
+                    let iterations = 500
+                    let queueCount = 4
+                    let expectation = QuickSpec.current.expectation(
+                        description: "concurrent log() operations"
+                    )
+                    expectation.expectedFulfillmentCount = queueCount
+
+                    for q in 0..<queueCount {
+                        DispatchQueue.global().async {
+                            for i in 0..<iterations {
+                                logger.log(.verbose, message: "thread \(q) message \(i)")
+                            }
+                            expectation.fulfill()
+                        }
+                    }
+
+                    QuickSpec.current.waitForExpectations(timeout: 10)
+                }
+
+                it("should handle concurrent hook add/remove and logMessage without crashing") {
+                    let logger = Logger()
+                    logger.logLevel = .verbose
+                    let iterations = 1000
+                    let expectation = QuickSpec.current.expectation(
+                        description: "concurrent logger operations"
+                    )
+                    expectation.expectedFulfillmentCount = 3
+
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        for i in 0..<iterations {
+                            logger.log(.verbose, message: "concurrent message \(i)")
+                        }
+                        expectation.fulfill()
+                    }
+
+                    DispatchQueue.global(qos: .utility).async {
+                        var hookIds: [String] = []
+                        for _ in 0..<iterations {
+                            let hookId = logger.addLogHook { _ in }
+                            hookIds.append(hookId)
+                        }
+                        for hookId in hookIds {
+                            logger.removeLogHook(with: hookId)
+                        }
+                        expectation.fulfill()
+                    }
+
+                    DispatchQueue.global(qos: .background).async {
+                        for _ in 0..<iterations {
+                            logger.logLevel = .verbose
+                            _ = logger.logLevel
+                            logger.logLevel = .warning
+                        }
+                        expectation.fulfill()
+                    }
+
+                    QuickSpec.current.waitForExpectations(timeout: 10)
+                    expect(logger.logLevel).to(equal(.warning))
+                }
             }
         }
     }

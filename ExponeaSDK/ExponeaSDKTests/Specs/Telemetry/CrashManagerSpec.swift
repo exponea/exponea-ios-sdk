@@ -149,6 +149,20 @@ final class CrashManagerSpec: QuickSpec {
             expect(crashManager.getLogs()).to(equal(["log1", "log2", "log3"]))
         }
 
+        it("should truncate logs exceeding maxLogMessages") {
+            let crashManager = CrashManager(
+                storage: storage, upload: upload,
+                launchDate: Date(), runId: "mock_run_id"
+            )
+            for i in 0..<(CrashManager.maxLogMessages + 20) {
+                crashManager.reportLog("log_\(i)")
+            }
+            let logs = crashManager.getLogs()
+            expect(logs.count).to(equal(CrashManager.maxLogMessages))
+            expect(logs.first).to(equal("log_20"))
+            expect(logs.last).to(equal("log_\(CrashManager.maxLogMessages + 19)"))
+        }
+
         it("should append logs to crashlogs") {
             let crashManager = CrashManager(storage: storage, upload: upload, launchDate: Date(), runId: "mock_run_id")
             crashManager.reportLog("log1")

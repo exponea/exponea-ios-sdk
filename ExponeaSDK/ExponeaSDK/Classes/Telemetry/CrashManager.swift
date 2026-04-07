@@ -38,7 +38,9 @@ final class CrashManager {
         self.runId = runId
 
         IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
-            self?.logMessages.removeAll()
+            self?.logsQueue.sync {
+                self?.logMessages.removeAll()
+            }
             self?.storage.getAllCrashLogs().forEach({ log in
                 self?.storage.deleteCrashLog(log)
             })
@@ -127,14 +129,14 @@ final class CrashManager {
         logsQueue.sync { [weak self] in
             self?.logMessages.append(message)
             if self?.logMessages.count ?? 0 > CrashManager.maxLogMessages {
-                
+                self?.logMessages.removeFirst()
             }
         }
     }
 
     func getLogs() -> [String] {
-        return logsQueue.sync {
-            self.logMessages
+        return logsQueue.sync { [weak self] in
+            self?.logMessages ?? []
         }
     }
 

@@ -21,8 +21,23 @@ open class Logger {
         return formatter
     }()
 
+    private let lock = NSLock()
+
+    private var _logLevel: LogLevel = .warning
+
     /// Default level of logging is set to `.warning`.
-    open var logLevel: LogLevel = .warning
+    open var logLevel: LogLevel {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return _logLevel
+        }
+        set {
+            lock.lock()
+            defer { lock.unlock() }
+            _logLevel = newValue
+        }
+    }
 
     private var logHooks: [String: (String) -> Void] = [:]
 
@@ -49,13 +64,10 @@ open class Logger {
             return false
         }
 
-        // Get date
         let date = dateFormatter.string(from: Date())
 
-        // Get file name
         let file = sourceFile(from: fileName)
 
-        // Print our log
         logMessage("\(date) [EXP-iOS] \(level.name) [\(file)]:\(line) \(funcName): \(message)")
         return true
     }
@@ -64,18 +76,25 @@ open class Logger {
     ///
     /// - Parameter message: The message you want to log.
     open func logMessage(_ message: String) {
-        logHooks.forEach { $0.value(message) }
+        lock.lock()
+        let hooks = Array(logHooks.values)
+        lock.unlock()
+        hooks.forEach { $0(message) }
         print(message)
     }
 
     public func addLogHook(_ hook: @escaping (String) -> Void) -> String {
         let id = UUID().uuidString
+        lock.lock()
         logHooks[id] = hook
+        lock.unlock()
         return id
     }
 
     public func removeLogHook(with id: String) {
+        lock.lock()
         logHooks.removeValue(forKey: id)
+        lock.unlock()
     }
 
     /// Returns the source file name from a provided a file path.
