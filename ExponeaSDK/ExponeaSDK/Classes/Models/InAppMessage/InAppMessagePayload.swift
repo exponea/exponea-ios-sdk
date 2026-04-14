@@ -22,7 +22,7 @@ public struct InAppButtonPayload: Codable {
     public let buttonStyle: [String]
     public let buttonLineHeight: String?
     public let buttonTextColor: String?
-    public let buttonFontUrl: URL?
+    public let buttonFontUrl: String?
     public let buttonTextAlignment: String?
     public let buttonEnabled: Bool
     public let buttonType: String?
@@ -45,7 +45,7 @@ public struct InAppButtonPayload: Codable {
         self.buttonStyle = try container.decodeIfPresent([String].self, forKey: .buttonStyle) ?? []
         self.buttonLineHeight = try container.decodeIfPresent(String.self, forKey: .buttonLineHeight)
         self.buttonTextColor = try container.decodeIfPresent(String.self, forKey: .buttonTextColor)
-        self.buttonFontUrl = URL(string: try container.decodeIfPresent(String.self, forKey: .buttonFontUrl) ?? "")
+        self.buttonFontUrl = try container.decodeIfPresent(String.self, forKey: .buttonFontUrl)
         self.buttonTextAlignment = try container.decodeIfPresent(String.self, forKey: .buttonTextAlignment)
         self.buttonEnabled = try container.decodeIfPresent(Bool.self, forKey: .buttonEnabled) ?? false
         self.buttonType = try container.decodeIfPresent(String.self, forKey: .buttonType)
@@ -92,33 +92,9 @@ public struct InAppButtonPayload: Codable {
                 hm?.loadedFont = UIFont(name: name, size: CGFloat(size))
             }
             self.buttonConfig?.fontData = hm
-        } else if let url = buttonFontUrl {
-            self.fontData = extractFont(url: url, fontSize: buttonFontSize, size: nil)
         }
     }
 
-    
-    func extractFont(url: URL, fontSize: String?, size: CGFloat?) -> InAppButtonFontData? {
-        if let data = try? Data(contentsOf: url),
-           let dataProvider = CGDataProvider(data: data as CFData),
-           let cgFont = CGFont(dataProvider) {
-            var fontData: InAppButtonFontData = .init()
-            var error: Unmanaged<CFError>?
-            if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
-                let size = size ?? fontSize?.convertPxToFloatWithDefaultValue() ?? 13
-                fontData.fontName = cgFont.postScriptName as? String
-                fontData.fontSize = size
-                fontData.fontData = data.base64EncodedString()
-                if let fontName = cgFont.postScriptName as? String {
-                    fontData.loadedFont = UIFont(name: fontName, size: size)
-                }
-                CTFontManagerUnregisterGraphicsFont(cgFont, &error)
-            }
-            return fontData
-        }
-        return nil
-    }
-    
     private func extractFont(base64: String?, size: CGFloat?) -> UIFont? {
         if let base64 = base64,
            let data = Data(base64Encoded: base64),
@@ -176,7 +152,7 @@ public struct InAppButtonPayload: Codable {
         case buttonTextAlignment = "button_align"
         case buttonFontUrl = "button_font_url"
         case buttonLink = "button_link"
-        case buttonStyle = "button_format"
+        case buttonStyle = "button_font_format"
         case buttonEnabled = "button_enabled"
         case buttonType = "button_type"
         case buttonHasBorder = "button_has_border"
@@ -384,27 +360,6 @@ public struct RichInAppMessagePayload: Codable, Sendable {
             return nil
         }
 
-        func extractFont(url: URL, fontSize: String?, size: CGFloat?) -> InAppButtonFontData? {
-            if let data = try? Data(contentsOf: url),
-               let dataProvider = CGDataProvider(data: data as CFData),
-               let cgFont = CGFont(dataProvider) {
-                var fontData: InAppButtonFontData = .init()
-                var error: Unmanaged<CFError>?
-                if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
-                    let size = size ?? fontSize?.convertPxToFloatWithDefaultValue() ?? 13
-                    fontData.fontName = cgFont.postScriptName as? String
-                    fontData.fontSize = size
-                    fontData.fontData = data.base64EncodedString()
-                    if let fontName = cgFont.postScriptName as? String {
-                        fontData.loadedFont = UIFont(name: fontName, size: size)
-                    }
-                    CTFontManagerUnregisterGraphicsFont(cgFont, &error)
-                }
-                return fontData
-            }
-            return nil
-        }
-
         buttons = try container.decode([InAppButtonPayload].self, forKey: .buttons)
 
         // Layout
@@ -455,8 +410,6 @@ public struct RichInAppMessagePayload: Codable, Sendable {
         if bodyFontDataBuffer?.fontName != nil && bodyIsVisible {
             bodyData?.loadedFont = extractFont(base64: bodyFontDataBuffer?.fontData, size: bodyFontDataBuffer?.fontSize)
             bodyFontData = bodyData
-        } else if let customFont = bodyCustomFont, let url = URL(string: customFont) {
-            bodyFontData = extractFont(url: url, fontSize: bodySize, size: nil)
         }
         self.bodyFontData = bodyFontData
 
@@ -494,8 +447,6 @@ public struct RichInAppMessagePayload: Codable, Sendable {
         if titleFontDataBuffer?.fontName != nil && titleIsVisible {
             titleData?.loadedFont = extractFont(base64: titleFontDataBuffer?.fontData, size: titleFontDataBuffer?.fontSize)
             titleFontData = titleData
-        } else if let customFont = titleCustomFont, let url = URL(string: customFont) {
-            titleFontData = extractFont(url: url, fontSize: titleSize, size: nil)
         }
         self.titleFontData = titleFontData
 
@@ -642,7 +593,7 @@ public struct InAppMessagePayloadButton: Codable, Equatable, Sendable {
         self.buttonTextColor = buttonTextColor
         self.buttonBackgroundColor = buttonBackgroundColor
     }
-    
+
     public init(closeConfig: InAppCloseButtonConfig) {
         self.buttonText = "close"
         self.rawButtonType = "close"
@@ -656,4 +607,25 @@ public enum InAppMessageButtonType: String {
     case cancel
     case deeplink = "deep-link"
     case browser
+}
+
+public struct InAppEnvelope: Codable {
+    public let id: String
+    public let name: String
+    public let payload: RichInAppMessagePayload
+
+    public let is_html: Bool?
+    public let is_rich_text: Bool?
+    public let message_type: String?
+    public let variant_id: Int?
+    public let variant_name: String?
+}
+
+public extension RichInAppMessagePayload {
+    // Helper for JSON
+    static func decode(fromEnvelopeJSON data: Data) throws -> RichInAppMessagePayload {
+        let decoder = JSONDecoder()
+        let envelope = try decoder.decode(InAppEnvelope.self, from: data)
+        return envelope.payload
+    }
 }

@@ -13,7 +13,7 @@ categorySlug: integrations
 
 The Exponea iOS SDK allows you to integrate your mobile application with Bloomreach Engagement and track your customers' behavior in your app. Integrating the SDK in your app will enable you to track events and customer properties, send push notifications, and display in-app messages and content blocks.
 
-The SDK is [available as open source on GitHub](https://github.com/exponea/exponea-ios-sdk) for maximum transparency and includes an [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) you can use as a reference implementation.
+The SDK is [available as open source on GitHub](https://github.com/exponea/exponea-ios-sdk) for maximum transparency and includes an [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) you can use as a reference implementation.
 
 > ❗️
 > 
@@ -38,24 +38,24 @@ This short video guide provides a step-by-step introduction to integrating the i
 
 ## Get started
 
-- [Initial SDK setup](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup)
-  - [Configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration)
-  - [Data flushing](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing)
-- [Tracking](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking)
-  - [Tracking consent](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent)
-- [Universal Links](https://documentation.bloomreach.com/engagement/docs/ios-sdk-universal-links)
-- [Push notifications](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications)
-  - [Configure Apple Push Notification Service](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configure-apns)
-  - [Notification extensions](https://documentation.bloomreach.com/engagement/docs/ios-sdk-notification-extensions)
-- [Fetch data](https://documentation.bloomreach.com/engagement/docs/ios-sdk-fetch-data)
-- [In-app personalization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-personalization)
-  - [In-app messages](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-messages)
-  - [In-app content blocks](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks)
-- [App Inbox](https://documentation.bloomreach.com/engagement/docs/ios-sdk-app-inbox)
-- [Segmentation](https://documentation.bloomreach.com/engagement/docs/ios-sdk-segmentation)
-- [Example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app)
-- [Release notes](https://documentation.bloomreach.com/engagement/docs/ios-sdk-release-notes)
-  - [SDK Version Update Guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update)
+- [Initial setup for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup)
+  - [Configuration for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration)
+  - [Data flushing for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing)
+- [Tracking for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking)
+  - [Tracking consent for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent)
+- [Universal links for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-universal-links)
+- [Push notifications for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications)
+  - [Configure Apple Push Notification Service for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configure-apns)
+  - [Notification extensions for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-notification-extensions)
+- [Fetch data for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-fetch-data)
+- [In-app personalization for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-personalization)
+  - [In-app messages for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-messages)
+  - [In-app content blocks for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks)
+- [App Inbox for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-app-inbox)
+- [Segmentation for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-segmentation)
+- [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app)
+- [Release notes for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-release-notes)
+  - [SDK version update guide for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update)
 
 ## Frequently asked questions
 

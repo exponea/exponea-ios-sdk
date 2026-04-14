@@ -14,6 +14,7 @@ protocol InAppMessageView {
     var actionCallback: ((InAppMessagePayloadButton) -> Void) { get }
     var dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)> { get }
 
+    func dismissFromSuperView()
     func present(in viewController: UIViewController, window: UIWindow?) throws
     func dismiss(isUserInteraction: Bool, cancelButton: InAppMessagePayloadButton?)
 }

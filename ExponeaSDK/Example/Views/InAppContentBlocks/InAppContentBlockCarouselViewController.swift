@@ -88,37 +88,34 @@ class InAppContentBlockCarouselViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        carousel.reload()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.carousel2.reload()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            self?.carousel3.reload()
-        }
-
         view.backgroundColor = .white
-
-        view.addSubview(carousel)
-        carousel.translatesAutoresizingMaskIntoConstraints = false
-        carousel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80).isActive = true
-        carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
-        carousel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
-
-        view.addSubview(carousel2)
-        carousel2.translatesAutoresizingMaskIntoConstraints = false
-        carousel2.topAnchor.constraint(equalTo: carousel.bottomAnchor, constant: 20).isActive = true
-        carousel2.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
-        carousel2.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
-
-        view.addSubview(carousel3)
-        carousel3.translatesAutoresizingMaskIntoConstraints = false
-        carousel3.topAnchor.constraint(equalTo: carousel2.bottomAnchor, constant: 20).isActive = true
-        carousel3.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
-        carousel3.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
+        addCarousel(carousel, topAnchor: view.safeAreaLayoutGuide.topAnchor)
+        addCarousel(carousel2, topAnchor: carousel.bottomAnchor)
+        addCarousel(carousel3, topAnchor: carousel2.bottomAnchor)
 
         navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .refresh, target: self, action: #selector(reloadCarousels))
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.navigationItem.title = "\(self.carousel.getShownCount()) / \(self.carousel2.getShownCount()) / \(self.carousel3.getShownCount())"
+        }
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.view.layoutIfNeeded()
+            self.carousel.reload()
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.carousel2.reload()
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.carousel3.reload()
+                }
+            }
+        }
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -131,5 +128,13 @@ class InAppContentBlockCarouselViewController: UIViewController {
         carousel.reload()
         carousel2.reload()
         carousel3.reload()
+    }
+
+    private func addCarousel(_ carousel: CarouselInAppContentBlockView, topAnchor: NSLayoutYAxisAnchor) {
+        view.addSubview(carousel)
+        carousel.translatesAutoresizingMaskIntoConstraints = false
+        carousel.topAnchor.constraint(equalTo: topAnchor, constant: 20).isActive = true
+        carousel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10).isActive = true
+        carousel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10).isActive = true
     }
 }

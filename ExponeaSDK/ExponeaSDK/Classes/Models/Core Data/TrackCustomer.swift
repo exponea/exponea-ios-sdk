@@ -27,7 +27,7 @@ class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
     @NSManaged public var retries: NSNumber
 
     var dataTypes: [DataType] {
-        let data: [DataType]? = managedObjectContext?.performAndWait {
+        let data: [DataType]? = managedObjectContext?.performAndWaitSafely {
             var data: [DataType] = []
             // Convert all properties to key value items.
             if let properties = properties as? Set<KeyValueItem> {
@@ -40,8 +40,15 @@ class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
                             """)
                         return
                     }
-
-                    props[key] = DatabaseManager.processObject(object)
+                    if !(key == "push_notification_token"
+                         || key == "valid"
+                         || key == "description"
+                         || key == "platform"
+                         || key == "application_id"
+                         || key == "device_id"
+                    ) {
+                        props[key] = DatabaseManager.processObject(object)
+                    }
                 })
                 data.append(.properties(props))
             }

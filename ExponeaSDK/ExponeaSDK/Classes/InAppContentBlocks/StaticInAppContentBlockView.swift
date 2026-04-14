@@ -8,6 +8,9 @@
 
 import UIKit
 import WebKit
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
@@ -44,7 +47,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     private let placeholder: String
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
-    private lazy var calculator: WKWebViewHeightCalculator = .init()
+    public lazy var calculator: WKWebViewHeightCalculator = .init()
     private var html: String = ""
     private var height: NSLayoutConstraint?
     private var contentReadyFlag: Bool?
@@ -82,11 +85,15 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                     placeholderId: placeholder,
                     contentBlock: message
                 )
+                Exponea.shared.telemetryManager?.report(
+                    eventWithType: .contentBlockShown,
+                    properties: [
+                        "type": (message.content == nil ? "personal" : "static"),
+                        "messageId": message.id,
+                        "placeholders": TelemetryUtility.toJson(message.placeholders)
+                    ]
+                )
             }
-            Exponea.shared.telemetryManager?.report(
-                eventWithType: .showInAppMessage,
-                properties: ["messageType": InAppContentBlockType.contentBlock.type]
-            )
         }
         if !deferredLoad {
             getContent()

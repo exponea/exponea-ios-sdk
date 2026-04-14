@@ -6,6 +6,10 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
+
 protocol TelemetryStorage {
     func saveCrashLog(_ log: CrashLog)
     func deleteCrashLog(_ log: CrashLog)

@@ -42,5 +42,25 @@ class InAppMessageSpec: QuickSpec {
                 msg?.payload
             ).toNot(beNil())
         }
+
+        it("should deserialize from JSON rich - with NIL image URL") {
+            let jsonDecoder = JSONDecoder()
+            jsonDecoder.dateDecodingStrategy = .secondsSince1970
+            var msg: InAppMessage?
+            do {
+                msg = try jsonDecoder.decode(
+                    InAppMessage.self,
+                    from: SampleInAppMessage.samplePayloadRich
+                        .replacingOccurrences(of: "https://asset-templates.exponea.dev/misc/media/canyon/canyon.jpg", with: "")
+                        .data(using: .utf8)!
+                )
+            } catch {
+                let error = error
+                print("======== \(error)")
+            }
+            expect(
+                msg?.payload
+            ).toNot(beNil())
+        }
     }
 }

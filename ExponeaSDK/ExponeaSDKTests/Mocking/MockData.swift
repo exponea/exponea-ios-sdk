@@ -65,7 +65,7 @@ struct MockData {
     let campaignData: [String: JSONValue] = [
         // swiftlint:disable:next line_length
         "url": .string("https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&xnpe_cmp=cmp&itt=usertoken"),
-        "platform": .string("iOS")
+        "platform": .string("ios")
     ]
 
     // swiftlint:disable:next line_length

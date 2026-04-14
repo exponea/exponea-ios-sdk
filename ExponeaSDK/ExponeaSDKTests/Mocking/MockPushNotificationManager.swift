@@ -37,4 +37,8 @@ final class MockPushNotificationManager: PushNotificationManagerType {
         handlePushOpenedCalls.append((userInfoObject, actionIdentifier))
     }
 
+    func verifyPushStatusAndTrackPushToken() {
+        fatalError("not implemented")
+    }
+
 }

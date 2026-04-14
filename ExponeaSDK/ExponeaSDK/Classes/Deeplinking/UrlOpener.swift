@@ -28,7 +28,7 @@ final class UrlOpener: UrlOpenerType {
 //        }
     }
 
-    private func openUniversalLink(_ url: URL, application: UIApplication) -> Bool {
+    private func openUniversalLink(_ url: URL, application: UIApplication, callBackHandler: @escaping (Bool) -> Void) {
         // Validate this is a valid URL, prevents NSUserActivity crash with invalid URL
         // only http/https is allowed
         // https://developer.apple.com/documentation/foundation/nsuseractivity/1418086-webpageurl

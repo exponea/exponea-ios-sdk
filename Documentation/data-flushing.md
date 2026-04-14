@@ -1,5 +1,5 @@
 ---
-title: Data flushing
+title: Data flushing for iOS SDK
 excerpt: Learn how the iOS SDK uploads data to the Engagement API and how to customize this behavior
 slug: ios-sdk-data-flushing
 categorySlug: integrations

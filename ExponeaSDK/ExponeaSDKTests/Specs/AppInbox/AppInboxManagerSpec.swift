@@ -204,7 +204,7 @@ class AppInboxManagerSpec: QuickSpec {
                 trackingManager: trackingManager,
                 database: database
             )
-            AppInboxCache().clear()
+            AppInboxCache.shared.clear()
         }
 
         it("should load only supported messages") {
@@ -536,6 +536,36 @@ class AppInboxManagerSpec: QuickSpec {
                     done()
                 }
             }
+        }
+
+        it("should keep messages when application ID stays the same") {
+            var message = AppInboxCacheSpec.getSampleMessage(id: "first-mock-id")
+            message.customerIds = ["some": "some"]
+            message.syncToken = "some"
+            let cache = AppInboxCache()
+            cache.setMessages(messages: [message])
+            appInboxManager = AppInboxManager(
+                repository: repository,
+                trackingManager: trackingManager,
+                database: database
+            )
+            expect(cache.getMessages()).to(equal([message]))
+            expect(AppInboxCache().getMessages()).to(equal([message]))
+        }
+
+        it("should delete messages when application ID changes") {
+            var message = AppInboxCacheSpec.getSampleMessage(id: "first-mock-id")
+            message.customerIds = ["some": "some"]
+            message.syncToken = "some"
+            let cache = AppInboxCache()
+            cache.setMessages(messages: [message])
+            appInboxManager = AppInboxManager(
+                repository: repository,
+                trackingManager: trackingManager,
+                database: database,
+                cachedAppId: "new-app-id"
+            )
+            expect(AppInboxCache().getMessages()).to(beEmpty())
         }
     }
 }

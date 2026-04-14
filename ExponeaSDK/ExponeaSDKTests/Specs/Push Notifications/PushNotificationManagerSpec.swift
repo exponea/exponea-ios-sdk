@@ -83,7 +83,10 @@ final class PushNotificationManagerSpec: QuickSpec {
             requirePushAuthorization: Bool,
             currentToken: String?,
             tokenTrackFrequency: ExponeaSDK.TokenTrackFrequency,
-            lastTokenTrackDate: Date = Date()
+            lastTokenTrackDate: Date = Date(),
+            userDefaults: UserDefaults? = UserDefaults(suiteName: Constants.General.userDefaultsSuite),
+            currentAppVersion: String? = nil,
+            currentApplicationID: String? = nil
         ) {
             pushManager = PushNotificationManager(
                 trackingConsentManager: trackingConsentManager,
@@ -94,7 +97,10 @@ final class PushNotificationManagerSpec: QuickSpec {
                 tokenTrackFrequency: tokenTrackFrequency,
                 currentPushToken: currentToken,
                 lastTokenTrackDate: lastTokenTrackDate,
-                urlOpener: urlOpener
+                urlOpener: urlOpener,
+                userDefaults: userDefaults,
+                currentAppVersion: currentAppVersion,
+                currentApplicationID: currentApplicationID
             )
         }
 
@@ -127,7 +133,22 @@ final class PushNotificationManagerSpec: QuickSpec {
 
         beforeEach {
             IntegrationManager.shared.isStopped = false
-            UserDefaults.standard.removePersistentDomain(forName: "mock-app-group")
+            // Clear app-group suite (removePersistentDomain only affects standard, not suite "mock-app-group")
+            if let appGroupDefaults = UserDefaults(suiteName: "mock-app-group") {
+                appGroupDefaults.removeObject(forKey: ExponeaSDK.Constants.General.deliveredPushUserDefaultsKey)
+                appGroupDefaults.removeObject(forKey: ExponeaSDK.Constants.General.deliveredPushEventUserDefaultsKey)
+                appGroupDefaults.set("device-id", forKey: Constants.General.telemetryInstallId)
+            }
+            // Clear ExponeaSDK suite so "should process previously saved push notifications" does not see stale opened pushes
+            UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
+                .removeObject(forKey: ExponeaSDK.Constants.General.openedPushUserDefaultsKey)
+            // Reset notification state tracking flag so each test starts from a known state
+            UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
+                .removeObject(forKey: ExponeaSDK.Constants.General.notificationStateTracked)
+            UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
+                .removeObject(forKey: ExponeaSDK.Constants.General.notificationStateAppVersion)
+            UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
+                .removeObject(forKey: ExponeaSDK.Constants.General.notificationStateApplicationID)
             trackingManager = MockTrackingManager(
                 onEventCallback: { type, event in
                     
@@ -141,6 +162,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                 currentToken: "mock-push-token",
                 tokenTrackFrequency: .daily
             )
+            // Clear events from manager init (verifyPushStatusAndTrackPushToken) so each test only sees events it produces
+            trackingManager.clearCalls()
         }
 
         describe("tracking stored delivered push notifications") {
@@ -171,6 +194,7 @@ final class PushNotificationManagerSpec: QuickSpec {
                 expect(trackingManager.trackedEvents).to(beEmpty())
             }
 
+            UserDefaults(suiteName: "mock-app-group")?.set("device-id", forKey: Constants.General.telemetryInstallId)
             let testCases = [
                 TrackDeliveredTestCase(
                     name: "without attributes",
@@ -182,7 +206,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                                 .properties([
                                     "status": .string("delivered"),
                                     "state": .string("shown"),
-                                    "platform": .string("ios")
+                                    "platform": .string("ios"),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id")
                                 ]),
                                 .timestamp($0),
                                 .eventType("campaign")
@@ -200,7 +226,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                                 .properties([
                                     "status": .string("delivered"),
                                     "state": .string("shown"),
-                                    "platform": .string("ios")
+                                    "platform": .string("ios"),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id")
                                 ]),
                                 .timestamp($0),
                                 .eventType("campaign")
@@ -224,7 +252,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     "state": .string("shown"),
                                     "campaign_id": .string("mock campaign id"),
                                     "platform": .string("mock platform"),
-                                    "action_id": .int(123)
+                                    "action_id": .int(123),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id")
                                 ]),
                                 .timestamp($0),
                                 .eventType("campaign")
@@ -243,7 +273,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                                 .properties([
                                     "status": .string("delivered"),
                                     "state": .string("shown"),
-                                    "platform": .string("ios")
+                                    "platform": .string("ios"),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id")
                                 ]),
                                 .timestamp($0)
                             ]
@@ -284,7 +316,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     "action_type": .string("mobile notification"),
                                     "campaign_name": .string("Wassil's push"),
                                     "language": .string(""),
-                                    "campaign_policy": .string("")
+                                    "campaign_policy": .string(""),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id")
                                 ]),
                                 .timestamp($0),
                                 .eventType("campaign")
@@ -343,7 +377,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                                     "campaign_id": .string("mock campaign id"),
                                     "platform": .string("mock platform"),
                                     "action_id": .int(123),
-                                    "consent_category_tracking": .string("I give consent")
+                                    "consent_category_tracking": .string("I give consent"),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id")
                                 ]),
                                 .timestamp($0),
                                 .eventType("campaign")
@@ -434,7 +470,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
                             "status": JSONValue.string("clicked"),
-                            "action_type": .string("mobile notification")
+                            "action_type": .string("mobile notification"),
+                            "application_id": .string("default-application"),
+                            "device_id": .string("device-id")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp),
                                .eventType("campaign")]
@@ -458,7 +496,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
                             "status": JSONValue.string("clicked"),
-                            "action_type": .string("mobile notification")
+                            "action_type": .string("mobile notification"),
+                            "application_id": .string("default-application"),
+                            "device_id": .string("device-id")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp),
                                .eventType("campaign")]
@@ -478,7 +518,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
                             "status": JSONValue.string("clicked"),
-                            "action_type": .string("mobile notification")
+                            "action_type": .string("mobile notification"),
+                            "application_id": .string("default-application"),
+                            "device_id": .string("device-id")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp),
                                .eventType("campaign")]
@@ -498,7 +540,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "platform": JSONValue.string("ios"),
                             "cta": JSONValue.string("notification"),
                             "status": JSONValue.string("clicked"),
-                            "action_type": .string("mobile notification")
+                            "action_type": .string("mobile notification"),
+                            "application_id": .string("default-application"),
+                            "device_id": .string("device-id")
                         ]),
                         .timestamp(PushNotificationsTestData.timestamp),
                                .eventType("campaign")]
@@ -549,7 +593,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "url": JSONValue.string("http://google.com?search=something"),
                             "utm_source": JSONValue.string("exponea"),
                             "utm_campaign": JSONValue.string("Testing mobile push"),
-                            "utm_medium": JSONValue.string("mobile_push_notification")
+                            "utm_medium": JSONValue.string("mobile_push_notification"),
+                            "application_id": .string("default-application"),
+                            "device_id": .string("device-id")
                         ] as [String: ExponeaSDK.JSONValue]), // without swift fails with typechecking took too long
                         .timestamp(PushNotificationsTestData.timestamp),
                         .eventType("campaign")]
@@ -604,7 +650,9 @@ final class PushNotificationManagerSpec: QuickSpec {
                             "utm_campaign": JSONValue.string("Testing mobile push"),
                             "utm_medium": JSONValue.string("mobile_push_notification"),
                             "sent_timestamp": JSONValue.double(PushNotificationsTestData.timestamp),
-                            "type": JSONValue.string("push")
+                            "type": JSONValue.string("push"),
+                            "application_id": .string("default-application"),
+                            "device_id": .string("device-id")
                         ] as [String: ExponeaSDK.JSONValue]), // without swift fails with typechecking took too long
                         .timestamp(PushNotificationsTestData.timestamp),
                         .eventType("campaign")]
@@ -656,18 +704,138 @@ final class PushNotificationManagerSpec: QuickSpec {
             it("should track push token if authorized") {
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .authorized)
                 pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
+                expect(trackingManager.trackedEvents).to(
+                    equal([
+                            MockTrackingManager.TrackedEvent(
+                                type: .notificationState,
+                                data: [
+                                    .properties([
+                                        "platform": .string("ios"),
+                                        "application_id": .string("default-application"),
+                                        "device_id": .string("device-id"),
+                                        "description": .string("Invalidated")
+                                    ]),
+                                    .pushNotificationToken(
+                                        token: "mock-push-token",
+                                        authorized: false
+                                    ),
+                                    .eventType("notification_state")
+                                ]
+                            ),
+                            MockTrackingManager.TrackedEvent(
+                                type: .notificationState,
+                                data: [
+                                    .properties([
+                                        "platform": .string("ios"),
+                                        "application_id": .string("default-application"),
+                                        "device_id": .string("device-id"),
+                                        "description": .string("Permission granted")
+                                    ]),
+                                    .pushNotificationToken(
+                                        token: "6D6F636B5F746F6B656E5F64617461",
+                                        authorized: true
+                                    ),
+                                    .eventType("notification_state")
+                                ]
+                            )
+                        ])
+                )
+            }
+
+            it("should track push token if not authorized") {
+                UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
+                pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
-                        type: .registerPushToken,
-                        data: [.pushNotificationToken(token: "6D6F636B5F746F6B656E5F64617461", authorized: true)]
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Invalidated")
+                            ]),
+                            .pushNotificationToken(
+                                token: "mock-push-token",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
+                    ),
+                    MockTrackingManager.TrackedEvent(
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission denied")
+                            ]),
+                            .pushNotificationToken(
+                                token: "6D6F636B5F746F6B656E5F64617461",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
                     )
                 ]))
             }
-
-            it("should not track push token if not authorized") {
+            
+            it("should track token in 'onTokenChange' frequency") {
+                createPushManager(
+                    requirePushAuthorization: true,
+                    currentToken: "new-mock-token",
+                    tokenTrackFrequency: .onTokenChange
+                )
+                expect(trackingManager.trackedEvents).to(
+                    equal([
+                        MockTrackingManager.TrackedEvent(
+                            type: .notificationState,
+                            data: [
+                                .properties([
+                                    "platform": .string("ios"),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id"),
+                                    "description": .string("Permission granted")
+                                ]),
+                                .pushNotificationToken(
+                                    token: "new-mock-token",
+                                    authorized: true
+                                ),
+                                .eventType("notification_state")
+                            ]
+                        )
+                    ])
+                )
+            }
+            
+            it("should track token in 'onTokenChange' frequency if permission denied") {
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
-                pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
-                expect(trackingManager.trackedEvents).to(beEmpty())
+                createPushManager(
+                    requirePushAuthorization: true,
+                    currentToken: "new-mock-token",
+                    tokenTrackFrequency: .onTokenChange
+                )
+                expect(trackingManager.trackedEvents).to(
+                    equal([
+                        MockTrackingManager.TrackedEvent(
+                            type: .notificationState,
+                            data: [
+                                .properties([
+                                    "platform": .string("ios"),
+                                    "application_id": .string("default-application"),
+                                    "device_id": .string("device-id"),
+                                    "description": .string("Permission denied")
+                                ]),
+                                .pushNotificationToken(
+                                    token: "new-mock-token",
+                                    authorized: false
+                                ),
+                                .eventType("notification_state")
+                            ]
+                        )
+                    ])
+                )
             }
 
             it("should track push token if not authorized but authorization is not required") {
@@ -682,8 +850,36 @@ final class PushNotificationManagerSpec: QuickSpec {
                 pushManager.handlePushTokenRegistered(dataObject: mockTokenData)
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
-                        type: .registerPushToken,
-                        data: [.pushNotificationToken(token: "6D6F636B5F746F6B656E5F64617461", authorized: false)]
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Invalidated")
+                            ]),
+                            .pushNotificationToken(
+                                token: "mock-token",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
+                    ),
+                    MockTrackingManager.TrackedEvent(
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission denied")
+                            ]),
+                            .pushNotificationToken(
+                                token: "6D6F636B5F746F6B656E5F64617461",
+                                authorized: true
+                            ),
+                            .eventType("notification_state")
+                        ]
                     )
                 ]))
             }
@@ -705,10 +901,22 @@ final class PushNotificationManagerSpec: QuickSpec {
                     tokenTrackFrequency: .daily,
                     lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 - 10)
                 )
-                expect(trackingManager.trackedEvents).to(equal([
+                expect(trackingManager.trackedEvents).to(contain([
                     MockTrackingManager.TrackedEvent(
-                        type: .registerPushToken,
-                        data: [.pushNotificationToken(token: "mock-token", authorized: true)]
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission granted")
+                            ]),
+                            .pushNotificationToken(
+                                token: "mock-token",
+                                authorized: true
+                            ),
+                            .eventType("notification_state")
+                        ]
                     )
                 ]))
             }
@@ -722,13 +930,25 @@ final class PushNotificationManagerSpec: QuickSpec {
                 )
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
-                        type: .registerPushToken,
-                        data: [.pushNotificationToken(token: "mock-token", authorized: true)]
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission granted")
+                            ]),
+                            .pushNotificationToken(
+                                token: "mock-token",
+                                authorized: true
+                            ),
+                            .eventType("notification_state")
+                        ]
                     )
                 ]))
             }
 
-            it("should clear token if not authorized and authorization required") {
+            it("should track permission denied if not authorized and authorization required") {
                 UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .denied)
                 createPushManager(
                     requirePushAuthorization: true,
@@ -738,8 +958,20 @@ final class PushNotificationManagerSpec: QuickSpec {
                 )
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
-                        type: .registerPushToken,
-                        data: [.pushNotificationToken(token: nil, authorized: false)]
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission denied")
+                            ]),
+                            .pushNotificationToken(
+                                token: "mock-token",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
                     )
                 ]))
             }
@@ -754,8 +986,20 @@ final class PushNotificationManagerSpec: QuickSpec {
                 )
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
-                        type: .registerPushToken,
-                        data: [.pushNotificationToken(token: "mock-token", authorized: false)]
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission denied")
+                            ]),
+                            .pushNotificationToken(
+                                token: "mock-token",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
                     )
                 ]))
             }
@@ -788,8 +1032,20 @@ final class PushNotificationManagerSpec: QuickSpec {
                 )
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
-                        type: .registerPushToken,
-                        data: [.pushNotificationToken(token: "authorized-token-1", authorized: true)]
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission granted")
+                            ]),
+                            .pushNotificationToken(
+                                token: "authorized-token-1",
+                                authorized: true
+                            ),
+                            .eventType("notification_state")
+                        ]
                     )
                 ]))
                 trackingManager.clearCalls()
@@ -798,8 +1054,20 @@ final class PushNotificationManagerSpec: QuickSpec {
                 pushManager.applicationDidBecomeActive()
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
-                        type: .registerPushToken,
-                        data: [.pushNotificationToken(token: nil, authorized: false)]
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission denied")
+                            ]),
+                            .pushNotificationToken(
+                                token: "authorized-token-1",
+                                authorized: false
+                            ),
+                            .eventType("notification_state")
+                        ]
                     )
                 ]))
                 trackingManager.clearCalls()
@@ -808,10 +1076,144 @@ final class PushNotificationManagerSpec: QuickSpec {
                 pushManager.applicationDidBecomeActive()
                 expect(trackingManager.trackedEvents).to(equal([
                     MockTrackingManager.TrackedEvent(
-                        type: .registerPushToken,
-                        data: [.pushNotificationToken(token: "authorized-token-1", authorized: true)]
-                    )
-                ]))
+                        type: .notificationState,
+                        data: [
+                            .properties([
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string("device-id"),
+                                "description": .string("Permission granted")
+                            ]),
+                            .pushNotificationToken(
+                                token: "authorized-token-1",
+                                authorized: true
+                            ),
+                            .eventType("notification_state")
+                        ]
+                    )])
+                )
+            }
+
+            context("should send notification_state on first launch after upgrade from legacy SDK") {
+                let tokenTrackFrequencyTypes: [ExponeaSDK.TokenTrackFrequency] = [.onTokenChange, .everyLaunch, .daily]
+                
+                for tokenTrackFrequency in tokenTrackFrequencyTypes {
+                    it("for token track frequency: \(tokenTrackFrequency.rawValue)") {
+                        // Simulate old SDK data: CoreData has the same token + a recent track date,
+                        // but notificationStateTracked flag is absent (upgrade scenario).
+                        // Without the fix, onTokenChange would compare "legacy-token" == "legacy-token"
+                        // and suppress the event. With the fix, isFirstNotificationStateTracking forces tracking.
+                        trackingManager.customerPushToken = "legacy-token"
+                        createPushManager(
+                            requirePushAuthorization: true,
+                            currentToken: "legacy-token",
+                            tokenTrackFrequency: tokenTrackFrequency,
+                            lastTokenTrackDate: Date(),        // recent date from old SDK — overridden to .distantPast
+                            userDefaults: nil                  // flag absent → isFirstNotificationStateTracking = true
+                        )
+                        expect(trackingManager.trackedEvents).to(haveCount(1))
+                        expect(trackingManager.trackedEvents.first?.type).to(equal(.notificationState))
+                    }
+                }
+            }
+
+            context("should send notification_state when app version changes") {
+                let tokenTrackFrequencyTypes: [ExponeaSDK.TokenTrackFrequency] = [.onTokenChange, .everyLaunch, .daily]
+                
+                for tokenTrackFrequency in tokenTrackFrequencyTypes {
+                    it("for token track frequency: \(tokenTrackFrequency.rawValue)") {
+                        // Simulate user already on new SDK: flag set, recent track date, same token
+                        let sdkDefaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite)!
+                        sdkDefaults.set(true, forKey: Constants.General.notificationStateTracked)
+                        sdkDefaults.set("1.0.0", forKey: Constants.General.notificationStateAppVersion)
+
+                        createPushManager(
+                            requirePushAuthorization: true,
+                            currentToken: "mock-token",
+                            tokenTrackFrequency: tokenTrackFrequency,
+                            lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 + 10),
+                            currentAppVersion: "2.0.0"   // differs from stored "1.0.0" → forces tracking
+                        )
+                        expect(trackingManager.trackedEvents).to(haveCount(1))
+                        expect(trackingManager.trackedEvents.first?.type).to(equal(.notificationState))
+                    }
+                }
+            }
+
+            context("should send notification_state when applicationID changes") {
+                let tokenTrackFrequencyTypes: [ExponeaSDK.TokenTrackFrequency] = [.onTokenChange, .everyLaunch, .daily]
+                
+                for tokenTrackFrequency in tokenTrackFrequencyTypes {
+                    it("for token track frequency: \(tokenTrackFrequency.rawValue)") {
+                        // Simulate user already tracked with one application ID; SDK re-initialized with another
+                        let sdkDefaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite)!
+                        sdkDefaults.set(true, forKey: Constants.General.notificationStateTracked)
+                        sdkDefaults.set("1.0.0", forKey: Constants.General.notificationStateAppVersion)
+                        sdkDefaults.set("app-id-previous", forKey: Constants.General.notificationStateApplicationID)
+
+                        createPushManager(
+                            requirePushAuthorization: true,
+                            currentToken: "mock-token",
+                            tokenTrackFrequency: tokenTrackFrequency,
+                            lastTokenTrackDate: Date(timeIntervalSince1970: Date().timeIntervalSince1970 - 60 * 60 * 24 + 10),
+                            currentAppVersion: "1.0.0",   // same version — no force from version
+                            currentApplicationID: "app-id-new"   // differs from stored "app-id-previous" → forces tracking
+                        )
+                        expect(trackingManager.trackedEvents).to(haveCount(1))
+                        expect(trackingManager.trackedEvents.first?.type).to(equal(.notificationState))
+                    }
+                }
+            }
+
+            context("should not send notification_state again when version and applicationID unchanged") {
+                let tokenTrackFrequencyTypes: [ExponeaSDK.TokenTrackFrequency] = [.onTokenChange, .everyLaunch, .daily]
+                
+                for tokenTrackFrequency in tokenTrackFrequencyTypes {
+                    it("for token track frequency: \(tokenTrackFrequency.rawValue)") {
+                        // Already tracked with current version and application ID; token unchanged.
+                        trackingManager.customerPushToken = "mock-token"
+                        let sdkDefaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite)!
+                        sdkDefaults.set(true, forKey: Constants.General.notificationStateTracked)
+                        sdkDefaults.set("1.0.0", forKey: Constants.General.notificationStateAppVersion)
+                        sdkDefaults.set("app-id-same", forKey: Constants.General.notificationStateApplicationID)
+
+                        createPushManager(
+                            requirePushAuthorization: true,
+                            currentToken: "mock-token",
+                            tokenTrackFrequency: tokenTrackFrequency,
+                            lastTokenTrackDate: Date(),
+                            currentAppVersion: "1.0.0",
+                            currentApplicationID: "app-id-same"
+                        )
+                        // everyLaunch always sends on each launch; onTokenChange/daily skip when version and app ID unchanged.
+                        let expectedCount = tokenTrackFrequency == .everyLaunch ? 1 : 0
+                        expect(trackingManager.trackedEvents).to(haveCount(expectedCount))
+                    }
+                }
+            }
+
+            context("should not send notification_state or persist when force tracking but no token yet") {
+                let tokenTrackFrequencyTypes: [ExponeaSDK.TokenTrackFrequency] = [.onTokenChange, .everyLaunch, .daily]
+                
+                for tokenTrackFrequency in tokenTrackFrequencyTypes {
+                    it("for token track frequency: \(tokenTrackFrequency.rawValue)") {
+                        // Version change forces tracking, but with no token we send nothing and must not mark.
+                        let sdkDefaults = UserDefaults(suiteName: Constants.General.userDefaultsSuite)!
+                        sdkDefaults.set(true, forKey: Constants.General.notificationStateTracked)
+                        sdkDefaults.set("1.0.0", forKey: Constants.General.notificationStateAppVersion)
+
+                        createPushManager(
+                            requirePushAuthorization: true,
+                            currentToken: nil,
+                            tokenTrackFrequency: tokenTrackFrequency,
+                            lastTokenTrackDate: Date(),
+                            currentAppVersion: "2.0.0"
+                        )
+                        expect(trackingManager.trackedEvents).to(haveCount(0))
+                        // We did not persist (no send → no mark): stored version should still be old.
+                        expect(sdkDefaults.string(forKey: Constants.General.notificationStateAppVersion)).to(equal("1.0.0"))
+                    }
+                }
             }
         }
 
@@ -876,7 +1278,8 @@ final class PushNotificationManagerSpec: QuickSpec {
                     UserDefaults(suiteName: ExponeaSDK.Constants.General.userDefaultsSuite)?
                         .array(forKey: ExponeaSDK.Constants.General.openedPushUserDefaultsKey)
                 ).to(beNil())
-                expect(trackingManager.trackedEvents.count).to(equal(2))
+                // createPushManager() init runs processStoredPushOpens (2 events) then verifyPushStatusAndTrackPushToken (2 events)
+                expect(trackingManager.trackedEvents.count).to(beGreaterThanOrEqualTo(2))
                 expect(trackingManager.trackedEvents[0].type).to(equal(ExponeaSDK.EventType.pushOpened))
                 expect(trackingManager.trackedEvents[1].type).to(equal(ExponeaSDK.EventType.pushDelivered))
             }

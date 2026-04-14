@@ -33,14 +33,14 @@ final class ExponeaAppDelegateSpec: QuickSpec {
                     IntegrationManager.shared.isStopped = false
                     UNAuthorizationStatusProvider.current = MockUNAuthorizationStatusProviding(status: .notDetermined)
                 }
-                it("should not track token if authorization required") {
+                it("should track token if valid false") {
                     self.configureExponea(requirePushAuthorization: true)
                     ExponeaAppDelegate().application(
                         UIApplication.shared,
                         didRegisterForRemoteNotificationsWithDeviceToken: "mock-token".data(using: .utf8)!
                     )
                     Exponea.shared.executeSafelyWithDependencies { dependencies in
-                        expect(dependencies.trackingManager.customerPushToken).to(beNil())
+                        expect(dependencies.trackingManager.customerPushToken).to(equal("6D6F636B2D746F6B656E"))
                     }
                 }
 
@@ -73,7 +73,7 @@ final class ExponeaAppDelegateSpec: QuickSpec {
                 }
 
                 it("should track token if authorization not required") {
-                    self.configureExponea(requirePushAuthorization: true)
+                    self.configureExponea(requirePushAuthorization: false)
                     ExponeaAppDelegate().application(
                         UIApplication.shared,
                         didRegisterForRemoteNotificationsWithDeviceToken: "mock-token".data(using: .utf8)!

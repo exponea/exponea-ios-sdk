@@ -69,7 +69,10 @@ extension ServerRepository: FetchRepository {
     ) {
         let router = RequestFactory(exponeaProject: configuration.mutualExponeaProject, route: .appInbox)
         let request = router.prepareRequest(
-            parameters: AppInboxRequest(syncToken: syncToken),
+            parameters: AppInboxRequest(
+                syncToken: syncToken,
+                applicationID: configuration.applicationID
+            ),
             customerIds: customerIds
         )
         session

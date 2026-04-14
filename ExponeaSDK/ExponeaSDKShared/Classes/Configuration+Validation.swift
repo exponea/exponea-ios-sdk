@@ -14,6 +14,7 @@ extension Configuration {
         case projectTokenInvalid(String)
         case projectMappingInvalid(EventType, Error)
         case advancedAuthInvalid(String)
+        case applicationIDInvalid(String)
 
         public var errorDescription: String? {
             switch self {
@@ -24,6 +25,8 @@ extension Configuration {
             case .projectMappingInvalid(let eventType, let error):
                 return "Project mapping for event type \(eventType) is not valid. \(error.localizedDescription)"
             case .advancedAuthInvalid(let message):
+                return message
+            case .applicationIDInvalid(let message):
                 return message
             }
         }
@@ -41,6 +44,25 @@ extension Configuration {
                 } catch {
                     throw ConfigurationValidationError.projectMappingInvalid(entry.key, error)
                 }
+            }
+        }
+        
+        if applicationID != Constants.General.applicationID,
+           !applicationID.isEmpty {
+            if applicationID.count > 50 {
+                throw ConfigurationValidationError.applicationIDInvalid("Application ID longer than allowed number of characters (50).")
+            }
+            // Fallback code for earlier iOS versions using NSRegularExpression
+            let pattern = "^[a-z0-9]+(?:[-.][a-z0-9]+)*$"
+            let regex = try! NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+            let range = NSRange(location: 0, length: applicationID.utf16.count)
+            let isInvalid = regex.firstMatch(
+                in: applicationID,
+                options: [],
+                range: range
+            ) == nil
+            if isInvalid {
+                throw ConfigurationValidationError.applicationIDInvalid("Application ID doesn't match required set of characters.")
             }
         }
         if advancedAuthEnabled && customAuthProvider == nil {

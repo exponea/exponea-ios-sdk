@@ -53,6 +53,7 @@ public enum Constants {
         public static let campaignClick = "campaign_click"
         public static let banner = "banner"
         public static let appInbox = "campaign"
+        public static let notificationState = "notification_state"
     }
 
     /// Error messages
@@ -94,5 +95,11 @@ public enum Constants {
         public static let inAppContentBlockDisplayStatusUserDefaultsKey = "EXPONEA_IN_APP_CONTENT_BLOCK_DISPLAY_STATUS"
         public static let lastKnownConfiguration = "EXPONEA_LAST_KNOWN_CONFIGURATION"
         public static let lastKnownCustomerIds = "EXPONEA_LAST_KNOWN_CUSTOMER_IDS"
+        public static let applicationID = "default-application"
+        public static let telemetryEvents = "EXPONEA_TELEMETRY_EVENTS"
+        public static let telemetryInstallId = "EXPONEA_TELEMETRY_INSTALL_ID"
+        public static let notificationStateTracked = "EXPONEA_NOTIFICATION_STATE_TRACKED"
+        public static let notificationStateAppVersion = "EXPONEA_NOTIFICATION_STATE_APP_VERSION"
+        public static let notificationStateApplicationID = "EXPONEA_NOTIFICATION_STATE_APPLICATION_ID"
     }
 }

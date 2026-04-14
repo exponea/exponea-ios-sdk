@@ -1,5 +1,5 @@
 ---
-title: Tracking consent
+title: Tracking consent for iOS SDK
 excerpt: Manage tracking consent using the iOS SDK.
 slug: ios-sdk-tracking-consent
 categorySlug: integrations

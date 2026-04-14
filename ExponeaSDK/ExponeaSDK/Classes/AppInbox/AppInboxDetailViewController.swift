@@ -14,7 +14,7 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
 
     // MARK: - Properties
     public let pushContainer = UIScrollView()
-    public let messageImage = UIImageView()
+    let messageImage = UIAnimatedImageView()
     public let receivedTime = UILabel()
     public let messageTitle = UILabel()
     public let message = UILabel()
@@ -78,6 +78,11 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
         navigationController?.isNavigationBarHidden = false
         applyDataToView()
         convertToDarkIfNeeded()
+    }
+    
+    override open func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.messageImage.clear()
     }
 
     private func determineActionType(_ action: ActionInfo) -> MessageItemActionType {
@@ -150,22 +155,19 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
             data?.content?.message ?? "", kern: 0.25, lineHeightMultiplier: CGFloat(1.2)
         )
         setupActionButtons(data)
-
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let self else { return }
-            if let imageUrl = self.data?.content?.imageUrl {
-                if let image = UIImage.gifImageWithURL(imageUrl) {
+        if let imageUrl = self.data?.content?.imageUrl {
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                guard let self else { return }
+                if let imageData = AppInboxCache.shared.tryGetImageData(at: imageUrl) {
                     onMain {
-                        self.messageImage.image = image
+                        self.messageImage.loadImage(imageData: imageData)
+                        self.messageImage.isHidden = false
                     }
                 } else {
-                    guard let imageSource = ImageUtils.tryDownloadImage(imageUrl),
-                          let image = ImageUtils.createImage(imageData: imageSource, maxDimensionInPixels: Int(UIScreen.main.bounds.width)) else {
-                        Exponea.logger.log(.error, message: "Image cannot be shown")
-                        return
-                    }
+                    Exponea.logger.log(.error, message: "Image cannot be shown correctly")
                     onMain {
-                        self.messageImage.image = image
+                        self.messageImage.isHidden = true
+                        self.messageImage.clear()
                     }
                 }
             }

@@ -40,14 +40,9 @@ extension TrackingParameters: RequestParametersType {
         /// Preparing customers_ids params
         parameters["customer_ids"] = .dictionary(customerIds.mapValues { $0.jsonValue })
 
-        if eventType != Constants.EventTypes.pushDelivered && eventType != Constants.EventTypes.pushOpen {
-            parameters["age"] =
-                .double(Double(Date().timeIntervalSince1970) - (timestamp ?? Double(Date().timeIntervalSince1970)))
-        } else {
-            /// Preparing timestamp param
-            if let timestamp = timestamp {
-                parameters["timestamp"] = .double(timestamp)
-            }
+        /// Preparing timestamp param
+        if let timestamp = timestamp {
+            parameters["timestamp"] = .double(timestamp)
         }
         if eventType == Constants.EventTypes.campaignClick {
             parameters["url"] = properties["url"]

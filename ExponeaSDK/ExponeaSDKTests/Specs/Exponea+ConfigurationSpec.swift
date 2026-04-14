@@ -43,6 +43,7 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                 expect(configuration.tokenTrackFrequency).to(equal(.onTokenChange))
                 expect(configuration.appGroup).to(beNil())
                 expect(configuration.flushEventMaxRetries).to(equal(Constants.Session.maxRetries))
+                expect(configuration.applicationID).to(equal(Constants.General.applicationID))
                 guard case .immediate = exponea.flushingMode else {
                     XCTFail("Incorect flushing mode")
                     return
@@ -76,7 +77,8 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                     automaticSessionTracking: .enabled(timeout: 12345),
                     defaultProperties: ["mock-prop-1": "mock-value-1", "mock-prop-2": 123],
                     flushingSetup: Exponea.FlushingSetup(mode: .periodic(111), maxRetries: 123),
-                    advancedAuthEnabled: false
+                    advancedAuthEnabled: false,
+                    applicationID: "com.company.project"
                 )
                 guard let configuration = exponea.configuration else {
                     XCTFail("Nil configuration")
@@ -104,6 +106,7 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                 expect(configuration.appGroup).to(equal("mock-app-group"))
                 expect(configuration.flushEventMaxRetries).to(equal(123))
                 expect(configuration.advancedAuthEnabled).to(equal(false))
+                expect(configuration.applicationID).to(equal("com.company.project"))
                 guard case .periodic(let period) = exponea.flushingMode else {
                     XCTFail("Incorect flushing mode")
                     return
@@ -113,7 +116,7 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
             }
 
             it("should allow single initialisation") {
-                for run in 0..<200 {
+                for _ in 0..<200 {
                     Exponea.logger.logLevel = .verbose
                     var sdkInitMessageCount = 0
                     Exponea.logger.addLogHook { message in
@@ -163,6 +166,7 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                         if let conf = exponea.configuration {
                             expect(conf.projectToken).to(equal(tokenWinner))
                         }
+                        expect(conf.applicationID).to(equal(Constants.General.applicationID))
                     }
                 }
             }

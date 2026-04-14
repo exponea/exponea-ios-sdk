@@ -1,5 +1,5 @@
 ---
-title: Notification extensions
+title: Notification extensions for iOS SDK
 excerpt: Configure application extensions required for certain push notification features in the iOS SDK.
 slug: ios-sdk-notification-extensions
 categorySlug: integrations
@@ -49,19 +49,8 @@ Follow the instructions in the relevant section for the dependency manager you u
 
 Optionally, you can specify the ExponeaSDK version as follows to let `pod` automatically any smaller than minor version updates:
 ```
-pod "ExponeaSDK-Notifications", "~> 3.3.0"
+pod "ExponeaSDK-Notifications", "~> 3.11.0"
 ```
-
-### Carthage
-
-Carthage will by default build both `ExponeaSDK` and `ExponeaSDKNotifications` frameworks.
-
-1. In a terminal window, navigate to your Xcode project folder and run the following command:
-    ```
-    carthage update --use-xcframeworks —platform iOS
-    ```
-2. In your Xcode project, navigate to your app extension target's settings. 
-3. On the `General` tab, in the `Frameworks, Libraries, and Embedded Content` section, click on `+` and add `ExponeaSDKNotifications.xcframework`.
 
 ### Swift Package Manager
 
@@ -106,7 +95,7 @@ class NotificationService: UNNotificationServiceExtension {
 
 > 📘
 >
-> Refer to [ExampleNotificationService](https://github.com/exponea/exponea-ios-sdk/tree/main/ExponeaSDK/ExampleNotificationService) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> Refer to [ExampleNotificationService](https://github.com/exponea/exponea-ios-sdk/tree/main/ExponeaSDK/ExampleNotificationService) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
 
 #### Notification content extension
 
@@ -153,4 +142,4 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
 
 > 📘
 >
-> Refer to [ExampleNotificationContent](https://github.com/exponea/exponea-ios-sdk/tree/main/ExponeaSDK/ExampleNotificationContent) in the [example app](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> Refer to [ExampleNotificationContent](https://github.com/exponea/exponea-ios-sdk/tree/main/ExponeaSDK/ExampleNotificationContent) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.

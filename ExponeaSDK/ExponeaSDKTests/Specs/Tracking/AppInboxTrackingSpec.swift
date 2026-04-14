@@ -47,6 +47,7 @@ final class AppInboxTrackingSpec: QuickSpec {
                     trackManagerInitializator: { _ in },
                     userDefaults: userDefaults,
                     campaignRepository: CampaignRepository(userDefaults: userDefaults),
+                    requirePushAuthorization: self.configuration.requirePushAuthorization,
                     onEventCallback: { _, _ in
                         // nothing
                     })
@@ -55,7 +56,7 @@ final class AppInboxTrackingSpec: QuickSpec {
                     trackingManager: trackingManager,
                     database: database
                 )
-                AppInboxCache().clear()
+                AppInboxCache.shared.clear()
                 trackingConsentManager = TrackingConsentManager(trackingManager: trackingManager)
             }
 

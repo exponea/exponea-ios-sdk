@@ -1,5 +1,5 @@
 ---
-title: In-app personalization
+title: In-app personalization for iOS SDK
 excerpt: Display in-app personalization based on definitions set up in Engagement using the iOS SDK
 slug: ios-sdk-in-app-personalization
 categorySlug: integrations
@@ -10,5 +10,5 @@ Through in-app personalization, Engagement provides ways to display campaigns wi
 
 The following two pages describe how to implement in-app messages and in-app content blocks using the SDK:
 
-- [In-app messages](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-messages)
-- [In-app content blocks](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks)
+- [In-app messages for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-messages)
+- [In-app content blocks for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks)

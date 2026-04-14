@@ -18,21 +18,26 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
     private let window: UIWindow?
     internal var presenting = false
     private var inAppController: UIViewController?
+    private var inAppMessageView: InAppMessageView?
 
     init(window: UIWindow? = nil) {
         self.window = window
 
         IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
             guard let self else { return }
-            if let last = (self.inAppController as? UINavigationController)?.viewControllers.last as? InAppDialogContainerView {
-                last.view.removeFromSuperview()
-                last.removeFromParent()
-            } else if let vc = self.inAppController as? InAppDialogContainerView {
-                vc.view.removeFromSuperview()
-                vc.removeFromParent()
-            } else {
-                (self.inAppController as? UINavigationController)?.removeFromParent()
-            }
+            self.closeInApp()
+        }
+    }
+
+    private func closeInApp() {
+        if let last = (inAppController as? UINavigationController)?.viewControllers.last as? InAppDialogContainerView {
+            last.view.removeFromSuperview()
+            last.removeFromParent()
+        } else if let vc = inAppController as? InAppDialogContainerView {
+            vc.view.removeFromSuperview()
+            vc.removeFromParent()
+        } else {
+            inAppMessageView?.dismissFromSuperView()
         }
     }
 
@@ -83,7 +88,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     }
                     self.inAppController = viewController
                     do {
-                        var inAppMessageView = try self.createInAppMessageView(
+                        self.inAppMessageView = try self.createInAppMessageView(
                             messageType: messageType,
                             payload: payload,
                             oldPayload: oldPayload,
@@ -99,13 +104,29 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                                 dismissCallback(isUserInteraction, cancelButtonPayload)
                             }
                         )
-                        try inAppMessageView.present(
+                        guard let inAppMessageView = self.inAppMessageView else {
+                            return
+                        }
+
+                        let targetWindow: UIWindow? = {
+                            if let w = self.window { return w }
+                            if #available(iOS 13.0, *) {
+                                return UIApplication.shared.connectedScenes
+                                    .compactMap { $0 as? UIWindowScene }
+                                    .flatMap { $0.windows }
+                                    .first { $0.isKeyWindow }
+                            } else {
+                                return UIApplication.shared.keyWindow
+                            }
+                        }()
+
+                        try self.inAppMessageView?.present(
                             in: viewController,
-                            window: self.window ?? UIApplication.shared.keyWindow
+                            window: targetWindow
                         )
                         self.presenting = true
                         Exponea.logger.log(.verbose, message: "In-app message presented.")
-                        if oldPayload != nil || payloadHtml != nil { // old inapp
+                        if oldPayload != nil || payloadHtml != nil {
                             self.setMessageTimeout(inAppMessageView: inAppMessageView, timeout: timeout)
                         }
                         presentedCallback?(inAppMessageView, nil)
@@ -160,20 +181,17 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 )
             }
         case .modal, .fullscreen:
-            guard let image = image else {
-                Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
-                throw InAppMessagePresenterError.unableToCreateView
-            }
             var fullscreen = false
             if case .fullscreen = messageType {
                 fullscreen = true
             }
             if var payload {
-                let updatedConfigs = payload.buttons.map { payload in
+                let updatedConfigs = payload.buttons.map { [weak self] payload in
                     var updatedPayload = payload
                     updatedPayload.buttonConfig?.actionCallback = { type in
                         if let type {
                             actionCallback(type)
+                            self?.closeInApp()
                         }
                     }
                     return updatedPayload
@@ -194,6 +212,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 }
                 return view
             } else if let oldPayload {
+                guard let image = image else {
+                    Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
+                    throw InAppMessagePresenterError.unableToCreateView
+                }
                 return InAppMessageDialogView(
                     payload: oldPayload,
                     image: image,
@@ -209,10 +231,6 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 )
             }
         case .slideIn:
-            guard let image = image else {
-                Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
-                throw InAppMessagePresenterError.unableToCreateView
-            }
             if var payload {
                 let updatedConfigs = payload.buttons.map { payload in
                     var updatedPayload = payload
@@ -239,6 +257,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 }
                 return slideInView
             } else if let oldPayload {
+                guard let image = image else {
+                    Exponea.logger.log(.error, message: "In-app message type \(messageType) requires image!")
+                    throw InAppMessagePresenterError.unableToCreateView
+                }
                 return OldInAppMessageSlideInView(
                     payload: oldPayload,
                     image: image,
@@ -287,14 +309,27 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
     }
 
     static func getTopViewController(window: UIWindow? = nil) -> UIViewController? {
-        let window = window ?? UIApplication.shared.keyWindow
-        if var topController = window?.rootViewController {
-            while let presentedViewController = topController.presentedViewController,
-                  !presentedViewController.isBeingDismissed {
-                topController = presentedViewController
+        let keyWindow: UIWindow? = {
+            if #available(iOS 13.0, *) {
+                return UIApplication.shared.connectedScenes
+                    .compactMap { $0 as? UIWindowScene }
+                    .flatMap { $0.windows }
+                    .first { $0.isKeyWindow }
+            } else {
+                return UIApplication.shared.keyWindow
             }
-            return topController
+        }()
+
+        let window = window ?? keyWindow
+        guard var topController = window?.rootViewController else { return nil }
+
+        var lastNonAlert = topController
+        while let presented = topController.presentedViewController,
+              !presented.isBeingDismissed {
+            if presented is UIAlertController { break }
+            lastNonAlert = presented
+            topController = presented
         }
-        return nil
+        return lastNonAlert
     }
 }

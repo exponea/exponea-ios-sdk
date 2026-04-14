@@ -10,12 +10,15 @@ import Foundation
 
 struct AppInboxRequest: Codable, RequestParametersType {
     var syncToken: String?
+    var applicationID: String?
     var parameters: [String: JSONValue] {
-        guard let syncToken = syncToken else {
-            return [:]
+        var result = [String: JSONValue]()
+        if let syncToken {
+            result["sync_token"] = syncToken.jsonValue
         }
-        return [
-            "sync_token": syncToken.jsonValue
-        ]
+        if let applicationID {
+            result["application_id"] = applicationID.jsonValue
+        }
+        return result
     }
 }

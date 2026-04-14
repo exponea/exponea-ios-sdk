@@ -9,6 +9,7 @@ import Quick
 import Nimble
 
 @testable import ExponeaSDK
+@testable import ExponeaSDKShared
 
 final class FileTelemetryStorageSpec: QuickSpec {
     let mockException = NSException()
@@ -19,7 +20,8 @@ final class FileTelemetryStorageSpec: QuickSpec {
             fatal: true,
             date: Date(),
             launchDate: Date(),
-            runId: "mock_run_id"
+            runId: "mock_run_id",
+            thread: TelemetryUtility.getCurrentThreadInfo()
         )
     }
 

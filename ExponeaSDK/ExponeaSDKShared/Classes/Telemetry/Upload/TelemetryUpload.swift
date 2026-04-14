@@ -6,8 +6,8 @@
 //  Copyright © 2019 Exponea. All rights reserved.
 //
 
-protocol TelemetryUpload: AnyObject {
-    func removeAll()
+public protocol TelemetryUpload: AnyObject {
+    func uploadSessionStart(runId: String, completionHandler: @escaping (Bool) -> Void)
     func upload(crashLog: CrashLog, completionHandler: @escaping (Bool) -> Void)
-    func upload(eventWithName: String, properties: [String: String], completionHandler: @escaping (Bool) -> Void)
+    func upload(eventLog: EventLog, completionHandler: @escaping (Bool) -> Void)
 }

@@ -33,7 +33,7 @@ class Customer: NSManagedObjectWithContext {
     @NSManaged public var trackEvent: NSSet?
 
     var ids: [String: String] {
-        let ids: [String: String]? = managedObjectContext?.performAndWait {
+        let ids: [String: String]? = managedObjectContext?.performAndWaitSafely {
             var data: [String: String] = ["cookie": uuid.uuidString]
 
             // Convert all properties to key value items.

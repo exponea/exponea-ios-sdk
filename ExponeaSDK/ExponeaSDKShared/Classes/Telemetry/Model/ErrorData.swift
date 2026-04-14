@@ -8,18 +8,18 @@
 
 import Foundation
 
-final class ErrorData: Codable, Equatable {
+public final class ErrorData: Codable, Equatable {
     let type: String
     let message: String
-    let stackTrace: [String]
+    let stackTrace: [ErrorStackTraceElement]
 
-    init(type: String, message: String, stackTrace: [String]) {
+    init(type: String, message: String, stackTrace: [ErrorStackTraceElement]) {
         self.type = type
         self.message = message
         self.stackTrace = stackTrace
     }
 
-    static func == (lhs: ErrorData, rhs: ErrorData) -> Bool {
+    public static func == (lhs: ErrorData, rhs: ErrorData) -> Bool {
         return lhs.type == rhs.type
             && lhs.message == rhs.message
             && lhs.stackTrace == rhs.stackTrace

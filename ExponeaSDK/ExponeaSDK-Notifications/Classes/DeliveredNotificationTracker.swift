@@ -69,6 +69,9 @@ final class DeliveredNotificationTracker {
         properties = properties.merging(notification.properties, uniquingKeysWith: { (_, new) in new })
         properties["status"] = .string("delivered")
         properties["state"] = .string("shown")
+        properties["application_id"] = .string(configuration.applicationID)
+        let userDefaults = TelemetryUtility.getUserDefaults(appGroup: configuration.appGroup)
+        properties["device_id"] = .string(TelemetryUtility.getInstallId(userDefaults: userDefaults))
         if notification.consentCategoryTracking != nil {
             properties["consent_category_tracking"] = .string(notification.consentCategoryTracking!)
         }

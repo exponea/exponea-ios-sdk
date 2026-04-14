@@ -60,7 +60,8 @@ public protocol ExponeaType: AnyObject {
         flushingSetup: Exponea.FlushingSetup,
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?,
-        manualSessionAutoClose: Bool
+        manualSessionAutoClose: Bool,
+        applicationID: String?
     )
 
     /// Initialize the configuration without a projectMapping (token mapping) for each type of event.
@@ -82,7 +83,8 @@ public protocol ExponeaType: AnyObject {
         inAppContentBlocksPlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?,
-        manualSessionAutoClose: Bool
+        manualSessionAutoClose: Bool,
+        applicationID: String?
     )
 
     /// Initialize the configuration with a projectMapping (token mapping) for each type of event. This allows
@@ -107,7 +109,8 @@ public protocol ExponeaType: AnyObject {
         inAppContentBlocksPlaceholders: [String]?,
         allowDefaultCustomerProperties: Bool?,
         advancedAuthEnabled: Bool?,
-        manualSessionAutoClose: Bool
+        manualSessionAutoClose: Bool,
+        applicationID: String?
     )
 
     /// Initialize the configuration with a plist file containing the keys for the ExponeaSDK.
@@ -179,6 +182,9 @@ public protocol ExponeaType: AnyObject {
 
     /// Handles push notification token registration - compared to trackPushToken respects requirePushAuthorization
     func handlePushNotificationToken(deviceToken: Data)
+    
+    /// Handles the change of push notifications permissions and tracks current push notification token
+    func trackCurrentPushNotificationToken()
 
     /// Handles push notification token registration - compared to trackPushToken respects requirePushAuthorization
     func handlePushNotificationToken(token: String)

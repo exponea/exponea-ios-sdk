@@ -10,6 +10,7 @@ import Quick
 
 @testable import ExponeaSDKNotifications
 @testable import ExponeaSDKShared
+@testable import ExponeaSDK
 
 final class DeliveredNotificationTrackerSpec: QuickSpec {
     override func spec() {
@@ -63,7 +64,9 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                                 "campaign_policy": .string("mock campaign policy"),
                                 "action_name": .string("mock action name"),
                                 "utm_source": .string("mock source"),
-                                "utm_campaign": .string("mock campaign")
+                                "utm_campaign": .string("mock campaign"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
                             ])
                         ]
                     )
@@ -97,7 +100,9 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                                 "status": .string("delivered"),
                                 "state": .string("shown"),
                                 "default-prop": .string("default-value"),
-                                "platform": .string("ios")
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
                             ])
                         ]
                     )
@@ -132,7 +137,9 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                             .properties([
                                 "status": .string("delivered"),
                                 "state": .string("shown"),
-                                "platform": .string("ios")
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
                             ])
                         ]
                     )
@@ -174,7 +181,9 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                             .properties([
                                 "status": .string("delivered"),
                                 "state": .string("shown"),
-                                "platform": .string("ios")
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
                             ])
                         ]
                     ),
@@ -191,7 +200,9 @@ final class DeliveredNotificationTrackerSpec: QuickSpec {
                             .properties([
                                 "status": .string("delivered"),
                                 "state": .string("shown"),
-                                "platform": .string("ios")
+                                "platform": .string("ios"),
+                                "application_id": .string("default-application"),
+                                "device_id": .string(TelemetryUtility.getInstallId(userDefaults: Exponea.shared.userDefaults))
                             ])
                         ]
                     )

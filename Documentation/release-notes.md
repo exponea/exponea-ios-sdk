@@ -1,5 +1,5 @@
 ---
-title: Release notes
+title: Release notes for iOS SDK
 excerpt: Exponea iOS SDK release notes
 slug: ios-sdk-release-notes
 categorySlug: integrations
@@ -8,9 +8,124 @@ parentDocSlug: ios-sdk
 
 > 📘
 >
-> Refer to the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
+> Refer to the [SDK version update guide for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 3.11.0
+#### March 11, 2026
+* Fixed:
+  * Fixed tracking of notification_state events when appVersion or applicationId changes.
+  * Disabled custom event logging for telemetry.
+
+
+## Release Notes for 3.10.0
+#### February 24, 2026
+* Added:
+  * Updates Example App's and their extensions bundle IDs.
+  * Updates Example App to handle App Links with the new domain.
+  * Clears device ID when calling stopIntegration() or clearLocalCustomerData().
+  * Updates documentation page titles with "iOS SDK" reference for improved searchability and navigation.
+* Fixed:
+  * Fixes tokenTrackFrequency method invocation.
+  * Fixes in-app message dismissal when user taps outside the dialog.
+
+
+## Release Notes for 3.9.0
+#### November 19, 2025
+* Added:
+  * Documents [major push notification updates](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update): notification_state event as a new token tracking method, Application ID configuration, and migration requirements for the Multiple mobile apps feature.
+* Fixed:
+  * Fixes crash that occurs when in app message has 3 buttons.
+  * Fixes incorrect push notification's image aspect ratio.
+  * Fixes crash on wrappers when in app message with stop integration action is called.
+
+
+## Release Notes for 3.8.2
+#### October 22, 2025
+* Added:
+  * Adds device_id parameter to all tracked events.
+  * Adds push notification token invalidation during manual token track and new token registration.
+* Fixed:
+  * Fixes notification_state event tracking not respecting token track frequency setup.
+  * Fixes missing application_id in push notification delivered event.
+  * Fixes in-app message display when alert is presented.
+  * Fixes notification_state event description messages.
+* Removed:
+  * Removes default properties from notification_state event.
+  * Removes push_notification_token, platform, description, device_id and application_id from customer properties.
+
+## Release Notes for 3.8.1
+#### October 07, 2025
+* Fixed:
+  * Fixes GIF image display using CADisplayLink for smoother animation
+
+
+## Release Notes for 3.8.0
+#### October 01, 2025
+* Added:
+  * Adds Multiple Mobile applications feature
+
+
+## Release Notes for 3.7.0
+#### September 25, 2025
+* Added:
+  * Updates SwiftSoup library to next major version (from 2.7.6).
+  * Replace age with timestamp for tracked Engagement events.
+* Fixed:
+  * Fixes Xcode 26 build issues related to 'performAndWait' method.
+
+
+## Release Notes for 3.6.0
+#### July 31, 2025
+* Added:
+  * Sentry integration for telemetry (replacing AppCenter)
+  * SwiftSoup library updated to version 2.7.6
+* Removed:
+  * Carthage package manager distribution
+  * AppCenter telemetry integration
+* Fixed:
+  * Removes Infinity double and float values from event payload before flush, as they aren't supported in JSON
+  * Updates validation steps of PushSelfCheck to support SwiftUI app delegate
+
+
+## Release Notes for 3.5.2
+#### June 16, 2025
+* Fixed:
+  * Event Storage Optimization: Event updates are now stored to the local database only when the context changes, improving performance.
+  * Flush Execution Check: Fixed an issue to ensure the flush process is executed only once, preventing event duplication.
+  * In-app Image Handling: Fixed an issue where an empty URL in in-app message images could cause unexpected crashes.
+
+
+## Release Notes for 3.5.1
+#### May 27, 2025
+* Fixed:
+  * Fixes SafeArea insets usage for In-app dialog showing to accept app layout paddings
+  * Fixes and updates some links in the documentation
+  * Moves caching of In-app images to the background thread to not block the main UI thread
+
+
+## Release Notes for 3.5.0
+#### May 20, 2025
+* Added:
+  * IsRichText public: IsRichText has been made accessible for customers
+  * Custom font cache: Added cache for smooth run
+* Fixed:
+  * Content Block serialization: Removed CodableIngored, which caused an issue with RN
+  * Button style: Corrected button style key
+  * Identify customer: Resolved an issue where only the last identifyCustomer request was persisted due to the inAppRefreshCallback overwriting previous storeTrackEvent requests
+  * URLOpener: Refactored URLOpener to support async/callback-based handling, enabling delayed deep link/URL resolution without breaking existing synchronous logic
+
+
+## Release Notes for 3.4.0
+#### April 22, 2025
+* Added:
+  * Height Calculator: The height calculator of content block has been made accessible for improved height calculations within the SDK.
+* Fixed:
+  * Carousel Freezing Issue: Fixed a bug causing the carousel to freeze under certain conditions.
+  * Carousel Bug Fixes: Multiple issues in the carousel component have been resolved, including inaccuracies in the getShownCount method and performance enhancements.
+  * Banner Count Return Fixes: Specific bug fixes related to the accurate returning of banner counts in the carousel.
+
+
 ## Release Notes for 3.3.0
 #### April 11, 2025
 * Added:

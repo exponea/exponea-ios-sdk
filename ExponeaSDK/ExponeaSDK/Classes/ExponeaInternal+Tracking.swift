@@ -8,6 +8,9 @@
 
 import Foundation
 import UserNotifications
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 extension ExponeaInternal {
     /// Adds new events to a customer. All events will be stored into coredata
@@ -76,8 +79,8 @@ extension ExponeaInternal {
                 ids["cookie"] = dependencies.trackingManager.customerIds["cookie"]
                 data.append(.customerIds(ids))
             }
-
             try dependencies.trackingManager.track(.identifyCustomer, with: data)
+            Exponea.shared.telemetryManager?.report(eventWithType: .identifyCustomer, properties: [:])
         }
     }
 
@@ -100,10 +103,13 @@ extension ExponeaInternal {
                 throw ExponeaError.authorizationInsufficient
             }
             UNAuthorizationStatusProvider.current.isAuthorized { authorized in
-                let data: [DataType] = [.pushNotificationToken(token: token, authorized: authorized)]
                 // Do the actual tracking
                 self.executeSafely {
-                    try dependencies.trackingManager.track(.registerPushToken, with: data)
+                    try dependencies.trackingManager.trackNotificationState(
+                        pushToken: token,
+                        isValid: authorized,
+                        description: authorized ? "Permission granted" : "Permission denied"
+                    )
                 }
             }
         }
@@ -325,6 +331,12 @@ extension ExponeaInternal {
         }
     }
 
+    public func trackCurrentPushNotificationToken() {
+        executeSafelyWithDependencies { dependencies in
+            dependencies.notificationsManager.verifyPushStatusAndTrackPushToken()
+        }
+    }
+
     // MARK: Flushing
     /// This method can be used to manually flush all available data to Exponea.
     public func flushData() {
@@ -373,11 +385,16 @@ extension ExponeaInternal {
             dependencies.inAppContentBlocksManager.anonymize()
             SegmentationManager.shared.anonymize()
             dependencies.campaignRepository.clear()
+            FileCache.shared.clear()
             try dependencies.trackingManager.anonymize(
                 exponeaProject: exponeaProject,
                 projectMapping: projectMapping
             )
-            self.telemetryManager?.report(eventWithType: .anonymize, properties: [:])
+            self.telemetryManager?.report(eventWithType: .anonymize, properties: [
+                "baseUrl": exponeaProject.baseUrl,
+                "projectToken": exponeaProject.projectToken,
+                "authorization": exponeaProject.authorization.description
+            ])
             Exponea.logger.log(.verbose, message: "Anonymisation request done")
         }
     }

@@ -9,19 +9,22 @@ PODS:
   - Nimble (9.2.1)
   - Quick (5.0.1)
   - SwiftLint (0.51.0)
+  - SwiftSoup (2.7.6)
   - URITemplate (3.0.1)
 
 DEPENDENCIES:
   - Mockingjay (from `https://github.com/kylef/Mockingjay.git`, branch `master`)
-  - Nimble (~> 9.2.0)
-  - Quick
-  - SwiftLint
+  - Nimble (= 9.2.1)
+  - Quick (= 5.0.1)
+  - SwiftLint (= 0.51.0)
+  - SwiftSoup (< 3.0, >= 2.7.6)
 
 SPEC REPOS:
   trunk:
     - Nimble
     - Quick
     - SwiftLint
+    - SwiftSoup
     - URITemplate
 
 EXTERNAL SOURCES:
@@ -39,8 +42,9 @@ SPEC CHECKSUMS:
   Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 749aa754fd1e7d984f2000fe051e18a3a9809179
   SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
+  SwiftSoup: 9ec2526c76ebc3fe5d3157c82b40b45a27eeb82d
   URITemplate: 5f5a79f3e384884102c4e6b3325d159c20a8035a
 
-PODFILE CHECKSUM: b85f3688a27365dd309ba679339bdb0e77367320
+PODFILE CHECKSUM: f62680b4c0263bd2f9784bde4ef9493ec6db182a
 
 COCOAPODS: 1.16.2

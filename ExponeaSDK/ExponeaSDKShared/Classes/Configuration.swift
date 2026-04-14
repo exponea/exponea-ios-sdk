@@ -19,6 +19,7 @@ public struct Configuration: Codable, Equatable {
     public var defaultProperties: [String: JSONConvertible]?
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
+    public var applicationID: String = Constants.General.applicationID
 
     /// If enabled, will swizzle default push notifications methods and functions and automatically
     /// listen to updates for tokens or push settings.
@@ -76,6 +77,7 @@ public struct Configuration: Codable, Equatable {
         case advancedAuthEnabled
         case isDarkModeEnabled
         case appInboxDetailImageInset
+        case applicationID
     }
 
     /// Creates the configuration object with the provided properties.
@@ -97,7 +99,8 @@ public struct Configuration: Codable, Equatable {
         advancedAuthEnabled: Bool? = nil,
         isDarkModeEnabled: Bool? = nil,
         appInboxDetailImageInset: CGFloat? = nil,
-        manualSessionAutoClose: Bool? = nil
+        manualSessionAutoClose: Bool? = nil,
+        applicationID: String? = nil
     ) throws {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
@@ -109,6 +112,9 @@ public struct Configuration: Codable, Equatable {
         self.inAppContentBlocksPlaceholders = inAppContentBlocksPlaceholders
         self.appInboxDetailImageInset = appInboxDetailImageInset ?? 56
         self.manualSessionAutoClose = manualSessionAutoClose ?? true
+        if let applicationID, !applicationID.isEmpty {
+            self.applicationID = applicationID
+        }
         self.baseUrl = baseUrl ?? Constants.Repository.baseUrl
         if self.advancedAuthEnabled {
             self.customAuthProvider = try loadCustomAuthProvider()
@@ -219,6 +225,11 @@ public struct Configuration: Codable, Equatable {
             Int.self, forKey: .flushEventMaxRetries) {
             self.flushEventMaxRetries = flushEventMaxRetries
         }
+        
+        // application ID setting
+        if let applicationID = try container.decodeIfPresent(String.self, forKey: .applicationID) {
+            self.applicationID = applicationID
+        }
 
         // isDarkModeEnabled
         if let isDarkModeEnabled = try container.decodeIfPresent(
@@ -292,6 +303,7 @@ public struct Configuration: Codable, Equatable {
         try container.encode(flushEventMaxRetries, forKey: .flushEventMaxRetries)
         try container.encode(allowDefaultCustomerProperties, forKey: .allowDefaultCustomerProperties)
         try container.encode(advancedAuthEnabled, forKey: .advancedAuthEnabled)
+        try container.encode(applicationID, forKey: .applicationID)
     }
 
     public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
@@ -309,7 +321,8 @@ public struct Configuration: Codable, Equatable {
             lhs.appGroup == rhs.appGroup &&
             lhs.flushEventMaxRetries == rhs.flushEventMaxRetries &&
             lhs.allowDefaultCustomerProperties == rhs.allowDefaultCustomerProperties &&
-            lhs.advancedAuthEnabled == rhs.advancedAuthEnabled
+            lhs.advancedAuthEnabled == rhs.advancedAuthEnabled &&
+            lhs.applicationID == rhs.applicationID
     }
 }
 
@@ -396,6 +409,7 @@ extension Configuration: CustomStringConvertible {
         App Group: \(appGroup ?? "not configured")
         Default Customer Props allowed: \(allowDefaultCustomerProperties)
         Advanced authorization Enabled: \(advancedAuthEnabled)
+        Application ID: \(applicationID)
         """
 
         return text

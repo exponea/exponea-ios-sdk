@@ -8,9 +8,17 @@
 
 import Foundation
 
-public struct StaticReturnData {
+public struct StaticReturnData: Hashable, Identifiable {
     public var id = UUID()
     public let html: String
     public let tag: Int
     public var message: InAppContentBlockResponse?
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(message?.id)
+    }
+
+    public static func == (lhs: StaticReturnData, rhs: StaticReturnData) -> Bool {
+        lhs.message?.id == rhs.message?.id
+    }
 }

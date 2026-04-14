@@ -197,7 +197,8 @@ public extension ExponeaInternal {
         flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
         allowDefaultCustomerProperties: Bool? = nil,
         advancedAuthEnabled: Bool? = nil,
-        manualSessionAutoClose: Bool = true
+        manualSessionAutoClose: Bool = true,
+        applicationID: String? = nil
     ) {
         invokeSdkInitSafely({
             let configuration = try Configuration(
@@ -216,7 +217,8 @@ public extension ExponeaInternal {
                 flushEventMaxRetries: flushingSetup.maxRetries,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
                 advancedAuthEnabled: advancedAuthEnabled,
-                manualSessionAutoClose: manualSessionAutoClose
+                manualSessionAutoClose: manualSessionAutoClose,
+                applicationID: applicationID
             )
             self.configuration = configuration
             self.pushNotificationsDelegate = automaticPushNotificationTracking.delegate
@@ -233,7 +235,8 @@ public extension ExponeaInternal {
         flushingSetup: Exponea.FlushingSetup = Exponea.FlushingSetup.default,
         allowDefaultCustomerProperties: Bool? = nil,
         advancedAuthEnabled: Bool? = nil,
-        manualSessionAutoClose: Bool = true
+        manualSessionAutoClose: Bool = true,
+        applicationID: String? = nil
     ) {
         invokeSdkInitSafely {
             var willRunSelfCheck = false
@@ -256,7 +259,8 @@ public extension ExponeaInternal {
                 flushEventMaxRetries: flushingSetup.maxRetries,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
                 advancedAuthEnabled: advancedAuthEnabled,
-                manualSessionAutoClose: manualSessionAutoClose
+                manualSessionAutoClose: manualSessionAutoClose,
+                applicationID: applicationID
             )
             self.configuration = configuration
             self.pushNotificationsDelegate = pushNotificationTracking.delegate
@@ -291,7 +295,8 @@ public extension ExponeaInternal {
         inAppContentBlocksPlaceholders: [String]? = nil,
         allowDefaultCustomerProperties: Bool? = nil,
         advancedAuthEnabled: Bool? = nil,
-        manualSessionAutoClose: Bool = true
+        manualSessionAutoClose: Bool = true,
+        applicationID: String? = nil
     ) {
         invokeSdkInitSafely {
             let configuration = try Configuration(
@@ -303,7 +308,8 @@ public extension ExponeaInternal {
                 inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
                 advancedAuthEnabled: advancedAuthEnabled,
-                manualSessionAutoClose: manualSessionAutoClose
+                manualSessionAutoClose: manualSessionAutoClose,
+                applicationID: applicationID
             )
             self.configuration = configuration
             self.afterInit.setStatus(status: .configured)
@@ -350,7 +356,8 @@ public extension ExponeaInternal {
         inAppContentBlocksPlaceholders: [String]? = nil,
         allowDefaultCustomerProperties: Bool? = nil,
         advancedAuthEnabled: Bool? = nil,
-        manualSessionAutoClose: Bool = true
+        manualSessionAutoClose: Bool = true,
+        applicationID: String? = nil
     ) {
         invokeSdkInitSafely {
             let configuration = try Configuration(
@@ -363,7 +370,8 @@ public extension ExponeaInternal {
                 inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
                 allowDefaultCustomerProperties: allowDefaultCustomerProperties ?? true,
                 advancedAuthEnabled: advancedAuthEnabled,
-                manualSessionAutoClose: manualSessionAutoClose
+                manualSessionAutoClose: manualSessionAutoClose,
+                applicationID: applicationID
             )
             self.configuration = configuration
         }

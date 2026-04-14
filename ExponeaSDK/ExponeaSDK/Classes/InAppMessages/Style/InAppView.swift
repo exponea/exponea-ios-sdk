@@ -263,8 +263,8 @@ public struct InAppView: View {
             case layouConfig.textPosition == .top:
                 VStack(spacing: 0) {
                     ZStack(alignment: .top) {
-                        closeButtonView
                         textArea
+                        closeButtonView
                     }
                     imageOnly
                     footer

@@ -10,6 +10,9 @@ import Foundation
 #if canImport(ExponeaSDKObjC)
 import ExponeaSDKObjC
 #endif
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 import UIKit
 
 extension Exponea {
@@ -46,6 +49,7 @@ public class ExponeaInternal: ExponeaType {
                 Exponea.logger.log(.error, message: "Exponea SDK already configured.")
                 return
             }
+
             sharedInitializer(configuration: newValue)
         }
     }
@@ -88,7 +92,6 @@ public class ExponeaInternal: ExponeaType {
     public var segmentationManager: SegmentationManagerType?
     public var manualSegmentationManager: ManualSegmentationManagerType?
 
-    /// Custom user defaults to track basic information
     internal var userDefaults: UserDefaults = {
         if UserDefaults(suiteName: Constants.General.userDefaultsSuite) == nil {
             UserDefaults.standard.addSuite(named: Constants.General.userDefaultsSuite)
@@ -267,6 +270,7 @@ public class ExponeaInternal: ExponeaType {
     /// This method, used privatly, is called either from the current thread (backwards compatibility)
     /// or when using the new onInitSucceededCallBack, it will be called wihtin the initializedQueue OperationQueue
     /// - Parameter configuration: Configuration
+    /// - Parameter appIdDidChange: Boolean value that describes if the application ID changed between instances
     private func initialize(with configuration: Configuration) {
         let exception = objc_tryCatch {
             do {
@@ -281,7 +285,7 @@ public class ExponeaInternal: ExponeaType {
                 databaeManagerCopy = database
                 if !Exponea.isBeingTested {
                     telemetryManager = TelemetryManager(
-                        userDefaults: userDefaults,
+                        appGroup: configuration.appGroup,
                         userId: database.currentCustomer.uuid.uuidString
                     )
                     telemetryManager?.start()
@@ -289,7 +293,15 @@ public class ExponeaInternal: ExponeaType {
                     let eventCount = try database.countTrackCustomer() + (try database.countTrackEvent())
                     telemetryManager?.report(
                         eventWithType: .eventCount,
-                        properties: ["count": String(describing: eventCount)])
+                        properties: ["count": String(describing: eventCount)]
+                    )
+                    segmentationManager?.getCallbacks().forEach({ rtsCallback in
+                        telemetryManager?.report(
+                            eventWithType: .rtsCallbackRegistered, properties: [
+                                "exposingCategory": rtsCallback.category.name
+                            ]
+                        )
+                    })
                 }
 
                 let repository = ServerRepository(configuration: configuration)
@@ -319,7 +331,7 @@ public class ExponeaInternal: ExponeaType {
                     repository: repository,
                     database: database,
                     flushingManager: flushingManager,
-                    inAppMessageManager: inAppMessagesManager,
+                    inAppMessageManager: self.inAppMessagesManager,
                     trackManagerInitializator: { trackingManager in
                         let trackingConsentManager = TrackingConsentManager(
                             trackingManager: trackingManager
@@ -340,12 +352,15 @@ public class ExponeaInternal: ExponeaType {
                             tokenTrackFrequency: repository.configuration.tokenTrackFrequency,
                             currentPushToken: database.currentCustomer.pushToken,
                             lastTokenTrackDate: database.currentCustomer.lastTokenTrackDate,
-                            urlOpener: UrlOpener()
+                            urlOpener: UrlOpener(),
+                            userDefaults: userDefaults,
+                            currentApplicationID: repository.configuration.applicationID
                         )
                         self.notificationsManager = notificationsManager
                     },
                     userDefaults: userDefaults,
                     campaignRepository: campaignRepository,
+                    requirePushAuthorization: repository.configuration.requirePushAuthorization,
                     onEventCallback: { type, event in
                         self.inAppMessagesManager?.onEventOccurred(of: type, for: event, triggerCompletion: nil)
                         self.appInboxManager?.onEventOccurred(of: type, for: event)
@@ -360,9 +375,11 @@ public class ExponeaInternal: ExponeaType {
                 self.appInboxManager = AppInboxManager(
                     repository: repository,
                     trackingManager: trackingManager,
-                    database: database
+                    database: database,
+                    cachedAppId: Configuration
+                        .loadFromUserDefaults(appGroup: repository.configuration.appGroup ?? Constants.General.userDefaultsSuite)?.applicationID ?? Constants.General.applicationID
                 )
-
+                
                 configuration.saveToUserDefaults()
 
                 self.inAppContentBlocksManager = InAppContentBlocksManager.manager
@@ -379,7 +396,11 @@ public class ExponeaInternal: ExponeaType {
                     SegmentationManager.shared.processTriggeredBy(type: .`init`)
                 }
             } catch {
-                telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
+                telemetryManager?.report(
+                    error: error,
+                    stackTrace: Thread.callStackSymbols,
+                    thread: TelemetryUtility.getCurrentThreadInfo()
+                )
                 // Failing gracefully, if setup failed
                 Exponea.logger.log(.error, message: """
                     Error while creating dependencies, Exponea cannot be configured.\n\(error.localizedDescription)
@@ -388,7 +409,10 @@ public class ExponeaInternal: ExponeaType {
         }
         if let exception = exception {
             nsExceptionRaised = true
-            telemetryManager?.report(exception: exception)
+            telemetryManager?.report(
+                exception: exception,
+                thread: TelemetryUtility.getCurrentThreadInfo()
+            )
             Exponea.logger.log(.error, message: """
             Error while creating dependencies, Exponea cannot be configured.\n
             \(ExponeaError.nsExceptionRaised(exception).localizedDescription)
@@ -487,12 +511,19 @@ internal extension ExponeaInternal {
                 try closure()
             } catch {
                 Exponea.logger.log(.error, message: error.localizedDescription)
-                telemetryManager?.report(error: error, stackTrace: Thread.callStackSymbols)
+                telemetryManager?.report(
+                    error: error,
+                    stackTrace: Thread.callStackSymbols,
+                    thread: TelemetryUtility.getCurrentThreadInfo()
+                )
                 errorHandler?(error)
             }
         }
         if let exception = exception {
-            telemetryManager?.report(exception: exception)
+            telemetryManager?.report(
+                exception: exception,
+                thread: TelemetryUtility.getCurrentThreadInfo()
+            )
             Exponea.logger.log(.error, message: ExponeaError.nsExceptionRaised(exception).localizedDescription)
             if safeModeEnabled {
                 nsExceptionRaised = true
@@ -565,11 +596,19 @@ public extension ExponeaInternal {
 
     func getSegments(force: Bool = false, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>) {
         executeSafelyWithDependencies { [weak self] _ in
+            Exponea.shared.telemetryManager?.report(
+                eventWithType: .rtsGetSegments,
+                properties: [
+                    "exposingCategory": category.name,
+                    "forceFetch": String(describing: force)
+                ]
+            )
             self?.manualSegmentationManager?.getSegments(category: category, force: force, result: result)
         }
     }
 
     func stopIntegration() {
+        Exponea.shared.telemetryManager?.report(eventWithType: .integrationStopped, properties: [:])
         IntegrationManager.shared.isStopped = true
         afterInit.actionBlocks.removeAll()
         afterInit.setStatus(status: .notInitialized)
@@ -578,6 +617,7 @@ public extension ExponeaInternal {
     }
 
     private func clearUserData(appGroup: String?) {
+        TelemetryUtility.clearInstallIdFromAllStores(appGroup: appGroup)
         IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
         IntegrationManager.shared.onIntegrationStoppedCallbacks.removeAll()
         notificationsManager?.handlePushTokenRegistered(token: "")
@@ -586,7 +626,9 @@ public extension ExponeaInternal {
         trackingManager?.clearSessionManager()
         InAppMessagesCache().clear()
         clearUserDefaults(appGroup: appGroup)
+        telemetryManager?.clear(appGroup)
         clearAllDependencies()
+        FileCache.shared.clear()
     }
 
     func clearLocalCustomerData(appGroup: String) {
@@ -594,16 +636,30 @@ public extension ExponeaInternal {
             Exponea.logger.log(.error, message: "This functionality is unavailable without initialization of SDK")
             return
         }
+        TelemetryUtility.clearInstallIdFromAllStores(appGroup: appGroup)
+        Exponea.shared.telemetryManager?.report(
+            eventWithType: .localCustomerDataCleared,
+            properties: [
+                "appGroup": appGroup
+            ]
+        )
         IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
         IntegrationManager.shared.onIntegrationStoppedCallbacks.removeAll()
         notificationsManager?.handlePushTokenRegistered(token: "")
         clearUserDefaults(appGroup: appGroup)
+        telemetryManager?.clear(appGroup)
         InAppMessagesCache().clear()
         try? DatabaseManager().removeAllEvents()
         CampaignRepository(userDefaults: userDefaults).clear()
         clearAllDependencies()
+        FileCache.shared.clear()
     }
 
+    /// Clears SDK-related keys from UserDefaults (session, config, etc.).
+    /// Install ID is cleared by clearInstallIdFromAllStores, which callers invoke before this.
+    /// We also clear known SDK keys from UserDefaults.standard so that if the SDK ever used
+    /// standard as fallback (named suite was nil), no stale SDK data remains. We never clear
+    /// all of standard—only these keys—so app and other SDKs are unaffected.
     private func clearUserDefaults(appGroup: String?) {
         if let appGroup, let defaults = UserDefaults(suiteName: appGroup) {
             for key in defaults.dictionaryRepresentation().keys where key != "isStopped" {
@@ -612,6 +668,10 @@ public extension ExponeaInternal {
             defaults.removeObject(forKey: Constants.Keys.sessionEnded)
             defaults.removeObject(forKey: Constants.Keys.sessionStarted)
             defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+            defaults.removeObject(forKey: Constants.General.telemetryInstallId)
+            defaults.removeObject(forKey: Constants.General.notificationStateTracked)
+            defaults.removeObject(forKey: Constants.General.notificationStateAppVersion)
+            defaults.removeObject(forKey: Constants.General.notificationStateApplicationID)
             Configuration.deleteLastKnownConfig(appGroup: appGroup)
             defaults.synchronize()
         } else {
@@ -622,9 +682,39 @@ public extension ExponeaInternal {
                 defaults.removeObject(forKey: Constants.Keys.sessionEnded)
                 defaults.removeObject(forKey: Constants.Keys.sessionStarted)
                 defaults.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+                defaults.removeObject(forKey: Constants.General.telemetryInstallId)
+                defaults.removeObject(forKey: Constants.General.notificationStateTracked)
+                defaults.removeObject(forKey: Constants.General.notificationStateAppVersion)
+                defaults.removeObject(forKey: Constants.General.notificationStateApplicationID)
                 Configuration.deleteLastKnownConfig(appGroup: Constants.General.userDefaultsSuite)
                 defaults.synchronize()
             }
         }
+        clearKnownSDKKeysFromStandard()
+    }
+
+    /// Removes only known Exponea SDK keys from UserDefaults.standard. Used when the canonical
+    /// store may have been standard (e.g. suite was nil). Does not clear other app data.
+    private func clearKnownSDKKeysFromStandard() {
+        let standard = UserDefaults.standard
+        standard.removeObject(forKey: Constants.General.telemetryInstallId)
+        standard.removeObject(forKey: Constants.Keys.sessionEnded)
+        standard.removeObject(forKey: Constants.Keys.sessionStarted)
+        standard.removeObject(forKey: Constants.General.deliveredPushUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.deliveredPushEventUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.openedPushUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.lastKnownConfiguration)
+        standard.removeObject(forKey: Constants.General.lastKnownCustomerIds)
+        standard.removeObject(forKey: Constants.General.savedCampaignClickEvent)
+        standard.removeObject(forKey: Constants.General.inAppMessageDisplayStatusUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.inAppContentBlockDisplayStatusUserDefaultsKey)
+        standard.removeObject(forKey: Constants.General.notificationStateApplicationID)
+        standard.removeObject(forKey: Constants.General.telemetryEvents)
+        standard.removeObject(forKey: Constants.General.notificationStateTracked)
+        standard.removeObject(forKey: Constants.General.notificationStateAppVersion)
+        for key in standard.dictionaryRepresentation().keys where key.hasPrefix(Constants.Keys.installTracked) {
+            standard.removeObject(forKey: key)
+        }
+        standard.synchronize()
     }
 }

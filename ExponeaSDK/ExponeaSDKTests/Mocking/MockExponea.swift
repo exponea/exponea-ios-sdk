@@ -59,6 +59,7 @@ final class MockExponeaImplementation: ExponeaInternal {
                     self.appInboxManager = AppInboxManager(
                         repository: repository,
                         trackingManager: trackingManager,
+                        cache: AppInboxCache(),
                         database: database
                     )
                     self.notificationsManager = PushNotificationManager(
@@ -75,6 +76,7 @@ final class MockExponeaImplementation: ExponeaInternal {
                 },
                 userDefaults: userDefaults,
                 campaignRepository: CampaignRepository(userDefaults: userDefaults),
+                requirePushAuthorization: repository.configuration.requirePushAuthorization,
                 onEventCallback: { type, event in
                     self.inAppMessagesManager?.onEventOccurred(of: type, for: event, triggerCompletion: nil)
                 }

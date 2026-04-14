@@ -40,8 +40,8 @@ final class PushNotificationSelfCheck {
     }
 
     private enum Selectors {
-        static let pushToken = #selector(
-            UIApplicationDelegate.application(_:didRegisterForRemoteNotificationsWithDeviceToken:)
+        static let pushToken = NSSelectorFromString(
+            "application:didRegisterForRemoteNotificationsWithDeviceToken:"
         )
 
         static let receive = NSSelectorFromString(
@@ -87,7 +87,7 @@ final class PushNotificationSelfCheck {
                 return
             }
             Exponea.shared.telemetryManager?.report(eventWithType: .selfCheck, properties: ["step": "1"])
-            guard class_getInstanceMethod(type(of: appDelegate), Selectors.pushToken) != nil else {
+            guard appDelegate.responds(to: Selectors.pushToken) else {
                 self.showResult(
                     step: 1,
                     message: "Callback for push token registration not implemented." +
@@ -97,7 +97,7 @@ final class PushNotificationSelfCheck {
                 return
             }
             Exponea.shared.telemetryManager?.report(eventWithType: .selfCheck, properties: ["step": "2"])
-            guard class_getInstanceMethod(type(of: appDelegate), Selectors.receive) != nil else {
+            guard appDelegate.responds(to: Selectors.receive) else {
                 self.showResult(
                     step: 2,
                     message: "Callback for push notification received not implemented." +

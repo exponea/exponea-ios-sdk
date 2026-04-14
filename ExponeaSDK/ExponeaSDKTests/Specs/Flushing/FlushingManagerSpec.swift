@@ -58,7 +58,7 @@ class FlushingManagerSpec: QuickSpec {
                     withStatusCode: 200,
                     withRequestHook: { _ in networkRequests += 1 }
                 )
-
+                // first approach
                 waitUntil(timeout: .seconds(3)) { done in
                     let group = DispatchGroup()
                     for _ in 0..<10 {
@@ -69,7 +69,16 @@ class FlushingManagerSpec: QuickSpec {
                     }
                     group.notify(queue: .main, execute: done)
                 }
-
+                expect(networkRequests).to(equal(1))
+                // second approach
+                networkRequests = 0
+                try! database.trackEvent(with: eventData, into: configuration.mainProject)
+                for i in 0...100 {
+                    DispatchQueue.global().async {
+                        flushingManager.flushData(isFromIdentify: true)
+                    }
+                }
+                Thread.sleep(forTimeInterval: 1)
                 expect(networkRequests).to(equal(1))
             }
 
@@ -177,9 +186,8 @@ class FlushingManagerSpec: QuickSpec {
                                 with: request.httpBodyStream!.readFully(),
                                 options: []
                             ) as? NSDictionary ?? NSDictionary()
-                            expect(payload["age"] as? Double).notTo(beNil())
-                            expect(payload["timestamp"] as? Double).to(beNil())
-                            expect(payload["age"] as? Double).to(beGreaterThan(0))
+                            expect(payload["timestamp"] as? Double).notTo(beNil())
+                            expect(payload["timestamp"] as? Double).to(beGreaterThan(0))
                             done()
                         }
                     )
@@ -210,7 +218,6 @@ class FlushingManagerSpec: QuickSpec {
                                 with: request.httpBodyStream!.readFully(),
                                 options: []
                             ) as? NSDictionary ?? NSDictionary()
-                            expect(payload["age"] as? Double).to(beNil())
                             expect(payload["timestamp"] as? Double).notTo(beNil())
                             expect(payload["timestamp"] as? Double).to(equal(timestamp))
                             done()

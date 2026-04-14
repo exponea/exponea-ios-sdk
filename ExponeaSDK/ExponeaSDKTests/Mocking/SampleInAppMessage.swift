@@ -115,7 +115,7 @@ struct SampleInAppMessage {
                 "button_border_width": "5px",
                 "button_font_family": null,
                 "button_enabled": true,
-                "button_format": ["italic", "bold"],
+                "button_font_format": ["italic", "bold"],
                 "button_font_url": ""
             }, {
                 "button_text": "Action",

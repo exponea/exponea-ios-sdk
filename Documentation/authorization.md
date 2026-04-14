@@ -1,5 +1,5 @@
 ---
-title: Authorization
+title: Authorization for iOS SDK
 excerpt: Authorization mode reference for the iOS SDK
 slug: ios-sdk-authorization
 categorySlug: integrations
@@ -23,7 +23,7 @@ Token authorization is used for the following API endpoints by default:
 * `POST /webxp/projects/<projectToken>/appinbox/markasread` for marking of AppInbox message as read
 * `POST /campaigns/send-self-check-notification?project_id=<projectToken>` for part of self-check push notification flow
 
-Developers must set the token using the `authorization` [configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) parameter when [initializing the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk):
+Developers must set the token using the `authorization` [Configuration for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) parameter when [initializing the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk):
 
 ```swift
 Exponea.shared.configure(
@@ -43,7 +43,7 @@ The SDK sends the customer token in `Bearer <value>` format. Currently, the SDK 
 * `POST /webxp/projects/<projectToken>/appinbox/fetch` for fetching of AppInbox data
 * `POST /webxp/projects/<projectToken>/appinbox/markasread` for marking of AppInbox message as read
 
-Developers can enable customer token authorization by setting the `advancedAuthEnabled` [configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) parameter to `true` when [initializing the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk):
+Developers can enable customer token authorization by setting the `advancedAuthEnabled` [Configuration for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) parameter to `true` when [initializing the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk):
 
 ```swift
 Exponea.shared.configure(
@@ -142,4 +142,20 @@ public class ExampleAuthProvider: NSObject, AuthorizationProviderType {
 
 > ❗️
 >
-> A customer token is valid until its expiration and is assigned to the current customer IDs. Bear in mind that if customer IDs change (due to invoking the `identifyCustomer` or `anonymize` methods), the customer token may become invalid for future HTTP requests invoked for new customer IDs.
+> A customer token is valid until expiration and is tied to the current customer IDs. If customer IDs change through `identifyCustomer` or `anonymize` methods, the customer token may become invalid for HTTP requests using the new customer IDs.
+
+## Configure application ID
+
+**Multiple mobile apps:** If your Engagement project supports multiple mobile apps, specify the `applicationID` in your configuration. This helps distinguish between different apps in your project.
+
+```swift
+Exponea.shared.configure(
+    ...,
+    applicationID = "<Your application id>",
+    ...
+)
+```
+
+Make sure your `applicationID` value matches exactly Application ID configured in your Bloomreach Engagement under **Project Settings > Campaigns > Channels > Push Notifications.**
+
+**Single mobile app:** If your Engagement project supports only one app, you can skip the `applicationID` configuration. The SDK will automatically use the default value "default-application".

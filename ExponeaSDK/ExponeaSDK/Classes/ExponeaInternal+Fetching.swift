@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 // MARK: - Fetching -
 
@@ -21,8 +24,17 @@ extension ExponeaInternal {
                 for: $0.trackingManager.customerIds,
                 completion: $1
             )
-            self.telemetryManager?.report(eventWithType: .fetchRecommendation, properties: [:])
-        }, completion: completion)
+        }, completion: { result in
+            completion(result)
+            Exponea.shared.telemetryManager?.report(
+                eventWithType: .recommendationsFetched, properties: [
+                    "count": String(result.value?.value?.count ?? 0),
+                    "data": TelemetryUtility.toJson(
+                        result.value?.value?.map { ["engineName": $0.systemData.engineName, "recommendationId": $0.systemData.recommendationId] } ?? []
+                    )
+                ]
+            )
+        })
     }
 
     /// Fetch the list of your existing consent categories.
@@ -40,7 +52,7 @@ extension ExponeaInternal {
 
             $0.repository.fetchConsents(completion: $1)
 
-            self.telemetryManager?.report(eventWithType: .fetchConsents, properties: [:])
+            self.telemetryManager?.report(eventWithType: .consentsFetched, properties: [:])
         }, completion: completion)
     }
 
@@ -53,7 +65,6 @@ extension ExponeaInternal {
                 throw ExponeaError.authorizationInsufficient
             }
             $0.appInboxManager.fetchAppInbox(completion: $1)
-            self.telemetryManager?.report(eventWithType: .fetchAppInbox, properties: [:])
         }, completion: completion)
     }
 

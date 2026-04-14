@@ -10,10 +10,14 @@ import Foundation
 import CoreData
 
 extension NSManagedObjectContext {
-    func performAndWait<T>(_ block: () throws -> T) rethrows -> T {
-        return try _performAndWaitHelper(
-            fn: performAndWait, execute: block, rescue: { throw $0 }
-        )
+    func performAndWaitSafely<T>(_ block: () throws -> T) rethrows -> T {
+        if #available(iOS 15.0, *) {
+            return try performAndWait(block)
+        } else {
+            return try _performAndWaitHelper(
+                fn: performAndWait, execute: block, rescue: { throw $0 }
+            )
+        }
     }
 
     /// Helper function for convincing the type checker that

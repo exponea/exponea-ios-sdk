@@ -24,7 +24,7 @@ public struct InAppButtonConfig: Identifiable, Codable {
     public let style: String
     public let lineHeight: CGFloat?
     public let textColor: String?
-    public let fontURL: URL?
+    public let fontURL: String?
     public let textAlignment: InAppButtonAlignmentType?
     public let isEnabled: Bool
     public let isBorderEnabled: Bool
@@ -61,7 +61,7 @@ public struct InAppButtonConfig: Identifiable, Codable {
         style: String,
         lineHeight: CGFloat?,
         textColor: String?,
-        fontURL: URL?,
+        fontURL: String?,
         textAlignment: InAppButtonAlignmentType?,
         isEnabled: Bool,
         isBorderEnabled: Bool,

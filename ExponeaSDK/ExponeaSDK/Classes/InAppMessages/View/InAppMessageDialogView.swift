@@ -86,10 +86,12 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     func dismissFromSuperView() {
-        guard presentingViewController != nil else {
-            return
+        DispatchQueue.main.async { [weak self] in
+            guard self?.presentingViewController != nil else {
+                return
+            }
+            self?.dismiss(animated: true)
         }
-        dismiss(animated: true)
     }
 
     override func loadView() {
@@ -383,6 +385,6 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
 // recognizes touches outside of the dialog
 extension InAppMessageDialogView: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        return touch.view?.isDescendant(of: self.view) == false
+        return touch.view?.isDescendant(of: self.dialogContainerView) == false
     }
 }

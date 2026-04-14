@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 class FileTelemetryStorage: TelemetryStorage {
     let crashLogFolder = "exponeasdk_telemetry_storage"

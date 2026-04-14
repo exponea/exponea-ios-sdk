@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 final class CrashManager {
     // we need to give NSSetUncaughtExceptionHandler a closure that doesn't trap context
@@ -24,6 +27,7 @@ final class CrashManager {
     static let maxLogMessages = 100
     private var logMessages: [String] = []
     private var logHookId: String?
+    private var isStarted = false
 
     var oldHandler: NSUncaughtExceptionHandler?
 
@@ -38,7 +42,6 @@ final class CrashManager {
             self?.storage.getAllCrashLogs().forEach({ log in
                 self?.storage.deleteCrashLog(log)
             })
-            self?.upload.removeAll()
         }
     }
 
@@ -49,14 +52,18 @@ final class CrashManager {
     }
 
     func start() {
+        guard !isStarted else { return }
+        isStarted = true
         logHookId = Exponea.logger.addLogHook(self.reportLog(_:))
         uploadCrashLogs()
         oldHandler = NSGetUncaughtExceptionHandler()
         CrashManager.current = self
-        NSSetUncaughtExceptionHandler({ CrashManager.current?.uncaughtExceptionHandler($0) })
+        NSSetUncaughtExceptionHandler({
+            CrashManager.current?.uncaughtExceptionHandler($0, thread: TelemetryUtility.getCurrentThreadInfo())
+        })
     }
 
-    func uncaughtExceptionHandler(_ exception: NSException) {
+    func uncaughtExceptionHandler(_ exception: NSException, thread: ThreadInfo) {
         self.oldHandler?(exception)
         Exponea.logger.log(.error, message: "Handling uncaught exception")
         if TelemetryUtility.isSDKRelated(stackTrace: exception.callStackSymbols) {
@@ -67,13 +74,14 @@ final class CrashManager {
                     date: Date(),
                     launchDate: launchDate,
                     runId: runId,
-                    logs: getLogs()
+                    logs: getLogs(),
+                    thread: thread
                 )
             )
         }
     }
 
-    func caughtExceptionHandler(_ exception: NSException) {
+    func caughtExceptionHandler(_ exception: NSException, thread: ThreadInfo) {
         uploadCaughtCrashLog(
             CrashLog(
                 exception: exception,
@@ -81,12 +89,13 @@ final class CrashManager {
                 date: Date(),
                 launchDate: launchDate,
                 runId: runId,
-                logs: getLogs()
+                logs: getLogs(),
+                thread: thread
             )
         )
     }
 
-    func caughtErrorHandler(_ error: Error, stackTrace: [String]) {
+    func caughtErrorHandler(_ error: Error, stackTrace: [String], thread: ThreadInfo) {
         uploadCaughtCrashLog(
             CrashLog(
                 error: error,
@@ -95,7 +104,8 @@ final class CrashManager {
                 date: Date(),
                 launchDate: launchDate,
                 runId: runId,
-                logs: getLogs()
+                logs: getLogs(),
+                thread: thread
             )
         )
     }
