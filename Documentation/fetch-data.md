@@ -1,9 +1,12 @@
 ---
 title: Fetch data for iOS SDK
-excerpt: Fetch data from Bloomreach Engagement using the iOS SDK
 slug: ios-sdk-fetch-data
-categorySlug: integrations
-parentDocSlug: ios-sdk
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk
+content:
+  excerpt: Fetch data from Bloomreach Engagement using the iOS SDK
 ---
 
 The SDK provides methods to retrieve data from the Engagement platform. Responses are available in a completion handler closure.

@@ -1,9 +1,12 @@
 ---
 title: SDK version update guide for iOS SDK
-excerpt: Update Exponea iOS SDK in your app to a new version
 slug: ios-sdk-version-update
-categorySlug: integrations
-parentDocSlug: ios-sdk-release-notes
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk-release-notes
+content:
+  excerpt: Update Exponea iOS SDK in your app to a new version
 ---
 
 This guide will help you upgrade your Exponea SDK to the latest major version.

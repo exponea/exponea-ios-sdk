@@ -1,9 +1,12 @@
 ---
 title: Push notifications for iOS SDK
-excerpt: Enable push notifications in your app using the iOS SDK
 slug: ios-sdk-push-notifications
-categorySlug: integrations
-parentDocSlug: ios-sdk
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk
+content:
+  excerpt: Enable push notifications in your app using the iOS SDK
 ---
 
 Engagement enables sending push notifications to your app users using [scenarios](https://documentation.bloomreach.com/engagement/docs/scenarios-1). The mobile application handles the push message using the SDK and renders the notification on the customer's device.

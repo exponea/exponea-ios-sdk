@@ -1,9 +1,12 @@
 ---
 title: Release notes for iOS SDK
-excerpt: Exponea iOS SDK release notes
 slug: ios-sdk-release-notes
-categorySlug: integrations
-parentDocSlug: ios-sdk
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk
+content:
+  excerpt: Exponea iOS SDK release notes
 ---
 
 > 📘

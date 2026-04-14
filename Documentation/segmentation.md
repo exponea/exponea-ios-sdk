@@ -1,9 +1,12 @@
 ---
 title: Segmentation for iOS SDK
-excerpt: Implement real-time segments using the iOS SDK
 slug: ios-sdk-segmentation
-categorySlug: integrations
-parentDocSlug: ios-sdk
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk
+content:
+  excerpt: Implement real-time segments using the iOS SDK
 ---
 
 The [real-time segments](https://documentation.bloomreach.com/discovery/docs/real-time-customer-segments-for-discovery) feature personalizes the product search, category and pathway results in real-time based on customer demographic and behavioral data. The feature combines Bloomreach Discovery’s extensive search algorithms and Bloomreach Engagement’s rich customer data to get the best of both worlds.

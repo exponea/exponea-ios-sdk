@@ -1,9 +1,12 @@
 ---
 title: Configuration for iOS SDK
-excerpt: Full configuration reference for the iOS SDK
 slug: ios-sdk-configuration
-categorySlug: integrations
-parentDocSlug: ios-sdk-setup
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk-setup
+content:
+  excerpt: Full configuration reference for the iOS SDK
 ---
 
 This page provides an overview of all configuration parameters for the SDK and several examples of how to initialize the SDK with different configurations.

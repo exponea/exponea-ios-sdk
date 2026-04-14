@@ -1,9 +1,12 @@
 ---
 title: Tracking consent for iOS SDK
-excerpt: Manage tracking consent using the iOS SDK.
 slug: ios-sdk-tracking-consent
-categorySlug: integrations
-parentDocSlug: ios-sdk-tracking
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk-tracking
+content:
+  excerpt: Manage tracking consent using the iOS SDK.
 ---
 
 Depending on local data access regulations, access to data on a user's device may require explicit consent. To follow such requirements, Engagement allows you to enable the standalone "tracking consent" feature. This feature activates the tracking consent option for in-app messages, in-app content blocks, and mobile push notifications.

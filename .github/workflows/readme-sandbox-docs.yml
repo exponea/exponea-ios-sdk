@@ -17,6 +17,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run `docs` command 🚀
-        uses: readmeio/rdme@v8
+        uses: readmeio/rdme@v10
         with:
-          rdme: docs Documentation --key=${{ secrets.README_SANDBOX_API_KEY }} --version=2
+          rdme: docs upload ./Documentation --key=${{ secrets.README_SANDBOX_API_KEY }} --branch=1.0

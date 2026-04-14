@@ -1,9 +1,14 @@
 ---
 title: In-app messages for iOS SDK
-excerpt: Display native in-app messages based on definitions set up in Engagement using the iOS SDK
 slug: ios-sdk-in-app-messages
-categorySlug: integrations
-parentDocSlug: ios-sdk-in-app-personalization
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk-in-app-personalization
+content:
+  excerpt: >-
+    Display native in-app messages based on definitions set up in Engagement
+    using the iOS SDK
 ---
 
 The SDK enables you to display native in-app messages in your app based on definitions set up in Engagement. 

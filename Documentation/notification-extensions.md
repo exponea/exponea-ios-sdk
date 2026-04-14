@@ -1,9 +1,14 @@
 ---
 title: Notification extensions for iOS SDK
-excerpt: Configure application extensions required for certain push notification features in the iOS SDK.
 slug: ios-sdk-notification-extensions
-categorySlug: integrations
-parentDocSlug: ios-sdk-push-notifications
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk-push-notifications
+content:
+  excerpt: >-
+    Configure application extensions required for certain push notification
+    features in the iOS SDK.
 ---
 
 To enable certain notification features supported by the iOS SDK, you must add either one or both of the following extensions to your application:

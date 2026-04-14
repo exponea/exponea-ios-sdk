@@ -1,9 +1,12 @@
 ---
 title: Universal links for iOS SDK
-excerpt: Enable and track universal links in your app using the iOS SDK
 slug: ios-sdk-universal-links
-categorySlug: integrations
-parentDocSlug: ios-sdk
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk
+content:
+  excerpt: Enable and track universal links in your app using the iOS SDK
 ---
 
 Universal links allow the links you send through Engagement to open directly in your native mobile application without any redirects that would hinder your users' experience.

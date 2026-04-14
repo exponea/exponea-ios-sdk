@@ -1,9 +1,12 @@
 ---
 title: Authorization for iOS SDK
-excerpt: Authorization mode reference for the iOS SDK
 slug: ios-sdk-authorization
-categorySlug: integrations
-parentDocSlug: ios-sdk-setup
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk-setup
+content:
+  excerpt: Authorization mode reference for the iOS SDK
 ---
 
 The SDK exchanges data with the Engagement APIs or the [Data hub Event stream](https://documentation.bloomreach.com/data-hub/docs/event-streams-overview) APIs through authorized HTTP/HTTPS communication. The SDK supports three authorization modes:

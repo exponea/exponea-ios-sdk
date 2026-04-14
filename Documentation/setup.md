@@ -1,9 +1,12 @@
 ---
 title: Initial setup for iOS SDK
-excerpt: Install and configure the iOS SDK
 slug: ios-sdk-setup
-categorySlug: integrations
-parentDocSlug: ios-sdk
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk
+content:
+  excerpt: Install and configure the iOS SDK
 ---
 
 ## Install the SDK

@@ -1,9 +1,12 @@
 ---
 title: Example app for iOS SDK
-excerpt: Build, run, and navigate the example app included with the iOS SDK
 slug: ios-sdk-example-app
-categorySlug: integrations
-parentDocSlug: ios-sdk
+category:
+  uri: /branches/2/categories/guides/Developers
+parent:
+  uri: ios-sdk
+content:
+  excerpt: 'Build, run, and navigate the example app included with the iOS SDK'
 ---
 
 The Exponea iOS SDK includes an example application you can use as a reference implementation. You can build and run the app, test Engagement features, and compare the code and behavior of your implementation with the expected behavior and code in the example app.
