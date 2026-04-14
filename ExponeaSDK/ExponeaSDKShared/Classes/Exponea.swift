@@ -9,7 +9,7 @@
 import Foundation
 
 public class Exponea {
-    public static let version = "3.11.0"
+    public static let version = "4.0.0"
     /// A logger used to log all messages from the SDK.
     public static var logger: Logger = Logger()
 

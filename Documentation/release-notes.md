@@ -14,6 +14,14 @@ content:
 > Refer to the [SDK version update guide for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 4.0.0
+#### April 14, 2026
+* Added:
+  * Adds support for Data hub Event streams integration with optional SDK auth token authorization.
+* Fixed:
+  * Fixes thread-safety issues in Logger and CrashManager, and adds missing log truncation.
+
+
 ## Release Notes for 3.11.0
 #### March 11, 2026
 * Fixed:
