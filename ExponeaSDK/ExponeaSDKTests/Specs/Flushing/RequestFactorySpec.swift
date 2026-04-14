@@ -17,20 +17,25 @@ import Quick
 final class RequestFactorySpec: QuickSpec {
     override func spec() {
         describe("RequestFactory") {
+            let configurations = TestConfigParams.configurationsForFlushing
+            for testConfiguration in configurations {
+                context(testConfiguration.integrationConfig.type.rawValue) {
+                    runAllTests(for: testConfiguration)
+                }
+            }
+        }
+        
+        func runAllTests(for testConfiguration: Configuration) {
             var database: MockDatabaseManager!
             var configuration: ExponeaSDK.Configuration!
             var flushingManager: FlushingManager!
             var repository: RepositoryType!
-
+            
             var eventData: [DataType]!
-
+            
             beforeEach {
                 IntegrationManager.shared.isStopped = false
-                configuration = try! Configuration(
-                    projectToken: UUID().uuidString,
-                    authorization: .token("mock-token"),
-                    baseUrl: "https://google.com/" // has to be real url because of reachability
-                )
+                configuration = testConfiguration
                 configuration.automaticSessionTracking = false
                 configuration.flushEventMaxRetries = 5
                 database = try! MockDatabaseManager()
@@ -42,15 +47,15 @@ final class RequestFactorySpec: QuickSpec {
                 )
                 eventData = [.properties(MockData().properties)]
             }
-
+            
             afterEach {
                 NetworkStubbing.unstubNetwork()
             }
-
+            
             it("should eliminate slash duplicity in URL") {
                 try! database.trackEvent(with: eventData, into: configuration.mainProject)
                 NetworkStubbing.stubNetwork(
-                    forProjectToken: configuration.projectToken,
+                    forIntegrationType: configuration.integrationConfig.type,
                     withStatusCode: 200,
                     withDelay: 0,
                     withResponseData: nil,
@@ -62,40 +67,54 @@ final class RequestFactorySpec: QuickSpec {
                     flushingManager.flushData(completion: { _ in done() })
                 }
             }
-
+            
             it("test empty reponse") {
-                var convert: (String) -> Data = { value in
+                let convert: (String) -> Data = { value in
                     value.data(using: .utf8) ?? Data()
                 }
-                let factory: RequestFactory = .init(
-                    exponeaProject: .init(
-                        baseUrl: configuration.baseUrl,
-                        projectToken: configuration.projectToken,
-                        authorization: configuration.authorization
-                    ),
-                    route: .appInbox
-                )
+                let factory: RequestFactory = {
+                    switch configuration.integrationConfig.type {
+                    case .project(let projectToken):
+                        let projectAuth = (configuration.integrationConfig as? Exponea.ProjectSettings)?.authorization ?? Authorization.none
+                        return RequestFactory(
+                            exponeaIntegrationType: ExponeaProject(
+                                baseUrl: configuration.integrationConfig.baseUrl,
+                                projectToken: projectToken,
+                                authorization: projectAuth
+                            ),
+                            route: .appInbox
+                        )
+                    case .stream(let streamId):
+                        return RequestFactory(
+                            exponeaIntegrationType: ExponeaIntegration(
+                                baseUrl: configuration.integrationConfig.baseUrl,
+                                streamId: streamId
+                            ),
+                            route: .appInbox
+                        )
+                    }
+                }()
                 let invalidForCode200 =
                 """
                 {{{
                 """
-                let invalid =
+                        let invalid =
                 """
                 """
-                let validForInApps =
+                        let validForInApps =
                 """
                 {
                     "success": true,
                 }
                 """
-                let valid =
+                        let valid =
                 """
                 {
                     "success": true,
                     "data": [],
                 }
                 """
-                let validEmptyData =
+                        let validEmptyData =
                 """
                 {
                     "success": true,

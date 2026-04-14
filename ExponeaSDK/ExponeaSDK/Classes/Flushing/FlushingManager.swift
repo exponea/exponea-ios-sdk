@@ -91,6 +91,7 @@ class FlushingManager: FlushingManagerType {
         guard !IntegrationManager.shared.isStopped else {
             stopPeriodicFlushTimer()
             Exponea.logger.log(.error, message: "Flushing has been denied, SDK is stopping")
+            completion?(.error(ExponeaError.stoppedProcess))
             return
         }
         do {
@@ -146,33 +147,87 @@ class FlushingManager: FlushingManagerType {
     }
 
     func flushTrackingObjects(_ flushableObjects: [FlushableObject], completion: ((FlushResult) -> Void)? = nil) {
-        let totalObjects = flushableObjects.count
-        var counter = flushableObjects.count
-        guard counter > 0 else {
+        guard !flushableObjects.isEmpty else {
             completion?(.success(0))
             return
         }
-        for flushableObject in flushableObjects {
-            // older events in database might be missing some of the information, let's use current settings as defaults
-            let trackingObject = flushableObject.getTrackingObject(
-                defaultBaseUrl: repository.configuration.baseUrl,
-                defaultProjectToken: repository.configuration.projectToken,
-                defaultAuthorization: repository.configuration.authorization
+
+        // Resolve tracking objects up-front so we can partition into sendable vs skipped
+        // and compute the count as an immutable value before any async work begins.
+        let resolved = flushableObjects.map { ($0, getTrackingObject(for: $0)) }
+
+        for (flushableObject, trackingObject) in resolved where trackingObject.customerIds.isEmpty {
+            Exponea.logger.log(
+                .warning,
+                message: """
+                Skipping tracking object \(flushableObject.databaseObjectProxy.objectID): \
+                no customer IDs available after applying defaults.
+                """
             )
-            if trackingObject.customerIds.isEmpty {
-                counter -= 1
-                if counter == 0 {
-                    completion?(.success(totalObjects))
+        }
+
+        var candidates: [(FlushableObject, any TrackingObject)] = []
+        for (flushableObject, trackingObject) in resolved {
+            if isEmptyUntrustedCustomerUpdate(trackingObject) {
+                Exponea.logger.log(
+                    .verbose,
+                    message: """
+                    Skipping empty customer update for stream integration \
+                    (only cookie ID, no properties): \(flushableObject.databaseObjectProxy.objectID)
+                    """
+                )
+                do {
+                    try database.delete(flushableObject.databaseObjectProxy)
+                } catch {
+                    Exponea.logger.log(
+                        .error,
+                        message: """
+                        Failed to remove skipped empty customer update from database: \
+                        \(flushableObject.databaseObjectProxy.objectID). \(error.localizedDescription)
+                        """
+                    )
                 }
             } else {
-                repository.trackObject(trackingObject) { [weak self] (result) in
-                    self?.onObjectFlush(flushableObject: flushableObject, result: result)
-                    counter -= 1
-                    if counter == 0 {
-                        completion?(.success(totalObjects))
-                    }
-                }
+                candidates.append((flushableObject, trackingObject))
             }
+        }
+
+        let sendable = candidates.filter { !$0.1.customerIds.isEmpty }
+        let attemptedCount = sendable.count
+
+        guard attemptedCount > 0 else {
+            completion?(.success(0))
+            return
+        }
+
+        let lock = NSLock()
+        var successCount = 0
+
+        let group = DispatchGroup()
+        for (flushableObject, trackingObject) in sendable {
+            group.enter()
+            repository.trackObject(trackingObject) { [weak self] result in
+                if case .success = result {
+                    lock.withLock { successCount += 1 }
+                }
+                self?.onObjectFlush(flushableObject: flushableObject, result: result)
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) {
+            if successCount == 0 {
+                Exponea.logger.log(
+                    .warning,
+                    message: "Flush failed: 0/\(attemptedCount) objects succeeded."
+                )
+            } else if successCount < attemptedCount {
+                Exponea.logger.log(
+                    .warning,
+                    message: "Flush partially failed: \(successCount)/\(attemptedCount) objects succeeded."
+                )
+            }
+            completion?(.success(successCount))
         }
     }
 
@@ -184,11 +239,8 @@ class FlushingManager: FlushingManagerType {
                 message: "Successfully uploaded tracking object: \(flushableObject.databaseObjectProxy.objectID)."
             )
             do {
-                let trackingObject = flushableObject.getTrackingObject(
-                    defaultBaseUrl: repository.configuration.baseUrl,
-                    defaultProjectToken: repository.configuration.projectToken,
-                    defaultAuthorization: repository.configuration.authorization
-                )
+                let trackingObject = getTrackingObject(for: flushableObject)
+                
                 if trackingObject is CustomerTrackingObject {
                     customerIdentifiedHandler()
                     inAppRefreshCallback?()
@@ -261,5 +313,45 @@ class FlushingManager: FlushingManagerType {
         let events = (try? database.fetchTrackEvent()) ?? []
         let customers = (try? database.fetchTrackCustomer()) ?? []
         return !events.isEmpty || !customers.isEmpty
+    }
+}
+
+private extension FlushingManager {
+    /// Detects customer updates that carry only an untrusted cookie ID and empty
+    /// properties in stream mode. The backend rejects these, so the SDK filters
+    /// them at flush time to avoid wasted retry cycles.
+    func isEmptyUntrustedCustomerUpdate(_ trackingObject: TrackingObject) -> Bool {
+        guard trackingObject is CustomerTrackingObject else { return false }
+        guard trackingObject.exponeaProject.type.isStream else { return false }
+
+        let hasOnlyCookie = trackingObject.customerIds.count == 1
+            && trackingObject.customerIds.keys.contains("cookie")
+        guard hasOnlyCookie else { return false }
+
+        var mergedProperties: [String: JSONValue] = [:]
+        for item in trackingObject.dataTypes {
+            if case .properties(let props) = item {
+                mergedProperties.merge(props, uniquingKeysWith: { first, _ in first })
+            }
+        }
+        return mergedProperties.isEmpty
+    }
+
+    func getTrackingObject(for flushableObject: FlushableObject) -> any TrackingObject {
+        // Use mainProject (static auth) for baseUrl, integrationId, and default authorization.
+        // Tracking endpoints should not receive the advanced-auth JWT Bearer token.
+        // Stream: pass .none — JWT is injected at request time in RequestFactory from ServerRepository.streamAuthProvider.
+        let currentProject = repository.configuration.mainProject
+        let defaultAuth: Authorization
+        if let project = currentProject as? ExponeaProject {
+            defaultAuth = project.authorization
+        } else {
+            defaultAuth = Authorization.none
+        }
+        return flushableObject.getTrackingObject(
+            defaultBaseUrl: currentProject.baseUrl,
+            defaultIntegrationId: currentProject.integrationId,
+            defaultAuthorization: defaultAuth
+        )
     }
 }

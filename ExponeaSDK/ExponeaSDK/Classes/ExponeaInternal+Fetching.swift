@@ -20,7 +20,7 @@ extension ExponeaInternal {
     ) {
         executeSafelyWithDependencies({
             $0.repository.fetchRecommendation(
-                request: RecommendationRequest(options: options),
+                options: options,
                 for: $0.trackingManager.customerIds,
                 completion: $1
             )
@@ -43,7 +43,7 @@ extension ExponeaInternal {
     ///                         which has either the returned data or error.
     public func fetchConsents(completion: @escaping (Result<ConsentsResponse>) -> Void) {
         executeSafelyWithDependencies({
-            guard $0.configuration.authorization != Authorization.none else {
+            guard $0.configuration.hasSufficientAuth else {
                 if IntegrationManager.shared.isStopped {
                     completion(.failure(ExponeaError.isStopped))
                 }
@@ -57,8 +57,13 @@ extension ExponeaInternal {
     }
 
     public func fetchAppInbox(completion: @escaping (Result<[MessageItem]>) -> Void) {
+        fetchAppInboxMessages(completion: completion)
+    }
+
+    /// Fetch App Inbox messages using appropriate auth (Engagement: Customer Token, Stream: JWT).
+    public func fetchAppInboxMessages(completion: @escaping (Result<[MessageItem]>) -> Void) {
         executeSafelyWithDependencies({
-            guard $0.configuration.authorization != Authorization.none else {
+            guard $0.configuration.hasSufficientAuth else {
                 if IntegrationManager.shared.isStopped {
                     completion(.failure(ExponeaError.isStopped))
                 }
@@ -70,7 +75,7 @@ extension ExponeaInternal {
 
     public func fetchAppInboxItem(_ messageId: String, completion: @escaping (Result<MessageItem>) -> Void) {
         executeSafelyWithDependencies({
-            guard $0.configuration.authorization != Authorization.none else {
+            guard $0.configuration.hasSufficientAuth else {
                 if IntegrationManager.shared.isStopped {
                     completion(.failure(ExponeaError.isStopped))
                 }

@@ -10,12 +10,28 @@ import Foundation
 
 public extension Configuration {
     mutating func switchProjects(
-        mainProject: ExponeaProject,
-        projectMapping: [EventType: [ExponeaProject]]?
+        exponeaIntegrationType: any ExponeaIntegrationType,
+        exponeaIntegrationMapping: [EventType: [any ExponeaIntegrationType]]?
     ) {
-        baseUrl = mainProject.baseUrl
-        projectToken = mainProject.projectToken
-        authorization = mainProject.authorization
-        self.projectMapping = projectMapping
+        switch exponeaIntegrationType.type {
+        case .project(let projectToken):
+            let projectAuth = (exponeaIntegrationType as? ExponeaProject)?.authorization ?? Authorization.none
+            self.projectToken = projectToken
+            self.baseUrl = exponeaIntegrationType.baseUrl
+            self.authorization = projectAuth
+            self.projectMapping = exponeaIntegrationMapping as? [EventType: [ExponeaProject]]
+            
+            self.integrationConfig = Exponea.ProjectSettings(
+                projectToken: projectToken,
+                authorization: projectAuth,
+                baseUrl: exponeaIntegrationType.baseUrl,
+                projectMapping: projectMapping
+            )
+        case .stream(let streamId):
+            self.integrationConfig = Exponea.StreamSettings(
+                streamId: streamId,
+                baseUrl: exponeaIntegrationType.baseUrl
+            )
+        }
     }
 }

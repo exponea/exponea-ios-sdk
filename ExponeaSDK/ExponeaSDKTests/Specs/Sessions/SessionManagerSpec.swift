@@ -33,7 +33,7 @@ class SessionManagerSpec: QuickSpec {
         func setup(automaticSessionTracking: Bool, manualSessionAutoClose: Bool = true) {
             configuration = try! Configuration(
                 projectToken: "mock-project-token",
-                authorization: .none,
+                authorization: Authorization.none,
                 baseUrl: "mock-base-url",
                 appGroup: "mock-app-group",
                 defaultProperties: nil,

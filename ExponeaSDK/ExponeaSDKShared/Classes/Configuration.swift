@@ -11,15 +11,72 @@ import CoreData
 
 /// A configuration object used to configure Exponea when initialising.
 public struct Configuration: Codable, Equatable {
-    public internal(set) var projectMapping: [EventType: [ExponeaProject]]?
-    public internal(set) var projectToken: String
-    public internal(set) var authorization: Authorization = .none
-    public internal(set) var baseUrl: String = Constants.Repository.baseUrl
+    @available(*, deprecated, message: "Please use exponeaIntegrationMapping in integrationConfig instead.")
+    public internal(set) var projectMapping: [EventType: [ExponeaProject]]? {
+        didSet {
+            if let projectSettings = integrationConfig as? Exponea.ProjectSettings {
+                integrationConfig = Exponea.ProjectSettings(
+                    projectToken: projectSettings.projectToken,
+                    authorization: projectSettings.authorization,
+                    baseUrl: projectSettings.baseUrl,
+                    projectMapping: projectMapping
+                )
+            }
+        }
+    }
+    
+    @available(*, deprecated, message: "Please use projectToken in integrationConfig instead.")
+    public internal(set) var projectToken: String = "" {
+        didSet {
+            if let projectSettings = integrationConfig as? Exponea.ProjectSettings {
+                integrationConfig = Exponea.ProjectSettings(
+                    projectToken: projectToken,
+                    authorization: projectSettings.authorization,
+                    baseUrl: projectSettings.baseUrl,
+                    projectMapping: projectSettings.projectMapping
+                )
+            }
+        }
+    }
+    
+    @available(*, deprecated, message: "Please use authorization in integrationConfig instead.")
+    public internal(set) var authorization: Authorization = Authorization.none {
+        didSet {
+            if let projectSettings = integrationConfig as? Exponea.ProjectSettings {
+                integrationConfig = Exponea.ProjectSettings(
+                    projectToken: projectSettings.projectToken,
+                    authorization: authorization,
+                    baseUrl: projectSettings.baseUrl,
+                    projectMapping: projectSettings.projectMapping
+                )
+            }
+        }
+    }
+    
+    @available(*, deprecated, message: "Please use baseUrl in integrationConfig instead.")
+    public internal(set) var baseUrl: String = Constants.Repository.baseUrl {
+        didSet {
+            if let projectSettings = integrationConfig as? Exponea.ProjectSettings {
+                integrationConfig = Exponea.ProjectSettings(
+                    projectToken: projectSettings.projectToken,
+                    authorization: projectSettings.authorization,
+                    baseUrl: baseUrl,
+                    projectMapping: projectSettings.projectMapping
+                )
+            }
+        }
+    }
+    
+    public var integrationId: String {
+        integrationConfig.type.integrationId
+    }
+    
     public var inAppContentBlocksPlaceholders: [String]?
     public var defaultProperties: [String: JSONConvertible]?
     public var sessionTimeout: Double = Constants.Session.defaultTimeout
     public var automaticSessionTracking: Bool = true
     public var applicationID: String = Constants.General.applicationID
+    public internal(set) var integrationConfig: any IntegrationType
 
     /// If enabled, will swizzle default push notifications methods and functions and automatically
     /// listen to updates for tokens or push settings.
@@ -50,7 +107,7 @@ public struct Configuration: Codable, Equatable {
 
     /// Advanced authorization provider instance
     public internal(set) var customAuthProvider: AuthorizationProviderType?
-
+    
     /// Is dark mode enabled
     public internal(set) var isDarkModeEnabled: Bool?
 
@@ -78,9 +135,11 @@ public struct Configuration: Codable, Equatable {
         case isDarkModeEnabled
         case appInboxDetailImageInset
         case applicationID
+        case streamId
     }
 
     /// Creates the configuration object with the provided properties.
+    @available(*, deprecated, message: "Please use init with 'integrationConfig: any IntegrationType' parameter instead.")
     public init(
         projectToken: String,
         projectMapping: [EventType: [ExponeaProject]]? = nil,
@@ -104,7 +163,7 @@ public struct Configuration: Codable, Equatable {
     ) throws {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
-        self.authorization = authorization ?? .none
+        self.authorization = authorization ?? Authorization.none
         self.appGroup = appGroup
         self.defaultProperties = defaultProperties
         self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
@@ -116,7 +175,59 @@ public struct Configuration: Codable, Equatable {
             self.applicationID = applicationID
         }
         self.baseUrl = baseUrl ?? Constants.Repository.baseUrl
+        
+        self.integrationConfig = Exponea.ProjectSettings(
+            projectToken: self.projectToken,
+            authorization: self.authorization,
+            baseUrl: self.baseUrl,
+            projectMapping: self.projectMapping
+        )
+        
         if self.advancedAuthEnabled {
+            self.customAuthProvider = try loadCustomAuthProvider()
+        }
+        self.isDarkModeEnabled = isDarkModeEnabled ?? false
+        self.sessionTimeout = sessionTimeout ?? Constants.Session.defaultTimeout
+        self.automaticSessionTracking = automaticSessionTracking ?? true
+        self.automaticPushNotificationTracking = automaticPushNotificationTracking ?? true
+        self.requirePushAuthorization = requirePushAuthorization ?? true
+        self.tokenTrackFrequency = tokenTrackFrequency ?? .onTokenChange
+        self.flushEventMaxRetries = flushEventMaxRetries ?? Constants.Session.maxRetries
+        
+        try self.validate()
+    }
+    
+    public init(
+        integrationConfig: any IntegrationType,
+        appGroup: String? = nil,
+        defaultProperties: [String: JSONConvertible]? = nil,
+        inAppContentBlocksPlaceholders: [String]? = nil,
+        sessionTimeout: Double? = nil,
+        automaticSessionTracking: Bool? = nil,
+        automaticPushNotificationTracking: Bool? = nil,
+        requirePushAuthorization: Bool? = nil,
+        tokenTrackFrequency: TokenTrackFrequency? = nil,
+        flushEventMaxRetries: Int? = nil,
+        allowDefaultCustomerProperties: Bool? = nil,
+        advancedAuthEnabled: Bool? = nil,
+        isDarkModeEnabled: Bool? = nil,
+        appInboxDetailImageInset: CGFloat? = nil,
+        manualSessionAutoClose: Bool? = nil,
+        applicationID: String? = nil
+    ) throws {
+        self.integrationConfig = integrationConfig
+        self.appGroup = appGroup
+        self.defaultProperties = defaultProperties
+        self.allowDefaultCustomerProperties = allowDefaultCustomerProperties ?? true
+        self.advancedAuthEnabled = advancedAuthEnabled ?? false
+        self.inAppContentBlocksPlaceholders = inAppContentBlocksPlaceholders
+        self.appInboxDetailImageInset = appInboxDetailImageInset ?? 56
+        self.manualSessionAutoClose = manualSessionAutoClose ?? true
+        if let applicationID, !applicationID.isEmpty {
+            self.applicationID = applicationID
+        }
+        // Only load customAuthProvider for Project mode - Stream uses JWT instead
+        if case .project = integrationConfig.type, self.advancedAuthEnabled {
             self.customAuthProvider = try loadCustomAuthProvider()
         }
         self.isDarkModeEnabled = isDarkModeEnabled ?? false
@@ -148,7 +259,8 @@ public struct Configuration: Codable, Equatable {
 
             // Decode from plist
             self = try PropertyListDecoder().decode(Configuration.self, from: data)
-            if self.advancedAuthEnabled {
+            // Only load customAuthProvider for Project mode - Stream uses JWT instead
+            if case .project = self.integrationConfig.type, self.advancedAuthEnabled {
                 self.customAuthProvider = try loadCustomAuthProvider()
             }
             try self.validate()
@@ -164,12 +276,12 @@ public struct Configuration: Codable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        // Project token
-        guard let projectToken = try container.decodeIfPresent(String.self, forKey: .projectToken) else {
-            throw ExponeaError.configurationError("No project token provided.")
+        var streamId = ""
+        
+        if let streamIdToken = try container.decodeIfPresent(String.self, forKey: .streamId) {
+            streamId = streamIdToken
         }
-        self.projectToken = projectToken
-
+        
         // Base URL
         if let baseUrl = try container.decodeIfPresent(String.self, forKey: .baseUrl) {
             self.baseUrl = baseUrl
@@ -179,18 +291,37 @@ public struct Configuration: Codable, Equatable {
         if let authorization = try container.decodeIfPresent(Authorization.self, forKey: .authorization) {
             self.authorization = authorization
         }
-
-        // Project token mapping
-        if let dictionary = try container.decodeIfPresent(
-            Dictionary<String, [ExponeaProject]>.self, forKey: .projectMapping) {
-            var mapping: [EventType: [ExponeaProject]] = [:]
-            for (_, element: (key: event, value: projectArray)) in dictionary.enumerated() {
-                guard let eventType = EventType(rawValue: event) else { continue }
-                mapping[eventType] = projectArray
+        
+        if streamId.isEmpty {
+            guard let projectTokenValue = try container.decodeIfPresent(String.self, forKey: .projectToken) else {
+                throw ExponeaError.configurationError("No project token or stream ID provided.")
             }
-            self.projectMapping = mapping
-        }
+                    
+            self.projectToken = projectTokenValue
 
+            // Project token mapping
+            if let dictionary = try container.decodeIfPresent(Dictionary<String, [ExponeaProject]>.self, forKey: .projectMapping) {
+                var mapping: [EventType: [ExponeaProject]] = [:]
+                for (_, element: (key: event, value: projectArray)) in dictionary.enumerated() {
+                    guard let eventType = EventType(rawValue: event) else { continue }
+                    mapping[eventType] = projectArray
+                }
+                self.projectMapping = mapping
+            }
+            
+            integrationConfig = Exponea.ProjectSettings(
+                projectToken: projectTokenValue,
+                authorization: self.authorization,
+                baseUrl: self.baseUrl,
+                projectMapping: self.projectMapping
+            )
+        } else {
+            integrationConfig = Exponea.StreamSettings(
+                streamId: streamId,
+                baseUrl: self.baseUrl
+            )
+        }
+        
         // Session timeout
         if let sessionTimeout = try container.decodeIfPresent(Double.self, forKey: .sessionTimeout) {
             self.sessionTimeout = sessionTimeout
@@ -275,8 +406,8 @@ public struct Configuration: Codable, Equatable {
             self.advancedAuthEnabled = false
         }
 
-        // Advanced auth provider
-        if self.advancedAuthEnabled {
+        // Advanced auth provider - only for Project mode (Stream uses JWT instead)
+        if case .project = self.integrationConfig.type, self.advancedAuthEnabled {
             self.customAuthProvider = try loadCustomAuthProvider()
         }
         try self.validate()
@@ -284,15 +415,22 @@ public struct Configuration: Codable, Equatable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        if let mapping = projectMapping {
-            let projectMappingWithStringKeys = Dictionary(
-                uniqueKeysWithValues: mapping.map { (key: EventType, value: [ExponeaProject]) in (key.rawValue, value) }
-            )
-            try container.encode(projectMappingWithStringKeys, forKey: .projectMapping)
+        
+        switch integrationConfig.type {
+        case .project(let projectToken):
+            if let mapping = (integrationConfig as? Exponea.ProjectSettings)?.projectMapping {
+                let projectMappingWithStringKeys = Dictionary(
+                    uniqueKeysWithValues: mapping.map { (key: EventType, value: [ExponeaProject]) in (key.rawValue, value) }
+                )
+                try container.encode(projectMappingWithStringKeys, forKey: .projectMapping)
+            }
+            try container.encode((integrationConfig as? Exponea.ProjectSettings)?.authorization, forKey: .authorization)
+            try container.encode(projectToken, forKey: .projectToken)
+        case .stream(let streamId):
+            try container.encode(streamId, forKey: .streamId)
         }
-        try container.encode(projectToken, forKey: .projectToken)
-        try container.encode(authorization, forKey: .authorization)
-        try container.encode(baseUrl, forKey: .baseUrl)
+        try container.encode(integrationConfig.baseUrl, forKey: .baseUrl)
+        
         try container.encode(defaultProperties?.mapValues { $0.jsonValue }, forKey: .defaultProperties)
         try container.encode(sessionTimeout, forKey: .sessionTimeout)
         try container.encode(automaticSessionTracking, forKey: .automaticSessionTracking)
@@ -307,11 +445,27 @@ public struct Configuration: Codable, Equatable {
     }
 
     public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+        if let lhsProjectSettings = lhs.integrationConfig as? Exponea.ProjectSettings, let rhsProjectSettings = rhs.integrationConfig as? Exponea.ProjectSettings {
+            return
+                lhsProjectSettings == rhsProjectSettings &&
+                areValuesInConfigurationsEqual(lhs: lhs, rhs: rhs)
+                
+        } else if let lhsStreamSettings = lhs.integrationConfig as? Exponea.StreamSettings, let rhsStreamSettings = rhs.integrationConfig as? Exponea.StreamSettings {
+            return
+                lhsStreamSettings == rhsStreamSettings &&
+                areValuesInConfigurationsEqual(lhs: lhs, rhs: rhs)
+        } else {
+            return
+                lhs.projectMapping == rhs.projectMapping &&
+                lhs.projectToken == rhs.projectToken &&
+                lhs.authorization == rhs.authorization &&
+                lhs.baseUrl == rhs.baseUrl &&
+                areValuesInConfigurationsEqual(lhs: lhs, rhs: rhs)
+        }
+    }
+    
+    private static func areValuesInConfigurationsEqual(lhs: Configuration, rhs: Configuration) -> Bool {
         return
-            lhs.projectMapping == rhs.projectMapping &&
-            lhs.projectToken == rhs.projectToken &&
-            lhs.authorization == rhs.authorization &&
-            lhs.baseUrl == rhs.baseUrl &&
             lhs.defaultProperties?.mapValues { $0.jsonValue } == rhs.defaultProperties?.mapValues { $0.jsonValue } &&
             lhs.sessionTimeout == rhs.sessionTimeout &&
             lhs.automaticSessionTracking == rhs.automaticSessionTracking &&
@@ -327,38 +481,58 @@ public struct Configuration: Codable, Equatable {
 }
 
 extension Configuration {
-    public func projects(for eventType: EventType) -> [ExponeaProject] {
-        var projects: [ExponeaProject] = [mainProject]
-        if let mapping = projectMapping, let mappedTokens = mapping[eventType] {
+    public func projects(for eventType: EventType) -> [any ExponeaIntegrationType] {
+        var projects: [any ExponeaIntegrationType] = [mainProject]
+        
+        if let mapping = (integrationConfig as? Exponea.ProjectSettings)?.projectMapping,
+           let mappedTokens = mapping[eventType] {
             projects.append(contentsOf: mappedTokens)
         }
+
         return projects
     }
 
-    public var mainProject: ExponeaProject {
-        ExponeaProject(baseUrl: baseUrl, projectToken: projectToken, authorization: authorization)
+    public var mainProject: any ExponeaIntegrationType {
+        switch integrationConfig.type {
+        case .project(let projectToken):
+            return ExponeaProject(
+                baseUrl: integrationConfig.baseUrl,
+                projectToken: projectToken,
+                authorization: (integrationConfig as? Exponea.ProjectSettings)?.authorization ?? Authorization.none
+            )
+        case .stream(let streamId):
+            return ExponeaIntegration(
+                baseUrl: integrationConfig.baseUrl,
+                streamId: streamId
+            )
+        }
     }
 
-    /// Returns ExponeaProject that:
-    /// - contains CustomerID auth token if AuthProvider is registered
-    /// - contains Api auth token otherwise
+    /// Returns the integration type enriched with advanced auth when available (Project mode only).
+    /// Stream JWT is NOT embedded here — it is injected at the HTTP-request level by RequestFactory
+    /// via the `streamAuthProvider` on ServerRepository.
     /// !!! Access it in background thread due to possibility of fetching of Customer Token value
-    public var mutualExponeaProject: ExponeaProject {
-        guard let customAuthProvider = self.customAuthProvider else {
+    public var mutualExponeaProject: any ExponeaIntegrationType {
+        switch integrationConfig.type {
+        case .stream:
             return mainProject
+        case .project(let projectToken):
+            guard let provider = customAuthProvider else {
+                return mainProject
+            }
+            let authToken = provider.getAuthorizationToken()
+            let authorization: Authorization
+            if let authToken = authToken, !authToken.isEmpty {
+                authorization = .bearer(token: authToken)
+            } else {
+                authorization = Authorization.none
+            }
+            return ExponeaProject(
+                baseUrl: integrationConfig.baseUrl,
+                projectToken: projectToken,
+                authorization: authorization
+            )
         }
-        let authToken = customAuthProvider.getAuthorizationToken()
-        let authorization: Authorization
-        if let authToken = authToken, !authToken.isEmpty {
-            authorization = .bearer(token: authToken)
-        } else {
-            authorization = .none
-        }
-        return ExponeaProject(
-            baseUrl: baseUrl,
-            projectToken: projectToken,
-            authorization: authorization
-        )
     }
 
     private func loadCustomAuthProvider() throws -> AuthorizationProviderType? {
@@ -387,19 +561,24 @@ extension Configuration: CustomStringConvertible {
     public var description: String {
         var text = "[Configuration]\n"
 
-        if let mapping = projectMapping {
-            text += "Project Token Mapping: \(mapping)\n"
+        switch integrationConfig.type {
+        case .project(let projectToken):
+            if let mapping = (integrationConfig as? Exponea.ProjectSettings)?.projectMapping {
+                text += "Project Token Mapping: \(mapping)\n"
+            }
+            text += "Authorization: \((integrationConfig as? Exponea.ProjectSettings)?.authorization ?? Authorization.none)"
+
+            text += "Project Token: \(projectToken)\n"
+        case .stream(let streamId):
+            text += "Stream ID Token: \(streamId)\n"
         }
-
-        text += "Project Token: \(projectToken)\n"
-
+        
         if let defaultProperties = defaultProperties {
             text += "Default Attributes: \(defaultProperties)\n"
         }
 
         text += """
-        Authorization: \(authorization)
-        Base URL: \(baseUrl)
+        Base URL: \(integrationConfig.baseUrl)
         Session Timeout: \(sessionTimeout)
         Automatic Session Tracking: \(automaticSessionTracking)
         Automatic Push Notification Tracking: \(automaticPushNotificationTracking)
@@ -417,10 +596,10 @@ extension Configuration: CustomStringConvertible {
 
     /// Returns the hostname based on the baseUrl value.
     public var hostname: String {
-        guard let components = URLComponents(string: baseUrl),
+        guard let components = URLComponents(string: integrationConfig.baseUrl),
             let host = components.host else {
             Exponea.logger.log(.warning, message: "Can't get URL components from baseUrl, check your baseUrl.")
-            return baseUrl
+            return integrationConfig.baseUrl
         }
 
         return host
@@ -431,4 +610,5 @@ extension Configuration: CustomStringConvertible {
 public protocol AuthorizationProviderType {
     init()
     func getAuthorizationToken() -> String?
+    @objc optional func getAuthorizationHeader() -> String?
 }

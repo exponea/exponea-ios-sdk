@@ -17,4 +17,8 @@ public class ExampleAuthProvider: NSObject, AuthorizationProviderType {
         return CustomerTokenStorage.shared.retrieveJwtToken()
         // NULL as returned value will be handled by SDK as 'no value'
     }
+    
+    public func getAuthorizationHeader() -> String? {
+        return nil
+    }
 }

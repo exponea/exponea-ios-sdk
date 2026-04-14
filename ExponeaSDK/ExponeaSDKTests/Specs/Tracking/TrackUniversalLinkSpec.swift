@@ -19,7 +19,7 @@ class TrackUniversalLinkSpec: QuickSpec {
         let mockData = MockData()
 
         describe("Track universal link") {
-            context("repository") {
+            context("repository (project)") {
                 let repository = ServerRepository(configuration: try! Configuration(plistName: "ExponeaConfig"))
                 let projectToken = UUID().uuidString
                 let data: [DataType] = [
@@ -29,7 +29,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                 ]
                 var lastRequest: URLRequest?
                 NetworkStubbing.stubNetwork(
-                    forProjectToken: projectToken,
+                    forIntegrationType: .project(projectToken: projectToken),
                     withStatusCode: 200,
                     withRequestHook: { request in lastRequest = request }
                 )
@@ -38,7 +38,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         exponeaProject: ExponeaProject(
                             baseUrl: "https://my-url.com",
                             projectToken: projectToken,
-                            authorization: .none
+                            authorization: Authorization.none
                         ),
                         customerIds: mockData.customerIds,
                         eventType: Constants.EventTypes.campaignClick,
@@ -65,11 +65,65 @@ class TrackUniversalLinkSpec: QuickSpec {
                     }
                 }
             }
+            context("repository (stream)") {
+                let repository = ServerRepository(configuration: try! Configuration(plistName: "ExponeaConfigStream"))
+                let streamId = UUID().uuidString
+                let data: [DataType] = [
+                    .properties(mockData.campaignData),
+                    .timestamp(nil),
+                    .eventType(Constants.EventTypes.campaignClick)
+                ]
+                var lastRequest: URLRequest?
+                NetworkStubbing.stubNetwork(
+                    forIntegrationType: .stream(streamId: streamId),
+                    withStatusCode: 200,
+                    withRequestHook: { request in lastRequest = request }
+                )
+                waitUntil(timeout: .seconds(3)) { done in
+                    let event = EventTrackingObject(
+                        exponeaProject: ExponeaIntegration(
+                            baseUrl: "https://my-url.com",
+                            streamId: streamId
+                        ),
+                        customerIds: mockData.customerIds,
+                        eventType: Constants.EventTypes.campaignClick,
+                        timestamp: 123,
+                        dataTypes: data
+                    )
+                    repository.trackObject(event) { result in
+                        it("should have nil result error") {
+                            expect(result.error).to(beNil())
+                        }
+                        it("should call correct url") {
+                            expect(lastRequest?.url?.absoluteString)
+                                .to(equal("https://my-url.com/track/u/v1/campaigns/clicks?stream_id=\(streamId)"))
+                        }
+                        it("should contains required properties") {
+                            guard let requestBody: String = lastRequest?.httpBodyStream?.readFully() else {
+                                fail("Request data are invalid")
+                                done()
+                                return
+                            }
+                            expect(requestBody).to(contain("platform"))
+                        }
+                        done()
+                    }
+                }
+            }
             context("Tracking manager") {
+                beforeEach {
+                    Exponea.logger.logLevel = .warning // Set default state before each test
+                }
+                for testConfigFileName in ["ExponeaConfig", "ExponeaConfigStream"] {
+                    runTrackingManagerTests(for: testConfigFileName)
+                }
+            }
+            
+            func runTrackingManagerTests(for testConfigFileName: String) {
                 context("with SDK started") {
                     it("track campaign_click and update session when called within update threshold") {
                         let exponea = MockExponeaImplementation()
-                        exponea.configure(plistName: "ExponeaConfig")
+                        exponea.configure(plistName: testConfigFileName)
 
                         // track campaign click, session_start should be updated with utm params
                         exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
@@ -83,7 +137,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                     }
                     it("track campaign_click and should not update session when called after update threshold") {
                         let exponea = MockExponeaImplementation()
-                        exponea.configure(plistName: "ExponeaConfig")
+                        exponea.configure(plistName: testConfigFileName)
                         Exponea.logger.logLevel = .verbose
                         expect {
                             try exponea.trackingManager!.updateLastPendingEvent(
@@ -105,7 +159,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                     }
                     it("not track campaign_click but update session") {
                         let exponea = MockExponeaImplementation()
-                        exponea.configure(plistName: "ExponeaConfig")
+                        exponea.configure(plistName: testConfigFileName)
 
                         // track campaign click, session_start should be updated with utm params
                         exponea.trackCampaignClick(url: mockData.invalidCampaignUrl!, timestamp: nil)
@@ -124,7 +178,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         // track campaign click, session_start should be updated with utm params
                         exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
 
-                        exponea.configure(plistName: "ExponeaConfig")
+                        exponea.configure(plistName: testConfigFileName)
 
                         let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
                         expect(campaignClick).notTo(beNil())
@@ -139,7 +193,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         // track campaign click, session_start should be updated with utm params
                         exponea.trackCampaignClick(url: mockData.campaignUrl!, timestamp: nil)
 
-                        exponea.configure(plistName: "ExponeaConfig")
+                        exponea.configure(plistName: testConfigFileName)
                         var trackEvents: [TrackEventProxy] = []
                         expect { trackEvents = try exponea.fetchTrackEvents() }.toNot(raiseException())
                         expect { trackEvents.filter({ $0.eventType == "campaign_click" }).count }.to(equal(1))
@@ -150,7 +204,7 @@ class TrackUniversalLinkSpec: QuickSpec {
                         // track campaign click, session_start should be updated with utm params
                         exponea.trackCampaignClick(url: mockData.invalidCampaignUrl!, timestamp: nil)
 
-                        exponea.configure(plistName: "ExponeaConfig")
+                        exponea.configure(plistName: testConfigFileName)
 
                         let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
                         expect(campaignClick).to(beNil())

@@ -22,7 +22,7 @@ extension ExponeaInternal {
     ///     - eventType: Name of event
     public func trackEvent(properties: [String: JSONConvertible], timestamp: Double?, eventType: String?) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })), .timestamp(timestamp)]
@@ -44,7 +44,7 @@ extension ExponeaInternal {
     ///     - timestamp: Unix timestamp when the event was created.
     public func trackPayment(properties: [String: JSONConvertible], timestamp: Double?) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             let data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })), .timestamp(timestamp)]
@@ -61,11 +61,12 @@ extension ExponeaInternal {
     ///     - customerId: Specify your customer with external id, for example an email address.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
+    @available(*, deprecated, message: "Use identifyCustomer(context:properties:timestamp:) with CustomerIdentity(customerIds:jwtToken:) instead.")
     public func identifyCustomer(customerIds: [String: String]?,
                                  properties: [String: JSONConvertible],
                                  timestamp: Double?) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })), .timestamp(timestamp)]
@@ -79,6 +80,54 @@ extension ExponeaInternal {
                 ids["cookie"] = dependencies.trackingManager.customerIds["cookie"]
                 data.append(.customerIds(ids))
             }
+            try dependencies.trackingManager.track(.identifyCustomer, with: data)
+            Exponea.shared.telemetryManager?.report(eventWithType: .identifyCustomer, properties: [:])
+        }
+    }
+    
+    /// Identifies a customer with authentication context.
+    /// Use this method when working with Stream JWT authentication.
+    ///
+    /// - Parameters:
+    ///   - context: Authentication context containing customer IDs and optional JWT token.
+    ///   - properties: Customer properties to track.
+    ///   - timestamp: Optional Unix timestamp when the event was created.
+    public func identifyCustomer(
+        context: CustomerIdentity,
+        properties: [String: JSONConvertible],
+        timestamp: Double?
+    ) {
+        executeSafelyWithDependencies { [weak self] dependencies in
+            guard dependencies.configuration.hasSufficientAuth else {
+                throw ExponeaError.authorizationInsufficient
+            }
+            
+            if case .stream = dependencies.configuration.integrationConfig.type,
+               let jwtManager = self?.jwtAuthManager {
+                jwtManager.clearSync()
+                if let jwtToken = context.jwtToken {
+                    jwtManager.setTokenSync(jwtToken)
+                } else {
+                    Exponea.logger.log(.verbose, message: "JWT: Token cleared during identify without new token")
+                }
+            }
+            
+            var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })), .timestamp(timestamp)]
+            
+            // Only add customer IDs if provided (non-empty)
+            if !context.customerIds.isEmpty {
+                var ids = context.customerIds
+                
+                // Check for overriding cookie
+                if ids["cookie"] != nil {
+                    Exponea.logger.log(.warning, message: """
+                    You should never set cookie ID directly on a customer. Ignoring.
+                    """)
+                }
+                ids["cookie"] = dependencies.trackingManager.customerIds["cookie"]
+                data.append(.customerIds(ids))
+            }
+            
             try dependencies.trackingManager.track(.identifyCustomer, with: data)
             Exponea.shared.telemetryManager?.report(eventWithType: .identifyCustomer, properties: [:])
         }
@@ -99,7 +148,7 @@ extension ExponeaInternal {
     /// - Parameter token: String containing the push notification token.
     public func trackPushToken(_ token: String?) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             UNAuthorizationStatusProvider.current.isAuthorized { authorized in
@@ -121,7 +170,7 @@ extension ExponeaInternal {
     //     - provided action url has TRUE value of query parameter 'xnpe_force_track'
     public func trackPushOpened(with userInfo: [AnyHashable: Any]) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackClickedPush(data: userInfo as AnyObject, mode: .CONSIDER_CONSENT)
@@ -132,7 +181,7 @@ extension ExponeaInternal {
     /// Event is tracked even if  notification and action link have not a tracking consent.
     public func trackPushOpenedWithoutTrackingConsent(with userInfo: [AnyHashable: Any]) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackClickedPush(data: userInfo as AnyObject, mode: .IGNORE_CONSENT)
@@ -149,7 +198,7 @@ extension ExponeaInternal {
 
     public func trackPushReceived(userInfo: [AnyHashable: Any]) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackDeliveredPush(
@@ -169,7 +218,7 @@ extension ExponeaInternal {
 
     public func trackPushReceivedWithoutTrackingConsent(userInfo: [AnyHashable: Any]) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackDeliveredPush(
@@ -209,7 +258,7 @@ extension ExponeaInternal {
     // MARK: Sessions
     public func trackSessionStart() {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingManager.manualSessionStart()
@@ -218,7 +267,7 @@ extension ExponeaInternal {
 
     public func trackSessionEnd() {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingManager.manualSessionEnd()
@@ -239,7 +288,7 @@ extension ExponeaInternal {
         Exponea.logger.log(.verbose, message: "Tracking campaign data: \(data.description)")
         executeSafelyWithDependencies { dependencies in
             // Create initial data
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             // url and payload is required for campaigns, but missing in notifications
@@ -346,7 +395,7 @@ extension ExponeaInternal {
     /// This method can be used to manually flush all available data to Exponea.
     public func flushData(completion: ((FlushResult) -> Void)?) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.flushingManager.flushData(completion: completion)
@@ -358,11 +407,20 @@ extension ExponeaInternal {
     /// Anonymizes the user and starts tracking as if the app was just installed.
     /// All customer identification (including cookie) will be permanently deleted.
     public func anonymize() {
+        anonymize(completion: nil)
+    }
+
+    /// Anonymizes the user with an optional completion callback.
+    /// In Stream mode, pending events are flushed with the current JWT before the identity is cleared.
+    /// The completion is called on the main thread once the anonymize (and optional flush) finishes.
+    public func anonymize(completion: (() -> Void)?) {
         Exponea.logger.log(.verbose, message: "Basic anonymisation requested")
         executeSafelyWithDependencies { dependencies in
-            self.anonymize(
-                exponeaProject: dependencies.configuration.mainProject,
-                projectMapping: dependencies.configuration.projectMapping
+            self.performAnonymize(
+                dependencies: dependencies,
+                exponeaIntegrationType: dependencies.configuration.mainProject,
+                exponeaProjectMapping: (dependencies.configuration.integrationConfig as? Exponea.ProjectSettings)?.projectMapping,
+                completion: completion
             )
         }
     }
@@ -370,32 +428,123 @@ extension ExponeaInternal {
     /// Anonymizes the user and starts tracking as if the app was just installed.
     /// All customer identification (including cookie) will be permanently deleted.
     /// Switches tracking into provided exponeaProject
+    @available(*, deprecated, message: """
+        Please use following function instead:
+        func anonymize(exponeaIntegrationType: any ExponeaIntegrationType, exponeaProjectMapping: [EventType: [ExponeaProject]]? = nil) throws
+    """)
     public func anonymize(
         exponeaProject: ExponeaProject,
         projectMapping: [EventType: [ExponeaProject]]?
     ) {
         Exponea.logger.log(.verbose, message: "Anonymisation requested with \(exponeaProject) and \(String(describing: projectMapping))")
         executeSafelyWithDependencies { dependencies in
-            Exponea.logger.log(.verbose, message: "Anonymisation request proceeding")
+            self.performAnonymize(
+                dependencies: dependencies,
+                exponeaIntegrationType: exponeaProject,
+                exponeaProjectMapping: projectMapping,
+                completion: nil
+            )
+        }
+    }
+    
+    /// Use exponeaProjectMapping when integrating with project token, not stream ID
+    public func anonymize(
+        exponeaIntegrationType: any ExponeaIntegrationType,
+        exponeaProjectMapping: [EventType: [ExponeaProject]]? = nil
+    ) {
+        Exponea.logger.log(.verbose, message: "Anonymisation requested with \(exponeaIntegrationType) and \(String(describing: exponeaProjectMapping))")
+        executeSafelyWithDependencies { dependencies in
+            self.performAnonymize(
+                dependencies: dependencies,
+                exponeaIntegrationType: exponeaIntegrationType,
+                exponeaProjectMapping: exponeaProjectMapping,
+                completion: nil
+            )
+        }
+    }
+
+    private func performAnonymize(
+        dependencies: Dependencies,
+        exponeaIntegrationType: any ExponeaIntegrationType,
+        exponeaProjectMapping: [EventType: [ExponeaProject]]?,
+        completion: (() -> Void)?
+    ) {
+        Exponea.logger.log(.verbose, message: "Anonymisation request proceeding")
+        do {
             if dependencies.configuration.automaticSessionTracking {
                 try dependencies.trackingManager.track(.sessionEnd, with: [.timestamp(Date().timeIntervalSince1970)])
             }
+        } catch {
+            Exponea.logger.log(.error, message: "Failed to track session_end during anonymize: \(error.localizedDescription)")
+        }
+
+        // Invalidate push token for the current (old) customer before flush,
+        // so the invalidation event is included in the pre-anonymize flush while JWT is still valid.
+        do {
+            try dependencies.trackingManager.trackNotificationState(
+                pushToken: dependencies.trackingManager.customerPushToken,
+                isValid: false,
+                description: "Invalidated"
+            )
+        } catch {
+            Exponea.logger.log(.error, message: "Failed to invalidate push token during anonymize: \(error.localizedDescription)")
+        }
+
+        let shouldFlush = dependencies.configuration.usesStreamIntegration
+            && (self.jwtAuthManager?.currentTokenSnapshot != nil || self.jwtAuthManager?.hasErrorHandler == true)
+
+        let completeAnonymize: () -> Void = { [weak self] in
+            guard !IntegrationManager.shared.isStopped else {
+                Exponea.logger.log(.warning, message: "Anonymize aborted, SDK is stopping")
+                DispatchQueue.main.async { completion?() }
+                return
+            }
+
             dependencies.inAppMessagesManager.anonymize()
             dependencies.appInboxManager.clear()
             dependencies.inAppContentBlocksManager.anonymize()
             SegmentationManager.shared.anonymize()
             dependencies.campaignRepository.clear()
             FileCache.shared.clear()
-            try dependencies.trackingManager.anonymize(
-                exponeaProject: exponeaProject,
-                projectMapping: projectMapping
-            )
-            self.telemetryManager?.report(eventWithType: .anonymize, properties: [
-                "baseUrl": exponeaProject.baseUrl,
-                "projectToken": exponeaProject.projectToken,
-                "authorization": exponeaProject.authorization.description
-            ])
+
+            self?.jwtAuthManager?.clearSync()
+            Exponea.logger.log(.verbose, message: "JWT token cleared during anonymization")
+
+            do {
+                try dependencies.trackingManager.anonymize(
+                    exponeaIntegrationType: exponeaIntegrationType,
+                    exponeaProjectMapping: exponeaProjectMapping
+                )
+            } catch {
+                Exponea.logger.log(.error, message: "Failed to anonymize tracking manager: \(error.localizedDescription)")
+            }
+
+            switch exponeaIntegrationType.type {
+            case .project(let projectToken):
+                let authDescription = (exponeaIntegrationType as? ExponeaProject)?.authorization.description ?? Authorization.none.description
+                self?.telemetryManager?.report(eventWithType: .anonymize, properties: [
+                    "baseUrl": exponeaIntegrationType.baseUrl,
+                    "projectToken": projectToken,
+                    "authorization": authDescription
+                ])
+            case .stream(let streamId):
+                self?.telemetryManager?.report(eventWithType: .anonymize, properties: [
+                    "baseUrl": exponeaIntegrationType.baseUrl,
+                    "streamId": streamId
+                ])
+            }
+
             Exponea.logger.log(.verbose, message: "Anonymisation request done")
+            DispatchQueue.main.async { completion?() }
+        }
+
+        if shouldFlush {
+            Exponea.logger.log(.verbose, message: "Stream mode: flushing pending events before anonymize")
+            dependencies.flushingManager.flushData(isFromIdentify: false) { _ in
+                DispatchQueue.main.async { completeAnonymize() }
+            }
+        } else {
+            completeAnonymize()
         }
     }
 
@@ -409,7 +558,7 @@ extension ExponeaInternal {
         buttonLink: String?
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppMessageClick(
@@ -430,7 +579,7 @@ extension ExponeaInternal {
         buttonLink: String?
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppMessageClick(
@@ -450,7 +599,7 @@ extension ExponeaInternal {
         isUserInteraction: Bool?
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppMessageClose(
@@ -469,7 +618,7 @@ extension ExponeaInternal {
         isUserInteraction: Bool?
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppMessageClose(
@@ -485,7 +634,7 @@ extension ExponeaInternal {
     /// Event is tracked if parameter 'message' has TRUE value of 'hasTrackingConsent' property
     public func trackAppInboxOpened(message: MessageItem) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackAppInboxOpened(
@@ -498,7 +647,7 @@ extension ExponeaInternal {
     /// Marks AppInbox message as read
     public func markAppInboxAsRead(_ message: MessageItem, completition: ((Bool) -> Void)?) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.appInboxManager.markMessageAsRead(message, nil, completition)
@@ -508,7 +657,7 @@ extension ExponeaInternal {
     /// Track AppInbox message detail opened event
     public func trackAppInboxOpenedWithoutTrackingConsent(message: MessageItem) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackAppInboxOpened(
@@ -527,7 +676,7 @@ extension ExponeaInternal {
         message: MessageItem
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackAppInboxClick(
@@ -545,7 +694,7 @@ extension ExponeaInternal {
         message: MessageItem
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackAppInboxClick(
@@ -563,7 +712,7 @@ extension ExponeaInternal {
         message: InAppContentBlockResponse
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppContentBlockClick(
@@ -581,7 +730,7 @@ extension ExponeaInternal {
         message: InAppContentBlockResponse
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppContentBlockClick(
@@ -598,7 +747,7 @@ extension ExponeaInternal {
         message: InAppContentBlockResponse
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppContentBlockClose(
@@ -614,7 +763,7 @@ extension ExponeaInternal {
         message: InAppContentBlockResponse
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppContentBlockClose(
@@ -630,7 +779,7 @@ extension ExponeaInternal {
         message: InAppContentBlockResponse
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppContentBlockShow(
@@ -646,7 +795,7 @@ extension ExponeaInternal {
         message: InAppContentBlockResponse
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppContentBlockShow(
@@ -663,7 +812,7 @@ extension ExponeaInternal {
         errorMessage: String
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppContentBlockError(
@@ -681,7 +830,7 @@ extension ExponeaInternal {
         errorMessage: String
     ) {
         executeSafelyWithDependencies { dependencies in
-            guard dependencies.configuration.authorization != Authorization.none else {
+            guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
             dependencies.trackingConsentManager.trackInAppContentBlockError(

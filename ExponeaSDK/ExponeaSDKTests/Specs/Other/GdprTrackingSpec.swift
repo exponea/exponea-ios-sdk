@@ -8,7 +8,8 @@
 
 import Nimble
 import Quick
-import ExponeaSDKShared
+
+@testable import ExponeaSDKShared
 
 final class GdprTrackingSpec: QuickSpec {
 

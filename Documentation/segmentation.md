@@ -12,6 +12,8 @@ Refer to the [Discovery real-time segments](https://documentation.bloomreach.com
 
 This page describes the integration steps required to retrieve any segmentation data changes assigned to the current customer.
 
+> Real-time segmentation works with both Project/Engagement and Stream/Data hub integration modes. No additional configuration is needed when using Stream integration.
+
 ### Use real-time segments
 
 To use real-time segments in your app, you must register one or more customized `SegmentCallbackData` instances.

@@ -18,7 +18,7 @@ protocol FetchRepository {
     ///   - customerIds: Identification of a customer.
     ///   - completion: Object containing the request result.
     func fetchRecommendation<T: RecommendationUserData>(
-        request: RecommendationRequest,
+        options: RecommendationOptions,
         for customerIds: [String: String],
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void
     )

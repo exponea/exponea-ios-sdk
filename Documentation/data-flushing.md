@@ -40,3 +40,14 @@ To manually trigger a data flush to the API, use the following method:
 ```swift
 Exponea.shared.flushData()
 ```
+
+## Stream mode flushing behavior
+
+When the SDK is configured with Stream/Data hub integration, the flushing behavior has the following differences:
+
+* All flush requests use JWT authentication (Bearer token provided via `setSdkAuthToken`). The SDK attaches the current JWT to each outgoing request.
+* If a flush request receives a **401 Unauthorized** response, the SDK invokes the [JWT error handler](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#jwt-error-handling) and retries the request once after a ~1-second delay. If the retry also fails, the event remains in the local cache for the next flush cycle.
+* Both `anonymize()` and `stopIntegration()` flush all pending events before clearing the JWT and customer identity. This ensures tracked data is uploaded while the current token is still available.
+* Use `anonymize(completion:)` or `stopIntegration(completion:)` to be notified on the main thread when the flush and teardown are complete.
+
+> If no JWT is set when a flush is attempted in Stream mode, the SDK will invoke the error handler with `.notProvided` and defer the flush until a token is available.

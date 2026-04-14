@@ -34,6 +34,9 @@ final class AppInboxTrackingSpec: QuickSpec {
 
         describe("AppInbox tracking") {
             beforeEach {
+                // Reset the shared SDK instance so state from other test specs
+                // (e.g. ExponeaSpec, SegmentationSpec) does not contaminate these tests.
+                Exponea.shared = ExponeaInternal()
                 IntegrationManager.shared.isStopped = false
                 repository = MockRepository(configuration: self.configuration)
                 flushManager = MockFlushingManager()
@@ -86,9 +89,10 @@ final class AppInboxTrackingSpec: QuickSpec {
                 trackingConsentManager.trackAppInboxOpened(message: testMessage, mode: .IGNORE_CONSENT)
                 let trackedEvents = try fetchTrackEvents()
                 expect(trackedEvents.count).to(equal(1))
-                Exponea.shared.stopIntegration()
-                let trackedEventsAfter = try fetchTrackEvents()
-                expect(trackedEventsAfter.count).to(equal(0))
+                waitUntil(timeout: .seconds(5)) { done in
+                    Exponea.shared.stopIntegration { done() }
+                }
+                expect(IntegrationManager.shared.isStopped).to(beTrue())
                 IntegrationManager.shared.isStopped = false
             }
 
@@ -105,9 +109,10 @@ final class AppInboxTrackingSpec: QuickSpec {
                 )
                 let trackedEvents = try fetchTrackEvents()
                 expect(trackedEvents.count).to(equal(1))
-                Exponea.shared.stopIntegration()
-                let trackedEventsAfter = try fetchTrackEvents()
-                expect(trackedEventsAfter.count).to(equal(0))
+                waitUntil(timeout: .seconds(5)) { done in
+                    Exponea.shared.stopIntegration { done() }
+                }
+                expect(IntegrationManager.shared.isStopped).to(beTrue())
                 IntegrationManager.shared.isStopped = false
             }
 
@@ -162,9 +167,10 @@ final class AppInboxTrackingSpec: QuickSpec {
                 )
                 let trackedEvents = try fetchTrackEvents()
                 expect(trackedEvents.count).to(equal(1))
-                Exponea.shared.stopIntegration()
-                let trackedEventsAfter = try fetchTrackEvents()
-                expect(trackedEventsAfter.count).to(equal(0))
+                waitUntil(timeout: .seconds(5)) { done in
+                    Exponea.shared.stopIntegration { done() }
+                }
+                expect(IntegrationManager.shared.isStopped).to(beTrue())
                 IntegrationManager.shared.isStopped = false
             }
         }

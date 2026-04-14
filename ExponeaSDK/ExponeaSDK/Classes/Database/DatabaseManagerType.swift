@@ -14,8 +14,8 @@ protocol DatabaseManagerType: AnyObject {
     var currentCustomer: CustomerThreadSafe { get }
     var customers: [CustomerThreadSafe] { get }
 
-    func trackEvent(with data: [DataType], into project: ExponeaProject) throws
-    func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws
+    func trackEvent(with data: [DataType], into project: any ExponeaIntegrationType) throws
+    func identifyCustomer(with data: [DataType], into project: any ExponeaIntegrationType) throws
     func updateEvent(withId id: NSManagedObjectID, withData data: DataType) throws
 
     func fetchTrackCustomer() throws -> [TrackCustomerProxy]

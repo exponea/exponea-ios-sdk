@@ -95,10 +95,10 @@ protocol TrackingManagerType: AnyObject {
     func manualSessionEnd()
 
     func setAutomaticSessionTracking(automaticSessionTracking: Exponea.AutomaticSessionTracking)
-
-    /// Anonymizes the user by deleting all identifiers (including cookie) and deletes all database data.
+    
+    // Anonymizes the user by deleting all identifiers (including cookie) and deletes all database data.
     /// You can switch project and new user will be tracked into it
-    func anonymize(exponeaProject: ExponeaProject, projectMapping: [EventType: [ExponeaProject]]?) throws
+    func anonymize(exponeaIntegrationType: any ExponeaIntegrationType, exponeaProjectMapping: [EventType: [ExponeaProject]]?) throws
     
     /// Tracks delivered push notification as EventTrackingObject
     func trackDeliveredPushEvent(_ eventObject: EventTrackingObject)

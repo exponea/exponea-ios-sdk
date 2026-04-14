@@ -57,12 +57,38 @@ Select your application target in Xcode, and on the `Signing & Capabilities` tab
 
 [Configure](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) the SDK with `pushNotificationTracking: .enabled(appGroup:)` to enable push notifications. Use the app group you created in the previous step.
 
+**Project/Engagement mode:**
+
 ``` swift
 Exponea.shared.configure(
-    Exponea.projectSettings(...),
+    Exponea.ProjectSettings(
+        projectToken: "YOUR_PROJECT_TOKEN",
+        authorization: .token("YOUR_API_KEY")
+    ),
     pushNotificationTracking: .enabled(appGroup: "YOUR_APP_GROUP")
 )
 ```
+
+**Stream/Data hub mode:**
+
+``` swift
+Exponea.shared.configure(
+    Exponea.StreamSettings(
+        streamId: "YOUR_STREAM_ID",
+        baseUrl: "https://api.exponea.com"
+    ),
+    pushNotificationTracking: .enabled(appGroup: "YOUR_APP_GROUP")
+)
+// Provide JWT after configuration:
+Exponea.shared.setJwtErrorHandler { context in
+    yourBackend.fetchNewJwt { newToken in
+        Exponea.shared.setSdkAuthToken(newToken)
+    }
+}
+Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
+```
+
+> Push token tracking (`notification_state` events) and the push self-check work the same way regardless of integration type.
 
 > 👍
 >

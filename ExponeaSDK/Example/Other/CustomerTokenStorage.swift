@@ -23,9 +23,7 @@ class CustomerTokenStorage {
     private var publicKey: String?
     public private(set) var customerIds: [String: String]?
     private var expiration: Int?
-
     private var tokenCache: String?
-
     private var lastTokenRequestTime: Double = 0
 
     func configure(
@@ -35,32 +33,35 @@ class CustomerTokenStorage {
         customerIds: [String: String]? = nil,
         expiration: Int? = nil
     ) {
-        self.host = host ?? self.host
-        self.projectToken = projectToken ?? self.projectToken
-        self.publicKey = publicKey ?? self.publicKey
-        self.customerIds = customerIds ?? self.customerIds
-        self.expiration = expiration ?? self.expiration
+        semaphore.sync(flags: .barrier) {
+            self.host = host ?? self.host
+            self.projectToken = projectToken ?? self.projectToken
+            self.publicKey = publicKey ?? self.publicKey
+            self.customerIds = customerIds ?? self.customerIds
+            self.expiration = expiration ?? self.expiration
+            
+            // Reset token
+            self.tokenCache = nil
+            self.lastTokenRequestTime = 0
+        }
     }
 
     func retrieveJwtToken() -> String? {
-        let now = Date().timeIntervalSince1970
-        let timeDiffMinutes = abs(now - lastTokenRequestTime) / 60.0
-        if timeDiffMinutes < 5 {
-            // allows request for token once per 5 minutes, doesn't care if cache is NULL
-            return tokenCache
-        }
-        lastTokenRequestTime = now
-        if tokenCache != nil {
-            // return cached value
-            return tokenCache
-        }
         semaphore.sync(flags: .barrier) {
-            // recheck nullity just in case
-            if tokenCache == nil {
-                tokenCache = loadJwtToken()
+            let now = Date().timeIntervalSince1970
+            let timeDiffMinutes = abs(now - lastTokenRequestTime) / 60.0
+            if timeDiffMinutes < 5 {
+                // allows request for token once per 5 minutes, doesn't care if cache is NULL
+                return tokenCache
             }
+            lastTokenRequestTime = now
+            if tokenCache != nil {
+                // return cached value
+                return tokenCache
+            }
+            tokenCache = loadJwtToken()
+            return tokenCache
         }
-        return tokenCache
     }
 
     private func loadJwtToken() -> String? {
@@ -100,7 +101,12 @@ class CustomerTokenStorage {
                 httpSemaphore.signal()
             }
             httpTask.resume()
-            _ = httpSemaphore.wait(timeout: .distantFuture)
+            let waitResult = httpSemaphore.wait(timeout: .now() + 10)
+            if waitResult == .timedOut {
+                httpTask.cancel()
+                Exponea.logger.log(.error, message: "CustomerTokenStorage: token request timed out after 10s")
+                return nil
+            }
             if let httpResponse = httpResponse as? HTTPURLResponse {
                 // this is optional check - we looking for 404 posibility
                 switch httpResponse.statusCode {

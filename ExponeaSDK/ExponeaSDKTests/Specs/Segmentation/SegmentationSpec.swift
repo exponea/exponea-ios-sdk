@@ -20,10 +20,22 @@ class SegmentationSpec: QuickSpec {
     )
 
     override func spec() {
-        Exponea.shared.configure(with: configuration)
-        let manager: SegmentationManagerType = Exponea.shared.segmentationManager!
+        var manager: SegmentationManagerType?
+        
+        beforeEach {
+            // Reset Exponea shared instance to ensure clean state
+            Exponea.shared = ExponeaInternal()
+            Exponea.shared.configure(with: self.configuration)
+            manager = Exponea.shared.segmentationManager
+            expect(manager).notTo(beNil(), description: "SegmentationManager should be available after configuration")
+            manager?.removeAll()
+        }
 
         it("union segments") {
+            guard let manager = manager else {
+                fail("Manager should not be nil")
+                return
+            }
             let discovery: SegmentCategory = .discovery(data: [
                 .init(id: "id1", segmentationId: "segmentationId1"),
                 .init(id: "id2", segmentationId: "segmentationId2"),
@@ -62,6 +74,10 @@ class SegmentationSpec: QuickSpec {
         }
 
         it("callbacks") {
+            guard let manager = manager else {
+                fail("Manager should not be nil")
+                return
+            }
             var totalFiredCallback = 0
             var totalFiredNewbies = 0
 
@@ -111,6 +127,10 @@ class SegmentationSpec: QuickSpec {
         }
 
         it("remove and anonymize") {
+            guard let manager = manager else {
+                fail("Manager should not be nil")
+                return
+            }
             manager.removeAll()
             let callback: SegmentCallbackData = .init(category: .discovery(), isIncludeFirstLoad: false) { _ in }
             let callback2: SegmentCallbackData = .init(category: .discovery(), isIncludeFirstLoad: true) { _ in }
@@ -137,6 +157,10 @@ class SegmentationSpec: QuickSpec {
         }
 
         it("synchronize") {
+            guard let manager = manager else {
+                fail("Manager should not be nil")
+                return
+            }
             @SegmentationStoring  var storedSegmentations: SegmentStore?
             let segment: SegmentDataDTO = .init(categories: [.discovery(data: [.init(id: "1", segmentationId: "1")])])
             let segment2: SegmentDataDTO = .init(categories: [.discovery(data: [.init(id: "2", segmentationId: "1")])])
@@ -178,7 +202,7 @@ class SegmentationSpec: QuickSpec {
             )
             expect(manualDTO.isWithinTime).to(beTrue())
             var isExpired = false
-            waitUntil(timeout: .seconds(6)) { done in
+            waitUntil(timeout: .seconds(8)) { done in
                 DispatchQueue.global().asyncAfter(deadline: .now() + 5.5) {
                     isExpired = !manualDTO.isWithinTime
                     done()

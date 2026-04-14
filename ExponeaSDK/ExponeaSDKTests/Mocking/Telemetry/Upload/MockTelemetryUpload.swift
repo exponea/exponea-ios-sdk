@@ -9,12 +9,6 @@
 @testable import ExponeaSDKShared
 
 final class MockTelemetryUpload: SentryTelemetryUpload {
-    struct UploadedEvent {
-        let name: String
-        let properties: [String: String]
-    }
-
-    // all logs we try to upload
     var uploadedCrashLogs: [CrashLog] = []
 
     var uploadedSessionRuns: [String] = []

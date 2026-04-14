@@ -51,7 +51,7 @@ final class TelemetryUtilitySpec: QuickSpec {
                     TelemetryUtility.formatConfigurationForTracking(
                         try! Configuration(
                             projectToken: "token",
-                            authorization: .none,
+                            authorization: Authorization.none,
                             baseUrl: Constants.Repository.baseUrl
                         )
                     )
@@ -83,7 +83,7 @@ final class TelemetryUtilitySpec: QuickSpec {
                 let configuration = try! Configuration(
                     projectToken: "mock-project-token",
                     projectMapping: [EventType.banner: [
-                        ExponeaProject(projectToken: "other-mock-project-token", authorization: .none)
+                        ExponeaProject(projectToken: "other-mock-project-token", authorization: Authorization.none)
                     ]],
                     authorization: .token("mock-authorization"),
                     baseUrl: "http://mock-base-url.com",

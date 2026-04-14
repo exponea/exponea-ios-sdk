@@ -13,6 +13,12 @@ import CoreData
 
 @testable import ExponeaSDK
 
+private enum TestConfigSource: String {
+    case project
+    case stream
+}
+private typealias TestDatabaseManagerInput = (source: TestConfigSource, exponeaIntegrationType: any ExponeaIntegrationType)
+
 class DatabaseManagerSpec: QuickSpec {
 
     override func spec() {
@@ -21,9 +27,20 @@ class DatabaseManagerSpec: QuickSpec {
 
         var db: DatabaseManager!
 
-        let myProject = ExponeaProject(baseUrl: "http://mock-url.com", projectToken: "mytoken", authorization: .none)
+        let inputs: [TestDatabaseManagerInput] = [
+            (source: .project, exponeaIntegrationType: ExponeaProject(baseUrl: "http://mock-url.com", projectToken: "mytoken", authorization: Authorization.none)),
+            (source: .stream, exponeaIntegrationType: ExponeaIntegration(baseUrl: "http://mock-url.com", streamId: "mytoken"))
+        ]
 
         context("A database manager") {
+            for input in inputs {
+                context("Type \(input.source.rawValue)") {
+                    runAllDatabaseManagerTests(input: input)
+                }
+            }
+        }
+        
+        func runAllDatabaseManagerTests(input: TestDatabaseManagerInput) {
             beforeEach {
                 IntegrationManager.shared.isStopped = false
                 db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
@@ -77,10 +94,20 @@ class DatabaseManagerSpec: QuickSpec {
 
                     it("should not delete old customers with events assigned") {
                         let firstUUID = db.currentCustomer.uuid
-                        try! db.identifyCustomer(
-                            with: [.customerIds(["email": "a@b.com"])],
-                            into: ExponeaProject(projectToken: "mock", authorization: .none)
-                        )
+                        
+                        switch input.source {
+                        case .project:
+                            try! db.identifyCustomer(
+                                with: [.customerIds(["email": "a@b.com"])],
+                                into: ExponeaProject(projectToken: "mock", authorization: Authorization.none)
+                            )
+                        case .stream:
+                            try! db.identifyCustomer(
+                                with: [.customerIds(["email": "a@b.com"])],
+                                into: ExponeaIntegration(streamId: "mock")
+                            )
+                        }
+                        
                         db.makeNewCustomer()
                         expect(db.customers.count).to(equal(2))
                         let identify = try! db.fetchTrackCustomer()[0]
@@ -92,13 +119,13 @@ class DatabaseManagerSpec: QuickSpec {
                 }
                 it("should identify, fetch and delete a customer identification", closure: {
                     var objects: [TrackCustomerProxy] = []
-                    expect { try db.identifyCustomer(with: customerData, into: myProject) }.toNot(raiseException())
+                    expect { try db.identifyCustomer(with: customerData, into: input.exponeaIntegrationType) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackCustomer() }.toNot(raiseException())
                     expect(objects.count).to(equal(1))
 
                     let object = objects[0]
                     expect(db.currentCustomer.ids["registered"]).to(equal("myemail"))
-                    expect(object.projectToken).to(equal("mytoken"))
+                    expect(object.integrationId).to(equal("mytoken"))
                     let props = object.dataTypes.properties
                     expect(props.count).to(equal(1))
 
@@ -113,20 +140,20 @@ class DatabaseManagerSpec: QuickSpec {
 
                 it("should count customer identifications") {
                     expect(try? db.countTrackCustomer()).to(equal(0))
-                    expect { try db.identifyCustomer(with: customerData, into: myProject) }.toNot(raiseException())
+                    expect { try db.identifyCustomer(with: customerData, into: input.exponeaIntegrationType) }.toNot(raiseException())
                     expect(try? db.countTrackCustomer()).to(equal(1))
-                    expect { try db.identifyCustomer(with: customerData, into: myProject) }.toNot(raiseException())
+                    expect { try db.identifyCustomer(with: customerData, into: input.exponeaIntegrationType) }.toNot(raiseException())
                     expect(try? db.countTrackCustomer()).to(equal(2))
                 }
 
                 it("should track, fetch and delete an event", closure: {
                     var objects: [TrackEventProxy] = []
-                    expect { try db.trackEvent(with: eventData, into: myProject) }.toNot(raiseException())
+                    expect { try db.trackEvent(with: eventData, into: input.exponeaIntegrationType) }.toNot(raiseException())
                     expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                     expect(objects.count).to(equal(1))
 
                     let object = objects[0]
-                    expect(object.projectToken).to(equal("mytoken"))
+                    expect(object.integrationId).to(equal("mytoken"))
                     expect(object.dataTypes.properties["customprop"] as? String).to(equal("customval"))
                     expect(object.timestamp).to(equal(100))
                     expect(object.eventType).to(equal("myevent"))
@@ -141,7 +168,7 @@ class DatabaseManagerSpec: QuickSpec {
                         "array": [123, "abc", false].jsonValue,
                         "dictionary": ["int": 123, "string": "abc", "bool": true].jsonValue
                     ])]
-                    expect { try db.trackEvent(with: complexData, into: myProject) }.toNot(raiseException())
+                    expect { try db.trackEvent(with: complexData, into: input.exponeaIntegrationType) }.toNot(raiseException())
                     let objects: [TrackEventProxy] = (try? db.fetchTrackEvent()) ?? []
                     let object: TrackEventProxy = objects[0]
                     expect(object.dataTypes.properties["array"]??.jsonValue)
@@ -152,16 +179,16 @@ class DatabaseManagerSpec: QuickSpec {
 
                 it("should count events") {
                     expect(try? db.countTrackEvent()).to(equal(0))
-                    expect { try db.trackEvent(with: eventData, into: myProject) }.toNot(raiseException())
+                    expect { try db.trackEvent(with: eventData, into: input.exponeaIntegrationType) }.toNot(raiseException())
                     expect(try? db.countTrackEvent()).to(equal(1))
-                    expect { try db.trackEvent(with: eventData, into: myProject) }.toNot(raiseException())
+                    expect { try db.trackEvent(with: eventData, into: input.exponeaIntegrationType) }.toNot(raiseException())
                     expect(try? db.countTrackEvent()).to(equal(2))
                 }
 
                 describe("update", {
                     func createSampleEvent() -> TrackEventProxy {
                         var objects: [TrackEventProxy] = []
-                        expect { try db.trackEvent(with: eventData, into: myProject) }.toNot(raiseException())
+                        expect { try db.trackEvent(with: eventData, into: input.exponeaIntegrationType) }.toNot(raiseException())
                         expect { objects = try db.fetchTrackEvent() }.toNot(raiseException())
                         expect(objects.count).to(equal(1))
 
@@ -254,7 +281,7 @@ class DatabaseManagerSpec: QuickSpec {
                             expect(Thread.isMainThread).to(beFalse())
                             expectedTimestamp = Date().timeIntervalSince1970
                             expect {
-                                try db.identifyCustomer(with: customerData, into: myProject)
+                                try db.identifyCustomer(with: customerData, into: input.exponeaIntegrationType)
                             }.toNot(raiseException())
                             done()
                         }
@@ -271,7 +298,7 @@ class DatabaseManagerSpec: QuickSpec {
 
                     let object = objects[0]
                     expect(db.currentCustomer.ids["registered"]).to(equal("myemail"))
-                    expect(object.projectToken).to(equal("mytoken"))
+                    expect(object.integrationId).to(equal("mytoken"))
                     let props = object.dataTypes.properties
                     expect(props.count).to(equal(1))
 
@@ -299,7 +326,7 @@ class DatabaseManagerSpec: QuickSpec {
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
                             expectedTimestamp =  Date().timeIntervalSince1970
-                            expect { try db.trackEvent(with: eventData, into: myProject) }.toNot(raiseException())
+                            expect { try db.trackEvent(with: eventData, into: input.exponeaIntegrationType) }.toNot(raiseException())
                             done()
                         }
                     }
@@ -317,7 +344,7 @@ class DatabaseManagerSpec: QuickSpec {
                     waitUntil(action: { (done) in
                         DispatchQueue.global(qos: .background).async {
                             expect(Thread.isMainThread).to(beFalse())
-                            expect(object.projectToken).to(equal("mytoken"))
+                            expect(object.integrationId).to(equal("mytoken"))
                             done()
                         }
                     })
@@ -356,7 +383,7 @@ class DatabaseManagerSpec: QuickSpec {
                     db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
                     expect {
                         for _ in 0..<1000 {
-                            try db.trackEvent(with: eventData, into: myProject)
+                            try db.trackEvent(with: eventData, into: input.exponeaIntegrationType)
                         }
                     }.toNot(raiseException())
 
@@ -369,7 +396,7 @@ class DatabaseManagerSpec: QuickSpec {
                     db = try! DatabaseManager(persistentStoreDescriptions: [inMemoryDescription])
                     expect {
                         for _ in 0..<1000 {
-                            try db.identifyCustomer(with: customerData, into: myProject)
+                            try db.identifyCustomer(with: customerData, into: input.exponeaIntegrationType)
                         }
                         }.toNot(raiseException())
 
@@ -394,7 +421,7 @@ class DatabaseManagerSpec: QuickSpec {
                         for _ in 0..<100 {
                             DispatchQueue.global(qos: .background).async {
                                 expect {
-                                    try db.trackEvent(with: eventData, into: myProject)
+                                    try db.trackEvent(with: eventData, into: input.exponeaIntegrationType)
                                 }.toNot(raiseException())
                                 done()
                             }

@@ -8,6 +8,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "Please use RecommendationsStreamRequest instead.")
 struct RecommendationRequest: RequestParametersType {
     let options: RecommendationOptions
 

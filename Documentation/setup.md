@@ -68,9 +68,13 @@ Now that you have installed the SDK in your project, you must import, configure,
  > Refer to [Stop SDK integration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking#stop-sdk-integration) for details.
 
 
-The required configuration parameters are `projectToken`, `authorization.token`, and `baseUrl`. You can find these as `Project token`, `API Token`, and `API Base URL` in the Bloomreach Engagement webapp under `Project settings` > `Access management` > `API`:
+The SDK supports two integration modes: **Project/Engagement** and **Stream/Data hub**. The required configuration parameters differ by mode.
+
+**Project/Engagement mode** requires `projectToken`, `authorization.token`, and `baseUrl`. You can find these as `Project token`, `API Token`, and `API Base URL` in the Bloomreach Engagement webapp under `Project settings` > `Access management` > `API`:
 
 ![Project token, API Base URL, and API key](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/api-access-management.png)
+
+**Stream/Data hub mode** requires `streamId` (and optionally `baseUrl`). Authentication is handled via JWT tokens provided after configuration.
 
 > 📘
 >
@@ -82,18 +86,44 @@ Import the SDK:
 import ExponeaSDK
 ```
 
-Initialize the SDK:
+Initialize the SDK with **Project/Engagement** settings:
 
 ```swift
 Exponea.shared.configure(
-	Exponea.ProjectSettings(
-		projectToken: "YOUR PROJECT TOKEN",
-		authorization: .token("YOUR API KEY"),
-		baseUrl: "https://api.exponea.com"
-	),
-	pushNotificationTracking: .disabled
+    Exponea.ProjectSettings(
+        projectToken: "YOUR PROJECT TOKEN",
+        authorization: .token("YOUR API KEY"),
+        baseUrl: "https://api.exponea.com"
+    ),
+    pushNotificationTracking: .disabled
 )
 ```
+
+Or initialize the SDK with **Stream/Data hub** settings:
+
+```swift
+Exponea.shared.configure(
+    Exponea.StreamSettings(
+        streamId: "YOUR_STREAM_ID",
+        baseUrl: "https://api.exponea.com"
+    ),
+    pushNotificationTracking: .enabled(appGroup: "YOUR_APP_GROUP")
+)
+
+> 📘 Note
+>
+> Refer to Data hub documentation for more details on how you can [configure iOS SDK with JWT authentication](https://documentation.bloomreach.com/data-hub/docs/configure-android-sdk-with-jwt-authentication)
+
+// After configuration, register JWT error handler and provide initial token:
+Exponea.shared.setJwtErrorHandler { context in
+    yourBackend.fetchNewJwt { newToken in
+        Exponea.shared.setSdkAuthToken(newToken)
+    }
+}
+Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
+```
+
+> For Stream mode, see [Stream JWT authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#stream-jwt-authorization-data-hub) for details on JWT lifecycle management.
 
 Your `AppDelegate`'s `application:didFinishLaunchingWithOptions` method is typically a good place to do the initialization but, depending on your application design, it can be anywhere in your code.
 

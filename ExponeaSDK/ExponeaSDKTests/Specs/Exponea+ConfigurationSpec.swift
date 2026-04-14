@@ -25,7 +25,7 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                 exponea.configure(
                     Exponea.ProjectSettings(
                         projectToken: "mock-project-token",
-                        authorization: .none
+                        authorization: Authorization.none
                     ),
                     pushNotificationTracking: .disabled
                 )
@@ -33,9 +33,9 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                     XCTFail("Nil configuration")
                     return
                 }
-                expect(configuration.projectMapping).to(beNil())
-                expect(configuration.projectToken).to(equal("mock-project-token"))
-                expect(configuration.baseUrl).to(equal(Constants.Repository.baseUrl))
+                expect((configuration.integrationConfig as? Exponea.ProjectSettings)?.projectMapping).to(beNil())
+                expect(configuration.integrationId).to(equal("mock-project-token"))
+                expect(configuration.integrationConfig.baseUrl).to(equal(Constants.Repository.baseUrl))
                 expect(configuration.defaultProperties).to(beNil())
                 expect(configuration.sessionTimeout).to(equal(Constants.Session.defaultTimeout))
                 expect(configuration.automaticSessionTracking).to(equal(true))
@@ -56,7 +56,7 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                 exponea.configure(
                     Exponea.ProjectSettings(
                         projectToken: "mock-project-token",
-                        authorization: .none,
+                        authorization: Authorization.none,
                         baseUrl: "mock-url",
                         projectMapping: [
                             .payment: [
@@ -84,17 +84,16 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                     XCTFail("Nil configuration")
                     return
                 }
-                expect(configuration.projectMapping).to(
-                    equal([.payment: [
-                        ExponeaProject(
-                            baseUrl: "other-mock-url",
-                            projectToken: "other-project-id",
-                            authorization: .token("some-token")
-                        )
-                    ]])
-                )
-                expect(configuration.projectToken).to(equal("mock-project-token"))
-                expect(configuration.baseUrl).to(equal("mock-url"))
+                let mapping = (configuration.integrationConfig as? Exponea.ProjectSettings)?.projectMapping
+                expect(mapping).to(equal([.payment: [
+                    ExponeaProject(
+                        baseUrl: "other-mock-url",
+                        projectToken: "other-project-id",
+                        authorization: .token("some-token")
+                    )
+                ]]))
+                expect(configuration.integrationId).to(equal("mock-project-token"))
+                expect(configuration.integrationConfig.baseUrl).to(equal("mock-url"))
                 expect(configuration.defaultProperties).notTo(beNil())
                 expect(configuration.defaultProperties?["mock-prop-1"] as? String).to(equal("mock-value-1"))
                 expect(configuration.defaultProperties?["mock-prop-2"] as? Int).to(equal(123))
@@ -135,14 +134,14 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                                 exponea.configure(
                                     Exponea.ProjectSettings(
                                         projectToken: "mock-project-token-\(i)",
-                                        authorization: .none
+                                        authorization: Authorization.none
                                     ),
                                     pushNotificationTracking: .disabled
                                 )
                                 if let conf = exponea.configuration,
-                                   conf.projectToken == "mock-project-token-\(i)",
+                                   conf.integrationId == "mock-project-token-\(i)",
                                    tokenWinner == "" {
-                                    tokenWinner = conf.projectToken
+                                    tokenWinner = conf.integrationId
                                 }
                                 initsCount += 1
                                 if initsCount == maxInitsCount {
@@ -151,20 +150,20 @@ class ExponeaConfigurationSpec: QuickSpec, PushNotificationManagerDelegate {
                             }
                         }
                     }
-                    expect(exponea.configuration!.projectToken).to(equal(tokenWinner))
+                    expect(exponea.configuration?.integrationId).to(equal(tokenWinner))
                     expect(sdkInitMessageCount).to(equal(1))
                     if sdkInitMessageCount != 1 {
                         break
                     }
                     if let conf = exponea.configuration {
-                        expect(conf.projectToken).to(equal(tokenWinner))
-                        expect(exponea.configuration!.projectToken).to(equal(tokenWinner))
+                        expect(exponea.configuration?.integrationId).to(equal(tokenWinner))
+                        expect(exponea.configuration?.integrationId).to(equal(tokenWinner))
                         expect(sdkInitMessageCount).to(equal(1))
                         if sdkInitMessageCount != 1 {
                             break
                         }
                         if let conf = exponea.configuration {
-                            expect(conf.projectToken).to(equal(tokenWinner))
+                            expect(conf.integrationId).to(equal(tokenWinner))
                         }
                         expect(conf.applicationID).to(equal(Constants.General.applicationID))
                     }

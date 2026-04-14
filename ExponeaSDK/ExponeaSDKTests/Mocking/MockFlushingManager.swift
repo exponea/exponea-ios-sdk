@@ -16,7 +16,7 @@ internal class MockFlushingManager: FlushingManagerType {
         completion?(.noInternetConnection)
     }
 
-    func flushData(completion: ((FlushResult) -> Void)?) {
+    func flushData(isFromIdentify: Bool, completion: ((FlushResult) -> Void)?) {
         completion?(.noInternetConnection)
     }
 

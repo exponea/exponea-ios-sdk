@@ -24,6 +24,7 @@ class TrackingManagerSpec: QuickSpec {
             var configuration: ExponeaSDK.Configuration!
 
             beforeEach {
+                Exponea.shared = ExponeaInternal()
                 IntegrationManager.shared.isStopped = false
                 configuration = try! Configuration(
                     projectToken: UUID().uuidString,

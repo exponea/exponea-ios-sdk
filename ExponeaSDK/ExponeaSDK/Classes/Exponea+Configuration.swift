@@ -14,25 +14,6 @@ import ExponeaSDKShared
 // MARK: - Configuration -
 
 public extension Exponea {
-    struct ProjectSettings {
-        public let projectToken: String
-        public let authorization: Authorization
-        public let baseUrl: String
-        public let projectMapping: [EventType: [ExponeaProject]]?
-
-        public init(
-            projectToken: String,
-            authorization: Authorization,
-            baseUrl: String? = nil,
-            projectMapping: [EventType: [ExponeaProject]]? = nil
-        ) {
-            self.projectToken = projectToken
-            self.authorization = authorization
-            self.baseUrl = baseUrl ?? Constants.Repository.baseUrl
-            self.projectMapping = projectMapping
-        }
-    }
-
     struct AutomaticPushNotificationTracking {
         let enabled: Bool
         let appGroup: String?
@@ -203,7 +184,7 @@ public extension ExponeaInternal {
         invokeSdkInitSafely({
             let configuration = try Configuration(
                 projectToken: projectSettings.projectToken,
-                projectMapping: projectSettings.projectMapping,
+                projectMapping: projectSettings.projectMapping as? [EventType: [ExponeaProject]],
                 authorization: projectSettings.authorization,
                 baseUrl: projectSettings.baseUrl,
                 appGroup: automaticPushNotificationTracking.appGroup,
@@ -227,7 +208,7 @@ public extension ExponeaInternal {
     }
 
     func configure(
-        _ projectSettings: Exponea.ProjectSettings,
+        _ integrationConfig: any IntegrationType,
         pushNotificationTracking: Exponea.PushNotificationTracking,
         automaticSessionTracking: Exponea.AutomaticSessionTracking = .enabled(),
         defaultProperties: [String: JSONConvertible]? = nil,
@@ -244,10 +225,7 @@ public extension ExponeaInternal {
                 willRunSelfCheck = self.checkPushSetup && pushNotificationTracking.isEnabled
             }
             let configuration = try Configuration(
-                projectToken: projectSettings.projectToken,
-                projectMapping: projectSettings.projectMapping,
-                authorization: projectSettings.authorization,
-                baseUrl: projectSettings.baseUrl,
+                integrationConfig: integrationConfig,
                 appGroup: pushNotificationTracking.appGroup,
                 defaultProperties: defaultProperties,
                 inAppContentBlocksPlaceholders: inAppContentBlocksPlaceholders,
@@ -334,6 +312,49 @@ public extension ExponeaInternal {
     func configure(with configuration: Configuration) {
         invokeSdkInitSafely {
             self.configuration = configuration
+        }
+    }
+    
+    /// Configure the SDK with a Configuration object and optional authentication context.
+    /// Use this when you want to provide initial customer IDs and/or JWT token during configuration.
+    ///
+    /// - Parameters:
+    ///   - configuration: The SDK configuration object.
+    ///   - authContext: Optional authentication context with customer IDs and JWT token.
+    func configure(
+        with configuration: Configuration,
+        authContext: CustomerIdentity?
+    ) {
+        invokeSdkInitSafely { [weak self] in
+            self?.configuration = configuration
+            
+            // After configuration, apply auth context if provided
+            if let authContext = authContext {
+                self?.applyInitialAuthContext(authContext, configuration: configuration)
+            }
+        }
+    }
+    
+    /// Applies the initial authentication context after SDK configuration.
+    private func applyInitialAuthContext(_ authContext: CustomerIdentity, configuration: Configuration) {
+        if case .stream = configuration.integrationConfig.type, let jwt = authContext.jwtToken {
+            jwtAuthManager?.setToken(jwt)
+            Exponea.logger.log(.verbose, message: "Initial Stream JWT token applied from authContext")
+        }
+        
+        // Identify customer with provided IDs if any
+        if !authContext.customerIds.isEmpty {
+            // We use executeSafely to ensure dependencies are ready
+            executeSafely { [weak self] in
+                guard let trackingManager = self?.trackingManager else { return }
+                var data: [DataType] = [.timestamp(nil)]
+                var ids = authContext.customerIds
+                // Preserve cookie
+                ids["cookie"] = trackingManager.customerIds["cookie"]
+                data.append(.customerIds(ids))
+                try trackingManager.track(.identifyCustomer, with: data)
+                Exponea.logger.log(.verbose, message: "Initial customer identification applied from authContext")
+            }
         }
     }
 

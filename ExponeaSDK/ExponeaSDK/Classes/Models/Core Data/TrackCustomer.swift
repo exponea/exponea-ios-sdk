@@ -19,8 +19,10 @@ class TrackCustomer: NSManagedObjectWithContext, DatabaseObject {
     }
 
     @NSManaged public var baseUrl: String?
-    @NSManaged public var projectToken: String?
+    @NSManaged public var integrationId: String?
     @NSManaged public var authorizationString: String?
+    @NSManaged public var integrationType: String?
+    @NSManaged public var projectToken: String?
 
     @NSManaged public var timestamp: Double
     @NSManaged public var customer: Customer?
@@ -82,7 +84,8 @@ final class TrackCustomerProxy: FlushableObject {
     let databaseObjectProxy: DatabaseObjectProxy
 
     let baseUrl: String?
-    let projectToken: String?
+    let integrationId: String?
+    let integrationType: String?
     let authorization: Authorization
 
     let customerIds: [String: String]
@@ -93,7 +96,8 @@ final class TrackCustomerProxy: FlushableObject {
     init(_ customer: TrackCustomer) {
         self.databaseObjectProxy = DatabaseObjectProxy(customer)
         self.baseUrl = customer.baseUrl
-        self.projectToken = customer.projectToken
+        self.integrationId = customer.integrationId
+        self.integrationType = customer.integrationType
         self.authorization = Authorization(from: customer.authorizationString)
 
         self.customerIds = customer.customer?.ids ?? [:]
@@ -104,19 +108,23 @@ final class TrackCustomerProxy: FlushableObject {
 
     func getTrackingObject(
         defaultBaseUrl: String,
-        defaultProjectToken: String,
+        defaultIntegrationId: String,
         defaultAuthorization: Authorization
     ) -> TrackingObject {
         var auth = authorization
-        if case .none = auth {
+        if case Authorization.none = auth {
             auth = defaultAuthorization
         }
+        
+        let exponeaProject = getExponeaIntegrationType(
+            integrationType: integrationType,
+            baseUrl: baseUrl ?? defaultBaseUrl,
+            integrationId: integrationId ?? defaultIntegrationId,
+            auth: auth
+        )
+        
         return CustomerTrackingObject(
-            exponeaProject: ExponeaProject(
-                baseUrl: baseUrl ?? defaultBaseUrl,
-                projectToken: projectToken ?? defaultProjectToken,
-                authorization: auth
-            ),
+            exponeaProject: exponeaProject,
             customerIds: customerIds,
             timestamp: timestamp,
             dataTypes: dataTypes

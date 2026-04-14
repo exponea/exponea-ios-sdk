@@ -12,6 +12,8 @@ The SDK provides methods to retrieve data from the Engagement platform. Response
 
 Use the `fetchRecommendation` method to get personalized recommendations for the current customer from an Engagement [recommendation model](https://documentation.bloomreach.com/engagement/docs/recommendations).
 
+> `fetchRecommendation` works transparently in both Project/Engagement and Stream/Data Hub modes. In Stream mode, the SDK routes the request to the Data Hub optimization endpoint (`/optimization/streams/<streamId>/recommend/user`) using JWT authentication. No API changes are needed from the consumer side.
+
 The method returns a `RecommendationResponse` object containing the system data (the recommendation engine data and recommended item IDs) and, if applicable, the user-defined data. To specify user-defined properties, you can use the generic type parameter `T: RecommendationUserData`. It's a simple `struct` with coding keys representing your custom properties. If you only need the system properties, you can use `EmptyRecommendationData`.
 
 ### Arguments

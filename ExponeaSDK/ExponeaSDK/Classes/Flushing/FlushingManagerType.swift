@@ -27,7 +27,9 @@ protocol FlushingManagerType {
 
 /// Result of flushing operation
 public enum FlushResult {
-    // Success with number of event/customer identification objects flushed.
+    /// Flush completed. The associated value is the number of objects that were
+    /// successfully flushed. Objects skipped due to empty customerIds are excluded.
+    /// When some items fail, the count reflects only the successful ones.
     case success(Int)
     // Flush can only be running once at a time.
     case flushAlreadyInProgress

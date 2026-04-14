@@ -14,6 +14,35 @@ import Nimble
 
 final class ExponeaNotificationServiceSpec: QuickSpec {
 
+    private let testConfigurations: [Configuration] = [
+        try! Configuration(
+            projectToken: "mock-project-token",
+            projectMapping: nil,
+            authorization: .token("mock-token"),
+            baseUrl: nil,
+            appGroup: "mock-app-group",
+            defaultProperties: nil
+        ),
+        try! Configuration(
+            integrationConfig: Exponea.ProjectSettings(
+                projectToken: "mock-project-token",
+                authorization: .token("mock-token"),
+                baseUrl: nil,
+                projectMapping: nil
+            ),
+            appGroup: "mock-app-group",
+            defaultProperties: nil
+        ),
+        try! Configuration(
+            integrationConfig: Exponea.StreamSettings(
+                streamId: "mock-project-token",
+                baseUrl: nil
+            ),
+            appGroup: "mock-app-group",
+            defaultProperties: nil
+        )
+    ]
+    
     private func mock_notification_request(userInfo: [AnyHashable: Any]?) -> UNNotificationRequest {
         let content = UNNotificationContent()
         content.setValue(userInfo, forKey: "userInfo")
@@ -61,28 +90,24 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
                 expect(savedNotificationData?.campaignName).to(equal("mock campaign name"))
             }
 
-            it("should record notification event into user defaults") {
-                let service = ExponeaNotificationService(appGroup: "mock-app-group")
-                service.telemetry = nil
-                let notification = NotificationData( attributes: ["campaign_name": .string("mock campaign name")])
-                let configuration = try! Configuration(
-                    projectToken: "mock-project-token",
-                    projectMapping: nil,
-                    authorization: .token("mock-token"),
-                    baseUrl: nil,
-                    appGroup: "mock-app-group",
-                    defaultProperties: nil
-                )
-                let events = DeliveredNotificationTracker.generateTrackingObjects(
-                    configuration: configuration,
-                    customerIds: ["cookie": "12345"],
-                    notification: notification
-                )
-                service.saveNotificationEventsForLaterTracking(events)
-                let delivered = self.getRecordedNotifications()
-                expect(delivered).to(beEmpty())
-                let deliveredEvents = self.getRecordedNotificationEvents()
-                expect(deliveredEvents.count).to(equal(1))
+            context("should record notification event into user defaults") {
+                for configuration in testConfigurations {
+                    it(configuration.integrationConfig.type.rawValue) {
+                        let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                        service.telemetry = nil
+                        let notification = NotificationData( attributes: ["campaign_name": .string("mock campaign name")])
+                        let events = DeliveredNotificationTracker.generateTrackingObjects(
+                            configuration: configuration,
+                            customerIds: ["cookie": "12345"],
+                            notification: notification
+                        )
+                        service.saveNotificationEventsForLaterTracking(events)
+                        let delivered = self.getRecordedNotifications()
+                        expect(delivered).to(beEmpty())
+                        let deliveredEvents = self.getRecordedNotificationEvents()
+                        expect(deliveredEvents.count).to(equal(1))
+                    }
+                }
             }
 
             it("should record notification without tracking info into user defaults") {
@@ -120,47 +145,43 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
                 )
             }
 
-            it("should record multiple notification events into user defaults") {
-                let service = ExponeaNotificationService(appGroup: "mock-app-group")
-                service.telemetry = nil
-                let configuration = try! Configuration(
-                    projectToken: "mock-project-token",
-                    projectMapping: nil,
-                    authorization: .token("mock-token"),
-                    baseUrl: nil,
-                    appGroup: "mock-app-group",
-                    defaultProperties: nil
-                )
-                let customerIds = ["cookie": "1234"]
-                service.saveNotificationEventsForLaterTracking(DeliveredNotificationTracker.generateTrackingObjects(
-                    configuration: configuration,
-                    customerIds: customerIds,
-                    notification: NotificationData( attributes: ["campaign_name": .string("first mock campaign name")])
-                ))
-                service.saveNotificationEventsForLaterTracking(DeliveredNotificationTracker.generateTrackingObjects(
-                    configuration: configuration,
-                    customerIds: customerIds,
-                    notification: NotificationData( attributes: ["campaign_name": .string("second mock campaign name")])
-                ))
-                service.saveNotificationEventsForLaterTracking(DeliveredNotificationTracker.generateTrackingObjects(
-                    configuration: configuration,
-                    customerIds: customerIds,
-                    notification: NotificationData( attributes: ["campaign_name": .string("third mock campaign name")])
-                ))
-                let deliveredEvents = self.getRecordedNotificationEvents()
-                expect(deliveredEvents.count).to(equal(3))
-                let event1 = EventTrackingObject.deserialize(from: deliveredEvents[0])
-                expect(event1?.customerIds["cookie"]).to(equal("1234"))
-                let campaignName1: String = event1?.dataTypes.properties["campaign_name"]?.unsafelyUnwrapped.jsonValue.rawValue as! String
-                expect(campaignName1).to(equal("first mock campaign name"))
-                let event2 = EventTrackingObject.deserialize(from: deliveredEvents[1])
-                expect(event2?.customerIds["cookie"]).to(equal("1234"))
-                let campaignName2: String = event2?.dataTypes.properties["campaign_name"]?.unsafelyUnwrapped.jsonValue.rawValue as! String
-                expect(campaignName2).to(equal("second mock campaign name"))
-                let event3 = EventTrackingObject.deserialize(from: deliveredEvents[2])
-                expect(event3?.customerIds["cookie"]).to(equal("1234"))
-                let campaignName3: String = event3?.dataTypes.properties["campaign_name"]?.unsafelyUnwrapped.jsonValue.rawValue as! String
-                expect(campaignName3).to(equal("third mock campaign name"))
+            context("should record multiple notification events into user defaults") {
+                for configuration in testConfigurations {
+                    it(configuration.integrationConfig.type.rawValue) {
+                        let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                        service.telemetry = nil
+                        let customerIds = ["cookie": "1234"]
+                        service.saveNotificationEventsForLaterTracking(DeliveredNotificationTracker.generateTrackingObjects(
+                            configuration: configuration,
+                            customerIds: customerIds,
+                            notification: NotificationData( attributes: ["campaign_name": .string("first mock campaign name")])
+                        ))
+                        service.saveNotificationEventsForLaterTracking(DeliveredNotificationTracker.generateTrackingObjects(
+                            configuration: configuration,
+                            customerIds: customerIds,
+                            notification: NotificationData( attributes: ["campaign_name": .string("second mock campaign name")])
+                        ))
+                        service.saveNotificationEventsForLaterTracking(DeliveredNotificationTracker.generateTrackingObjects(
+                            configuration: configuration,
+                            customerIds: customerIds,
+                            notification: NotificationData( attributes: ["campaign_name": .string("third mock campaign name")])
+                        ))
+                        let deliveredEvents = self.getRecordedNotificationEvents()
+                        expect(deliveredEvents.count).to(equal(3))
+                        let event1 = EventTrackingObject.deserialize(from: deliveredEvents[0])
+                        expect(event1?.customerIds["cookie"]).to(equal("1234"))
+                        let campaignName1: String = event1?.dataTypes.properties["campaign_name"]?.unsafelyUnwrapped.jsonValue.rawValue as! String
+                        expect(campaignName1).to(equal("first mock campaign name"))
+                        let event2 = EventTrackingObject.deserialize(from: deliveredEvents[1])
+                        expect(event2?.customerIds["cookie"]).to(equal("1234"))
+                        let campaignName2: String = event2?.dataTypes.properties["campaign_name"]?.unsafelyUnwrapped.jsonValue.rawValue as! String
+                        expect(campaignName2).to(equal("second mock campaign name"))
+                        let event3 = EventTrackingObject.deserialize(from: deliveredEvents[2])
+                        expect(event3?.customerIds["cookie"]).to(equal("1234"))
+                        let campaignName3: String = event3?.dataTypes.properties["campaign_name"]?.unsafelyUnwrapped.jsonValue.rawValue as! String
+                        expect(campaignName3).to(equal("third mock campaign name"))
+                    }
+                }
             }
         }
 
@@ -198,56 +219,52 @@ final class ExponeaNotificationServiceSpec: QuickSpec {
                 }
             }
 
-            it("should not save notification events for later when tracking failed by network") {
-                try! Configuration(
-                    projectToken: "mock-project-token",
-                    projectMapping: nil,
-                    authorization: ExponeaSDK.Authorization.token("mock-token"),
-                    baseUrl: nil,
-                    appGroup: "mock-app-group",
-                    defaultProperties: nil
-                ).saveToUserDefaults()
-                guard let userDefaults = UserDefaults(suiteName: "mock-app-group"),
-                    let data = try? JSONEncoder().encode(["uuid": ExponeaSDK.JSONValue.string("mock-uuid")]) else {
-                    return
-                }
-                userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
-                let service = ExponeaNotificationService(appGroup: "mock-app-group")
-                service.telemetry = nil
-                waitUntil(timeout: .seconds(5)) { done in
-                    service.process(request: request) { _ in
-                        // for existing SDK conf, raw NotifPayloads are meaningless to be stored
-                        expect(self.getRecordedNotifications()).to(beEmpty())
-                        // for existing SDK conf, delivered events has to be created and stored
-                        let deliveredEvents = self.getRecordedNotificationEvents()
-                        expect(deliveredEvents.count).to(equal(1))
-                        done()
+            context("should not save notification events for later when tracking failed by network") {
+                for configuration in testConfigurations {
+                    it(configuration.integrationConfig.type.rawValue) {
+                        configuration.saveToUserDefaults()
+                        
+                        guard let userDefaults = UserDefaults(suiteName: "mock-app-group"),
+                            let data = try? JSONEncoder().encode(["uuid": ExponeaSDK.JSONValue.string("mock-uuid")]) else {
+                            return
+                        }
+                        userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
+                        let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                        service.telemetry = nil
+                        waitUntil(timeout: .seconds(5)) { done in
+                            service.process(request: request) { _ in
+                                // for existing SDK conf, raw NotifPayloads are meaningless to be stored
+                                expect(self.getRecordedNotifications()).to(beEmpty())
+                                // for existing SDK conf, delivered events has to be created and stored
+                                let deliveredEvents = self.getRecordedNotificationEvents()
+                                expect(deliveredEvents.count).to(equal(1))
+                                done()
+                            }
+                        }
                     }
                 }
             }
 
-            it("should not save notification for later when tracking succeeds") {
-                try! Configuration(
-                    projectToken: "mock-project-token",
-                    projectMapping: nil,
-                    authorization: ExponeaSDK.Authorization.token("mock-token"),
-                    baseUrl: nil,
-                    appGroup: "mock-app-group",
-                    defaultProperties: nil
-                ).saveToUserDefaults()
-                guard let userDefaults = UserDefaults(suiteName: "mock-app-group"),
-                    let data = try? JSONEncoder().encode(["uuid": ExponeaSDK.JSONValue.string("mock-uuid")]) else {
-                    return
-                }
-                userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
-                NetworkStubbing.stubNetwork(forProjectToken: "mock-project-token", withStatusCode: 200)
-                let service = ExponeaNotificationService(appGroup: "mock-app-group")
-                service.telemetry = nil
-                waitUntil(timeout: .seconds(5)) { done in
-                    service.process(request: request) { _ in
-                        expect(self.getRecordedNotifications()).to(beEmpty())
-                        expect(self.getRecordedNotificationEvents()).to(beEmpty())
-                        done()
+            context("should not save notification for later when tracking succeeds") {
+                for configuration in testConfigurations {
+                    it(configuration.integrationConfig.type.rawValue) {
+                        configuration.saveToUserDefaults()
+                        
+                        guard let userDefaults = UserDefaults(suiteName: "mock-app-group"),
+                            let data = try? JSONEncoder().encode(["uuid": ExponeaSDK.JSONValue.string("mock-uuid")]) else {
+                            return
+                        }
+                        userDefaults.set(data, forKey: Constants.General.lastKnownCustomerIds)
+                        NetworkStubbing.stubNetwork(forIntegrationType: configuration.integrationConfig.type, withStatusCode: 200)
+                        let service = ExponeaNotificationService(appGroup: "mock-app-group")
+                        service.telemetry = nil
+                        waitUntil(timeout: .seconds(5)) { done in
+                            service.process(request: request) { _ in
+                                expect(self.getRecordedNotifications()).to(beEmpty())
+                                expect(self.getRecordedNotificationEvents()).to(beEmpty())
+                                done()
+                            }
+                        }
                     }
                 }
             }

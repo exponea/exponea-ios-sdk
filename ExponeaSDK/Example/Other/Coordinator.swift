@@ -80,10 +80,11 @@ final class Coordinator {
         case .stopAndContinue:
             Exponea.shared.stopIntegration()
         case .stopAndRestart:
-            Exponea.shared.stopIntegration()
-            if let window = UIApplication.shared.windows.first,
-               let auth: UINavigationController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "authnav") as? UINavigationController {
-                window.rootViewController = auth
+            Exponea.shared.stopIntegration {
+                if let window = UIApplication.shared.windows.first,
+                   let auth: UINavigationController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "authnav") as? UINavigationController {
+                    window.rootViewController = auth
+                }
             }
         }
     }

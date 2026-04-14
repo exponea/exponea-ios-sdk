@@ -9,6 +9,8 @@
 import Foundation
 import Mockingjay
 
+@testable import ExponeaSDKShared
+
 extension URL {
     init?(safeString: String) {
 #if compiler(>=5.9) // XCODE 15+
@@ -28,7 +30,7 @@ extension URL {
 
 struct NetworkStubbing {
     static func stubNetwork(
-        forProjectToken projectToken: String,
+        forIntegrationType integrationType: IntegrationSourceType,
         withStatusCode statusCode: Int,
         withDelay delay: TimeInterval = TimeInterval(0),
         withResponseData responseData: Data? = nil,
@@ -49,7 +51,12 @@ struct NetworkStubbing {
                 else {
                     return false
                 }
-                return components.path.contains("/projects/\(projectToken)/")
+                switch integrationType {
+                case .project(let projectToken):
+                    return components.path.contains("/projects/\(projectToken)/")
+                case .stream(let streamId):
+                    return components.path.contains("/streams/\(streamId)/") || (components.url?.absoluteString.contains("?stream_id=\(streamId)") ?? false)
+                }
             },
             delay: delay,
             builder: { request in

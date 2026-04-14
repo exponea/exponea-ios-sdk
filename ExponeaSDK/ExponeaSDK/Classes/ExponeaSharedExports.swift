@@ -34,6 +34,15 @@ public typealias TokenTrackFrequency = ExponeaSDKShared.TokenTrackFrequency
 public typealias NotificationData = ExponeaSDKShared.NotificationData
 public typealias GdprTracking = ExponeaSDKShared.GdprTracking
 public typealias AuthorizationProviderType = ExponeaSDKShared.AuthorizationProviderType
+public typealias IntegrationType = ExponeaSDKShared.IntegrationType
+public typealias StreamSettings = ExponeaSDKShared.Exponea.StreamSettings
+public typealias ProjectSettings = ExponeaSDKShared.Exponea.ProjectSettings
+public typealias ExponeaIntegrationType = ExponeaSDKShared.ExponeaIntegrationType
+public typealias ExponeaIntegration = ExponeaSDKShared.ExponeaIntegration
+public typealias IntegrationSourceType = ExponeaSDKShared.IntegrationSourceType
+public typealias CustomerIds = ExponeaSDKShared.CustomerIds
+public typealias CustomerIdentity = ExponeaSDKShared.CustomerIdentity
+public typealias JwtErrorContext = ExponeaSDKShared.JwtErrorContext
 
 /*
  Instead of including ExponeaSDKShared in every file and conditionally

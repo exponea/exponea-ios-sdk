@@ -18,6 +18,7 @@ final class TelemetryManagerSpec: QuickSpec {
     var manager: TelemetryManager!
     override func spec() {
         beforeEach {
+            Exponea.shared = ExponeaInternal()
             IntegrationManager.shared.isStopped = false
             let userDefaults = TelemetryUtility.getUserDefaults(appGroup: nil)
             let installId = TelemetryUtility.getInstallId(userDefaults: userDefaults)
@@ -86,6 +87,35 @@ final class TelemetryManagerSpec: QuickSpec {
             expect(self.upload.uploadedCrashLogs[0].errorData.message)
                 .to(equal("custom domain:123 localized error"))
             expect(self.upload.uploadedCrashLogs[0].errorData.stackTrace.count).to(equal(2))
+        }
+
+        it("should complete event report without sending to Sentry") {
+            self.manager.report(
+                eventWithType: .recommendationsFetched,
+                properties: ["property": "value", "other_property": "other_value"]
+            )
+            expect(self.upload.uploadedEnvelopes).to(beEmpty())
+        }
+        
+        it("should complete event report for stopped SDK without sending to Sentry") {
+            Exponea.shared.stopIntegration()
+            self.manager.report(
+                eventWithType: .recommendationsFetched,
+                properties: ["property": "value", "other_property": "other_value"]
+            )
+            expect(self.upload.uploadedEnvelopes).to(beEmpty())
+            IntegrationManager.shared.isStopped = false
+        }
+
+        it("should complete init event report without sending to Sentry") {
+            self.manager.report(
+                initEventWithConfiguration: try! Configuration(
+                    projectToken: "token",
+                    authorization: Authorization.none,
+                    baseUrl: Constants.Repository.baseUrl
+                )
+            )
+            expect(self.upload.uploadedEnvelopes).to(beEmpty())
         }
     }
 }

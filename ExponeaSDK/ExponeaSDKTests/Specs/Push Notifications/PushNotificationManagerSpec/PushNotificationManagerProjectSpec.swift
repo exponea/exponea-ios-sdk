@@ -12,7 +12,7 @@ import Quick
 @testable import ExponeaSDK
 @testable import ExponeaSDKNotifications
 
-final class PushNotificationManagerSpec: QuickSpec {
+final class PushNotificationManagerProjectSpec: QuickSpec {
     struct TrackDeliveredTestCase {
         let name: String
         let userInfo: [String: Any]
@@ -1417,7 +1417,7 @@ final class PushNotificationManagerSpec: QuickSpec {
 
                     waitUntil(timeout: .seconds(5)) { done in
                         NetworkStubbing.stubNetwork(
-                            forProjectToken: "mock-project-token",
+                            forIntegrationType: .project(projectToken: "mock-project-token"),
                             withStatusCode: 200,
                             withDelay: 0,
                             withResponseData: nil,

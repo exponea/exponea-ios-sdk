@@ -13,6 +13,7 @@ public enum Routes {
     case identifyCustomer
     case customEvent
     case customerAttributes
+    case recommendations
     case campaignClick
     case consents
     case inAppMessages
@@ -26,7 +27,10 @@ public enum Routes {
 
     public var method: HTTPMethod {
         switch self {
-        case .consents, .inAppContentBlocks, .segmentation: return .get
+        case .consents,
+                .inAppContentBlocks,
+                .segmentation:
+            return .get
         default: return .post
         }
     }

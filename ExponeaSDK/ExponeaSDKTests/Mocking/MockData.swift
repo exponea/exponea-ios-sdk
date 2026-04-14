@@ -74,3 +74,61 @@ struct MockData {
     // swiftlint:disable:next line_length
     let invalidCampaignUrl = URL(safeString: "https://mockurl?param?utm_source=utm&utm_campaign=mycampaign&utm_content=utmcontent&utm_medium=utmmedium&utm_term=term&itt=usertoken")
 }
+
+// TODO: move to separate file or somewhere else
+
+struct ThrowableConfiguration {
+    let config: () throws -> Configuration
+}
+
+typealias TestableOptionalConfigErrorDesc = (configuration: Configuration?, errorDescription: String)
+typealias TestableNonOptionalConfigErrorDesc = (configuration: Configuration, errorDescription: String)
+
+/// This structure was created for more convenient unit testing. It provides some default test mock data via static functions.
+struct TestConfigParams {
+    static var configurations: [Configuration] {
+        [
+            try! Configuration(
+                projectToken: UUID().uuidString,
+                authorization: .token("mock-token"),
+                baseUrl: "https://mock-base-url.com"
+            ),
+            try! Configuration(
+                integrationConfig: Exponea.ProjectSettings(
+                    projectToken: UUID().uuidString,
+                    authorization: .token("mock-token"),
+                    baseUrl: "https://mock-base-url.com"
+                )
+            ),
+            try! Configuration(
+                integrationConfig: Exponea.StreamSettings(
+                    streamId: UUID().uuidString,
+                    baseUrl: "https://mock-base-url.com"
+                )
+            )
+        ]
+    }
+    
+    static var configurationsForFlushing: [Configuration] {
+        [
+            try! Configuration(
+                projectToken: UUID().uuidString,
+                authorization: .token("mock-token"),
+                baseUrl: "https://google.com/" // has to be real url because of reachability
+            ),
+            try! Configuration(
+                integrationConfig: Exponea.ProjectSettings(
+                    projectToken: UUID().uuidString,
+                    authorization: .token("mock-token"),
+                    baseUrl: "https://google.com/", // has to be real url because of reachability
+                )
+            ),
+            try! Configuration(
+                integrationConfig: Exponea.StreamSettings(
+                    streamId: UUID().uuidString,
+                    baseUrl: "https://google.com/" // has to be real url because of reachability
+                )
+            )
+        ]
+    }
+}

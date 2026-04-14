@@ -46,7 +46,7 @@ public final class TelemetryUtility {
     public static func formatConfigurationForTracking(_ config: Configuration) -> [String: String] {
         guard let defaultConfig = try? Configuration(
             projectToken: "placeholder",
-            authorization: .none,
+            authorization: Authorization.none,
             baseUrl: Constants.Repository.baseUrl,
             allowDefaultCustomerProperties: true,
             manualSessionAutoClose: config.manualSessionAutoClose
@@ -57,7 +57,7 @@ public final class TelemetryUtility {
             "projectMapping":
                 config.projectMapping != nil && config.projectMapping?.isEmpty == false ? "[REDACTED]" : "",
             "authorization":
-                config.authorization == .none ? "[]" : "[REDACTED]",
+                config.hasSufficientAuth ? "[REDACTED]" : "[]",
             "baseUrl":
                 "\(config.baseUrl)\(config.baseUrl == defaultConfig.baseUrl ? " [default]" : "")",
             "inAppContentBlocksPlaceholders":

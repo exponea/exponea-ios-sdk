@@ -28,7 +28,28 @@ protocol FlushableObject {
 
     func getTrackingObject(
         defaultBaseUrl: String,
-        defaultProjectToken: String,
+        defaultIntegrationId: String,
         defaultAuthorization: Authorization
     ) -> TrackingObject
+}
+
+extension FlushableObject {
+    func getExponeaIntegrationType(
+        integrationType: String?,
+        baseUrl: String,
+        integrationId: String,
+        auth: Authorization
+    ) -> any ExponeaIntegrationType {
+        guard let type = integrationType, type == IntegrationSourceType.stream(streamId: "").rawValue else {
+            return ExponeaProject(
+                baseUrl: baseUrl,
+                projectToken: integrationId,
+                authorization: auth
+            )
+        }
+        return ExponeaIntegration(
+            baseUrl: baseUrl,
+            streamId: integrationId
+        )
+    }
 }

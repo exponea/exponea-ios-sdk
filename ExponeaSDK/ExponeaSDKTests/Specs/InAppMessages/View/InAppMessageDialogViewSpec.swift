@@ -23,7 +23,7 @@ final class InAppMessageDialogViewSpec: QuickSpec {
         }
 
         let fullscreenSettings = [true, false]
-        fullscreenSettings.forEach { fullscreen in
+        for fullscreen in fullscreenSettings {
             it("should setup \(fullscreen ? "fullscreen" : "modal") dialog with payload") {
                 let dialog: InAppMessageDialogView = InAppMessageDialogView(
                     payload: payload!,

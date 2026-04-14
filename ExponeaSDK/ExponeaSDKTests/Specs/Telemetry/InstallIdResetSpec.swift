@@ -7,6 +7,7 @@
 //  Anonymize does NOT clear device_id (install ID is preserved).
 //
 
+import Foundation
 import Quick
 import Nimble
 
@@ -14,6 +15,17 @@ import Nimble
 @testable import ExponeaSDKShared
 
 final class InstallIdResetSpec: QuickSpec {
+    private static func restoreExponeaShared() {
+        let exponea = ExponeaInternal()
+        Exponea.shared = exponea
+        exponea.configure(
+            Exponea.ProjectSettings(projectToken: "cleanup-token", authorization: .token("cleanup")),
+            pushNotificationTracking: .enabled(appGroup: "group.test.exponea.cleanup"),
+            flushingSetup: Exponea.FlushingSetup(mode: .manual)
+        )
+        IntegrationManager.shared.isStopped = false
+    }
+
     override func spec() {
         describe("Install ID (device_id) reset on stop and clear") {
             context("stopIntegration") {
@@ -26,7 +38,7 @@ final class InstallIdResetSpec: QuickSpec {
                 }
 
                 afterEach {
-                    IntegrationManager.shared.isStopped = false
+                    InstallIdResetSpec.restoreExponeaShared()
                 }
 
                 it("clears install ID from app group UserDefaults so next getInstallId returns a new value") {
@@ -43,7 +55,11 @@ final class InstallIdResetSpec: QuickSpec {
                     expect(installIdBeforeStop).notTo(beEmpty())
                     expect(UUID(uuidString: installIdBeforeStop)).notTo(beNil())
 
-                    Exponea.shared.stopIntegration()
+                    waitUntil(timeout: .seconds(5)) { done in
+                        Exponea.shared.stopIntegration(completion: {
+                            done()
+                        })
+                    }
 
                     let installIdAfterStop = TelemetryUtility.getInstallId(userDefaults: TelemetryUtility.getUserDefaults(appGroup: appGroup))
                     expect(installIdAfterStop).notTo(equal(installIdBeforeStop))
@@ -58,6 +74,10 @@ final class InstallIdResetSpec: QuickSpec {
                     Exponea.shared = ExponeaInternal()
                     TelemetryUtility.clearInstallIdFromAllStores(appGroup: appGroup)
                     UserDefaults(suiteName: appGroup)?.removeObject(forKey: Constants.General.lastKnownConfiguration)
+                }
+
+                afterEach {
+                    InstallIdResetSpec.restoreExponeaShared()
                 }
 
                 it("clears install ID from app group UserDefaults so next getInstallId returns a new value") {
@@ -110,7 +130,7 @@ final class InstallIdResetSpec: QuickSpec {
                 }
 
                 afterEach {
-                    IntegrationManager.shared.isStopped = false
+                    InstallIdResetSpec.restoreExponeaShared()
                 }
 
                 it("does not clear install ID (device_id is preserved across anonymize)") {

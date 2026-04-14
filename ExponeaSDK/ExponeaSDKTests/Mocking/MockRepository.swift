@@ -35,11 +35,13 @@ final class MockRepository: RepositoryType {
     var configuration: Configuration
 
     var trackObjectResult: EmptyResult<RepositoryError> = EmptyResult.failure(RepositoryError.connectionError)
+    var trackObjectHook: ((TrackingObject) -> Void)?
     var fetchRecommendationResult: Result<RecommendationResponse<EmptyRecommendationData>>
         = Result.failure(RepositoryError.connectionError)
     var fetchConsentsResult: Result<ConsentsResponse> = Result.failure(RepositoryError.connectionError)
     var fetchInAppMessagesResult: Result<InAppMessagesResponse> = Result.failure(RepositoryError.connectionError)
     var fetchAppInboxResult: Result<AppInboxResponse> = Result.failure(RepositoryError.connectionError)
+    var fetchAppInboxAction: ((_ syncToken: String?, _ completion: @escaping (Result<AppInboxResponse>) -> Void) -> Void)?
     var fetchInAppContentBlocksPlaceholdersResult: Result<InAppContentBlocksDataResponse> = Result.failure(RepositoryError.connectionError)
     var fetchInAppContentBlocksResult: Result<PersonalizedInAppContentBlockResponseData> = Result.failure(RepositoryError.connectionError)
 
@@ -56,11 +58,12 @@ final class MockRepository: RepositoryType {
         _ object: TrackingObject,
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     ) {
+        trackObjectHook?(object)
         completion(trackObjectResult)
     }
 
     func fetchRecommendation<T>(
-        request: RecommendationRequest,
+        options: RecommendationOptions,
         for customerIds: [String: String],
         completion: @escaping (Result<RecommendationResponse<T>>) -> Void
     ) where T: RecommendationUserData {
@@ -68,7 +71,7 @@ final class MockRepository: RepositoryType {
     }
 
     func fetchRecommendation(
-        request: RecommendationRequest,
+        options: RecommendationOptions,
         for customerIds: [String: String],
         completion: @escaping (Result<RecommendationResponse<EmptyRecommendationData>>) -> Void
     ) {
@@ -105,7 +108,11 @@ final class MockRepository: RepositoryType {
         with syncToken: String?,
         completion: @escaping (Result<AppInboxResponse>) -> Void
     ) {
-        completion(fetchAppInboxResult)
+        if let action = fetchAppInboxAction {
+            action(syncToken, completion)
+        } else {
+            completion(fetchAppInboxResult)
+        }
     }
 
     func postReadFlagAppInbox(

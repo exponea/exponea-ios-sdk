@@ -33,7 +33,9 @@ class IdentifyCustomerViewController: UIViewController {
         keyField2.placeholder = "custom_key_2"
         keyField3.placeholder = "custom_key_3"
 
-        if let customerIds = CustomerTokenStorage.shared.customerIds,
+        // Prefill only in Project mode (CustomerTokenStorage is used only for Project)
+        if case .some(.project) = Exponea.shared.configuration?.integrationConfig.type,
+           let customerIds = CustomerTokenStorage.shared.customerIds,
            let registeredValue = customerIds["registered"] {
             idKeyField.text = "registered"
             idValueField.text = registeredValue
@@ -70,9 +72,19 @@ class IdentifyCustomerViewController: UIViewController {
         if let key3 = keyField3.text, !key3.isEmpty {
             properties[key3] = valueField3.text ?? ""
         }
-        CustomerTokenStorage.shared.configure(customerIds: ids)
-        Exponea.shared.identifyCustomer(customerIds: ids, properties: properties, timestamp: nil)
-        dismiss(animated: true, completion: nil)
         
+        // Stream: JWT is stored in SDK Keychain; the identify request uses it automatically via the auth provider.
+        // Project: use CustomerTokenStorage for customer IDs and standard identify.
+        if case .some(.stream) = Exponea.shared.configuration?.integrationConfig.type {
+            let context = CustomerIdentity(customerIds: ids ?? [:], jwtToken: nil)
+            Exponea.shared.identifyCustomer(context: context, properties: properties, timestamp: nil)
+            Exponea.logger.log(.verbose, message: "Identified customer (Stream); JWT from Keychain")
+        } else {
+            CustomerTokenStorage.shared.configure(customerIds: ids)
+            let context = CustomerIdentity(customerIds: ids ?? [:], jwtToken: nil)
+            Exponea.shared.identifyCustomer(context: context, properties: properties, timestamp: nil)
+        }
+
+        dismiss(animated: true, completion: nil)
     }
 }

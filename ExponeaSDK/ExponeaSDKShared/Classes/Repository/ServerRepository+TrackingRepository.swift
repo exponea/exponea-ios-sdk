@@ -51,16 +51,23 @@ extension ServerRepository: TrackingRepository {
     }
 
     func uploadTrackingData(
-        into exponeaProject: ExponeaProject,
+        into exponeaProject: any ExponeaIntegrationType,
         trackingParameters: TrackingParameters,
         route: Routes,
         completion: @escaping ((EmptyResult<RepositoryError>) -> Void)
     ) {
-        let router = RequestFactory(exponeaProject: exponeaProject, route: route)
-        let request = router.prepareRequest(parameters: trackingParameters)
-
-        session
-            .dataTask(with: request, completionHandler: router.handler(with: completion))
-            .resume()
+        let router = makeRouter(for: route, project: exponeaProject)
+        var executeRequest: ((@escaping (Bool) -> Void) -> Void)?
+        let (handler, startRequest) = router.handler(withRetry: { setRequestHadJwt in executeRequest?(setRequestHadJwt) }, completion: completion)
+        executeRequest = { setRequestHadJwt in
+            do {
+                let request = try router.prepareRequest(parameters: trackingParameters)
+                setRequestHadJwt(request.value(forHTTPHeaderField: Constants.Repository.headerAuthorization) != nil)
+                self.session.dataTask(with: request, completionHandler: handler).resume()
+            } catch {
+                completion(.failure(RepositoryError.unknown(error)))
+            }
+        }
+        startRequest()
     }
 }

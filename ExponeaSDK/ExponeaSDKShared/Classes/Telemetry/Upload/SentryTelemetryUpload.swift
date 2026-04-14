@@ -145,9 +145,10 @@ public class SentryTelemetryUpload: TelemetryUpload {
     }
     
     private func buildTags(_ eventName: String) -> [String: String] {
+        let integration = integrationValues
         return [
             "uuid": installId,
-            "projectToken": tryReadProjectToken(),
+            integration.key: integration.value,
             "sdkVersion": Exponea.version,
             "sdkName": "ExponeaSDK.ios",
             "appName": appInfo.appName,
@@ -164,8 +165,14 @@ public class SentryTelemetryUpload: TelemetryUpload {
         ]
     }
     
-    private func tryReadProjectToken() -> String {
-        return sdkConfigGetter()?.projectToken ?? ""
+    private var integrationValues: (key: String, value: String) {
+        guard let configuration = sdkConfigGetter() else { return (key: "", value: "") }
+        switch configuration.integrationConfig.type {
+        case .project(let projectToken):
+            return (key: "projectToken", value: projectToken)
+        case .stream(let streamId):
+            return (key: "streamId", value: streamId)
+        }
     }
     
     private func toSentryErrorLevel(_ isFatal: Bool) -> String {

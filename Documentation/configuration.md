@@ -10,8 +10,13 @@ This page provides an overview of all configuration parameters for the SDK and s
 
 ## Configuration parameters
 
-* `projectToken` **(required)**
+* `projectToken` **(required for Project/Engagement mode)**
    * Your project token. You can find this in the Engagement web app under `Project settings` > `Access management` > `API`.
+   * Not used when configuring with Stream integration (Data hub).
+
+* `streamId` **(required for Stream/Data hub mode)**
+   * Your stream ID when using Data hub integration.
+   * Use `Exponea.StreamSettings(streamId:baseUrl:)` instead of `ProjectSettings` when configuring for Stream mode.
    
 * `applicationID`
   * This `applicationID` defines a unique identifier for the mobile app within the Engagement project. Change this value only if your Engagement project contains and supports multiple mobile apps.
@@ -26,9 +31,10 @@ This page provides an overview of all configuration parameters for the SDK and s
     * Maximum length is 50 characters
   * Default value: `default-application`
   
-* `authorization` **(required)**
+* `authorization` **(required for Project/Engagement mode)**
    * Options are `.none` or `.token(token)`.
    * The token must be an Engagement **public** key. See [Mobile SDKs API Access Management](https://documentation.bloomreach.com/engagement/docs/mobile-sdks-api-access-management) for details.
+   * Not used in Stream mode. Stream integration uses JWT via `setSdkAuthToken` instead. See [Stream JWT authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#stream-jwt-authorization-data-hub).
    * For more information, please refer to the [Bloomreach Engagement API documentation](https://documentation.bloomreach.com/engagement/reference/authentication).
 
 * `baseUrl`
@@ -36,8 +42,9 @@ This page provides an overview of all configuration parameters for the SDK and s
   * Default value `https://api.exponea.com`.
   * If you have custom base URL, you must set this property.
 
-* `projectMapping`
+* `projectMapping` **(Project/Engagement mode only)**
   * If you need to track events into more than one project, you can define project information for "event types" which should be tracked multiple times.
+  * Not available in Stream mode.
 
 * `defaultProperties`
   * A list of properties to be added to all tracking events.
@@ -92,7 +99,44 @@ This page provides an overview of all configuration parameters for the SDK and s
 * `advancedAuthEnabled`
   * If set to `true`, the SDK uses [customer token](https://documentation.bloomreach.com/engagement/docs/customer-token) authorization for communication with the Engagement APIs listed in [Customer Token Authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#customer-token-authorization).
   * Refer the [Authorization for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization) documentation for details.
+  * Not used in Stream mode; Stream uses JWT via `setSdkAuthToken` instead.
   * Default value: `false`
+
+### Stream integration (Data Hub)
+
+When integrating with Data Hub, use `Exponea.StreamSettings` instead of `ProjectSettings`:
+
+```swift
+Exponea.shared.configure(
+    Exponea.StreamSettings(
+        streamId: "YOUR_STREAM_ID",
+        baseUrl: "https://api.exponea.com"
+    ),
+    pushNotificationTracking: .disabled,
+    // ... other parameters
+)
+```
+
+After configuration, provide the Stream JWT token via `Exponea.shared.setSdkAuthToken("YOUR_JWT")` and register a JWT error handler with `setJwtErrorHandler`. See [Stream JWT authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#stream-jwt-authorization-data-hub) for details.
+
+### Parameter availability by integration mode
+
+| Parameter | Project/Engagement | Stream/Data hub |
+| --- | --- | --- |
+| `projectToken` | Required | Not used |
+| `streamId` | Not used | Required |
+| `authorization` | Required | Not used (JWT via `setSdkAuthToken`) |
+| `projectMapping` | Optional | Not available |
+| `baseUrl` | Optional | Optional |
+| `applicationID` | Optional | Optional |
+| `advancedAuthEnabled` | Optional | Not used |
+| `pushNotificationTracking` | Optional | Optional |
+| `defaultProperties` | Optional | Optional |
+| `automaticSessionTracking` | Optional | Optional |
+| `sessionTimeout` | Optional | Optional |
+| `flushEventMaxRetries` | Optional | Optional |
+| `inAppContentBlocksPlaceholders` | Optional | Optional |
+| `manualSessionAutoClose` | Optional | Optional |
 
 * `inAppContentBlocksPlaceholders`
   * If set, all [In-app content blocks for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks) will be prefetched right after the SDK is initialized.
@@ -104,21 +148,23 @@ This page provides an overview of all configuration parameters for the SDK and s
 ## Configure the SDK
 
 ### Configure the SDK programmatically
-Configuration is split into several objects that are passed into the `Exponea.shared.configure()` function.
+
+Configuration is split into several objects that are passed into the `Exponea.shared.configure()` function. The first parameter accepts either `ProjectSettings` (for Engagement) or `StreamSettings` (for Data Hub) via the `IntegrationType` protocol:
+
 ``` swift
 func configure(
-        _ projectSettings: ProjectSettings,
-        pushNotificationTracking: PushNotificationTracking,
-        automaticSessionTracking: AutomaticSessionTracking = .enabled(),
-        defaultProperties: [String: JSONConvertible]? = nil,
-        flushingSetup: FlushingSetup = FlushingSetup.default,
-        applicationID: String = "default-application"
-    )
+    _ integrationConfig: any IntegrationType,
+    pushNotificationTracking: PushNotificationTracking,
+    automaticSessionTracking: AutomaticSessionTracking = .enabled(),
+    defaultProperties: [String: JSONConvertible]? = nil,
+    flushingSetup: FlushingSetup = FlushingSetup.default,
+    applicationID: String? = nil
+)
 ```
 
-* `ProjectSettings` **(required)**
-  * Contains the basic project settings: `projectToken`, `authorization`, `baseUrl`, and `projectMapping`.
-  * In most use cases, only `projectToken`` and `authorization` are required.
+* `integrationConfig` **(required)** — one of:
+  * `ProjectSettings` — for Project/Engagement integration. Contains `projectToken` (required), `authorization` (required), `baseUrl` (optional), and `projectMapping` (optional).
+  * `StreamSettings` — for Stream/Data hub integration. Contains `streamId` (required) and `baseUrl` (optional, defaults to `https://api.exponea.com`). Does not include `authorization` or `projectMapping`; authentication is handled separately via `setSdkAuthToken`.
 
 * `pushNotificationTracking` **(required)**
   * Either `.disabled` or `.enabled(appGroup, delegate, requirePushAuthorization, tokenTrackFrequency)`. Only `appGroup` is required for the SDK to function correctly.
@@ -132,62 +178,142 @@ func configure(
   * As described above in [Configuration Parameters](#configuration-parameters).
 
 * `flushingSetup`
-  * Allows you to set up `flushingMode` and `maxRetries`. By default, event flush happens as soon as you track an event(`.immediate`). You can change this behavior to one of `.manual`, `.automatic`, `periodic(period)`.
+  * Allows you to set up `flushingMode` and `maxRetries`. By default, event flush happens as soon as you track an event (`.immediate`). You can change this behavior to one of `.manual`, `.automatic`, `periodic(period)`.
   * See [Data flushing for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-data-flushing) for details.
 
-#### Examples
+#### Project/Engagement examples
+
 Most common use case:
+
 ``` swift
 Exponea.shared.configure(
-	Exponea.ProjectSettings(
-		projectToken: "YOUR PROJECT TOKEN",
-		authorization: .token("YOUR ACCESS TOKEN")
-	),
-	pushNotificationTracking: .enabled(appGroup: "YOUR APP GROUP")
+    Exponea.ProjectSettings(
+        projectToken: "YOUR PROJECT TOKEN",
+        authorization: .token("YOUR ACCESS TOKEN")
+    ),
+    pushNotificationTracking: .enabled(appGroup: "YOUR APP GROUP")
 )
 ```
+
 Disabling all the automatic features of the SDK:
+
 ``` swift
 Exponea.shared.configure(
-	Exponea.ProjectSettings(
-		projectToken: "YOUR PROJECT TOKEN",
-		authorization: .token("YOUR ACCESS TOKEN")
-	),
-	pushNotificationTracking: .disabled,
-	automaticSessionTracking: .disabled,
-	flushingSetup: Exponea.FlushingSetup(mode: .manual)
+    Exponea.ProjectSettings(
+        projectToken: "YOUR PROJECT TOKEN",
+        authorization: .token("YOUR ACCESS TOKEN")
+    ),
+    pushNotificationTracking: .disabled,
+    automaticSessionTracking: .disabled,
+    flushingSetup: Exponea.FlushingSetup(mode: .manual)
 )
 ```
-Complex use-case:
+
+Complex use-case with project mapping and advanced auth:
+
 ``` swift
 Exponea.shared.configure(
-	Exponea.ProjectSettings(
-		projectToken: "YOUR PROJECT TOKEN",
-		authorization: .token("YOUR ACCESS TOKEN")
-		baseUrl: "YOUR URL",
-		projectMapping: [
-			.payment: [
-				ExponeaProject(
-					baseUrl: "YOUR URL",
-					projectToken: "YOUR OTHER PROJECT TOKEN",
-					authorization: .token("YOUR OTHER ACCESS TOKEN")
-				)
-			]
-		]
-	),
-	pushNotificationTracking: .enabled(
-		appGroup: "YOUR APP GROUP",
-		delegate: self,
-		requirePushAuthorization: false,
-		tokenTrackFrequency: .onTokenChange
-	),
-	automaticSessionTracking: .enabled(timeout: 123),
-	defaultProperties: ["prop-1": "value-1", "prop-2": 123],
-	flushingSetup: Exponea.FlushingSetup(mode: .periodic(100), maxRetries: 5),
-	advancedAuthEnabled: true,
+    Exponea.ProjectSettings(
+        projectToken: "YOUR PROJECT TOKEN",
+        authorization: .token("YOUR ACCESS TOKEN"),
+        baseUrl: "YOUR URL",
+        projectMapping: [
+            .payment: [
+                ExponeaProject(
+                    baseUrl: "YOUR URL",
+                    projectToken: "YOUR OTHER PROJECT TOKEN",
+                    authorization: .token("YOUR OTHER ACCESS TOKEN")
+                )
+            ]
+        ]
+    ),
+    pushNotificationTracking: .enabled(
+        appGroup: "YOUR APP GROUP",
+        delegate: self,
+        requirePushAuthorization: false,
+        tokenTrackFrequency: .onTokenChange
+    ),
+    automaticSessionTracking: .enabled(timeout: 123),
+    defaultProperties: ["prop-1": "value-1", "prop-2": 123],
+    flushingSetup: Exponea.FlushingSetup(mode: .periodic(100), maxRetries: 5),
+    advancedAuthEnabled: true,
     applicationID: "com.yourApplication.org"
 )
 ```
+
+#### Stream/Data hub examples
+
+Simple Stream configuration:
+
+``` swift
+Exponea.shared.configure(
+    Exponea.StreamSettings(
+        streamId: "YOUR_STREAM_ID",
+        baseUrl: "https://api.exponea.com"
+    ),
+    pushNotificationTracking: .disabled
+)
+
+// After configuration, provide JWT and register error handler:
+Exponea.shared.setJwtErrorHandler { context in
+    // Fetch new token from your backend and call setSdkAuthToken
+    yourBackend.fetchNewJwt { newToken in
+        Exponea.shared.setSdkAuthToken(newToken)
+    }
+}
+Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
+```
+
+Stream with push notifications:
+
+``` swift
+Exponea.shared.configure(
+    Exponea.StreamSettings(
+        streamId: "YOUR_STREAM_ID",
+        baseUrl: "https://api.exponea.com"
+    ),
+    pushNotificationTracking: .enabled(appGroup: "YOUR APP GROUP")
+)
+
+Exponea.shared.setJwtErrorHandler { context in
+    yourBackend.fetchNewJwt { newToken in
+        Exponea.shared.setSdkAuthToken(newToken)
+    }
+}
+Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
+```
+
+Stream with all options:
+
+``` swift
+Exponea.shared.configure(
+    Exponea.StreamSettings(
+        streamId: "YOUR_STREAM_ID",
+        baseUrl: "https://api.exponea.com"
+    ),
+    pushNotificationTracking: .enabled(
+        appGroup: "YOUR APP GROUP",
+        delegate: self,
+        requirePushAuthorization: false,
+        tokenTrackFrequency: .onTokenChange
+    ),
+    automaticSessionTracking: .enabled(timeout: 123),
+    defaultProperties: ["prop-1": "value-1", "prop-2": 123],
+    flushingSetup: Exponea.FlushingSetup(mode: .periodic(100), maxRetries: 5),
+    applicationID: "com.yourApplication.org"
+)
+
+Exponea.shared.setJwtErrorHandler { context in
+    yourBackend.fetchNewJwt { newToken in
+        Exponea.shared.setSdkAuthToken(newToken)
+    }
+}
+Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
+```
+
+> ❗️
+>
+> In Stream mode, always call `setJwtErrorHandler` before `setSdkAuthToken` so that proactive refresh notifications are handled from the start. See [Stream JWT authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#stream-jwt-authorization-data-hub) for details on JWT lifecycle management.
 
 
 ### Using a configuration file - LEGACY
@@ -206,6 +332,7 @@ public func configure(plistName: String)
 Exponea.shared.configure(plistName: "ExampleConfig.plist")
 ```
 
+#### Project plist example
 
 *ExampleConfig.plist*
 
@@ -213,14 +340,13 @@ Exponea.shared.configure(plistName: "ExampleConfig.plist")
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<plist version="1.0">
 <dict>
 	<key>projectToken</key>
 	<string>testToken</string>
 	<key>sessionTimeout</key>
 	<integer>20</integer>
-    <key>applicationID</>
-    <string>com.yourApplication.org</>
+	<key>applicationID</key>
+	<string>com.yourApplication.org</string>
 	<key>projectMapping</key>
 	<dict>
 		<key>INSTALL</key>
@@ -264,5 +390,28 @@ Exponea.shared.configure(plistName: "ExampleConfig.plist")
 </dict>
 </plist>
 ```
+
+#### Stream plist example
+
+For Stream/Data hub integration, use `streamId` instead of `projectToken` and `authorization`:
+
+*StreamConfig.plist*
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>streamId</key>
+	<string>YOUR_STREAM_ID</string>
+	<key>sessionTimeout</key>
+	<integer>20</integer>
+	<key>automaticSessionTracking</key>
+	<false/>
+</dict>
+</plist>
+```
+
+> After plist-based configuration in Stream mode, you still need to provide the JWT token programmatically via `Exponea.shared.setSdkAuthToken("YOUR_JWT")` and register an error handler with `setJwtErrorHandler`.
 
 

@@ -9,6 +9,10 @@
 import Foundation
 import CoreData
 
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
+
 /// The Database Manager class is responsible for persist the data using CoreData Framework.
 /// Persisted data will be used to interact with the Exponea API.
 class DatabaseManager {
@@ -296,7 +300,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `properties`
     ///     - `timestamp`
     ///     - `eventType`
-    func trackEvent(with data: [DataType], into project: ExponeaProject) throws {
+    func trackEvent(with data: [DataType], into project: any ExponeaIntegrationType) throws {
         guard !IntegrationManager.shared.isStopped else {
             data.forEach { type in
                 Exponea.logger.log(.error, message: "Event \(data) has not been tracked, SDK is stopping")
@@ -322,9 +326,15 @@ extension DatabaseManager: DatabaseManagerType {
             } else {
                 trackEvent.timestamp = Date().timeIntervalSince1970
             }
+            
             trackEvent.baseUrl = project.baseUrl
-            trackEvent.projectToken = project.projectToken
-            trackEvent.authorizationString = project.authorization.encode()
+            trackEvent.integrationType = project.type.rawValue
+            // Project only: persist encoded authorization (including token) so it’s available when flushing.
+            if case .project = project.type, let projectSettings = project as? ProjectSettings {
+                trackEvent.authorizationString = projectSettings.authorization.encode()
+            }
+            trackEvent.integrationId = project.integrationId
+            
             for type in data {
                 switch type {
                 case .eventType(let event):
@@ -365,7 +375,7 @@ extension DatabaseManager: DatabaseManagerType {
     ///     - `properties`
     ///     - `timestamp`
     /// - Throws: <#throws value description#>
-    func identifyCustomer(with data: [DataType], into project: ExponeaProject) throws {
+    func identifyCustomer(with data: [DataType], into project: any ExponeaIntegrationType) throws {
         try context.performAndWaitSafely {
             loadTrackingCustomer(context: context, with: data, into: project)
             // Save the customer properties into CoreData
@@ -375,15 +385,19 @@ extension DatabaseManager: DatabaseManagerType {
 
     /// To be called from a bg thread, otherwise the thread will be blocked
     /// - Parameter context: a background context
-    private func loadTrackingCustomer(context: NSManagedObjectContext, with data: [DataType], into project: ExponeaProject) {
+    private func loadTrackingCustomer(context: NSManagedObjectContext, with data: [DataType], into project: any ExponeaIntegrationType) {
         let trackCustomer = TrackCustomer(context: context)
         trackCustomer.customer = currentCustomerManagedObject
 
         // Always specify a timestamp
         trackCustomer.timestamp = Date().timeIntervalSince1970
         trackCustomer.baseUrl = project.baseUrl
-        trackCustomer.projectToken = project.projectToken
-        trackCustomer.authorizationString = project.authorization.encode()
+        trackCustomer.integrationId = project.integrationId
+        trackCustomer.integrationType = project.type.rawValue
+        // Project only: persist encoded authorization (including token) so it’s available when flushing.
+        if case .project = project.type, let projectSettings = project as? ProjectSettings {
+            trackCustomer.authorizationString = projectSettings.authorization.encode()
+        }
 
         if data.customerIds.isEmpty {
             Exponea.logger.log(.error, message: "IdentifyCustomer event with no customer IDs occured, fallback to current")

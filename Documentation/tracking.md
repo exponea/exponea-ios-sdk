@@ -169,21 +169,65 @@ Exponea.identifyCustomer(customerIds: customerIds,
 >
 > Optionally, you can provide a custom `timestamp` if the identification happened at a different time. By default the current time will be used.
 
+### Identify with auth context (Stream/Data hub)
+
+When using Stream JWT integration, you can provide customer IDs and the JWT token together using `identifyCustomer(context:properties:timestamp:)`. This is the preferred method for Stream mode as it atomically associates the customer identity with the JWT.
+
+#### Arguments
+
+| Name | Type | Description |
+| --- | --- | --- |
+| context **(required)** | CustomerIdentity | Contains `customerIds` (dictionary of customer IDs) and optional `jwtToken` (Stream JWT). |
+| properties | [String: JSONConvertible] | Dictionary of customer properties. |
+| timestamp | Double | Unix timestamp specifying when the identification happened. Specify `nil` to use the current time. |
+
+#### Example
+
+```swift
+let context = CustomerIdentity(
+    customerIds: ["registered": "user@example.com"],
+    jwtToken: "YOUR_STREAM_JWT_TOKEN"
+)
+Exponea.shared.identifyCustomer(context: context, properties: [:], timestamp: nil)
+```
+
+The JWT is stored in the Keychain and used for subsequent Stream requests. You can omit `jwtToken` if the token was already set via `setSdkAuthToken`.
+
 ### Anonymize
 
 Use the `anonymize()` method to delete all information stored locally and reset the current SDK state. A typical use case for this is when the user signs out of the app.
 
 Invoking this method will cause the SDK to:
 
-* Remove the push notification token for the current customer from local device storage and the customer profile in Engagement.
-* Clear local repositories and caches, excluding tracked events.
-* Track a new session start if `automaticSessionTracking` is enabled.
-* Create a new customer record in Engagement (a new `cookie` soft ID is generated).
-* Assign the previous push notification token to the new customer record.
-* Preload in-app messages, in-app content blocks, and app inbox for the new customer.
-* Track a new `installation` event for the new customer.
+1. Track a `session_end` event if `automaticSessionTracking` is enabled.
+2. Invalidate the push notification token by tracking `notification_state` with `valid: false`.
+3. Flush all pending events to the server (in Stream mode, this uses the current JWT while it is still available).
+4. Remove the push notification token for the current customer from local device storage and the customer profile in Engagement.
+5. Clear local repositories and caches, excluding tracked events.
+6. Clear the JWT from the Keychain (Stream mode).
+7. Create a new customer record in Engagement (a new `cookie` soft ID is generated).
+8. Assign the previous push notification token to the new customer record.
+9. Preload in-app messages, in-app content blocks, and app inbox for the new customer.
+10. Track a new `installation` event for the new customer.
+11. Track a new session start if `automaticSessionTracking` is enabled.
 
-You can also use the `anonymize` method to switch to a different Engagement project. The SDK will then track events to a new customer record in the new project, similar to the first app session after installation on a new device.
+You can also use the `anonymize` method to switch to a different integration. The SDK will then track events to a new customer record, similar to the first app session after installation on a new device.
+
+> ⚠️ **Stream/JWT integrators**
+>
+> `anonymize()` creates a new anonymous customer profile. If your integration requires that every event is associated with an authenticated customer and valid JWT, use [`stopIntegration(completion:)`](#stop-sdk-integration) on logout instead. `stopIntegration` does not generate anonymous events.
+
+#### Overloads
+
+| Method | Description |
+| --- | --- |
+| `anonymize()` | Anonymize with current integration settings. |
+| `anonymize(completion:)` | Same as above, but calls `completion` on the main thread after flush + teardown are complete. Recommended for Stream mode so the host app knows when it is safe to proceed. |
+| `anonymize(exponeaIntegrationType:exponeaProjectMapping:)` | Anonymize and switch to a different integration (accepts both `ExponeaProject` and `ExponeaIntegration`). |
+
+> ⚠️
+>
+> `anonymize(exponeaProject:projectMapping:)` is **deprecated**. Use `anonymize(exponeaIntegrationType:exponeaProjectMapping:)` instead, which accepts any `ExponeaIntegrationType` (both Project and Stream).
 
 #### Examples
 
@@ -191,16 +235,36 @@ You can also use the `anonymize` method to switch to a different Engagement proj
 Exponea.shared.anonymize()
 ```
 
-Switch to a different project:
+Anonymize with completion (recommended for Stream mode):
+
+```swift
+Exponea.shared.anonymize { 
+    // Flush and teardown are complete, safe to re-configure or navigate
+}
+```
+
+Switch to a different Project:
 
 ```swift
 Exponea.shared.anonymize(
-    exponeaProject: ExponeaProject(
+    exponeaIntegrationType: ExponeaProject(
         baseUrl: "https://api.exponea.com",
         projectToken: "YOUR PROJECT TOKEN",
-        authorization: .token("YOUR API KEY"),
+        authorization: .token("YOUR API KEY")
     ),
-    projectMapping: nil
+    exponeaProjectMapping: nil
+)
+```
+
+Switch to a Stream integration:
+
+```swift
+Exponea.shared.anonymize(
+    exponeaIntegrationType: ExponeaIntegration(
+        baseUrl: "https://api.exponea.com",
+        streamId: "YOUR_STREAM_ID"
+    ),
+    exponeaProjectMapping: nil
 )
 ```
 
@@ -451,6 +515,7 @@ Invoking this method will cause the SDK to:
 * Remove the customer record stored locally.
 * Clear any previously loaded in-app messages, in-app content blocks, and app inbox messages.
 * Clear the SDK configuration from the last invoked initialization.
+* Clear the Stream JWT from the Keychain (if Stream integration was used).
 * Stop handling of received push notifications.
 * Stop tracking of deep links and universal links (your app's handling of them isn't affected).
 
@@ -465,29 +530,48 @@ If the customer doesn't consent to any tracking before the SDK is initialized, i
 
 The customer may also revoke all tracking consent later, after the SDK is fully initialized and tracking is enabled. In this case, you can stop SDK integration and remove all locally stored data by using the `Exponea.shared.stopIntegration()` method.
 
-Use the `stopIntegration()` method to delete all information stored locally and stop the SDK if it is already running.
+Use the `stopIntegration()` method to stop the SDK, flush any pending data, and delete all information stored locally.
 
-Invoking this method will cause the SDK to:
+> 👍 **Preferred for Stream/JWT mode**
+>
+> Use `stopIntegration` instead of `anonymize()` when non-anonymous traffic is required (e.g. Stream JWT mode). Unlike `anonymize`, `stopIntegration` does not create a new anonymous customer profile.
 
-* Remove the push notification token for the current customer from local device storage.
-* Clear local repositories and caches, including all previously tracked events that were not flushed yet.
-* Clear all session start and end information.
-* Remove the customer record stored locally.
-* Clear any In-app messages, In-app content blocks, and App inbox messages previously loaded.
-* Clear the SDK configuration from the last invoked initialization.
-* Stop handling of received push notifications.
-* Stop tracking of Deep links and Universal links (your app's handling of them is not affected).
+When the SDK is running, invoking this method will cause the SDK to:
 
-If the SDK is already running, invoking of this method also:
+1. Track a `session_end` event if automatic session tracking is enabled. (If you use manual session tracking, call `trackSessionEnd()` before `stopIntegration`.)
+2. Invalidate the push notification token by tracking `notification_state` with `valid: false`.
+3. Flush all pending events to the server (using the current JWT in Stream mode).
+4. Clear the Stream JWT from the Keychain (Stream mode).
+5. Remove the push notification token for the current customer from local device storage.
+6. Clear local repositories and caches.
+7. Clear all session start and end information.
+8. Remove the customer record stored locally.
+9. Clear any in-app messages, in-app content blocks, and App Inbox messages previously loaded.
+10. Clear the SDK configuration from the last invoked initialization.
+11. Stop handling of received push notifications.
+12. Stop tracking of deep links and universal links (your app's handling of them is not affected).
+13. Stop and disable session tracking, event tracking, and flushing.
+14. Stop displaying in-app messages, in-app content blocks, and App Inbox messages. Already displayed messages are dismissed.
 
-* Stops and disables session start and session end tracking even if your application tries later on.
-* Stops and disables any tracking of events even if your application tries later on.
-* Stops and disables any flushing of tracked events even if your application tries later on.
-* Stops displaying of In-app messages, In-app content blocks, and App inbox messages.
-* Already displayed messages are dismissed.
-* Please validate dismiss behaviour if you [customized](https://documentation.bloomreach.com/engagement/docs/ios-sdk-app-inbox#customize-app-inbox) the App Inbox UI layout. 
+After invoking `stopIntegration()`, the SDK will drop any API method invocation until you [initialize the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize_the_sdk) again.
 
-After invoking the `stopIntegration()` method, the SDK will drop any API method invocation until you [initialize the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize_the_sdk) again. 
+#### `stopIntegration(completion:)`
+
+Use the completion variant to be notified when flush and teardown are complete. The completion block is called on the main thread. You may safely call `Exponea.shared.configure(...)` again inside the completion handler (e.g. for re-login flows).
+
+```swift
+Exponea.shared.stopIntegration {
+    // All data flushed, JWT cleared, SDK fully torn down.
+    // Safe to re-configure for a different user:
+    Exponea.shared.configure(
+        Exponea.StreamSettings(streamId: "NEW_STREAM_ID"),
+        pushNotificationTracking: .enabled(appGroup: "YOUR_APP_GROUP")
+    )
+    Exponea.shared.setSdkAuthToken("NEW_USER_JWT")
+}
+```
+
+Please validate dismiss behaviour if you [customized](https://documentation.bloomreach.com/engagement/docs/ios-sdk-app-inbox#customize-app-inbox) the App Inbox UI layout.
 
 
 ### Use cases
@@ -496,16 +580,14 @@ Correct usage of the `stopIntegration()` method depends on the use case, so cons
 
 #### Stop the SDK but upload tracked data
 
-The SDK caches data (such as sessions, events, and customer properties) in an internal local database and periodically sends them to Bloomreach Engagement. These data are kept locally if the device has no network or if you configured SDK to upload them less frequently.
+`stopIntegration()` now automatically flushes all pending events before clearing local data. You no longer need to call `flushData()` manually before stopping the SDK.
 
-Invoking the `stopIntegration()` method will remove all these locally stored data that may not be uploaded yet. To avoid loss of these data, request to flush them before stopping the SDK:
+If you need to know when the flush completes, use the completion variant:
 
 ```swift
-// SDK is init with flush
-Exponea.shared.configure(...)
-Exponea.shared.flushData()
-// Stop integration
-Exponea.shared.stopIntegration()
+Exponea.shared.stopIntegration {
+    // All pending data has been flushed and the SDK is fully stopped.
+}
 ```
 
 #### Stop the SDK and wipe all tracked data
@@ -538,9 +620,7 @@ Exponea.shared.configure(...)
 Exponea.shared.stopIntegration()
 ```
 
-This results in the SDK stopping all internal processes (such as session tracking and push notifications handling) and removing all locally stored data.
-
-Please be aware that `stopIntegration()` stops any further tracking and flushing of data. If you need to upload tracked data to Bloomreach Engagement, then [flush them synchronously](#stop-the-sdk-but-upload-tracked-data) before stopping the SDK.
+This results in the SDK flushing all pending events, then stopping all internal processes (such as session tracking and push notifications handling) and removing all locally stored data.
 
 #### Customer denies tracking consent
 

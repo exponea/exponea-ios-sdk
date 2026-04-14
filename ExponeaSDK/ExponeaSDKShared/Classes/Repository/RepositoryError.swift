@@ -21,6 +21,7 @@ public enum RepositoryError: LocalizedError, ErrorInitialisable {
     case missingData(String)
     case serverError(MultipleErrorResponse?)
     case urlNotFound(MultipleErrorResponse?)
+    case resourceGone(String?)
     case invalidResponse(URLResponse?)
     case connectionError
     case unknown(Error)
@@ -40,6 +41,8 @@ public enum RepositoryError: LocalizedError, ErrorInitialisable {
             return response?.errors.description ?? "There was a server error, please try again later."
         case .urlNotFound(let response):
             return response?.errors.description ?? "Requested URL was not found."
+        case .resourceGone(let details):
+            return "The requested resource is no longer available: \(details ?? "No details provided.")"
         case .connectionError:
             return "No response received from the server, please check your internet connection."
         case .unknown(let error):

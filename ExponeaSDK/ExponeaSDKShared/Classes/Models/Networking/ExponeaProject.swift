@@ -6,12 +6,21 @@
 //  Copyright © 2020 Exponea. All rights reserved.
 //
 
-public struct ExponeaProject: Equatable, Codable {
+import Foundation
+
+public struct ExponeaProject: ExponeaIntegrationType {
     public let baseUrl: String
     public let projectToken: String
     public let authorization: Authorization
+    public var type: IntegrationSourceType {
+        .project(projectToken: projectToken)
+    }
 
-    public init(baseUrl: String = Constants.Repository.baseUrl, projectToken: String, authorization: Authorization) {
+    public init(
+        baseUrl: String = Constants.Repository.baseUrl,
+        projectToken: String,
+        authorization: Authorization
+    ) {
         self.baseUrl = baseUrl
         self.projectToken = projectToken
         self.authorization = authorization

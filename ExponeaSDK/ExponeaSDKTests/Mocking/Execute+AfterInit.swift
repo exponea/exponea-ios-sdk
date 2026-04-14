@@ -64,7 +64,7 @@ class ExponeaSpecInitSpec: QuickSpec {
                 }
                 self.sdkInstance.executeSafely(self.increment)
                 expect(manager.actionBlocks.count).to(equal(5))
-                self.sdkInstance.configure(plistName: "ExponeaConfig")
+                self.sdkInstance.configure(plistName: "ExponeaConfig") // TODO:  modify also for "ExponeaConfigStream"
                 expect(manager.actionBlocks.isEmpty).to(beTruthy())
                 expect(self.counter).to(equal(4))
                 /// Counter += 1

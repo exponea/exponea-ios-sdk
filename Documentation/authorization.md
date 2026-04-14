@@ -6,7 +6,13 @@ categorySlug: integrations
 parentDocSlug: ios-sdk-setup
 ---
 
-The SDK exchanges data with the Engagement APIs through authorized HTTP/HTTPS communication. The SDK supports two authorization modes: the default **token authorization** for public API access and the more secure **customer token authorization** for private API access. Developers can choose the appropriate authorization mode for the required level of security.
+The SDK exchanges data with the Engagement APIs or the [Data hub Event stream](https://documentation.bloomreach.com/data-hub/docs/event-streams-overview) APIs through authorized HTTP/HTTPS communication. The SDK supports three authorization modes:
+
+1. **Token authorization** — default mode for public API access using an API key (Project/Engagement integration).
+2. **Customer token authorization** — optional, more secure mode for private API access using a JWT customer token (Project/Engagement integration).
+3. **Stream JWT authorization** — used exclusively with Data hub / Stream integration, where a backend-issued JWT authenticates all API requests.
+
+Developers should choose the appropriate authorization mode based on their integration type and required level of security.
 
 ## Token authorization
 
@@ -143,6 +149,208 @@ public class ExampleAuthProvider: NSObject, AuthorizationProviderType {
 > ❗️
 >
 > A customer token is valid until expiration and is tied to the current customer IDs. If customer IDs change through `identifyCustomer` or `anonymize` methods, the customer token may become invalid for HTTP requests using the new customer IDs.
+
+## Stream JWT authorization (Data Hub)
+
+When the SDK is configured with **Stream integration** (Data hub), it uses a Stream JWT token for authentication. This is separate from the Engagement customer token and is used for all Stream API requests including tracking, App Inbox, and recommendations.
+
+Stream JWT authorization is used for the following API endpoints:
+
+* `POST /track/u/v1/customers?stream_id=<streamId>` — customer data tracking
+* `POST /track/u/v1/customers/events?stream_id=<streamId>` — event tracking
+* `POST /webxp/streams/<streamId>/inappmessages` — in-app messages
+* `POST /webxp/streams/<streamId>/appinbox/fetch` — App Inbox fetch
+* `POST /webxp/streams/<streamId>/appinbox/markasread` — App Inbox mark as read
+* `POST /optimization/streams/<streamId>/recommend/user` — recommendations
+* `POST /campaigns/send-self-check-notification?project_id=<streamId>` — push self-check
+
+### Setting the Stream JWT token
+
+Use `setSdkAuthToken` to provide the JWT token. The token is stored securely in the Keychain and used for all Stream requests:
+
+```swift
+Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
+```
+
+The token is cleared automatically when `anonymize()`, `stopIntegration()`, or `clearLocalCustomerData(appGroup:)` is called. It is also cleared when `identifyCustomer(context:properties:timestamp:)` is called without a `jwtToken` in the `CustomerIdentity`.
+
+> ❗️
+>
+> `setSdkAuthToken` only has effect when the SDK is configured with Stream integration. In Project/Engagement mode, the token is ignored.
+
+### JWT error handling
+
+Register a handler to be notified when the JWT expires, is missing, or becomes invalid. Use this to refresh the token from your backend:
+
+```swift
+Exponea.shared.setJwtErrorHandler { context in
+    switch context.reason {
+    case .expired, .expiredSoon, .notProvided, .invalid, .insufficient:
+        // Fetch new token from your backend and call setSdkAuthToken
+        yourBackend.fetchNewJwt { newToken in
+            Exponea.shared.setSdkAuthToken(newToken)
+        }
+    default:
+        // Forward compatibility: handle future reason values
+        break
+    }
+}
+```
+
+The `JwtErrorContext` provides `reason` (why the token needs refreshing) and `customerIds` (the current customer IDs, so you can request a token for the right customer).
+
+### Token refreshed notification
+
+When the JWT token is updated via `setSdkAuthToken`, the SDK posts `JwtAuthManager.tokenRefreshedNotification`. You can observe this to refetch data (e.g. App Inbox) after a token refresh:
+
+```swift
+NotificationCenter.default.addObserver(
+    forName: JwtAuthManager.tokenRefreshedNotification,
+    object: nil,
+    queue: .main
+) { _ in
+    // Refetch App Inbox or other Stream data
+    Exponea.shared.fetchAppInboxMessages { _ in }
+}
+```
+
+> ⚠️ Important
+>
+> The notification fires whenever `setSdkAuthToken` is called, even if the provided token is already expired. Observers should not assume the token is valid just because this notification was received. Verify token validity in your logic if needed.
+
+### Identify customer with auth context
+
+When using Stream JWT, you can provide customer IDs and the JWT token together via `identifyCustomer(context:properties:timestamp:)`:
+
+```swift
+let context = CustomerIdentity(
+    customerIds: ["registered": "user@example.com"],
+    jwtToken: "YOUR_STREAM_JWT_TOKEN"
+)
+Exponea.shared.identifyCustomer(context: context, properties: [:], timestamp: nil)
+```
+
+The JWT is stored and used for subsequent Stream requests. You can omit `jwtToken` if the token was already set via `setSdkAuthToken`.
+
+### App Inbox requires JWT in Stream mode
+
+For **App Inbox** (fetch and mark-as-read) in Stream mode, the JWT is **required**. If no token is set when you call `fetchAppInboxMessages` or `markAppInboxAsRead`, the SDK does **not** send the request. Instead it:
+
+1. Invokes your JWT error handler once (so you can set the token, e.g. from your backend).
+2. If the token is still missing after that, completes the call with an authorization error (synthetic 401) without hitting the network.
+
+Ensure a valid token is set via `setSdkAuthToken` (or via `identifyCustomer(context:properties:timestamp:)` with `jwtToken`) before using App Inbox in Stream mode.
+
+### Token refresh lifecycle
+
+The SDK actively manages the JWT lifecycle through proactive and reactive mechanisms so that integrators can keep the token fresh with minimal disruption.
+
+#### Proactive refresh timer
+
+When a token is set via `setSdkAuthToken`, the SDK parses the `exp` claim and schedules a timer that fires approximately 60 seconds before expiry. When triggered, the JWT error handler is called with reason `.expiredSoon`, giving the integrator time to fetch a new token before any request fails. This happens without any HTTP failure — the timer fires independently.
+
+#### Pre-flight token check
+
+Before each Stream HTTP request, the SDK checks the current token and fires the error handler proactively:
+
+* **No token set** → error handler called with `.notProvided`. The request proceeds without an auth header and will receive a 401/403 from the server, triggering the [retry mechanism](#request-retry-on-auth-failure).
+* **Token already expired** → error handler called with `.expired`. The expired token is still sent with the request; the server will return 401, triggering the retry mechanism.
+* **Token about to expire** → error handler called with `.expiredSoon`. The request proceeds normally with the current token (which is still valid). The handler fires so the integrator can start a background refresh.
+
+The error handler fires **before** the HTTP call is made, giving the integrator an early signal. If a new token is provided via `setSdkAuthToken` before the server response arrives (or during the retry delay), the retry will use the new token.
+
+> The error handler is always invoked on the main thread.
+
+#### Request retry on auth failure
+
+When a Stream request fails with an authentication error, the SDK applies a single-retry mechanism:
+
+* **401 Unauthorized**: The SDK invokes the JWT error handler (`.expired` or `.invalid`), waits approximately 1 second to allow the integrator to provide a new token via `setSdkAuthToken`, then retries the request once. If the retry also fails, the request fails permanently.
+* **403 Forbidden without a token**: Same retry-once flow as 401. The error handler is called with `.notProvided`.
+* **403 Forbidden with a valid token**: The token is valid but does not have the correct scope for the requested stream. No retry, no token cleared, no error handler invoked. The request fails immediately.
+
+### `JwtErrorContext.Reason` reference
+
+| Reason | When triggered |
+| --- | --- |
+| `.notProvided` | Request requires JWT but no token is set (pre-flight or 403 without token) |
+| `.invalid` | JWT is malformed or signature verification failed (401 from server) |
+| `.expired` | JWT `exp` claim is in the past (pre-flight check or 401 with expired token) |
+| `.expiredSoon` | Proactive timer fires ~60s before `exp`, or pre-flight detects imminent expiry |
+| `.insufficient` | Reserved for future use |
+
+### JWT claims format
+
+Stream JWTs use HMAC HS512 signing. The expected claims are:
+
+* `exp` (required): Expiration timestamp in Unix seconds. The SDK uses this to schedule the proactive refresh timer and for pre-flight validation.
+* `ids` (required): A map of customer identity keys to values (e.g. `{"registered": "user@example.com"}`). These identify the customer the token was issued for.
+* `kid` (in JWT header): Identifies the signing key used to create the token.
+
+Tokens are issued by the integrator's backend. The SDK does not generate or validate the signature — it only parses `exp` for lifecycle management.
+
+### Token storage and clearing
+
+* The SDK stores the Stream JWT in the Keychain for persistence across app launches.
+* When `anonymize()` is called in Stream mode, pending events are flushed with the current JWT before the token and identity are cleared.
+* The token is cleared when `stopIntegration()` is called (events are also flushed first).
+* `clearLocalCustomerData(appGroup:)` also clears the JWT from the Keychain.
+* You can pass a completion callback to `anonymize(completion:)` or `stopIntegration(completion:)` to be notified when the flush and teardown are complete.
+
+### End-to-end integration pattern
+
+The recommended integration order for Stream JWT:
+
+```swift
+// 1. Configure with StreamSettings
+Exponea.shared.configure(
+    Exponea.StreamSettings(
+        streamId: "YOUR_STREAM_ID",
+        baseUrl: "https://api.exponea.com"
+    ),
+    pushNotificationTracking: .enabled(appGroup: "YOUR_APP_GROUP")
+)
+
+// 2. Register JWT error handler (handles both proactive and reactive refresh)
+Exponea.shared.setJwtErrorHandler { context in
+    switch context.reason {
+    case .expiredSoon:
+        // Proactive: token is about to expire, refresh in background
+        yourBackend.fetchNewJwt(for: context.customerIds) { newToken in
+            Exponea.shared.setSdkAuthToken(newToken)
+        }
+    case .expired, .notProvided, .invalid:
+        // Reactive: token has already expired or is missing
+        yourBackend.fetchNewJwt(for: context.customerIds) { newToken in
+            Exponea.shared.setSdkAuthToken(newToken)
+        }
+    default:
+        break
+    }
+}
+
+// 3. Provide initial token
+Exponea.shared.setSdkAuthToken("YOUR_INITIAL_JWT_TOKEN")
+
+// 4. Optionally observe token refresh to update UI
+NotificationCenter.default.addObserver(
+    forName: JwtAuthManager.tokenRefreshedNotification,
+    object: nil,
+    queue: .main
+) { _ in
+    // Refetch data that depends on a valid token (e.g. App Inbox)
+    Exponea.shared.fetchAppInboxMessages { _ in }
+}
+
+// 5. Identify customer (optional, token can be bundled with identity)
+let identity = CustomerIdentity(
+    customerIds: ["registered": "user@example.com"],
+    jwtToken: "YOUR_STREAM_JWT_TOKEN"
+)
+Exponea.shared.identifyCustomer(context: identity, properties: [:], timestamp: nil)
+```
+
+> When the error handler fires (step 2), the SDK automatically retries the failed request after a ~1-second delay. If `setSdkAuthToken` is called within that window, the retry uses the new token.
 
 ## Configure application ID
 

@@ -9,6 +9,9 @@
 import Foundation
 import UserNotifications
 import UIKit
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 /// Protocol of what types of events are available in the Exponea SDK.
 public protocol ExponeaType: AnyObject {
@@ -52,7 +55,7 @@ public protocol ExponeaType: AnyObject {
 
     /// Configure the SDK setting configuration properties split into areas of functionality
     func configure(
-        _ projectSettings: Exponea.ProjectSettings,
+        _ integrationConfig: any IntegrationType,
         pushNotificationTracking: Exponea.PushNotificationTracking,
         automaticSessionTracking: Exponea.AutomaticSessionTracking,
         defaultProperties: [String: JSONConvertible]?,
@@ -122,6 +125,46 @@ public protocol ExponeaType: AnyObject {
     ///  - projectToken: Project token to be used through the SDK, as a fallback to projectMapping.
     ///  - authorization: The authorization type used to authenticate with some Exponea endpoints.
     func configure(plistName: String)
+    
+    /// Configure the SDK with a Configuration object and optional authentication context.
+    /// Use this when you want to provide initial customer IDs and/or JWT token during configuration.
+    ///
+    /// - Parameters:
+    ///   - configuration: The SDK configuration object.
+    ///   - authContext: Optional authentication context with customer IDs and JWT token.
+    func configure(
+        with configuration: Configuration,
+        authContext: CustomerIdentity?
+    )
+    
+    // MARK: - Stream JWT (Data Hub) -
+    
+    /// Sets the Stream JWT token for Data Hub authentication.
+    /// This token is used for all Stream API requests including tracking and App Inbox.
+    /// Only effective when SDK is configured with Stream integration.
+    /// JWT is cleared internally on anonymize, identifyCustomer without token, or clearLocalCustomerData.
+    ///
+    /// - Parameter token: The JWT token string (must be non-empty).
+    func setSdkAuthToken(_ token: String)
+    
+    /// Sets a handler that will be called when JWT-related errors occur.
+    /// Use this to refresh the JWT token when it expires or becomes invalid.
+    ///
+    /// - Parameter handler: Closure called with JWT error context when errors occur.
+    func setJwtErrorHandler(_ handler: @escaping (JwtErrorContext) -> Void)
+    
+    /// Identifies a customer with authentication context.
+    /// Use this method when working with Stream JWT authentication.
+    ///
+    /// - Parameters:
+    ///   - context: Authentication context containing customer IDs and optional JWT token.
+    ///   - properties: Customer properties to track.
+    ///   - timestamp: Optional Unix timestamp when the event was created.
+    func identifyCustomer(
+        context: CustomerIdentity,
+        properties: [String: JSONConvertible],
+        timestamp: Double?
+    )
 
     // MARK: - Tracking -
 
@@ -155,6 +198,7 @@ public protocol ExponeaType: AnyObject {
     ///     - customerId: Specify your customer with external id, for example an email address.
     ///     - properties: Object with properties to be updated.
     ///     - timestamp: Unix timestamp when the event was created.
+    @available(*, deprecated, message: "Use identifyCustomer(context:properties:timestamp:) with CustomerIdentity(customerIds:jwtToken:) instead.")
     func identifyCustomer(
         customerIds: [String: String]?,
         properties: [String: JSONConvertible],
@@ -296,6 +340,13 @@ public protocol ExponeaType: AnyObject {
     ///                         which has either the returned data or error.
     func fetchAppInbox(completion: @escaping (Result<[MessageItem]>) -> Void)
 
+    /// Fetch App Inbox messages using appropriate auth:
+    /// - Engagement mode: Customer Token (legacy)
+    /// - Stream mode: Stream JWT (Data Hub)
+    ///
+    /// - Parameter completion: A closure executed upon request completion containing the result.
+    func fetchAppInboxMessages(completion: @escaping (Result<[MessageItem]>) -> Void)
+
     /// Fetch the App Inbox message by ID.
     ///
     /// - Parameter completion: A closure executed upon request completion containing the result
@@ -306,15 +357,35 @@ public protocol ExponeaType: AnyObject {
 
     /// Anonymizes the user and starts tracking as if the app was just installed.
     /// All customer identification (including cookie) will be permanently deleted.
+    ///
+    /// > **Warning — non-anonymous (Stream / JWT) integrations:**
+    /// > `anonymize()` generates anonymous events (`installation`, `session_start`) after clearing the
+    /// > current identity. If your integration requires that every event is associated with an authenticated
+    /// > customer and a valid JWT (e.g. CDE / Stream / Data Hub), call `stopIntegration(completion:)`
+    /// > on logout instead. `stopIntegration` does not generate anonymous events.
     func anonymize()
 
     /// Anonymizes the user and starts tracking as if the app was just installed.
     /// All customer identification (including cookie) will be permanently deleted.
     /// Switches tracking into provided exponeaProject
+    @available(*, deprecated, message: """
+        Please use following function instead:
+        func anonymize(exponeaIntegrationType: any ExponeaIntegrationType, exponeaProjectMapping: [EventType: [ExponeaProject]]? = nil) throws
+    """)
     func anonymize(
         exponeaProject: ExponeaProject,
         projectMapping: [EventType: [ExponeaProject]]?
     )
+    
+    func anonymize(
+        exponeaIntegrationType: any ExponeaIntegrationType,
+        exponeaProjectMapping: [EventType: [ExponeaProject]]?
+    )
+
+    /// Anonymizes the user with a completion callback.
+    /// In Stream mode, pending events are flushed with the current JWT before the identity is cleared.
+    /// The completion is called on the main thread once the anonymize (and optional flush) finishes.
+    func anonymize(completion: (() -> Void)?)
 
     func trackInAppMessageClick(message: InAppMessage, buttonText: String?, buttonLink: String?)
 
@@ -382,6 +453,34 @@ public protocol ExponeaType: AnyObject {
     )
 
     func getSegments(force: Bool, category: SegmentCategory, result: @escaping TypeBlock<[SegmentDTO]>)
+
+    /// Stops the SDK integration synchronously (fire-and-forget).
+    ///
+    /// This is a convenience wrapper for `stopIntegration(completion: nil)`.
+    ///
+    /// > **Behavioral change (4.0.0):** This method now tracks `session_end` (when automatic session
+    /// > tracking is enabled) and sends a `notification_state` event with `valid: false` to invalidate
+    /// > the push token before flushing. Callers that previously relied on a silent, event-free stop
+    /// > (e.g. GDPR data removal, consent gating) should be aware that these events will be sent.
+    /// >
+    /// > If you need to act after teardown is complete, use `stopIntegration(completion:)` instead.
     func stopIntegration()
+
+    /// Stops the SDK integration, tracking logout events and flushing pending data before teardown.
+    ///
+    /// Use this instead of `anonymize()` when non-anonymous traffic is required (e.g. CDE / Stream JWT mode).
+    /// The SDK will, in order:
+    ///   1. Track `session_end` if automatic session tracking is enabled. Apps using manual
+    ///      session tracking should call `trackSessionEnd()` themselves before this method.
+    ///   2. Invalidate the push notification token (`notification_state` with `valid: false`).
+    ///   3. Flush all pending events to the server while the current JWT is still live.
+    ///   4. Tear down all SDK state.
+    ///   5. Invoke `completion` on the main thread.
+    ///
+    /// The host app may safely call `Exponea.shared.configure(...)` again inside the completion handler.
+    ///
+    /// - Parameter completion: Optional block invoked on the main thread after full teardown.
+    func stopIntegration(completion: (() -> Void)?)
+
     func clearLocalCustomerData(appGroup: String)
 }
