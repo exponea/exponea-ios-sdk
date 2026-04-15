@@ -14,6 +14,12 @@ content:
 > Refer to the [SDK version update guide for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
 ## Release Notes
+## Release Notes for 4.0.1
+#### April 15, 2026
+* Fixed:
+  * Fixes CocoaPods compilation error.
+
+
 ## Release Notes for 4.0.0
 #### April 14, 2026
 * Added:
