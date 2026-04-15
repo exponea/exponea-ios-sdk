@@ -330,7 +330,7 @@ extension DatabaseManager: DatabaseManagerType {
             trackEvent.baseUrl = project.baseUrl
             trackEvent.integrationType = project.type.rawValue
             // Project only: persist encoded authorization (including token) so it’s available when flushing.
-            if case .project = project.type, let projectSettings = project as? ProjectSettings {
+            if case .project = project.type, let projectSettings = project as? Exponea.ProjectSettings {
                 trackEvent.authorizationString = projectSettings.authorization.encode()
             }
             trackEvent.integrationId = project.integrationId
@@ -395,7 +395,7 @@ extension DatabaseManager: DatabaseManagerType {
         trackCustomer.integrationId = project.integrationId
         trackCustomer.integrationType = project.type.rawValue
         // Project only: persist encoded authorization (including token) so it’s available when flushing.
-        if case .project = project.type, let projectSettings = project as? ProjectSettings {
+        if case .project = project.type, let projectSettings = project as? Exponea.ProjectSettings {
             trackCustomer.authorizationString = projectSettings.authorization.encode()
         }
 
