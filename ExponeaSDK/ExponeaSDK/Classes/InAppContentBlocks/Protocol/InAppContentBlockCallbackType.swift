@@ -108,8 +108,10 @@ internal struct DefaultInAppContentBlockCallback: InAppContentBlockCallbackType 
         }
         if action.type == .browser {
             guard let stringUrl = action.url, let url = URL(safeString: stringUrl) else { return }
-            let safari = SFSafariViewController(url: url)
-            UIApplication.shared.windows.first?.rootViewController?.presentedViewController?.present(safari, animated: true)
+            onMain {
+                let safari = SFSafariViewController(url: url)
+                UIApplication.shared.windows.first?.rootViewController?.presentedViewController?.present(safari, animated: true)
+            }
         } else {
             invokeAction(action, contentBlock)
         }

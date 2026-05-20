@@ -274,12 +274,16 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
 
             case .browser:
                 if let value = pushOpenedData.actionValue {
-                    urlOpener.openBrowserLink(value)
+                    onMain { [weak self] in
+                        self?.urlOpener.openBrowserLink(value)
+                    }
                 }
 
             case .deeplink:
                 if let value = pushOpenedData.actionValue {
-                    urlOpener.openDeeplink(value)
+                    onMain { [weak self] in
+                        self?.urlOpener.openDeeplink(value)
+                    }
                 }
             }
         }
