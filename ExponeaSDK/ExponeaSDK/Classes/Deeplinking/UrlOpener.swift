@@ -15,7 +15,9 @@ final class UrlOpener: UrlOpenerType {
             Exponea.logger.log(.warning, message: "Provided url \"\(urlString)\" is invalid")
             return
         }
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        onMain {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
     }
 
     func openDeeplink(_ urlString: String) {
@@ -23,9 +25,11 @@ final class UrlOpener: UrlOpenerType {
             Exponea.logger.log(.warning, message: "Provided url \"\(urlString)\" is invalid")
             return
         }
-        self.openUniversalLink(url, application: UIApplication.shared) { result in
-            if !result {
-                self.openURLSchemeDeeplink(url, application: UIApplication.shared)
+        onMain {
+            self.openUniversalLink(url, application: UIApplication.shared) { result in
+                if !result {
+                    self.openURLSchemeDeeplink(url, application: UIApplication.shared)
+                }
             }
         }
     }

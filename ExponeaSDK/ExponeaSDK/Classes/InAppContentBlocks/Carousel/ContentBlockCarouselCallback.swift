@@ -96,11 +96,13 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
         if !overrideDefaultBehavior {
             if action.type == .browser {
                 guard let stringUrl = action.url, let url = URL(safeString: stringUrl) else { return }
-                let safari = SFSafariViewController(url: url)
-                if let presented = UIApplication.shared.windows.first?.rootViewController?.presentedViewController {
-                    presented.present(safari, animated: true)
-                } else {
-                    UIApplication.shared.windows.first?.rootViewController?.present(safari, animated: true)
+                onMain {
+                    let safari = SFSafariViewController(url: url)
+                    if let presented = UIApplication.shared.windows.first?.rootViewController?.presentedViewController {
+                        presented.present(safari, animated: true)
+                    } else {
+                        UIApplication.shared.windows.first?.rootViewController?.present(safari, animated: true)
+                    }
                 }
             } else {
                 invokeAction(action, contentBlock)
