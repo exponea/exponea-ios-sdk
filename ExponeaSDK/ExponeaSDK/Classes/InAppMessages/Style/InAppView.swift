@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 public struct InAppView: View {
 
@@ -18,6 +19,7 @@ public struct InAppView: View {
     public let imageConfig: InAppImageComponentConfig
     public var textCompletionHeight: TypeBlock<CGFloat>?
     @ObservedObject var config: InAppViewConfig = .init()
+    private let preloadedImage: UIImage?
     private let isFullscreen: Bool
 
     private var isTextVisible: Bool {
@@ -31,6 +33,7 @@ public struct InAppView: View {
         bodyConfig: InAppBodyLabelConfig,
         closeButtonConfig: InAppCloseButtonConfig,
         imageConfig: InAppImageComponentConfig,
+        preloadedImage: UIImage? = nil,
         isFullscreen: Bool
     ) {
         self.layouConfig = layouConfig
@@ -39,6 +42,7 @@ public struct InAppView: View {
         self.bodyConfig = bodyConfig
         self.closeButtonConfig = closeButtonConfig
         self.imageConfig = imageConfig
+        self.preloadedImage = preloadedImage
         self.isFullscreen = isFullscreen
     }
 
@@ -95,7 +99,11 @@ public struct InAppView: View {
 
     private var imageArea: some View {
         VStack(spacing: 0) {
-            InAppImageComponent(config: imageConfig, layoutConfig: layouConfig)
+            InAppImageComponent(
+                config: imageConfig,
+                layoutConfig: layouConfig,
+                preloadedImage: preloadedImage
+            )
         }
     }
 
@@ -129,7 +137,11 @@ public struct InAppView: View {
     var imageOnly: some View {
         VStack(spacing: 0) {
             if imageConfig.isVisible {
-                InAppImageComponent(config: imageConfig, layoutConfig: layouConfig)
+                InAppImageComponent(
+                    config: imageConfig,
+                    layoutConfig: layouConfig,
+                    preloadedImage: preloadedImage
+                )
                 .padding(.bottom, imageConfig.margin.first(where: { $0.edge == .bottom })?.value ?? 0)
                 .padding(.top, imageConfig.margin.first(where: { $0.edge == .top })?.value ?? 0)
                 .padding(.trailing, imageConfig.margin.first(where: { $0.edge == .trailing })?.value ?? 0)
@@ -221,10 +233,7 @@ public struct InAppView: View {
         .background(Color(UIColor.parse(layouConfig.backgroundColor) ?? .clear))
         .inAppCloseButtonOverlay(config: closeButtonConfig)
         .readHeight { height in
-            config.debouncer.debounce {
-                print("height: \(height)")
-                self.config.height = height
-            }
+            self.config.height = height
         }
         .onAppear {
             config.textCompletionHeight = { height in

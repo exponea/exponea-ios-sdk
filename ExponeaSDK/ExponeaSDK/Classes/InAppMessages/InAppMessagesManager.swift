@@ -30,6 +30,100 @@ internal enum IdentifyTriggerState {
     case storedFetch
 }
 
+/// Serial FIFO pipeline for async identify / IAM work. `enqueue` appends synchronously on the
+/// caller's thread; a single consumer drains items one at a time in submission order.
+final class IdentifyFlowWorkQueue {
+    private let continuation: AsyncStream<() async -> Void>.Continuation
+    private let processingTask: Task<Void, Never>
+
+    init() {
+        let (stream, continuation) = AsyncStream.makeStream(of: (() async -> Void).self)
+        self.continuation = continuation
+        self.processingTask = Task {
+            for await work in stream {
+                await work()
+            }
+        }
+    }
+
+    deinit {
+        continuation.finish()
+        processingTask.cancel()
+    }
+
+    func enqueue(_ work: @escaping () async -> Void) {
+        continuation.yield(work)
+    }
+}
+
+/// Owns deferred session_start replay state.
+/// Compound invariants (e.g. claim-and-clear pending payload) are atomic within the actor.
+private actor IdentifyFlowState {
+    private var pendingBackgroundSessionStart: [DataType]?
+    private var sessionStartReplayCompleted = false
+    private var isReplayedSessionStartFlow = false
+    private var isIdentifyFlowInProcess = false
+
+    func storePendingSessionStart(_ event: [DataType]) {
+        sessionStartReplayCompleted = false
+        pendingBackgroundSessionStart = event
+    }
+
+    func claimPendingSessionStart() -> [DataType]? {
+        defer { pendingBackgroundSessionStart = nil }
+        return pendingBackgroundSessionStart
+    }
+
+    func clearReplaySlots() {
+        pendingBackgroundSessionStart = nil
+    }
+
+    func clearReplayState() {
+        pendingBackgroundSessionStart = nil
+        sessionStartReplayCompleted = false
+    }
+
+    func markReplayFinished() {
+        sessionStartReplayCompleted = true
+    }
+
+    func resetReplayDedupeOnBackground() {
+        sessionStartReplayCompleted = false
+    }
+
+    func setReplayInProgress(_ value: Bool) {
+        isReplayedSessionStartFlow = value
+    }
+
+    func isReplayInProgress() -> Bool {
+        isReplayedSessionStartFlow
+    }
+
+    func setIdentifyInProcess(_ value: Bool) {
+        isIdentifyFlowInProcess = value
+    }
+
+    func identifyInProcess() -> Bool {
+        isIdentifyFlowInProcess
+    }
+
+    func pendingSessionStart() -> [DataType]? {
+        pendingBackgroundSessionStart
+    }
+
+    func restorePendingSessionStart(_ event: [DataType]) {
+        pendingBackgroundSessionStart = event
+    }
+
+    /// Returns true when a foreground session_start should be skipped after a successful replay dedupe.
+    func consumeSessionStartReplayDedupeIfNeeded() -> Bool {
+        guard sessionStartReplayCompleted else { return false }
+        sessionStartReplayCompleted = false
+        pendingBackgroundSessionStart = nil
+        return true
+    }
+}
+
 final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable {
 
     struct InAppMessageShowRequest {
@@ -57,15 +151,17 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
     private let trackingConsentManager: TrackingConsentManagerType
     private let urlOpener: UrlOpenerType
     internal var sessionStartDate: Date = Date()
-    private var isIdentifyFlowInProcess: Bool = false
     private static let refreshCacheAfter: TimeInterval = 60 * 30 // refresh on session start if cache is older than this
     private static let maxPendingMessageAge: TimeInterval = 3 // time window to show pending message after preloading
     @Atomic internal var pendingShowRequests: [String: InAppMessageShowRequest] = [:]
-    private lazy var identifyFlowQueue: OperationQueue = {
-        let queue = OperationQueue()
-        queue.name = "identify flow"
-        return queue
-    }()
+    private let flowState = IdentifyFlowState()
+    private let identifyFlowWorkQueue = IdentifyFlowWorkQueue()
+
+    /// Runs async identify / IAM work serially: one operation at a time, in submission order,
+    /// without blocking any thread while waiting for each to finish.
+    private func enqueueIdentifyFlowWork(_ work: @escaping () async -> Void) {
+        identifyFlowWorkQueue.enqueue(work)
+    }
 
     init(
         repository: RepositoryType,
@@ -85,9 +181,51 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
         IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
             guard let self else { return }
             self.pendingShowRequests.removeAll()
+            self.enqueueIdentifyFlowWork { [weak self] in
+                await self?.flowState.clearReplayState()
+            }
             self.cache.clear()
             self.displayStatusStore.clear()
         }
+    }
+
+    private func isSessionStartEvent(_ event: [DataType]) -> Bool {
+        event.eventTypes.contains(EventType.sessionStart.rawValue)
+            || event.eventTypes.contains(Constants.EventTypes.sessionStart)
+    }
+
+    private func eventCustomerIdsMatchForInApp(event: [DataType], current: [String: String]) -> Bool {
+        let stored = event.customerIds
+        // Production session_start payloads always include customerIds. An empty stored snapshot
+        // means there is nothing to compare, so treat as incompatible to avoid replaying a
+        // deferred session_start after an unrelated identify.
+        guard !stored.isEmpty else { return false }
+        for (key, value) in stored {
+            guard current[key] == value else { return false }
+        }
+        return true
+    }
+
+    private func hydratedSessionStartEvent(from stored: [DataType]) -> [DataType] {
+        let currentIds = Exponea.shared.trackingManager?.customerIds ?? stored.customerIds
+        return stored.withCustomerIds(currentIds)
+    }
+
+    private func replayPendingSessionStart(stored: [DataType]) async {
+        let hydrated = hydratedSessionStartEvent(from: stored)
+        Exponea.logger.log(
+            .verbose,
+            message: "[InApp] Replaying skipped session_start in-app message processing"
+        )
+        await flowState.setReplayInProgress(true)
+        await startIdentifyCustomerFlow(for: hydrated)
+        await flowState.setReplayInProgress(false)
+    }
+
+    private func replaySkippedSessionStartIfForeground() async {
+        guard Exponea.shared.isAppForeground else { return }
+        guard let stored = await flowState.claimPendingSessionStart() else { return }
+        await replayPendingSessionStart(stored: stored)
     }
 
     // MARK: - Methods
@@ -100,9 +238,11 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
         pendingShowRequests.removeAll()
         cache.clear()
         displayStatusStore.clear()
-        if let cookie = Exponea.shared.trackingManager?.customerIds {
-            Task { [weak self] in
-                await self?.startIdentifyCustomerFlow(for: [.customerIds(cookie)], isAnonymized: true)
+        enqueueIdentifyFlowWork { [weak self] in
+            guard let self else { return }
+            await self.flowState.clearReplayState()
+            if let cookie = Exponea.shared.trackingManager?.customerIds {
+                await self.startIdentifyCustomerFlow(for: [.customerIds(cookie)], isAnonymized: true)
             }
         }
     }
@@ -225,7 +365,10 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
             return
         }
         await withCheckedContinuation { [weak self] continuation in
-            guard let self else { return }
+            guard let self else {
+                continuation.resume()
+                return
+            }
             guard message.hasPayload() && message.variantId != -1 else {
                 Exponea.logger.log(
                     .verbose,
@@ -241,6 +384,7 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
             if !(message.payload?.imageUrl ?? "").isEmpty {
                 guard let createdImageData = self.getImageData(for: message) else {
                     callback?(nil)
+                    continuation.resume()
                     return
                 }
                 imageData = createdImageData
@@ -248,6 +392,7 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
             if !(message.oldPayload?.imageUrl ?? "").isEmpty {
                 guard let createdImageData = self.getImageData(for: message) else {
                     callback?(nil)
+                    continuation.resume()
                     return
                 }
                 imageData = createdImageData
@@ -370,8 +515,6 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
         return []
     }
 
-    let semaphore = DispatchSemaphore(value: 0)
-
     private func extractFont(url: String, fontSize: String?, size: CGFloat?) async -> InAppButtonFontData? {
         await withCheckedContinuation { continuation in
             DispatchQueue.global(qos: .background).async {
@@ -467,7 +610,6 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                 )
                 return
             }
-            self?.isIdentifyFlowInProcess = false
             guard case let .success(response) = result,
                     let self,
                     var currentCustomerIds = Exponea.shared.trackingManager?.customerIds
@@ -510,11 +652,13 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
     @discardableResult
     internal func isFetchInAppMessagesDone(for event: [DataType]) async throws -> Bool {
         try await withCheckedThrowingContinuation { [weak self] continuation in
-            guard let self else { return }
+            guard let self else {
+                continuation.resume(throwing: InAppMessageError.fetchInAppMessagesFailed)
+                return
+            }
             DispatchQueue.global(qos: .userInitiated).async {
                 self.repository.fetchInAppMessages(for: event.customerIds) { result in
                     Task {
-                        self.isIdentifyFlowInProcess = false
                         switch result {
                         case let .success(response):
                             if var currentCustomerIds = Exponea.shared.trackingManager?.customerIds, !currentCustomerIds.isEmpty {
@@ -618,7 +762,24 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                 .verbose,
                 message: "[InApp] Skipping messages process for \(event) because app is not in foreground state"
             )
+            if isSessionStartEvent(event) {
+                await flowState.storePendingSessionStart(event)
+                // Foreground may flip before this queued operation runs (TOCTOU).
+                if Exponea.shared.isAppForeground, let stored = await flowState.claimPendingSessionStart() {
+                    await replayPendingSessionStart(stored: stored)
+                }
+            }
             return
+        }
+        // After a replayed background session_start succeeds, ignore another foreground session_start
+        // in the same active stint (tracking often emits session_start again on foreground). The flag is
+        // cleared on applicationDidEnterBackground so a later session_start after background is still processed.
+        if isSessionStartEvent(event), await flowState.consumeSessionStartReplayDedupeIfNeeded() {
+            return
+        }
+        // Past foreground guard — clear any pending replay to prevent double-show
+        if isSessionStartEvent(event) {
+            await flowState.clearReplaySlots()
         }
         // Should reload or identify customer
         switch true {
@@ -628,15 +789,25 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                 message: "[InApp] Identify customer in progress"
             )
             _pendingShowRequests.changeValue(with: { $0.removeAll() })
+            if let pending = await flowState.pendingSessionStart(),
+               !eventCustomerIdsMatchForInApp(event: pending, current: event.customerIds) {
+                await flowState.clearReplayState()
+            }
             clearImagesAndFonts()
-            isIdentifyFlowInProcess = true
+            await flowState.setIdentifyInProcess(true)
             await isFlushDone()
             await addToPendingShowRequest(event: event)
             if triggerCompletion != nil {
-                isIdentifyFlowInProcess = false
+                await flowState.setIdentifyInProcess(false)
                 triggerCompletion?(.identifyFetch)
             }
-            guard Exponea.shared.isAppForeground else { return }
+            guard Exponea.shared.isAppForeground else {
+                // The app backgrounded before the fetch could run. Without this reset,
+                // isIdentifyFlowInProcess stays stuck true, which incorrectly gates the
+                // message-loading logic for every subsequent event, not only replayed ones.
+                await flowState.setIdentifyInProcess(false)
+                return
+            }
             do {
                 try await isFetchInAppMessagesDone(for: event)
                 let message = try await loadMessageIfNeeded(event: event)
@@ -647,12 +818,17 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                     message: "[InApp] fetchInAppMessages error \(error)"
                 )
             }
+            // Clear on the serial path so subsequent FIFO work sees a consistent flag
+            // (do not rely on fire-and-forget Tasks from GCD completion handlers).
+            await flowState.setIdentifyInProcess(false)
+            await replaySkippedSessionStartIfForeground()
         case isAnonymized:
             Exponea.logger.log(
                 .verbose,
                 message: "[InApp] Fetch in app messages, because 'isAnonymized'"
             )
             _pendingShowRequests.changeValue(with: { $0.removeAll() })
+            await flowState.clearReplayState()
             clearImagesAndFonts()
             do {
                 try await isFetchInAppMessagesDone(for: event)
@@ -671,16 +847,23 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                 try await isFetchInAppMessagesDone(for: event)
                 let message = try await loadMessageIfNeeded(event: event)
                 await showInAppMessage(message)
+                if await flowState.isReplayInProgress(), isSessionStartEvent(event) {
+                    await flowState.markReplayFinished()
+                }
             } catch {
                 Exponea.logger.log(
                     .error,
                     message: "[InApp] fetchInAppMessages error \(error)"
                 )
+                // Claim already cleared pending; restore so a later become-active can retry.
+                if await flowState.isReplayInProgress(), isSessionStartEvent(event) {
+                    await flowState.restorePendingSessionStart(event)
+                }
             }
             // For test purposes. Initialized only inside test
             if triggerCompletion != nil {
                 sessionStartDate = Date().addingTimeInterval(-Date().timeIntervalSince1970)
-                isIdentifyFlowInProcess = false
+                await flowState.setIdentifyInProcess(false)
                 triggerCompletion?(.shouldReloadFetch)
             }
         default:
@@ -691,7 +874,7 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                 )
                 return
             }
-            if !isIdentifyFlowInProcess {
+            if !(await flowState.identifyInProcess()) {
                 Exponea.logger.log(
                     .verbose,
                     message: "[InApp] ShoulReload is false. Just load messages'"
@@ -699,25 +882,42 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                 do {
                     let message = try await loadMessageIfNeeded(event: event)
                     await showInAppMessage(message)
+                    if await flowState.isReplayInProgress(), isSessionStartEvent(event) {
+                        await flowState.markReplayFinished()
+                    }
                 } catch {
                     Exponea.logger.log(
                         .error,
                         message: "[InApp] loadMessageIfNeeded error \(error)"
                     )
+                    // Claim already cleared pending; restore so a later become-active can retry.
+                    if await flowState.isReplayInProgress(), isSessionStartEvent(event) {
+                        await flowState.restorePendingSessionStart(event)
+                    }
                 }
 
                 // For test purposes. Initialized only inside test
                 if triggerCompletion != nil {
-                    isIdentifyFlowInProcess = false
+                    await flowState.setIdentifyInProcess(false)
                     triggerCompletion?(.storedFetch)
                 }
+            } else if await flowState.isReplayInProgress(), isSessionStartEvent(event) {
+                // Identify is still in progress, so no fetch/show was attempted for this replay.
+                // Restore the pending event instead of marking the replay finished, so it is
+                // retried once the in-progress identify flow completes (see the
+                // replaySkippedSessionStartIfForeground() call at the end of the
+                // isFromIdentifyCustomer case above).
+                await flowState.restorePendingSessionStart(event)
             }
         }
     }
 
     private func loadMessageIfNeeded(event: [DataType]) async throws -> InAppMessage {
         try await withCheckedThrowingContinuation { [weak self] continuation in
-            guard let self else { return }
+            guard let self else {
+                continuation.resume(throwing: InAppMessageError.fetchInAppMessagesFailed)
+                return
+            }
             DispatchQueue.global(qos: .userInitiated).async {
                 if var message = self.pickPendingMessage {
                     self.pendingShowRequests.removeAll()
@@ -735,7 +935,6 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                                 ))
                             """
                         )
-                        self.isIdentifyFlowInProcess = false
                         if message.downloadedImage == nil, let image = self.preloadImage(for: message) {
                             message.downloadedImage = image
                             onMain {
@@ -765,7 +964,6 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
                     }
                 } else {
                     if var message = self.loadMessageToShow(for: event) {
-                        self.isIdentifyFlowInProcess = false
                         if message.downloadedImage == nil, let image = self.preloadImage(for: message) {
                             message.downloadedImage = image
                             onMain {
@@ -847,31 +1045,46 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
     }
 
     internal func onEventOccurred(of type: EventType, for event: [DataType], triggerCompletion: TypeBlock<IdentifyTriggerState>? = nil) {
-        identifyFlowQueue.addOperation { [weak self] in
-            Task {
-                guard let self else { return }
-                switch type {
-                case .sessionStart:
-                    Exponea.logger.log(
-                        .verbose,
-                        message: "[InApp] Session start"
-                    )
-                    self.sessionStartDate = Date(timeIntervalSince1970: event.latestTimestamp ?? Date().timeIntervalSince1970)
-                    await self.startIdentifyCustomerFlow(for: event, triggerCompletion: triggerCompletion)
-                case .sessionEnd, .pushDelivered, .pushOpened:
-                    Exponea.logger.log(
-                        .verbose,
-                        message: "[InApp] Event type - \(type)"
-                    )
-                    await self.startIdentifyCustomerFlow(for: event, isFetchDisabled: true)
-                default:
-                    Exponea.logger.log(
-                        .verbose,
-                        message: "[InApp] Event type - \(type)"
-                    )
-                    await self.startIdentifyCustomerFlow(for: event, isFromIdentifyCustomer: type == .identifyCustomer, triggerCompletion: triggerCompletion)
-                }
+        enqueueIdentifyFlowWork { [weak self] in
+            guard let self else { return }
+            switch type {
+            case .sessionStart:
+                Exponea.logger.log(
+                    .verbose,
+                    message: "[InApp] Session start"
+                )
+                self.sessionStartDate = Date(timeIntervalSince1970: event.latestTimestamp ?? Date().timeIntervalSince1970)
+                await self.startIdentifyCustomerFlow(for: event, triggerCompletion: triggerCompletion)
+            case .sessionEnd, .pushDelivered, .pushOpened:
+                Exponea.logger.log(
+                    .verbose,
+                    message: "[InApp] Event type - \(type)"
+                )
+                await self.startIdentifyCustomerFlow(for: event, isFetchDisabled: true)
+            default:
+                Exponea.logger.log(
+                    .verbose,
+                    message: "[InApp] Event type - \(type)"
+                )
+                await self.startIdentifyCustomerFlow(
+                    for: event,
+                    isFromIdentifyCustomer: type == .identifyCustomer,
+                    triggerCompletion: triggerCompletion
+                )
             }
+        }
+    }
+
+    func applicationDidBecomeActive() {
+        enqueueIdentifyFlowWork { [weak self] in
+            guard let self else { return }
+            await self.replaySkippedSessionStartIfForeground()
+        }
+    }
+
+    func applicationDidEnterBackground() {
+        enqueueIdentifyFlowWork { [weak self] in
+            await self?.flowState.resetReplayDedupeOnBackground()
         }
     }
 }

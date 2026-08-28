@@ -23,7 +23,6 @@ public final class InAppMessageSlideInViewModel: ObservableObject {
     @Published public var height: CGFloat = 0
     @Published public var isBiggerThanScreen = false
     private var areConfigsSet = false
-    public var isLoaded = false
     var debouncer = Debouncer(delay: 2)
 
     init(
@@ -46,6 +45,7 @@ public final class InAppMessageSlideInViewModel: ObservableObject {
 struct InAppMessageSlideInViewSwiftUI: View {
 
     public let heightCompletion: TypeBlock<CGFloat>?
+    private let preloadedImage: UIImage?
 
     @ObservedObject public var viewModel: InAppMessageSlideInViewModel
 
@@ -60,9 +60,11 @@ struct InAppMessageSlideInViewSwiftUI: View {
         bodyConfig: InAppBodyLabelConfig,
         closeButtonConfig: InAppCloseButtonConfig,
         imageConfig: InAppImageComponentConfig,
+        preloadedImage: UIImage? = nil,
         heightCompletion: TypeBlock<CGFloat>?
     ) {
         self.heightCompletion = heightCompletion
+        self.preloadedImage = preloadedImage
 
         viewModel = .init(
             layouConfig: layouConfig,
@@ -83,7 +85,8 @@ struct InAppMessageSlideInViewSwiftUI: View {
     private var imageArea: some View {
         SlideInAppImageComponent(
             config: viewModel.imageConfig,
-            layoutConfig: viewModel.layouConfig
+            layoutConfig: viewModel.layouConfig,
+            preloadedImage: preloadedImage
         )
     }
 
@@ -254,7 +257,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     var setCloseTimeCallback: EmptyBlock?
 
     private var inAppWindow: UIWindow?
-    private var isLoaded = false
+    private var hasAnimatedIn = false
 
     var bottomCons: NSLayoutConstraint?
     var topCons: NSLayoutConstraint?
@@ -292,8 +295,11 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
                     }
                     guard let view = self.slideView else { return }
                     view.layoutIfNeeded()
-                    self.animateIn()
-                    self.setCloseTimeCallback?()
+                    if !self.hasAnimatedIn {
+                        self.animateIn()
+                        self.setCloseTimeCallback?()
+                        self.hasAnimatedIn = true
+                    }
                 }
             }
         }
@@ -350,12 +356,10 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
             bodyConfig: payload.bodyConfig,
             closeButtonConfig: updatedPayload.closeConfig,
             imageConfig: payload.imageConfig,
+            preloadedImage: image,
             heightCompletion: { newHeight in
-                self.debouncer.debounce {
-                    if !self.isLoaded {
-                        self.isLoaded = true
-                        self.calculatedHeight += newHeight
-                    }
+                if newHeight != 0 {
+                    self.calculatedHeight = newHeight
                 }
             }
         )

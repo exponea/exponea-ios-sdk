@@ -8,6 +8,7 @@
 
 import Nimble
 import Quick
+import UIKit
 
 @testable import ExponeaSDK
 @testable import ExponeaSDKShared
@@ -138,6 +139,29 @@ class SessionManagerSpec: QuickSpec {
 
                 expect(trackingDelegate.sessionStarts.count).to(equal(1))
                 expect(trackingDelegate.sessionStarts[0]).to(equal(10))
+            }
+
+            it("should synchronize Exponea.shared.isAppForeground from UIApplication state when called on main thread") {
+                // Apps with manual session tracking commonly call trackSessionStart() from their
+                // own applicationDidBecomeActive(), which can run before the SDK's own
+                // foreground-state notification observer updates the cached flag. manualSessionStart()
+                // must correct the stale flag itself instead of relying on that notification to
+                // arrive first.
+                expect(Thread.isMainThread).to(equal(true))
+                let liveAppState = UIApplication.shared.applicationState
+
+                Exponea.shared.isAppForeground = false
+
+                sessionManager.manualSessionStart(at: 10)
+
+                switch liveAppState {
+                case .active:
+                    expect(Exponea.shared.isAppForeground).to(beTrue())
+                case .inactive, .background:
+                    expect(Exponea.shared.isAppForeground).to(beFalse())
+                @unknown default:
+                    fail("Unexpected UIApplication.applicationState: \(liveAppState.rawValue)")
+                }
             }
 
             it("should manually track session end") {

@@ -18,9 +18,8 @@ public final class InAppDialogContainerView: UIViewController, InAppMessageView 
     private let isFullscreen: Bool
     internal let dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)>
     private var payLoad: RichInAppMessagePayload
-    private var isLoaded = false
     private var isRichPresented = false
-    private let debouncer = Debouncer(delay: 2)
+    private var hasPresentedModal = false
     var bottomCons: NSLayoutConstraint?
     var heightCons: NSLayoutConstraint?
     private var inAppView: InAppView?
@@ -51,8 +50,11 @@ public final class InAppDialogContainerView: UIViewController, InAppMessageView 
                     heightCons?.constant = newValue
                 }
                 view.layoutIfNeeded()
-                showModal()
-                setCloseTimeCallback?()
+                if !hasPresentedModal {
+                    showModal()
+                    setCloseTimeCallback?()
+                    hasPresentedModal = true
+                }
             }
         }
     }
@@ -64,6 +66,7 @@ public final class InAppDialogContainerView: UIViewController, InAppMessageView 
     public init(
         payLoad: RichInAppMessagePayload,
         isFullscreen: Bool = false,
+        preloadedImage: UIImage? = nil,
         dismissCallback: @escaping TypeBlock<(Bool, InAppMessagePayloadButton?)>,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void)
     ) {
@@ -84,6 +87,7 @@ public final class InAppDialogContainerView: UIViewController, InAppMessageView 
             bodyConfig: payLoad.bodyConfig,
             closeButtonConfig: updatedPayload.closeConfig,
             imageConfig: payLoad.imageConfig,
+            preloadedImage: preloadedImage,
             isFullscreen: isFullscreen
         )
         view.textCompletionHeight = { [weak self] height in

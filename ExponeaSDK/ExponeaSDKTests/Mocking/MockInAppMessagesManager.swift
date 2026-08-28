@@ -54,4 +54,6 @@ final class MockInAppMessagesManager: InAppMessagesManagerType {
     ) {}
 
     func onEventOccurred(of type: EventType, for event: [ExponeaSDK.DataType]) {}
+    func applicationDidBecomeActive() {}
+    func applicationDidEnterBackground() {}
 }

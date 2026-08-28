@@ -257,7 +257,7 @@ public class ExponeaInternal: ExponeaType {
         return InAppContentBlockDisplayStatusStore(userDefaults: userDefaults)
     }()
 
-    internal var isAppForeground: Bool = false
+    @Atomic internal var isAppForeground: Bool = false
 
     // MARK: - Init -
 
@@ -593,8 +593,13 @@ internal extension ExponeaInternal {
     }
 
     func registerApplicationStateListener() {
-        onMain {
-            self.isAppForeground = UIApplication.shared.applicationState == .active
+        onMain { [weak self] in
+            guard let self else { return }
+            let isActive = UIApplication.shared.applicationState == .active
+            self.isAppForeground = isActive
+            if isActive {
+                self.inAppMessagesManager?.applicationDidBecomeActive()
+            }
         }
         NotificationCenter.default.addObserver(
             self,
@@ -626,10 +631,12 @@ internal extension ExponeaInternal {
 
     @objc func applicationDidBecomeActive() {
         self.isAppForeground = true
+        self.inAppMessagesManager?.applicationDidBecomeActive()
     }
 
     @objc func applicationDidEnterBackground() {
         self.isAppForeground = false
+        self.inAppMessagesManager?.applicationDidEnterBackground()
     }
 }
 

@@ -31,6 +31,25 @@ class InAppMessagesManagerSpec: QuickSpec {
         let customer1 = ["fake": "user"]
         let event: DataType = .customerIds(Exponea.shared.trackingManager?.customerIds ?? customer1)
 
+        func productionSessionStartEvent(customerIds: [String: String]) -> [DataType] {
+            [
+                .eventType(EventType.sessionStart.rawValue),
+                .eventType(Constants.EventTypes.sessionStart),
+                .customerIds(customerIds),
+                .timestamp(Date().timeIntervalSince1970)
+            ]
+        }
+
+        func seedSessionStartMessageCache() {
+            let message = SampleInAppMessage.getSampleInAppMessage()
+            cache.saveInAppMessages(inAppMessages: [message])
+            cache.saveImageData(
+                at: message.oldPayload!.imageUrl!,
+                data: "mock data".data(using: .utf8)!
+            )
+            cache.setInAppMessagesTimestamp(Date().timeIntervalSince1970)
+        }
+
         beforeEach {
             IntegrationManager.shared.isStopped = false
             cache = MockInAppMessagesCache()
@@ -57,6 +76,7 @@ class InAppMessagesManagerSpec: QuickSpec {
                 trackingConsentManager: trackingConsentManager
             )
             trackingManager.inAppManager = manager
+            trackingManager.customerIds = customer1
         }
 
         describe("Load") {
@@ -134,6 +154,353 @@ class InAppMessagesManagerSpec: QuickSpec {
                     }
                 }
                 expect(successOperations).to(equal(4))
+            }
+            it("replays session_start IAM after app transitions from background to foreground") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+            }
+            it("does not double-show when foreground session_start follows a pending replay") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+            }
+            it("does not replay non-session_start events after foreground transition") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .customEvent,
+                    for: [.eventType("button_clicked"), .customerIds(customer1)]
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+            }
+            it("clears pending session_start replay on anonymize") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                manager.anonymize()
+
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+            }
+            it("clears pending session_start replay on integration stop") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
+
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+            }
+            it("clears pending session_start replay on identify customer") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                Exponea.shared.isAppForeground = true
+                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(["other": "user"])])
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(5))
+                let countAfterIdentify = presenter.presentedMessages.count
+
+                manager.applicationDidBecomeActive()
+
+                expect(presenter.presentedMessages.count).toEventually(equal(countAfterIdentify), timeout: .seconds(5))
+            }
+            it("replays deferred session_start after identify with compatible customer") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                Exponea.shared.isAppForeground = true
+                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+            }
+            it("hydrated customer ids allow session_start replay when tracking ids are a superset") {
+                seedSessionStartMessageCache()
+                let cookieOnly = ["cookie": "test-cookie"]
+                trackingManager.customerIds = ["cookie": "test-cookie", "fake": "user"]
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: cookieOnly)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+            }
+            it("replays session_start when foreground is set before queued session_start is processed") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+            }
+            it("processes a new session_start after background following an earlier foreground session_start") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = true
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+
+                Exponea.shared.isAppForeground = false
+                manager.applicationDidEnterBackground()
+                Exponea.shared.isAppForeground = true
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(2), timeout: .seconds(5))
+            }
+            it("does not lose a session_start replay after an unrelated identify call left the app in background") {
+                // An identifyCustomer() that hits the top-level foreground guard must not leave
+                // isIdentifyFlowInProcess stuck true (it never sets the flag on that path). Deferred
+                // session_start must still replay on become-active.
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+            }
+            it("does not lose a session_start replay after an identify mid-flow backgrounds") {
+                // Identify passes the top-level guard (foreground), then backgrounds before fetch
+                // completes so the mid-flow guard resets isIdentifyFlowInProcess. Pending
+                // session_start must still replay on the next become-active.
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                let fetchStarted = DispatchSemaphore(value: 0)
+                repository.onFetchInAppMessagesStarted = {
+                    fetchStarted.signal()
+                }
+                repository.fetchInAppMessagesDelay = 0.5
+                Exponea.shared.isAppForeground = true
+                manager.onEventOccurred(of: .identifyCustomer, for: [.customerIds(customer1)])
+                // Deterministically wait until identify has passed the top-level guard, set
+                // identify-in-process and actually started the (delayed) fetch, then background
+                // before it completes so the mid-flow guard aborts cleanly.
+                let didStartFetch = fetchStarted.wait(timeout: .now() + 2) == .success
+                expect(didStartFetch).to(beTrue())
+                repository.onFetchInAppMessagesStarted = nil
+                Exponea.shared.isAppForeground = false
+
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(3))
+
+                repository.fetchInAppMessagesDelay = 0
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+            }
+            it("retries session_start replay after a failed fetch when app becomes active again") {
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                // Force shouldReload + failing fetch so replay claims pending then fails.
+                cache.setInAppMessagesTimestamp(0)
+                repository.fetchInAppMessagesResult = Result.failure(RepositoryError.connectionError)
+
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(3))
+
+                seedSessionStartMessageCache()
+                let message = SampleInAppMessage.getSampleInAppMessage()
+                repository.fetchInAppMessagesResult = Result.success(
+                    InAppMessagesResponse(success: true, data: [message])
+                )
+                manager.applicationDidBecomeActive()
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+            }
+            it("processes session_start after anonymize when replay dedupe flag was set") {
+                seedSessionStartMessageCache()
+
+                Exponea.shared.isAppForeground = false
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(0), timeout: .seconds(2))
+
+                Exponea.shared.isAppForeground = true
+                manager.applicationDidBecomeActive()
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+
+                manager.anonymize()
+                expect(presenter.presentedMessages.count).toEventually(equal(1), timeout: .seconds(5))
+
+                seedSessionStartMessageCache()
+
+                manager.onEventOccurred(
+                    of: .sessionStart,
+                    for: productionSessionStartEvent(customerIds: customer1)
+                )
+                expect(presenter.presentedMessages.count).toEventually(equal(2), timeout: .seconds(5))
+            }
+        }
+
+        describe("IdentifyFlowWorkQueue") {
+            it("processes enqueued work in FIFO submission order") {
+                waitUntil(timeout: .seconds(5)) { done in
+                    Task {
+                        let queue = IdentifyFlowWorkQueue()
+                        var observedOrder: [Int] = []
+                        let orderLock = NSLock()
+                        let itemCount = 30
+
+                        for index in 0..<itemCount {
+                            queue.enqueue {
+                                orderLock.lock()
+                                observedOrder.append(index)
+                                orderLock.unlock()
+                                try? await Task.sleep(nanoseconds: 100_000)
+                            }
+                        }
+
+                        for _ in 0..<100 {
+                            orderLock.lock()
+                            let count = observedOrder.count
+                            orderLock.unlock()
+                            if count == itemCount {
+                                break
+                            }
+                            try? await Task.sleep(nanoseconds: 50_000_000)
+                        }
+
+                        orderLock.lock()
+                        let result = observedOrder
+                        orderLock.unlock()
+                        expect(result).to(equal(Array(0..<itemCount)))
+                        done()
+                    }
+                }
+            }
+
+            it("preserves FIFO submission order under concurrent enqueue") {
+                waitUntil(timeout: .seconds(5)) { done in
+                    Task {
+                        let queue = IdentifyFlowWorkQueue()
+                        var expectedSubmissionOrder: [Int] = []
+                        var observedExecutionOrder: [Int] = []
+                        let orderLock = NSLock()
+                        let submitLock = NSLock()
+                        let itemCount = 50
+
+                        await withTaskGroup(of: Void.self) { group in
+                            for _ in 0..<itemCount {
+                                group.addTask {
+                                    submitLock.lock()
+                                    let submissionSequence = expectedSubmissionOrder.count
+                                    expectedSubmissionOrder.append(submissionSequence)
+                                    queue.enqueue {
+                                        orderLock.lock()
+                                        observedExecutionOrder.append(submissionSequence)
+                                        orderLock.unlock()
+                                    }
+                                    submitLock.unlock()
+                                }
+                            }
+                        }
+
+                        for _ in 0..<100 {
+                            orderLock.lock()
+                            let count = observedExecutionOrder.count
+                            orderLock.unlock()
+                            if count == itemCount {
+                                break
+                            }
+                            try? await Task.sleep(nanoseconds: 50_000_000)
+                        }
+
+                        orderLock.lock()
+                        let expected = expectedSubmissionOrder
+                        let observed = observedExecutionOrder
+                        orderLock.unlock()
+                        expect(observed).to(equal(expected))
+                        done()
+                    }
+                }
             }
         }
 

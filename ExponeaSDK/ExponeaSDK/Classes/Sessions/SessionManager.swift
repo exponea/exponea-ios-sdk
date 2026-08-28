@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 final class SessionManager: SessionManagerType {
     private let userDefaults: UserDefaults
@@ -47,7 +48,18 @@ final class SessionManager: SessionManagerType {
 
     func manualSessionStart(at timestamp: TimeInterval) {
         guard !isAutomatic else { return }
+        syncForegroundStateIfPossible()
         triggerSessionStart(at: timestamp)
+    }
+
+    /// Manual session tracking is commonly invoked directly from the host app's own
+    /// `applicationDidBecomeActive`, ahead of the SDK's own foreground-state notification observer.
+    /// When called on the main thread, `UIApplication.shared.applicationState` is authoritative and
+    /// already reflects the true state, so it is used to correct a potentially stale cached flag
+    /// before the event is processed, instead of waiting for the SDK's own notification to catch up.
+    private func syncForegroundStateIfPossible() {
+        guard Thread.isMainThread else { return }
+        Exponea.shared.isAppForeground = UIApplication.shared.applicationState == .active
     }
 
     func clearSessionManager() {

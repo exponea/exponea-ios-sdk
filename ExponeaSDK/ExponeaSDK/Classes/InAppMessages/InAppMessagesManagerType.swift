@@ -16,6 +16,8 @@ protocol InAppMessagesManagerType {
     func anonymize()
     func loadMessageToShow(for event: [DataType]) -> InAppMessage?
     func onEventOccurred(of type: EventType, for event: [DataType], triggerCompletion: TypeBlock<IdentifyTriggerState>?)
+    func applicationDidBecomeActive()
+    func applicationDidEnterBackground()
     func startIdentifyCustomerFlow(
         for event: [DataType],
         isFromIdentifyCustomer: Bool,

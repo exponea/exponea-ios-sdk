@@ -379,6 +379,7 @@
 		608B3AAA2F1649DC00DF41B0 /* config_valid2_stream.plist in Resources */ = {isa = PBXBuildFile; fileRef = 608B3AA92F1649DC00DF41B0 /* config_valid2_stream.plist */; };
 		608B3AAC2F16890300DF41B0 /* ExponeaConfigStream.plist in Resources */ = {isa = PBXBuildFile; fileRef = 608B3AAB2F16890300DF41B0 /* ExponeaConfigStream.plist */; };
 		608CB4E32F27BAF200F8FF46 /* SegmentationStreamSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608CB4E22F27BAEC00F8FF46 /* SegmentationStreamSpec.swift */; };
+		6097F21A3036D141007731F8 /* InAppImageSizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6097F2193036D140007731F8 /* InAppImageSizing.swift */; };
 		60AB12072F30000100000007 /* MockJwtTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AB12012F30000100000001 /* MockJwtTokenStore.swift */; };
 		60AB12082F30000100000008 /* JwtAuthManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AB12022F30000100000002 /* JwtAuthManagerSpec.swift */; };
 		60AB12092F30000100000009 /* CustomerIdentitySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AB12032F30000100000003 /* CustomerIdentitySpec.swift */; };
@@ -996,6 +997,7 @@
 		608B3AA92F1649DC00DF41B0 /* config_valid2_stream.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config_valid2_stream.plist; sourceTree = "<group>"; };
 		608B3AAB2F16890300DF41B0 /* ExponeaConfigStream.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExponeaConfigStream.plist; sourceTree = "<group>"; };
 		608CB4E22F27BAEC00F8FF46 /* SegmentationStreamSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationStreamSpec.swift; sourceTree = "<group>"; };
+		6097F2193036D140007731F8 /* InAppImageSizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppImageSizing.swift; sourceTree = "<group>"; };
 		60AB12012F30000100000001 /* MockJwtTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockJwtTokenStore.swift; sourceTree = "<group>"; };
 		60AB12022F30000100000002 /* JwtAuthManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JwtAuthManagerSpec.swift; sourceTree = "<group>"; };
 		60AB12032F30000100000003 /* CustomerIdentitySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerIdentitySpec.swift; sourceTree = "<group>"; };
@@ -1756,6 +1758,7 @@
 		311268D92CD10E4D00C38394 /* Style */ = {
 			isa = PBXGroup;
 			children = (
+				6097F2193036D140007731F8 /* InAppImageSizing.swift */,
 				311557C12CE9DF070027B481 /* InAppImageComponent.swift */,
 				31B689552CEF537E00C45E44 /* ExponeaAsyncImage.swift */,
 				311557BD2CE9DEBD0027B481 /* InAppLabel.swift */,
@@ -3480,6 +3483,7 @@
 				05E81632247555DD00AA28E3 /* ExponeaAppDelegate.swift in Sources */,
 				05CDD835239114A900C7291A /* InAppMessagesManager.swift in Sources */,
 				55391D492953051E001D95B8 /* AppInboxParser.swift in Sources */,
+				6097F21A3036D141007731F8 /* InAppImageSizing.swift in Sources */,
 				317536862BD27D910062A5E5 /* SegmentDTO.swift in Sources */,
 				55D0543A2B230C9600BC773A /* InAppContentBlockCallbackType.swift in Sources */,
 				057E367523E0503F00DDD6C1 /* InAppMessageSlideInView.swift in Sources */,

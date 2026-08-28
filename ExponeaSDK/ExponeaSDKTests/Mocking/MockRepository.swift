@@ -40,6 +40,12 @@ final class MockRepository: RepositoryType {
         = Result.failure(RepositoryError.connectionError)
     var fetchConsentsResult: Result<ConsentsResponse> = Result.failure(RepositoryError.connectionError)
     var fetchInAppMessagesResult: Result<InAppMessagesResponse> = Result.failure(RepositoryError.connectionError)
+    /// When > 0, `fetchInAppMessages` completes asynchronously after this delay (seconds).
+    var fetchInAppMessagesDelay: TimeInterval = 0
+    /// Invoked synchronously, on whatever queue triggers the fetch, right before the (possibly
+    /// delayed) completion is scheduled. Lets tests deterministically synchronize with "the mocked
+    /// fetch has started" instead of racing a fixed sleep against the async identify flow.
+    var onFetchInAppMessagesStarted: (() -> Void)?
     var fetchAppInboxResult: Result<AppInboxResponse> = Result.failure(RepositoryError.connectionError)
     var fetchAppInboxAction: ((_ syncToken: String?, _ completion: @escaping (Result<AppInboxResponse>) -> Void) -> Void)?
     var fetchInAppContentBlocksPlaceholdersResult: Result<InAppContentBlocksDataResponse> = Result.failure(RepositoryError.connectionError)
@@ -86,7 +92,16 @@ final class MockRepository: RepositoryType {
         for customerIds: [String: String],
         completion: @escaping (Result<InAppMessagesResponse>) -> Void
     ) {
-        completion(fetchInAppMessagesResult)
+        let result = fetchInAppMessagesResult
+        let delay = fetchInAppMessagesDelay
+        onFetchInAppMessagesStarted?()
+        if delay > 0 {
+            DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                completion(result)
+            }
+        } else {
+            completion(result)
+        }
     }
 
     func requestSelfCheckPush(

@@ -204,6 +204,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                 let view = InAppDialogContainerView(
                     payLoad: updatedPayload,
                     isFullscreen: fullscreen,
+                    preloadedImage: image,
                     dismissCallback: dismissCallback,
                     actionCallback: actionCallback
                 )
