@@ -6,7 +6,7 @@ category:
 parent:
   uri: ios-sdk-push-notifications
 content:
-  excerpt: Configure the Apple Push Notification Service Integration for Engagement
+  excerpt: Configure the Apple Push Notification Service Integration for Marketing
 ---
 
 To be able to send [Push notifications for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-push-notifications) using {user.mkg}, you must obtain an Apple Push Notification service (APNs) authentication token signing key and configure the APNs integration in the {user.mkg} web app.

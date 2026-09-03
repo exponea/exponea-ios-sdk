@@ -6,7 +6,7 @@ category:
 parent:
   uri: ios-sdk
 content:
-  excerpt: Fetch data from Bloomreach Engagement using the iOS SDK
+  excerpt: Fetch data from Bloomreach Marketing using the iOS SDK
 ---
 
 The SDK provides methods to retrieve data from the {user.mkg} platform. Responses are available in a completion handler closure.

@@ -8,7 +8,7 @@ parent:
 content:
   excerpt: >-
     Display native in-app content blocks based on definitions set up in
-    Engagement using the iOS SDK
+    Marketing using the iOS SDK
 ---
 
 In-app content blocks provide a way to display campaigns within your mobile applications that seamlessly blend with the overall app design. Unlike [In-app messages for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-messages) that appear as overlays or pop-ups demanding immediate attention, in-app content blocks display inline with the app's existing content.
@@ -582,7 +582,6 @@ This section provides helpful pointers for troubleshooting in-app content blocks
 
 - The SDK can only display an in-app content block after it has been fully loaded (including its content, any images, and its height). Therefore, the in-app content block may only show in the app after a delay.
 - Always ensure that the placeholder IDs in the in-app content block configuration (in the {user.mkg} web app) and in your mobile app match.
-- Always ensure that the placeholder IDs in the in-app content block configuration (in the Engagement web app) and in your mobile app match.
 - If the backend environment doesn't support conditional revalidation yet (no `ETag` header returned), the SDK operates identically to its previous behavior: no `If-None-Match` header is sent and the full payload is downloaded on every TTL re-fetch. No configuration change is needed.
 
 ### ETag cache granularity

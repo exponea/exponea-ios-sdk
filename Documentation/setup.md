@@ -115,7 +115,7 @@ Exponea.shared.configure(
 
 > 📘 Note
 >
-> Refer to Data hub documentation for more details on how you can [configure iOS SDK with JWT authentication](https://documentation.bloomreach.com/data-hub/docs/configure-android-sdk-with-jwt-authentication)
+> Refer to {user.dh} documentation for more details on how you can [configure iOS SDK with JWT authentication](https://documentation.bloomreach.com/data-hub/docs/configure-android-sdk-with-jwt-authentication)
 
 // After configuration, register JWT error handler and provide initial token:
 Exponea.shared.setJwtErrorHandler { context in
