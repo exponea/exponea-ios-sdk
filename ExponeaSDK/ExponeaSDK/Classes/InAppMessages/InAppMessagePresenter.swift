@@ -7,6 +7,9 @@
 //
 
 import UIKit
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 final class InAppMessagePresenter: InAppMessagePresenterType {
 
@@ -67,7 +70,11 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     }
                     var image: UIImage?
                     if let imageData = imageData {
-                        if let gifImage = UIImage.gifImageWithData(imageData) {
+                        if payload == nil, imageData.isInAppAnimatedImage {
+                            // Legacy (non-rich) views animate via `imageData` in `UIAnimatedImageView`;
+                            // only a non-nil placeholder is required for the `image` parameter.
+                            image = UIImage()
+                        } else if let gifImage = UIImage.gifImageWithData(imageData) {
                             image = gifImage
                         } else if let createdImage = self.createImage(
                             imageData: imageData,
@@ -102,7 +109,8 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                             dismissCallback: { isUserInteraction, cancelButtonPayload in
                                 self.presenting = false
                                 dismissCallback(isUserInteraction, cancelButtonPayload)
-                            }
+                            },
+                            imageData: imageData
                         )
                         guard let inAppMessageView = self.inAppMessageView else {
                             return
@@ -169,7 +177,8 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
         image: UIImage?,
         timeout: TimeInterval?,
         actionCallback: @escaping (InAppMessagePayloadButton) -> Void,
-        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void
+        dismissCallback: @escaping (Bool, InAppMessagePayloadButton?) -> Void,
+        imageData: Data? = nil
     ) throws -> InAppMessageView {
         switch messageType {
         case .alert:
@@ -222,7 +231,8 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     image: image,
                     actionCallback: actionCallback,
                     dismissCallback: dismissCallback,
-                    fullscreen: fullscreen
+                    fullscreen: fullscreen,
+                    imageData: imageData
                 )
             } else {
                 return InAppMessageWebView(
@@ -266,7 +276,8 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
                     payload: oldPayload,
                     image: image,
                     actionCallback: actionCallback,
-                    dismissCallback: dismissCallback
+                    dismissCallback: dismissCallback,
+                    imageData: imageData
                 )
             }
         case .freeform:

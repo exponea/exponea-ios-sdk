@@ -10,6 +10,9 @@ import Foundation
 import UIKit
 import SwiftUI
 import Combine
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 public final class InAppMessageSlideInViewModel: ObservableObject {
 
@@ -496,10 +499,11 @@ final class OldInAppMessageSlideInView: UIView, InAppMessageView {
 
     private let payload: InAppMessagePayload
     private let image: UIImage
+    private let imageData: Data?
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
     let dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)>
 
-    private let imageView: UIImageView = UIImageView()
+    private let imageView: UIAnimatedImageView = UIAnimatedImageView()
 
     private let stackView: UIStackView = UIStackView()
     private let titleTextView: UITextView = UITextView()
@@ -524,10 +528,12 @@ final class OldInAppMessageSlideInView: UIView, InAppMessageView {
         payload: InAppMessagePayload,
         image: UIImage,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
-        dismissCallback: @escaping TypeBlock<(Bool, InAppMessagePayloadButton?)>
+        dismissCallback: @escaping TypeBlock<(Bool, InAppMessagePayloadButton?)>,
+        imageData: Data? = nil
     ) {
         self.payload = payload
         self.image = image
+        self.imageData = imageData
         self.actionCallback = actionCallback
         self.dismissCallback = dismissCallback
 
@@ -582,6 +588,7 @@ final class OldInAppMessageSlideInView: UIView, InAppMessageView {
         guard superview != nil else {
             return
         }
+        imageView.clear()
         animateOut {
             self.removeFromSuperview()
         }
@@ -647,7 +654,11 @@ final class OldInAppMessageSlideInView: UIView, InAppMessageView {
     private func setupImage() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
-        imageView.image = image
+        if let imageData, imageData.isInAppAnimatedImage {
+            imageView.loadImage(imageData: imageData)
+        } else {
+            imageView.image = image
+        }
 
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true

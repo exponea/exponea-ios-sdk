@@ -9,6 +9,9 @@
 import UIKit
 import ImageIO
 import MobileCoreServices
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 class UIAnimatedImageView: UIImageView {
 
@@ -30,21 +33,17 @@ class UIAnimatedImageView: UIImageView {
             return
         }
         frameDurations = (0..<frameCount).map { i in
-            let defaultDelay = 0.1
-            guard let props = CGImageSourceCopyPropertiesAtIndex(src, i, nil) as? [CFString: Any],
-                  let gifDict = props[kCGImagePropertyGIFDictionary] as? [CFString: Any] else {
-                return defaultDelay
+            guard let props = CGImageSourceCopyPropertiesAtIndex(src, i, nil) as? [CFString: Any] else {
+                return ImageIOFrameDelay.defaultDelay
             }
-            if let unclamped = gifDict[kCGImagePropertyGIFUnclampedDelayTime] as? Double, unclamped > 0 {
-                return unclamped
-            }
-            if let clamped = gifDict[kCGImagePropertyGIFDelayTime] as? Double, clamped > 0 {
-                return clamped
-            }
-            return defaultDelay
+            return ImageIOFrameDelay.delaySeconds(from: props) ?? ImageIOFrameDelay.defaultDelay
         }
         displayLink = CADisplayLink(target: self, selector: #selector(updateFrame))
         displayLink?.add(to: .main, forMode: .common)
+    }
+
+    deinit {
+        displayLink?.invalidate()
     }
 
     func clear() {

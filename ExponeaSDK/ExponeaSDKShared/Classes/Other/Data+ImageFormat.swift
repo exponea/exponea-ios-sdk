@@ -6,6 +6,88 @@
 //
 
 import Foundation
+import ImageIO
+import UIKit
+
+private final class InAppImageSizeCacheKey: NSObject {
+    private let dataHash: Int
+    private let count: Int
+
+    init(data: Data) {
+        var hasher = Hasher()
+        hasher.combine(data)
+        self.dataHash = hasher.finalize()
+        self.count = data.count
+    }
+
+    override var hash: Int {
+        var hasher = Hasher()
+        hasher.combine(dataHash)
+        hasher.combine(count)
+        return hasher.finalize()
+    }
+
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? InAppImageSizeCacheKey else {
+            return false
+        }
+        return dataHash == other.dataHash && count == other.count
+    }
+}
+
+private enum InAppImageSizeCache {
+    private static let firstFrameSizeCache = NSCache<InAppImageSizeCacheKey, NSValue>()
+
+    static func firstFrameSize(for data: Data, compute: () -> CGSize?) -> CGSize? {
+        let key = InAppImageSizeCacheKey(data: data)
+        if let cached = firstFrameSizeCache.object(forKey: key) {
+            return cached.cgSizeValue
+        }
+        guard let size = compute(), size.width > 0, size.height > 0 else {
+            return nil
+        }
+        firstFrameSizeCache.setObject(NSValue(cgSize: size), forKey: key)
+        return size
+    }
+}
+
+private func pixelDimensions(from properties: [CFString: Any]) -> (width: Int, height: Int)? {
+    let widthValue = properties[kCGImagePropertyPixelWidth]
+    let heightValue = properties[kCGImagePropertyPixelHeight]
+    let width: Int?
+    let height: Int?
+
+    switch widthValue {
+    case let value as Int:
+        width = value
+    case let value as CGFloat:
+        width = Int(value)
+    case let value as Double:
+        width = Int(value)
+    case let value as NSNumber:
+        width = value.intValue
+    default:
+        width = nil
+    }
+
+    switch heightValue {
+    case let value as Int:
+        height = value
+    case let value as CGFloat:
+        height = Int(value)
+    case let value as Double:
+        height = Int(value)
+    case let value as NSNumber:
+        height = value.intValue
+    default:
+        height = nil
+    }
+
+    guard let width, let height, width > 0, height > 0 else {
+        return nil
+    }
+    return (width, height)
+}
 
 extension Data {
     /// GIF87a and GIF89a both start with "GIF8".
@@ -39,5 +121,27 @@ extension Data {
             && self[startIndex + 14] == 0x38
             && self[startIndex + 15] == 0x58
     }
-}
 
+    /// Multi-frame GIF or animated WebP data should be rendered via `UIAnimatedImageView`
+    /// instead of static `UIImage(data:)` or `UIImage.animatedImage(with:duration:)`.
+    public var isInAppAnimatedImage: Bool {
+        (isGif || isExtendedWebP) && UIImage.hasMultipleFrames(data: self)
+    }
+
+    /// Reads pixel dimensions from the first frame's ImageIO metadata and converts to points using
+    /// the main screen scale, matching `UIImage(cgImage:scale:orientation:)` as used by `UIAnimatedImageView`.
+    public var inAppImageFirstFrameSize: CGSize? {
+        InAppImageSizeCache.firstFrameSize(for: self) {
+            guard let source = CGImageSourceCreateWithData(self as CFData, nil),
+                  let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+                  let dimensions = pixelDimensions(from: properties) else {
+                return nil
+            }
+            let scale = UIScreen.main.scale
+            return CGSize(
+                width: CGFloat(dimensions.width) / scale,
+                height: CGFloat(dimensions.height) / scale
+            )
+        }
+    }
+}

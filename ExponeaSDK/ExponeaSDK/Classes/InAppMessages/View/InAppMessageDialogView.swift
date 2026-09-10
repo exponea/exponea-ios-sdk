@@ -7,6 +7,9 @@
 //
 
 import UIKit
+#if canImport(ExponeaSDKShared)
+import ExponeaSDKShared
+#endif
 
 final class InAppMessageDialogView: UIViewController, InAppMessageView {
     var showCallback: EmptyBlock?
@@ -19,6 +22,8 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
 
     let payload: InAppMessagePayload
     let image: UIImage
+    private let imageData: Data?
+    private let resolvedImageSize: CGSize
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
     var dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)>
     let fullscreen: Bool
@@ -26,7 +31,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     let dialogContainerView: UIView = UIView() // whole dialog
     let dialogStackView: UIStackView = UIStackView()
 
-    let imageView: UIImageView = UIImageView()
+    let imageView: UIAnimatedImageView = UIAnimatedImageView()
     var imageViewHeightConstraint: NSLayoutConstraint?
     let closeButton: UIButton = InAppMessageActionButton()
 
@@ -53,10 +58,19 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
         image: UIImage,
         actionCallback: @escaping ((InAppMessagePayloadButton) -> Void),
         dismissCallback: @escaping TypeBlock<(Bool, InAppMessagePayloadButton?)>,
-        fullscreen: Bool
+        fullscreen: Bool,
+        imageData: Data? = nil
     ) {
         self.payload = payload
         self.image = image
+        self.imageData = imageData
+        if let imageData, let firstFrameSize = imageData.inAppImageFirstFrameSize, firstFrameSize.height > 0 {
+            self.resolvedImageSize = firstFrameSize
+        } else if image.size.height > 0 {
+            self.resolvedImageSize = image.size
+        } else {
+            self.resolvedImageSize = .zero
+        }
         self.actionCallback = actionCallback
         self.dismissCallback = dismissCallback
         self.fullscreen = fullscreen
@@ -86,6 +100,7 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     func dismissFromSuperView() {
+        imageView.clear()
         DispatchQueue.main.async { [weak self] in
             guard self?.presentingViewController != nil else {
                 return
@@ -222,7 +237,11 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     private func setupImage() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
-        imageView.image = image
+        if let imageData, imageData.isInAppAnimatedImage {
+            imageView.loadImage(imageData: imageData)
+        } else {
+            imageView.image = image
+        }
 
         var constraints = [
             imageView.leadingAnchor.constraint(equalTo: dialogContainerView.leadingAnchor),
@@ -237,7 +256,12 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
     }
 
     private func setupImageHeightConstraint() {
-        let ratio = image.size.width / image.size.height
+        guard resolvedImageSize.height > 0 else {
+            Exponea.logger.log(.warning, message: "Unable to determine in-app message image height; using fallback")
+            imageViewHeightConstraint?.constant = 150
+            return
+        }
+        let ratio = resolvedImageSize.width / resolvedImageSize.height
         let height = imageView.frame.width / ratio
         imageViewHeightConstraint?.constant = height
     }

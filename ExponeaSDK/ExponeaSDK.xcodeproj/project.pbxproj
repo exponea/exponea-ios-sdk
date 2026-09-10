@@ -61,7 +61,6 @@
 		0561831025AD9EEB001E30A3 /* JSON+SnakeCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */; };
 		0561831125AD9EEB001E30A3 /* URLResponse+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */; };
 		0561831225AD9EEB001E30A3 /* JSONConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B97D2C2417C95200FE9309 /* JSONConvertible.swift */; };
-		0561831325AD9EEB001E30A3 /* UIImage+Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0570E76A246EBE7400E92ACF /* UIImage+Gif.swift */; };
 		0561832025ADB1BC001E30A3 /* NotificationData+Properties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09C33CA221C097100715603 /* NotificationData+Properties.swift */; };
 		0561832125ADB1BC001E30A3 /* EventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC2DB3207E58080031BFEB /* EventType.swift */; };
 		0561832225ADB1BC001E30A3 /* ExponeaNotificationActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03B23D721AAFDBB00360EE6 /* ExponeaNotificationActionType.swift */; };
@@ -232,7 +231,6 @@
 		318EFF622D898BE4004C5E1F /* InAppLayoutConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF612D898BE4004C5E1F /* InAppLayoutConfig.swift */; };
 		318EFF642D898BF1004C5E1F /* InAppViewConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EFF632D898BF1004C5E1F /* InAppViewConfig.swift */; };
 		319FEBF42BD6DA4300E0EB11 /* SegmentationStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */; };
-		31A1D21B2C6F8A6300606633 /* GiftHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A1D21A2C6F8A6300606633 /* GiftHelper.swift */; };
 		31A277DD2C74E08E00354CD2 /* GIFTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A277DC2C74E08E00354CD2 /* GIFTest.swift */; };
 		31B689542CEF4DE500C45E44 /* InAppDialogContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B689532CEF4DE500C45E44 /* InAppDialogContainerView.swift */; };
 		31B689562CEF537E00C45E44 /* ExponeaAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B689552CEF537E00C45E44 /* ExponeaAsyncImage.swift */; };
@@ -379,6 +377,7 @@
 		608B3AAA2F1649DC00DF41B0 /* config_valid2_stream.plist in Resources */ = {isa = PBXBuildFile; fileRef = 608B3AA92F1649DC00DF41B0 /* config_valid2_stream.plist */; };
 		608B3AAC2F16890300DF41B0 /* ExponeaConfigStream.plist in Resources */ = {isa = PBXBuildFile; fileRef = 608B3AAB2F16890300DF41B0 /* ExponeaConfigStream.plist */; };
 		608CB4E32F27BAF200F8FF46 /* SegmentationStreamSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608CB4E22F27BAEC00F8FF46 /* SegmentationStreamSpec.swift */; };
+		6097F21C30371BFE007731F8 /* GifHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6097F21B30371BFA007731F8 /* GifHelper.swift */; };
 		6097F21A3036D141007731F8 /* InAppImageSizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6097F2193036D140007731F8 /* InAppImageSizing.swift */; };
 		60AB12072F30000100000007 /* MockJwtTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AB12012F30000100000001 /* MockJwtTokenStore.swift */; };
 		60AB12082F30000100000008 /* JwtAuthManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AB12022F30000100000002 /* JwtAuthManagerSpec.swift */; };
@@ -707,7 +706,6 @@
 		0567724223746DDC0082167C /* MockPushNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPushNotificationManager.swift; sourceTree = "<group>"; };
 		056772442374703B0082167C /* PushNotificationManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationManagerType.swift; sourceTree = "<group>"; };
 		056848F22445DE9F002EB2B6 /* DatabaseModel v6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v6.xcdatamodel"; sourceTree = "<group>"; };
-		0570E76A246EBE7400E92ACF /* UIImage+Gif.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Gif.swift"; sourceTree = "<group>"; };
 		05714B72243758FA00E62206 /* ExponeaProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaProject.swift; sourceTree = "<group>"; };
 		05735EA023A3950800DA0FA9 /* FlushingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingManager.swift; sourceTree = "<group>"; };
 		05735EA223A3975100DA0FA9 /* FlushingManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlushingManagerType.swift; sourceTree = "<group>"; };
@@ -860,7 +858,6 @@
 		318EFF612D898BE4004C5E1F /* InAppLayoutConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppLayoutConfig.swift; sourceTree = "<group>"; };
 		318EFF632D898BF1004C5E1F /* InAppViewConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppViewConfig.swift; sourceTree = "<group>"; };
 		319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationStoring.swift; sourceTree = "<group>"; };
-		31A1D21A2C6F8A6300606633 /* GiftHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftHelper.swift; sourceTree = "<group>"; };
 		31A277DC2C74E08E00354CD2 /* GIFTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFTest.swift; sourceTree = "<group>"; };
 		31B689532CEF4DE500C45E44 /* InAppDialogContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppDialogContainerView.swift; sourceTree = "<group>"; };
 		31B689552CEF537E00C45E44 /* ExponeaAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaAsyncImage.swift; sourceTree = "<group>"; };
@@ -997,6 +994,7 @@
 		608B3AA92F1649DC00DF41B0 /* config_valid2_stream.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config_valid2_stream.plist; sourceTree = "<group>"; };
 		608B3AAB2F16890300DF41B0 /* ExponeaConfigStream.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExponeaConfigStream.plist; sourceTree = "<group>"; };
 		608CB4E22F27BAEC00F8FF46 /* SegmentationStreamSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationStreamSpec.swift; sourceTree = "<group>"; };
+		6097F21B30371BFA007731F8 /* GifHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifHelper.swift; sourceTree = "<group>"; };
 		6097F2193036D140007731F8 /* InAppImageSizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppImageSizing.swift; sourceTree = "<group>"; };
 		60AB12012F30000100000001 /* MockJwtTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockJwtTokenStore.swift; sourceTree = "<group>"; };
 		60AB12022F30000100000002 /* JwtAuthManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JwtAuthManagerSpec.swift; sourceTree = "<group>"; };
@@ -1524,13 +1522,13 @@
 		058DD937241131F400E5BF91 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				6097F21B30371BFA007731F8 /* GifHelper.swift */,
 				605899D42FD6CD8B00022F20 /* Data+ImageFormat.swift */,
 				31EBB8652A6AC3330003AAA5 /* Extension+CleanURL.swift */,
 				5527979C28D98C15002B2B77 /* GdprTracking.swift */,
 				0551A0AB241A81FE009A5A5E /* JSON+SnakeCase.swift */,
 				05B97D2C2417C95200FE9309 /* JSONConvertible.swift */,
 				31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */,
-				0570E76A246EBE7400E92ACF /* UIImage+Gif.swift */,
 				C0329E5E20F76EB00051F5DF /* URLRequest+Debug.swift */,
 				C0329E6020F76EBF0051F5DF /* URLResponse+Debug.swift */,
 				55CD47622E29310300E8BF3F /* BuildConfigurationShared.swift */,
@@ -1827,14 +1825,6 @@
 				319FEBF32BD6DA4300E0EB11 /* SegmentationStoring.swift */,
 			);
 			path = Helper;
-			sourceTree = "<group>";
-		};
-		31A1D2192C6F8A5A00606633 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				31A1D21A2C6F8A6300606633 /* GiftHelper.swift */,
-			);
-			path = Helpers;
 			sourceTree = "<group>";
 		};
 		31CC0B722BD2518500608057 /* Segmentation */ = {
@@ -2668,7 +2658,6 @@
 			isa = PBXGroup;
 			children = (
 				6030B3F52F51CDB90092016B /* JWT */,
-				31A1D2192C6F8A5A00606633 /* Helpers */,
 				31CC0B722BD2518500608057 /* Segmentation */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
 				552772C328ED86E0000ACFD5 /* AppInbox */,
@@ -3256,7 +3245,7 @@
 				60D5E6B32FBB17BF00C2CB5D /* DeliveredNotificationStateResolver.swift in Sources */,
 				0561831125AD9EEB001E30A3 /* URLResponse+Debug.swift in Sources */,
 				55CD475C2E292DAE00E8BF3F /* ErrorData.swift in Sources */,
-				0561831325AD9EEB001E30A3 /* UIImage+Gif.swift in Sources */,
+				6097F21C30371BFE007731F8 /* GifHelper.swift in Sources */,
 				0561832125ADB1BC001E30A3 /* EventType.swift in Sources */,
 				A370CD8A2F2BE7CE00073A3D /* Configuration+StreamIntegration.swift in Sources */,
 				0561832A25ADB1BC001E30A3 /* ExponeaProject.swift in Sources */,
@@ -3442,7 +3431,6 @@
 				315598082C09CAE500FBED42 /* CarouselInAppContentBlockView.swift in Sources */,
 				058DD92924112FBE00E5BF91 /* ServerRepository+FetchingRepository.swift in Sources */,
 				3377ABFC29897F4C00E530FB /* ExpoInitManager.swift in Sources */,
-				31A1D21B2C6F8A6300606633 /* GiftHelper.swift in Sources */,
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				CCB87B7C28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift in Sources */,
 				31EBB8572A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift in Sources */,

@@ -8,6 +8,7 @@
 import Nimble
 import Quick
 import UIKit
+import ImageIO
 
 @testable import ExponeaSDK
 @testable import ExponeaSDKShared
@@ -15,7 +16,8 @@ import UIKit
 final class GifImageDecodingSpec: QuickSpec {
 
     // Proper multi-frame GIF89a: 1x1 pixel, 2 frames (red + blue), built from raw bytes
-    private static func makeTwoFrameGifData() -> Data {
+    // Internal (not private) so other specs, e.g. InAppMessageImageViewSpec, can reuse these fixtures.
+    static func makeTwoFrameGifData(frameDelayHundredths: UInt8 = 0x0A) -> Data {
         // GIF89a header + logical screen descriptor + GCE + frame1 + GCE + frame2 + trailer
         let bytes: [UInt8] = [
             // Header: GIF89a
@@ -27,7 +29,7 @@ final class GifImageDecodingSpec: QuickSpec {
             0x4E, 0x45, 0x54, 0x53, 0x43, 0x41, 0x50, 0x45, 0x32, 0x2E, 0x30,
             0x03, 0x01, 0x00, 0x00, 0x00,
             // Frame 1: GCE
-            0x21, 0xF9, 0x04, 0x00, 0x0A, 0x00, 0x00, 0x00,
+            0x21, 0xF9, 0x04, 0x00, frameDelayHundredths, 0x00, 0x00, 0x00,
             // Image Descriptor: 1x1, local color table (2 colors)
             0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x81,
             // Local Color Table (4 entries for 2-bit)
@@ -38,7 +40,7 @@ final class GifImageDecodingSpec: QuickSpec {
             // Image Data
             0x02, 0x02, 0x44, 0x01, 0x00,
             // Frame 2: GCE
-            0x21, 0xF9, 0x04, 0x00, 0x0A, 0x00, 0x00, 0x00,
+            0x21, 0xF9, 0x04, 0x00, frameDelayHundredths, 0x00, 0x00, 0x00,
             // Image Descriptor: 1x1, local color table (2 colors)
             0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x81,
             // Local Color Table (4 entries for 2-bit)
@@ -54,7 +56,33 @@ final class GifImageDecodingSpec: QuickSpec {
         return Data(bytes)
     }
 
-    private static func makeMinimalPngData() -> Data {
+    /// Builds a multi-frame GIF by repeating the 1x1 frame block from `makeTwoFrameGifData`.
+    static func makeMultiFrameGifData(frameCount: Int) -> Data {
+        precondition(frameCount >= 2)
+        let singleFrameBlock: [UInt8] = [
+            0x21, 0xF9, 0x04, 0x00, 0x0A, 0x00, 0x00, 0x00,
+            0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x81,
+            0xFF, 0x00, 0x00,
+            0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00,
+            0x02, 0x02, 0x44, 0x01, 0x00
+        ]
+        var bytes: [UInt8] = [
+            0x47, 0x49, 0x46, 0x38, 0x39, 0x61,
+            0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+            0x21, 0xFF, 0x0B,
+            0x4E, 0x45, 0x54, 0x53, 0x43, 0x41, 0x50, 0x45, 0x32, 0x2E, 0x30,
+            0x03, 0x01, 0x00, 0x00, 0x00
+        ]
+        for _ in 0..<frameCount {
+            bytes.append(contentsOf: singleFrameBlock)
+        }
+        bytes.append(0x3B)
+        return Data(bytes)
+    }
+
+    static func makeMinimalPngData() -> Data {
         UIGraphicsBeginImageContext(CGSize(width: 2, height: 2))
         UIColor.red.setFill()
         UIRectFill(CGRect(x: 0, y: 0, width: 2, height: 2))
@@ -63,7 +91,7 @@ final class GifImageDecodingSpec: QuickSpec {
         return image.pngData()!
     }
 
-    private static func makeMinimalJpegData() -> Data {
+    static func makeMinimalJpegData() -> Data {
         UIGraphicsBeginImageContext(CGSize(width: 2, height: 2))
         UIColor.blue.setFill()
         UIRectFill(CGRect(x: 0, y: 0, width: 2, height: 2))
@@ -75,7 +103,7 @@ final class GifImageDecodingSpec: QuickSpec {
     // Minimal animated WebP header for magic-bytes detection.
     // Real WebP files contain additional VP8X flag bytes, ANIM chunk, and ANMF frames,
     // but only the first 16 bytes are needed to verify the detection logic.
-    private static func makeAnimatedWebPHeader() -> Data {
+    static func makeAnimatedWebPHeader() -> Data {
         let bytes: [UInt8] = [
             // RIFF container
             0x52, 0x49, 0x46, 0x46,
@@ -90,7 +118,7 @@ final class GifImageDecodingSpec: QuickSpec {
     }
 
     // Static WebP using the basic VP8 chunk (lossy single frame). Should NOT be detected as animated.
-    private static func makeStaticWebPHeader() -> Data {
+    static func makeStaticWebPHeader() -> Data {
         let bytes: [UInt8] = [
             0x52, 0x49, 0x46, 0x46,
             0x00, 0x00, 0x00, 0x00,
@@ -240,6 +268,47 @@ final class GifImageDecodingSpec: QuickSpec {
                 let aspect = downsampled!.size.height / downsampled!.size.width
                 let originalAspect = CGFloat(100) / CGFloat(200)
                 expect(aspect).to(beCloseTo(originalAspect, within: 0.01))
+            }
+
+            it("preserves sub-0.1s frame delays for smooth push notification animation") {
+                // 4 hundredths of a second per frame (common for ~25 fps GIFs).
+                // Clamping to 0.1s (old GiftHelper behavior) would yield 0.2s total for 2 frames.
+                let fastGifData = GifImageDecodingSpec.makeTwoFrameGifData(frameDelayHundredths: 0x04)
+                let image = UIImage.gif(data: fastGifData)
+                expect(image).toNot(beNil())
+                expect(image!.duration).to(beCloseTo(0.08, within: 0.02))
+            }
+        }
+
+        describe("ImageIOFrameDelay") {
+            it("reads GIF per-frame delay from ImageIO properties") {
+                let properties: [CFString: Any] = [
+                    kCGImagePropertyGIFDictionary: [
+                        kCGImagePropertyGIFDelayTime: 0.25
+                    ]
+                ]
+                expect(ImageIOFrameDelay.delaySeconds(from: properties)).to(equal(0.25))
+            }
+
+            it("reads WebP per-frame delay from ImageIO properties") {
+                guard #available(iOS 14.0, *) else { return }
+                let properties: [CFString: Any] = [
+                    kCGImagePropertyWebPDictionary: [
+                        kCGImagePropertyWebPDelayTime: 0.5
+                    ]
+                ]
+                expect(ImageIOFrameDelay.delaySeconds(from: properties)).to(equal(0.5))
+            }
+
+            it("prefers WebP unclamped delay over clamped delay") {
+                guard #available(iOS 14.0, *) else { return }
+                let properties: [CFString: Any] = [
+                    kCGImagePropertyWebPDictionary: [
+                        kCGImagePropertyWebPUnclampedDelayTime: 0.33,
+                        kCGImagePropertyWebPDelayTime: 0.1
+                    ]
+                ]
+                expect(ImageIOFrameDelay.delaySeconds(from: properties)).to(equal(0.33))
             }
         }
 
@@ -408,6 +477,57 @@ final class GifImageDecodingSpec: QuickSpec {
                 expect(reloaded.isExtendedWebP).to(beTrue())
             }
         }
+
+        describe("Data.inAppImageFirstFrameSize") {
+            it("returns point dimensions consistent with UIAnimatedImageView frame decode") {
+                guard let source = CGImageSourceCreateWithData(pngData as CFData, nil),
+                      let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
+                    fail("Failed to decode PNG fixture")
+                    return
+                }
+                let expectedSize = UIImage(cgImage: cgImage, scale: UIScreen.main.scale, orientation: .up).size
+                let metadataSize = pngData.inAppImageFirstFrameSize
+                expect(metadataSize).toNot(beNil())
+                expect(metadataSize?.width).to(equal(expectedSize.width))
+                expect(metadataSize?.height).to(equal(expectedSize.height))
+            }
+
+            it("returns point dimensions for multi-frame GIF metadata") {
+                guard let source = CGImageSourceCreateWithData(gifData as CFData, nil),
+                      let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
+                    fail("Failed to decode GIF fixture")
+                    return
+                }
+                let expectedSize = UIImage(cgImage: cgImage, scale: UIScreen.main.scale, orientation: .up).size
+                let metadataSize = gifData.inAppImageFirstFrameSize
+                expect(metadataSize).toNot(beNil())
+                expect(metadataSize?.width).to(equal(expectedSize.width))
+                expect(metadataSize?.height).to(equal(expectedSize.height))
+            }
+
+            it("returns the same cached first-frame size on repeated access") {
+                let first = gifData.inAppImageFirstFrameSize
+                let second = gifData.inAppImageFirstFrameSize
+                expect(first).to(equal(second))
+            }
+        }
+
+        describe("ARC regression — repeated GIF decode") {
+            it("decodes a multi-frame GIF many times without crashing") {
+                for _ in 0..<100 {
+                    let image = UIImage.gifImageWithData(gifData)
+                    expect(image).toNot(beNil())
+                    expect(image?.images?.count).to(beGreaterThan(1))
+                }
+            }
+
+            it("decodes via gifImageWithData with downsampling in a loop") {
+                for _ in 0..<50 {
+                    let image = UIImage.gifImageWithData(gifData, maxPixelSize: 10)
+                    expect(image).toNot(beNil())
+                    expect(image?.images?.count).to(beGreaterThan(1))
+                }
+            }
+        }
     }
 }
-
