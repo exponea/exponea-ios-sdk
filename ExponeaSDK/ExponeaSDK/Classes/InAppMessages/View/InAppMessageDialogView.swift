@@ -116,20 +116,18 @@ final class InAppMessageDialogView: UIViewController, InAppMessageView {
 
     func convertToDarkIfNeeded() {
         guard Exponea.shared.isDarkMode else { return }
-        if #available(iOS 13.0, *) {
-            titleTextView.textColor = .label
-            bodyTextView.textColor = .label
-            [
-                dialogContainerView,
-                dialogStackView,
-                contentsStackView,
-                titleTextView,
-                bodyTextView,
-                actionButtonsStackView,
-                backgroundView
-            ].forEach { view in
-                view.backgroundColor = .secondarySystemBackground
-            }
+        titleTextView.textColor = .label
+        bodyTextView.textColor = .label
+        [
+            dialogContainerView,
+            dialogStackView,
+            contentsStackView,
+            titleTextView,
+            bodyTextView,
+            actionButtonsStackView,
+            backgroundView
+        ].forEach { view in
+            view.backgroundColor = .secondarySystemBackground
         }
     }
 

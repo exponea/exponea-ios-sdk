@@ -62,11 +62,7 @@ final class InAppMessageWebView: UIView, InAppMessageView {
             throw InAppMessagePresenter.InAppMessagePresenterError.unableToPresentView
         }
         window.addSubview(self)
-        if #available(iOS 11.0, *) {
-            topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor).isActive = true
-        } else {
-            topAnchor.constraint(equalTo: window.topAnchor).isActive = true
-        }
+        topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor).isActive = true
         NSLayoutConstraint.activate([
             leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 10),
             trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -10)
@@ -141,11 +137,9 @@ final class InAppMessageWebView: UIView, InAppMessageView {
         configuration.allowsAirPlayForMediaPlayback = false
         configuration.allowsInlineMediaPlayback = false
         configuration.allowsPictureInPictureMediaPlayback = false
-        if #available(iOS 14.0, *) {
-            let webPagePreferences = WKWebpagePreferences()
-            webPagePreferences.allowsContentJavaScript = false
-            configuration.defaultWebpagePreferences = webPagePreferences
-        }
+        let webPagePreferences = WKWebpagePreferences()
+        webPagePreferences.allowsContentJavaScript = false
+        configuration.defaultWebpagePreferences = webPagePreferences
         if let contentRuleList = inAppContentBlocksManager.contentRuleList {
             configuration.userContentController.add(contentRuleList)
         }

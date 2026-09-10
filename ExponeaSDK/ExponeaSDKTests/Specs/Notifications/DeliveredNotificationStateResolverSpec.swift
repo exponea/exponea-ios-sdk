@@ -100,18 +100,14 @@ final class DeliveredNotificationStateResolverSpec: QuickSpec {
                         alert: .enabled,
                         expected: DeliveredNotificationStateResolver.shownValue,
                         description: "provisional + alerts enabled"
+                    ),
+                    Case(
+                        status: .ephemeral,
+                        alert: .enabled,
+                        expected: DeliveredNotificationStateResolver.shownValue,
+                        description: "ephemeral + alerts enabled"
                     )
                 ]
-                if #available(iOS 14.0, *) {
-                    cases.append(
-                        Case(
-                            status: .ephemeral,
-                            alert: .enabled,
-                            expected: DeliveredNotificationStateResolver.shownValue,
-                            description: "ephemeral + alerts enabled"
-                        )
-                    )
-                }
                 cases.append(contentsOf: [
                     Case(
                         status: .authorized,

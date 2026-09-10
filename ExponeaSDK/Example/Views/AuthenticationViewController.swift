@@ -160,13 +160,8 @@ class AuthenticationViewController: UIViewController {
         
         let button = UIButton(type: .system)
         
-        if #available(iOS 13.0, *) {
-            let image = UIImage(systemName: "chevron.down")
-            button.setImage(image, for: .normal)
-        } else {
-            let image = UIImage(named: "chevron_down")
-            button.setImage(image, for: .normal)
-        }
+        let image = UIImage(systemName: "chevron.down")
+        button.setImage(image, for: .normal)
         
         button.tintColor = .secondaryLabel
         

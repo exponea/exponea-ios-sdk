@@ -170,22 +170,13 @@ public enum DeliveredNotificationStateResolver {
         return (authorized && alertsEnabled) ? shownValue : notShownValue
     }
 
-    /// Extracted helper so the `.ephemeral` case (iOS 14+) can be handled
-    /// without polluting the main resolver with availability checks.
     private static func isUserVisible(_ status: UNAuthorizationStatus) -> Bool {
         switch status {
-        case .authorized, .provisional:
+        case .authorized, .provisional, .ephemeral:
             return true
         case .notDetermined, .denied:
             return false
-        default:
-            // Covers `.ephemeral` on iOS 14+ and any future cases. We fall
-            // through here rather than pattern-matching `.ephemeral` directly
-            // so the Shared module can keep its iOS 13 deployment target
-            // without introducing `if #available` noise everywhere.
-            if #available(iOS 14.0, *) {
-                return status == .ephemeral
-            }
+        @unknown default:
             return false
         }
     }

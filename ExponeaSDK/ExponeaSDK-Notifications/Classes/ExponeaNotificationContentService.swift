@@ -44,8 +44,7 @@ public class ExponeaNotificationContentService {
     }
 
     private func createActions(notification: UNNotification, context: NSExtensionContext?) {
-        guard #available(iOS 12.0, *),
-              let context = context,
+        guard let context = context,
               let actionsObject = notification.request.content.userInfo["actions"],
               let data = try? JSONSerialization.data(withJSONObject: actionsObject, options: []),
               let actions = try? decoder.decode([ExponeaNotificationAction].self, from: data) else {

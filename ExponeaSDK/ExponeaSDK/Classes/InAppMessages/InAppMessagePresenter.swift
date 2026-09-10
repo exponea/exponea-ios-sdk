@@ -118,14 +118,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
 
                         let targetWindow: UIWindow? = {
                             if let w = self.window { return w }
-                            if #available(iOS 13.0, *) {
-                                return UIApplication.shared.connectedScenes
-                                    .compactMap { $0 as? UIWindowScene }
-                                    .flatMap { $0.windows }
-                                    .first { $0.isKeyWindow }
-                            } else {
-                                return UIApplication.shared.keyWindow
-                            }
+                            return UIApplication.shared.connectedScenes
+                                .compactMap { $0 as? UIWindowScene }
+                                .flatMap { $0.windows }
+                                .first { $0.isKeyWindow }
                         }()
 
                         try self.inAppMessageView?.present(
@@ -322,14 +318,10 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
 
     static func getTopViewController(window: UIWindow? = nil) -> UIViewController? {
         let keyWindow: UIWindow? = {
-            if #available(iOS 13.0, *) {
-                return UIApplication.shared.connectedScenes
-                    .compactMap { $0 as? UIWindowScene }
-                    .flatMap { $0.windows }
-                    .first { $0.isKeyWindow }
-            } else {
-                return UIApplication.shared.keyWindow
-            }
+            return UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap { $0.windows }
+                .first { $0.isKeyWindow }
         }()
 
         let window = window ?? keyWindow

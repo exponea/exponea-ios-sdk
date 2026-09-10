@@ -47,14 +47,12 @@ public enum ImageIOFrameDelay {
                 return clamped
             }
         }
-        if #available(iOS 14.0, *) {
-            if let webpDict = properties[kCGImagePropertyWebPDictionary] as? [CFString: Any] {
-                if let unclamped = webpDict[kCGImagePropertyWebPUnclampedDelayTime] as? Double, unclamped > 0 {
-                    return unclamped
-                }
-                if let clamped = webpDict[kCGImagePropertyWebPDelayTime] as? Double, clamped > 0 {
-                    return clamped
-                }
+        if let webpDict = properties[kCGImagePropertyWebPDictionary] as? [CFString: Any] {
+            if let unclamped = webpDict[kCGImagePropertyWebPUnclampedDelayTime] as? Double, unclamped > 0 {
+                return unclamped
+            }
+            if let clamped = webpDict[kCGImagePropertyWebPDelayTime] as? Double, clamped > 0 {
+                return clamped
             }
         }
         return nil

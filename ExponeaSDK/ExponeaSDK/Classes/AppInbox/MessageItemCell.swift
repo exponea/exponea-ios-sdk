@@ -50,12 +50,10 @@ public class MessageItemCell: UITableViewCell {
 private extension MessageItemCell {
     func convertToDarkIfNeeded() {
         guard Exponea.shared.isDarkMode else { return }
-        if #available(iOS 13.0, *) {
-            contentView.backgroundColor = .systemBackground
-            titleLabel.textColor = .label
-            receivedTime.textColor = .secondaryLabel
-            readFlag.backgroundColor = .systemBlue
-        }
+        contentView.backgroundColor = .systemBackground
+        titleLabel.textColor = .label
+        receivedTime.textColor = .secondaryLabel
+        readFlag.backgroundColor = .systemBlue
     }
 
     func setupElements() {
@@ -167,16 +165,8 @@ public extension MessageItemCell {
     }
 
     func translateReceivedTime(_ source: Date) -> String {
-        if #available(iOS 13.0, *) {
-            let formatter = RelativeDateTimeFormatter()
-            formatter.unitsStyle = .full
-            return formatter.localizedString(for: source, relativeTo: Date())
-        } else {
-            let formatter = DateFormatter()
-            formatter.timeStyle = .long
-            formatter.dateStyle = .long
-            formatter.doesRelativeDateFormatting = true
-            return formatter.string(from: source)
-        }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter.localizedString(for: source, relativeTo: Date())
     }
 }

@@ -331,7 +331,7 @@ Using the `ExponeaNotificationContentService.didReceive()` method will enhance t
 
 #### Checklist:
  - [ ] Check that push notifications with images and buttons sent from {user.mkg} are correctly displayed on your device. Push delivery tracking should work.
- - [ ] If you don't see buttons in the expanded push notification, the content extension is **not** running. Double check `UNNotificationExtensionCategory` in `Info.plist` - notice the placement inside `NSExtensionAttributes`. Check that the `iOS Deployment Target` is the same for the extensions and the main app.
+ - [ ] If you don't see buttons in the expanded push notification, the content extension isn't running. Check `UNNotificationExtensionCategory` in `Info.plist`, and confirm it's nested inside `NSExtensionAttributes`. Also check that the iOS deployment target is iOS 15.0 or higher and matches the main app's target.
 
 ### Push notification alert sound
 
@@ -382,7 +382,7 @@ Sometimes, your application may need to retrieve the current push token while ru
 
 By default, if an iOS app receives a notification while the app is in the foreground, the notification banner is not displayed.
 
-In iOS 10 and later, you can show foreground notifications by implementing a `UNUserNotificationCenterDelegate` and telling iOS to display the banner.
+In iOS 15 and later, show foreground notifications by implementing `UNUserNotificationCenterDelegate` and telling iOS to display the banner.
 
 1. Create a class that implements `UNUserNotificationCenterDelegate`.
 2. Override `userNotificationCenter(center:willPresentNotification:withCompletionHandler)` and return at least the alert type to its completion handler
@@ -527,37 +527,6 @@ You can completely disable notification tracking and use the methods `Exponea.sh
 > ❗️
 >
 > The behavior of `trackPushReceived` and `trackClickedPush` may be affected by the tracking consent feature, which in enabled mode considers the requirement of explicit consent for tracking. Read more in the [Tracking consent for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking-consent) documentation.
-
-### Custom notification actions in iOS 11 and lower
-
-To support the action buttons on iOS 11 and lower that can be configured in the {user.mkg} web app, you must implement custom notification categories that are used to hook up the button actions and titles. The SDK provides a convenient factory method to simplify the creation of such a category.
-
-> ❗️
->
-> The category identifier you specify here must be identical to the one you specify in the {user.mkg} backend.
-
-```swift
-// Set legacy exponea categories
-let category1 = UNNotificationCategory(
-    identifier: "EXAMPLE_LEGACY_CATEGORY_1",
-    actions: [
-        ExponeaNotificationAction.createNotificationAction(
-            type: .openApp, 
-            title: "Hardcoded open app", 
-            index: 0
-        ),
-        ExponeaNotificationAction.createNotificationAction(
-            type: .deeplink, 
-            title: "Hardcoded deeplink", 
-            index: 1
-        )
-    ], 
-    intentIdentifiers: [], 
-    options: []
-)
-    
-UNUserNotificationCenter.current().setNotificationCategories([category1])
-```
 
 ## Payload example
 

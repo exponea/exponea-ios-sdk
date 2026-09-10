@@ -34,9 +34,6 @@ class PushNotificationDelegateObserver: NSObject {
     }
 
     deinit {
-        if #available(iOS 11.0, *) {} else if let observation = observation {
-            removeObserver(observation, forKeyPath: "observable.delegate")
-        }
         observation?.invalidate()
     }
 }

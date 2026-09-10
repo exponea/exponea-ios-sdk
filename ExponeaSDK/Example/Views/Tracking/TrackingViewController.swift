@@ -49,7 +49,6 @@ class TrackingViewController: UIViewController {
         }
     }
 
-    @available(iOS 12.0, *)
     @IBAction func registerForProvisionalPush() {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.provisional, .badge, .alert, .sound]) { (granted, _) in

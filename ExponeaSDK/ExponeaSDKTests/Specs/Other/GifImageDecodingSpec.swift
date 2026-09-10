@@ -291,7 +291,6 @@ final class GifImageDecodingSpec: QuickSpec {
             }
 
             it("reads WebP per-frame delay from ImageIO properties") {
-                guard #available(iOS 14.0, *) else { return }
                 let properties: [CFString: Any] = [
                     kCGImagePropertyWebPDictionary: [
                         kCGImagePropertyWebPDelayTime: 0.5
@@ -301,7 +300,6 @@ final class GifImageDecodingSpec: QuickSpec {
             }
 
             it("prefers WebP unclamped delay over clamped delay") {
-                guard #available(iOS 14.0, *) else { return }
                 let properties: [CFString: Any] = [
                     kCGImagePropertyWebPDictionary: [
                         kCGImagePropertyWebPUnclampedDelayTime: 0.33,

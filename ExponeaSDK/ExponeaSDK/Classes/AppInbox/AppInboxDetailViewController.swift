@@ -318,17 +318,9 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
     }
 
     open func translateReceivedTime(_ source: Date) -> String {
-        if #available(iOS 13.0, *) {
-            let formatter = RelativeDateTimeFormatter()
-            formatter.unitsStyle = .full
-            return formatter.localizedString(for: source, relativeTo: Date())
-        } else {
-            let formatter = DateFormatter()
-            formatter.timeStyle = .long
-            formatter.dateStyle = .long
-            formatter.doesRelativeDateFormatting = true
-            return formatter.string(from: source)
-        }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter.localizedString(for: source, relativeTo: Date())
     }
 }
 
@@ -336,13 +328,11 @@ open class AppInboxDetailViewController: UIViewController, WKUIDelegate {
 private extension AppInboxDetailViewController {
     func convertToDarkIfNeeded() {
         guard Exponea.shared.isDarkMode else { return }
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-            messageImage.backgroundColor = .secondarySystemBackground
-            messageTitle.textColor = .label
-            message.textColor = .secondaryLabel
-            htmlContainer.backgroundColor = .systemBackground
-        }
+        view.backgroundColor = .systemBackground
+        messageImage.backgroundColor = .secondarySystemBackground
+        messageTitle.textColor = .label
+        message.textColor = .secondaryLabel
+        htmlContainer.backgroundColor = .systemBackground
     }
 
     func setupElements() {

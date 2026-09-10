@@ -37,14 +37,12 @@ open class AppInboxListViewController: UIViewController {
 private extension AppInboxListViewController {
     func convertToDarkIfNeeded() {
         guard Exponea.shared.isDarkMode else { return }
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-            tableView.backgroundColor = .secondarySystemBackground
-            statusEmptyTitle.textColor = .label
-            statusEmptyMessage.textColor = .secondaryLabel
-            statusErrorTitle.textColor = .systemRed
-            statusErrorMessage.textColor = .secondaryLabel
-        }
+        view.backgroundColor = .systemBackground
+        tableView.backgroundColor = .secondarySystemBackground
+        statusEmptyTitle.textColor = .label
+        statusEmptyMessage.textColor = .secondaryLabel
+        statusErrorTitle.textColor = .systemRed
+        statusErrorMessage.textColor = .secondaryLabel
     }
 
     func setupElements() {

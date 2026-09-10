@@ -378,11 +378,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
             bottomCons = bottomAnchor.constraint(equalTo: window.bottomAnchor, constant: 1000)
             bottomCons?.isActive = true
         } else {
-            if #available(iOS 11.0, *) {
-                topCons = topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor, constant: -1000)
-            } else {
-                topCons = topAnchor.constraint(equalTo: window.topAnchor, constant: -1000)
-            }
+            topCons = topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor, constant: -1000)
             topCons?.isActive = true
         }
 
@@ -556,11 +552,7 @@ final class OldInAppMessageSlideInView: UIView, InAppMessageView {
         if displayOnBottom {
             bottomAnchor.constraint(equalTo: window.bottomAnchor, constant: -10).isActive = true
         } else {
-            if #available(iOS 11.0, *) {
-                topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor).isActive = true
-            } else {
-                topAnchor.constraint(equalTo: window.topAnchor).isActive = true
-            }
+            topAnchor.constraint(equalTo: window.safeAreaLayoutGuide.topAnchor).isActive = true
         }
         NSLayoutConstraint.activate([
             leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 10),

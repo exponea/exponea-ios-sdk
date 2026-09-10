@@ -28,7 +28,7 @@ Navigate to `File` > `New` > `Target` in Xcode and select the extension type (`N
 
 > ❗️
 >
->  Make sure that the `iOS Deployment Target` of your extension is the same as for your main app.
+>  Ensure the `iOS Deployment Target` of your extension matches your main app (minimum **iOS 15.0**).
 
 
 ## Step 2: Configure ExponeaSDK-Notifications dependency
