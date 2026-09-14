@@ -181,6 +181,10 @@ Make sure that:
 >
 > No action is required from the host app — the behavior is automatic. The SDK's token-registration path and [`tokenTrackFrequency`](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) rules handle duplicate replays, so no duplicate `notification_state` events are tracked regardless of which frequency mode is active.
 
+> 📘 **UIScene lifecycle**
+>
+> Push notification handling stays on `UIApplicationDelegate` (`ExponeaAppDelegate`). Adopting `UIApplicationSceneManifest` **doesn't** require moving push handlers to `SceneDelegate`. Universal links are the exception — they move to `SceneDelegate`; see [Universal links for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-universal-links).
+
 ### Step 4: Register to receive push notifications
 
 Your app needs to register to receive push notifications. It’s important to ensure you have the correct authorization to receive push notifications. You require explicit permission from the user to receive "alert" notifications visible to the user. You don't need authorization to receive [silent push notifications](#silent-push-notifications) (background updates).

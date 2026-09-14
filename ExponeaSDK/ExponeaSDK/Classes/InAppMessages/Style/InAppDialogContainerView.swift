@@ -29,7 +29,7 @@ public final class InAppDialogContainerView: UIViewController, InAppMessageView 
             if newValue != 0 {
                 var safeTop: CGFloat = 0
                 var safeBottom: CGFloat = 0
-                if let window = UIApplication.shared.windows.first {
+                if let window = WindowHelper.keyWindow {
                     safeTop = window.safeAreaInsets.top
                     safeBottom = window.safeAreaInsets.bottom
                 }
@@ -181,7 +181,7 @@ public final class InAppDialogContainerView: UIViewController, InAppMessageView 
             var safeTop: CGFloat = 0
             var safeBottom: CGFloat = 0
             if !isReactNativeSDK() && !isFlutterSDK() {
-                if let window = UIApplication.shared.windows.first {
+                if let window = WindowHelper.keyWindow {
                     safeTop = window.safeAreaInsets.top
                     safeBottom = window.safeAreaInsets.bottom
                 }
@@ -204,7 +204,7 @@ public final class InAppDialogContainerView: UIViewController, InAppMessageView 
             var safeTop: CGFloat = 0
             var safeBottom: CGFloat = 0
             if !isReactNativeSDK() && !isFlutterSDK() {
-                if let window = UIApplication.shared.windows.first {
+                if let window = WindowHelper.keyWindow {
                     safeTop = window.safeAreaInsets.top
                     safeBottom = window.safeAreaInsets.bottom
                 }

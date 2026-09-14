@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import UserNotifications
 #if canImport(ExponeaSDKShared)
 import ExponeaSDKShared
@@ -311,6 +312,16 @@ extension ExponeaInternal {
 
     public func trackCampaignClick(url: URL, timestamp: Double?) {
         trackCampaignData(data: CampaignData(url: url), timestamp: timestamp)
+    }
+
+    @discardableResult
+    public func handleUniversalLink(_ userActivity: NSUserActivity) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+              let incomingURL = userActivity.webpageURL else {
+            return false
+        }
+        trackCampaignClick(url: incomingURL, timestamp: nil)
+        return true
     }
 
     func trackCampaignData(data: CampaignData, timestamp: Double?) {

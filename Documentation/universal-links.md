@@ -56,25 +56,81 @@ Once the above items are in place, opening universal links should open your app.
 
 ## Track universal links
 
-When the system opens your app after a user taps or clicks on a universal link, your app receives an `NSUserActivity` object with an `activityType` value of `NSUserActivityTypeBrowsingWeb`. You must update your app delegate to respond and track the link to the {user.mkg} platform when it receives the `NSUserActivity` object.
+When the system opens your app after a user taps or clicks on a universal link, your app receives an `NSUserActivity` object with an `activityType` value of `NSUserActivityTypeBrowsingWeb`. You must forward that activity to the SDK so campaign clicks are tracked in {user.mkg}.
 
-The activity object’s `webpageURL` property contains the URL you need to pass on to the SDK’s `.trackCampaignClick()` method.
+The activity object's `webpageURL` property contains the URL passed to campaign-click tracking.
 
-The code example below shows how to respond to a universal link and track it:
+### UIScene lifecycle (recommended for iOS 27+)
+
+If your app uses `UIApplicationSceneManifest`, UIKit delivers universal links to your `SceneDelegate`, not `AppDelegate.application(_:continue:restorationHandler:)`.
+
+Subclass `ExponeaSceneDelegate` in your scene delegate and call `super` from the scene lifecycle methods:
 
 ```swift
-func application(_ application:UIApplication,
+import ExponeaSDK
+
+class SceneDelegate: ExponeaSceneDelegate {
+    var window: UIWindow?
+
+    override func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        super.scene(scene, willConnectTo: session, options: connectionOptions)
+        // cold launch: connectionOptions.userActivities
+    }
+
+    override func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        super.scene(scene, continue: userActivity)
+        // warm launch
+    }
+}
+```
+
+For a fully custom `SceneDelegate`, forward universal links manually:
+
+```swift
+func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    Exponea.shared.handleUniversalLink(userActivity)
+}
+
+func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+) {
+    if let activity = connectionOptions.userActivities.first(where: {
+        $0.activityType == NSUserActivityTypeBrowsingWeb
+    }) {
+        Exponea.shared.handleUniversalLink(activity)
+    }
+}
+```
+
+> ❗️
+>
+> If your custom `SceneDelegate` implements `scene(_:continue:)` for reasons unrelated to the SDK (for example, Handoff or Shortcuts), it must still explicitly call `Exponea.shared.handleUniversalLink(_:)` (or `trackCampaignClick(url:timestamp:)`). The SDK's in-app deeplink handling (`UrlOpener`) can only detect whether your scene delegate implements `scene(_:continue:)` — it can't verify that the implementation forwards to the SDK. 
+>
+> If your implementation doesn't forward, this affects SDK-initiated deeplinks only (in-app messages, in-app content blocks). The campaign click isn't tracked, and the link itself silently fails to open for that scene: `UrlOpener` treats the scene as having already handled the link and doesn't fall back to opening the URL. 
+>
+> Real, system-delivered universal links (tapped from Notes, Messages, or Safari) aren't affected, since UIKit always dispatches those directly to your real `SceneDelegate`.
+
+### Legacy AppDelegate lifecycle
+
+If your app **doesn't** use `UIApplicationSceneManifest`, handle universal links in `AppDelegate`:
+
+```swift
+func application(_ application: UIApplication,
                  continue userActivity: NSUserActivity,
                  restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-    guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-        let incomingURL = userActivity.webpageURL
-        else { return false }
-
-    Exponea.shared.trackCampaignClick(url: incomingURL, timestamp: nil)
+    guard Exponea.shared.handleUniversalLink(userActivity) else { return false }
     // process the universal link and return true once it has been processed
     return true
 }
 ```
+
+You can also call `Exponea.shared.trackCampaignClick(url:timestamp:)` directly if you already extracted `userActivity.webpageURL`.
 
 Universal Link parameters are automatically tracked in `session_start` events when a new session is started for a given Universal Link click. If the URL contains a parameter `xnpe_cmp` then an additional `campaign` event is tracked. The parameter `xnpe_cmp` represents a campaign identifier typically generated for Email or SMS campaigns. 
 

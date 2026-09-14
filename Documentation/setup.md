@@ -130,6 +130,10 @@ Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
 
 Your `AppDelegate`'s `application:didFinishLaunchingWithOptions` method is typically a good place to do the initialization but, depending on your application design, it can be anywhere in your code.
 
+> 📘
+>
+> If your app uses the UIScene lifecycle (`UIApplicationSceneManifest`), also subclass [`ExponeaSceneDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/ExponeaSDK/Classes/ExponeaSceneDelegate.swift) in your `SceneDelegate` to track universal links. Push notifications still rely on `ExponeaAppDelegate` / `UIApplicationDelegate` and need no scene delegate changes. Learn more about [universal links for the iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-universal-links).
+
 At this point, the SDK is active and should now be tracking customers and events in your app.
 
 ####Configure application ID

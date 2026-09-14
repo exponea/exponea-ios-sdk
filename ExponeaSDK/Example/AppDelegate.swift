@@ -77,19 +77,19 @@ class AppDelegate: ExponeaAppDelegate {
         return true
     }
 
+    /// Legacy AppDelegate universal-link path. Not called when `UIApplicationSceneManifest` is active;
+    /// use `SceneDelegate` (subclass `ExponeaSceneDelegate`) for UIScene lifecycle apps.
     func application(
         _ application: UIApplication,
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
-        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-            let incomingURL = userActivity.webpageURL
-            else { return false }
-        Exponea.shared.trackCampaignClick(url: incomingURL, timestamp: nil)
-        if let type = DeeplinkType(input: incomingURL.absoluteString) {
+        guard Exponea.shared.handleUniversalLink(userActivity) else { return false }
+        if let incomingURL = userActivity.webpageURL,
+           let type = DeeplinkType(input: incomingURL.absoluteString) {
             DeeplinkManager.manager.setDeeplinkType(type: type)
         }
-        return incomingURL.host == "mobile-sdk-example-apps.web.app"
+        return userActivity.webpageURL?.host == "mobile-sdk-example-apps.web.app"
     }
 
     func application(

@@ -118,10 +118,7 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
 
                         let targetWindow: UIWindow? = {
                             if let w = self.window { return w }
-                            return UIApplication.shared.connectedScenes
-                                .compactMap { $0 as? UIWindowScene }
-                                .flatMap { $0.windows }
-                                .first { $0.isKeyWindow }
+                            return WindowHelper.keyWindow
                         }()
 
                         try self.inAppMessageView?.present(
@@ -317,15 +314,8 @@ final class InAppMessagePresenter: InAppMessagePresenterType {
     }
 
     static func getTopViewController(window: UIWindow? = nil) -> UIViewController? {
-        let keyWindow: UIWindow? = {
-            return UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .flatMap { $0.windows }
-                .first { $0.isKeyWindow }
-        }()
-
-        let window = window ?? keyWindow
-        guard var topController = window?.rootViewController else { return nil }
+        let resolvedWindow = window ?? WindowHelper.keyWindow
+        guard var topController = resolvedWindow?.rootViewController else { return nil }
 
         var lastNonAlert = topController
         while let presented = topController.presentedViewController,

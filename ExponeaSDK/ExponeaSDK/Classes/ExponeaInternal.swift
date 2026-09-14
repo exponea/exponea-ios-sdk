@@ -643,7 +643,7 @@ public extension ExponeaInternal {
     @objc
     func openAppInboxList(sender: UIButton!) {
         onMain {
-            let window = UIApplication.shared.keyWindow
+            let window = WindowHelper.keyWindow
             guard let topViewController = InAppMessagePresenter.getTopViewController(window: window) else {
                 Exponea.logger.log(.error, message: "Unable to show AppInbox list - no view controller")
                 return

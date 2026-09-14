@@ -214,6 +214,50 @@ class TrackUniversalLinkSpec: QuickSpec {
                     }
                 }
             }
+            context("handleUniversalLink") {
+                it("tracks valid browsing-web activities") {
+                    let exponea = MockExponeaImplementation()
+                    Exponea.shared = exponea
+                    exponea.configure(plistName: "ExponeaConfig")
+
+                    let activity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+                    activity.webpageURL = mockData.campaignUrl
+
+                    expect(exponea.handleUniversalLink(activity)).to(beTrue())
+
+                    let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
+                    expect(campaignClick).notTo(beNil())
+                }
+
+                it("returns false for invalid activities") {
+                    let exponea = MockExponeaImplementation()
+                    Exponea.shared = exponea
+                    exponea.configure(plistName: "ExponeaConfig")
+
+                    let activity = NSUserActivity(activityType: "com.example.other")
+                    activity.webpageURL = mockData.campaignUrl
+
+                    expect(exponea.handleUniversalLink(activity)).to(beFalse())
+
+                    let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
+                    expect(campaignClick).to(beNil())
+                }
+
+                it("buffers campaign data before SDK initialization") {
+                    let exponea = MockExponeaImplementation()
+                    Exponea.shared = exponea
+
+                    let activity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+                    activity.webpageURL = mockData.campaignUrl
+
+                    expect(exponea.handleUniversalLink(activity)).to(beTrue())
+
+                    exponea.configure(plistName: "ExponeaConfig")
+
+                    let campaignClick = findEvent(exponea: exponea, eventType: "campaign_click")
+                    expect(campaignClick).notTo(beNil())
+                }
+            }
         }
     }
 }

@@ -360,6 +360,11 @@
 		6030B3F82F51CE2F0092016B /* JwtAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A370CD7F2F2BE72400073A3D /* JwtAuthManager.swift */; };
 		6030B3F92F51CE2F0092016B /* KeychainJwtTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A370CD822F2BE72400073A3D /* KeychainJwtTokenStore.swift */; };
 		6030B3FA2F51CE2F0092016B /* JwtTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A370CD812F2BE72400073A3D /* JwtTokenStore.swift */; };
+		60364E913048A97C0075B9CD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60364E903048A97B0075B9CD /* SceneDelegate.swift */; };
+		60364E933048A9BD0075B9CD /* ExponeaSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60364E923048A9BB0075B9CD /* ExponeaSceneDelegate.swift */; };
+		60364E963048AA250075B9CD /* WindowHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60364E953048AA240075B9CD /* WindowHelper.swift */; };
+		60364E983048AA6A0075B9CD /* ExponeaSceneDelegateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60364E973048AA690075B9CD /* ExponeaSceneDelegateSpec.swift */; };
+		60364E9A3048AA9B0075B9CD /* UrlOpenerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60364E993048AA9B0075B9CD /* UrlOpenerSpec.swift */; };
 		603CC5802FD0785C005A7A64 /* AnonymizeWithIntegrationAndCompletionSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603CC57F2FD0785C005A7A64 /* AnonymizeWithIntegrationAndCompletionSpec.swift */; };
 		603CC5822FD0957F005A7A64 /* CompletionGuaranteesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603CC5812FD0957E005A7A64 /* CompletionGuaranteesSpec.swift */; };
 		604755463020A979005291B9 /* InAppCloseButtonLayoutSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604755453020A978005291B9 /* InAppCloseButtonLayoutSpec.swift */; };
@@ -977,6 +982,11 @@
 		5C2B1E5FFF8D1D6FBBC6C981 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		602F9B5F2FB5DB84007D5F5B /* SelfCheckApplicationIDWiringSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfCheckApplicationIDWiringSpec.swift; sourceTree = "<group>"; };
 		602F9B632FB5F137007D5F5B /* PushSelfCheckRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSelfCheckRequestSpec.swift; sourceTree = "<group>"; };
+		60364E903048A97B0075B9CD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		60364E923048A9BB0075B9CD /* ExponeaSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSceneDelegate.swift; sourceTree = "<group>"; };
+		60364E953048AA240075B9CD /* WindowHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowHelper.swift; sourceTree = "<group>"; };
+		60364E973048AA690075B9CD /* ExponeaSceneDelegateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponeaSceneDelegateSpec.swift; sourceTree = "<group>"; };
+		60364E993048AA9B0075B9CD /* UrlOpenerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlOpenerSpec.swift; sourceTree = "<group>"; };
 		603CC57F2FD0785C005A7A64 /* AnonymizeWithIntegrationAndCompletionSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnonymizeWithIntegrationAndCompletionSpec.swift; sourceTree = "<group>"; };
 		603CC5812FD0957E005A7A64 /* CompletionGuaranteesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionGuaranteesSpec.swift; sourceTree = "<group>"; };
 		604755453020A978005291B9 /* InAppCloseButtonLayoutSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppCloseButtonLayoutSpec.swift; sourceTree = "<group>"; };
@@ -1288,8 +1298,10 @@
 				F0CA58F7207F783E00C89A7F /* Tracking */,
 				05D9F62D2387EE6600C47509 /* Exponea+ConfigurationSpec.swift */,
 				05895CCA247E4F7D0021B0B9 /* ExponeaAppDelegateSpec.swift */,
+				60364E973048AA690075B9CD /* ExponeaSceneDelegateSpec.swift */,
 				052F685E2327D404002DDCD4 /* ExponeaErrorSpec.swift */,
 				05297973241919BF00A90526 /* ExponeaSDKQuickConfiguration.swift */,
+				60364E993048AA9B0075B9CD /* UrlOpenerSpec.swift */,
 				F0E757F2207D02F100FE8C21 /* ExponeaSpec.swift */,
 			);
 			path = Specs;
@@ -2051,6 +2063,14 @@
 			path = Internal;
 			sourceTree = "<group>";
 		};
+		60364E943048AA140075B9CD /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				60364E953048AA240075B9CD /* WindowHelper.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		605C41802F23C09300946118 /* PushNotificationManagerSpec */ = {
 			isa = PBXGroup;
 			children = (
@@ -2393,6 +2413,7 @@
 		C0F6C4E12098A1AB00834E21 /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				60364E903048A97B0075B9CD /* SceneDelegate.swift */,
 				C0EA5FCF20CE961000660802 /* Other */,
 				C0EA5FCD20CE95EE00660802 /* Resources */,
 				C0EA5FCE20CE960700660802 /* Views */,
@@ -2657,6 +2678,7 @@
 		F0E757EC207D023A00FE8C21 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				60364E943048AA140075B9CD /* Common */,
 				6030B3F52F51CDB90092016B /* JWT */,
 				31CC0B722BD2518500608057 /* Segmentation */,
 				C0EB5D9E20BB530000F1031F /* ExponeaType.swift */,
@@ -2675,6 +2697,7 @@
 				05F3EFCB237E9237006E83F4 /* Telemetry */,
 				01EC2DB0207E55C10031BFEB /* Tracking */,
 				05D0E5552386C63800413AE2 /* Exponea+Configuration.swift */,
+				60364E923048A9BB0075B9CD /* ExponeaSceneDelegate.swift */,
 				05E81631247555DD00AA28E3 /* ExponeaAppDelegate.swift */,
 				C0F2406B20BC50A000CAF7CE /* ExponeaInternal+Fetching.swift */,
 				C0F2406D20BC511500CAF7CE /* ExponeaInternal+Tracking.swift */,
@@ -3308,6 +3331,7 @@
 				31C7B4242A822848001BA5E2 /* Coordinator.swift in Sources */,
 				55F6A41829891F130029D628 /* ExampleAuthProvider.swift in Sources */,
 				C0F6C4E52098A1AB00834E21 /* AuthenticationViewController.swift in Sources */,
+				60364E913048A97C0075B9CD /* SceneDelegate.swift in Sources */,
 				C0F2407020BD98EB00CAF7CE /* MemoryLogger.swift in Sources */,
 				558DFADB2B2B350F00177800 /* ExtensionUtils.swift in Sources */,
 				31EBB8422A6AC2E90003AAA5 /* InAppContentBlocksViewController.swift in Sources */,
@@ -3424,6 +3448,7 @@
 				053CA1FE247D4A0F003B699C /* SelfCheckRepository.swift in Sources */,
 				552772C928ED86E0000ACFD5 /* ExponeaInternal+AppInbox.swift in Sources */,
 				55DA6EBA290ABD4800B5B285 /* AppInboxManagerType.swift in Sources */,
+				60364E933048A9BD0075B9CD /* ExponeaSceneDelegate.swift in Sources */,
 				55C08DCF2A5689F4000BA66A /* FileCacheType.swift in Sources */,
 				318EFF542D898B3C004C5E1F /* InAppButtonAlignmentType.swift in Sources */,
 				556887502A175A0900498B40 /* AppInboxListItemStyle.swift in Sources */,
@@ -3453,6 +3478,7 @@
 				556887442A1756E500498B40 /* DetailViewStyle.swift in Sources */,
 				05583E9B23603BA900F7084E /* PushNotificationParser.swift in Sources */,
 				31EBB8582A6AC3020003AAA5 /* InappContentBlocksManagerType.swift in Sources */,
+				60364E963048AA250075B9CD /* WindowHelper.swift in Sources */,
 				C0F2406A20BC38EC00CAF7CE /* Swizzle.swift in Sources */,
 				5568873E2A1754D500498B40 /* StyledAppInboxProvider.swift in Sources */,
 				C0EB5D8C20B70D5000F1031F /* Swizzler.swift in Sources */,
@@ -3570,6 +3596,7 @@
 				4C3F5F2D22DF98C00069E71D /* MockExponea.swift in Sources */,
 				05B4D658238FF6DC00F5010F /* InAppMessageSpec.swift in Sources */,
 				314CF9272BD8F2820000EFD9 /* SegmentationSpec.swift in Sources */,
+				60364E9A3048AA9B0075B9CD /* UrlOpenerSpec.swift in Sources */,
 				60AB12072F30000100000007 /* MockJwtTokenStore.swift in Sources */,
 				60AB12082F30000100000008 /* JwtAuthManagerSpec.swift in Sources */,
 				60AB12092F30000100000009 /* CustomerIdentitySpec.swift in Sources */,
@@ -3632,6 +3659,7 @@
 				0567723F237464990082167C /* PushNotificationDelegateObserverSpec.swift in Sources */,
 				55130C5128E425D600B4FE77 /* TrackConsentManagerSpec.swift in Sources */,
 				60D5E6B52FBB182F00C2CB5D /* DeliveredNotificationStateResolverSpec.swift in Sources */,
+				60364E983048AA6A0075B9CD /* ExponeaSceneDelegateSpec.swift in Sources */,
 				05D95C44250100B5001DA2DA /* MockInAppMessagesManager.swift in Sources */,
 				057F44872399322D0070DF30 /* InAppMessageDialogViewSpec.swift in Sources */,
 				05FBB15D244709C500BDF234 /* DatabaseManager+Clear.swift in Sources */,

@@ -184,6 +184,16 @@ public protocol ExponeaType: AnyObject {
     ///     - url: campaign url
     ///     - timestamp: Unix timestamp when the event was created.
     func trackCampaignClick(url: URL, timestamp: Double?)
+
+    /// Handles a universal link delivered by the system via `NSUserActivity`.
+    /// Guards on `NSUserActivityTypeBrowsingWeb` and a non-nil `webpageURL`, then tracks
+    /// the campaign click. Safe to call before SDK initialization.
+    ///
+    /// - Parameter userActivity: The `NSUserActivity` received from `AppDelegate` or `SceneDelegate`.
+    /// - Returns: `true` if the activity was a browsing-web universal link and was tracked.
+    @discardableResult
+    func handleUniversalLink(_ userActivity: NSUserActivity) -> Bool
+
     /// Adds new payment event to a customer.
     ///
     /// - Parameters:

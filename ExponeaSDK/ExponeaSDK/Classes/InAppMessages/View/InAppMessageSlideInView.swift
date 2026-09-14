@@ -275,7 +275,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
                 if newValue != 0 {
                     var top: CGFloat = 0
                     var bottom: CGFloat = 0
-                    if let window = UIApplication.shared.windows.first {
+                    if let window = WindowHelper.keyWindow {
                         top = window.safeAreaInsets.top
                         bottom = window.safeAreaInsets.bottom
                     }
