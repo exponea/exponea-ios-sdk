@@ -95,6 +95,8 @@ public class ExponeaInternal: ExponeaType {
     private var isStopping = false
 
     public var inAppContentBlocksManager: InAppContentBlocksManagerType?
+    var concreteICBController: RuntimeInContentBlockController?
+    public var inAppContentBlocksController: RuntimeInContentBlockControllerType? { concreteICBController }
     public var segmentationManager: SegmentationManagerType?
     public var manualSegmentationManager: ManualSegmentationManagerType?
 
@@ -123,6 +125,8 @@ public class ExponeaInternal: ExponeaType {
         appInboxManager = nil
         notificationsManager = nil
         campaignRepository = nil
+        concreteICBController?.stopIntegration()
+        concreteICBController = nil
     }
 
     /// Sets the flushing mode for usage
@@ -359,7 +363,6 @@ public class ExponeaInternal: ExponeaType {
                     database: database,
                     repository: repository,
                     customerIdentifiedHandler: { [weak self] in
-                        // reload in-app messages once customer identification is flushed - user may have been merged
                         guard let inAppContentBlocksManager = self?.inAppContentBlocksManager else { return }
                         inAppContentBlocksManager.loadInAppContentBlockMessages {
                             if let placeholders = configuration.inAppContentBlocksPlaceholders {
@@ -435,11 +438,17 @@ public class ExponeaInternal: ExponeaType {
 
                 let inAppContentBlocksManager = InAppContentBlocksManager.manager
                 self.inAppContentBlocksManager = inAppContentBlocksManager
+                self.concreteICBController = RuntimeInContentBlockController(
+                    manager: inAppContentBlocksManager
+                )
                 inAppContentBlocksManager.initBlocker {
                     inAppContentBlocksManager.prewarmReusableContentBlockResourcesForStartup()
                 }
-                self.inAppContentBlocksManager?.loadInAppContentBlockMessages { [weak self] in
-                    self?.inAppContentBlocksManager?.prefetchPlaceholdersWithIds(ids: configuration.inAppContentBlocksPlaceholders ?? [])
+                inAppContentBlocksManager.loadInAppContentBlockMessages {
+                    guard !IntegrationManager.shared.isStopped else { return }
+                    inAppContentBlocksManager.prefetchPlaceholdersWithIds(
+                        ids: configuration.inAppContentBlocksPlaceholders ?? []
+                    )
                 }
 
                 if isDebugModeEnabled {

@@ -211,7 +211,7 @@ Invoking this method will cause the SDK to:
 7. If [`regenerateDeviceIdOnAnonymize`](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration) is set to `true`, regenerate the SDK's persisted telemetry `device_id` so subsequent events for the new customer carry a freshly-generated identifier (see the callout below for the full data flow). This step runs before the new customer record is created so the new `device_id` is in place for steps 8–12.
 8. Create a new customer record in {user.mkg} (a new `cookie` soft ID is generated).
 9. Assign the previous push notification token to the new customer record.
-10. Preload in-app messages, in-app content blocks, and app inbox for the new customer.
+10. Preload in-app messages and app inbox for the new customer. In-app content block cache is cleared and the catalog is reloaded; placeholders listed in `inAppContentBlocksPlaceholders` are prefetched for the new anonymous customer.
 11. Track a new `installation` event for the new customer.
 12. Track a new session start if `automaticSessionTracking` is enabled.
 

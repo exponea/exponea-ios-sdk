@@ -32,6 +32,8 @@ public protocol ExponeaType: AnyObject {
     var appInboxProvider: AppInboxProvider { get set }
     /// In-app content block manager
     var inAppContentBlocksManager: InAppContentBlocksManagerType? { get }
+    /// Runtime in-app content block controller. `nil` while the SDK is not configured.
+    var inAppContentBlocksController: RuntimeInContentBlockControllerType? { get }
 
     /// Any NSException inside Exponea SDK will be logged and swallowed if flag is enabled, otherwise
     /// the exception will be rethrown.

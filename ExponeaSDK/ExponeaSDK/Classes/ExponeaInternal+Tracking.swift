@@ -66,10 +66,11 @@ extension ExponeaInternal {
     public func identifyCustomer(customerIds: [String: String]?,
                                  properties: [String: JSONConvertible],
                                  timestamp: Double?) {
-        executeSafelyWithDependencies { dependencies in
+        executeSafelyWithDependencies { [weak self] dependencies in
             guard dependencies.configuration.hasSufficientAuth else {
                 throw ExponeaError.authorizationInsufficient
             }
+            let previousCustomerIds = dependencies.trackingManager.customerIds
             var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })), .timestamp(timestamp)]
             if var ids = customerIds {
                 // Check for overriding cookie
@@ -78,10 +79,15 @@ extension ExponeaInternal {
                     You should never set cookie ID directly on a customer. Ignoring.
                     """)
                 }
-                ids["cookie"] = dependencies.trackingManager.customerIds["cookie"]
+                ids["cookie"] = previousCustomerIds["cookie"]
                 data.append(.customerIds(ids))
             }
             try dependencies.trackingManager.track(.identifyCustomer, with: data)
+            if let ids = customerIds, !ids.isEmpty,
+               icbCacheNeedsReset(incomingIds: ids, currentIds: previousCustomerIds) {
+                self?.concreteICBController?.prepareForCustomerChange()
+                (dependencies.inAppContentBlocksManager as? InAppContentBlocksManager)?.onCustomerIdentified()
+            }
             Exponea.shared.telemetryManager?.report(eventWithType: .identifyCustomer, properties: [:])
         }
     }
@@ -113,6 +119,7 @@ extension ExponeaInternal {
                 }
             }
             
+            let previousCustomerIds = dependencies.trackingManager.customerIds
             var data: [DataType] = [.properties(properties.mapValues({ $0.jsonValue })), .timestamp(timestamp)]
             
             // Only add customer IDs if provided (non-empty)
@@ -125,11 +132,16 @@ extension ExponeaInternal {
                     You should never set cookie ID directly on a customer. Ignoring.
                     """)
                 }
-                ids["cookie"] = dependencies.trackingManager.customerIds["cookie"]
+                ids["cookie"] = previousCustomerIds["cookie"]
                 data.append(.customerIds(ids))
             }
             
             try dependencies.trackingManager.track(.identifyCustomer, with: data)
+            if !context.customerIds.isEmpty,
+               icbCacheNeedsReset(incomingIds: context.customerIds, currentIds: previousCustomerIds) {
+                self?.concreteICBController?.prepareForCustomerChange()
+                (dependencies.inAppContentBlocksManager as? InAppContentBlocksManager)?.onCustomerIdentified()
+            }
             Exponea.shared.telemetryManager?.report(eventWithType: .identifyCustomer, properties: [:])
         }
     }
@@ -681,6 +693,7 @@ extension ExponeaInternal {
 
             dependencies.inAppMessagesManager.anonymize()
             dependencies.appInboxManager.clear()
+            self?.concreteICBController?.prepareForAnonymize()
             dependencies.inAppContentBlocksManager.anonymize()
             SegmentationManager.shared.anonymize()
             dependencies.campaignRepository.clear()
@@ -711,6 +724,11 @@ extension ExponeaInternal {
             } catch {
                 Exponea.logger.log(.error, message: "Failed to anonymize tracking manager: \(error.localizedDescription)")
             }
+
+            reloadICBCatalogAndPrefetchConfigured(
+                manager: dependencies.inAppContentBlocksManager,
+                placeholders: dependencies.configuration.inAppContentBlocksPlaceholders ?? []
+            )
 
             switch exponeaIntegrationType.type {
             case .project(let projectToken):
@@ -1034,4 +1052,20 @@ extension ExponeaInternal {
             )
         }
     }
+}
+
+private func reloadICBCatalogAndPrefetchConfigured(
+    manager: InAppContentBlocksManagerType,
+    placeholders: [String]
+) {
+    manager.loadInAppContentBlockMessages {
+        guard !IntegrationManager.shared.isStopped else { return }
+        manager.prefetchPlaceholdersWithIds(ids: placeholders)
+    }
+}
+
+private func icbCacheNeedsReset(incomingIds: [String: String], currentIds: [String: String]) -> Bool {
+    incomingIds
+        .filter { $0.key != "cookie" }
+        .contains { currentIds[$0.key] != $0.value }
 }

@@ -169,7 +169,10 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
 
-        navigationItem.leftBarButtonItem = .init(title: "Carousel", style: .plain, target: self, action: #selector(openCarousel))
+        navigationItem.leftBarButtonItems = [
+            .init(title: "Carousel", style: .plain, target: self, action: #selector(openCarousel)),
+            .init(title: "Runtime Lab", style: .plain, target: self, action: #selector(openRuntimeLab))
+        ]
         navigationItem.rightBarButtonItem = .init(barButtonSystemItem: .refresh, target: self, action: #selector(reloadStaticView))
 
         SegmentationManager.shared.addCallback(
@@ -204,6 +207,12 @@ class InAppContentBlocksViewController: UIViewController, UITableViewDelegate, U
 
     @objc func openCarousel() {
         let vc = InAppContentBlockCarouselViewController()
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    @objc func openRuntimeLab() {
+        let vc = RuntimeICBLabViewController()
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }

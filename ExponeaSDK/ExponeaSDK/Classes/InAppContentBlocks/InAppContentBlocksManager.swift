@@ -79,6 +79,10 @@ final class InAppContentBlocksManager: NSObject {
     @Atomic private var carouselQueue: [String] = []
     @Atomic var imageValidationStates: [String: ImageValidationState] = [:]
     @Atomic private var heightCalculationMessageByPlaceholder: [String: String] = [:]
+    @Atomic private var cacheGeneration: UInt = 0
+    private let catalogStateLock = NSLock()
+    private var catalogState: CatalogState = .dirty
+    private var catalogWaiters: [(Bool) -> Void] = []
 
     private var newUsedInAppContentBlocks: UsedInAppContentBlocks? {
         willSet {
@@ -99,6 +103,8 @@ final class InAppContentBlocksManager: NSObject {
     private let sessionStart = Date()
     private let provider: InAppContentBlocksDataProviderType & InAppContentBlocksETagDataProviding
     private let etagStore: InAppContentBlocksETagStore
+    private let batchKeyIndexLock = NSLock()
+    private var _batchKeysByPlaceholder: [String: Set<String>] = [:]
     @Atomic private var coalescedRefreshKeys: Set<String> = []
     private var didWarmHeightCalculator = false
     private let maxPreparedContentBlockWebViews = 2
@@ -109,6 +115,11 @@ final class InAppContentBlocksManager: NSObject {
     private var preparedStaticHeightCalculators: [WKWebViewHeightCalculator] = []
     private var warmingStaticHeightCalculator: WKWebViewHeightCalculator?
     private var isStaticHeightCalculatorWarmupScheduled = false
+
+    private func clearAllETags() {
+        etagStore.clearAll()
+        batchKeyIndexLock.withLock { _batchKeysByPlaceholder.removeAll() }
+    }
 
     private func warmHeightCalculator() {
         onMain { [weak self] in
@@ -269,6 +280,8 @@ final class InAppContentBlocksManager: NSObject {
 
         IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
             guard let self else { return }
+            self._cacheGeneration.changeValue { $0 &+= 1 }
+            self.markCatalogDirty()
             self.usedInAppContentBlocks.forEach { key, value in
                 let content = self.usedInAppContentBlocks[key] ?? []
                 let updatedMessages = content.map { content in
@@ -288,7 +301,7 @@ final class InAppContentBlocksManager: NSObject {
             // Drop in-flight carousel dedup records; outstanding callbacks no-op at the token guard.
             self._carouselInFlightFetches.changeValue(with: { $0.removeAll() })
             // Clear ETags so the next session does not send stale If-None-Match headers.
-            self.etagStore.clearAll()
+            self.clearAllETags()
         }
     }
 
@@ -297,9 +310,31 @@ final class InAppContentBlocksManager: NSObject {
     }
 
     internal func onEventOccurred(of type: EventType, for event: [DataType]) {
-        guard type == .identifyCustomer else { return }
-        Exponea.logger.log(.verbose, message: "CustomerIDs are updated, clearing In-app Content Blocks ETags")
-        etagStore.clearAll()
+        // Identity-change clearing is handled directly via onCustomerIdentified(), called
+        // synchronously in the identifyCustomer path. Handling it here as well would fire after
+        // an async flush in .immediate mode, creating a race window, and would also cause a
+        // double cacheGeneration bump that discards valid in-flight requests for the new customer.
+    }
+
+    internal func onCustomerIdentified() {
+        Exponea.logger.log(.verbose, message: "CustomerIDs are updated, invalidating In-app Content Blocks personalised cache")
+        clearPersonalisedContent()
+        clearAllETags()
+    }
+
+    /// Bumps `cacheGeneration` to fence off in-flight personalisation responses and clears all
+    /// per-message personalised payloads and display-state caches. The catalog (message list) and
+    /// ETag store are left intact and are cleared by their own dedicated paths.
+    private func clearPersonalisedContent() {
+        _cacheGeneration.changeValue { $0 &+= 1 }
+        _inAppContentBlockMessages.changeValue { messages in
+            for index in messages.indices {
+                messages[index].personalizedMessage = nil
+                messages[index].normalizedResult = nil
+            }
+        }
+        _usedInAppContentBlocks.changeValue { $0.removeAll() }
+        _heightCalculationMessageByPlaceholder.changeValue { $0.removeAll() }
     }
 
     func initBlocker() {
@@ -627,7 +662,10 @@ private extension InAppContentBlocksManager {
 }
 
 // MARK: InAppContentBlocksManagerType
-extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigationDelegate {    
+extension InAppContentBlocksManager:
+    InAppContentBlocksManagerType,
+    RuntimeInContentBlockManagerType,
+    WKNavigationDelegate {
     func hasHtmlImages(html: String) -> Bool {
         return hasHtmlImages(html: html, maxConcurrentDownloads: maxImageValidationConcurrency)
     }
@@ -742,10 +780,18 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     }
 
     func anonymize() {
+        _cacheGeneration.changeValue { $0 &+= 1 }
+        markCatalogDirty()
         usedInAppContentBlocks.removeAll()
         inAppContentBlockMessages.removeAll()
         _imageValidationStates.changeValue(with: { $0.removeAll() })
-        etagStore.clearAll()
+        _heightCalculationMessageByPlaceholder.changeValue(with: { $0.removeAll() })
+        _carouselValidationTokens.changeValue(with: { $0.removeAll() })
+        clearAllETags()
+        onMain { [weak self] in
+            self?.isLoadUpdating = false
+            self?.isCarouselLoading = false
+        }
     }
 
     func webView(
@@ -910,22 +956,135 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
         }
     }
 
+    func invalidatePlaceholders(_ placeholderIds: [String]) {
+        guard !placeholderIds.isEmpty else { return }
+        _cacheGeneration.changeValue { $0 &+= 1 }
+
+        for placeholderId in placeholderIds {
+            _inAppContentBlockMessages.changeValue { messages in
+                for index in messages.indices where messages[index].placeholders.contains(placeholderId) {
+                    messages[index].personalizedMessage = nil
+                    messages[index].normalizedResult = nil
+                }
+            }
+            _usedInAppContentBlocks.changeValue { $0.removeValue(forKey: placeholderId) }
+            _heightCalculationMessageByPlaceholder.changeValue { $0.removeValue(forKey: placeholderId) }
+        }
+
+        evictETags(forPlaceholderIds: placeholderIds)
+    }
+
+    private func evictETags(forPlaceholderIds placeholderIds: [String]) {
+        guard let customerIds = try? DatabaseManager().currentCustomer.ids else { return }
+        let projectToken = Exponea.shared.configuration?.mainProject.integrationId ?? ""
+
+        let exactKeys = etagPlaceholderIdBatches(for: placeholderIds).compactMap {
+            etagCacheKey(projectToken: projectToken, customerIds: customerIds, placeholderIds: $0)
+        }
+
+        let supersetKeys = batchKeyIndexLock.withLock {
+            var keys = Set<String>()
+            for id in placeholderIds {
+                if let batchKeys = _batchKeysByPlaceholder.removeValue(forKey: id) {
+                    keys.formUnion(batchKeys)
+                }
+            }
+            return keys
+        }
+
+        for key in Set(exactKeys).union(supersetKeys) {
+            etagStore.remove(forKey: key)
+        }
+    }
+
+    private func etagPlaceholderIdBatches(for placeholderIds: [String]) -> [[String]] {
+        var batches = placeholderIds.map { [$0] }
+        if placeholderIds.count > 1 {
+            batches.append(placeholderIds)
+        }
+        return batches
+    }
+
+    private func etagCacheKey(
+        projectToken: String,
+        customerIds: [String: String],
+        placeholderIds: [String]
+    ) -> String? {
+        let blockIds = prefetchPlaceholdersWithIds(
+            input: inAppContentBlockMessages,
+            ids: placeholderIds
+        ).map(\.id).sorted()
+        guard !blockIds.isEmpty else { return nil }
+        return type(of: etagStore).cacheKey(
+            projectToken: projectToken,
+            customerIds: customerIds,
+            blockIds: blockIds
+        )
+    }
+
     func prefetchPlaceholdersWithIds(ids: [String]) {
+        prefetchPlaceholdersWithIds(ids: ids, completion: nil)
+    }
+
+    func prefetchPlaceholdersWithIds(ids: [String], completion: (() -> Void)?) {
+        prefetchRuntimePlaceholdersWithIds(ids: ids) { _ in completion?() }
+    }
+
+    func prefetchRuntimePlaceholdersWithIds(
+        ids: [String],
+        completion: @escaping (RuntimeInContentBlockPrefetchOutcome) -> Void
+    ) {
         Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts.")
-        guard let customerIds = try? DatabaseManager().currentCustomer.ids, !ids.isEmpty else {
-            Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts failed due to customer ids or ids are empty")
+        guard !ids.isEmpty else {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts failed because IDs are empty")
+            completion(.completed)
             return
         }
+        ensureCatalogLoaded { [weak self] isLoaded in
+            guard let self, isLoaded else {
+                completion(.retryableFailure)
+                return
+            }
+            guard let customerIds = try? DatabaseManager().currentCustomer.ids else {
+                Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch starts failed due to customer IDs")
+                completion(.retryableFailure)
+                return
+            }
+            self.prefetchPlaceholdersWithIds(
+                ids: ids,
+                customerIds: customerIds,
+                completion: { completion(.completed) }
+            )
+        }
+    }
+
+    private func prefetchPlaceholdersWithIds(
+        ids: [String],
+        customerIds: [String: String],
+        completion: (() -> Void)?
+    ) {
         Exponea.logger.log(.verbose, message: "In-app Content Blocks prefetch ids \(ids)")
         let messageIds = prefetchPlaceholdersWithIds(input: inAppContentBlockMessages, ids: ids).map { $0.id }
+        guard !messageIds.isEmpty else {
+            completion?()
+            return
+        }
+        let generation = cacheGeneration
         // Prefetch only warms cache; conditional revalidation does not apply.
         provider.loadPersonalizedInAppContentBlocks(
             data: PersonalizedInAppContentBlockResponseData.self,
             customerIds: customerIds,
             inAppContentBlocksIds: messageIds
         ) { [weak self] messages in
-            guard let self else { return }
+            guard let self else {
+                completion?()
+                return
+            }
             ensureBackground {
+                guard self.cacheGeneration == generation else {
+                    completion?()
+                    return
+                }
                 let prefetchedMessagesDescriptions = (messages.data?.data ?? []).map { $0.describeDetailed() }
                 Exponea.logger.log(.verbose, message: "In-app Content Blocks downloaded prefetched messages \(prefetchedMessagesDescriptions)")
                 let personalizedWithPayload: [PersonalizedInAppContentBlockResponse]? = messages.data?.data.filter { $0.status == .ok }.compactMap { response in
@@ -943,10 +1102,30 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                         updatedContentBlocksForTelemetry.append(updatedPlaceholders[index])
                     }
                 }
-                self.inAppContentBlockMessages = updatedPlaceholders
+                let applied = self.updateMessagesIfCurrent(generation: generation) { messages in
+                    messages = updatedPlaceholders
+                }
+                guard applied else {
+                    completion?()
+                    return
+                }
                 self.trackTelemetryForFetch(.contentBlockPersonalisedFetch, updatedContentBlocksForTelemetry)
+                completion?()
             }
         }
+    }
+
+    func availabilityForPlaceholder(id: String) -> InAppContentBlockAvailability {
+        let candidates = prefetchPlaceholdersWithIds(input: inAppContentBlockMessages, ids: [id])
+        let renderable = candidates.filter { applyDateFilter(message: $0) && hasRenderablePayload($0) }
+        guard !renderable.isEmpty else { return .empty }
+        if renderable.contains(where: { !($0.content?.html ?? "").isEmpty }) {
+            return .ready
+        }
+        if filterPersonalizedMessages(input: renderable) != nil {
+            return .ready
+        }
+        return .empty
     }
 
     func getFilteredMessage(message: InAppContentBlockResponse) -> Bool {        
@@ -1028,6 +1207,19 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
             Exponea.logger.log(.verbose, message: "In-app content blocks fetch failed: SDK is stopping")
             return .init()
         }
+        guard isCatalogReady else {
+            ensureCatalogLoaded { [weak self] isLoaded in
+                guard let self, isLoaded else { return }
+                onMain {
+                    self.notifyRefreshCallback(
+                        indexPath: indexPath,
+                        source: "prepareInAppContentBlockView.catalog",
+                        placeholder: placeholderId
+                    )
+                }
+            }
+            return returnEmptyView(tag: Int.random(in: 0..<99999999))
+        }
         let messagesToUse = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholderId) }
         let messagesNeedToRefresh = messagesToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
         let expiredMessages = messagesToUse.filter { inAppContentBlocks in
@@ -1107,6 +1299,20 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     }
 
     func filterCarouselData(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?) {
+        guard isCatalogReady else {
+            ensureCatalogLoaded { [weak self] isLoaded in
+                guard let self, isLoaded else {
+                    continueCallback?([])
+                    return
+                }
+                self.filterCarouselData(
+                    placeholder: placeholder,
+                    continueCallback: continueCallback,
+                    expiredCompletion: expiredCompletion
+                )
+            }
+            return
+        }
         let placehodlersToUse = inAppContentBlockMessages.filter { !$0.placeholders.filter { $0 == placeholder }.isEmpty }
         let placeholdersNeedToRefresh = placehodlersToUse.filter { $0.personalizedMessage == nil && $0.content?.html == nil }
         // Scope expiration to the placeholder being loaded. `loadMessagesForCarousel`
@@ -1270,15 +1476,59 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
     }
 
     func loadInAppContentBlockMessages(completion: EmptyBlock?) {
+        loadCatalog { _ in completion?() }
+    }
+
+    private func ensureCatalogLoaded(completion: @escaping (Bool) -> Void) {
+        catalogStateLock.lock()
+        switch catalogState {
+        case .ready:
+            catalogStateLock.unlock()
+            completion(true)
+        case .loading:
+            catalogWaiters.append(completion)
+            catalogStateLock.unlock()
+        case .dirty:
+            catalogStateLock.unlock()
+            loadCatalog(completion: completion)
+        }
+    }
+
+    private var isCatalogReady: Bool {
+        catalogStateLock.lock()
+        defer { catalogStateLock.unlock() }
+        return catalogState == .ready
+    }
+
+    private func loadCatalog(completion: @escaping (Bool) -> Void) {
+        catalogStateLock.lock()
+        if catalogState == .loading {
+            catalogWaiters.append(completion)
+            catalogStateLock.unlock()
+            return
+        }
+        catalogState = .loading
+        catalogWaiters.append(completion)
+        catalogStateLock.unlock()
+
+        let generation = cacheGeneration
         provider.getInAppContentBlocks(
             data: InAppContentBlocksDataResponse.self
         ) { [weak self] result in
-            guard result.data?.success == true, let messages = result.data?.data else { return }
+            guard let self else { return }
+            guard result.data?.success == true, let messages = result.data?.data else {
+                self.completeCatalogLoad(generation: generation, succeeded: false)
+                return
+            }
             ensureBackground {
+                guard self.cacheGeneration == generation else {
+                    self.completeCatalogLoad(generation: generation, succeeded: false)
+                    return
+                }
                 let filteredMessages: [InAppContentBlockResponse] = messages.map { message in
                     if let content = message.content?.html {
                         var msg = message
-                        if let normalizedPayload = self?.prepareNormalizedHtmlPayload(
+                        if let normalizedPayload = self.prepareNormalizedHtmlPayload(
                             html: content,
                             makeResourcesOffline: true,
                             ensureCloseButton: false
@@ -1292,9 +1542,15 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                     }
                     return message
                 }
-                self?.inAppContentBlockMessages = filteredMessages
+                let applied = self.updateMessagesIfCurrent(generation: generation) { currentMessages in
+                    currentMessages = filteredMessages
+                }
+                guard applied else {
+                    self.completeCatalogLoad(generation: generation, succeeded: false)
+                    return
+                }
                 let validIds = Set(filteredMessages.map { $0.id })
-                self?._imageValidationStates.changeValue { states in
+                self._imageValidationStates.changeValue { states in
                     states = states.filter { validIds.contains($0.key) }
                 }
                 let loadedMessagesDescriptions = (result.data?.data ?? []).map { $0.describe() }
@@ -1302,11 +1558,79 @@ extension InAppContentBlocksManager: InAppContentBlocksManagerType, WKNavigation
                     .verbose,
                     message: "In-app Content Blocks loadInAppContentBlockMessages done with \(loadedMessagesDescriptions)."
                 )
-                self?.trackTelemetryForFetch(.contentBlockInitFetch, messages)
-                completion?()
+                self.trackTelemetryForFetch(.contentBlockInitFetch, messages)
+                self.completeCatalogLoad(generation: generation, succeeded: true)
             }
         }
     }
+
+    private func markCatalogDirty() {
+        catalogStateLock.lock()
+        catalogState = .dirty
+        let waiters = catalogWaiters
+        catalogWaiters.removeAll()
+        catalogStateLock.unlock()
+        waiters.forEach { $0(false) }
+    }
+
+    @discardableResult
+    private func updateMessagesIfCurrent(
+        generation: UInt,
+        mutation: (inout [InAppContentBlockResponse]) -> Void
+    ) -> Bool {
+        guard cacheGeneration == generation else { return false }
+        var applied = false
+        _inAppContentBlockMessages.changeValue { messages in
+            mutation(&messages)
+            applied = true
+        }
+        guard cacheGeneration == generation else {
+            _inAppContentBlockMessages.changeValue { messages in
+                messages.removeAll()
+            }
+            return false
+        }
+        return applied
+    }
+
+    private func completeCatalogLoad(generation: UInt, succeeded: Bool) {
+        let isCurrentGeneration = cacheGeneration == generation
+        catalogStateLock.lock()
+        if !isCurrentGeneration {
+            // A newer generation (triggered by anonymize/identifyCustomer) superseded this fetch.
+            // If the newer load has already moved catalogState to .loading, flipping it back to
+            // .dirty here is a known coarse-grained tradeoff: cacheGeneration is a UInt counter,
+            // not a per-load token, so this branch cannot distinguish "new load in-flight" from
+            // "still dirty". The consequence is one spurious retryableFailure and an extra network
+            // round trip on the next ensureCatalogLoaded call — no hang and no data corruption.
+            // Under normal usage (identity changes are seconds apart) this path is never hit.
+            if catalogState == .loading {
+                catalogState = .dirty
+                let waiters = catalogWaiters
+                catalogWaiters.removeAll()
+                catalogStateLock.unlock()
+                waiters.forEach { $0(false) }
+                return
+            }
+            catalogStateLock.unlock()
+            return
+        }
+        guard catalogState == .loading else {
+            catalogStateLock.unlock()
+            return
+        }
+        catalogState = succeeded ? .ready : .dirty
+        let waiters = catalogWaiters
+        catalogWaiters.removeAll()
+        catalogStateLock.unlock()
+        waiters.forEach { $0(succeeded) }
+    }
+}
+
+private enum CatalogState: Equatable {
+    case dirty
+    case loading
+    case ready
 }
 
 private extension InAppContentBlocksManager {
@@ -1508,6 +1832,15 @@ private extension InAppContentBlocksManager {
             Exponea.logger.log(.verbose, message: "In-app Content Blocks loadContent - customer ids not found")
             return
         }
+        guard isCatalogReady else {
+            ensureCatalogLoaded { [weak self] isLoaded in
+                guard let self, isLoaded else { return }
+                onMain {
+                    self.loadContent(indexPath: indexPath, placeholder: placeholder, expired: expired)
+                }
+            }
+            return
+        }
         if !isLoadUpdating {
             // Clear stale coalescing keys when a new load cycle starts.
             clearRefreshCoalescingIfIdle()
@@ -1556,12 +1889,13 @@ private extension InAppContentBlocksManager {
             let isRevalidation = !expired.isEmpty
                 && Set(placeholdersNeedToGetContent.map { $0.id }) == Set(expired.map { $0.id })
             let blockIds = placeholdersNeedToGetContent.map { $0.id }.sorted()
+            let generation = cacheGeneration
             let projectToken = Exponea.shared.configuration?.mainProject.integrationId ?? ""
             let cacheKey = type(of: self.etagStore).cacheKey(projectToken: projectToken, customerIds: ids, blockIds: blockIds)
             let storedEtag = isRevalidation ? self.etagStore.retrieve(forKey: cacheKey) : nil
 
             let onNotModified: (() -> Void)? = isRevalidation ? { [weak self] in
-                guard let self else { return }
+                guard let self, self.cacheGeneration == generation else { return }
                 Exponea.logger.log(.verbose, message: "ICB loadContent: 304 cache hit for placeholder \(placeholder)")
                 let placehodlersToUse = self.inAppContentBlockMessages.filter { $0.placeholders.contains(placeholder) }
                 let renderablePlaceholdersToUse = self.preparedRenderableMessagesForHeightCalculation(
@@ -1610,15 +1944,19 @@ private extension InAppContentBlocksManager {
                 etag: storedEtag,
                 onNotModified: onNotModified,
                 onEtagHeader: { [weak self] etag in
-                    self?.etagStore.store(etag: etag, forKey: cacheKey)
+                    guard let self, self.cacheGeneration == generation else { return }
+                    self.etagStore.store(etag: etag, forKey: cacheKey)
                     Exponea.logger.log(.verbose, message: "ICB loadContent: received ETag from server, storing for key=\(cacheKey.prefix(16))…")
+                    self.batchKeyIndexLock.withLock {
+                        self._batchKeysByPlaceholder[placeholder, default: []].insert(cacheKey)
+                    }
                 }
             ) { [weak self] data in
                 guard let self else { return }
                 ensureBackground {
                     let personalizedResponses = data.data?.data ?? []
                     var logDescriptions: [String] = []
-                    self._inAppContentBlockMessages.changeValue { messages in
+                    let applied = self.updateMessagesIfCurrent(generation: generation) { messages in
                         for (index, inAppContentBlocks) in messages.enumerated() {
                             if var personalized = personalizedResponses.first(where: { $0.id == inAppContentBlocks.id }) {
                                 let tag = self.createUniqueTag(placeholder: inAppContentBlocks)
@@ -1630,6 +1968,7 @@ private extension InAppContentBlocksManager {
                         }
                         logDescriptions = messages.map { $0.describe() }
                     }
+                    guard applied else { return }
                     Exponea.logger.log(
                         .verbose,
                         message: "In-app Content Blocks updatedPlaceholders \(logDescriptions)"
@@ -1749,6 +2088,12 @@ private extension InAppContentBlocksManager {
 
 // MARK: - Static inAppContentBlocks
 extension InAppContentBlocksManager {
+    private func completeStaticRequestsWithEmpty(_ requests: [StaticQueueData]) {
+        for request in requests {
+            onMain { request.completion?(.init(html: "", tag: 0, message: nil)) }
+        }
+    }
+
     private func continueWithStaticQueue() {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -1806,6 +2151,12 @@ extension InAppContentBlocksManager {
                 .filter { !Set($0.placeholders).isDisjoint(with: allPlaceholderIds) }
                 .map { $0.id }
         ).sorted()
+        guard !mergedIds.isEmpty else {
+            completeStaticRequestsWithEmpty(validRequests)
+            continueWithStaticQueue()
+            return
+        }
+        let generation = cacheGeneration
         // Batch-level ETag; skipEtag on any queued request bypasses conditional fetch for the whole batch.
         let batchSkipEtag = validRequests.contains { $0.skipEtag }
         Exponea.logger.log(
@@ -1821,6 +2172,11 @@ extension InAppContentBlocksManager {
         let batchStoredEtag = batchSkipEtag ? nil : etagStore.retrieve(forKey: batchCacheKey)
         let batchOnNotModified: (() -> Void)? = batchSkipEtag ? nil : { [weak self, batchCacheKey] in
             guard let self else { return }
+            guard self.cacheGeneration == generation else {
+                self.completeStaticRequestsWithEmpty(validRequests)
+                self.continueWithStaticQueue()
+                return
+            }
             Exponea.logger.log(
                 .verbose,
                 message: "ICB processStaticBatch: 304 cache hit for placeholder(s) \(allPlaceholderIds.joined(separator: ", "))"
@@ -1877,12 +2233,24 @@ extension InAppContentBlocksManager {
             etag: batchStoredEtag,
             onNotModified: batchOnNotModified,
             onEtagHeader: { [weak self] etag in
+                guard let self, self.cacheGeneration == generation else { return }
                 Exponea.logger.log(.verbose, message: "ICB processStaticBatch: received ETag from server, storing for key=\(batchCacheKey.prefix(16))…")
-                self?.etagStore.store(etag: etag, forKey: batchCacheKey)
+                self.etagStore.store(etag: etag, forKey: batchCacheKey)
+                let placeholderSnapshot = allPlaceholderIds
+                self.batchKeyIndexLock.withLock {
+                    for id in placeholderSnapshot {
+                        self._batchKeysByPlaceholder[id, default: []].insert(batchCacheKey)
+                    }
+                }
             }
         ) { [weak self] data in
             guard let self else { return }
             ensureBackground {
+                guard self.cacheGeneration == generation else {
+                    self.completeStaticRequestsWithEmpty(validRequests)
+                    self.continueWithStaticQueue()
+                    return
+                }
                 if let error = data.error {
                     Exponea.logger.log(
                         .error,
@@ -1916,7 +2284,7 @@ extension InAppContentBlocksManager {
                 )
                 let personalizedResponses = data.data?.data ?? []
                 var updatedContentBlocksForTelemetry: [InAppContentBlockResponse] = []
-                self._inAppContentBlockMessages.changeValue { messages in
+                let applied = self.updateMessagesIfCurrent(generation: generation) { messages in
                     for (index, inAppContentBlocks) in messages.enumerated() {
                         if var personalized = personalizedResponses.first(where: { $0.id == inAppContentBlocks.id }) {
                             personalized.ttlSeen = Date()
@@ -1924,6 +2292,11 @@ extension InAppContentBlocksManager {
                             updatedContentBlocksForTelemetry.append(messages[index])
                         }
                     }
+                }
+                guard applied else {
+                    self.completeStaticRequestsWithEmpty(validRequests)
+                    self.continueWithStaticQueue()
+                    return
                 }
                 self.trackTelemetryForFetch(.contentBlockPersonalisedFetch, updatedContentBlocksForTelemetry)
                 for request in validRequests {
@@ -2007,6 +2380,23 @@ extension InAppContentBlocksManager {
         initialCompletion: EmptyBlock?,
         completion: EmptyBlock?
     ) {
+        guard isCatalogReady else {
+            ensureCatalogLoaded { [weak self] isLoaded in
+                guard let self, isLoaded else {
+                    ensureBackground {
+                        initialCompletion?()
+                        completion?()
+                    }
+                    return
+                }
+                self.loadMessagesForCarousel(
+                    placeholder: placeholder,
+                    initialCompletion: initialCompletion,
+                    completion: completion
+                )
+            }
+            return
+        }
         guard !placeholder.isEmpty, let ids = try? DatabaseManager().currentCustomer.ids else {
             Exponea.logger.log(.verbose, message: "In-app Content Blocks Carousel cant refresh placeholderId: \(placeholder), ids: \(String(describing: try? DatabaseManager().currentCustomer.ids))")
             ensureBackground {
@@ -2047,6 +2437,20 @@ extension InAppContentBlocksManager {
         }
 
         let idsForDownload = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholder) }.map { $0.id }
+        guard !idsForDownload.isEmpty else {
+            let waiters = claimInFlightCarouselFetch(
+                placeholder: placeholder,
+                validationToken: validationToken
+            ) ?? []
+            ensureBackground {
+                waiters.forEach {
+                    $0.initial?()
+                    $0.completion?()
+                }
+            }
+            return
+        }
+        let generation = cacheGeneration
         // Fresh fetch required for carousel rotation and image validation.
         provider.loadPersonalizedInAppContentBlocks(
             data: PersonalizedInAppContentBlockResponseData.self,
@@ -2065,18 +2469,34 @@ extension InAppContentBlocksManager {
                 )
                 return
             }
+            guard self.cacheGeneration == generation else {
+                ensureBackground {
+                    waiters.forEach {
+                        $0.initial?()
+                        $0.completion?()
+                    }
+                }
+                return
+            }
 
             ensureBackground {
                 let refreshStaticViewContentDescriptions = (data.data?.data ?? []).map { $0.describeDetailed() }
                 Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshStaticViewContent data: \(refreshStaticViewContentDescriptions)")
                 let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data ?? []
-                self._inAppContentBlockMessages.changeValue { messages in
+                let applied = self.updateMessagesIfCurrent(generation: generation) { messages in
                     for (index, inAppContentBlocks) in messages.enumerated() {
                         if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
                             personalized.ttlSeen = Date()
                             messages[index].personalizedMessage = personalized
                         }
                     }
+                }
+                guard applied else {
+                    waiters.forEach {
+                        $0.initial?()
+                        $0.completion?()
+                    }
+                    return
                 }
                 // Fan-out: broadcast the single shared validation pass to every waiter.
                 // `startCarouselImageValidation` internally one-shots its `initialCompletion`
@@ -2244,9 +2664,10 @@ extension InAppContentBlocksManager {
     }
 
     func refreshMessage(message: InAppContentBlockResponse, completion: TypeBlock<InAppContentBlockResponse>?) {
-        guard let ids = try? DatabaseManager().currentCustomer.ids else {
+        guard !message.id.isEmpty, let ids = try? DatabaseManager().currentCustomer.ids else {
             return
         }
+        let generation = cacheGeneration
         // Force refresh bypasses conditional revalidation.
         provider.loadPersonalizedInAppContentBlocks(
             data: PersonalizedInAppContentBlockResponseData.self,
@@ -2255,6 +2676,7 @@ extension InAppContentBlocksManager {
         ) { [weak self] data in
             guard let self else { return }
             ensureBackground {
+                guard self.cacheGeneration == generation else { return }
                 let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data
                     .filter { $0.id == message.id }
                     .compactMap { response in
@@ -2264,10 +2686,13 @@ extension InAppContentBlocksManager {
                         )
                     } ?? []
                 if let personal = personalizedWithPayload.first {
-                    self._imageValidationStates.changeValue(with: { $0[personal.id] = personal.isCorruptedImage ? .corrupted : .valid })
+                    self._imageValidationStates.changeValue { states in
+                        guard self.cacheGeneration == generation else { return }
+                        states[personal.id] = personal.isCorruptedImage ? .corrupted : .valid
+                    }
                 }
                 var updatedMessage: InAppContentBlockResponse?
-                self._inAppContentBlockMessages.changeValue { messages in
+                let applied = self.updateMessagesIfCurrent(generation: generation) { messages in
                     for (index, inAppContentBlocks) in messages.enumerated() {
                         if let personal = personalizedWithPayload.first, inAppContentBlocks.id == personal.id {
                             var personalized = personal
@@ -2279,6 +2704,7 @@ extension InAppContentBlocksManager {
                         }
                     }
                 }
+                guard applied else { return }
                 if let updatedMessage {
                     Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshed personalized: \(updatedMessage.id)")
                     completion?(updatedMessage)
@@ -2297,6 +2723,12 @@ extension InAppContentBlocksManager {
                 return
             }
             let idsForDownload = inAppContentBlockMessages.filter { $0.placeholders.contains(placeholder) }.map { $0.id }
+            guard !idsForDownload.isEmpty else {
+                dataCompletion?([])
+                continueWithCarouselQueue(dataCompletion: dataCompletion)
+                return
+            }
+            let generation = cacheGeneration
             // Fresh fetch required for carousel rotation and image validation.
             provider.loadPersonalizedInAppContentBlocks(
                 data: PersonalizedInAppContentBlockResponseData.self,
@@ -2305,6 +2737,11 @@ extension InAppContentBlocksManager {
             ) { [weak self] data in
                 guard let self else { return }
                 ensureBackground {
+                    guard self.cacheGeneration == generation else {
+                        dataCompletion?([])
+                        self.continueWithCarouselQueue(dataCompletion: dataCompletion)
+                        return
+                    }
                     let refreshStaticViewContentDescriptions = (data.data?.data ?? []).map { $0.describeDetailed() }
                     Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshStaticViewContent data: \(refreshStaticViewContentDescriptions)")
                     let personalizedWithPayload: [PersonalizedInAppContentBlockResponse] = data.data?.data.compactMap { response in
@@ -2314,12 +2751,13 @@ extension InAppContentBlocksManager {
                         )
                     } ?? []
                     self._imageValidationStates.changeValue { state in
+                        guard self.cacheGeneration == generation else { return }
                         personalizedWithPayload.forEach { personalized in
                             state[personalized.id] = personalized.isCorruptedImage ? .corrupted : .valid
                         }
                     }
                     var updatedContentBlocksForTelemetry: [InAppContentBlockResponse] = []
-                    self._inAppContentBlockMessages.changeValue { messages in
+                    let applied = self.updateMessagesIfCurrent(generation: generation) { messages in
                         for (index, inAppContentBlocks) in messages.enumerated() {
                             if var personalized = personalizedWithPayload.first(where: { $0.id == inAppContentBlocks.id }) {
                                 personalized.ttlSeen = Date()
@@ -2327,6 +2765,11 @@ extension InAppContentBlocksManager {
                                 updatedContentBlocksForTelemetry.append(messages[index])
                             }
                         }
+                    }
+                    guard applied else {
+                        dataCompletion?([])
+                        self.continueWithCarouselQueue(dataCompletion: dataCompletion)
+                        return
                     }
                     self.trackTelemetryForFetch(.contentBlockPersonalisedFetch, updatedContentBlocksForTelemetry)
                     let toReturn = self.inAppContentBlockMessages.filter { $0.placeholders.contains(placeholder) }
@@ -2347,6 +2790,19 @@ extension InAppContentBlocksManager {
         // `isStaticUpdating` is serialized on the main queue — hop there unconditionally.
         onMain { [weak self] in
             guard let self else { return }
+            guard self.isCatalogReady else {
+                self.ensureCatalogLoaded { [weak self] isLoaded in
+                    guard let self else { return }
+                    if isLoaded {
+                        self.refreshStaticViewContent(staticQueueData: staticQueueData)
+                    } else {
+                        onMain {
+                            staticQueueData.completion?(.init(html: "", tag: 0, message: nil))
+                        }
+                    }
+                }
+                return
+            }
             Exponea.logger.log(.verbose, message: "In-app Content Blocks refreshStaticViewContent")
             self.staticQueue.append(staticQueueData)
             guard !self.isStaticUpdating else { return }
@@ -2555,6 +3011,42 @@ private extension InAppContentBlocksManager {
             }
             store[placeholder] = usedBlocks
         }
+    }
+}
+
+// MARK: - Test support
+extension InAppContentBlocksManager {
+
+    internal func test_setCatalogReady() {
+        catalogStateLock.lock()
+        catalogState = .ready
+        catalogWaiters.removeAll()
+        catalogStateLock.unlock()
+    }
+
+    internal func test_seedPlaceholderCacheStores(
+        placeholderId: String,
+        messageId: String,
+        height: CGFloat = 100
+    ) {
+        let used = UsedInAppContentBlocks(
+            tag: 1,
+            indexPath: IndexPath(row: 0, section: 0),
+            messageId: messageId,
+            placeholder: placeholderId,
+            height: height,
+            isActive: true
+        )
+        _usedInAppContentBlocks.changeValue { $0[placeholderId] = [used] }
+        _heightCalculationMessageByPlaceholder.changeValue { $0[placeholderId] = messageId }
+    }
+
+    internal func test_heightSelectionMessageId(for placeholderId: String) -> String? {
+        heightCalculationMessageByPlaceholder[placeholderId]
+    }
+
+    internal var test_cacheGeneration: UInt {
+        cacheGeneration
     }
 }
 

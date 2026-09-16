@@ -34,6 +34,14 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
         self.behaviourCallback = behaviourCallback
     }
 
+    private var effectiveOverrideDefaultBehavior: Bool {
+        behaviourCallback?.overrideDefaultBehavior ?? overrideDefaultBehavior
+    }
+
+    private var effectiveTrackActions: Bool {
+        behaviourCallback?.trackActions ?? trackActions
+    }
+
     func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse, index: Int, count: Int) {
         Exponea.logger.log(
             .verbose,
@@ -68,7 +76,7 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
 
     func onCloseClicked(placeholderId: String, contentBlock: InAppContentBlockResponse) {
         Exponea.logger.log(.verbose, message: "Tracking of Carousel Content Block \(contentBlock.id) close")
-        if trackActions {
+        if effectiveTrackActions {
             Exponea.shared.trackInAppContentBlockClose(
                 placeholderId: placeholderId,
                 message: contentBlock
@@ -86,14 +94,14 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
         if action.type == .close {
             return
         }
-        if trackActions {
+        if effectiveTrackActions {
             Exponea.shared.trackInAppContentBlockClick(
                 placeholderId: placeholderId,
                 action: action,
                 message: contentBlock
             )
         }
-        if !overrideDefaultBehavior {
+        if !effectiveOverrideDefaultBehavior {
             if action.type == .browser {
                 guard let stringUrl = action.url, let url = URL(safeString: stringUrl) else { return }
                 let safari = SFSafariViewController(url: url)

@@ -31,6 +31,57 @@ fileprivate final class LoadHTMLStringSpyWebView: WKWebView {
     }
 }
 
+private final class DeferredInAppContentBlocksDataProvider:
+    InAppContentBlocksDataProviderType,
+    InAppContentBlocksETagDataProviding {
+
+    private(set) var catalogLoadCallCount = 0
+    private(set) var catalogCompletion:
+        ((ResponseData<InAppContentBlocksDataResponse>) -> Void)?
+    private(set) var personalizedBlockIds: [[String]] = []
+    private(set) var personalizedCompletion:
+        ((ResponseData<PersonalizedInAppContentBlockResponseData>) -> Void)?
+
+    func loadPersonalizedInAppContentBlocks<Data: Codable>(
+        data: Data.Type,
+        customerIds: [String: String],
+        inAppContentBlocksIds: [String],
+        completion: @escaping TypeBlock<ResponseData<Data>>
+    ) {
+        personalizedBlockIds.append(inAppContentBlocksIds)
+        personalizedCompletion = { response in
+            completion(ResponseData(data: response.data as? Data, error: response.error))
+        }
+    }
+
+    func getInAppContentBlocks<Data: Codable>(
+        data: Data.Type,
+        completion: @escaping TypeBlock<ResponseData<Data>>
+    ) {
+        catalogLoadCallCount += 1
+        catalogCompletion = { response in
+            completion(ResponseData(data: response.data as? Data, error: response.error))
+        }
+    }
+
+    func loadPersonalizedInAppContentBlocks<Data: Codable>(
+        data: Data.Type,
+        customerIds: [String: String],
+        inAppContentBlocksIds: [String],
+        etag: String?,
+        onNotModified: (() -> Void)?,
+        onEtagHeader: ((String) -> Void)?,
+        completion: @escaping TypeBlock<ResponseData<Data>>
+    ) {
+        loadPersonalizedInAppContentBlocks(
+            data: data,
+            customerIds: customerIds,
+            inAppContentBlocksIds: inAppContentBlocksIds,
+            completion: completion
+        )
+    }
+}
+
 fileprivate class CustomCarouselCallback: DefaultContentBlockCarouselCallback {
 
     var notFoundCallback: EmptyBlock?
@@ -91,6 +142,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             manager = Exponea.shared.inAppContentBlocksManager!
             callback = CustomCarouselCallback()
             manager.anonymize()
+            (manager as? InAppContentBlocksManager)?.test_setCatalogReady()
         }
 
         it("date filter") {
@@ -1600,6 +1652,606 @@ class InAppContentBlocksManagerSpec: QuickSpec {
                 indexPath: indexPath
             )
             expect(stored?.height).to(beGreaterThan(0))
+        }
+
+        describe("prefetchPlaceholdersWithIds characterisation") {
+            var testDefaults: UserDefaults!
+            var testEtagStore: UserDefaultsETagStore!
+            var provider: DeferredInAppContentBlocksDataProvider!
+            var isolatedManager: InAppContentBlocksManager!
+
+            func seedCatalogMessage(id: String, placeholders: [String]) {
+                isolatedManager.addMessage(
+                    SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                        id: id,
+                        placeholders: placeholders
+                    )
+                )
+            }
+
+            func personalizedResponse(
+                messageId: String,
+                html: String = "<html><body>prefetched</body></html>"
+            ) -> ResponseData<PersonalizedInAppContentBlockResponseData> {
+                ResponseData(
+                    data: PersonalizedInAppContentBlockResponseData(
+                        data: [
+                            PersonalizedInAppContentBlockResponse(
+                                id: messageId,
+                                status: .ok,
+                                ttlSeconds: 60,
+                                variantId: nil,
+                                hasTrackingConsent: true,
+                                variantName: nil,
+                                contentType: .html,
+                                content: .init(html: html),
+                                htmlPayload: nil,
+                                ttlSeen: nil
+                            )
+                        ]
+                    ),
+                    error: nil
+                )
+            }
+
+            beforeEach {
+                let suiteName = "test.prefetch.characterisation.\(UUID().uuidString)"
+                testDefaults = UserDefaults(suiteName: suiteName)!
+                testEtagStore = UserDefaultsETagStore(defaults: testDefaults)
+                provider = DeferredInAppContentBlocksDataProvider()
+                isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.test_setCatalogReady()
+            }
+
+            it("invokes personalized fetch for matching catalog IDs and writes payload into cache") {
+                seedCatalogMessage(id: "char-msg-a", placeholders: ["char-ph-a"])
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-a"]) {
+                    completed = true
+                }
+
+                expect(provider.personalizedBlockIds).to(equal([["char-msg-a"]]))
+                provider.personalizedCompletion?(personalizedResponse(messageId: "char-msg-a"))
+
+                expect(completed).toEventually(beTrue())
+                expect(
+                    isolatedManager.inAppContentBlockMessages.first { $0.id == "char-msg-a" }?
+                        .personalizedMessage?.status
+                ).to(equal(.ok))
+            }
+
+            it("completes immediately for empty placeholder IDs without a network call") {
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: []) {
+                    completed = true
+                }
+
+                expect(completed).to(beTrue())
+                expect(provider.personalizedBlockIds).to(beEmpty())
+                expect(provider.catalogLoadCallCount).to(equal(0))
+            }
+
+            it("completes without a personalized request when the catalog has no matching placeholders") {
+                seedCatalogMessage(id: "char-msg-known", placeholders: ["char-ph-known"])
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-unknown"]) {
+                    completed = true
+                }
+
+                expect(completed).toEventually(beTrue())
+                expect(provider.personalizedBlockIds).to(beEmpty())
+            }
+
+            it("requests only message IDs tied to the requested placeholders") {
+                seedCatalogMessage(id: "char-msg-1", placeholders: ["char-ph-1"])
+                seedCatalogMessage(id: "char-msg-2", placeholders: ["char-ph-2"])
+                seedCatalogMessage(id: "char-msg-3", placeholders: ["char-ph-1"])
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-1"], completion: nil)
+
+                expect(provider.personalizedBlockIds.count).to(equal(1))
+                expect(Set(provider.personalizedBlockIds[0])).to(equal(Set(["char-msg-1", "char-msg-3"])))
+            }
+
+            it("supports prefetch without a completion handler") {
+                seedCatalogMessage(id: "char-msg-noop", placeholders: ["char-ph-noop"])
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-noop"])
+
+                expect(provider.personalizedBlockIds).toEventually(equal([["char-msg-noop"]]))
+            }
+        }
+
+        describe("invalidatePlaceholders") {
+            var testDefaults: UserDefaults!
+            var testEtagStore: UserDefaultsETagStore!
+            var concreteManager: InAppContentBlocksManager!
+
+            func etagCacheKey(blockIds: [String]) -> String {
+                let customerIds = (try? DatabaseManager().currentCustomer.ids) ?? [:]
+                let projectToken = Exponea.shared.configuration?.mainProject.integrationId ?? ""
+                return UserDefaultsETagStore.cacheKey(
+                    projectToken: projectToken,
+                    customerIds: customerIds,
+                    blockIds: blockIds
+                )
+            }
+
+            func seedMessage(
+                id: String,
+                placeholders: [String],
+                personalized: PersonalizedInAppContentBlockResponse? = nil
+            ) {
+                let message = SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                    id: id,
+                    placeholders: placeholders,
+                    personalized: personalized ?? .getSample(status: .ok, ttlSeen: Date())
+                )
+                concreteManager.addMessage(message)
+            }
+
+            beforeEach {
+                let suiteName = "test.invalidate.\(UUID().uuidString)"
+                testDefaults = UserDefaults(suiteName: suiteName)!
+                testEtagStore = UserDefaultsETagStore(defaults: testDefaults)
+                concreteManager = InAppContentBlocksManager(
+                    provider: InAppContentBlocksDataProvider(),
+                    etagStore: testEtagStore
+                )
+                (Exponea.shared as! ExponeaInternal).inAppContentBlocksManager = concreteManager
+                manager = concreteManager
+            }
+
+            it("clears payload, height cache, selection pin, and ETag for a single placeholder") {
+                let placeholderId = "inv-ph-1"
+                let messageId = "inv-msg-1"
+                seedMessage(id: messageId, placeholders: [placeholderId])
+                concreteManager.test_seedPlaceholderCacheStores(
+                    placeholderId: placeholderId,
+                    messageId: messageId
+                )
+                let cacheKey = etagCacheKey(blockIds: [messageId])
+                testEtagStore.store(etag: "\"inv-etag-1\"", forKey: cacheKey)
+
+                expect(concreteManager.inAppContentBlockMessages.first { $0.id == messageId }?.personalizedMessage)
+                    .toNot(beNil())
+                expect(concreteManager.getUsedInAppContentBlocks(
+                    placeholder: placeholderId,
+                    indexPath: IndexPath(row: 0, section: 0)
+                )).toNot(beNil())
+                expect(concreteManager.test_heightSelectionMessageId(for: placeholderId)).to(equal(messageId))
+                expect(testEtagStore.retrieve(forKey: cacheKey)).toNot(beNil())
+
+                concreteManager.invalidatePlaceholders([placeholderId])
+
+                expect(concreteManager.inAppContentBlockMessages.first { $0.id == messageId }?.personalizedMessage)
+                    .to(beNil())
+                expect(concreteManager.inAppContentBlockMessages.first { $0.id == messageId }?.normalizedResult)
+                    .to(beNil())
+                expect(concreteManager.getUsedInAppContentBlocks(
+                    placeholder: placeholderId,
+                    indexPath: IndexPath(row: 0, section: 0)
+                )).to(beNil())
+                expect(concreteManager.test_heightSelectionMessageId(for: placeholderId)).to(beNil())
+                expect(testEtagStore.retrieve(forKey: cacheKey)).to(beNil())
+            }
+
+            it("clears only the specified placeholders when multiple IDs are invalidated") {
+                seedMessage(id: "inv-msg-a", placeholders: ["inv-ph-a"])
+                seedMessage(id: "inv-msg-b", placeholders: ["inv-ph-b"])
+                concreteManager.test_seedPlaceholderCacheStores(placeholderId: "inv-ph-a", messageId: "inv-msg-a")
+                concreteManager.test_seedPlaceholderCacheStores(placeholderId: "inv-ph-b", messageId: "inv-msg-b")
+
+                let cacheKeyA = etagCacheKey(blockIds: ["inv-msg-a"])
+                let cacheKeyB = etagCacheKey(blockIds: ["inv-msg-b"])
+                let mergedCacheKey = etagCacheKey(blockIds: ["inv-msg-a", "inv-msg-b"])
+                testEtagStore.store(etag: "\"etag-a\"", forKey: cacheKeyA)
+                testEtagStore.store(etag: "\"etag-b\"", forKey: cacheKeyB)
+                testEtagStore.store(etag: "\"etag-merged\"", forKey: mergedCacheKey)
+
+                concreteManager.invalidatePlaceholders(["inv-ph-a", "inv-ph-b"])
+
+                expect(concreteManager.inAppContentBlockMessages.first { $0.id == "inv-msg-a" }?.personalizedMessage)
+                    .to(beNil())
+                expect(concreteManager.inAppContentBlockMessages.first { $0.id == "inv-msg-b" }?.personalizedMessage)
+                    .to(beNil())
+                expect(concreteManager.getUsedInAppContentBlocks(
+                    placeholder: "inv-ph-a",
+                    indexPath: IndexPath(row: 0, section: 0)
+                )).to(beNil())
+                expect(concreteManager.getUsedInAppContentBlocks(
+                    placeholder: "inv-ph-b",
+                    indexPath: IndexPath(row: 0, section: 0)
+                )).to(beNil())
+                expect(testEtagStore.retrieve(forKey: cacheKeyA)).to(beNil())
+                expect(testEtagStore.retrieve(forKey: cacheKeyB)).to(beNil())
+                expect(testEtagStore.retrieve(forKey: mergedCacheKey)).to(beNil())
+            }
+
+            it("leaves unrelated placeholders untouched") {
+                seedMessage(id: "inv-msg-target", placeholders: ["inv-ph-target"])
+                seedMessage(id: "inv-msg-other", placeholders: ["inv-ph-other"])
+                concreteManager.test_seedPlaceholderCacheStores(
+                    placeholderId: "inv-ph-target",
+                    messageId: "inv-msg-target"
+                )
+                concreteManager.test_seedPlaceholderCacheStores(
+                    placeholderId: "inv-ph-other",
+                    messageId: "inv-msg-other"
+                )
+
+                let targetCacheKey = etagCacheKey(blockIds: ["inv-msg-target"])
+                let otherCacheKey = etagCacheKey(blockIds: ["inv-msg-other"])
+                testEtagStore.store(etag: "\"etag-target\"", forKey: targetCacheKey)
+                testEtagStore.store(etag: "\"etag-other\"", forKey: otherCacheKey)
+
+                concreteManager.invalidatePlaceholders(["inv-ph-target"])
+
+                expect(concreteManager.inAppContentBlockMessages.first { $0.id == "inv-msg-target" }?.personalizedMessage)
+                    .to(beNil())
+                expect(concreteManager.inAppContentBlockMessages.first { $0.id == "inv-msg-other" }?.personalizedMessage)
+                    .toNot(beNil())
+                expect(concreteManager.getUsedInAppContentBlocks(
+                    placeholder: "inv-ph-target",
+                    indexPath: IndexPath(row: 0, section: 0)
+                )).to(beNil())
+                expect(concreteManager.getUsedInAppContentBlocks(
+                    placeholder: "inv-ph-other",
+                    indexPath: IndexPath(row: 0, section: 0)
+                )).toNot(beNil())
+                expect(concreteManager.test_heightSelectionMessageId(for: "inv-ph-target")).to(beNil())
+                expect(concreteManager.test_heightSelectionMessageId(for: "inv-ph-other")).to(equal("inv-msg-other"))
+                expect(testEtagStore.retrieve(forKey: targetCacheKey)).to(beNil())
+                expect(testEtagStore.retrieve(forKey: otherCacheKey)).to(equal("\"etag-other\""))
+            }
+
+            it("is a no-op for an empty placeholder ID list") {
+                seedMessage(id: "inv-msg-noop", placeholders: ["inv-ph-noop"])
+                concreteManager.test_seedPlaceholderCacheStores(
+                    placeholderId: "inv-ph-noop",
+                    messageId: "inv-msg-noop"
+                )
+                let cacheKey = etagCacheKey(blockIds: ["inv-msg-noop"])
+                testEtagStore.store(etag: "\"etag-noop\"", forKey: cacheKey)
+
+                concreteManager.invalidatePlaceholders([])
+
+                expect(concreteManager.inAppContentBlockMessages.first { $0.id == "inv-msg-noop" }?.personalizedMessage)
+                    .toNot(beNil())
+                expect(concreteManager.getUsedInAppContentBlocks(
+                    placeholder: "inv-ph-noop",
+                    indexPath: IndexPath(row: 0, section: 0)
+                )).toNot(beNil())
+                expect(concreteManager.test_heightSelectionMessageId(for: "inv-ph-noop")).to(equal("inv-msg-noop"))
+                expect(testEtagStore.retrieve(forKey: cacheKey)).to(equal("\"etag-noop\""))
+            }
+
+            it("bumps cacheGeneration to fence in-flight personalization writes") {
+                let generationBefore = concreteManager.test_cacheGeneration
+                concreteManager.invalidatePlaceholders(["inv-ph-fence"])
+                expect(concreteManager.test_cacheGeneration).to(equal(generationBefore &+ 1))
+            }
+
+            it("does not bump cacheGeneration for an empty placeholder list") {
+                let generationBefore = concreteManager.test_cacheGeneration
+                concreteManager.invalidatePlaceholders([])
+                expect(concreteManager.test_cacheGeneration).to(equal(generationBefore))
+            }
+
+            it("clears the height selection pin when anonymized") {
+                let placeholderId = "anonymous-ph"
+                let messageId = "anonymous-msg"
+                seedMessage(id: messageId, placeholders: [placeholderId])
+                concreteManager.test_seedPlaceholderCacheStores(
+                    placeholderId: placeholderId,
+                    messageId: messageId
+                )
+
+                expect(concreteManager.test_heightSelectionMessageId(for: placeholderId))
+                    .to(equal(messageId))
+
+                concreteManager.anonymize()
+
+                expect(concreteManager.test_heightSelectionMessageId(for: placeholderId))
+                    .to(beNil())
+            }
+
+            it("discards personalized responses started before anonymize") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                let placeholderId = "generation-ph"
+                let messageId = "generation-msg"
+                isolatedManager.addMessage(
+                    SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                        id: messageId,
+                        placeholders: [placeholderId]
+                    )
+                )
+                // Catalog is dirty by default (correct production default). Prime it to ready so
+                // this test can exercise the generation guard on in-flight personalization.
+                isolatedManager.test_setCatalogReady()
+
+                var completed = false
+                isolatedManager.prefetchPlaceholdersWithIds(
+                    ids: [placeholderId],
+                    completion: { completed = true }
+                )
+                expect(provider.personalizedCompletion).toNot(beNil())
+
+                isolatedManager.anonymize()
+                isolatedManager.addMessage(
+                    SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                        id: messageId,
+                        placeholders: [placeholderId]
+                    )
+                )
+
+                provider.personalizedCompletion?(
+                    ResponseData(
+                        data: PersonalizedInAppContentBlockResponseData(
+                            data: [
+                                PersonalizedInAppContentBlockResponse(
+                                    id: messageId,
+                                    status: .ok,
+                                    ttlSeconds: 60,
+                                    variantId: nil,
+                                    hasTrackingConsent: true,
+                                    variantName: nil,
+                                    contentType: .html,
+                                    content: .init(html: "<html><body>old customer</body></html>"),
+                                    htmlPayload: nil,
+                                    ttlSeen: nil
+                                )
+                            ]
+                        ),
+                        error: nil
+                    )
+                )
+
+                expect(completed).toEventually(beTrue())
+                expect(
+                    isolatedManager.inAppContentBlockMessages.first { $0.id == messageId }?
+                        .personalizedMessage
+                ).to(beNil())
+            }
+
+            it("waits for the current customer catalog before personalized prefetch") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.anonymize()
+
+                var completed = false
+                isolatedManager.prefetchPlaceholdersWithIds(
+                    ids: ["generation-ph"],
+                    completion: { completed = true }
+                )
+
+                expect(provider.catalogLoadCallCount).to(equal(1))
+                expect(provider.personalizedBlockIds).to(beEmpty())
+                expect(completed).to(beFalse())
+
+                provider.catalogCompletion?(
+                    ResponseData(
+                        data: InAppContentBlocksDataResponse(
+                            data: [
+                                SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                                    id: "generation-msg",
+                                    placeholders: ["generation-ph"]
+                                )
+                            ],
+                            success: true
+                        ),
+                        error: nil
+                    )
+                )
+
+                expect(provider.personalizedBlockIds).toEventually(equal([["generation-msg"]]))
+            }
+
+            it("coalesces concurrent first-use catalog loads") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.anonymize()
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["first"], completion: {})
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["second"], completion: {})
+
+                expect(provider.catalogLoadCallCount).to(equal(1))
+            }
+
+            it("retries the catalog after a failed first-use load") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.anonymize()
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["generation-ph"], completion: {})
+                provider.catalogCompletion?(
+                    ResponseData(
+                        data: nil,
+                        error: NSError(domain: "RuntimeICB", code: 1)
+                    )
+                )
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["generation-ph"], completion: {})
+
+                expect(provider.catalogLoadCallCount).to(equal(2))
+                expect(provider.personalizedBlockIds).to(beEmpty())
+            }
+
+            it("does not personalize when a valid catalog has no requested ids") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.anonymize()
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(
+                    ids: ["unknown-ph"],
+                    completion: { completed = true }
+                )
+                provider.catalogCompletion?(
+                    ResponseData(
+                        data: InAppContentBlocksDataResponse(data: [], success: true),
+                        error: nil
+                    )
+                )
+
+                expect(completed).toEventually(beTrue())
+                expect(provider.personalizedBlockIds).to(beEmpty())
+            }
+
+            it("reloads a mounted placeholder after its first-use catalog load") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.anonymize()
+                var refreshedIndexPath: IndexPath?
+                isolatedManager.refreshCallback = { refreshedIndexPath = $0 }
+                let indexPath = IndexPath(row: 2, section: 1)
+
+                _ = isolatedManager.prepareInAppContentBlockView(
+                    placeholderId: "generation-ph",
+                    indexPath: indexPath
+                )
+
+                expect(provider.catalogLoadCallCount).to(equal(1))
+                expect(refreshedIndexPath).to(beNil())
+
+                provider.catalogCompletion?(
+                    ResponseData(
+                        data: InAppContentBlocksDataResponse(
+                            data: [
+                                SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                                    id: "generation-msg",
+                                    placeholders: ["generation-ph"]
+                                )
+                            ],
+                            success: true
+                        ),
+                        error: nil
+                    )
+                )
+
+                expect(refreshedIndexPath).toEventually(equal(indexPath))
+            }
+
+            it("does not personalize an empty catalog for a first-use static view") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.anonymize()
+                var completed = false
+
+                isolatedManager.refreshStaticViewContent(
+                    staticQueueData: StaticQueueData(
+                        tag: 1,
+                        placeholderId: "unknown-static",
+                        makeResourcesOffline: false,
+                        completion: { _ in completed = true }
+                    )
+                )
+                provider.catalogCompletion?(
+                    ResponseData(
+                        data: InAppContentBlocksDataResponse(data: [], success: true),
+                        error: nil
+                    )
+                )
+
+                expect(completed).toEventually(beTrue())
+                expect(provider.personalizedBlockIds).to(beEmpty())
+            }
+
+            it("does not personalize an empty catalog for a first-use carousel") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.anonymize()
+                var initialCompleted = false
+                var completed = false
+
+                isolatedManager.loadMessagesForCarousel(
+                    placeholder: "unknown-carousel",
+                    initialCompletion: { initialCompleted = true },
+                    completion: { completed = true }
+                )
+                provider.catalogCompletion?(
+                    ResponseData(
+                        data: InAppContentBlocksDataResponse(data: [], success: true),
+                        error: nil
+                    )
+                )
+
+                expect(initialCompleted).toEventually(beTrue())
+                expect(completed).toEventually(beTrue())
+                expect(provider.personalizedBlockIds).to(beEmpty())
+            }
+
+            it("reaches ready state after a stale-generation completion flips catalogState to dirty") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.anonymize()
+
+                var firstCompleted = false
+                isolatedManager.prefetchPlaceholdersWithIds(
+                    ids: ["race-ph"],
+                    completion: { firstCompleted = true }
+                )
+
+                // Simulate identifyCustomer bumping the generation before the first load returns.
+                isolatedManager.anonymize()
+
+                // Stale catalog completion arrives — this flips catalogState back to dirty.
+                provider.catalogCompletion?(
+                    ResponseData(
+                        data: InAppContentBlocksDataResponse(data: [], success: true),
+                        error: nil
+                    )
+                )
+
+                // A fresh load triggered by the second prefetch should still succeed.
+                var secondCompleted = false
+                isolatedManager.prefetchPlaceholdersWithIds(
+                    ids: ["race-ph"],
+                    completion: { secondCompleted = true }
+                )
+                provider.catalogCompletion?(
+                    ResponseData(
+                        data: InAppContentBlocksDataResponse(data: [], success: true),
+                        error: nil
+                    )
+                )
+
+                expect(secondCompleted).toEventually(beTrue())
+                expect(provider.catalogLoadCallCount).to(equal(2))
+            }
         }
     }
 }

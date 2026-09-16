@@ -49,6 +49,7 @@ final class InAppContentBlocksETagSpec: QuickSpec {
             (Exponea.shared as! ExponeaInternal).inAppContentBlocksManager = testManager
             manager = testManager
             manager.anonymize()
+            testManager.test_setCatalogReady()
         }
 
         afterEach {
@@ -481,7 +482,7 @@ final class InAppContentBlocksETagSpec: QuickSpec {
         }
 
         describe("identifyCustomer() clears stored ETags") {
-            it("removes all exponea_icb_etag_ keys when identifyCustomer event is received") {
+            it("removes all exponea_icb_etag_ keys when onCustomerIdentified is called") {
                 self.testDefaults.set("\"some-etag\"", forKey: "exponea_icb_etag_test_key")
                 expect(self.etagPrefixedKeys).toNot(beEmpty())
 
@@ -489,7 +490,7 @@ final class InAppContentBlocksETagSpec: QuickSpec {
                     fail("Expected concrete InAppContentBlocksManager")
                     return
                 }
-                concreteManager.onEventOccurred(of: .identifyCustomer, for: [])
+                concreteManager.onCustomerIdentified()
 
                 expect(self.etagPrefixedKeys).to(beEmpty())
             }

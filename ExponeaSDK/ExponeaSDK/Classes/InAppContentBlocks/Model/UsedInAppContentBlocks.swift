@@ -34,6 +34,7 @@ public struct UsedInAppContentBlocks {
         self.placeholder = placeholder
         self.height = height
         self.hasBeenLoaded = hasBeenLoaded
+        self.isActive = isActive
         self.placeholderData = placeholderData
     }
     

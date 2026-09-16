@@ -72,7 +72,18 @@ extension InAppContentBlocksDataProvider: InAppContentBlocksDataProviderType {
         data: Data.Type = Data.self,
         completion: @escaping TypeBlock<ResponseData<Data>>
     ) {
-        guard let serverRepository = serverRepository else { return }
+        guard let serverRepository = serverRepository else {
+            completion(
+                .init(
+                    error: NSError(
+                        domain: "com.exponea.in-app-content-blocks",
+                        code: 1,
+                        userInfo: [NSLocalizedDescriptionKey: "In-app content-block repository is unavailable"]
+                    )
+                )
+            )
+            return
+        }
         serverRepository.getInAppContentBlocks { response in
             guard response.error == nil, let data = response.value as? Data else {
                 completion(.init(error: response.error))
@@ -113,9 +124,21 @@ extension InAppContentBlocksDataProvider: InAppContentBlocksETagDataProviding {
     ) {
         guard !IntegrationManager.shared.isStopped else {
             Exponea.logger.log(.verbose, message: "In-app content blocks fetch failed: SDK is stopping")
+            completion(.init(error: NSError(
+                domain: "com.exponea.in-app-content-blocks",
+                code: 2,
+                userInfo: [NSLocalizedDescriptionKey: "In-app content blocks fetch failed: SDK is stopping"]
+            )))
             return
         }
-        guard let serverRepository = serverRepository else { return }
+        guard let serverRepository = serverRepository else {
+            completion(.init(error: NSError(
+                domain: "com.exponea.in-app-content-blocks",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "In-app content-block repository is unavailable"]
+            )))
+            return
+        }
         serverRepository.personalizedInAppContentBlocks(
             customerIds: customerIds,
             inAppContentBlocksIds: inAppContentBlocksIds,
@@ -125,6 +148,11 @@ extension InAppContentBlocksDataProvider: InAppContentBlocksETagDataProviding {
         ) { response in
             guard !IntegrationManager.shared.isStopped else {
                 Exponea.logger.log(.verbose, message: "In-app content blocks fetch failed: SDK is stopping")
+                completion(.init(error: NSError(
+                    domain: "com.exponea.in-app-content-blocks",
+                    code: 2,
+                    userInfo: [NSLocalizedDescriptionKey: "In-app content blocks fetch failed: SDK is stopping"]
+                )))
                 return
             }
             guard response.error == nil, let data = response.value as? D else {
