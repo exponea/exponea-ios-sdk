@@ -13,6 +13,22 @@ content:
 >
 > Refer to the [SDK version update guide for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
+## Release Notes for 5.0.0
+#### September 17, 2026
+* Added:
+  * Adds `Exponea.shared.inAppContentBlocksController` for runtime in-app content block control with `prefetch`, `invalidate` (eager/lazy), and `availability` APIs.
+  * Adopts the UIScene lifecycle for universal links with `ExponeaSceneDelegate`, `handleUniversalLink`, and `UrlOpener` scene-delivery fixes.
+
+* Changed:
+  * Raises the minimum iOS deployment target to 15.0 for Xcode 27 compatibility.
+
+* Fixed:
+  * Fixes stale in-app content block content being served after `invalidatePlaceholders()` when placeholders were originally fetched as part of a larger batch.
+  * Fixes `invalidate()` resolving with stale content when a concurrent fetch completed after the invalidation was applied.
+  * Fixes in-app messages configured to display on app load being silently skipped when session processing runs before the SDK marks the app as foreground.
+  * Fixes incorrect in-app message height when the message image loads after the initial layout.
+  * Fixes a crash and non-animating rendering for animated GIF/WebP images in legacy in-app messages.
+
 ## Release Notes for 4.3.0
 #### August 12, 2026
 * Added:
