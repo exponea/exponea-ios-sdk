@@ -9,6 +9,7 @@
 import Foundation
 import Quick
 import Nimble
+import Mockingjay
 
 @testable import ExponeaSDK
 
@@ -631,6 +632,86 @@ class AppInboxManagerSpec: QuickSpec {
             }
         }
 
+        it("should not block main thread while preloading images") {
+            let imageUrl = "https://appinbox-image.test/slow.jpg"
+            // Written on the URL loading thread, read on main
+            let resultLock = NSLock()
+            var mainRespondedDuringDownload: Bool?
+            MockingjayProtocol.addStub(
+                matcher: { $0.url?.absoluteString == imageUrl },
+                builder: { request in
+                    // Download is in flight here; a blocked main thread cannot answer until it ends
+                    let mainResponded = DispatchSemaphore(value: 0)
+                    DispatchQueue.main.async { mainResponded.signal() }
+                    let responded = mainResponded.wait(timeout: .now() + 3) == .success
+                    resultLock.lock()
+                    mainRespondedDuringDownload = responded
+                    resultLock.unlock()
+                    let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                    return Response.success(response, .content(Data([0x1])))
+                }
+            )
+            defer { NetworkStubbing.unstubNetwork() }
+            let response = AppInboxResponse(
+                success: true,
+                messages: [
+                    AppInboxCacheSpec.getSampleMessage(id: "id1", type: "push", data: ["image": .string(imageUrl)])
+                ],
+                syncToken: nil
+            )
+            // Real repository delivers completions on the main queue
+            repository.fetchAppInboxAction = { _, completion in
+                DispatchQueue.main.async { completion(.success(response)) }
+            }
+            waitUntil(timeout: .seconds(15)) { done in
+                appInboxManager.fetchAppInbox { result in
+                    expect(Thread.isMainThread).to(beTrue())
+                    expect(result.value?.count).to(equal(1))
+                    done()
+                }
+            }
+            resultLock.lock()
+            let respondedDuringDownload = mainRespondedDuringDownload
+            resultLock.unlock()
+            expect(respondedDuringDownload).to(beTrue())
+            expect(AppInboxCache.shared.hasImageData(at: imageUrl)).to(beTrue())
+        }
+
+        it("should keep read flag when marking as read during fetch merge") {
+            let cache = SlowMergeAppInboxCache()
+            let manager = AppInboxManager(
+                repository: repository,
+                trackingManager: trackingManager,
+                cache: cache,
+                database: database
+            )
+            cache.setMessages(messages: [AppInboxCacheSpec.getSampleMessage(id: "id0", read: false, type: "push")])
+            let response = AppInboxResponse(
+                success: true,
+                messages: [AppInboxCacheSpec.getSampleMessage(id: "id1", type: "push")],
+                syncToken: nil
+            )
+            repository.fetchAppInboxAction = { _, completion in
+                DispatchQueue.main.async { completion(.success(response)) }
+            }
+            waitUntil(timeout: .seconds(15)) { done in
+                let group = DispatchGroup()
+                group.enter()
+                manager.fetchAppInbox { _ in group.leave() }
+                group.enter()
+                DispatchQueue.global().async {
+                    // Mark as read while the merge has read the old messages but not yet written
+                    _ = cache.mergeStarted.wait(timeout: .now() + 5)
+                    manager.markMessageDataAsRead("id0")
+                    group.leave()
+                }
+                group.notify(queue: .main) { done() }
+            }
+            let messages = cache.getMessages()
+            expect(Set(messages.map { $0.id })).to(equal(["id0", "id1"]))
+            expect(messages.first { $0.id == "id0" }?.read).to(beTrue())
+        }
+
         it("should reset isFetching on failure") {
             repository.fetchAppInboxResult = .failure(RepositoryError.connectionError)
             waitUntil(timeout: .seconds(10)) { done in
@@ -648,4 +729,29 @@ class AppInboxManagerSpec: QuickSpec {
             expect(AppInboxCache.shared.getSyncToken()).to(beNil())
         }
     }
+}
+
+/// Merges as a separate read and write with a pause in between, so any unserialized
+/// write to the messages during a merge gets overwritten.
+private final class SlowMergeAppInboxCache: AppInboxCacheType {
+    private let wrapped = AppInboxCache.shared
+    let mergeStarted = DispatchSemaphore(value: 0)
+
+    func addMessages(messages: [MessageItem]) {
+        let currentMessages = wrapped.getMessages()
+        mergeStarted.signal()
+        Thread.sleep(forTimeInterval: 0.3)
+        let newIds = Set(messages.map { $0.id })
+        wrapped.setMessages(messages: currentMessages.filter { !newIds.contains($0.id) } + messages)
+    }
+
+    func setMessages(messages: [MessageItem]) { wrapped.setMessages(messages: messages) }
+    func getMessages() -> [MessageItem] { wrapped.getMessages() }
+    func setSyncToken(token: String?) { wrapped.setSyncToken(token: token) }
+    func getSyncToken() -> String? { wrapped.getSyncToken() }
+    func deleteImages(except: [String]) { wrapped.deleteImages(except: except) }
+    func hasImageData(at imageUrl: String) -> Bool { wrapped.hasImageData(at: imageUrl) }
+    func saveImageData(at imageUrl: String, data: Data) { wrapped.saveImageData(at: imageUrl, data: data) }
+    func getImageData(at imageUrl: String) -> Data? { wrapped.getImageData(at: imageUrl) }
+    func clear() { wrapped.clear() }
 }

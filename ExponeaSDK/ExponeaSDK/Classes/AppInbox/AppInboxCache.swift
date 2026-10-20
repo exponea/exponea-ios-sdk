@@ -15,6 +15,8 @@ final class AppInboxCache: AppInboxCacheType {
     // we should use our own instance of filemanager, host app can implement delegate on default one
     private let fileManager: FileManager = FileManager()
     private let semaphore: DispatchQueue = DispatchQueue(label: "AppInboxCacheLockingQueue", attributes: .concurrent)
+    // Guards `data`; recursive because addMessages and clear call setMessages
+    private let dataLock = NSRecursiveLock()
     private var data: AppInboxData!
 
     init() {
@@ -86,6 +88,8 @@ final class AppInboxCache: AppInboxCacheType {
     }
 
     func setMessages(messages: [MessageItem]) {
+        dataLock.lock()
+        defer { dataLock.unlock() }
         data.messages = messages.sorted { msg1, msg2 in
             msg1.receivedTime > msg2.receivedTime
         }
@@ -93,10 +97,14 @@ final class AppInboxCache: AppInboxCacheType {
     }
 
     func getMessages() -> [MessageItem] {
+        dataLock.lock()
+        defer { dataLock.unlock() }
         return data.messages
     }
 
     func addMessages(messages: [MessageItem]) {
+        dataLock.lock()
+        defer { dataLock.unlock() }
         let currentMessages = data.messages
         let allMessages = currentMessages + messages
         let uniqueMessages = [String: MessageItem](
@@ -174,15 +182,21 @@ final class AppInboxCache: AppInboxCacheType {
     }
 
     func setSyncToken(token: String?) {
+        dataLock.lock()
+        defer { dataLock.unlock() }
         data.token = token
         storeData()
     }
 
     func getSyncToken() -> String? {
-        data.token
+        dataLock.lock()
+        defer { dataLock.unlock() }
+        return data.token
     }
 
     func clear() {
+        dataLock.lock()
+        defer { dataLock.unlock() }
         deleteImages(except: [])
         setMessages(messages: [])
         setSyncToken(token: nil)

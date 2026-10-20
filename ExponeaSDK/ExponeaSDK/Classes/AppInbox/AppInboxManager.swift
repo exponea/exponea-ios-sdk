@@ -21,6 +21,9 @@ final class AppInboxManager: AppInboxManagerType {
     private var isFetching = false
     private var savedCustomerIds: [[String: String]] = []
     private let fetchLock = NSLock()
+    private let responseQueue = DispatchQueue(label: "AppInboxManagerResponseQueue", qos: .userInitiated)
+    // Serializes read-modify-write of cached messages (fetch merge on responseQueue vs. mark-as-read on main)
+    private let messagesLock = NSLock()
 
     private let SUPPORTED_MESSAGE_TYPES: [String] = [
         "push", "html"
@@ -94,62 +97,74 @@ final class AppInboxManager: AppInboxManagerType {
                 for: customerIds,
                 with: self.appInboxCache.getSyncToken()
             ) { result in
-                guard !IntegrationManager.shared.isStopped else {
-                    Exponea.logger.log(.error, message: "AppInbox fetch failed, SDK is stopping")
+                // Repository completions arrive on the main queue and image preloading blocks
+                // on network, so responses are processed off main, one at a time.
+                self.responseQueue.async {
+                    self.handleFetchResult(result, customerIds: customerIds, completion: completion)
+                }
+            }
+        }
+    }
+
+    private func handleFetchResult(
+        _ result: Result<AppInboxResponse>,
+        customerIds: [String: String],
+        completion: @escaping (Result<[MessageItem]>) -> Void
+    ) {
+        guard !IntegrationManager.shared.isStopped else {
+            Exponea.logger.log(.error, message: "AppInbox fetch failed, SDK is stopping")
+            self.fetchLock.lock()
+            self.isFetching = false
+            self.fetchLock.unlock()
+            DispatchQueue.main.async {
+                completion(.failure(ExponeaError.stoppedProcess))
+            }
+            return
+        }
+        switch result {
+        case .success(let response):
+            self.trackTelemetry(result)
+            self.fetchLock.lock()
+            guard self.savedCustomerIds.last == nil || Exponea.shared.trackingManager?.customerIds == self.savedCustomerIds.last else {
+                let newCustomerIds = self.savedCustomerIds.last
+                self.savedCustomerIds.removeAll()
+                self.fetchLock.unlock()
+                self.clear()
+                if let newCustomerIds {
+                    self.fetchAppInbox(customerIds: newCustomerIds, completion: completion)
+                } else {
                     self.fetchLock.lock()
                     self.isFetching = false
                     self.fetchLock.unlock()
                     DispatchQueue.main.async {
                         completion(.failure(ExponeaError.stoppedProcess))
                     }
-                    return
                 }
-                switch result {
-                case .success(let response):
-                    self.trackTelemetry(result)
-                    self.fetchLock.lock()
-                    guard self.savedCustomerIds.last == nil || Exponea.shared.trackingManager?.customerIds == self.savedCustomerIds.last else {
-                        let newCustomerIds = self.savedCustomerIds.last
-                        self.savedCustomerIds.removeAll()
-                        self.fetchLock.unlock()
-                        self.clear()
-                        if let newCustomerIds {
-                            self.fetchAppInbox(customerIds: newCustomerIds, completion: completion)
-                        } else {
-                            self.fetchLock.lock()
-                            self.isFetching = false
-                            self.fetchLock.unlock()
-                            DispatchQueue.main.async {
-                                completion(.failure(ExponeaError.stoppedProcess))
-                            }
-                        }
-                        return
-                    }
-                    self.savedCustomerIds.removeAll()
-                    self.fetchLock.unlock()
-                    Exponea.logger.log(.verbose, message: "AppInbox loaded successfully")
-                    let enhancedMessages = self.enhanceMessages(response.messages, response.syncToken, customerIds: customerIds)
-                    self.onAppInboxDataLoaded(enhancedMessages, response.syncToken, completion)
-                case .failure(let error):
-                    if self.appInboxCache.getSyncToken() != nil,
-                       case .resourceGone = error as? RepositoryError {
-                        Exponea.logger.log(
-                            .warning,
-                            message: "AppInbox sync token is invalid, clearing cache and retrying full sync"
-                        )
-                        self.clear()
-                        self.fetchAppInbox(customerIds: customerIds, completion: completion)
-                        return
-                    }
-                    self.trackTelemetry(result)
-                    Exponea.logger.log(.error, message: "AppInbox loading failed. \(error.localizedDescription)")
-                    self.fetchLock.lock()
-                    self.isFetching = false
-                    self.fetchLock.unlock()
-                    DispatchQueue.main.async {
-                        completion(Result.failure(error))
-                    }
-                }
+                return
+            }
+            self.savedCustomerIds.removeAll()
+            self.fetchLock.unlock()
+            Exponea.logger.log(.verbose, message: "AppInbox loaded successfully")
+            let enhancedMessages = self.enhanceMessages(response.messages, response.syncToken, customerIds: customerIds)
+            self.onAppInboxDataLoaded(enhancedMessages, response.syncToken, completion)
+        case .failure(let error):
+            if self.appInboxCache.getSyncToken() != nil,
+               case .resourceGone = error as? RepositoryError {
+                Exponea.logger.log(
+                    .warning,
+                    message: "AppInbox sync token is invalid, clearing cache and retrying full sync"
+                )
+                self.clear()
+                self.fetchAppInbox(customerIds: customerIds, completion: completion)
+                return
+            }
+            self.trackTelemetry(result)
+            Exponea.logger.log(.error, message: "AppInbox loading failed. \(error.localizedDescription)")
+            self.fetchLock.lock()
+            self.isFetching = false
+            self.fetchLock.unlock()
+            DispatchQueue.main.async {
+                completion(Result.failure(error))
             }
         }
     }
@@ -257,6 +272,8 @@ final class AppInboxManager: AppInboxManagerType {
     }
 
     func markMessageDataAsRead(_ messageId: String) {
+        messagesLock.lock()
+        defer { messagesLock.unlock() }
         var currentMessages = appInboxCache.getMessages()
         for index in currentMessages.indices {
             if currentMessages[index].id == messageId {
@@ -285,11 +302,13 @@ final class AppInboxManager: AppInboxManagerType {
         let supportedMessages = messages.filter { msg in
             return SUPPORTED_MESSAGE_TYPES.contains(msg.type)
         }
+        messagesLock.lock()
         appInboxCache.addMessages(messages: supportedMessages)
+        let allMessages = appInboxCache.getMessages()
+        messagesLock.unlock()
         let imageUrls: [String] = supportedMessages
             .map { message in message.content?.imageUrl ?? "" }
             .filter { imageUrl in imageUrl.isEmpty == false }
-        let allMessages = appInboxCache.getMessages()
         if imageUrls.isEmpty {
             fetchLock.lock()
             isFetching = false
@@ -317,6 +336,8 @@ final class AppInboxManager: AppInboxManagerType {
     }
 
     func clear() {
+        messagesLock.lock()
+        defer { messagesLock.unlock() }
         appInboxCache.clear()
     }
 }
