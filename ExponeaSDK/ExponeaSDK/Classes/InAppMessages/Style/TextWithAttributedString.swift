@@ -11,7 +11,7 @@ import SwiftUI
 
 struct TextWithAttributedString: View {
 
-    @State private var height: CGFloat = .zero
+    @State private var height: CGFloat
     let config: InAppTextConfigurable
     let isCompressionVertical: Bool
     let width: CGFloat
@@ -27,15 +27,28 @@ struct TextWithAttributedString: View {
         self.width = width
         self.isCompressionVertical = isCompressionVertical
         self.heightCompletion = heightCompletion
+        // Measured up front so the very first layout pass already has the final text height;
+        // waiting for the hosted UITextView to report it is what delayed the presentation.
+        _height = State(initialValue: InternalTextView.fittingHeight(
+            config: config,
+            width: width,
+            isCompressionVertical: isCompressionVertical
+        ))
     }
 
     var body: some View {
         InternalTextView(
             dynamicHeight: $height,
             config: config,
+            width: width,
             isCompressionVertical: isCompressionVertical
         )
         .frame(height: height)
+        .onAppear {
+            if height > 0 {
+                heightCompletion?(height)
+            }
+        }
         .valueChanged(value: height) { height in
             self.height = height
             heightCompletion?(height)
@@ -51,19 +64,37 @@ struct TextWithAttributedString: View {
        @Binding var dynamicHeight: CGFloat
 
        private let config: InAppTextConfigurable
+       private let width: CGFloat
        private let isCompressionVertical: Bool
 
        init(
         dynamicHeight: Binding<CGFloat>,
         config: InAppTextConfigurable,
+        width: CGFloat,
         isCompressionVertical: Bool = false
        ) {
            self._dynamicHeight = dynamicHeight
            self.config = config
+           self.width = width
            self.isCompressionVertical = isCompressionVertical
        }
 
+       static func fittingHeight(
+        config: InAppTextConfigurable,
+        width: CGFloat,
+        isCompressionVertical: Bool
+       ) -> CGFloat {
+           guard width > 0 else { return 0 }
+           let textView = makeTextView(isCompressionVertical: isCompressionVertical)
+           textView.attributedText = applyStyle(config: config)
+           return textView.sizeThatFits(CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)).height
+       }
+
        func makeUIView(context: Context) -> UITextView {
+           Self.makeTextView(isCompressionVertical: isCompressionVertical)
+       }
+
+       private static func makeTextView(isCompressionVertical: Bool) -> UITextView {
            let textView = UITextView()
            textView.isScrollEnabled = false
            textView.isEditable = false
@@ -87,7 +118,7 @@ struct TextWithAttributedString: View {
            return textView
        }
 
-       private func applyStyle() -> NSMutableAttributedString {
+       private static func applyStyle(config: InAppTextConfigurable) -> NSMutableAttributedString {
            var attributes: [NSAttributedString.Key: Any] = [:]
 
            if let customFont = config.fontData?.loadedFont {
@@ -117,10 +148,16 @@ struct TextWithAttributedString: View {
        }
 
        func updateUIView(_ uiView: UITextView, context: Context) {
-           uiView.attributedText = applyStyle()
-           DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-               let height = uiView.sizeThatFits(CGSize(width: uiView.bounds.width, height: CGFloat.greatestFiniteMagnitude)).height
-               dynamicHeight = height
+           uiView.attributedText = Self.applyStyle(config: config)
+           // Re-measure against the real bounds once laid out; only differs from the upfront
+           // estimate when the proposed width does not match `width` (e.g. safe-area insets).
+           DispatchQueue.main.async {
+               let measuredWidth = uiView.bounds.width > 0 ? uiView.bounds.width : width
+               guard measuredWidth > 0 else { return }
+               let height = uiView.sizeThatFits(CGSize(width: measuredWidth, height: CGFloat.greatestFiniteMagnitude)).height
+               if height != dynamicHeight {
+                   dynamicHeight = height
+               }
            }
        }
    }

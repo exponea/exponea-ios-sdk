@@ -20,5 +20,7 @@ final class InAppViewConfig: ObservableObject {
     }
     public var textCompletionHeight: TypeBlock<CGFloat>?
     @Published var shouldBeScrollable = false
-    var debouncer = Debouncer(delay: 1.5)
+    // Zero delay: coalesces the layout passes of a single run loop turn without holding the
+    // first presentation back. The container keeps resizing after it has been shown.
+    var debouncer = Debouncer(delay: 0)
 }

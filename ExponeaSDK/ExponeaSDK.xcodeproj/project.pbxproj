@@ -112,6 +112,7 @@
 		057F448323990E320070DF30 /* MockInAppMessagesCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F448223990E320070DF30 /* MockInAppMessagesCache.swift */; };
 		057F44852399301A0070DF30 /* UIColor+FromHexStringSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F44842399301A0070DF30 /* UIColor+FromHexStringSpec.swift */; };
 		057F44872399322D0070DF30 /* InAppMessageDialogViewSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F44862399322D0070DF30 /* InAppMessageDialogViewSpec.swift */; };
+		7E5A11C12F0A4B6D00C1D0A1 /* TextWithAttributedStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5A11C02F0A4B6D00C1D0A1 /* TextWithAttributedStringTests.swift */; };
 		057F448F23995DC20070DF30 /* InAppMessagePresenterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F448E23995DC20070DF30 /* InAppMessagePresenterType.swift */; };
 		057F449123995EA00070DF30 /* MockInAppMessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057F449023995EA00070DF30 /* MockInAppMessagePresenter.swift */; };
 		057F4494239960650070DF30 /* lena.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 057F4492239960650070DF30 /* lena.jpeg */; };
@@ -782,6 +783,7 @@
 		057F448223990E320070DF30 /* MockInAppMessagesCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessagesCache.swift; sourceTree = "<group>"; };
 		057F44842399301A0070DF30 /* UIColor+FromHexStringSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+FromHexStringSpec.swift"; sourceTree = "<group>"; };
 		057F44862399322D0070DF30 /* InAppMessageDialogViewSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDialogViewSpec.swift; sourceTree = "<group>"; };
+		7E5A11C02F0A4B6D00C1D0A1 /* TextWithAttributedStringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWithAttributedStringTests.swift; sourceTree = "<group>"; };
 		057F448E23995DC20070DF30 /* InAppMessagePresenterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessagePresenterType.swift; sourceTree = "<group>"; };
 		057F449023995EA00070DF30 /* MockInAppMessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockInAppMessagePresenter.swift; sourceTree = "<group>"; };
 		057F4492239960650070DF30 /* lena.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = lena.jpeg; sourceTree = "<group>"; };
@@ -1774,6 +1776,7 @@
 				607269E53017A74B00E808CD /* InAppCloseButtonOverlaySpec.swift */,
 				05D2D39F23DF07E800E3E79A /* InAppMessageAlertViewSpec.swift */,
 				057F44862399322D0070DF30 /* InAppMessageDialogViewSpec.swift */,
+				7E5A11C02F0A4B6D00C1D0A1 /* TextWithAttributedStringTests.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -4066,6 +4069,7 @@
 				60364E983048AA6A0075B9CD /* ExponeaSceneDelegateSpec.swift in Sources */,
 				05D95C44250100B5001DA2DA /* MockInAppMessagesManager.swift in Sources */,
 				057F44872399322D0070DF30 /* InAppMessageDialogViewSpec.swift in Sources */,
+				7E5A11C12F0A4B6D00C1D0A1 /* TextWithAttributedStringTests.swift in Sources */,
 				05FBB15D244709C500BDF234 /* DatabaseManager+Clear.swift in Sources */,
 				F0BE610021107D3A0082ABD8 /* TrackingParametersSpec.swift in Sources */,
 				60B15E3430247367003F9281 /* TrackPushTokenSessionTrackingSpec.swift in Sources */,

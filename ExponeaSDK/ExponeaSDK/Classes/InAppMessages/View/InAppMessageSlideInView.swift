@@ -26,7 +26,6 @@ public final class InAppMessageSlideInViewModel: ObservableObject {
     @Published public var height: CGFloat = 0
     @Published public var isBiggerThanScreen = false
     private var areConfigsSet = false
-    var debouncer = Debouncer(delay: 2)
 
     init(
         layouConfig: InAppLayoutConfig,
@@ -254,7 +253,7 @@ final class InAppMessageSlideInView: UIView, InAppMessageView {
     var showCallback: EmptyBlock?
     private let payload: RichInAppMessagePayload
     private let image: UIImage?
-    private let debouncer = Debouncer(delay: 2)
+    private let debouncer = Debouncer(delay: 0)
     let actionCallback: ((InAppMessagePayloadButton) -> Void)
     let dismissCallback: TypeBlock<(Bool, InAppMessagePayloadButton?)>
     var setCloseTimeCallback: EmptyBlock?
