@@ -10,11 +10,18 @@
 
 final class MockRepository: RepositoryType {
     func getSegmentations(cookie: String, completion: @escaping TypeBlock<Result<SegmentDataDTO>>) {
-        
+        getSegmentationsCookies.append(cookie)
+        onGetSegmentations?(cookie)
+        if let fetchSegmentationsResult = fetchSegmentationsResult {
+            completion(fetchSegmentationsResult)
+        }
     }
     
-    func getLinkIds(cookie: String, externalIds: [String : String], completion: @escaping TypeBlock<Result<SegmentDataDTO>>) {
-        
+    func getLinkIds(cookie: String, externalIds: [String : String], completion: @escaping TypeBlock<EmptyResult<RepositoryError>>) {
+        getLinkIdsCount += 1
+        if let fetchLinkIdsResult = fetchLinkIdsResult {
+            completion(fetchLinkIdsResult)
+        }
     }
     
     
@@ -50,6 +57,13 @@ final class MockRepository: RepositoryType {
     var fetchAppInboxAction: ((_ syncToken: String?, _ completion: @escaping (Result<AppInboxResponse>) -> Void) -> Void)?
     var fetchInAppContentBlocksPlaceholdersResult: Result<InAppContentBlocksDataResponse> = Result.failure(RepositoryError.connectionError)
     var fetchInAppContentBlocksResult: Result<PersonalizedInAppContentBlockResponseData> = Result.failure(RepositoryError.connectionError)
+    /// When nil, `getSegmentations` never completes (the previous behaviour other specs rely on).
+    var fetchSegmentationsResult: Result<SegmentDataDTO>?
+    /// When nil, `getLinkIds` never completes (the previous behaviour other specs rely on).
+    var fetchLinkIdsResult: EmptyResult<RepositoryError>?
+    var getSegmentationsCookies: [String] = []
+    var onGetSegmentations: ((String) -> Void)?
+    var getLinkIdsCount = 0
 
     init(configuration: Configuration) {
         IntegrationManager.shared.isStopped = false

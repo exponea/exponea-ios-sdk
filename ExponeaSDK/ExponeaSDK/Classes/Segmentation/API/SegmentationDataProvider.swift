@@ -36,7 +36,10 @@ extension SegmentationDataProvider: SegmentationDataProviderType {
         cookie: String,
         completion: @escaping TypeBlock<ResponseData<D>>
     ) {
-        guard let serverRepository = serverRepository else { return }
+        guard let serverRepository = serverRepository else {
+            completion(.init(error: RepositoryError.connectionError))
+            return
+        }
         serverRepository.getSegmentations(cookie: cookie) { response in
             guard response.error == nil, let data = response.value as? D else {
                 completion(.init(error: response.error))
@@ -51,13 +54,17 @@ extension SegmentationDataProvider: SegmentationDataProviderType {
         cookie: String,
         externalIds: [String: String],
         completion: @escaping TypeBlock<ResponseData<D>>) {
-            guard let serverRepository = serverRepository else { return }
+            guard let serverRepository = serverRepository else {
+                completion(.init(error: RepositoryError.connectionError))
+                return
+            }
             serverRepository.getLinkIds(cookie: cookie, externalIds: externalIds) { response in
-                guard response.error == nil, let data = response.value as? D else {
-                    completion(.init(error: response.error))
-                    return
+                switch response {
+                case .success:
+                    completion(.init(data: nil, error: nil))
+                case let .failure(error):
+                    completion(.init(error: error))
                 }
-                completion(.init(data: data, error: nil))
             }
     }
 }

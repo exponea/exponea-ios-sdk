@@ -37,94 +37,43 @@ public final class ManualSegmentationManager: ManualSegmentationManagerType {
     // MARK: - Init
     public static let shared = ManualSegmentationManager()
 
+    // Mirrors the Android SDK (SegmentsManagerImpl.fetchSegmentsManually): every caller waits in
+    // `manualCallbacks` and one fetch runs at a time. However the fetch ends, all waiting callers
+    // are answered exactly once with the segments of their category, or an empty list.
     @Atomic private var manualCallbacks: [SegmentCallbackData] = []
-    private var isRequestRunning = false
-    private func areCustomerIdsEqual(customerIds: [String: String]) -> Bool {
-        guard let currentCustomerIds = Exponea.shared.trackingManager?.customerIds else { return false }
-        let areSame = currentCustomerIds.compareWith(other: customerIds)
-        if !areSame {
-            Exponea.logger.log(.verbose, message: "Segments: Check process was canceled because customer has changed")
-        }
-        return areSame
+    @Atomic private var isRequestRunning = false
+
+    // Customer IDs of the tracked customer; replaced in tests.
+    var customerIdsProvider: () -> [String: String] = {
+        Exponea.shared.trackingManager?.customerIds ?? [:]
     }
-    private var externalIds: [String: String] {
-        guard var ids = Exponea.shared.trackingManager?.customerIds else { return [:] }
+
+    private var currentCustomerIds: [String: String] {
+        customerIdsProvider()
+    }
+
+    private var isStopped: Bool {
+        IntegrationManager.shared.isStopped
+    }
+
+    private func areCustomerIdsActual(_ customerIds: [String: String]) -> Bool {
+        currentCustomerIds.compareWith(other: customerIds)
+    }
+
+    private func isCacheAssigned(to customerIds: [String: String]) -> Bool {
+        guard let assignedCustomer = cache?.assignedCustomer else { return false }
+        return assignedCustomer.compareWith(other: customerIds)
+    }
+
+    private func externalIds(of customerIds: [String: String]) -> [String: String] {
+        var ids = customerIds
         ids["cookie"] = nil
         return ids
     }
-    private func customerIdsNeedsSync(currentCustomer: [String: String]) -> Bool {
-        areCustomerIdsEqual(customerIds: currentCustomer) && !externalIds.isEmpty
-    }
 
-    private func linkIds(completion: @escaping EmptyBlock) {
-        guard let cookie = Exponea.shared.customerCookie, let ids = Exponea.shared.trackingManager?.customerIds else { return }
-        dataProvider.linkIds(data: EmptyDTO.self, cookie: cookie, externalIds: externalIds) { response in
-            if response.error != nil {
-                Exponea.logger.log(.warning, message: "Segments: Customer IDs \(ids) merge failed, unable to fetch segments due to \(String(describing: response.error?.localizedDescription))")
-            }
-            completion()
-        }
-    }
-
-    private func fetchSegments(
-        category: SegmentCategory,
-        result: @escaping TypeBlock<[SegmentDTO]>,
-        cookie: String,
-        customerIds: [String: String]
-    ) {
-        dataProvider.getSegmentations(
-            data: SegmentDataDTO.self,
-            cookie: cookie
-        ) { [weak self] response in
-            guard let self, let data = response.data else {
-                if let error = response.error {
-                    Exponea.logger.log(.error, message: "Segments: Fetch of segments failed: \(error)")
-                }
-                self?.manualCallbacks.forEach { $0.fireBlock(category: []) }
-                return
-            }
-            guard self.areCustomerIdsEqual(customerIds: customerIds) else {
-                invokeFetch(
-                    customerIds: customerIds,
-                    category: category,
-                    result: result,
-                    cookie: cookie
-                )
-                return
-            }
-            cache = .init(
-                timestamp: Date().timeIntervalSince1970,
-                data: data,
-                assignedCustomer: customerIds
-            )
-            self.isRequestRunning = false
-            cache?.data.categories.forEach { [weak self] category in
-                guard let self else { return }
-                guard !self.manualCallbacks.isEmpty else {
-                    Exponea.logger.log(.verbose, message: "Segments: Skipping segments reload process for no callback")
-                    return
-                }
-                for callback in self.manualCallbacks where callback.category.id == category.id {
-                    switch category {
-                    case let .discovery(data),
-                        let .content(data),
-                        let .merchandising(data):
-                        callback.fireBlock(category: data)
-                        if let index = self.manualCallbacks.firstIndex(where: { $0.category.id == category.id }) {
-                            self._manualCallbacks.changeValue(with: { $0.remove(at: index) })
-                        }
-                    case .other: break
-                    }
-                }
-            }
-        }
-    }
-
-    private func checkCacheCustomer() -> Bool {
-        if let cache = cache?.assignedCustomer {
-            return areCustomerIdsEqual(customerIds: cache)
-        }
-        return false
+    /// Customer IDs are linked once per customer, before the first fetch for it.
+    private func customerIdsMergeIsRequired(_ customerIds: [String: String]) -> Bool {
+        !isCacheAssigned(to: customerIds) && !externalIds(of: customerIds).isEmpty
     }
 
     public func getSegments(
@@ -132,83 +81,156 @@ public final class ManualSegmentationManager: ManualSegmentationManagerType {
         force: Bool = false,
         result: @escaping TypeBlock<[SegmentDTO]>
     ) {
-        guard force ||
-                !checkCacheCustomer() ||
-                cache?.isWithinTime == false
-        else {
-            cache?.data.categories.forEach { category in
-                switch category {
-                case let .discovery(data),
-                    let .content(data),
-                    let .merchandising(data):
-                    result(data)
-                case .other: break
-                }
-            }
+        guard !isStopped else {
+            Exponea.logger.log(.verbose, message: "Segments: Segments fetch failed, SDK is stopping")
+            result([])
+            return
+        }
+        let customerIdsForFetch = currentCustomerIds
+        let requireFetch = force || !isCacheAssigned(to: customerIdsForFetch) || cache?.isWithinTime != true
+        guard requireFetch else {
+            result(Self.segments(of: category, in: cache?.data))
             return
         }
         let manual: SegmentCallbackData = .init(
             category: category,
-            isIncludeFirstLoad: true,
-            onNewData: result
-        )
+            isIncludeFirstLoad: true
+        ) { segments in
+            if IntegrationManager.shared.isStopped {
+                Exponea.logger.log(.verbose, message: "Segments: Segments fetch failed, SDK is stopping")
+                result([])
+                return
+            }
+            result(segments)
+        }
         _manualCallbacks.changeValue(with: { $0.append(manual) })
-        guard !isRequestRunning else {
+        var shouldStart = false
+        _isRequestRunning.changeValue(with: { running in
+            shouldStart = !running
+            running = true
+        })
+        guard shouldStart else {
             Exponea.logger.log(.verbose, message: "Segments: Manual fetch is already in progress, waiting for result")
             return
         }
-        guard let customerIds = Exponea.shared.trackingManager?.customerIds, let cookie = customerIds["cookie"] else {
-            Exponea.logger.log(.verbose, message: "Segments: Customer in not identified")
-            result([])
-            return
-        }
-        invokeFetch(
-            customerIds: customerIds,
-            category: category,
-            result: result,
-            cookie: cookie
-        )
+        runManualSegmentsFetch(customerIds: customerIdsForFetch)
     }
 
-    private func invokeFetch(
-        customerIds: [String: String],
-        category: SegmentCategory,
-        result: @escaping TypeBlock<[SegmentDTO]>,
-        cookie: String
-    ) {
-        guard areCustomerIdsEqual(customerIds: customerIds) else {
-            invokeFetch(
-                customerIds: Exponea.shared.trackingManager?.customerIds ?? [:],
-                category: category,
-                result: result,
-                cookie: cookie
-            )
+    private func runManualSegmentsFetch(customerIds: [String: String]) {
+        guard areCustomerIdsActual(customerIds) else {
+            Exponea.logger.log(.warning, message: "Segments: Repeating manual fetch because customer has changed")
+            runManualSegmentsFetch(customerIds: currentCustomerIds)
             return
         }
-        isRequestRunning = true
-        if customerIdsNeedsSync(currentCustomer: customerIds) {
-            linkIds { [weak self] in
-                self?.fetchSegments(
-                    category: category,
-                    result: result,
-                    cookie: cookie,
-                    customerIds: customerIds
+        guard !isStopped else {
+            Exponea.logger.log(.verbose, message: "Segments: Segments fetch failed, SDK is stopping")
+            finishManualFetch(with: nil)
+            return
+        }
+        guard let cookie = customerIds["cookie"] else {
+            Exponea.logger.log(.warning, message: "Segments: Fetch of segments for no cookie ID is forbidden")
+            finishManualFetch(with: nil)
+            return
+        }
+        guard customerIdsMergeIsRequired(customerIds) else {
+            fetchSegments(customerIds: customerIds, cookie: cookie)
+            return
+        }
+        Exponea.logger.log(.verbose, message: "Segments: Current customer IDs require to be linked")
+        dataProvider.linkIds(
+            data: EmptyDTO.self,
+            cookie: cookie,
+            externalIds: externalIds(of: customerIds)
+        ) { [weak self] response in
+            guard let self else { return }
+            if let error = response.error {
+                Exponea.logger.log(
+                    .error,
+                    message: "Segments: Customer IDs \(customerIds.keys.sorted()) merge failed, unable to fetch segments: \(error)"
                 )
+                self.finishManualFetch(with: nil)
+                return
             }
-        } else {
-            fetchSegments(
-                category: category,
-                result: result,
-                cookie: cookie,
-                customerIds: customerIds
+            guard !self.isStopped else {
+                Exponea.logger.log(.verbose, message: "Segments: Segments fetch failed, SDK is stopping")
+                self.finishManualFetch(with: nil)
+                return
+            }
+            self.fetchSegments(customerIds: customerIds, cookie: cookie)
+        }
+    }
+
+    private func fetchSegments(customerIds: [String: String], cookie: String) {
+        dataProvider.getSegmentations(data: SegmentDataDTO.self, cookie: cookie) { [weak self] response in
+            guard let self else { return }
+            guard !self.isStopped else {
+                Exponea.logger.log(.verbose, message: "Segments: Segments fetch failed, SDK is stopping")
+                self.finishManualFetch(with: nil)
+                return
+            }
+            guard let data = response.data else {
+                Exponea.logger.log(
+                    .error,
+                    message: "Segments: Fetch of segments failed: \(String(describing: response.error))"
+                )
+                self.finishManualFetch(with: nil)
+                return
+            }
+            Exponea.logger.log(
+                .verbose,
+                message: "Segments: Manual Data load is done successfully, size: \(data.categories.count)"
             )
+            guard self.areCustomerIdsActual(customerIds) else {
+                Exponea.logger.log(
+                    .warning,
+                    message: "Segments: New data are ignored because were manually loaded for different customer"
+                )
+                self.runManualSegmentsFetch(customerIds: self.currentCustomerIds)
+                return
+            }
+            self.cache = .init(
+                timestamp: Date().timeIntervalSince1970,
+                data: data,
+                assignedCustomer: customerIds
+            )
+            self.finishManualFetch(with: data)
+        }
+    }
+
+    private func finishManualFetch(with data: SegmentDataDTO?) {
+        isRequestRunning = false
+        notifyManualCallbacks(data: data)
+    }
+
+    /// Answers and releases every waiting caller with the segments of its category. The backend
+    /// omits categories without segments (`{}` for a fresh customer), so a missing category, a
+    /// failure or a reset all yield an empty list.
+    private func notifyManualCallbacks(data: SegmentDataDTO?) {
+        var pending: [SegmentCallbackData] = []
+        _manualCallbacks.changeValue(with: {
+            pending = $0
+            $0.removeAll()
+        })
+        pending.forEach { callback in
+            callback.fireBlock(category: Self.segments(of: callback.category, in: data))
+        }
+    }
+
+    private static func segments(of category: SegmentCategory, in data: SegmentDataDTO?) -> [SegmentDTO] {
+        guard let match = data?.categories.first(where: { $0.id == category.id }) else { return [] }
+        switch match {
+        case let .discovery(segments),
+            let .content(segments),
+            let .merchandising(segments):
+            return segments
+        case .other:
+            return []
         }
     }
 
     public func anonymize() {
         cache = nil
-        manualCallbacks.forEach { $0.fireBlock(category: []) }
-        manualCallbacks.removeAll()
+        notifyManualCallbacks(data: nil)
         Exponea.logger.log(.verbose, message: "Segments: Segments change check has anonymized")
     }
 }

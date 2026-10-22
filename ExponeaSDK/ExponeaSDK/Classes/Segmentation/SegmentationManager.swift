@@ -269,7 +269,7 @@ extension SegmentationManager {
         guard let cookie = Exponea.shared.customerCookie, let ids = Exponea.shared.trackingManager?.customerIds else { return }
         dataProvider.linkIds(data: EmptyDTO.self, cookie: cookie, externalIds: externalIds) { response in
             if response.error != nil {
-                Exponea.logger.log(.warning, message: "Segments: Customer IDs \(ids) merge failed, unable to fetch segments due to \(String(describing: response.error?.localizedDescription))")
+                Exponea.logger.log(.warning, message: "Segments: Customer IDs \(ids.keys.sorted()) merge failed, unable to fetch segments due to \(String(describing: response.error?.localizedDescription))")
             }
             completion()
         }

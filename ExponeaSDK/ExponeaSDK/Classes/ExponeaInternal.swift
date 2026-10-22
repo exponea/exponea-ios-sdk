@@ -732,6 +732,8 @@ public extension ExponeaInternal {
         TelemetryUtility.clearInstallIdFromAllStores(appGroup: appGroup)
         IntegrationManager.shared.onIntegrationStoppedCallbacks.forEach { $0() }
         IntegrationManager.shared.onIntegrationStoppedCallbacks.removeAll()
+        // Pending getSegments callers get an empty list, as on Android.
+        manualSegmentationManager?.anonymize()
         notificationsManager?.handlePushTokenRegistered(token: "")
         campaignRepository?.clear()
         databaeManagerCopy?.removeAllEvents()

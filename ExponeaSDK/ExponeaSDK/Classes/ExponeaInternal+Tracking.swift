@@ -696,6 +696,8 @@ extension ExponeaInternal {
             self?.concreteICBController?.prepareForAnonymize()
             dependencies.inAppContentBlocksManager.anonymize()
             SegmentationManager.shared.anonymize()
+            // Pending getSegments callers get an empty list, as on Android.
+            self?.manualSegmentationManager?.anonymize()
             dependencies.campaignRepository.clear()
             FileCache.shared.clear()
 

@@ -65,6 +65,45 @@ final class ServerRepositorySpec: QuickSpec {
                             networkTask.cancel()
                         }
                     }
+
+                    context("when linking customer IDs") {
+                        func linkIds() -> EmptyResult<RepositoryError>? {
+                            var linkResult: EmptyResult<RepositoryError>?
+                            waitUntil(timeout: .seconds(5)) { done in
+                                ServerRepository(configuration: configuration).getLinkIds(
+                                    cookie: "cookie",
+                                    externalIds: ["registered": "user@example.com"]
+                                ) { result in
+                                    linkResult = result
+                                    done()
+                                }
+                            }
+                            return linkResult
+                        }
+
+                        it("should succeed on an empty 2xx body") {
+                            // The backend answers link-ids with HTTP 200 and no body.
+                            NetworkStubbing.stubNetwork(
+                                forIntegrationType: configuration.integrationConfig.type,
+                                withStatusCode: 200,
+                                withResponseData: Data()
+                            )
+                            guard case .success = linkIds() else {
+                                return fail("Expected success")
+                            }
+                        }
+
+                        it("should fail on a server error") {
+                            NetworkStubbing.stubNetwork(
+                                forIntegrationType: configuration.integrationConfig.type,
+                                withStatusCode: 500,
+                                withResponseData: Data()
+                            )
+                            guard case .failure = linkIds() else {
+                                return fail("Expected failure")
+                            }
+                        }
+                    }
                 }
             }
         }

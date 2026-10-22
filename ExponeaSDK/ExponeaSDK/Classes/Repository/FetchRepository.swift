@@ -71,10 +71,11 @@ protocol FetchRepository {
         completion: @escaping TypeBlock<Result<SegmentDataDTO>>
     )
 
+    /// Succeeds on any 2xx; the backend answers with an empty body.
     func getLinkIds(
         cookie: String,
         externalIds: [String: String],
-        completion: @escaping TypeBlock<Result<SegmentDataDTO>>
+        completion: @escaping TypeBlock<EmptyResult<RepositoryError>>
     )
 }
 

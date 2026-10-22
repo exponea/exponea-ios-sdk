@@ -210,5 +210,181 @@ class SegmentationSpec: QuickSpec {
             }
             expect(isExpired).to(beTrue())
         }
+
+        describe("SegmentDataDTO decoding") {
+            func decode(_ json: String) throws -> [SegmentCategory] {
+                try JSONDecoder().decode(SegmentDataDTO.self, from: Data(json.utf8)).categories
+            }
+
+            it("decodes an empty object to no categories") {
+                expect(try decode("{}")).to(beEmpty())
+            }
+
+            it("decodes an empty category") {
+                let categories = try decode(#"{"discovery":[]}"#)
+                expect(categories.count).to(equal(1))
+                guard case let .discovery(data) = categories.first else { return fail("Expected discovery") }
+                expect(data).to(beEmpty())
+            }
+
+            it("decodes segments of a category") {
+                let categories = try decode(#"{"discovery":[{"id":"d1","segmentation_id":"s1"}]}"#)
+                guard case let .discovery(data) = categories.first else { return fail("Expected discovery") }
+                expect(data).to(equal([.init(id: "d1", segmentationId: "s1")]))
+            }
+        }
+
+        describe("manual fetch") {
+            // Mirrors SegmentsManagerImpl.fetchSegmentsManually of the Android SDK.
+            let discovery: [SegmentDTO] = [.init(id: "d1", segmentationId: "s1")]
+            let content: [SegmentDTO] = [.init(id: "c1", segmentationId: "s2")]
+            let noSegments: [[SegmentDTO]] = [[]]
+            var repository: MockRepository!
+            var manualManager: ManualSegmentationManager!
+            var customerIds: [String: String] = [:]
+
+            beforeEach {
+                repository = MockRepository(configuration: self.configuration)
+                repository.fetchLinkIdsResult = .success
+                Exponea.shared.repository = repository
+                customerIds = ["cookie": "cookie-1"]
+                manualManager = ManualSegmentationManager()
+                manualManager.customerIdsProvider = { customerIds }
+            }
+
+            afterEach {
+                IntegrationManager.shared.isStopped = false
+            }
+
+            // Collects every result delivered for one getSegments call, so a missing or a
+            // repeated callback both fail the expectation.
+            func fetch(_ category: SegmentCategory, force: Bool = true) -> [[SegmentDTO]] {
+                var results: [[SegmentDTO]] = []
+                waitUntil(timeout: .seconds(3)) { done in
+                    manualManager.getSegments(category: category, force: force) { segments in
+                        results.append(segments)
+                        if results.count == 1 {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: done)
+                        }
+                    }
+                }
+                return results
+            }
+
+            it("returns an empty list when the response has no segments") {
+                // The backend answers `{}` for a customer without segments.
+                repository.fetchSegmentationsResult = .success(.init(categories: []))
+                expect(fetch(.discovery())).to(equal(noSegments))
+            }
+
+            it("returns only the requested category") {
+                repository.fetchSegmentationsResult = .success(
+                    .init(categories: [.content(data: content), .discovery(data: discovery)])
+                )
+                expect(fetch(.discovery())).to(equal([discovery]))
+                expect(fetch(.merchandising())).to(equal(noSegments))
+            }
+
+            it("returns an empty list on failure and fetches again next time") {
+                repository.fetchSegmentationsResult = .failure(RepositoryError.connectionError)
+                expect(fetch(.discovery())).to(equal(noSegments))
+
+                repository.fetchSegmentationsResult = .success(.init(categories: [.discovery(data: discovery)]))
+                expect(fetch(.discovery())).to(equal([discovery]))
+            }
+
+            it("serves only the requested category from a fresh cache") {
+                repository.fetchSegmentationsResult = .success(
+                    .init(categories: [.content(data: content), .discovery(data: discovery)])
+                )
+                expect(fetch(.discovery())).to(equal([discovery]))
+
+                repository.fetchSegmentationsResult = nil
+                expect(fetch(.discovery(), force: false)).to(equal([discovery]))
+                expect(fetch(.merchandising(), force: false)).to(equal(noSegments))
+                expect(repository.getSegmentationsCookies.count).to(equal(1))
+            }
+
+            it("returns an empty list without fetching when the SDK is stopped") {
+                repository.fetchSegmentationsResult = .success(.init(categories: [.discovery(data: discovery)]))
+                IntegrationManager.shared.isStopped = true
+                expect(fetch(.discovery())).to(equal(noSegments))
+                expect(repository.getSegmentationsCookies).to(beEmpty())
+            }
+
+            it("returns an empty list without a cookie") {
+                customerIds = [:]
+                repository.fetchSegmentationsResult = .success(.init(categories: [.discovery(data: discovery)]))
+                expect(fetch(.discovery())).to(equal(noSegments))
+                expect(repository.getSegmentationsCookies).to(beEmpty())
+            }
+
+            it("links external IDs once per customer before fetching") {
+                customerIds = ["cookie": "cookie-1", "registered": "user@example.com"]
+                repository.fetchSegmentationsResult = .success(.init(categories: [.discovery(data: discovery)]))
+                expect(fetch(.discovery())).to(equal([discovery]))
+                expect(fetch(.discovery())).to(equal([discovery]))
+                expect(repository.getLinkIdsCount).to(equal(1))
+                expect(repository.getSegmentationsCookies.count).to(equal(2))
+            }
+
+            it("does not log customer ID values when linking fails") {
+                customerIds = ["cookie": "cookie-1", "registered": "user@example.com"]
+                repository.fetchLinkIdsResult = .failure(RepositoryError.connectionError)
+                var logs: [String] = []
+                let hookId = Exponea.logger.addLogHook { logs.append($0) }
+                defer { Exponea.logger.removeLogHook(with: hookId) }
+                expect(fetch(.discovery())).to(equal(noSegments))
+                expect(logs.contains { $0.contains("merge failed") }).to(beTrue())
+                expect(logs.contains { $0.contains("user@example.com") || $0.contains("cookie-1") }).to(beFalse())
+            }
+
+            it("returns an empty list for a real `{}` response") {
+                // The exact scenario from the ticket: HTTP 200 with an empty JSON object.
+                var requestedUrl: URL?
+                NetworkStubbing.stubNetwork(
+                    forIntegrationType: self.configuration.integrationConfig.type,
+                    withStatusCode: 200,
+                    withResponseData: Data("{}".utf8),
+                    withRequestHook: { requestedUrl = $0.url }
+                )
+                defer { NetworkStubbing.unstubNetwork() }
+                Exponea.shared.repository = ServerRepository(configuration: self.configuration)
+                expect(fetch(.discovery())).to(equal(noSegments))
+                expect(requestedUrl?.absoluteString).to(contain("/segments?cookie=cookie-1"))
+                // The cache is only stored when the body decoded successfully.
+                expect(manualManager.cache?.data.categories).to(beEmpty())
+            }
+
+            it("returns an empty list without fetching when linking fails") {
+                customerIds = ["cookie": "cookie-1", "registered": "user@example.com"]
+                repository.fetchLinkIdsResult = .failure(RepositoryError.connectionError)
+                repository.fetchSegmentationsResult = .success(.init(categories: [.discovery(data: discovery)]))
+                expect(fetch(.discovery())).to(equal(noSegments))
+                expect(repository.getSegmentationsCookies).to(beEmpty())
+            }
+
+            it("fetches again with the new cookie when the customer changes meanwhile") {
+                repository.fetchSegmentationsResult = .success(.init(categories: [.discovery(data: discovery)]))
+                repository.onGetSegmentations = { _ in
+                    customerIds = ["cookie": "cookie-2"]
+                }
+                expect(fetch(.discovery())).to(equal([discovery]))
+                expect(repository.getSegmentationsCookies).to(equal(["cookie-1", "cookie-2"]))
+            }
+
+            it("answers waiting callers with an empty list on anonymize") {
+                var results: [[SegmentDTO]] = []
+                waitUntil(timeout: .seconds(3)) { done in
+                    // The fetch never completes, so only anonymize can answer.
+                    manualManager.getSegments(category: .discovery(), force: true) { segments in
+                        results.append(segments)
+                        done()
+                    }
+                    manualManager.anonymize()
+                }
+                expect(results).to(equal(noSegments))
+            }
+        }
     }
 }

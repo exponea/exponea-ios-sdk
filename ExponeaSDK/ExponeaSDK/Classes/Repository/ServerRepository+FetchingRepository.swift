@@ -291,7 +291,7 @@ extension ServerRepository: FetchRepository {
     func getLinkIds(
         cookie: String,
         externalIds: [String: String],
-        completion: @escaping TypeBlock<Result<SegmentDataDTO>>
+        completion: @escaping TypeBlock<EmptyResult<RepositoryError>>
     ) {
         let router = makeRouter(for: .linkIds(cookie: cookie))
         var executeRequest: ((@escaping (Bool) -> Void) -> Void)?
