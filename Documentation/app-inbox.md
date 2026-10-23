@@ -155,6 +155,14 @@ public override func getAppInboxButton() -> UIButton {
 }
 ```
 
+> 📘 **Shared button instance and `stopIntegration()`**
+>
+> The default provider returns a shared `UIButton` instance on each call to `getAppInboxButton()`. Hosts that cache this reference (for example, React Native or SwiftUI wrappers) rely on the SDK to update its visibility when integration stops.
+>
+> When you invoke [`stopIntegration()`](https://documentation.bloomreach.com/engagement/docs/ios-sdk-tracking#stop-sdk-integration), the SDK hides the default App Inbox button and removes it from accessibility. The SDK also dismisses open App Inbox list and detail screens. While the SDK is stopped, `getAppInboxButton()` returns a hidden button. After you initialize the SDK again, the next call to `getAppInboxButton()` restores a visible button.
+>
+> Custom providers that extend `DefaultAppInboxProvider` inherit this behavior when they call `super.getAppInboxButton()`.
+
 #### App Inbox list view
 
 The method `getAppInboxListViewController()` returns a `UIViewController` instance to display the App Inbox messages list.

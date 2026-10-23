@@ -35,26 +35,58 @@ open class DefaultAppInboxProvider: AppInboxProvider {
     private var appInboxListViewControllerRef: AppInboxListViewController?
     private var detailViewControllerRef: AppInboxDetailViewController?
 
+    /// True while our stop-integration callback is registered in IntegrationManager.
+    /// Cleared synchronously when the callback fires so re-registration is not blocked
+    /// if stop runs off-main and `getAppInboxButton()` is called again before `onMain` drains.
+    private var isStopCallbackRegistered = false
+
     public init() {
+        registerStopCallbackIfNeeded()
+    }
+
+    /// Registers a one-shot stop callback if we don't already have one.
+    private func registerStopCallbackIfNeeded() {
+        guard !isStopCallbackRegistered else { return }
+        isStopCallbackRegistered = true
         IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
             guard let self else { return }
+            self.isStopCallbackRegistered = false
 
-            if let nav = self.detailViewControllerRef?.presentingViewController {
-                nav.dismiss(animated: false)
-            } else {
-                self.detailViewControllerRef?.navigationController?.popViewController(animated: false)
-            }
+            // Run on main for UIKit safety. If stop ran off-main, this may be async.
+            onMain {
+                if let nav = self.detailViewControllerRef?.presentingViewController {
+                    nav.dismiss(animated: false)
+                } else {
+                    self.detailViewControllerRef?.navigationController?.popViewController(animated: false)
+                }
 
-            if let nav = self.appInboxListViewControllerRef?.presentingViewController {
-                nav.dismiss(animated: false)
-            } else {
-                self.appInboxListViewControllerRef?.navigationController?.popViewController(animated: false)
+                if let nav = self.appInboxListViewControllerRef?.presentingViewController {
+                    nav.dismiss(animated: false)
+                } else {
+                    self.appInboxListViewControllerRef?.navigationController?.popViewController(animated: false)
+                }
+
+                // Hide the shared button after stop (Android uses GONE) so hosts that keep a
+                // reference (RN / SwiftUI) no longer show Inbox. Skip hide if the SDK was
+                // already started again before this block ran.
+                guard IntegrationManager.shared.isStopped else { return }
+
+                self.appInboxButton.isHidden = true
+                self.appInboxButton.isAccessibilityElement = false
             }
         }
     }
 
     open func getAppInboxButton() -> UIButton {
-        appInboxButton
+        // Show again after reinit and re-arm the stop callback. UIKit must run on main.
+        onMain {
+            if !IntegrationManager.shared.isStopped {
+                self.registerStopCallbackIfNeeded()
+                self.appInboxButton.isHidden = false
+                self.appInboxButton.isAccessibilityElement = true
+            }
+        }
+        return appInboxButton
     }
 
     open func getAppInboxListViewController() -> UIViewController {

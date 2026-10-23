@@ -625,7 +625,25 @@ When the SDK is running, invoking this method will cause the SDK to:
 11. Stop handling of received push notifications.
 12. Stop tracking of deep links and universal links (your app's handling of them is not affected).
 13. Stop and disable session tracking, event tracking, and flushing.
-14. Stop displaying in-app messages, in-app content blocks, and App Inbox messages. Already displayed messages are dismissed.
+14. Stop displaying in-app messages, in-app content blocks, and App Inbox UI. Already displayed messages are dismissed, and the default App Inbox button is hidden.
+
+> 📘 App Inbox button after `stopIntegration()`
+>
+> `DefaultAppInboxProvider` hides the cached App Inbox button when integration stops. This applies to host apps that keep a reference to the button returned by `getAppInboxButton()`, such as React Native or SwiftUI wrappers.
+>
+> While the SDK is stopped, `getAppInboxButton()` returns a hidden button. After you [initialize the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize_the_sdk) again, the next call to `getAppInboxButton()` restores a visible button.
+>
+> If you extend `DefaultAppInboxProvider`, call `super.getAppInboxButton()` to inherit this behavior. For a fully custom `AppInboxProvider`, hide or remove the button in your own `stopIntegration()` handling.
+>
+> The SDK clears `onIntegrationStoppedCallbacks` after they fire. To keep a custom callback across multiple stop and reinitialization cycles, register it again each time you initialize the SDK. The example below removes the button from the view hierarchy entirely, which is a stronger action than hiding it:
+
+```swift
+// Register during each SDK initialization.
+IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
+    self?.appInboxButton.removeFromSuperview()
+    self?.view.layoutIfNeeded()
+}
+```
 
 After invoking `stopIntegration()`, the SDK will drop any API method invocation until you [initialize the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize_the_sdk) again.
 
@@ -699,16 +717,6 @@ This results in the SDK flushing all pending events, then stopping all internal 
 #### Customer denies tracking consent
 
 It is recommended to ask the customer for tracking consent as soon as possible in your application. If the customer denies consent, please do not initialize the SDK at all.
-
-❗️ AppInbox remove after `stopIntegration()` 
-Add a callback to your viewController with AppInboxButton
-
-```swift
-IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
-    self?.appInboxButton.removeFromSuperview()
-    self?.view.layoutIfNeeded()
-}
-```
 
 ❗️ Stop receiving push after `stopIntegration()` 
 You have to override the method in ExponeaAppDelegate
