@@ -47,12 +47,13 @@ final class ServerRepositorySpec: QuickSpec {
                             )
                             let repo = ServerRepository(configuration: configuration)
                             
+                            // trailing slash is required for the stub to match, so the request stays pending
                             var url: URL {
                                 switch configuration.integrationConfig.type {
                                 case .project(let projectToken):
-                                    return URL(safeString: configuration.integrationConfig.baseUrl + "/projects/\(projectToken)")!
+                                    return URL(safeString: configuration.integrationConfig.baseUrl + "/projects/\(projectToken)/")!
                                 case .stream(let streamId):
-                                    return URL(safeString: configuration.integrationConfig.baseUrl + "/streams/\(streamId)")!
+                                    return URL(safeString: configuration.integrationConfig.baseUrl + "/streams/\(streamId)/")!
                                 }
                             }
                             let networkTask = URLSession.shared.dataTask(with: url)
@@ -63,6 +64,8 @@ final class ServerRepositorySpec: QuickSpec {
                             }
                             expect(networkTask.state.rawValue).to(equal(URLSessionTask.State.running.rawValue))
                             networkTask.cancel()
+                            // let the request finish before afterEach removes the stubs it is matched against
+                            expect(networkTask.state.rawValue).toEventually(equal(URLSessionTask.State.completed.rawValue))
                         }
                     }
 
