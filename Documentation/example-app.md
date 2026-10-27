@@ -31,80 +31,89 @@ In Xcode, navigate to **Xcode** > **Settings** > **Locations** and make sure `Co
    pod install
    ```
 3. Open the `ExponeaSDK.xcworkspace` file to open the project in Xcode.
-4. In the Project navigator in Xcode, select the `ExponeaSDK` project.
-5. Navigate to the `Example` application target's settings. On the **General** tab, find the `Frameworks, Libraries, and Embedded Content` section and verify that `ExponeaSDK.framework` is listed.
-6. Navigate to **Product** > **Scheme** and select `Example`.
-7. Select **Product** > **Build** (Cmd + B).
-8. Select **Product** > **Run** (Cmd + R) to run the example app in the simulator.
+4. Navigate to **Product** > **Scheme** and select **Example**.
+5. Select **Product** > **Build** (`Cmd + B`).
+6. Select **Product** > **Run** (`Cmd + R`) to run the example app in the simulator.
 
 > 📘
 >
-> To enable push notifications in the example app, you must also [Configure Apple Push Notification Service for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configure-apns) in the {user.mkg} web app.
+> To enable push notifications in the example app, you must also [Configure Apple Push Notification Service for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configure-apns) in the {user.mkg} web app. The example app includes notification service and content extensions for rich push notifications. Rich push notifications require a physical device.
+>
+> In debug builds on a physical device, the example app enables the SDK's push setup self-check. A few seconds after you initialize the SDK, an alert shows which push setup steps succeeded. While the self-check runs, the SDK tracks the push token even before you grant notification permission, and the `notification_state` event reports `valid=false` until you do.
 
 ## Navigate the example app
 
-![Example app screens: authorization](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/ios-example-app-auth-screen-variants.png)
-![Example app screens: fetching, tracking, track event, identify customer](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/ios-example-app-screens-1.png)
+![Example app SDK Configuration screen](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/example-app-auth.png)
 
-When you run the app in the simulator, you'll see the **Authentication** view. The screen fields change depending on the selected integration type. Here's how to set it up:
-1. Select your integration type from the dropdown: **Stream ID** or **Project token**.
-2. For **Stream ID**:
-   - Enter your `Stream ID`.
-   - **Optional:** Enter `Key ID` and `Key secret` to enable local JWT token generation for testing. Both must be provided together. Refer to [SDK auth token authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#sdk-auth-token-authorization) for details.
-   - **Optional:** Enter a `Registered customer ID` to identify the customer at startup. When `Key ID` and `Key secret` are provided, the registered customer ID is required.
-3. For **Project token**:
-   - Enter your `Project token`.
-   - **Optional:** Enter the `Authorization` (API key).
-   - **Optional:** Enter the `Advanced Auth` key to enable [customer token authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#customer-token-authorization).
-4. Enter the `Base (API) URL` (API base URL for the {user.br} platform).
-5. **Optional:** Enter an `Application ID` if your {user.mkg} project supports multiple mobile apps. If you leave this blank, the SDK uses the default value `default-application`. [Learn more about Configuration for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration).
-6. Click **Start** to [initialize the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk).
+Run the app to open the **SDK Configuration** screen. The fields change depending on the selected integration type. To set it up:
 
-The **Clear local data** button invokes `Exponea.shared.clearLocalCustomerData(appGroup:)` to delete all locally stored data without initializing the SDK.
+1. Select your integration type using the **Project** or **Stream** toggle.
+2. For **Project**:
+   - Enter your **Project Token**.
+   - Enter your **Authorization Token** (API key).
+   - **Optional:** Enter the **Advanced Auth Key** to enable [customer token authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#customer-token-authorization).
+3. For **Stream**:
+   - Enter your **Stream ID**. Find the stream ID in the {user.dh} app under **Event streams** > select your stream > **Access Security**.
+   - **Optional:** Enter **JWT Key ID** and **JWT Secret** to enable local JWT token generation for testing. Both must be provided together. For more details, see [SDK auth token authorization](https://documentation.bloomreach.com/engagement/docs/ios-sdk-authorization#sdk-auth-token-authorization).
+4. Enter the **API Base URL** (API base URL for the {user.br} platform).
+5. **Optional:** Enter an email address hard ID in the **Registered Customer ID** field to identify the customer. Leave blank for anonymous tracking.
+6. **Optional:** Enter an **Application ID** if your {user.mkg} project supports multiple mobile apps. If you leave this blank, the SDK uses the default value `default-application`. For more details, see [Configuration for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration).
+7. Click **Start** to [initialize the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk).
 
-> [`AuthenticationViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/AuthenticationViewController.swift)
+The **Clear Local Data** button invokes `Exponea.shared.clearLocalCustomerData(appGroup:)` to delete all locally stored data without initializing the SDK. It also clears the values the app saved from the form.
+
+- [`ConfigurationView.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Configuration/ConfigurationView.swift)
+- [`ExponeaService.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Shared/SDK/ExponeaService.swift)
 
 > 👍
 >
-> When using **Project token**, make sure to prefix your API key with `Token `, for example:
-> `Token 0b7uuqicb0fwuv1tqz7ubesxzj3kc3dje3lqyqhzd94pgwnypdiwxz45zqkhjmbf`.
+> When using **Project** integration, prefix your API key with `Token `, for example: `Token 0b7uuqicb0fwuv1tqz7ubesxzj3kc3dje3lqyqhzd94pgwnypdiwxz45zqkhjmbf`.
 
-The app provides several views, accessible using the bottom navigation, to test the different SDK features:
+![Example app screens: fetching, tracking, track event, identify](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/example-app-screens-1.png)
 
-- The **Fetching** view enables you to fetch recommendations, consents, and segments, as well as open the app inbox.
-  > [`FetchViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Fetching/FetchViewController.swift)
+After initialization, the main screen provides bottom navigation to test different SDK features. The app bar also includes:
+   * SDK status indicator
+   * SDK configuration overview (tap the Bloomreach logo)
+   * Logs sheet
+   * **Reset** action that returns to the **SDK Configuration** screen or stops the SDK integration
 
-- The **Tracking** view enables you to test tracking of different events and properties. The `Custom Event` and `Identify Customer` buttons lead to their separate views to enter test data.
-  > [`TrackingViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Tracking/TrackingViewController.swift)
-  > [`TrackEventViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Tracking/TrackEventViewController.swift)
-  > [`IdentifyCustomerViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Tracking/IdentifyCustomerViewController.swift)
+- The **Fetching** screen enables you to fetch consents, recommendations, and segments, and open the App Inbox.
+  - [`FetchingView.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/Fetching/FetchingView.swift)
+  - [`AppInboxButtonRepresentable.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/Fetching/AppInboxButtonRepresentable.swift)
 
-- The **Flushing** view lets you trigger a manual data flush and log out.
-  > [`FlushingViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Flushing/FlushingViewController.swift)
+- The **Tracking** screen shows the customer's cookie ID and enables you to identify the customer, set the SDK auth token (**Stream** integration), track custom events, payments, and page views, request push permission, and track push tokens and push delivered and clicked events. The **Track Custom Event** dialog includes presets that trigger the test in-app messages, for example `Modal`, `Fullscreen`, `Slide-in`, and `Alert Rich`.
+  - [`TrackingView.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/Tracking/TrackingView.swift)
+  - [`IdentifyDialog.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Shared/Components/Dialogs/IdentifyDialog.swift)
+  - [`TrackCustomEventDialog.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Shared/Components/Dialogs/TrackCustomEventDialog.swift)
 
-- The **Anonymize** view lets you anonymize the current user and stop the SDK integration.
-  > [`AnonymizeViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Anonymize/AnonymizeViewController.swift)
+- The **Flushing** screen lets you read and change the flush mode and flush period, trigger a manual data flush, and read and change the SDK log level.
+  - [`FlushingView.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/Flushing/FlushingView.swift)
 
-- The **In-app Content Blocks** view displays in-app content blocks. Use placeholder IDs `example_top`, `ph_x_example_iOS`, `example_list`, `example_carousel`, and `example_carousel_ios` in your in-app content block settings.
-  > [`InAppContentBlocksViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift)
-  > [`InAppContentBlockCarouselViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlockCarouselViewController.swift)
+- The **Anonymize** screen lets you anonymize the current customer and stop the SDK integration.
+  - [`AnonymizeView.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/Anonymize/AnonymizeView.swift)
 
-- The **Logging** view displays log messages from the SDK.
-  > [`LogViewController.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Logging/LogViewController.swift)
+- The **In-app CB** screen displays in-app content blocks. Use the placeholder IDs `example_top` and `example_list` in your in-app content block settings, and `ph_x_example_iOS` to test platform-specific content blocks. Turn on **Show carousels** to display the `example_carousel` and `example_carousel_ios` carousels, including a carousel that filters and sorts its content blocks.
+  - [`ContentBlocksView.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/ContentBlocks/ContentBlocksView.swift)
+  - [`ExampleCarouselViews.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/ContentBlocks/ExampleCarouselViews.swift)
+
+The app also logs segmentation data, in-app message actions, and opened push notifications to the logs sheet, so you can see the SDK callbacks in action.
+  - [`ExampleListeners.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Shared/SDK/ExampleListeners.swift)
+  - [`LogsView.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Shared/Logging/LogsView.swift)
+
+The app handles universal links on `mobile-sdk-example-apps.web.app` and links with the `exponea://` scheme. Links containing `fetch`, `track`, `flush`, `anonymize`, or `inappcb` open the matching screen.
+  - [`Deeplinks.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/App/Deeplinks.swift)
 
 Try out the different features in the app, then find the customer profile in the {user.mkg} web app (under `Data & Assets` > `Customers`) to see the properties and events tracked by the SDK.
 
-If you enter a `Registered customer ID` on the authentication screen (Stream ID mode), the customer is identified from startup and can be found in the {user.mkg} web app by their registered ID.
+If you left the **Registered Customer ID** field blank, the customer is tracked anonymously using a cookie soft ID. You can look up the cookie value on the **Tracking** screen and find the corresponding profile in the {user.mkg} web app.
 
-If you left the `Registered customer ID` field blank, or are using Project token mode, the customer is tracked anonymously using a cookie soft ID. You can look up the cookie value in the logs and find the corresponding profile in the {user.mkg} web app.
-
-If you use `Identify Customer` in the app to set the `registered` hard ID (use an email address as value), the customer is identified and can be found in the {user.mkg} web app by their email address.
+If you entered a hard ID — for example, an email address — in the **Registered Customer ID** field, you can find the customer in the {user.mkg} web app by their email address.
 
 > 📘
 >
-> Refer to [Customer identification](https://documentation.bloomreach.com/engagement/docs/customer-identification) for more information on soft IDs and hard IDs.
+> For more information on soft IDs and hard IDs, see [Customer identification](https://documentation.bloomreach.com/engagement/docs/customer-identification).
 
-![Example app screens: flushing, anonymize, logging, content blocks](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/ios-example-app-screens-2.png)
+![Example app screens: flushing, anonymize, content blocks](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/example-app-screens-2.png)
 
 ## Troubleshooting
 

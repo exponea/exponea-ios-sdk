@@ -1,0 +1,4 @@
+# Minimal allowlist for negative fixture tests (does not cover btn_unknown_fixture_gap).
+gaps:
+  btn_nav_fetching:
+    owner: example-shell-contract

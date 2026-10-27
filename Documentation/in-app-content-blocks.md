@@ -62,11 +62,6 @@ Exponea.shared.inAppContentBlocksManager?.refreshCallback = { [weak self] indexP
 }
 ```
 
-
-> 📘
->
-> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
-
 > 👍
 >
 > Always us descriptive, human-readable placeholder IDs. They are tracked as an event property and can be used for analytics within {user.mkg}.
@@ -445,7 +440,7 @@ class CustomInAppContentBlockCallback: InAppContentBlockCallbackType {
 
 > 📘
 >
-> Refer to [InAppContentBlocksViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlocksViewController.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a working example.
+> For a working example, see `ConsentIgnoringContentBlockCallback` in [StaticContentBlockRepresentable.swift](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/ContentBlocks/StaticContentBlockRepresentable.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app). It tracks interactions with the `*WithoutTrackingConsent` methods and opens action links itself.
 
 #### Carousel view
 
@@ -654,7 +649,7 @@ The order in which content blocks are displayed is determined by:
 1. By the `Priority` setting, descending
 2. By the `Name`, ascending (alphabetically)
 
-You can extend `CarouselInAppContentBlockView` to override methods like `func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?)` and `func sortContentBlocks(data: [StaticReturnData]) -> [StaticReturnData]`. Refer to [`InAppContentBlockCarouselViewController`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/InAppContentBlocks/InAppContentBlockCarouselViewController.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for an example implementation ()`CustomCarouselView`).
+You can extend `CarouselInAppContentBlockView` to override methods such as `func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?)` and `func sortContentBlocks(data: [StaticReturnData]) -> [StaticReturnData]`. For an example implementation, see [`ExampleFilteredCarouselView`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/ContentBlocks/ExampleCarouselViews.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app).
 
 ```swift
 class CustomCarouselView: CarouselInAppContentBlockView {

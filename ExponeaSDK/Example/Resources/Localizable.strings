@@ -1,5 +1,128 @@
+/* App */
+"app.name" = "Bloomreach SDK Demo";
+
+/* Tabs */
+"tab.fetching" = "Fetching";
+"tab.tracking" = "Tracking";
+"tab.flushing" = "Flushing";
+"tab.anonymize" = "Anonymize";
+"tab.contentBlocks" = "In-app CB";
+
+/* Configuration screen */
+"config.title" = "SDK Configuration";
+"config.mode.project" = "Project";
+"config.mode.stream" = "Stream / Data Hub";
+"config.field.projectToken" = "Project Token";
+"config.field.authToken" = "Authorization Token";
+"config.field.advancedAuthKey" = "Advanced Auth Key";
+"config.field.streamId" = "Stream ID";
+"config.field.jwtKeyId" = "JWT Key ID";
+"config.field.jwtSecret" = "JWT Secret";
+"config.field.baseUrl" = "API Base URL";
+"config.field.registeredId" = "Registered Customer ID";
+"config.field.applicationId" = "Application ID";
+"config.action.start" = "Start";
+"config.action.clearLocalData" = "Clear Local Data";
+"config.error.missingFields" = "Please fill in all required fields.";
+"config.error.invalidUrl" = "API Base URL is not a valid URL.";
+"config.error.jwtPair" = "JWT Key ID and Secret must both be provided or both be empty.";
+
+/* Fetching screen */
+"fetching.title" = "Fetching";
+"fetching.action.consents" = "Fetch Consents";
+"fetching.action.recommendations" = "Fetch Recommendations";
+"fetching.action.segments" = "Fetch Segments";
+"fetching.action.clearResult" = "Clear";
+"fetching.result.empty" = "No result yet.";
+"fetching.fetchConsents" = "Fetch Consents";
+"fetching.fetchRecommendations" = "Fetch Recommendations";
+"fetching.fetchSegments" = "Fetch Segments";
+"fetching.recommendationIdPlaceholder" = "Recommendation ID";
+
+/* Tracking screen */
+"tracking.title" = "Tracking";
+"tracking.label.cookie" = "Customer Cookie / ID";
+"tracking.action.identify" = "Identify Customer";
+"tracking.action.setAuthToken" = "Set Auth Token";
+"tracking.action.customEvent" = "Track Custom Event";
+"tracking.action.payment" = "Track Payment";
+"tracking.action.pushPermission" = "Request Push Permission";
+"tracking.action.pushToken" = "Track Push Token";
+"tracking.action.pushDelivered" = "Track Delivered Push";
+"tracking.action.pushClicked" = "Track Clicked Push";
+"tracking.identify" = "Identify Customer";
+"tracking.customEvent" = "Track Custom Event";
+"tracking.trackPayment" = "Track Payment";
+"tracking.requestPushPermission" = "Request Push Permission";
+"tracking.trackDeliveredPush" = "Track Delivered Push";
+"tracking.trackClickedPush" = "Track Clicked Push";
+"tracking.setAuthToken" = "Set Auth Token";
+
+/* Flushing screen */
+"flushing.title" = "Flushing";
+"flushing.applyMode" = "Apply Mode";
+"flushing.flushNow" = "Flush Now";
+"flushing.applyLogLevel" = "Apply Log Level";
+"flushing.section.mode" = "Flush Mode";
+"flushing.section.period" = "Flush Period";
+"flushing.section.manual" = "Manual Flush";
+"flushing.section.logLevel" = "Log Level";
+"flushing.mode.immediate" = "Immediate";
+"flushing.mode.periodic" = "Periodic";
+"flushing.mode.manual" = "Manual";
+"flushing.period.30s" = "30 seconds";
+"flushing.period.60s" = "60 seconds";
+"flushing.action.flushNow" = "Flush Now";
+"flushing.logLevel.none" = "Off";
+"flushing.logLevel.error" = "Error";
+"flushing.logLevel.warning" = "Warning";
+"flushing.logLevel.verbose" = "Verbose";
+
+/* Anonymize screen */
+"anonymize.title" = "Anonymize";
+"anonymize.action.anonymize" = "Anonymize";
+"anonymize.action.stopIntegration" = "Stop Integration";
+"anonymize.confirm.anonymize" = "Are you sure you want to anonymize? This will clear stored customer data and start a new anonymous session.";
+"anonymize.confirm.stopIntegration" = "Are you sure you want to stop integration? The SDK will be de-integrated.";
+"anonymize.anonymize" = "Anonymize";
+"anonymize.stopIntegration" = "Stop Integration";
+"anonymize.description" = "Erases locally stored customer data and assigns a new anonymous customer cookie.";
+"anonymize.stopIntegrationDescription" = "Stops all SDK activity. Requires a full restart of the app to re-integrate.";
+"anonymize.stopIntegrationConfirmation" = "This will stop all SDK activity. Are you sure?";
+
+/* Content Blocks screen */
+"contentBlocks.title" = "Content Blocks";
+"contentBlocks.segment.placeholders" = "Placeholders";
+"contentBlocks.segment.carousels" = "Carousels";
+"contentBlocks.carousel.status" = "Showing %@ as %d of %d";
+"contentBlocks.staticPlaceholder" = "Static Placeholder ID";
+"contentBlocks.carouselPlaceholder" = "Carousel Placeholder ID";
+
+/* Logs viewer */
+"logs.title" = "SDK Logs";
+"logs.filter.all" = "All";
+"logs.action.clear" = "Clear";
+"logs.action.copy" = "Copy";
+"logs.action.close" = "Close";
+"logs.empty" = "No logs yet. Trigger an SDK action to populate.";
+
+/* Dialogs */
+"dialog.identify.title" = "Identify Customer";
+"dialog.identify.addProperty" = "Add Property";
+"dialog.identify.withToken" = "With Auth Token";
+"dialog.identify.confirm" = "Identify";
+"dialog.customEvent.title" = "Track Custom Event";
+"dialog.customEvent.namePlaceholder" = "Event name";
+"dialog.customEvent.addProperty" = "Add Property";
+"dialog.customEvent.confirm" = "Track";
+"dialog.recommendation.title" = "Fetch Recommendations";
+"dialog.recommendation.idPlaceholder" = "Recommendation ID";
+"dialog.recommendation.fillRandom" = "Fill with Random";
+"dialog.recommendation.confirm" = "Fetch";
+
+/* SDK App Inbox */
 "exponea.inbox.button" = "Inbox";
-"exponea.inbox.title" = "Example AppInbox";
+"exponea.inbox.title" = "App Inbox";
 "exponea.inbox.emptyTitle" = "Empty Inbox";
 "exponea.inbox.emptyMessage" = "You have no messages yet.";
 "exponea.inbox.errorTitle" = "Something went wrong :(";

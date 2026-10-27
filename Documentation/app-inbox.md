@@ -62,7 +62,7 @@ That's all that's required to integrate the App Inbox. Optionally, you can [cust
 
 > 📘
 >
-> See [FetchViewController](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/Fetching/FetchViewController.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> For a reference implementation, see [FetchingView](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/Fetching/FetchingView.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app).
 
 ## Default App Inbox behavior
 
@@ -131,7 +131,7 @@ Your `AppInboxProvider` instance must implement all App Inbox UI components. You
 
 > 📘
 >
-> Refer to [ExampleAppInboxProvider](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Views/ExampleAppInboxProvider.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a reference implementation.
+> For a reference implementation, see [ExampleAppInboxProvider](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Features/Fetching/AppInboxButtonRepresentable.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app).
 
 #### App Inbox button
 

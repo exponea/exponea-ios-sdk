@@ -1,0 +1,7 @@
+capabilities:
+  example-app-shell:
+    screen: AppShell
+    startsOnMainScreen: true
+    semantics:
+      - btn_nav_fetching
+      - btn_nav_fetching

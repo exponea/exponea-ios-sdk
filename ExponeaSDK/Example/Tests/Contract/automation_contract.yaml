@@ -1,0 +1,220 @@
+capabilities:
+  example-app-shell:
+    screen: AppShell
+    startsOnMainScreen: true
+    semantics:
+      - btn_nav_fetching
+      - btn_nav_tracking
+      - btn_nav_flushing
+      - btn_nav_anonymize
+      - btn_nav_content_blocks
+      - btn_reset_state
+      - btn_open_logs
+      - btn_shell_logo
+      - status_sdk_indicator
+      - id: btn_reset_back_to_auth
+        afterTap: btn_reset_state
+      - id: btn_reset_stop_and_continue
+        afterTap: btn_reset_state
+      - id: btn_reset_cancel
+        afterTap: btn_reset_state
+  authentication-config:
+    screen: AuthenticationScreen
+    startsOnMainScreen: false
+    semantics:
+      - lbl_auth_title
+      - btn_auth_mode_project
+      - btn_auth_mode_stream
+      - fld_auth_project_token
+      - fld_auth_authorization_token
+      - fld_auth_advanced_auth
+      - fld_auth_registered_id
+      - fld_auth_api_url
+      - fld_auth_application_id
+      - btn_auth_start
+      - btn_auth_clear_local_data
+      - id: fld_auth_stream_id
+        afterTap: btn_auth_mode_stream
+      - id: fld_auth_jwt_key_id
+        afterTap: btn_auth_mode_stream
+      - id: fld_auth_jwt_secret
+        afterTap: btn_auth_mode_stream
+  fetching:
+    screen: FetchingScreen
+    startsOnMainScreen: true
+    semantics:
+      - btn_fetch_consents
+      - btn_fetch_recommendations
+      - btn_fetch_segments
+      - btn_app_inbox_provider
+      - btn_open_inbox
+      - btn_clear_result
+      - lbl_fetch_result
+      - status_fetch_loading
+      - id: fld_recommendation_id
+        afterTap: btn_fetch_recommendations
+      - id: btn_recommendation_dialog_fetch
+        afterTap: btn_fetch_recommendations
+      - id: btn_recommendation_dialog_cancel
+        afterTap: btn_fetch_recommendations
+  app-inbox:
+    screen: FetchingScreen
+    startsOnMainScreen: true
+    semantics:
+      - btn_open_inbox
+  tracking:
+    screen: TrackingScreen
+    startsOnMainScreen: true
+    navTab: btn_nav_tracking
+    streamMode: true
+    semantics:
+      - lbl_cookie_id
+      - btn_copy_cookie_id
+      - btn_identify_customer
+      - btn_set_auth_token
+      - btn_track_custom_event
+      - btn_track_payment
+      - btn_track_page_view
+      - btn_request_push
+      - btn_track_fcm_token
+      - btn_track_push_delivered
+      - btn_track_push_clicked
+      - id: btn_identify
+        afterTap: btn_identify_customer
+      - id: fld_registered_id
+        afterTap: btn_identify_customer
+      - id: lbl_registered_id
+        afterTap: btn_identify_customer
+      - id: btn_identify_auth
+        afterTap: btn_identify_customer
+      - id: fld_identify_attr_name
+        afterTap: btn_identify_customer
+      - id: fld_identify_attr_value
+        afterTap: btn_identify_customer
+      - id: btn_identify_add_attr
+        afterTap: btn_identify_customer
+      - id: lbl_identify_attrs_json
+        afterTap: btn_identify_customer
+      - id: sel_inapp_preset
+        afterTap: btn_track_custom_event
+      - id: btn_track_event
+        afterTap: btn_track_custom_event
+      - id: fld_event_name
+        afterTap: btn_track_custom_event
+      - id: fld_event_attr_name
+        afterTap: btn_track_custom_event
+      - id: fld_event_attr_value
+        afterTap: btn_track_custom_event
+      - id: btn_event_add_attr
+        afterTap: btn_track_custom_event
+      - id: lbl_event_props_json
+        afterTap: btn_track_custom_event
+  flushing:
+    screen: FlushingScreen
+    startsOnMainScreen: true
+    navTab: btn_nav_flushing
+    semantics:
+      - tab_flush_mode
+      - tab_flush_period
+      - tab_log_level
+      - btn_get_flush_mode
+      - btn_flush_mode_immediate
+      - btn_flush_mode_period
+      - btn_flush_mode_app_close
+      - btn_flush_mode_manual
+      - id: btn_get_flush_period
+        afterTap: tab_flush_period
+      - id: btn_flush_period_30
+        afterTap: tab_flush_period
+      - id: btn_flush_period_60
+        afterTap: tab_flush_period
+      - id: btn_flush_data
+        afterTap: tab_flush_period
+      - id: btn_get_log_level
+        afterTap: tab_log_level
+      - id: btn_log_off
+        afterTap: tab_log_level
+      - id: btn_log_error
+        afterTap: tab_log_level
+      - id: btn_log_warn
+        afterTap: tab_log_level
+      - id: btn_log_info
+        afterTap: tab_log_level
+      - id: btn_log_debug
+        afterTap: tab_log_level
+      - id: btn_log_verbose
+        afterTap: tab_log_level
+  anonymize:
+    screen: AnonymizeScreen
+    startsOnMainScreen: true
+    navTab: btn_nav_anonymize
+    semantics:
+      - btn_anonymize
+      - btn_stop_integration
+      - id: btn_anonymized_ok
+        afterTap: btn_anonymize
+      - id: btn_stop_back_to_auth
+        afterTap: btn_stop_integration
+      - id: btn_stop_continue
+        afterTap: btn_stop_integration
+      - id: btn_stop_cancel
+        afterTap: btn_stop_integration
+  content-blocks-and-in-app-messages:
+    screen: ContentBlocksScreen
+    startsOnMainScreen: true
+    navTab: btn_nav_content_blocks
+    semantics:
+      - btn_toggle_carousels
+      - cb_placeholder_example_top
+      - cb_placeholder_example_platform
+      - cb_placeholder_example_list
+      - id: cb_carousel_default
+        afterTap: btn_toggle_carousels
+      - id: cb_carousel_filtered
+        afterTap: btn_toggle_carousels
+      - id: cb_carousel_platform
+        afterTap: btn_toggle_carousels
+      - id: lbl_carousel_status
+        afterTap: btn_toggle_carousels
+      - cb_tab_classic
+      - cb_tab_runtime_lab
+      - id: btn_cb_runtime_prefetch
+        afterTap: cb_tab_runtime_lab
+      - id: btn_cb_runtime_availability
+        afterTap: cb_tab_runtime_lab
+      - id: btn_cb_runtime_invalidate
+        afterTap: cb_tab_runtime_lab
+      - id: btn_cb_runtime_logout
+        afterTap: cb_tab_runtime_lab
+      - id: lbl_cb_runtime_status
+        afterTap: cb_tab_runtime_lab
+  configuration-sheet:
+    screen: AppShell
+    startsOnMainScreen: true
+    semantics:
+      - id: btn_config_close
+        afterTap: btn_shell_logo
+      - id: lbl_config_not_configured
+        afterTap: btn_shell_logo
+  logs-sheet:
+    screen: AppShell
+    startsOnMainScreen: true
+    semantics:
+      - id: btn_logs_copy
+        afterTap: btn_open_logs
+      - id: btn_logs_clear
+        afterTap: btn_open_logs
+      - id: btn_logs_close
+        afterTap: btn_open_logs
+      - id: btn_logs_filter_all
+        afterTap: btn_open_logs
+      - id: btn_logs_filter_verbose
+        afterTap: btn_open_logs
+      - id: btn_logs_filter_debug
+        afterTap: btn_open_logs
+      - id: btn_logs_filter_info
+        afterTap: btn_open_logs
+      - id: btn_logs_filter_warn
+        afterTap: btn_open_logs
+      - id: btn_logs_filter_error
+        afterTap: btn_open_logs

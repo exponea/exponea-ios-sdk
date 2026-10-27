@@ -1,0 +1,6 @@
+capabilities:
+  test-unknown-gap:
+    screen: TestScreen
+    startsOnMainScreen: true
+    semantics:
+      - btn_unknown_fixture_gap

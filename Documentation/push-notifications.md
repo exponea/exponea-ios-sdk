@@ -97,6 +97,8 @@ Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
 >
 > The SDK provides a push setup self-check feature to help developers successfully set up push notifications. The self-check will try to track the push token, request the {user.mkg} backend to send a silent push to the device, and check if the app is ready to open push notifications.
 >
+> The self-check runs only in debug builds. While it runs, the SDK registers for remote notifications and tracks the push token even if the user hasn't granted notification permission, as if `requirePushAuthorization` were `false`. Until the user grants permission, the `notification_state` event reports `valid=false`.
+>
 > To enable the setup check, set `Exponea.shared.checkPushSetup = true` **before** [initializing the SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#initialize-the-sdk):
 
 ### Step 3: Implement application delegate methods
@@ -279,7 +281,7 @@ extension AppDelegate: PushNotificationManagerDelegate {
 
 > 📘
 >
-> Refer to [`AppDelegate`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/AppDelegate.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app) for a basic example.
+> For a basic example, see [`ExampleListeners.swift`](https://github.com/exponea/exponea-ios-sdk/blob/main/ExponeaSDK/Example/Shared/SDK/ExampleListeners.swift) in the [Example app for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-example-app). The example app passes its delegate to `configure` through `pushNotificationTracking: .enabled(appGroup:delegate:)`.
 
 > ❗️Important
 >
