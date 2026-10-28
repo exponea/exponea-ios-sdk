@@ -17,6 +17,8 @@ final class MockSceneForwarding: SceneUniversalLinkForwarding {
     let isForegroundActive: Bool
     let canForwardUniversalLink: Bool
     private(set) var forwardedActivity: NSUserActivity?
+    private(set) var forwardedOnMainThread: Bool?
+    var onForward: (() -> Void)?
 
     init(isForegroundActive: Bool, canForwardUniversalLink: Bool) {
         self.isForegroundActive = isForegroundActive
@@ -25,6 +27,8 @@ final class MockSceneForwarding: SceneUniversalLinkForwarding {
 
     func forwardUniversalLink(_ userActivity: NSUserActivity) {
         forwardedActivity = userActivity
+        forwardedOnMainThread = Thread.isMainThread
+        onForward?()
     }
 }
 
@@ -165,6 +169,56 @@ final class UrlOpenerSpec: QuickSpec {
                     scenedUrlOpener.openDeeplink("https://example.com/page")
 
                     expect(openedURL?.absoluteString).to(equal("https://example.com/page"))
+                }
+            }
+
+            context("threading") {
+                beforeEach {
+                    IntegrationManager.shared.isStopped = false
+                }
+
+                it("forwards universal link to scene delegate on main thread when called from background") {
+                    let activeScene = MockSceneForwarding(isForegroundActive: true, canForwardUniversalLink: true)
+                    let scenedUrlOpener = UrlOpener(connectedWindowScenesProvider: { [activeScene] })
+
+                    waitUntil(timeout: .seconds(5)) { done in
+                        activeScene.onForward = done
+                        DispatchQueue.global(qos: .userInitiated).async {
+                            scenedUrlOpener.openDeeplink("https://example.com/page")
+                        }
+                    }
+
+                    expect(activeScene.forwardedOnMainThread).to(beTrue())
+                }
+
+                it("opens URL scheme deeplink on main thread when called from background") {
+                    var openedOnMainThread: Bool?
+                    waitUntil(timeout: .seconds(5)) { done in
+                        let scenedUrlOpener = UrlOpener(
+                            connectedWindowScenesProvider: { [] },
+                            openURLHandler: { _, _ in
+                                openedOnMainThread = Thread.isMainThread
+                                done()
+                            }
+                        )
+                        DispatchQueue.global(qos: .userInitiated).async {
+                            scenedUrlOpener.openDeeplink("exponea://deeplink")
+                        }
+                    }
+
+                    expect(openedOnMainThread).to(beTrue())
+                }
+
+                it("opens deeplink synchronously when already on main thread") {
+                    var openedURL: URL?
+                    let scenedUrlOpener = UrlOpener(
+                        connectedWindowScenesProvider: { [] },
+                        openURLHandler: { url, _ in openedURL = url }
+                    )
+
+                    scenedUrlOpener.openDeeplink("exponea://deeplink")
+
+                    expect(openedURL?.absoluteString).to(equal("exponea://deeplink"))
                 }
             }
         }

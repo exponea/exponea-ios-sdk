@@ -12,10 +12,9 @@ public typealias EmptyBlock = () -> Swift.Void
 public typealias EmptyThrowsBlock =  () throws -> Swift.Void
 
 protocol ExpoInitManagerType {
-    var actionBlocks: [EmptyThrowsBlock] { get set }
+    var actionBlocks: [EmptyThrowsBlock] { get }
     var isConfigured: Bool { get }
 
-    func notifyListenerIfNeeded()
     func doActionAfterExponeaInit(_ action: @escaping EmptyThrowsBlock) rethrows
     func setStatus(status: ExpoInitManager.ExponeaInitType)
     func clean()
@@ -29,39 +28,59 @@ final class ExpoInitManager: ExpoInitManagerType {
         case configured
     }
 
+    // Init status and the queue of deferred actions are kept in a single atomic value,
+    // so that switching to `.configured` and taking the queued actions is one step.
+    // Every action therefore runs exactly once: it is either queued before the switch and replayed,
+    // or it runs directly after it. Order is not guaranteed: an action submitted while the replay
+    // is running runs immediately and can run before older queued actions.
+    private enum State {
+        case pending([EmptyThrowsBlock])
+        case configured
+    }
+
     // MARK: - Properties
-    internal var status: ExponeaInitType = .notInitialized
-    internal var isConfigured: Bool { sdkInstance.isConfigured }
-    @Atomic internal var actionBlocks: [EmptyThrowsBlock] = []
-    internal var sdkInstance: ExponeaType
+    @Atomic private var state: State = .pending([])
+    private let isConfiguredProvider: () -> Bool
+    internal var isConfigured: Bool { isConfiguredProvider() }
+    internal var actionBlocks: [EmptyThrowsBlock] {
+        if case .pending(let blocks) = state { return blocks }
+        return []
+    }
 
     // MARK: - Init
-    init(sdk: ExponeaType) {
-        sdkInstance = sdk
+    convenience init(sdk: ExponeaType) {
+        self.init(isConfigured: { sdk.isConfigured })
+    }
+
+    init(isConfigured: @escaping () -> Bool) {
+        isConfiguredProvider = isConfigured
     }
 }
 
 // MARK: - Methods
 extension ExpoInitManager {
     func setStatus(status: ExponeaInitType) {
-        self.status = status
         switch status {
-        case .notInitialized: break
+        case .notInitialized:
+            _state.changeValue(with: { $0 = .pending([]) })
         case .configured:
-            notifyListenerIfNeeded()
+            guard !IntegrationManager.shared.isStopped else {
+                Exponea.logger.log(.error, message: "Method has not been invoked, SDK is stopping")
+                return
+            }
+            guard isConfigured else { return }
+            var pending: [EmptyThrowsBlock] = []
+            _state.changeValue(with: {
+                if case .pending(let blocks) = $0 {
+                    pending = blocks
+                }
+                $0 = .configured
+            })
+            // Replay runs outside of the atomic section, so actions may safely call back into this manager
+            for action in pending {
+                Exponea.shared.logOnException(action, errorHandler: nil)
+            }
         }
-    }
-
-    internal func notifyListenerIfNeeded() {
-        guard !IntegrationManager.shared.isStopped else {
-            Exponea.logger.log(.error, message: "Method has not been invoked, SDK is stopping")
-            return
-        }
-        guard isConfigured, status == .configured, !actionBlocks.isEmpty else { return }
-        for action in actionBlocks {
-            Exponea.shared.logOnException(action, errorHandler: nil)
-        }
-        clean()
     }
 
     // This will be visible only - rest private
@@ -70,15 +89,31 @@ extension ExpoInitManager {
             Exponea.logger.log(.error, message: "Method has not been invoked, SDK is stopping")
             return
         }
-        if isConfigured && status == .configured {
+        var runNow = false
+        _state.changeValue(with: {
+            switch $0 {
+            case .pending(let blocks):
+                $0 = .pending(blocks + [action])
+            case .configured:
+                runNow = true
+            }
+        })
+        if runNow {
             try action()
-        } else {
-            _actionBlocks.changeValue(with: { $0.append(action) })
         }
     }
 
     func clean() {
-        Exponea.logger.log(.verbose, message: "Action blocks (\(actionBlocks.count)) have been deleted")
-        _actionBlocks.changeValue(with: { $0.removeAll() })
+        var deletedCount: Int?
+        _state.changeValue(with: {
+            if case .pending(let blocks) = $0 {
+                deletedCount = blocks.count
+                $0 = .pending([])
+            }
+        })
+        // Logged outside of the atomic section, a log hook may call back into this manager
+        if let deletedCount {
+            Exponea.logger.log(.verbose, message: "Action blocks (\(deletedCount)) have been deleted")
+        }
     }
 }

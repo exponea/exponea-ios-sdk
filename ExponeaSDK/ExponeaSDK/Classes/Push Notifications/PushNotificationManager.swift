@@ -71,21 +71,25 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         }
         set {
             delegateValue = newValue
-            guard let delegateValue = delegateValue else {
-                return
-            }
-            pendingOpenedPushes.forEach {
-                if $0.silent {
-                    delegateValue.silentPushNotificationReceived(extraData: $0.extraData)
-                } else {
-                    delegateValue.pushNotificationOpened(
-                        with: $0.actionType,
-                        value: $0.actionValue,
-                        extraData: $0.extraData
-                    )
+            // pending pushes are stored and delivered on main only, the delegate may be set from any thread
+            onMain {
+                guard let delegateValue = self.delegateValue else {
+                    return
+                }
+                let pendingPushes = self.pendingOpenedPushes
+                self.pendingOpenedPushes = []
+                pendingPushes.forEach {
+                    if $0.silent {
+                        delegateValue.silentPushNotificationReceived(extraData: $0.extraData)
+                    } else {
+                        delegateValue.pushNotificationOpened(
+                            with: $0.actionType,
+                            value: $0.actionValue,
+                            extraData: $0.extraData
+                        )
+                    }
                 }
             }
-            pendingOpenedPushes = []
         }
     }
 
@@ -292,10 +296,13 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
         }
         trackingConsentManager.trackClickedPush(data: pushOpenedData)
         if pushOpenedData.silent {
-            if let delegate = delegate {
-                delegate.silentPushNotificationReceived(extraData: pushOpenedData.extraData)
-            } else {
-                pendingOpenedPushes.append(pushOpenedData)
+            // the delegate is app code, call it on main even when a deferred push open is replayed off main
+            onMain {
+                if let delegate = self.delegate {
+                    delegate.silentPushNotificationReceived(extraData: pushOpenedData.extraData)
+                } else {
+                    self.pendingOpenedPushes.append(pushOpenedData)
+                }
             }
         } else {
             if pushOpenedData.considerConsent
@@ -308,15 +315,17 @@ final class PushNotificationManager: NSObject, PushNotificationManagerType {
                 Exponea.shared.trackCampaignData(data: pushOpenedData.campaignData, timestamp: nil)
             }
 
-            // Notify the delegate
-            if let delegate = delegate {
-                delegate.pushNotificationOpened(
-                    with: pushOpenedData.actionType,
-                    value: pushOpenedData.actionValue,
-                    extraData: pushOpenedData.extraData
-                )
-            } else {
-                pendingOpenedPushes.append(pushOpenedData)
+            // Notify the delegate on main, same as for silent pushes above
+            onMain {
+                if let delegate = self.delegate {
+                    delegate.pushNotificationOpened(
+                        with: pushOpenedData.actionType,
+                        value: pushOpenedData.actionValue,
+                        extraData: pushOpenedData.extraData
+                    )
+                } else {
+                    self.pendingOpenedPushes.append(pushOpenedData)
+                }
             }
 
             switch pushOpenedData.actionType {

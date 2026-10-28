@@ -696,9 +696,8 @@ public extension ExponeaInternal {
 
         let performTeardown: () -> Void = { [weak self] in
             IntegrationManager.shared.isStopped = true
-            self?.afterInit.actionBlocks.removeAll()
+            // Resets init status and drops any queued actions
             self?.afterInit.setStatus(status: .notInitialized)
-            self?.afterInit.clean()
             self?.clearUserData(appGroup: appGroup)
             self?.isStopping = false
             DispatchQueue.main.async { completion?() }

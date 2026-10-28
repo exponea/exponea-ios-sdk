@@ -69,7 +69,11 @@ final class UrlOpener: UrlOpenerType {
             Exponea.logger.log(.warning, message: "Provided url \"\(urlString)\" is invalid")
             return
         }
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        // Callers may run on any thread (e.g. deferred actions replayed after SDK init),
+        // but UIApplication must only be used from the main thread
+        onMain {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
     }
 
     func openDeeplink(_ urlString: String) {
@@ -77,9 +81,13 @@ final class UrlOpener: UrlOpenerType {
             Exponea.logger.log(.warning, message: "Provided url \"\(urlString)\" is invalid")
             return
         }
-        self.openUniversalLink(url, application: UIApplication.shared) { result in
-            if !result {
-                self.openURLSchemeDeeplink(url, application: UIApplication.shared)
+        // Callers may run on any thread (e.g. deferred actions replayed after SDK init), but app/scene
+        // delegates are main-actor isolated, and calling them off main traps (e.g. Expo SDK 57)
+        onMain {
+            self.openUniversalLink(url, application: UIApplication.shared) { result in
+                if !result {
+                    self.openURLSchemeDeeplink(url, application: UIApplication.shared)
+                }
             }
         }
     }

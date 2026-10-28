@@ -374,14 +374,14 @@ final class CompletionGuaranteesSpec: QuickSpec {
                         }
 
                         // The call was placed before configure(...); the action must be queued,
-                        // not invoked. ExpoInitManager.doActionAfterExponeaInit appends to
-                        // actionBlocks when status != .configured.
+                        // not invoked. The action is held in the pending state until
+                        // configuration completes.
                         expect(exponea.afterInit.actionBlocks.count).to(equal(1))
 
-                        // configure(...) synchronously drains the queued actions via
-                        // ExpoInitManager.notifyListenerIfNeeded, which fires the deferred
-                        // flushData against the now-configured pipeline. The trampoline then
-                        // delivers the user callback on the main thread.
+                        // configure(...) switches the state to configured and replays the
+                        // pending actions, which fires the deferred flushData against the
+                        // now-configured pipeline. The trampoline then delivers the user
+                        // callback on the main thread.
                         Exponea.shared.configure(
                             Exponea.ProjectSettings(
                                 projectToken: "mock-token",
