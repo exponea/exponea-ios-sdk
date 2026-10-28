@@ -96,21 +96,7 @@ public struct InAppButtonPayload: Codable {
     }
 
     private func extractFont(base64: String?, size: CGFloat?) -> UIFont? {
-        if let base64 = base64,
-           let data = Data(base64Encoded: base64),
-           let dataProvider = CGDataProvider(data: data as CFData),
-           let cgFont = CGFont(dataProvider) {
-            var error: Unmanaged<CFError>?
-            if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
-                var font: UIFont?
-                if let fontName = cgFont.postScriptName as? String {
-                    font = UIFont(name: fontName, size: size ?? 13)
-                }
-                CTFontManagerUnregisterGraphicsFont(cgFont, &error)
-                return font
-            }
-        }
-        return nil
+        InAppFontLoader.load(base64: base64, size: size)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -343,21 +329,7 @@ public struct RichInAppMessagePayload: Codable, Sendable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         func extractFont(base64: String?, size: CGFloat?) -> UIFont? {
-            if let base64 = base64,
-               let data = Data(base64Encoded: base64),
-               let dataProvider = CGDataProvider(data: data as CFData),
-               let cgFont = CGFont(dataProvider) {
-                var error: Unmanaged<CFError>?
-                if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
-                    var font: UIFont?
-                    if let fontName = cgFont.postScriptName as? String {
-                        font = UIFont(name: fontName, size: size ?? 13)
-                    }
-                    CTFontManagerUnregisterGraphicsFont(cgFont, &error)
-                    return font
-                }
-            }
-            return nil
+            InAppFontLoader.load(base64: base64, size: size)
         }
 
         buttons = try container.decode([InAppButtonPayload].self, forKey: .buttons)

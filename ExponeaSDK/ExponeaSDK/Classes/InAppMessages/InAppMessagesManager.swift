@@ -518,27 +518,19 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
     private func extractFont(url: String, fontSize: String?, size: CGFloat?) async -> InAppButtonFontData? {
         await withCheckedContinuation { continuation in
             DispatchQueue.global(qos: .background).async {
-                if let data = FileCache.shared.getOrDownloadFile(at: url),
-                   let dataProvider = CGDataProvider(data: data as CFData),
-                   let cgFont = CGFont(dataProvider) {
-                    var fontData: InAppButtonFontData = .init()
-                    var error: Unmanaged<CFError>?
-                    if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
-                        fontData.fontName = cgFont.postScriptName as? String
-                        CTFontManagerUnregisterGraphicsFont(cgFont, &error)
-                        let size = size ?? fontSize?.convertPxToFloatWithDefaultValue() ?? 13
-                        fontData.fontSize = size
-                        fontData.fontData = data.base64EncodedString()
-                    } else {
-                        Exponea.logger.log(
-                            .error,
-                            message: "[InApp] Cant download custom font from url"
-                        )
-                    }
-                    continuation.resume(returning: fontData)
-                } else {
+                guard let data = FileCache.shared.getOrDownloadFile(at: url),
+                      let font = InAppFontLoader.load(
+                        data: data,
+                        size: size ?? fontSize?.convertPxToFloatWithDefaultValue() ?? 13
+                      ) else {
                     continuation.resume(returning: nil)
+                    return
                 }
+                continuation.resume(returning: InAppButtonFontData(
+                    fontName: font.fontName,
+                    fontSize: font.pointSize,
+                    fontData: data.base64EncodedString()
+                ))
             }
         }
     }
@@ -1019,24 +1011,6 @@ final class InAppMessagesManager: InAppMessagesManagerType, @unchecked Sendable 
             .verbose,
             message: "[InApp] Got \(messages.count) messages with highest priority. \(messages.map { $0.name })")
         return messages
-    }
-
-    private func extractFont(base64: String?, size: CGFloat?) -> UIFont? {
-        if let base64 = base64,
-           let data = Data(base64Encoded: base64),
-           let dataProvider = CGDataProvider(data: data as CFData),
-           let cgFont = CGFont(dataProvider) {
-            var error: Unmanaged<CFError>?
-            if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
-                var font: UIFont?
-                if let fontName = cgFont.postScriptName as? String {
-                    font = UIFont(name: fontName, size: size ?? 13)
-                }
-                CTFontManagerUnregisterGraphicsFont(cgFont, &error)
-                return font
-            }
-        }
-        return nil
     }
 
     @discardableResult

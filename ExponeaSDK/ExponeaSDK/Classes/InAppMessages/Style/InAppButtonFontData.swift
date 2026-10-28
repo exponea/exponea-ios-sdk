@@ -50,25 +50,7 @@ public struct InAppButtonFontData: Codable {
            let size = fontSize,
            let font = UIFont(name: registeredFont, size: size) {
             return font
-        } else if let base = fontData,
-            let data = Data(base64Encoded: base, options: .ignoreUnknownCharacters),
-            let dataProvider = CGDataProvider(data: data as CFData),
-            let cgFont = CGFont(dataProvider) {
-            var error: Unmanaged<CFError>?
-            if CTFontManagerRegisterGraphicsFont(cgFont, &error) {
-                var font: UIFont?
-                if let fontName = cgFont.postScriptName as? String {
-                    font = UIFont(name: fontName, size: fontSize ?? 13)
-                }
-                CTFontManagerUnregisterGraphicsFont(cgFont, &error)
-                return font
-            } else {
-                Exponea.logger.log(
-                    .error,
-                    message: "[InApp] Cant download custom font from url"
-                )
-            }
         }
-        return nil
+        return InAppFontLoader.load(base64: fontData, size: fontSize)
     }
 }

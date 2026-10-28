@@ -196,6 +196,8 @@
 		8937852586FF9D89B1778844 /* RuntimeControllerLabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BD858F51B43825A82DBD78 /* RuntimeControllerLabView.swift */; };
 		53D158951D3415A06DACBEC3 /* RuntimeControllerLabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DFD74A770E189928F74A145 /* RuntimeControllerLabViewModel.swift */; };
 		3008093F1E36BE7D3B447789 /* ExampleNotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C08D53CD21B9474E00EA2C13 /* ExampleNotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1D4F5BBD4A041100B257E7F8 /* Abel-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A794EDB9BB6E2CBE9836E05D /* Abel-Regular.ttf */; };
+		2AF9997B501140157DB1BD7C /* InAppFontLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD990360DB0D848593047F0 /* InAppFontLoaderTests.swift */; };
 		311268DB2CD10E9C00C38394 /* InAppButtonContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311268DA2CD10E9C00C38394 /* InAppButtonContainer.swift */; };
 		311268DD2CD1135900C38394 /* InAppButtonConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311268DC2CD1135900C38394 /* InAppButtonConfig.swift */; };
 		311557BF2CE9DEBD0027B481 /* InAppLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311557BD2CE9DEBD0027B481 /* InAppLabel.swift */; };
@@ -244,6 +246,7 @@
 		31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */; };
 		31CFEF6F2A66940E005402E5 /* SequenceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6E2A66940E005402E5 /* SequenceTest.swift */; };
 		31E9CBA22AE9494B00A333C8 /* URL+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E9CBA12AE9494B00A333C8 /* URL+Init.swift */; };
+		44F1465D31116305B7B362DF /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2302C3D4B11449D0EC2341FB /* OFL.txt */; };
 		31EBB8552A6AC3020003AAA5 /* StaticInAppContentBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */; };
 		31EBB8562A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */; };
 		31EBB8572A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8462A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift */; };
@@ -412,6 +415,7 @@
 		97F37408BA3791C84E054A09 /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3C70C6D9AC72FD009DABE5 /* ConfigurationViewModel.swift */; };
 		997EDED2AC6F247D4310F690 /* TrackCustomEventDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAD4FB1113565539126D7E0 /* TrackCustomEventDialog.swift */; };
 		9B9E6357BA9B53E3108175B7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F74CF28C5FCF744D2CB8366C /* Foundation.framework */; };
+		8D2268730B261EAFE2FE35AC /* InAppFontLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC60A804CAB7D02D329DE4F /* InAppFontLoader.swift */; };
 		A30AC9DD2F07DEF200E51E34 /* ExponeaSettings+Integration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30AC9DC2F07DEEA00E51E34 /* ExponeaSettings+Integration.swift */; };
 		A30AC9E02F111EBB00E51E34 /* ExponeaIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30AC9DF2F111EBB00E51E34 /* ExponeaIntegration.swift */; };
 		A30AC9E22F111EDA00E51E34 /* ExponeaIntegrationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30AC9E12F111EDA00E51E34 /* ExponeaIntegrationType.swift */; };
@@ -850,6 +854,7 @@
 		157DB5FA2BD0A7FA8886C540 /* UserDefaultsETagStoreSpec.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UserDefaultsETagStoreSpec.swift; sourceTree = "<group>"; };
 		1834092C0840A684D9848A58 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		238951823A8BB25758D541D5 /* DemoJwtGenerator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DemoJwtGenerator.swift; sourceTree = "<group>"; };
+		2302C3D4B11449D0EC2341FB /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Fonts/OFL.txt; sourceTree = "<group>"; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		311268DA2CD10E9C00C38394 /* InAppButtonContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonContainer.swift; sourceTree = "<group>"; };
 		311268DC2CD1135900C38394 /* InAppButtonConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonConfig.swift; sourceTree = "<group>"; };
@@ -1085,6 +1090,8 @@
 		AABB001122334455667788AA /* ExampleCarouselViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExampleCarouselViews.swift; sourceTree = "<group>"; };
 		AE07F98A5BEC1CE73699F7DA /* AnonymizeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AnonymizeView.swift; sourceTree = "<group>"; };
 		B30B52A707017051D5D763D9 /* FlushingViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlushingViewModel.swift; sourceTree = "<group>"; };
+		A794EDB9BB6E2CBE9836E05D /* Abel-Regular.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Abel-Regular.ttf"; path = "Fonts/Abel-Regular.ttf"; sourceTree = "<group>"; };
+		AAC60A804CAB7D02D329DE4F /* InAppFontLoader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InAppFontLoader.swift; sourceTree = "<group>"; };
 		B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTrackFrequency.swift; sourceTree = "<group>"; };
 		B40E9F5E22FAD58E0085B8A1 /* DatabaseModel v4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v4.xcdatamodel"; sourceTree = "<group>"; };
 		B42DA68822B03F7700BBA225 /* Consent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Consent.swift; sourceTree = "<group>"; };
@@ -1179,6 +1186,7 @@
 		E96DA4542FC959B30E85D1CF /* AppInboxButtonRepresentable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppInboxButtonRepresentable.swift; sourceTree = "<group>"; };
 		ED7C1067A7B3BAA7AE1BC128 /* ExampleApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExampleApp.swift; sourceTree = "<group>"; };
 		EDD77A5BE04E3EDDC90C0DE1 /* ExponeaService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExponeaService.swift; sourceTree = "<group>"; };
+		ECD990360DB0D848593047F0 /* InAppFontLoaderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InAppFontLoaderTests.swift; sourceTree = "<group>"; };
 		F01ADE612084D58600E20662 /* DevicePropertiesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePropertiesSpec.swift; sourceTree = "<group>"; };
 		F021E859206CF10200788ABC /* ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F021E85C206CF10200788ABC /* ExponeaSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExponeaSDK.h; sourceTree = "<group>"; };
@@ -1320,6 +1328,8 @@
 				0509610123216C7D00D59C01 /* TrackingManagerUpdate.plist */,
 				057F4492239960650070DF30 /* lena.jpeg */,
 				057F4493239960650070DF30 /* mountain.png */,
+				A794EDB9BB6E2CBE9836E05D /* Abel-Regular.ttf */,
+				2302C3D4B11449D0EC2341FB /* OFL.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1511,6 +1521,7 @@
 				0515975923E44D8000DF8691 /* InAppMessagePresenterSpec.swift */,
 				057F447A2398FE930070DF30 /* InAppMessagesCacheSpec.swift */,
 				057F447E239908650070DF30 /* InAppMessagesManagerSpec.swift */,
+				ECD990360DB0D848593047F0 /* InAppFontLoaderTests.swift */,
 			);
 			path = InAppMessages;
 			sourceTree = "<group>";
@@ -1924,6 +1935,7 @@
 				318EFF452D8989EA004C5E1F /* SlideInAppImageComponent.swift */,
 				318EFF492D898A5A004C5E1F /* Sttring+calculatePaddings.swift */,
 				318EFF4D2D898A97004C5E1F /* UIFont+styles.swift */,
+				AAC60A804CAB7D02D329DE4F /* InAppFontLoader.swift */,
 			);
 			path = Style;
 			sourceTree = "<group>";
@@ -3259,6 +3271,8 @@
 				057F4495239960650070DF30 /* mountain.png in Resources */,
 				057F4494239960650070DF30 /* lena.jpeg in Resources */,
 				0509610223216C7D00D59C01 /* TrackingManagerUpdate.plist in Resources */,
+				1D4F5BBD4A041100B257E7F8 /* Abel-Regular.ttf in Resources */,
+				44F1465D31116305B7B362DF /* OFL.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3785,6 +3799,7 @@
 				E2741CBA9006ICB00000006 /* InAppContentBlockAvailabilityDecision.swift in Sources */,
 				E2741CBA9007ICB00000007 /* InAppContentBlockInvalidateMode.swift in Sources */,
 				4113AFA9ACACFB27A89C3ED8 /* UserDefaultsETagStore.swift in Sources */,
+				8D2268730B261EAFE2FE35AC /* InAppFontLoader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3928,6 +3943,7 @@
 				A34A3BFD707F12AADCEE81B5 /* UserDefaultsETagStoreSpec.swift in Sources */,
 				B8AF30BA26B3EFD207280413 /* InAppContentBlocksETagSpec.swift in Sources */,
 				23686A39A4CD703043FC6878 /* RequestFactory304Spec.swift in Sources */,
+				2AF9997B501140157DB1BD7C /* InAppFontLoaderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
