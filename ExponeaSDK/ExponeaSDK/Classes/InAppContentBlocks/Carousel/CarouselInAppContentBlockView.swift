@@ -70,7 +70,8 @@ open class CarouselInAppContentBlockView: UIView {
     @Published var currentIndex: Int = 0
     var cancellables: [AnyCancellable] = []
     private let defaultRefreshInterval: TimeInterval
-    lazy var calculator: WKWebViewHeightCalculator = .init()
+    // Created on first use, so no WKWebView exists before there is content to measure.
+    lazy var calculator: WKWebViewHeightCalculator = makeCalculator()
     var lastScrollTimestamp: TimeInterval = Date().timeIntervalSince1970
     private var timer: AnyCancellable?
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
@@ -92,6 +93,7 @@ open class CarouselInAppContentBlockView: UIView {
     @Atomic private var data: [StaticReturnData] = []
     private var savedTimer: TimeInterval?
     private let placeholder: String
+    private(set) var isCalculatorCreated = false
 
     public init(
         placeholder: String,
@@ -121,13 +123,6 @@ open class CarouselInAppContentBlockView: UIView {
             }
             .store(in: &cancellables)
 
-        calculator.heightUpdate = { [weak self] height in
-            guard let self else { return }
-            let height = self.customHeight ?? height.height
-            self.redrawWithNewHeight(inputView: self, loadedInAppContentBlocksView: collectionView, height: height)
-            defaultBehaviourCallback.onHeightUpdate(placeholderId: placeholder, height: height)
-        }
-
         IntegrationManager.shared.onIntegrationStoppedCallbacks.append { [weak self] in
             guard let self else { return }
             self.height?.constant = 0
@@ -136,6 +131,18 @@ open class CarouselInAppContentBlockView: UIView {
         }
 
         redrawWithNewHeight(inputView: self, loadedInAppContentBlocksView: collectionView, height: 1)
+    }
+
+    private func makeCalculator() -> WKWebViewHeightCalculator {
+        let calculator = ContentBlockWebViewFactory.makeHeightCalculator()
+        isCalculatorCreated = true
+        calculator.heightUpdate = { [weak self] height in
+            guard let self else { return }
+            let height = self.customHeight ?? height.height
+            self.redrawWithNewHeight(inputView: self, loadedInAppContentBlocksView: collectionView, height: height)
+            defaultBehaviourCallback.onHeightUpdate(placeholderId: placeholder, height: height)
+        }
+        return calculator
     }
 
     open func filterContentBlocks(placeholder: String, continueCallback: TypeBlock<[InAppContentBlockResponse]>?, expiredCompletion: EmptyBlock?) {
@@ -253,54 +260,64 @@ open class CarouselInAppContentBlockView: UIView {
         if phase == .full {
             reportCorruptedImages()
         }
+        let token = reloadToken
         filterContentBlocks(placeholder: placeholder) { [weak self] data in
-            guard let self else { return }
-            guard !data.isEmpty else {
-                if phase == .full {
-                    self.notifyNoMessageFound()
-                }
-                return
-            }
-            let toReturn = data.compactMap { response in
-                self.inAppContentBlocksManager.prepareCarouselStaticData(messages: response)
-            }
-            let sortedMessages = self.sortContentBlocks(data: toReturn)
-            let input = self.maxMessagesCount > 0 ? Array(sortedMessages.prefix(self.maxMessagesCount)) : sortedMessages
-            guard !input.isEmpty else {
-                if phase == .full {
-                    self.notifyNoMessageFound()
-                }
-                return
-            }
-            let currentMessageId = self.currentMessage?.message?.id
-            let newFiltered = input.filter { $0.message != nil }
-            if phase == .full {
-                // Eligible set unchanged from the initial phase — skip the rebuild,
-                // the second WKWebView load, and the collection-view refresh to avoid
-                // the visible flicker / scroll-jump on the cold-render path.
-                let previousIds = self.messages.compactMap { $0.message?.id }
-                let nextIds = newFiltered.compactMap { $0.message?.id }
-                if previousIds == nextIds, !previousIds.isEmpty {
-                    return
-                }
-            }
-            self.messages = newFiltered
-            self.pendingScrollMessageId = currentMessageId
-            self._data.changeValue(with: { $0 = self.makeDuplicate(input: input) })
-            if let first = self.data.first?.html {
-                self.calculator.loadHtml(placedholderId: self.placeholder, html: first)
-            }
-            self.state = .refresh
-            if !self.hasStartedCarousel {
-                self.hasStartedCarousel = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + carouselStartDelay) { [weak self] in
-                    self?.startCarouseling()
-                }
+            // Called off main when the catalog had to be reloaded first; the apply creates a WKWebView.
+            onMain {
+                guard let self, self.reloadToken == token else { return }
+                self.applyFilteredCarouselData(data, phase: phase)
             }
         } expiredCompletion: { [weak self] in
             guard let self else { return }
             if !isTriggered {
                 self.reload(isTriggered: true)
+            }
+        }
+    }
+
+    private func applyFilteredCarouselData(_ data: [InAppContentBlockResponse], phase: CarouselLoadPhase) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        guard !data.isEmpty else {
+            if phase == .full {
+                self.notifyNoMessageFound()
+            }
+            return
+        }
+        let toReturn = data.compactMap { response in
+            self.inAppContentBlocksManager.prepareCarouselStaticData(messages: response)
+        }
+        let sortedMessages = self.sortContentBlocks(data: toReturn)
+        let input = self.maxMessagesCount > 0 ? Array(sortedMessages.prefix(self.maxMessagesCount)) : sortedMessages
+        guard !input.isEmpty else {
+            if phase == .full {
+                self.notifyNoMessageFound()
+            }
+            return
+        }
+        let currentMessageId = self.currentMessage?.message?.id
+        let newFiltered = input.filter { $0.message != nil }
+        if phase == .full {
+            // Eligible set unchanged from the initial phase: skip the rebuild,
+            // the second WKWebView load, and the collection-view refresh to avoid
+            // the visible flicker / scroll-jump on the cold-render path.
+            let previousIds = self.messages.compactMap { $0.message?.id }
+            let nextIds = newFiltered.compactMap { $0.message?.id }
+            if previousIds == nextIds, !previousIds.isEmpty {
+                return
+            }
+        }
+        self.messages = newFiltered
+        self.pendingScrollMessageId = currentMessageId
+        self._data.changeValue(with: { $0 = self.makeDuplicate(input: input) })
+        if let first = self.data.first?.html {
+            InAppContentBlockRenderHistory.shared.recordRender()
+            self.calculator.loadHtml(placedholderId: self.placeholder, html: first)
+        }
+        self.state = .refresh
+        if !self.hasStartedCarousel {
+            self.hasStartedCarousel = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + carouselStartDelay) { [weak self] in
+                self?.startCarouseling()
             }
         }
     }
@@ -634,6 +651,12 @@ extension CarouselInAppContentBlockView {
     internal func _testOnly_seedData(_ entries: [StaticReturnData]) {
         self._data.changeValue { $0 = entries }
         self.messages = entries
+    }
+
+    /// Test-only: runs the final carousel data apply (filter, then render) directly, without
+    /// waiting for `loadMessagesForCarousel`. Must be called on the main thread.
+    internal func _testOnly_applyCarouselData() {
+        applyCarouselData(isTriggered: true, phase: .full)
     }
 
     /// Test-only: drives `collectionView(_:cellForItemAt:)` on the view's own

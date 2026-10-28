@@ -105,6 +105,9 @@ public final class TelemetryUtility {
             "regenerateDeviceIdOnAnonymize":
                 "\(config.regenerateDeviceIdOnAnonymize)"
             + "\(config.regenerateDeviceIdOnAnonymize == defaultConfig.regenerateDeviceIdOnAnonymize ? " [default]" : "")",
+            "prewarmInAppContentBlocks":
+                "\(config.prewarmInAppContentBlocks)"
+            + "\(config.prewarmInAppContentBlocks == defaultConfig.prewarmInAppContentBlocks ? " [default]" : "")",
             "application_id": Constants.General.applicationID
         ]
     }

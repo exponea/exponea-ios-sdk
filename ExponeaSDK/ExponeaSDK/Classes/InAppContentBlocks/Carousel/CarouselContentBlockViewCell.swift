@@ -11,7 +11,7 @@ import WebKit
 
 class CarouselContentBlockViewCell: UICollectionViewCell, WKNavigationDelegate {
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
-    var webview = WKWebView(frame: .zero, configuration: HtmlNormalizer.createWebViewConfiguration())
+    var webview = ContentBlockWebViewFactory.makeWebView(frame: .zero, configuration: HtmlNormalizer.createWebViewConfiguration())
     var assignedMessage: InAppContentBlockResponse?
     var placeholder: String = ""
     var actionClicked: EmptyBlock?

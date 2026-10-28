@@ -621,6 +621,65 @@ class ConfigurationSpec: QuickSpec {
                     expect(decoded).to(equal(config))
                 }
             }
+
+            context("prewarmInAppContentBlocks Codable round-trip") {
+                it("should default to true and survive encode and decode") {
+                    let config = try! Configuration(
+                        projectToken: "project-token",
+                        authorization: Authorization.none,
+                        baseUrl: "baseUrl",
+                        appGroup: appGroup
+                    )
+                    expect(config.prewarmInAppContentBlocks).to(beTrue())
+
+                    let encoded = try! PropertyListEncoder().encode(config)
+                    let decoded = try! PropertyListDecoder().decode(Configuration.self, from: encoded)
+                    expect(decoded.prewarmInAppContentBlocks).to(beTrue())
+                    expect(decoded).to(equal(config))
+                }
+
+                it("should preserve false through save and load from UserDefaults") {
+                    let config = try! Configuration(
+                        integrationConfig: Exponea.ProjectSettings(
+                            projectToken: "project-token",
+                            authorization: .token("test"),
+                            baseUrl: "https://some.base.url",
+                            projectMapping: nil
+                        ),
+                        appGroup: appGroup,
+                        prewarmInAppContentBlocks: false
+                    )
+                    expect(config.prewarmInAppContentBlocks).to(beFalse())
+                    config.saveToUserDefaults()
+                    let loaded = Configuration.loadFromUserDefaults(appGroup: appGroup)
+                    expect(loaded?.prewarmInAppContentBlocks).to(beFalse())
+                    expect(loaded).to(equal(config))
+                }
+
+                it("should decode as true when saved without the key") {
+                    let config = try! Configuration(
+                        projectToken: "project-token",
+                        authorization: Authorization.none,
+                        baseUrl: "baseUrl",
+                        appGroup: appGroup,
+                        prewarmInAppContentBlocks: false
+                    )
+                    let encoded = try! PropertyListEncoder().encode(config)
+                    var plist = try! PropertyListSerialization.propertyList(
+                        from: encoded,
+                        format: nil
+                    ) as! [String: Any]
+                    expect(plist["prewarmInAppContentBlocks"]).notTo(beNil())
+                    plist.removeValue(forKey: "prewarmInAppContentBlocks")
+                    let withoutKey = try! PropertyListSerialization.data(
+                        fromPropertyList: plist,
+                        format: .binary,
+                        options: 0
+                    )
+                    let decoded = try! PropertyListDecoder().decode(Configuration.self, from: withoutKey)
+                    expect(decoded.prewarmInAppContentBlocks).to(beTrue())
+                }
+            }
         }
     }
 }

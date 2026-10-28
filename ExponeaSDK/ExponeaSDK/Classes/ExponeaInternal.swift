@@ -441,8 +441,9 @@ public class ExponeaInternal: ExponeaType {
                 self.concreteICBController = RuntimeInContentBlockController(
                     manager: inAppContentBlocksManager
                 )
+                inAppContentBlocksManager.isPrewarmEnabled = configuration.prewarmInAppContentBlocks
                 inAppContentBlocksManager.initBlocker {
-                    inAppContentBlocksManager.prewarmReusableContentBlockResourcesForStartup()
+                    inAppContentBlocksManager.prewarmForStartupIfContentRecentlyRendered()
                 }
                 inAppContentBlocksManager.loadInAppContentBlockMessages {
                     guard !IntegrationManager.shared.isStopped else { return }
@@ -836,6 +837,8 @@ public extension ExponeaInternal {
         // anonymize/stopIntegration and be replayed on the next configure().
         UserDefaults(suiteName: Constants.General.userDefaultsSuite)?
             .removeObject(forKey: Constants.General.preInitPushTokenBufferKey)
+        // The in-app content block render history always lives in the SDK suite, so clear it here too.
+        InAppContentBlockRenderHistory.shared.clear()
         clearKnownSDKKeysFromStandard()
     }
 

@@ -298,6 +298,16 @@ Then call `load()` when the placeholder becomes visible to the user to trigger t
 placeholderView.load()
 ```
 
+A placeholder doesn't create any web view until it has content to show. The SDK prepares a web view in advance only in these cases:
+
+* On the first app start without in-app content block history, such as after you install the app or update from an SDK version without this behavior.
+* When content blocks were rendered on the device recently.
+* When the SDK has prefetched content for a placeholder.
+
+Placeholders that stay empty never start the system web view engine.
+
+If the advance preparation delays your first screen on older devices, set `prewarmInAppContentBlocks` to `false` to skip it as well. For details, see [Configuration](https://documentation.bloomreach.com/engagement/docs/ios-sdk-configuration).
+
 > 📘
 >
 > Use `load()` for the initial trigger and for re-checking content when navigating back to a screen. Use `reload()` only when an explicit force-refresh is required (for example, a pull-to-refresh action). The difference is:
@@ -338,14 +348,18 @@ placeholderView.contentReadyCompletion = { [weak self] contentLoaded in
 }
 ```
 
-In such use cases you can use the `calculator.publicHeightUpdate` callback on the placeholder view to get notified when an in-app content block changed its height.
+In such cases, you can use the `publicHeightUpdate` callback on the placeholder view to get notified when an in-app content block's height changes. The SDK calls it on the main thread, and only after the placeholder has content to show. If the content later goes away, the SDK calls it once more with height `0`.
 
 ```swift
-lazy var placeholder = StaticInAppContentBlockView(placeholder: "example_top", deferredLoad: true)
-placeholder.calculator.publicHeightUpdate = { calculator in
-    print(calculator.height)
+let placeholderView = StaticInAppContentBlockView(placeholder: "example_top", deferredLoad: true)
+placeholderView.publicHeightUpdate = { calculatorData in
+    print(calculatorData.height)
 }
 ```
+
+> 👍
+>
+> Use `publicHeightUpdate` on the placeholder view rather than `calculator.publicHeightUpdate`. Reading `calculator` creates a web view even when the placeholder has no content to show.
 
 ### Customize action behavior
 

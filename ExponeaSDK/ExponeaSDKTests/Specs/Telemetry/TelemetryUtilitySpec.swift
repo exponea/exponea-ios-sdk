@@ -71,6 +71,7 @@ final class TelemetryUtilitySpec: QuickSpec {
                         "appInboxDetailImageInset": "56.0 [default]",
                         "manualSessionAutoClose": "true [default]",
                         "regenerateDeviceIdOnAnonymize": "false [default]",
+                        "prewarmInAppContentBlocks": "true [default]",
                         "automaticSessionTracking": "true [default]",
                         "projectMapping": "",
                         "sessionTimeout": "60.0 [default]",
@@ -118,6 +119,7 @@ final class TelemetryUtilitySpec: QuickSpec {
                         "authorization": "[REDACTED]",
                         "manualSessionAutoClose": "true [default]",
                         "regenerateDeviceIdOnAnonymize": "true",
+                        "prewarmInAppContentBlocks": "true [default]",
                         "projectMapping": "[REDACTED]",
                         "appInboxDetailImageInset": "56.0 [default]",
                         "defaultProperties": "[REDACTED]"

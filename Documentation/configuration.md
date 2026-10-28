@@ -155,12 +155,21 @@ After configuration, provide the Stream JWT token via `Exponea.shared.setSdkAuth
 | `regenerateDeviceIdOnAnonymize` | Optional | Optional |
 | `inAppContentBlocksPlaceholders` | Optional | Optional |
 | `manualSessionAutoClose` | Optional | Optional |
+| `prewarmInAppContentBlocks` | Optional | Optional |
 
 * `inAppContentBlocksPlaceholders`
   * If set, all [In-app content blocks for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-in-app-content-blocks) will be prefetched right after the SDK is initialized.
 
 * `manualSessionAutoClose`
   * Determines whether the SDK automatically tracks `session_end` for sessions that remain open when `Exponea.shared.trackSessionStart()` is called multiple times in manual session tracking mode.
+  * Default value: `true`
+
+* `prewarmInAppContentBlocks`
+  * When `true`, the SDK prepares in-app content block web views on the main thread before the first content block renders, so content appears faster. It does this shortly after `configure` on the first app start without in-app content block history, such as after you install the app or update from an SDK version without this behavior. It also does this whenever in-app content blocks rendered on this device in the last 30 days, and after a prefetch (see `inAppContentBlocksPlaceholders`) that finds content to show.
+  * The first `WKWebView` created in an app process initializes WebKit, which can block the main thread for a few hundred milliseconds on older devices. To skip the preparation, set this to `false`. The SDK then creates no web view until a content block has content to show. The WebKit setup cost moves to the first content block that renders content, and the SDK doesn't keep a spare web view ready for the next placeholder after a render.
+  * When this is `false`, in-app content blocks shown through `prepareInAppContentBlockView` in a table or collection view still create their height calculator as soon as they start loading content. Each cell's web view is created when that cell renders.
+  * The setting applies from `configure` onward. If your app reads a placeholder's `calculator` before `configure`, the SDK can still keep one spare web view ready.
+  * Set it on the `Configuration` object that you pass to `Exponea.shared.configure(with:)`. For details, see [Using a Configuration object](#using-a-configuration-object).
   * Default value: `true`
 
 ## Configure the SDK
@@ -261,7 +270,7 @@ Exponea.shared.configure(
 
 > 📘 Configuration-only flags
 >
-> `regenerateDeviceIdOnAnonymize` and similar advanced flags aren't available as parameters on `Exponea.shared.configure(_:)`. To enable them, construct a `Configuration` object directly and pass it to `Exponea.shared.configure(with:)`. See [Using a Configuration object](#using-a-configuration-object) below for details.
+> `regenerateDeviceIdOnAnonymize`, `prewarmInAppContentBlocks`, and similar advanced flags aren't available as parameters on `Exponea.shared.configure(_:)`. To set them, construct a `Configuration` object directly and pass it to `Exponea.shared.configure(with:)`. For details, see [Using a Configuration object](#using-a-configuration-object).
 
 #### Stream/{user.dh} examples
 
@@ -339,7 +348,7 @@ Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
 
 #### Using a Configuration object
 
-`regenerateDeviceIdOnAnonymize` and similar advanced flags aren't available as parameters on `Exponea.shared.configure(_:)`. To enable them, construct a `Configuration` object directly and pass it to `Exponea.shared.configure(with:)`.
+`regenerateDeviceIdOnAnonymize`, `prewarmInAppContentBlocks`, and similar advanced flags aren't available as parameters on `Exponea.shared.configure(_:)`. To set them, construct a `Configuration` object directly and pass it to `Exponea.shared.configure(with:)`.
 
 Project/{user.mkg}:
 
@@ -378,6 +387,20 @@ Exponea.shared.setJwtErrorHandler { context in
     }
 }
 Exponea.shared.setSdkAuthToken("YOUR_STREAM_JWT_TOKEN")
+```
+
+To avoid creating in-app content block web views before a content block renders, disable the prewarm:
+
+``` swift
+let configuration = try Configuration(
+    integrationConfig: Exponea.ProjectSettings(
+        projectToken: "YOUR PROJECT TOKEN",
+        authorization: .token("YOUR ACCESS TOKEN")
+    ),
+    appGroup: "YOUR APP GROUP",
+    prewarmInAppContentBlocks: false // default `true`
+)
+Exponea.shared.configure(with: configuration)
 ```
 
 

@@ -123,6 +123,18 @@ public struct Configuration: Codable, Equatable {
     /// behavior (install ID is preserved across anonymize).
     public internal(set) var regenerateDeviceIdOnAnonymize: Bool = false
 
+    /// When `true` (default), the SDK prepares in-app content block web views ahead of the first render:
+    /// at startup on the first launch without content block history and whenever content blocks
+    /// rendered on this device recently, and after a prefetch that finds content. Set to `false` to
+    /// skip all of these, so no `WKWebView` is created until a content block actually renders. The
+    /// one-time WebKit initialization cost then moves to that render, and no spare web view is kept
+    /// ready for the next placeholder. With `false`, the table and collection API
+    /// (`prepareInAppContentBlockView`) still creates its height calculator when it starts loading
+    /// content, and each cell's web view when that cell renders.
+    /// The setting applies from `configure` onwards. Reading a placeholder's `calculator` before
+    /// `configure` can still keep one spare web view ready.
+    public internal(set) var prewarmInAppContentBlocks: Bool = true
+
     enum CodingKeys: String, CodingKey {
         case projectMapping
         case projectToken
@@ -143,6 +155,7 @@ public struct Configuration: Codable, Equatable {
         case applicationID
         case streamId
         case regenerateDeviceIdOnAnonymize
+        case prewarmInAppContentBlocks
     }
 
     /// Creates the configuration object with the provided properties.
@@ -167,7 +180,8 @@ public struct Configuration: Codable, Equatable {
         appInboxDetailImageInset: CGFloat? = nil,
         manualSessionAutoClose: Bool? = nil,
         applicationID: String? = nil,
-        regenerateDeviceIdOnAnonymize: Bool? = nil
+        regenerateDeviceIdOnAnonymize: Bool? = nil,
+        prewarmInAppContentBlocks: Bool? = nil
     ) throws {
         self.projectToken = projectToken
         self.projectMapping = projectMapping
@@ -180,6 +194,7 @@ public struct Configuration: Codable, Equatable {
         self.appInboxDetailImageInset = appInboxDetailImageInset ?? 56
         self.manualSessionAutoClose = manualSessionAutoClose ?? true
         self.regenerateDeviceIdOnAnonymize = regenerateDeviceIdOnAnonymize ?? false
+        self.prewarmInAppContentBlocks = prewarmInAppContentBlocks ?? true
         if let applicationID, !applicationID.isEmpty {
             self.applicationID = applicationID
         }
@@ -223,7 +238,8 @@ public struct Configuration: Codable, Equatable {
         appInboxDetailImageInset: CGFloat? = nil,
         manualSessionAutoClose: Bool? = nil,
         applicationID: String? = nil,
-        regenerateDeviceIdOnAnonymize: Bool? = nil
+        regenerateDeviceIdOnAnonymize: Bool? = nil,
+        prewarmInAppContentBlocks: Bool? = nil
     ) throws {
         self.integrationConfig = integrationConfig
         self.appGroup = appGroup
@@ -234,6 +250,7 @@ public struct Configuration: Codable, Equatable {
         self.appInboxDetailImageInset = appInboxDetailImageInset ?? 56
         self.manualSessionAutoClose = manualSessionAutoClose ?? true
         self.regenerateDeviceIdOnAnonymize = regenerateDeviceIdOnAnonymize ?? false
+        self.prewarmInAppContentBlocks = prewarmInAppContentBlocks ?? true
         if let applicationID, !applicationID.isEmpty {
             self.applicationID = applicationID
         }
@@ -424,6 +441,13 @@ public struct Configuration: Codable, Equatable {
             self.regenerateDeviceIdOnAnonymize = false
         }
 
+        if let prewarmInAppContentBlocks = try container.decodeIfPresent(
+            Bool.self, forKey: .prewarmInAppContentBlocks) {
+            self.prewarmInAppContentBlocks = prewarmInAppContentBlocks
+        } else {
+            self.prewarmInAppContentBlocks = true
+        }
+
         // Advanced auth provider - only for Project mode (Stream uses JWT instead)
         if case .project = self.integrationConfig.type, self.advancedAuthEnabled {
             self.customAuthProvider = try loadCustomAuthProvider()
@@ -461,6 +485,7 @@ public struct Configuration: Codable, Equatable {
         try container.encode(advancedAuthEnabled, forKey: .advancedAuthEnabled)
         try container.encode(applicationID, forKey: .applicationID)
         try container.encode(regenerateDeviceIdOnAnonymize, forKey: .regenerateDeviceIdOnAnonymize)
+        try container.encode(prewarmInAppContentBlocks, forKey: .prewarmInAppContentBlocks)
     }
 
     public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
@@ -496,7 +521,8 @@ public struct Configuration: Codable, Equatable {
             lhs.allowDefaultCustomerProperties == rhs.allowDefaultCustomerProperties &&
             lhs.advancedAuthEnabled == rhs.advancedAuthEnabled &&
             lhs.applicationID == rhs.applicationID &&
-            lhs.regenerateDeviceIdOnAnonymize == rhs.regenerateDeviceIdOnAnonymize
+            lhs.regenerateDeviceIdOnAnonymize == rhs.regenerateDeviceIdOnAnonymize &&
+            lhs.prewarmInAppContentBlocks == rhs.prewarmInAppContentBlocks
     }
 }
 
@@ -610,6 +636,7 @@ extension Configuration: CustomStringConvertible {
         Advanced authorization Enabled: \(advancedAuthEnabled)
         Application ID: \(applicationID)
         Regenerate Device ID On Anonymize: \(regenerateDeviceIdOnAnonymize)
+        Prewarm In-app Content Blocks: \(prewarmInAppContentBlocks)
         """
 
         return text

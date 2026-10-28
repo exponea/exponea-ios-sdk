@@ -247,6 +247,8 @@
 		31EBB8552A6AC3020003AAA5 /* StaticInAppContentBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */; };
 		31EBB8562A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */; };
 		31EBB8572A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8462A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift */; };
+		A2CE9D6C90CA49F5BDEAB517 /* ContentBlockWebViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DD50BC126E4D29842CF8E8 /* ContentBlockWebViewFactory.swift */; };
+		5E1A3C9F2B7D4E6A8C0F1A02 /* InAppContentBlockRenderHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1A3C9F2B7D4E6A8C0F1A01 /* InAppContentBlockRenderHistory.swift */; };
 		31EBB8582A6AC3020003AAA5 /* InappContentBlocksManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8482A6AC3020003AAA5 /* InappContentBlocksManagerType.swift */; };
 		31EBB8592A6AC3020003AAA5 /* InAppContentBlocksManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8492A6AC3020003AAA5 /* InAppContentBlocksManager.swift */; };
 		31EBB85A2A6AC3020003AAA5 /* UsedInAppContentBlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB84B2A6AC3020003AAA5 /* UsedInAppContentBlocks.swift */; };
@@ -900,6 +902,8 @@
 		31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticInAppContentBlockView.swift; sourceTree = "<group>"; };
 		31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppContentBlocksTrackingEvent.swift; sourceTree = "<group>"; };
 		31EBB8462A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WKWebViewHeightCalculator.swift; sourceTree = "<group>"; };
+		69DD50BC126E4D29842CF8E8 /* ContentBlockWebViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentBlockWebViewFactory.swift; sourceTree = "<group>"; };
+		5E1A3C9F2B7D4E6A8C0F1A01 /* InAppContentBlockRenderHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockRenderHistory.swift; sourceTree = "<group>"; };
 		31EBB8482A6AC3020003AAA5 /* InappContentBlocksManagerType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InappContentBlocksManagerType.swift; sourceTree = "<group>"; };
 		31EBB8492A6AC3020003AAA5 /* InAppContentBlocksManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppContentBlocksManager.swift; sourceTree = "<group>"; };
 		31EBB84B2A6AC3020003AAA5 /* UsedInAppContentBlocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsedInAppContentBlocks.swift; sourceTree = "<group>"; };
@@ -1996,6 +2000,8 @@
 				31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */,
 				31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */,
 				31EBB8462A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift */,
+				69DD50BC126E4D29842CF8E8 /* ContentBlockWebViewFactory.swift */,
+				5E1A3C9F2B7D4E6A8C0F1A01 /* InAppContentBlockRenderHistory.swift */,
 				557856022BC7BF9300420072 /* InAppContentBlockDisplayStatusStore.swift */,
 				6AEA64C49D6889F52D36B90F /* ETagStore */,
 			);
@@ -3649,6 +3655,8 @@
 				057D476923C87F8500AEE902 /* UrlOpener.swift in Sources */,
 				CCB87B7C28169FF5005DFB8E /* ServerRepository+VersionCheckRepository.swift in Sources */,
 				31EBB8572A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift in Sources */,
+				A2CE9D6C90CA49F5BDEAB517 /* ContentBlockWebViewFactory.swift in Sources */,
+				5E1A3C9F2B7D4E6A8C0F1A02 /* InAppContentBlockRenderHistory.swift in Sources */,
 				05677239237453250082167C /* PushNotificationSwizzler.swift in Sources */,
 				CCB87B7828169C6C005DFB8E /* VersionChecker.swift in Sources */,
 				318EFF582D898B53004C5E1F /* InAppButtonEdge.swift in Sources */,

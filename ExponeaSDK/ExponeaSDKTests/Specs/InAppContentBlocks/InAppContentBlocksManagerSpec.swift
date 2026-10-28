@@ -1320,7 +1320,7 @@ class InAppContentBlocksManagerSpec: QuickSpec {
                     let holder = UIView()
 
                     // Exhaust the prepared pool so the next dequeue must come from issued-recycle path.
-                    concreteManager.prewarmReusableContentBlockResourcesForStartup()
+                    concreteManager.prepareSpareContentBlockWebViewsForTest()
                     while concreteManager.preparedContentBlockWebViewCount > 0 {
                         let drain = concreteManager.dequeueContentBlockWebViewForTest(tag: 999)
                         holder.addSubview(drain)
@@ -1625,6 +1625,8 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             )
 
             let indexPath = IndexPath(row: 0, section: 0)
+            InAppContentBlockRenderHistory.shared.clear()
+            defer { InAppContentBlockRenderHistory.shared.resetToSteadyStateForTest() }
             var refreshCalled = false
             waitUntil(timeout: .seconds(15)) { done in
                 manager.refreshCallback = { _ in
@@ -1641,10 +1643,15 @@ class InAppContentBlocksManagerSpec: QuickSpec {
             expect(fetchCount).to(equal(1))
 
             // Second prepare simulates a host table reload after refreshCallback.
-            _ = manager.prepareInAppContentBlockView(
+            let renderedView = manager.prepareInAppContentBlockView(
                 placeholderId: placeholder,
                 indexPath: indexPath
             )
+            expect(renderedView is WKWebView).to(beTrue())
+            // The table path renders in a spare web view, so later startups prepare spares too.
+            expect(
+                InAppContentBlockRenderHistory.shared.hasRenderedWithSpareWebView(since: Date(timeIntervalSinceNow: -60))
+            ).to(beTrue())
 
             let concreteManager = manager as! InAppContentBlocksManager
             let stored = concreteManager.getUsedInAppContentBlocks(
@@ -1765,6 +1772,109 @@ class InAppContentBlocksManagerSpec: QuickSpec {
                 isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-noop"])
 
                 expect(provider.personalizedBlockIds).toEventually(equal([["char-msg-noop"]]))
+            }
+
+            it("prewarms the height calculator when prefetched content can be rendered") {
+                seedCatalogMessage(id: "char-msg-render", placeholders: ["char-ph-render"])
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-render"]) {
+                    completed = true
+                }
+                expect(isolatedManager.hasPreparedOrWarmingStaticHeightCalculator).to(beFalse())
+                provider.personalizedCompletion?(personalizedResponse(messageId: "char-msg-render"))
+
+                expect(completed).toEventually(beTrue())
+                expect(isolatedManager.hasPreparedOrWarmingStaticHeightCalculator).toEventually(beTrue())
+                expect(isolatedManager.preparedContentBlockWebViewCount).to(equal(0))
+            }
+
+            it("does not prewarm when prewarm is disabled") {
+                isolatedManager.isPrewarmEnabled = false
+                seedCatalogMessage(id: "char-msg-off", placeholders: ["char-ph-off"])
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-off"]) {
+                    completed = true
+                }
+                provider.personalizedCompletion?(personalizedResponse(messageId: "char-msg-off"))
+
+                expect(completed).toEventually(beTrue())
+                waitUntil { done in DispatchQueue.main.async { done() } }
+                expect(isolatedManager.hasPreparedOrWarmingStaticHeightCalculator).to(beFalse())
+                expect(isolatedManager.availabilityForPlaceholder(id: "char-ph-off")).to(equal(.ready))
+            }
+
+            it("does not prewarm when the prefetched placeholder has no content") {
+                seedCatalogMessage(id: "char-msg-empty", placeholders: ["char-ph-empty"])
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-empty"]) {
+                    completed = true
+                }
+                provider.personalizedCompletion?(personalizedResponse(messageId: "char-msg-empty", html: ""))
+
+                expect(completed).toEventually(beTrue())
+                waitUntil { done in DispatchQueue.main.async { done() } }
+                expect(isolatedManager.hasPreparedOrWarmingStaticHeightCalculator).to(beFalse())
+            }
+
+            it("prewarms the height calculator when the prefetched placeholder has static content") {
+                isolatedManager.addMessage(
+                    SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                        id: "char-msg-static",
+                        dateFilter: .init(enabled: false, fromDate: nil, toDate: nil),
+                        placeholders: ["char-ph-static"],
+                        content: .init(html: "<html><body>static</body></html>")
+                    )
+                )
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-static"]) {
+                    completed = true
+                }
+                provider.personalizedCompletion?(
+                    ResponseData(data: PersonalizedInAppContentBlockResponseData(data: []), error: nil)
+                )
+
+                expect(completed).toEventually(beTrue())
+                expect(isolatedManager.hasPreparedOrWarmingStaticHeightCalculator).toEventually(beTrue())
+            }
+
+            it("does not prewarm when prefetched content is outside its date window") {
+                isolatedManager.addMessage(
+                    SampleInAppContentBlocks.getSampleIninAppContentBlocks(
+                        id: "char-msg-expired",
+                        dateFilter: .init(enabled: true, fromDate: nil, toDate: Date(timeIntervalSinceNow: -3600)),
+                        placeholders: ["char-ph-expired"]
+                    )
+                )
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-expired"]) {
+                    completed = true
+                }
+                provider.personalizedCompletion?(personalizedResponse(messageId: "char-msg-expired"))
+
+                expect(completed).toEventually(beTrue())
+                waitUntil { done in DispatchQueue.main.async { done() } }
+                expect(isolatedManager.hasPreparedOrWarmingStaticHeightCalculator).to(beFalse())
+            }
+
+            it("does not prewarm when the prefetch request fails") {
+                seedCatalogMessage(id: "char-msg-failed", placeholders: ["char-ph-failed"])
+                var completed = false
+
+                isolatedManager.prefetchPlaceholdersWithIds(ids: ["char-ph-failed"]) {
+                    completed = true
+                }
+                provider.personalizedCompletion?(
+                    ResponseData(data: nil, error: RepositoryError.connectionError)
+                )
+
+                expect(completed).toEventually(beTrue())
+                waitUntil { done in DispatchQueue.main.async { done() } }
+                expect(isolatedManager.hasPreparedOrWarmingStaticHeightCalculator).to(beFalse())
             }
         }
 
@@ -2117,6 +2227,46 @@ class InAppContentBlocksManagerSpec: QuickSpec {
 
                 expect(completed).toEventually(beTrue())
                 expect(provider.personalizedBlockIds).to(beEmpty())
+            }
+
+            it("returns a plain view, not a WKWebView, when there is no content") {
+                let provider = DeferredInAppContentBlocksDataProvider()
+                let isolatedManager = InAppContentBlocksManager(
+                    provider: provider,
+                    etagStore: testEtagStore
+                )
+                isolatedManager.anonymize()
+                let indexPath = IndexPath(row: 0, section: 0)
+
+                // Catalog not loaded yet.
+                let createdBeforeLoading = ContentBlockWebViewFactory.createdCount
+                let loadingView = isolatedManager.prepareInAppContentBlockView(
+                    placeholderId: "empty-ph",
+                    indexPath: indexPath
+                )
+                expect(loadingView is WKWebView).to(beFalse())
+                expect(ContentBlockWebViewFactory.createdCount).to(equal(createdBeforeLoading))
+
+                // Catalog loaded, but nothing for this placeholder.
+                var catalogLoaded = false
+                isolatedManager.prefetchPlaceholdersWithIds(
+                    ids: ["empty-ph"],
+                    completion: { catalogLoaded = true }
+                )
+                provider.catalogCompletion?(
+                    ResponseData(
+                        data: InAppContentBlocksDataResponse(data: [], success: true),
+                        error: nil
+                    )
+                )
+                expect(catalogLoaded).toEventually(beTrue())
+                let createdBeforeEmpty = ContentBlockWebViewFactory.createdCount
+                let emptyView = isolatedManager.prepareInAppContentBlockView(
+                    placeholderId: "empty-ph",
+                    indexPath: indexPath
+                )
+                expect(emptyView is WKWebView).to(beFalse())
+                expect(ContentBlockWebViewFactory.createdCount).to(equal(createdBeforeEmpty))
             }
 
             it("reloads a mounted placeholder after its first-use catalog load") {

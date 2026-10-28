@@ -90,7 +90,7 @@ final class InAppContentBlocksManager: NSObject {
             if placeholder.content == nil, newValue.height == 0 {
                 loadContentForPlacehoder(newValue: newValue, message: placeholder)
             } else if let html = placeholder.content?.html, newValue.height == 0 {
-                calculator = .init()
+                calculator = ContentBlockWebViewFactory.makeHeightCalculator()
                 calculator.heightUpdate = { [weak self] height in
                     guard let self else { return }
                     self.calculateStaticData(height: height, newValue: newValue, placeholder: placeholder)
@@ -107,6 +107,8 @@ final class InAppContentBlocksManager: NSObject {
     private var _batchKeysByPlaceholder: [String: Set<String>] = [:]
     @Atomic private var coalescedRefreshKeys: Set<String> = []
     private var didWarmHeightCalculator = false
+    /// Mirrors `Configuration.prewarmInAppContentBlocks`; gates the startup and prefetch prewarm.
+    @Atomic var isPrewarmEnabled = true
     private let maxPreparedContentBlockWebViews = 2
     private var preparedContentBlockWebViews: [WKWebView] = []
     private var issuedContentBlockWebViews: [WeakWKWebView] = []
@@ -361,7 +363,7 @@ final class InAppContentBlocksManager: NSObject {
             if let calculator = objc_getAssociatedObject(self, &calculatorKey) as? WKWebViewHeightCalculator {
                 return calculator
             }
-            let calculator = WKWebViewHeightCalculator()
+            let calculator = ContentBlockWebViewFactory.makeHeightCalculator()
             objc_setAssociatedObject(self, &calculatorKey, calculator, .OBJC_ASSOCIATION_RETAIN)
             return calculator
         }
@@ -385,8 +387,42 @@ private final class WeakWKWebView {
 }
 
 extension InAppContentBlocksManager {
-    func prewarmReusableContentBlockResourcesForStartup() {
-        prewarmForStartup()
+    /// How long a rendered content block keeps justifying a WebKit prewarm at startup.
+    static let startupPrewarmLookback: TimeInterval = 30 * 24 * 60 * 60
+
+    /// Prepares the height calculator at startup only when content blocks rendered in a web view on
+    /// this device recently. The first `WKWebView` in a process initializes WebKit on the main thread,
+    /// so apps whose placeholders stay empty, or that render natively, never pay that cost, while
+    /// apps that show content keep a warm start. Spare display web views serve only the table and
+    /// collection API, so they are prepared only when that API rendered content recently.
+    /// The first startup without render history prepares the height calculator and spare web views.
+    func prewarmForStartupIfContentRecentlyRendered(
+        renderHistory: InAppContentBlockRenderHistory = .shared,
+        now: Date = Date()
+    ) {
+        guard isPrewarmEnabled else {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks startup prewarm disabled by configuration")
+            return
+        }
+        guard !IntegrationManager.shared.isStopped else {
+            return
+        }
+        guard renderHistory.hasRecordedFirstStartup else {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks first startup prewarm, no render history yet")
+            renderHistory.recordFirstStartup()
+            prewarmStaticHeightCalculator()
+            prewarmContentBlockWebViews()
+            return
+        }
+        let cutOff = now.addingTimeInterval(-Self.startupPrewarmLookback)
+        guard renderHistory.hasRendered(since: cutOff) else {
+            Exponea.logger.log(.verbose, message: "In-app Content Blocks startup prewarm skipped, no content rendered recently")
+            return
+        }
+        prewarmStaticHeightCalculator()
+        if renderHistory.hasRenderedWithSpareWebView(since: cutOff) {
+            prewarmContentBlockWebViews()
+        }
     }
 
     func preparedStaticHeightCalculator() -> WKWebViewHeightCalculator {
@@ -399,8 +435,28 @@ extension InAppContentBlocksManager {
         preparedContentBlockWebViews.count
     }
 
+    var hasPreparedOrWarmingStaticHeightCalculator: Bool {
+        !preparedStaticHeightCalculators.isEmpty || warmingStaticHeightCalculator != nil
+    }
+
+    func prepareSpareContentBlockWebViewsForTest() {
+        prepareSpareContentBlockWebView()
+    }
+
+    func clearPreparedStaticHeightCalculatorsForTest() {
+        preparedStaticHeightCalculators.removeAll()
+    }
+
     func dequeueContentBlockWebViewForTest(tag: Int) -> WKWebView {
         dequeueContentBlockWebView(tag: tag)
+    }
+
+    func prewarmContentBlockWebViewsForTest() {
+        prewarmContentBlockWebViews()
+    }
+
+    func clearPreparedContentBlockWebViewsForTest() {
+        clearPreparedContentBlockWebViews()
     }
 
     var queueCount: Int {
@@ -479,7 +535,7 @@ private extension InAppContentBlocksManager {
         if let contentRuleList {
             configuration.userContentController.add(contentRuleList)
         }
-        let webView = WKWebView(
+        let webView = ContentBlockWebViewFactory.makeWebView(
             frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 0),
             configuration: configuration
         )
@@ -532,6 +588,8 @@ private extension InAppContentBlocksManager {
     }
 
     func scheduleContentBlockWebViewWarmup() {
+        // With prewarm disabled, no spare display web view is kept; each render creates its own.
+        guard isPrewarmEnabled else { return }
         onMain { [weak self] in
             guard let self else { return }
             guard !self.isContentBlockWebViewWarmupScheduled else { return }
@@ -545,19 +603,9 @@ private extension InAppContentBlocksManager {
     }
 
     func prewarmContentBlockWebViews() {
+        guard isPrewarmEnabled else { return }
         onMain { [weak self] in
             self?.prepareSpareContentBlockWebView()
-        }
-    }
-
-    func prewarmForStartup() {
-        onMain { [weak self] in
-            guard let self else { return }
-            guard !IntegrationManager.shared.isStopped else {
-                return
-            }
-            self.prewarmStaticHeightCalculator()
-            self.prepareSpareContentBlockWebView()
         }
     }
 
@@ -577,17 +625,27 @@ private extension InAppContentBlocksManager {
 
     func dequeueStaticHeightCalculator() -> WKWebViewHeightCalculator {
         guard Thread.isMainThread else {
-            return WKWebViewHeightCalculator()
+            return ContentBlockWebViewFactory.makeHeightCalculator()
         }
+        // Refill the pool on a later run loop pass, so the caller's render does not also pay
+        // for creating a spare WKWebView in the same frame.
         if !preparedStaticHeightCalculators.isEmpty {
             let calculator = preparedStaticHeightCalculators.removeFirst()
             calculator.stopLoading()
             calculator.heightUpdate = nil
-            prewarmStaticHeightCalculator()
+            schedulePreparedStaticHeightCalculatorRefill()
             return calculator
         }
-        prewarmStaticHeightCalculator()
-        return WKWebViewHeightCalculator()
+        schedulePreparedStaticHeightCalculatorRefill()
+        return ContentBlockWebViewFactory.makeHeightCalculator()
+    }
+
+    private func schedulePreparedStaticHeightCalculatorRefill() {
+        // With prewarm disabled, every render creates its own calculator and no spare is kept.
+        guard isPrewarmEnabled else { return }
+        DispatchQueue.main.async { [weak self] in
+            self?.prewarmStaticHeightCalculator()
+        }
     }
 
     func prewarmStaticHeightCalculator() {
@@ -607,7 +665,7 @@ private extension InAppContentBlocksManager {
             return
         }
         isStaticHeightCalculatorWarmupScheduled = true
-        let calculator = WKWebViewHeightCalculator()
+        let calculator = ContentBlockWebViewFactory.makeHeightCalculator()
         warmingStaticHeightCalculator = calculator
         var didFinish = false
 
@@ -1110,6 +1168,11 @@ extension InAppContentBlocksManager:
                     return
                 }
                 self.trackTelemetryForFetch(.contentBlockPersonalisedFetch, updatedContentBlocksForTelemetry)
+                // Prefetched content is rendered later, so prepare WebKit now, off the render path.
+                if self.isPrewarmEnabled,
+                   ids.contains(where: { self.availabilityForPlaceholder(id: $0) == .ready }) {
+                    self.prewarmStaticHeightCalculator()
+                }
                 completion?()
             }
         }
@@ -1253,8 +1316,6 @@ extension InAppContentBlocksManager:
         let indexOfPlaceholder: Int = inAppContentBlockMessages.firstIndex(where: { $0.indexPath == message.indexPath }) ?? 0
         updateDisplayedState(for: message.id)
 
-        let web = dequeueContentBlockWebView(tag: tag)
-
         if let html = message.content?.html, !html.isEmpty {
             Exponea.logger.log(
                 .verbose,
@@ -1281,14 +1342,18 @@ extension InAppContentBlocksManager:
             if inAppContentBlockMessages[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
                 _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
+            let web = dequeueContentBlockWebView(tag: tag)
             web.loadHTMLString(finalHTML, baseURL: nil)
+            InAppContentBlockRenderHistory.shared.recordRender(usedSpareWebView: true)
             return web
         } else if let personalized = message.personalizedMessage, let payloadData = personalized.htmlPayload?.html?.data(using: .utf8), !payloadData.isEmpty {
             if inAppContentBlockMessages[indexOfPlaceholder].personalizedMessage?.ttlSeen == nil {
                 _inAppContentBlockMessages.changeValue(with: { $0[indexOfPlaceholder].personalizedMessage?.ttlSeen = Date() })
             }
             if let html = personalized.htmlPayload?.html, !html.isEmpty {
+                let web = dequeueContentBlockWebView(tag: tag)
                 web.loadHTMLString(html, baseURL: nil)
+                InAppContentBlockRenderHistory.shared.recordRender(usedSpareWebView: true)
                 return web
             } else {
                 return returnEmptyView(tag: tag)
@@ -1817,8 +1882,9 @@ private extension InAppContentBlocksManager {
         }
     }
 
+    // A plain view is enough for "no content" and avoids creating a WKWebView during cell setup.
     func returnEmptyView(tag: Int) -> UIView {
-        dequeueContentBlockWebView(tag: tag)
+        returnEmptyStaticView(tag: tag)
     }
 
     func returnEmptyStaticView(tag: Int) -> UIView {

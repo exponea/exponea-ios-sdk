@@ -27,7 +27,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         if let contentRuleList = inAppContentBlocksManager.contentRuleList {
             configuration.userContentController.add(contentRuleList)
         }
-        let newWebview = WKWebView(
+        let newWebview = ContentBlockWebViewFactory.makeWebView(
             frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 0),
             configuration: configuration
         )
@@ -39,6 +39,9 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         newWebview.backgroundColor = .clear
         newWebview.isOpaque = false
         newWebview.translatesAutoresizingMaskIntoConstraints = false
+        newWebview.navigationDelegate = self
+        newWebview.tag = contentTag
+        isWebviewCreated = true
         return newWebview
     }()
 
@@ -54,7 +57,24 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
 
     private let placeholder: String
     private lazy var inAppContentBlocksManager = InAppContentBlocksManager.manager
-    public var calculator: WKWebViewHeightCalculator
+    /// Called on the main thread whenever the rendered content block changes height, only once
+    /// there is content to show. When shown content goes away, it is called once with height `0`.
+    /// Setting it does not create a web view, so prefer it over `calculator.publicHeightUpdate`.
+    public var publicHeightUpdate: TypeBlock<CalculatorData>?
+    private var hasReportedPublicHeight = false
+    /// Measures the content block height in an offscreen web view.
+    /// The first access creates that web view, so avoid reading it before content arrives;
+    /// use `publicHeightUpdate` on this view to observe height changes instead.
+    public lazy var calculator: WKWebViewHeightCalculator = makeCalculator()
+    private var isWebviewCreated = false
+    private var isCalculatorCreated = false
+    private var contentTag: Int = 0 {
+        didSet {
+            if isWebviewCreated {
+                webview.tag = contentTag
+            }
+        }
+    }
     private var html: String = ""
     private var height: NSLayoutConstraint?
     private var contentReadyFlag: Bool?
@@ -64,34 +84,8 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
     public init(placeholder: String, deferredLoad: Bool = false, heightCompletion: TypeBlock<Int>? = nil) {
         self.placeholder = placeholder
         self.heightCompletion = heightCompletion
-        self.calculator = InAppContentBlocksManager.manager.preparedStaticHeightCalculator()
         super.init(frame: .zero)
 
-        webview.navigationDelegate = self
-        calculator.heightUpdate = { [weak self] height in
-            guard let self else { return }
-            guard height.height > 0 else {
-                self.notifyContentReadyState(true)
-                self.reportMessageShownIfNeeded()
-                return
-            }
-            let usableHeight = height.height
-            if self.webview.superview != nil {
-                onMain {
-                    self.height?.constant = usableHeight
-                    self.heightCompletion?(Int(usableHeight))
-                    self.webview.loadHTMLString(self.html, baseURL: nil)
-                    self.webview.layoutIfNeeded()
-                    self.reportMessageShownIfNeeded()
-                }
-                return
-            }
-            self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: usableHeight) {
-                self.heightCompletion?(Int(usableHeight))
-                self.prepareContentReadyState(true)
-                self.reportMessageShownIfNeeded()
-            }
-        }
         if !deferredLoad {
             getContent()
         }
@@ -101,7 +95,42 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             self.height?.constant = 0
             self.sizeToFit()
             self.layoutIfNeeded()
+            onMain { self.reportPublicHeightCollapsedIfNeeded() }
         }
+    }
+
+    private func makeCalculator() -> WKWebViewHeightCalculator {
+        let calculator = InAppContentBlocksManager.manager.preparedStaticHeightCalculator()
+        isCalculatorCreated = true
+        calculator.heightUpdate = { [weak self] height in
+            guard let self else { return }
+            guard height.height > 0 else {
+                self.notifyContentReadyState(true)
+                self.reportMessageShownIfNeeded()
+                onMain { self.reportPublicHeightCollapsedIfNeeded() }
+                return
+            }
+            let usableHeight = height.height
+            // The display web view is created lazily, so check it on main.
+            onMain {
+                if self.webview.superview != nil {
+                    self.height?.constant = usableHeight
+                    self.heightCompletion?(Int(usableHeight))
+                    self.reportPublicHeight(height)
+                    self.webview.loadHTMLString(self.html, baseURL: nil)
+                    self.webview.layoutIfNeeded()
+                    self.reportMessageShownIfNeeded()
+                    return
+                }
+                self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: usableHeight) {
+                    self.heightCompletion?(Int(usableHeight))
+                    self.reportPublicHeight(height)
+                    self.prepareContentReadyState(true)
+                    self.reportMessageShownIfNeeded()
+                }
+            }
+        }
+        return calculator
     }
 
     /// Starts deferred loading with conditional revalidation when a stored ETag exists.
@@ -114,10 +143,35 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
         getContent(force: true)
     }
 
+    private func reportPublicHeight(_ data: CalculatorData) {
+        hasReportedPublicHeight = true
+        publicHeightUpdate?(data)
+    }
+
+    // An empty placeholder reports no height; only shown content that goes away reports 0.
+    private func reportPublicHeightCollapsedIfNeeded() {
+        guard hasReportedPublicHeight else { return }
+        hasReportedPublicHeight = false
+        publicHeightUpdate?(.init(height: 0, placeholderId: placeholder))
+    }
+
+    // MARK: - Test-support accessors
+
+    func loadContentForTest(html: String) {
+        loadContent(html: html, message: nil)
+    }
+
+    var hasCreatedWebViews: Bool {
+        isWebviewCreated || isCalculatorCreated
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // `load()` and `reload()` can be called from any thread. Content is prepared on the calling
+    // thread, since it can wait for resource downloads. The view state, including the lazily created
+    // web view and its tag, is only touched on the main thread.
     private func getContent(force: Bool = false) {
         guard !IntegrationManager.shared.isStopped else {
             Exponea.logger.log(.verbose, message: "In-app content blocks UI is unavailable, SDK is stopping")
@@ -134,26 +188,30 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
             placeholderId: placeholder,
             makeResourcesOffline: !skipNativeRendering
         )
-        webview.tag = data.tag
-        if data.html.isEmpty || force {
-            inAppContentBlocksManager.refreshStaticViewContent(staticQueueData: .init(
-                tag: data.tag,
-                placeholderId: placeholder,
-                makeResourcesOffline: !skipNativeRendering,
-                skipEtag: force
-            ) { [weak self] result in
-                guard let self else { return }
-                self.webview.tag = result.tag
+        let makeResourcesOffline = !skipNativeRendering
+        onMain { [weak self] in
+            guard let self else { return }
+            self.contentTag = data.tag
+            if data.html.isEmpty || force {
+                self.inAppContentBlocksManager.refreshStaticViewContent(staticQueueData: .init(
+                    tag: data.tag,
+                    placeholderId: self.placeholder,
+                    makeResourcesOffline: makeResourcesOffline,
+                    skipEtag: force
+                ) { [weak self] result in
+                    guard let self else { return }
+                    self.contentTag = result.tag
+                    self.loadContent(
+                        html: result.html,
+                        message: result.message
+                    )
+                })
+            } else {
                 self.loadContent(
-                    html: result.html,
-                    message: result.message
+                    html: data.html,
+                    message: data.message
                 )
-            })
-        } else {
-            loadContent(
-                html: data.html,
-                message: data.message
-            )
+            }
         }
     }
 
@@ -169,6 +227,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                 }
             } else {
                 replacePlaceholder(inputView: self, loadedInAppContentBlocksView: .init(frame: .zero), height: 0) {
+                    self.reportPublicHeightCollapsedIfNeeded()
                     self.prepareContentReadyState(true)
                     self.behaviourCallback.onNoMessageFound(placeholderId: self.placeholder)
                 }
@@ -184,7 +243,11 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                 self.reportMessageShownIfNeeded()
             }
         } else {
-            calculator.loadHtml(placedholderId: placeholder, html: html)
+            InAppContentBlockRenderHistory.shared.recordRender()
+            // The calculator is a WKWebView and may be created here.
+            onMain {
+                self.calculator.loadHtml(placedholderId: self.placeholder, html: html)
+            }
         }
     }
 
@@ -225,7 +288,10 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                     UIView.animate(withDuration: duration) {
                         loadedInAppContentBlocksView.alpha = 1
                     }
-                    self.webview.loadHTMLString(self.html, baseURL: nil)
+                    // No content so far: don't create a WKWebView just to load nothing.
+                    if self.isWebviewCreated {
+                        self.webview.loadHTMLString(self.html, baseURL: nil)
+                    }
                     onCompletion()
                 }
             }
