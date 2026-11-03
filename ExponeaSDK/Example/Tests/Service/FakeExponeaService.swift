@@ -1,7 +1,8 @@
 import Foundation
 import ExponeaSDK
+@testable import Example
 
-/// Deterministic fake for source-only tests; does not invoke ExponeaSDK.
+/// Deterministic fake for ExampleTests; does not invoke ExponeaSDK.
 final class FakeExponeaService: ExponeaServicing {
     struct RecordedCall: Equatable {
         let name: String

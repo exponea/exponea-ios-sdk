@@ -11,6 +11,11 @@ target 'ExponeaSDK' do
 end
 target 'Example' do
     pod 'SwiftSoup', '>= 2.7.6', '< 3.0'
+
+    target 'ExampleTests' do
+        inherit! :search_paths
+        pod 'Yams', '~> 5.0'
+    end
 end
 
 target 'ExponeaSDKTests' do

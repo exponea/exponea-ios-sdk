@@ -12,6 +12,7 @@ capabilities:
       - btn_open_logs
       - btn_shell_logo
       - status_sdk_indicator
+      - img_loading_logo
       - id: btn_reset_back_to_auth
         afterTap: btn_reset_state
       - id: btn_reset_stop_and_continue
@@ -61,7 +62,18 @@ capabilities:
     screen: FetchingScreen
     startsOnMainScreen: true
     semantics:
-      - btn_open_inbox
+      - id: lbl_app_inbox_title
+        afterTap: btn_open_inbox
+      - id: btn_app_inbox_back
+        afterTap: btn_open_inbox
+      - id: list_app_inbox
+        afterTap: btn_open_inbox
+      - id: lbl_app_inbox_detail_title
+        afterTap: btn_open_inbox
+      - id: btn_app_inbox_detail_back
+        afterTap: btn_open_inbox
+      - id: view_app_inbox_detail
+        afterTap: btn_open_inbox
   tracking:
     screen: TrackingScreen
     startsOnMainScreen: true
@@ -118,11 +130,14 @@ capabilities:
       - tab_flush_period
       - tab_log_level
       - btn_get_flush_mode
+      - lbl_current_flush_mode
       - btn_flush_mode_immediate
       - btn_flush_mode_period
       - btn_flush_mode_app_close
       - btn_flush_mode_manual
       - id: btn_get_flush_period
+        afterTap: tab_flush_period
+      - id: lbl_current_flush_period
         afterTap: tab_flush_period
       - id: btn_flush_period_30
         afterTap: tab_flush_period
@@ -130,7 +145,13 @@ capabilities:
         afterTap: tab_flush_period
       - id: btn_flush_data
         afterTap: tab_flush_period
+      - id: lbl_flush_result_title
+        afterTap: btn_flush_data
+      - id: btn_flush_result_ok
+        afterTap: btn_flush_data
       - id: btn_get_log_level
+        afterTap: tab_log_level
+      - id: lbl_current_log_level
         afterTap: tab_log_level
       - id: btn_log_off
         afterTap: tab_log_level
@@ -151,6 +172,8 @@ capabilities:
     semantics:
       - btn_anonymize
       - btn_stop_integration
+      - id: lbl_anonymized_title
+        afterTap: btn_anonymize
       - id: btn_anonymized_ok
         afterTap: btn_anonymize
       - id: btn_stop_back_to_auth
@@ -178,6 +201,10 @@ capabilities:
         afterTap: btn_toggle_carousels
       - cb_tab_classic
       - cb_tab_runtime_lab
+      - id: cb_runtime_ids_input
+        afterTap: cb_tab_runtime_lab
+      - id: cb_runtime_deadline_input
+        afterTap: cb_tab_runtime_lab
       - id: btn_cb_runtime_prefetch
         afterTap: cb_tab_runtime_lab
       - id: btn_cb_runtime_availability
@@ -200,6 +227,10 @@ capabilities:
     screen: AppShell
     startsOnMainScreen: true
     semantics:
+      - id: list_logs
+        afterTap: btn_open_logs
+      - id: lbl_logs_empty
+        afterTap: btn_open_logs
       - id: btn_logs_copy
         afterTap: btn_open_logs
       - id: btn_logs_clear
@@ -218,3 +249,11 @@ capabilities:
         afterTap: btn_open_logs
       - id: btn_logs_filter_error
         afterTap: btn_open_logs
+
+# IDs shared with the other example apps that this app can't apply. Each one must stay in the
+# capabilities above and must not exist in A11yID; the contract test enforces both.
+known_gaps:
+  - id: lbl_flush_result_title
+    reason: SwiftUI .alert can't carry an accessibility identifier on its title
+  - id: lbl_anonymized_title
+    reason: SwiftUI .alert can't carry an accessibility identifier on its title

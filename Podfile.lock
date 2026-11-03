@@ -11,6 +11,7 @@ PODS:
   - SwiftLint (0.51.0)
   - SwiftSoup (2.7.6)
   - URITemplate (3.0.1)
+  - Yams (5.0.6)
 
 DEPENDENCIES:
   - Mockingjay (from `https://github.com/kylef/Mockingjay.git`, branch `master`)
@@ -18,6 +19,7 @@ DEPENDENCIES:
   - Quick (= 5.0.1)
   - SwiftLint (= 0.51.0)
   - SwiftSoup (< 3.0, >= 2.7.6)
+  - Yams (~> 5.0)
 
 SPEC REPOS:
   trunk:
@@ -26,6 +28,7 @@ SPEC REPOS:
     - SwiftLint
     - SwiftSoup
     - URITemplate
+    - Yams
 
 EXTERNAL SOURCES:
   Mockingjay:
@@ -44,7 +47,8 @@ SPEC CHECKSUMS:
   SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
   SwiftSoup: 9ec2526c76ebc3fe5d3157c82b40b45a27eeb82d
   URITemplate: 5f5a79f3e384884102c4e6b3325d159c20a8035a
+  Yams: e10dae147f517ed57ecae37c5e8681bdf8fcab65
 
-PODFILE CHECKSUM: e38d4864537cf84dfc03d1baea0d40b796289303
+PODFILE CHECKSUM: 7c2006009f945a23a173dec514b0fccb6370b730
 
 COCOAPODS: 1.16.2

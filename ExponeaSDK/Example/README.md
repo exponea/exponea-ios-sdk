@@ -72,12 +72,12 @@ In debug builds on a physical device, the app turns on the SDK's push setup self
 xcrun simctl openurl booted "exponea://track"
 ```
 
-## Checks
+## Tests
 
-From `ExponeaSDK/Example`:
+The `ExampleTests` target runs with the `Example` scheme's Test action (`Cmd + U`), or from the repository root:
 
 ```bash
-./Tests/run_all.sh
+xcodebuild test -workspace ExponeaSDK.xcworkspace -scheme Example -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
 
-These are static source checks: accessibility identifiers against `Tests/Contract/automation_contract.yaml`, app identity, configuration validation and similar. They don't build or run the app. See [Tests/README.md](Tests/README.md).
+The tests check accessibility identifiers against `Tests/Contract/automation_contract.yaml`, app identity, deeplinks, configuration validation and view models. See [Tests/README.md](Tests/README.md).

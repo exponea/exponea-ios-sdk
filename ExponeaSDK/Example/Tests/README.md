@@ -1,39 +1,39 @@
-# Example app local verification
+# Example app tests
 
-Executable checks live under `Tests/` and do not require an Xcode test target.
+`ExampleTests` is an XCTest unit-test target hosted by the `Example` app. It runs in the Test action of the `Example` scheme. The tests need no network or credentials and don't call the real SDK.
 
-## Run everything
+## Run the tests
+
+In Xcode, select the `Example` scheme and choose **Product** > **Test** (`Cmd + U`).
+
+From the repository root, after `pod install`:
 
 ```bash
-./Tests/run_all.sh
+xcodebuild test \
+  -workspace ExponeaSDK.xcworkspace \
+  -scheme Example \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
 
-## Checks included
+To run the tests from a build artifact on another machine, build with `xcodebuild build-for-testing`, copy the `.xctestrun` file and the `Build/Products` folder, and run `xcodebuild test-without-building -xctestrun <file>`. The test bundle carries every file it reads, so it doesn't need the source checkout.
 
-| Check | Script |
+## What the tests cover
+
+| Test class | Covers |
 |-------|--------|
-| App identity | `Tests/Contract/verify_app_identity.sh` |
-| Automation manifest integrity (`Tests/Contract/automation_contract.yaml`) | `Tests/Contract/verify_manifest_integrity.sh` |
-| Identifier coverage + allowlist | `Tests/Contract/verify_identifier_coverage.sh` |
-| Env config / credentials | `Tests/Contract/verify_env_config.sh` |
-| ExponeaServicing source contract | `Tests/Service/verify_exponea_servicing_source.sh` |
+| `AccessibilityContractTests` | Every ID in `A11yID` is in `Contract/automation_contract.yaml` and every contract ID exists in `A11yID`, except the `known_gaps` the app can't apply (which must stay out of `A11yID`). Also checks the contract has no duplicates, IDs are `lower_snake_case`, and every `afterTap` points to a contract ID. |
+| `AppIdentityTests` | Bundle ID, display name, URL scheme, app group and associated domain, which test automation and universal links depend on. |
+| `DeeplinkActionTests` | `exponea://` and universal link resolution. |
+| `ConfigureRequestTests` | Configuration form validation. |
+| `EnvConfigTests` | Prefill from `EXPONEA_*` values. |
+| `DemoJwtGeneratorTests` | The demo JWT is signed with HS512 and carries the `ids` claim. |
+| `ViewModelTests` | Flushing, anonymize, SDK state and the runtime content block lab, through `FakeExponeaService`. |
+| `ExponeaServicingContractTests` | `FakeExponeaService` records calls and returns its configured results. |
 
-## Credentials prefill
+## Accessibility IDs
 
-See [Prefill the configuration screen](../README.md#prefill-the-configuration-screen) in the example app README.
+The IDs in `A11yID` are shared with test automation and the other Bloomreach SDK example apps. When you add, rename or remove an ID, update `Contract/automation_contract.yaml` too. A shared ID this app can't apply (for example an alert title, which SwiftUI can't give an identifier) stays in the contract and goes into its `known_gaps` list with a reason; once the app applies it, the test asks you to remove it from the list. Keep each `A11yID` namespace a struct with `let` properties: the contract test lists IDs with `Mirror`, which doesn't see `static let`. A new namespace also has to be added to `appNamespaces` in `AccessibilityContractTests`.
 
-## XCTest status
+The Test action of the `Example` scheme doesn't reuse the Run action's environment and sets `EXPONEA_AUTO_CONFIGURE=false`, so the host app never configures the real SDK during a test run.
 
-`Tests/Service/ExponeaServicingContractTests.swift` is **source-only**. It is not wired into an Xcode test target and is **not executed** by `run_all.sh`.
-
-To run XCTest later (manual prerequisite):
-
-1. Add an example app unit-test target in Xcode.
-2. Include `Tests/Service/*.swift` in that target.
-3. Run tests from Xcode or `xcodebuild test`.
-
-`run_all.sh` verifies the fake service and protocol API via static source checks instead.
-
-## Simulator build
-
-`run_all.sh` does not build the app. Use `scripts/install_simulator.sh` after visual-facing changes.
+The view model tests replace the global `ExponeaService.service`, so the scheme runs `ExampleTests` serially.

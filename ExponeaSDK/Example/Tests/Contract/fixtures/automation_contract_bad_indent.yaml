@@ -1,7 +1,0 @@
-capabilities:
-  broken-capability:
-    screen: BrokenScreen
-    startsOnMainScreen: true
-      navTab: btn_nav_tracking
-    semantics:
-      - btn_nav_tracking

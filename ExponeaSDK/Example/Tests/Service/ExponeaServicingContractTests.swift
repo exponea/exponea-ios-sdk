@@ -1,7 +1,7 @@
 import XCTest
 @testable import Example
 
-/// Source-only XCTest examples for ExponeaServicing. Wire into an Xcode test target manually.
+/// Checks that FakeExponeaService records calls and returns its configured results.
 final class ExponeaServicingContractTests: XCTestCase {
 
     func testFakeRecordsTrackEvent() {

@@ -1,6 +1,0 @@
-capabilities:
-  example-app-shell:
-    screen: AppShell
-    startsOnMainScreen: true
-    semantics:
-      - Btn_Invalid_Case

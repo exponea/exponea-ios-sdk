@@ -1,8 +1,0 @@
-capabilities:
-  broken-capability:
-    screen: BrokenScreen
-    startsOnMainScreen: true
-    semantics:
-      - ""
-      - id: ""
-        afterTap: btn_reset_state

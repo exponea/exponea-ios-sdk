@@ -1,6 +1,0 @@
-capabilities:
-  stale-fixture:
-    screen: StaleFixtureScreen
-    startsOnMainScreen: true
-    semantics:
-      - btn_stale_fixture_id
