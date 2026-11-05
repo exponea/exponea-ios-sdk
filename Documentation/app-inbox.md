@@ -235,6 +235,28 @@ private func stylizeActionButton(_ button: UIButton) {
 }
 ```
 
+##### Message image
+
+`AppInboxDetailViewController.messageImage` is the `UIImageView` that shows the message image. It fills the width of the screen, and its height follows the aspect ratio of the image. When the message has no image, or the image can't be loaded, the image view collapses to zero height, and the received time, title, and message move up.
+
+- To hide the image, set `messageImage.isHidden = true`. The image view collapses the same way. The SDK never changes `isHidden`, so your setting stays after the message image loads.
+- To show your own image, set `messageImage.image`. The SDK then doesn't load or replace the message image, even if you set your image before the message data loads. When the screen gets data for a different message, the SDK loads that message's image again. To give control back to the SDK, set `messageImage.image` to `nil`. The SDK then loads its image the next time the screen gets message data or the user returns to the screen.
+- Don't use `messageImage.image` as a placeholder while the message image loads. The SDK never replaces an image you set with the message image. When the screen first appears, the image view stays collapsed until the message image is ready, and then it expands to the image's height.
+- The SDK releases its image while the detail screen is hidden and loads it again when the user returns. If your subclass of `AppInboxDetailViewController` overrides `viewWillAppear(_:)` or `viewDidDisappear(_:)`, call `super`.
+
+```swift
+public override func getAppInboxDetailViewController(_ messageId: String) -> UIViewController {
+   let detailProvider = super.getAppInboxDetailViewController(messageId)
+   let typedDetailProvider = detailProvider as! AppInboxDetailViewController
+   typedDetailProvider.loadViewIfNeeded()
+   // change the background shown behind transparent parts of the image
+   typedDetailProvider.messageImage.backgroundColor = .clear
+   // or hide the image completely
+   // typedDetailProvider.messageImage.isHidden = true
+   return typedDetailProvider
+}
+```
+
 > 👍
 >
 > **AppInbox detail image inset**

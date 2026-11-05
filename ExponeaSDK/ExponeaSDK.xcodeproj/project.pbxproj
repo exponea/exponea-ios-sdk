@@ -247,10 +247,11 @@
 		31CFEF6D2A66933A005402E5 /* Sequence+RemoveNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6B2A6692B2005402E5 /* Sequence+RemoveNil.swift */; };
 		31CFEF6F2A66940E005402E5 /* SequenceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CFEF6E2A66940E005402E5 /* SequenceTest.swift */; };
 		31E9CBA22AE9494B00A333C8 /* URL+Init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E9CBA12AE9494B00A333C8 /* URL+Init.swift */; };
-		44F1465D31116305B7B362DF /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2302C3D4B11449D0EC2341FB /* OFL.txt */; };
+		44F1465D31116305B7B362DF /* Fonts/OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2302C3D4B11449D0EC2341FB /* Fonts/OFL.txt */; };
 		31EBB8552A6AC3020003AAA5 /* StaticInAppContentBlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */; };
 		31EBB8562A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */; };
 		31EBB8572A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8462A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift */; };
+		60817144309A4137004AF346 /* AppInboxDetailViewControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60817143309A4136004AF346 /* AppInboxDetailViewControllerSpec.swift */; };
 		A2CE9D6C90CA49F5BDEAB517 /* ContentBlockWebViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DD50BC126E4D29842CF8E8 /* ContentBlockWebViewFactory.swift */; };
 		5E1A3C9F2B7D4E6A8C0F1A02 /* InAppContentBlockRenderHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1A3C9F2B7D4E6A8C0F1A01 /* InAppContentBlockRenderHistory.swift */; };
 		31EBB8582A6AC3020003AAA5 /* InappContentBlocksManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31EBB8482A6AC3020003AAA5 /* InappContentBlocksManagerType.swift */; };
@@ -875,7 +876,7 @@
 		157DB5FA2BD0A7FA8886C540 /* UserDefaultsETagStoreSpec.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UserDefaultsETagStoreSpec.swift; sourceTree = "<group>"; };
 		1834092C0840A684D9848A58 /* Pods_ExponeaSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ExponeaSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		238951823A8BB25758D541D5 /* DemoJwtGenerator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DemoJwtGenerator.swift; sourceTree = "<group>"; };
-		2302C3D4B11449D0EC2341FB /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Fonts/OFL.txt; sourceTree = "<group>"; };
+		2302C3D4B11449D0EC2341FB /* Fonts/OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Fonts/OFL.txt; sourceTree = "<group>"; };
 		23E725E3214AA7A900B552B8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		2EF91EEC80A562446B78EC80 /* Pods-ExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ExampleTests.release.xcconfig"; path = "Target Support Files/Pods-ExampleTests/Pods-ExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		311268DA2CD10E9C00C38394 /* InAppButtonContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppButtonContainer.swift; sourceTree = "<group>"; };
@@ -929,6 +930,7 @@
 		31EBB8442A6AC3020003AAA5 /* StaticInAppContentBlockView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticInAppContentBlockView.swift; sourceTree = "<group>"; };
 		31EBB8452A6AC3020003AAA5 /* InAppContentBlocksTrackingEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppContentBlocksTrackingEvent.swift; sourceTree = "<group>"; };
 		31EBB8462A6AC3020003AAA5 /* WKWebViewHeightCalculator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WKWebViewHeightCalculator.swift; sourceTree = "<group>"; };
+		60817143309A4136004AF346 /* AppInboxDetailViewControllerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInboxDetailViewControllerSpec.swift; sourceTree = "<group>"; };
 		69DD50BC126E4D29842CF8E8 /* ContentBlockWebViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentBlockWebViewFactory.swift; sourceTree = "<group>"; };
 		5E1A3C9F2B7D4E6A8C0F1A01 /* InAppContentBlockRenderHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppContentBlockRenderHistory.swift; sourceTree = "<group>"; };
 		31EBB8482A6AC3020003AAA5 /* InappContentBlocksManagerType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InappContentBlocksManagerType.swift; sourceTree = "<group>"; };
@@ -1121,7 +1123,7 @@
 		AC1D2DC84CC13ECD28F801CF /* EnvConfigTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EnvConfigTests.swift; sourceTree = "<group>"; };
 		AE07F98A5BEC1CE73699F7DA /* AnonymizeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AnonymizeView.swift; sourceTree = "<group>"; };
 		B30B52A707017051D5D763D9 /* FlushingViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlushingViewModel.swift; sourceTree = "<group>"; };
-		A794EDB9BB6E2CBE9836E05D /* Abel-Regular.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Abel-Regular.ttf"; path = "Fonts/Abel-Regular.ttf"; sourceTree = "<group>"; };
+		A794EDB9BB6E2CBE9836E05D /* Abel-Regular.ttf */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file; name = "Abel-Regular.ttf"; path = "Fonts/Abel-Regular.ttf"; sourceTree = "<group>"; };
 		AAC60A804CAB7D02D329DE4F /* InAppFontLoader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = InAppFontLoader.swift; sourceTree = "<group>"; };
 		B40E9F5C22FAD25A0085B8A1 /* TokenTrackFrequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTrackFrequency.swift; sourceTree = "<group>"; };
 		B40E9F5E22FAD58E0085B8A1 /* DatabaseModel v4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DatabaseModel v4.xcdatamodel"; sourceTree = "<group>"; };
@@ -1373,7 +1375,7 @@
 				057F4492239960650070DF30 /* lena.jpeg */,
 				057F4493239960650070DF30 /* mountain.png */,
 				A794EDB9BB6E2CBE9836E05D /* Abel-Regular.ttf */,
-				2302C3D4B11449D0EC2341FB /* OFL.txt */,
+				2302C3D4B11449D0EC2341FB /* Fonts/OFL.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1876,7 +1878,6 @@
 				7CBAA71CAE88FBD71B2A91BD /* IdentifyDialog.swift */,
 				4CAD4FB1113565539126D7E0 /* TrackCustomEventDialog.swift */,
 			);
-			name = Dialogs;
 			path = Dialogs;
 			sourceTree = "<group>";
 		};
@@ -1888,7 +1889,6 @@
 				50F6BE723ADE73C44ACCC51F /* Localizable.strings */,
 				A16C24DBE649A1E743E2A696 /* Example.entitlements */,
 			);
-			name = Resources;
 			path = Resources;
 			sourceTree = "<group>";
 		};
@@ -1897,7 +1897,6 @@
 			children = (
 				238951823A8BB25758D541D5 /* DemoJwtGenerator.swift */,
 			);
-			name = Auth;
 			path = Auth;
 			sourceTree = "<group>";
 		};
@@ -1911,7 +1910,6 @@
 				0F8C377FA865358DB35E5DD8 /* Auth */,
 				FFAE2A8D98416C8AD09E9C2D /* Components */,
 			);
-			name = Shared;
 			path = Shared;
 			sourceTree = "<group>";
 		};
@@ -1921,7 +1919,6 @@
 				D8043ED6EC1E435D8494BC13 /* TrackingView.swift */,
 				6DE8E2B0F246F29EBA327A91 /* TrackingViewModel.swift */,
 			);
-			name = Tracking;
 			path = Tracking;
 			sourceTree = "<group>";
 		};
@@ -1931,7 +1928,6 @@
 				AE07F98A5BEC1CE73699F7DA /* AnonymizeView.swift */,
 				A215E25E98EA71DF076C3DEB /* AnonymizeViewModel.swift */,
 			);
-			name = Anonymize;
 			path = Anonymize;
 			sourceTree = "<group>";
 		};
@@ -1944,7 +1940,6 @@
 				2A7BA67168FF214A503B4526 /* Anonymize */,
 				BF8738CD61704DFEF47B15A3 /* ContentBlocks */,
 			);
-			name = Features;
 			path = Features;
 			sourceTree = "<group>";
 		};
@@ -2228,6 +2223,7 @@
 		55EFD790291A6C08002569FB /* AppInbox */ = {
 			isa = PBXGroup;
 			children = (
+				60817143309A4136004AF346 /* AppInboxDetailViewControllerSpec.swift */,
 				55EFD791291A6C26002569FB /* AppInboxCacheSpec.swift */,
 				55391D4A295342C7001D95B8 /* AppInboxManagerSpec.swift */,
 				55391D4C295497A7001D95B8 /* AppInboxProviderSpec.swift */,
@@ -2326,7 +2322,6 @@
 				0DCA79C087367308AB787811 /* Resources */,
 				F7B6F7F84F119BE8F1F138EE /* Tests */,
 			);
-			name = Example;
 			path = Example;
 			sourceTree = "<group>";
 		};
@@ -2392,7 +2387,6 @@
 				EDD77A5BE04E3EDDC90C0DE1 /* ExponeaService.swift */,
 				4A520F8B7F7EE51A8468D7A3 /* SdkState.swift */,
 			);
-			name = SDK;
 			path = SDK;
 			sourceTree = "<group>";
 		};
@@ -2403,7 +2397,6 @@
 				A3B8FC99FF2388D1E6014C3F /* LogsView.swift */,
 				C55E3F53A959581C0110BC13 /* LogsViewModel.swift */,
 			);
-			name = Logging;
 			path = Logging;
 			sourceTree = "<group>";
 		};
@@ -2422,7 +2415,6 @@
 			children = (
 				FEF52DEC6EDDDB288EAE7F03 /* StatusSemaphoreView.swift */,
 			);
-			name = Status;
 			path = Status;
 			sourceTree = "<group>";
 		};
@@ -2479,7 +2471,6 @@
 				C1706237CD2769D2D6CA653E /* ContentBlocksRepresentables.swift */,
 				AABB001122334455667788AA /* ExampleCarouselViews.swift */,
 			);
-			name = ContentBlocks;
 			path = ContentBlocks;
 			sourceTree = "<group>";
 		};
@@ -2634,7 +2625,6 @@
 				3D1250D1C314A74CC1A438A7 /* FetchingViewModel.swift */,
 				E96DA4542FC959B30E85D1CF /* AppInboxButtonRepresentable.swift */,
 			);
-			name = Fetching;
 			path = Fetching;
 			sourceTree = "<group>";
 		};
@@ -2649,7 +2639,6 @@
 				853AA601D8C2FECEC86A558D /* MainTabView.swift */,
 				A991452976D86795E84A493A /* RootView.swift */,
 			);
-			name = App;
 			path = App;
 			sourceTree = "<group>";
 		};
@@ -2679,7 +2668,6 @@
 			children = (
 				E2B001122334455667788AB /* ExampleTheme.swift */,
 			);
-			name = Theme;
 			path = Theme;
 			sourceTree = "<group>";
 		};
@@ -2689,7 +2677,6 @@
 				511EB5F4F4E248B812DF2BC6 /* ConfigurationView.swift */,
 				4F3C70C6D9AC72FD009DABE5 /* ConfigurationViewModel.swift */,
 			);
-			name = Configuration;
 			path = Configuration;
 			sourceTree = "<group>";
 		};
@@ -3006,7 +2993,6 @@
 				8E82D8EAC14AC5243E9A9B75 /* FlushingView.swift */,
 				B30B52A707017051D5D763D9 /* FlushingViewModel.swift */,
 			);
-			name = Flushing;
 			path = Flushing;
 			sourceTree = "<group>";
 		};
@@ -3018,7 +3004,6 @@
 				411CC230EF20F3181EDEE652 /* A11yID.swift */,
 				6A7673BD28D16DE0A261E4A3 /* FeedbackBanner.swift */,
 			);
-			name = Components;
 			path = Components;
 			sourceTree = "<group>";
 		};
@@ -3271,6 +3256,9 @@
 						CreatedOnToolsVersion = 12.2;
 						ProvisioningStyle = Manual;
 					};
+					178C898F63228FCB2003B44C = {
+						ProvisioningStyle = Manual;
+					};
 					C08D53CC21B9474E00EA2C13 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1020;
@@ -3290,22 +3278,6 @@
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1020;
 						ProvisioningStyle = Manual;
-					};
-					C0F6C4DF2098A1AB00834E21 = {
-						CreatedOnToolsVersion = 9.3;
-						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
-						SystemCapabilities = {
-							com.apple.ApplicationGroups.iOS = {
-								enabled = 1;
-							};
-							com.apple.Push = {
-								enabled = 1;
-							};
-							com.apple.SafariKeychain = {
-								enabled = 1;
-							};
-						};
 					};
 					F021E858206CF10200788ABC = {
 						CreatedOnToolsVersion = 9.2;
@@ -3424,7 +3396,7 @@
 				057F4494239960650070DF30 /* lena.jpeg in Resources */,
 				0509610223216C7D00D59C01 /* TrackingManagerUpdate.plist in Resources */,
 				1D4F5BBD4A041100B257E7F8 /* Abel-Regular.ttf in Resources */,
-				44F1465D31116305B7B362DF /* OFL.txt in Resources */,
+				44F1465D31116305B7B362DF /* Fonts/OFL.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4129,6 +4101,7 @@
 				0567724123746B9B0082167C /* PushNotificationSwizzlerSpec.swift in Sources */,
 				057F447B2398FE930070DF30 /* InAppMessagesCacheSpec.swift in Sources */,
 				603CC5822FD0957F005A7A64 /* CompletionGuaranteesSpec.swift in Sources */,
+				60817144309A4137004AF346 /* AppInboxDetailViewControllerSpec.swift in Sources */,
 				05FEBDC223A7C940007C2372 /* MockInAppMessageTrackingDelegate.swift in Sources */,
 				F063BEAA207E36E600030811 /* MockDatabaseManager.swift in Sources */,
 				F04BEA9B2111AF7E00591950 /* RequestParametersTypeSpec.swift in Sources */,
