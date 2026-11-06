@@ -517,6 +517,7 @@
 		E2741CBA9016ICB00000016 /* RuntimeInContentBlockControllerLifecycleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2741CBA9015ICB00000015 /* RuntimeInContentBlockControllerLifecycleSpec.swift */; };
 		E2741CBA9018ICB00000018 /* AnonymizeContentBlockReloadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2741CBA9017ICB00000017 /* AnonymizeContentBlockReloadSpec.swift */; };
 		E2741CBA9022ICB00000022 /* ContentBlockCarouselCallbackSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2741CBA9021ICB00000021 /* ContentBlockCarouselCallbackSpec.swift */; };
+		830C7AE4488C61CCF5BC0761 /* DefaultInAppContentBlockCallbackSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FDC21CE7F22284A351B705 /* DefaultInAppContentBlockCallbackSpec.swift */; };
 		E2A000012F40000100000001 /* ExponeaSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F021E859206CF10200788ABC /* ExponeaSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E2A000022F40000100000002 /* ExponeaSDKShared.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0561829725AD959C001E30A3 /* ExponeaSDKShared.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E2A000032F40000100000003 /* ExponeaSDKObjC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0563750C25AF030A00AB68DA /* ExponeaSDKObjC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1218,6 +1219,7 @@
 		E2741CBA9015ICB00000015 /* RuntimeInContentBlockControllerLifecycleSpec.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RuntimeInContentBlockControllerLifecycleSpec.swift; sourceTree = "<group>"; };
 		E2741CBA9017ICB00000017 /* AnonymizeContentBlockReloadSpec.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AnonymizeContentBlockReloadSpec.swift; sourceTree = "<group>"; };
 		E2741CBA9021ICB00000021 /* ContentBlockCarouselCallbackSpec.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentBlockCarouselCallbackSpec.swift; sourceTree = "<group>"; };
+		41FDC21CE7F22284A351B705 /* DefaultInAppContentBlockCallbackSpec.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultInAppContentBlockCallbackSpec.swift; sourceTree = "<group>"; };
 		E2B001122334455667788AB /* ExampleTheme.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExampleTheme.swift; sourceTree = "<group>"; };
 		E96DA4542FC959B30E85D1CF /* AppInboxButtonRepresentable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppInboxButtonRepresentable.swift; sourceTree = "<group>"; };
 		ED7C1067A7B3BAA7AE1BC128 /* ExampleApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExampleApp.swift; sourceTree = "<group>"; };
@@ -2099,6 +2101,7 @@
 				E2741CBA9010ICB00000010 /* RuntimeICB */,
 				31EBB86A2A6AC3500003AAA5 /* InAppContentBlocksManagerSpec.swift */,
 				E2741CBA9021ICB00000021 /* ContentBlockCarouselCallbackSpec.swift */,
+				41FDC21CE7F22284A351B705 /* DefaultInAppContentBlockCallbackSpec.swift */,
 				555A10E72B6CE8D9004D3FB4 /* StaticInAppContentBlockViewSpec.swift */,
 				B72C1DB358895FA3E93251F9 /* ETagStore */,
 			);
@@ -4013,6 +4016,7 @@
 				E2741CBA9016ICB00000016 /* RuntimeInContentBlockControllerLifecycleSpec.swift in Sources */,
 				E2741CBA9018ICB00000018 /* AnonymizeContentBlockReloadSpec.swift in Sources */,
 				E2741CBA9022ICB00000022 /* ContentBlockCarouselCallbackSpec.swift in Sources */,
+				830C7AE4488C61CCF5BC0761 /* DefaultInAppContentBlockCallbackSpec.swift in Sources */,
 				05C289362428DDAA0021220C /* SessionManagerSpec.swift in Sources */,
 				55EFD792291A6C26002569FB /* AppInboxCacheSpec.swift in Sources */,
 				019163A3207E15FB005FD174 /* LoggerSpec.swift in Sources */,

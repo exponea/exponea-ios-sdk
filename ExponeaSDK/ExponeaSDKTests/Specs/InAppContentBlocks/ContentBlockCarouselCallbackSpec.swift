@@ -92,5 +92,51 @@ class ContentBlockCarouselCallbackSpec: QuickSpec {
                 expect(logger.messages.contains { $0.contains("Invoking Carousel Content Block") }).to(beTrue())
             }
         }
+
+        describe("browser action") {
+            it("presents Safari on main thread when called from background") {
+                let spy = MutableCarouselCallbackSpy()
+                var presentedOnMainThread: Bool?
+                var presentedUrl: URL?
+                waitUntil(timeout: .seconds(5)) { done in
+                    let wrapper = ContentBlockCarouselCallback(
+                        behaviourCallback: spy,
+                        safariPresenter: { url in
+                            presentedOnMainThread = Thread.isMainThread
+                            presentedUrl = url
+                            done()
+                        }
+                    )
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        wrapper.onActionClickedSafari(
+                            placeholderId: "example_carousel",
+                            contentBlock: SampleInAppContentBlocks.getSampleIninAppContentBlocks(),
+                            action: InAppContentBlockAction(name: "open", url: "https://example.com/page", type: .browser)
+                        )
+                    }
+                }
+
+                expect(presentedOnMainThread).to(beTrue())
+                expect(presentedUrl?.absoluteString).to(equal("https://example.com/page"))
+            }
+
+            it("presents Safari synchronously when already on main thread") {
+                let spy = MutableCarouselCallbackSpy()
+                var presentedUrl: URL?
+                let wrapper = ContentBlockCarouselCallback(
+                    behaviourCallback: spy,
+                    safariPresenter: { presentedUrl = $0 }
+                )
+
+                wrapper.onActionClickedSafari(
+                    placeholderId: "example_carousel",
+                    contentBlock: SampleInAppContentBlocks.getSampleIninAppContentBlocks(),
+                    action: InAppContentBlockAction(name: "open", url: "https://example.com/page", type: .browser)
+                )
+
+                expect(presentedUrl?.absoluteString).to(equal("https://example.com/page"))
+                expect(spy.onActionClickedSafariCallCount).to(equal(1))
+            }
+        }
     }
 }

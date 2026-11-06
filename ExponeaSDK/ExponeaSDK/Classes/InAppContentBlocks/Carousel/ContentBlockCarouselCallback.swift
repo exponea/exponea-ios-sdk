@@ -27,11 +27,26 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
     var trackActions: Bool = true
     var overrideDefaultBehavior: Bool = false
     private var behaviourCallback: DefaultContentBlockCarouselCallback?
+    /// Presents the browser action URL; injectable so tests can observe the thread it runs on
+    private let safariPresenter: (URL) -> Void
 
-    init(behaviourCallback: DefaultContentBlockCarouselCallback?) {
+    init(
+        behaviourCallback: DefaultContentBlockCarouselCallback?,
+        safariPresenter: @escaping (URL) -> Void = ContentBlockCarouselCallback.presentSafari
+    ) {
         self.trackActions = behaviourCallback?.trackActions ?? true
         self.overrideDefaultBehavior = behaviourCallback?.overrideDefaultBehavior ?? false
         self.behaviourCallback = behaviourCallback
+        self.safariPresenter = safariPresenter
+    }
+
+    private static func presentSafari(_ url: URL) {
+        let safari = SFSafariViewController(url: url)
+        if let presented = WindowHelper.keyWindow?.rootViewController?.presentedViewController {
+            presented.present(safari, animated: true)
+        } else {
+            WindowHelper.keyWindow?.rootViewController?.present(safari, animated: true)
+        }
     }
 
     private var effectiveOverrideDefaultBehavior: Bool {
@@ -104,11 +119,11 @@ internal struct ContentBlockCarouselCallback: DefaultContentBlockCarouselCallbac
         if !effectiveOverrideDefaultBehavior {
             if action.type == .browser {
                 guard let stringUrl = action.url, let url = URL(safeString: stringUrl) else { return }
-                let safari = SFSafariViewController(url: url)
-                if let presented = WindowHelper.keyWindow?.rootViewController?.presentedViewController {
-                    presented.present(safari, animated: true)
-                } else {
-                    WindowHelper.keyWindow?.rootViewController?.present(safari, animated: true)
+                // Callers may run on any thread, but SFSafariViewController must be created
+                // and presented on the main thread
+                let safariPresenter = self.safariPresenter
+                onMain {
+                    safariPresenter(url)
                 }
             } else {
                 invokeAction(action, contentBlock)

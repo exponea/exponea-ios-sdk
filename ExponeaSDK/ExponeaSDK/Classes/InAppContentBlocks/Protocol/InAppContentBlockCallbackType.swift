@@ -34,6 +34,18 @@ public protocol InAppContentBlockCallbackType {
 
 internal struct DefaultInAppContentBlockCallback: InAppContentBlockCallbackType {
 
+    /// Presents the browser action URL; injectable so tests can observe the thread it runs on
+    private let safariPresenter: (URL) -> Void
+
+    init(safariPresenter: @escaping (URL) -> Void = DefaultInAppContentBlockCallback.presentSafari) {
+        self.safariPresenter = safariPresenter
+    }
+
+    private static func presentSafari(_ url: URL) {
+        let safari = SFSafariViewController(url: url)
+        WindowHelper.keyWindow?.rootViewController?.presentedViewController?.present(safari, animated: true)
+    }
+
     func onMessageShown(placeholderId: String, contentBlock: InAppContentBlockResponse) {
         Exponea.logger.log(
             .verbose,
@@ -108,8 +120,12 @@ internal struct DefaultInAppContentBlockCallback: InAppContentBlockCallbackType 
         }
         if action.type == .browser {
             guard let stringUrl = action.url, let url = URL(safeString: stringUrl) else { return }
-            let safari = SFSafariViewController(url: url)
-            WindowHelper.keyWindow?.rootViewController?.presentedViewController?.present(safari, animated: true)
+            // Callers may run on any thread (e.g. `invokeActionClick` or a stored original callback),
+            // but SFSafariViewController must be created and presented on the main thread
+            let safariPresenter = self.safariPresenter
+            onMain {
+                safariPresenter(url)
+            }
         } else {
             invokeAction(action, contentBlock)
         }
