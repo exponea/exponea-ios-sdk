@@ -18,6 +18,12 @@ You must have the following software installed to be able to build and run the e
 - Xcode
 - [CocoaPods](https://cocoapods.org/)
 
+> 📘
+>
+> The example app uses CocoaPods only to install the libraries that build the SDK and run its tests. This doesn't affect your app.
+>
+> To install the SDK in your app, use [Swift Package Manager](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#install-with-swift-package-manager).
+
 In Xcode, navigate to **Xcode** > **Settings** > **Locations** and make sure `Command Line Tools` is set to your Xcode version.
 
 ## Build and run the example app

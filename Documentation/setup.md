@@ -11,15 +11,60 @@ content:
 
 ## Install the SDK
 
-The Exponea iOS SDK can be installed or updated using [CocoaPods](https://cocoapods.org/) or [Swift Package Manager](https://www.swift.org/package-manager/).
+[Swift Package Manager](https://www.swift.org/package-manager/) is the recommended way to install the Exponea iOS SDK.
 
-The instructions below are for Xcode 15.1 and may differ if you use a different Xcode version.
+> 🚧 No new SDK versions on CocoaPods after December 2, 2026
+>
+> CocoaPods trunk becomes read-only on December 2, 2026. The last SDK version we release before that date is the last version available on CocoaPods. Later versions, including bug fixes and security fixes, are available only through Swift Package Manager.
+>
+> Versions already published to CocoaPods stay installable, so existing CocoaPods builds keep working.
 
-### CocoaPods
+To find the last version on CocoaPods, see the [ExponeaSDK page on CocoaPods](https://cocoapods.org/pods/ExponeaSDK). To keep receiving SDK updates, [migrate from CocoaPods to Swift Package Manager](#migrate-from-cocoapods-to-swift-package-manager).
+
+The instructions below use the menus of recent Xcode versions. The screenshots may show an older Xcode version.
+
+### Install with Swift Package Manager
+
+1. Open **File** > **Add Package Dependencies...**
+2. In the dialog that appears, enter the Exponea iOS SDK repository URL `https://github.com/exponea/exponea-ios-sdk` in the search box.
+3. In the **Dependency Rule** section, select **Up to Next Major Version** and the SDK version.
+   ![Add Package Dependencies dialog](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/swift-pm-1.png)
+4. Click on **Add Package**.
+5. In the next dialog, select the `ExponeaSDK` product and set **Add to Target** to your app target. If you use rich push notifications, also select `ExponeaSDK-Notifications` and add it to your notification extension targets. You can also add it later, as described in [Notification extensions](https://documentation.bloomreach.com/engagement/docs/ios-sdk-notification-extensions).
+   ![Choose Packages dialog](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/swift-pm-2.png)
+6. Click on **Add Package**.
+
+To update the SDK later, select **File** > **Packages** > **Update to Latest Package Versions**, or change the version rule in your project's **Package Dependencies** tab.
+
+### Migrate from CocoaPods to Swift Package Manager
+
+If your app installs the SDK with CocoaPods, follow these steps to migrate to Swift Package Manager. The steps cover the app target and the notification extension targets.
+
+> ❗️
+>
+> Don't install the SDK with both CocoaPods and Swift Package Manager. Two copies cause build errors or duplicate classes at runtime. Remove the SDK pods from all targets before you add the Swift package.
+
+1. Find your current SDK version in `Podfile.lock`, under `ExponeaSDK`. Select this version or a newer one in step 5. If you move to a newer major version, also follow the [SDK version update guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update).
+2. In your `Podfile`, remove the `pod "ExponeaSDK"` and `pod "ExponeaSDK-Notifications"` lines from every target, including the notification service and content extension targets. Remove any target block that is now empty.
+3. Update your project:
+   - **If your `Podfile` contains other pods,** run `pod install` and keep using the `.xcworkspace` file.
+   - **If the SDK was your only pod,** run `pod deintegrate`, then delete the `Podfile`, `Podfile.lock`, the `Pods` folder, and the `.xcworkspace` file that CocoaPods created. Open the `.xcodeproj` file from now on.
+4. If your app uses SwiftSoup through CocoaPods, move it to Swift Package Manager too. The SDK depends on SwiftSoup, and it must not be installed through both dependency managers.
+5. Add the SDK package and the `ExponeaSDK` product to your app target, as described in [Install with Swift Package Manager](#install-with-swift-package-manager).
+6. For each notification extension target, open the target's settings. On the **General** tab, in the **Frameworks, Libraries, and Embedded Content** section, click **+** and add `ExponeaSDK-Notifications`. Both products come from the same package, so the app and the extensions use the same SDK version.
+7. Keep your code unchanged. The module names stay the same: `import ExponeaSDK` in the app and `import ExponeaSDK_Notifications` in the extensions.
+8. Optional: if you set **User Script Sandboxing** to **No** only for CocoaPods, set it back to **Yes**.
+9. Select **Product** > **Clean Build Folder**, then build and run the app. Check that push notifications work, including rich push notifications on a physical device.
+
+### Install with CocoaPods (no new versions after December 2, 2026)
+
+> 🚧
+>
+> Use CocoaPods only if you can't migrate to Swift Package Manager yet. CocoaPods installs stay on the last version published to CocoaPods and don't receive any later fixes.
 
 1. Install [CocoaPods](https://cocoapods.org/) if you haven't done so yet.
 2. Create a file named `Podfile` in your Xcode project folder.
-3. Add the following to your `Podfile`
+3. Add the following to your `Podfile`:
    ```
    platform :ios, '15.0'
    use_frameworks!
@@ -27,32 +72,28 @@ The instructions below are for Xcode 15.1 and may differ if you use a different 
    target 'YourAppTarget' do
      pod "ExponeaSDK"
    end
+
+   post_install do |installer|
+     installer.pods_project.targets.each do |target|
+       target.build_configurations.each do |config|
+         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+       end
+     end
+   end
    ```
    (Replace `15.0` with your desired iOS deployment target and `YourAppTarget` with your app target's name)
+
+   The `post_install` block sets the deployment target of the SDK's dependencies, such as SwiftSoup, to iOS 15.0. Without it, Xcode 27 and later fail to build them. If your `Podfile` already has a `post_install` block, add the loop to it, because a `Podfile` can have only one.
 4. In a terminal window, navigate to your Xcode project folder and run the following command:
     ```
     pod install
     ```
-5. Open the file `HelloWorld.xcworkspace`, located in your project folder, in XCode.
-6. In Xcode, select your project, then select the `Build Settings` tab. Under `Build Options`, change `User Script Sandboxing` from `Yes` to `No`.
+5. Open the file `HelloWorld.xcworkspace`, located in your project folder, in Xcode.
+6. Build your app. If the build fails with a `Sandbox: ... deny` error in a `[CP]` build phase, select your project in Xcode, open the **Build Settings** tab, and under **Build Options** change **User Script Sandboxing** from **Yes** to **No**.
 
-Optionally, you can specify the `ExponeaSDK` version as follows to let `pod` automatically any smaller than minor version updates:
-```
-pod "ExponeaSDK", "~> 5.0.0"
-```
-For more information, refer to [Specifying pod versions](https://guides.cocoapods.org/using/the-podfile.html#specifying-pod-versions) in the Cocoapods documentation.
+`pod "ExponeaSDK"` installs the newest version available on CocoaPods. For more information, refer to [Specifying pod versions](https://guides.cocoapods.org/using/the-podfile.html#specifying-pod-versions) in the CocoaPods documentation.
 
-### Swift Package Manager
-
-1. In Xcode, navigate to `Xcode -> Settings -> Accounts` and add your GitHub account if you haven't already. 
-2. Open `File -> Add Package Dependencies...`
-3. In the dialog that appears, enter the Exponia iOS SDK repository URL `https://github.com/exponea/exponea-ios-sdk` in the search box.
-4. In the `Dependency Rule` section, select the SDK version.
-   ![Add Package Dependencies dialog](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/swift-pm-1.png)
-5. Click on `Add Package`.
-6. In the next dialog, make sure `ExponeaSDK` and `ExponeaSDK-Notifications` are both selected.
-   ![Choose Packages dialog](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/swift-pm-2.png)
-7. Click on `Add Package`.
+On CocoaPods, the SDK's SwiftSoup dependency is limited to version 2.11.3, the last version published there. Swift Package Manager installs the newest compatible SwiftSoup version.
 
 ## Initialize the SDK
 

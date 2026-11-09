@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./Documentation/images/logo_engagement.png?raw=true" alt="Exponea"/>
+  <img src="./Documentation/images/logo_bloomreach.png?raw=true" alt="Bloomreach"/>
 </p>
 
 ![Platform](https://img.shields.io/badge/Platform-iOS-lightgrey.svg?style=flat)
@@ -18,15 +18,21 @@ It has been written 100% in Swift with ❤️
 
 ## 📦 Installation
 
-### CocoaPods
+### Swift Package Manager
+
+Swift Package Manager is the recommended way to install the SDK. In Xcode, open `File -> Add Package Dependencies...`, enter the repository URL `https://github.com/exponea/exponea-ios-sdk`, and add the `ExponeaSDK` product to your app target. If you use rich push notifications, add the `ExponeaSDK-Notifications` product to your notification extension targets. For the full steps, follow the [step by step guide](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup).
+
+### CocoaPods (no new versions after December 2, 2026)
+
+> **No new SDK versions on CocoaPods after December 2, 2026.** CocoaPods trunk becomes read-only on that date. The last SDK version we release before then is the last version available on CocoaPods, and later versions, including bug fixes and security fixes, are available only through Swift Package Manager. Versions already on CocoaPods stay installable. To keep receiving updates, [migrate to Swift Package Manager](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#migrate-from-cocoapods-to-swift-package-manager).
 
 ```ruby
 # Add this under your main application target
-pod "ExponeaSDK", "~> 5.0.0"
+pod "ExponeaSDK"
 
 # If you also use rich push notifications,
 # add this line to your notification service extension target.
-pod "ExponeaSDK-Notifications", "~> 5.0.0"
+pod "ExponeaSDK-Notifications"
 ```
 
 ## 📱 Example Application

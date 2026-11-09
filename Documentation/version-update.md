@@ -11,6 +11,12 @@ content:
 
 This guide will help you upgrade your Exponea SDK to the latest major version.
 
+> 🚧 No new SDK versions on CocoaPods after December 2, 2026
+>
+> The last SDK version we release before December 2, 2026 is the last version available on CocoaPods. To update to any version released after that date, first migrate from CocoaPods to Swift Package Manager.
+
+For the steps, see [Migrate from CocoaPods to Swift Package Manager](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#migrate-from-cocoapods-to-swift-package-manager).
+
 ## Update from version 3.x.x to 4.x.x
 
 Version 4.0.0 introduces support for {user.dh} [event stream](https://documentation.bloomreach.com/data-hub/docs/event-streams) integration as an alternative to the existing Project/{user.mkg} integration. The `configure` method now accepts either `Exponea.ProjectSettings` or the new `Exponea.StreamSettings` via the `IntegrationType` protocol.

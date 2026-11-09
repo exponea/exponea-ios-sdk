@@ -22,22 +22,35 @@ This page describes the steps to create an extension of either type. Make sure t
 
 ## Step 1: Create the extension
 
-Navigate to `File` > `New` > `Target` in Xcode and select the extension type (`Notification Service Extension` or `Notification Content Extension`).
+Navigate to **File** > **New** > **Target** in Xcode and select the extension type (**Notification Service Extension** or **Notification Content Extension**).
 
 ![Create new notification extension in Xcode](https://raw.githubusercontent.com/exponea/exponea-ios-sdk/main/Documentation/images/extension1.png)
 
 > ❗️
 >
->  Ensure the `iOS Deployment Target` of your extension matches your main app (minimum **iOS 15.0**).
+>  Ensure the **iOS Deployment Target** of your extension matches your main app (minimum **iOS 15.0**).
 
 
 ## Step 2: Configure ExponeaSDK-Notifications dependency
 
-Both extension types require a dependency on `ExponeaSDK-Notification` so they can import `ExponeaNotificationService`.
+Both extension types require a dependency on `ExponeaSDK-Notifications` so they can import `ExponeaNotificationService`.
 
-Follow the instructions in the relevant section for the dependency manager you use.
+Use the same dependency manager for the extensions as for your main app. Swift Package Manager is the recommended method.
 
-### CocoaPods
+> 🚧 No new SDK versions on CocoaPods after December 2, 2026
+>
+> The last SDK version we release before December 2, 2026 is the last version available on CocoaPods. Later versions, including bug fixes and security fixes, are available only through Swift Package Manager.
+>
+> To move your app and its extensions, follow [Migrate from CocoaPods to Swift Package Manager](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#migrate-from-cocoapods-to-swift-package-manager).
+
+### Swift Package Manager
+
+`ExponeaSDK-Notifications` is a product of the same package as `ExponeaSDK`. If you haven't added the package to your project yet, follow [Install with Swift Package Manager](https://documentation.bloomreach.com/engagement/docs/ios-sdk-setup#install-with-swift-package-manager) first.
+
+1. In your Xcode project, navigate to your app extension target's settings.
+2. On the **General** tab, in the **Frameworks, Libraries, and Embedded Content** section, click on **+** and add `ExponeaSDK-Notifications`.
+
+### CocoaPods (no new versions after December 2, 2026)
 
 1. Add the following to the `Podfile` in the root folder of your Xcode project:
    ```
@@ -50,17 +63,9 @@ Follow the instructions in the relevant section for the dependency manager you u
    ```
    pod install
    ```
-3. Reopen the file `HelloWorld.xcworkspace`, located in your project folder, in XCode.
+3. Reopen the file `HelloWorld.xcworkspace`, located in your project folder, in Xcode.
 
-Optionally, you can specify the ExponeaSDK version as follows to let `pod` automatically any smaller than minor version updates:
-```
-pod "ExponeaSDK-Notifications", "~> 5.0.0"
-```
-
-### Swift Package Manager
-
-1. In your Xcode project, navigate to your app extension target's settings.
-2. On the `General` tab, in the `Frameworks, Libraries, and Embedded Content` section, click on `+` and add `ExponeaSDK-Notifications`.
+Use the same version of `ExponeaSDK-Notifications` as `ExponeaSDK` in your main app.
 
 ## Step 3: Implement the extension
 
@@ -68,7 +73,7 @@ pod "ExponeaSDK-Notifications", "~> 5.0.0"
 
 This type of extension lets you customize the content of a push notification before it's displayed to the user.
 
-Navigate to the extension's target, and on the `Signing & Capabilities` tab, add the `App Groups` capability, selecting the same group you used for your main app.
+Navigate to the extension's target, and on the **Signing & Capabilities** tab, add the **App Groups** capability, selecting the same group you used for your main app.
 
 Open `NotificationService.swift` and replace its contents with the code below to call the `ExponeaNotificationService`'s methods for processing notifications and handling timeouts.
 
