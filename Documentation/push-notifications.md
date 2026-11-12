@@ -335,6 +335,8 @@ For each extension, follow the instructions in [Notification extensions for iOS 
 
 Using the `ExponeaNotificationContentService.didReceive()` method will enhance the notification body with an image and actions delivered within the UNNotification payload. The notification actions shown by `ExponeaNotificationContentService` are registered with configurations to open your application with the required information and handle campaign clicks automatically.
 
+Rich push notifications support animated GIF images. Use SDK version 4.3.0 or newer, which fixes GIFs not animating in push notifications. Keep images small: the iOS limit for image attachments is 10 MB.
+
 #### Checklist:
  - [ ] Check that push notifications with images and buttons sent from {user.mkg} are correctly displayed on your device. Push delivery tracking should work.
  - [ ] If you don't see buttons in the expanded push notification, the content extension isn't running. Check `UNNotificationExtensionCategory` in `Info.plist`, and confirm it's nested inside `NSExtensionAttributes`. Also check that the iOS deployment target is iOS 15.0 or higher and matches the main app's target.
