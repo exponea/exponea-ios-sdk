@@ -102,7 +102,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
     private func makeCalculator() -> WKWebViewHeightCalculator {
         let calculator = InAppContentBlocksManager.manager.preparedStaticHeightCalculator()
         isCalculatorCreated = true
-        calculator.heightUpdate = { [weak self] height in
+        calculator.heightUpdate = { [weak self, padding = calculator.defaultPadding] height in
             guard let self else { return }
             guard height.height > 0 else {
                 self.notifyContentReadyState(true)
@@ -110,13 +110,16 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                 onMain { self.reportPublicHeightCollapsedIfNeeded() }
                 return
             }
-            let usableHeight = height.height
+            // The calculator adds defaultPadding for the carousel and the table/collection-view placeholders;
+            // the static block must not include it.
+            let usableHeight = height.height - padding
+            let usableData = CalculatorData(height: usableHeight, placeholderId: height.placeholderId)
             // The display web view is created lazily, so check it on main.
             onMain {
                 if self.webview.superview != nil {
                     self.height?.constant = usableHeight
                     self.heightCompletion?(Int(usableHeight))
-                    self.reportPublicHeight(height)
+                    self.reportPublicHeight(usableData)
                     self.webview.loadHTMLString(self.html, baseURL: nil)
                     self.webview.layoutIfNeeded()
                     self.reportMessageShownIfNeeded()
@@ -124,7 +127,7 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
                 }
                 self.replacePlaceholder(inputView: self, loadedInAppContentBlocksView: self.webview, height: usableHeight) {
                     self.heightCompletion?(Int(usableHeight))
-                    self.reportPublicHeight(height)
+                    self.reportPublicHeight(usableData)
                     self.prepareContentReadyState(true)
                     self.reportMessageShownIfNeeded()
                 }
@@ -144,6 +147,11 @@ public final class StaticInAppContentBlockView: UIView, WKNavigationDelegate {
     }
 
     private func reportPublicHeight(_ data: CalculatorData) {
+        // Content that measures 0 is not shown content.
+        guard data.height > 0 else {
+            reportPublicHeightCollapsedIfNeeded()
+            return
+        }
         hasReportedPublicHeight = true
         publicHeightUpdate?(data)
     }

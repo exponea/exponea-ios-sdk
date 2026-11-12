@@ -66,7 +66,7 @@ final class StaticInAppContentBlockViewTests: XCTestCase {
         super.tearDown()
     }
 
-    func testUsesFullCalculatorHeightForRenderedWebView() {
+    func testSubtractsCalculatorPaddingFromRenderedHeight() {
         let expectation = expectation(description: "height completion")
         var reportedHeight: Int?
         let animationsEnabled = UIView.areAnimationsEnabled
@@ -80,7 +80,7 @@ final class StaticInAppContentBlockViewTests: XCTestCase {
             deferredLoad: true,
             heightCompletion: { height in
                 reportedHeight = height
-                if height == 120 {
+                if height == 100 {
                     expectation.fulfill()
                 }
             }
@@ -89,7 +89,8 @@ final class StaticInAppContentBlockViewTests: XCTestCase {
         view.calculator.heightUpdate?(.init(height: 120, placeholderId: "ph_1"))
         wait(for: [expectation], timeout: 2)
 
-        XCTAssertEqual(reportedHeight, 120)
+        // 120 from the calculator includes its 20pt defaultPadding.
+        XCTAssertEqual(reportedHeight, 100)
         let displayWebView = view.subviews.first as? WKWebView
         XCTAssertEqual(displayWebView?.scrollView.contentInsetAdjustmentBehavior, .never)
         XCTAssertEqual(displayWebView?.scrollView.contentInset, .zero)
@@ -289,7 +290,7 @@ final class StaticInAppContentBlockViewTests: XCTestCase {
         view.calculator.heightUpdate?(.init(height: 120, placeholderId: "ph_1"))
         wait(for: [called], timeout: 2)
 
-        XCTAssertEqual(reported?.height, 120)
+        XCTAssertEqual(reported?.height, 100)
         XCTAssertEqual(reported?.placeholderId, "ph_1")
     }
 
@@ -345,7 +346,7 @@ final class StaticInAppContentBlockViewTests: XCTestCase {
         view.loadContentForTest(html: "")
         wait(for: [collapsed], timeout: 2)
 
-        XCTAssertEqual(reported, [120, 0])
+        XCTAssertEqual(reported, [100, 0])
     }
 
     func testPublicHeightUpdateReportsZeroWhenShownContentMeasuresZero() {
@@ -370,7 +371,7 @@ final class StaticInAppContentBlockViewTests: XCTestCase {
         view.calculator.heightUpdate?(.init(height: 0, placeholderId: "ph_1"))
         wait(for: [collapsed], timeout: 2)
 
-        XCTAssertEqual(reported, [120, 0])
+        XCTAssertEqual(reported, [100, 0])
     }
 
     func testPublicHeightUpdateReportsZeroWhenIntegrationStops() {
@@ -396,7 +397,81 @@ final class StaticInAppContentBlockViewTests: XCTestCase {
         stopCallback?()
         wait(for: [collapsed], timeout: 2)
 
-        XCTAssertEqual(reported, [120, 0])
+        XCTAssertEqual(reported, [100, 0])
+    }
+
+    func testPublicHeightUpdateIsNotCalledWhenContentMeasuresZero() {
+        let animationsEnabled = UIView.areAnimationsEnabled
+        UIView.setAnimationsEnabled(false)
+        defer { UIView.setAnimationsEnabled(animationsEnabled) }
+        let laidOut = expectation(description: "height completion")
+        let view = StaticInAppContentBlockView(
+            placeholder: "ph_1",
+            deferredLoad: true,
+            heightCompletion: { _ in laidOut.fulfill() }
+        )
+        var called = false
+        view.publicHeightUpdate = { _ in called = true }
+
+        // Empty content: the calculator reports only its padding.
+        view.calculator.heightUpdate?(.init(height: view.calculator.defaultPadding, placeholderId: "ph_1"))
+        wait(for: [laidOut], timeout: 2)
+
+        XCTAssertFalse(called)
+    }
+
+    func testHeightChangeAfterShownReportsContentHeight() {
+        let animationsEnabled = UIView.areAnimationsEnabled
+        UIView.setAnimationsEnabled(false)
+        defer { UIView.setAnimationsEnabled(animationsEnabled) }
+        var completed: [Int] = []
+        var reported: [CGFloat] = []
+        let shown = expectation(description: "first height")
+        let changed = expectation(description: "changed height")
+        let view = StaticInAppContentBlockView(
+            placeholder: "ph_1",
+            deferredLoad: true,
+            heightCompletion: { height in
+                completed.append(height)
+                if height == 100 {
+                    shown.fulfill()
+                } else {
+                    changed.fulfill()
+                }
+            }
+        )
+        view.publicHeightUpdate = { reported.append($0.height) }
+
+        view.calculator.heightUpdate?(.init(height: 120, placeholderId: "ph_1"))
+        wait(for: [shown], timeout: 2)
+        // The block is on screen now, so this goes through the update path.
+        view.calculator.heightUpdate?(.init(height: 150, placeholderId: "ph_1"))
+        wait(for: [changed], timeout: 2)
+
+        XCTAssertEqual(completed, [100, 130])
+        XCTAssertEqual(reported, [100, 130])
+    }
+
+    // Real calculator and view together: the padding the calculator adds is the padding the view removes.
+    func testRenderedHeightMatchesMeasuredHtmlHeight() {
+        let animationsEnabled = UIView.areAnimationsEnabled
+        UIView.setAnimationsEnabled(false)
+        defer { UIView.setAnimationsEnabled(animationsEnabled) }
+        let laidOut = expectation(description: "height completion")
+        var reportedHeight: Int?
+        let view = StaticInAppContentBlockView(
+            placeholder: "ph_1",
+            deferredLoad: true,
+            heightCompletion: { height in
+                reportedHeight = height
+                laidOut.fulfill()
+            }
+        )
+
+        view.loadContentForTest(html: "<html><body style=\"margin:0\"><div style=\"height:100px\"></div></body></html>")
+        wait(for: [laidOut], timeout: 10)
+
+        XCTAssertEqual(reportedHeight, 100)
     }
 
     func testPublicHeightUpdateIsNotCalledWhenPlaceholderStaysEmpty() {
