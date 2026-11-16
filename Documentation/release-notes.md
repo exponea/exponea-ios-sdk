@@ -13,6 +13,32 @@ content:
 >
 > Refer to the [SDK version update guide for iOS SDK](https://documentation.bloomreach.com/engagement/docs/ios-sdk-version-update) for details on updating to the next major version.
 
+## Release Notes for 5.1.0
+#### November 16, 2026
+* Added:
+  * Adds `Configuration.prewarmInAppContentBlocks` (default `true`) to control whether the SDK prepares in-app content block web views on the main thread before content renders. Consider setting it to `false` if your app shows a placeholder on its first screen or you notice a slower launch on older devices.
+  * Adds `StaticInAppContentBlockView.publicHeightUpdate` to observe content block height changes without creating a web view.
+  * Makes `AppInboxDetailViewController.messageImage` public, so developers can hide it or replace the message image.
+
+* Changed:
+  * Stops in-app content block placeholders from creating a web view until they have content, and limits the startup prewarm to cases where content blocks rendered recently, on first launch, or after a prefetch that finds content.
+  * Hides the default App Inbox button when calling `stopIntegration()`, and shows it again on the next `getAppInboxButton()` call after the SDK is initialized again.
+  * Replaces the example app with a redesigned SwiftUI app.
+  * Makes Swift Package Manager the only recommended way to install the SDK. CocoaPods trunk becomes read-only on December 2, 2026, so the last SDK version released before that date is the last one on CocoaPods. Later versions, including bug fixes and security fixes, are available only through Swift Package Manager.
+  * Adds steps to the setup guide for migrating from CocoaPods to Swift Package Manager, including notification extension targets.
+  * Updates the CocoaPods steps with the `post_install` block that Xcode 27 needs, and corrects the SwiftSoup version limit to 2.11.3.
+  * Documents animated GIF support in rich push notifications, available in SDK 4.3.0 and later. iOS limits notification attachments to 10 MB.
+
+* Fixed:
+  * Fixes `getSegments()` never calling its callback when the backend returns an empty response or leaves out the requested category, and fixes customer ID linking failing before a segments fetch.
+  * Fixes SDK calls made before `configure()` being lost during the post-init replay, and a crash when a deferred action opened a deep link off the main thread.
+  * Fixes push notification delegate callbacks being called off the main thread.
+  * Fixes in-app message custom fonts falling back to the system font when the app registers a font with the same PostScript name.
+  * Fixes the App Inbox detail image covering the message content, and a memory leak in animated App Inbox images.
+  * Fixes the UI freezing while App Inbox loads images, and a race when marking App Inbox messages as read.
+  * Fixes `SFSafariViewController` being created and presented off the main thread when the default `onActionClickedSafari` callback runs on a background thread in in-app content blocks and carousels. This can happen when a custom callback forwards to the default behavior after an asynchronous step.
+  * Fixes `StaticInAppContentBlockView` rendering 20pt taller than its content (introduced in 4.3.0), ensuring `heightCompletion` reports the accurate content height.
+
 ## Release Notes for 5.0.0
 #### September 17, 2026
 * Added:
