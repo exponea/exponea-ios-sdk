@@ -110,12 +110,10 @@ public final class InAppDialogContainerView: UIViewController, InAppMessageView 
         view.transform = CGAffineTransform(translationX: 0, y: 2000)
         self.view.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
         isRichPresented = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            UIView.animate(withDuration: 0.2, animations: {
-                self.view.alpha = 1
-                self.view.transform = .identity
-            })
-        }
+        UIView.animate(withDuration: 0.2, animations: {
+            self.view.alpha = 1
+            self.view.transform = .identity
+        })
     }
 
     func present(in viewController: UIViewController, window: UIWindow?) {
